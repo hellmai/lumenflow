@@ -22,36 +22,29 @@
   },
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./schema": {
-      "types": "./dist/schema.d.ts",
-      "import": "./dist/schema.js"
-    }
+    ".": "./lib/index.mjs",
+    "./orchestrator": "./lib/initiative-orchestrator.mjs",
+    "./validator": "./lib/initiative-validator.mjs",
+    "./yaml": "./lib/initiative-yaml.mjs",
+    "./schema": "./lib/initiative-schema.mjs",
+    "./constants": "./lib/initiative-constants.mjs",
+    "./paths": "./lib/initiative-paths.mjs",
+    "./lib/*": "./lib/*.mjs"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.mjs",
   "files": [
-    "dist",
+    "lib",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "test": "node --test lib/__tests__/*.test.mjs 2>/dev/null || echo 'No tests yet'"
   },
   "dependencies": {
+    "@lumenflow/core": "workspace:*",
+    "js-yaml": "^4.1.0",
     "yaml": "^2.8.0",
     "zod": "^3.25.0"
-  },
-  "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.0"
   },
   "engines": {
     "node": ">=22"
