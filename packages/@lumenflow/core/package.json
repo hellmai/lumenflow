@@ -26,6 +26,26 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./git": {
+      "types": "./dist/git/index.d.ts",
+      "import": "./dist/git/index.js"
+    },
+    "./gates": {
+      "types": "./dist/gates/index.d.ts",
+      "import": "./dist/gates/index.js"
+    },
+    "./guards": {
+      "types": "./dist/guards/index.d.ts",
+      "import": "./dist/guards/index.js"
+    },
+    "./spawn": {
+      "types": "./dist/spawn/index.d.ts",
+      "import": "./dist/spawn/index.js"
+    },
+    "./state": {
+      "types": "./dist/state/index.d.ts",
+      "import": "./dist/state/index.js"
     }
   },
   "main": "./dist/index.js",
@@ -39,11 +59,17 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint src --max-warnings 0",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "simple-git": "^3.30.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.0"
+  },
   "engines": {
     "node": ">=22"
   },
