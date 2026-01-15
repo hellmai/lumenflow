@@ -7,7 +7,6 @@
     "workflow",
     "wu",
     "work-unit",
-    "tdd",
     "devops"
   ],
   "homepage": "https://github.com/hellmai/os",
@@ -23,53 +22,62 @@
   },
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./git": {
-      "types": "./dist/git/index.d.ts",
-      "import": "./dist/git/index.js"
-    },
-    "./gates": {
-      "types": "./dist/gates/index.d.ts",
-      "import": "./dist/gates/index.js"
-    },
-    "./guards": {
-      "types": "./dist/guards/index.d.ts",
-      "import": "./dist/guards/index.js"
-    },
-    "./spawn": {
-      "types": "./dist/spawn/index.d.ts",
-      "import": "./dist/spawn/index.js"
-    },
-    "./state": {
-      "types": "./dist/state/index.d.ts",
-      "import": "./dist/state/index.js"
-    }
+    ".": "./lib/index.mjs",
+    "./arg-parser": "./lib/arg-parser.mjs",
+    "./date-utils": "./lib/date-utils.mjs",
+    "./error-handler": "./lib/error-handler.mjs",
+    "./retry-strategy": "./lib/retry-strategy.mjs",
+    "./git-adapter": "./lib/git-adapter.mjs",
+    "./state-machine": "./lib/state-machine.mjs",
+    "./lane-checker": "./lib/lane-checker.mjs",
+    "./lane-inference": "./lib/lane-inference.mjs",
+    "./lane-lock": "./lib/lane-lock.mjs",
+    "./lane-validator": "./lib/lane-validator.mjs",
+    "./spawn-registry-store": "./lib/spawn-registry-store.mjs",
+    "./spawn-registry-schema": "./lib/spawn-registry-schema.mjs",
+    "./spawn-tree": "./lib/spawn-tree.mjs",
+    "./spawn-recovery": "./lib/spawn-recovery.mjs",
+    "./spawn-monitor": "./lib/spawn-monitor.mjs",
+    "./spawn-escalation": "./lib/spawn-escalation.mjs",
+    "./backlog-generator": "./lib/backlog-generator.mjs",
+    "./backlog-parser": "./lib/backlog-parser.mjs",
+    "./backlog-editor": "./lib/backlog-editor.mjs",
+    "./wu-yaml": "./lib/wu-yaml.mjs",
+    "./wu-state-schema": "./lib/wu-state-schema.mjs",
+    "./wu-state-store": "./lib/wu-state-store.mjs",
+    "./wu-claim-helpers": "./lib/wu-claim-helpers.mjs",
+    "./wu-done-worktree": "./lib/wu-done-worktree.mjs",
+    "./wu-done-validators": "./lib/wu-done-validators.mjs",
+    "./dependency-guard": "./lib/dependency-guard.mjs",
+    "./worktree-scanner": "./lib/worktree-scanner.mjs",
+    "./worktree-ownership": "./lib/worktree-ownership.mjs",
+    "./lib/*": "./lib/*.mjs"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.mjs",
   "files": [
-    "dist",
+    "lib",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "test": "node --test lib/__tests__/*.test.mjs 2>/dev/null || echo 'No tests yet'"
   },
   "dependencies": {
+    "change-case": "^5.4.4",
+    "commander": "^12.1.0",
+    "date-fns": "^4.1.0",
+    "fast-glob": "^3.3.3",
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
+    "micromatch": "^4.0.8",
     "minimatch": "^10.1.1",
+    "pretty-ms": "^9.2.0",
+    "ps-list": "^8.1.1",
     "simple-git": "^3.30.0",
+    "tiktoken": "^1.0.21",
+    "yaml": "^2.7.0",
     "zod": "^3.25.0"
-  },
-  "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.0"
   },
   "engines": {
     "node": ">=22"

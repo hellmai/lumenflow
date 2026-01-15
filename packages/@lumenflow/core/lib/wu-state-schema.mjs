@@ -1,0 +1,174 @@
+/**
+ * WU State Schema (WU-1570)
+ *
+ * Zod schemas for WU state event validation.
+ * Defines event types for WU lifecycle: create, claim, block, unblock, complete.
+ *
+ * @see {@link tools/lib/__tests__/wu-state-store.test.mjs} - Tests
+ */
+
+import { z } from 'zod';
+
+/**
+ * WU event types
+ *
+ * - create: WU created (transitions to ready)
+ * - claim: WU claimed (transitions to in_progress)
+ * - block: WU blocked (transitions to blocked)
+ * - unblock: WU unblocked (transitions back to in_progress)
+ * - complete: WU completed (transitions to done)
+ * - checkpoint: Progress checkpoint (WU-1748: cross-agent visibility)
+ * - spawn: WU spawned from parent (WU-1947: parent-child relationships)
+ */
+export const WU_EVENT_TYPES = ['create', 'claim', 'block', 'unblock', 'complete', 'checkpoint', 'spawn'];
+
+/**
+ * WU status values (matches LumenFlow state machine)
+ */
+export const WU_STATUSES = ['ready', 'in_progress', 'blocked', 'waiting', 'done'];
+
+/**
+ * Regex patterns for WU validation
+ */
+export const WU_PATTERNS = {
+  /** WU ID format: WU-{digits} */
+  WU_ID: /^WU-\d+$/,
+};
+
+/**
+ * Error messages for schema validation
+ */
+const ERROR_MESSAGES = {
+  EVENT_TYPE: `Event type must be one of: ${WU_EVENT_TYPES.join(', ')}`,
+  WU_ID: 'WU ID must match pattern WU-XXX (e.g., WU-1570)',
+  LANE_REQUIRED: 'Lane is required',
+  TITLE_REQUIRED: 'Title is required',
+  REASON_REQUIRED: 'Reason is required',
+  TIMESTAMP_REQUIRED: 'Timestamp is required',
+};
+
+/**
+ * Base event schema (common fields for all events)
+ */
+const BaseEventSchema = z.object({
+  /** Event type */
+  type: z.enum(WU_EVENT_TYPES, {
+    errorMap: () => ({ message: ERROR_MESSAGES.EVENT_TYPE }),
+  }),
+
+  /** WU ID */
+  wuId: z.string().regex(WU_PATTERNS.WU_ID, { message: ERROR_MESSAGES.WU_ID }),
+
+  /** Event timestamp (ISO 8601 datetime) */
+  timestamp: z.string().datetime({ message: ERROR_MESSAGES.TIMESTAMP_REQUIRED }),
+});
+
+/**
+ * Create event schema
+ */
+export const CreateEventSchema = BaseEventSchema.extend({
+  type: z.literal('create'),
+  lane: z.string().min(1, { message: ERROR_MESSAGES.LANE_REQUIRED }),
+  title: z.string().min(1, { message: ERROR_MESSAGES.TITLE_REQUIRED }),
+});
+
+/**
+ * Claim event schema
+ */
+export const ClaimEventSchema = BaseEventSchema.extend({
+  type: z.literal('claim'),
+  lane: z.string().min(1, { message: ERROR_MESSAGES.LANE_REQUIRED }),
+  title: z.string().min(1, { message: ERROR_MESSAGES.TITLE_REQUIRED }),
+});
+
+/**
+ * Block event schema
+ */
+export const BlockEventSchema = BaseEventSchema.extend({
+  type: z.literal('block'),
+  reason: z.string().min(1, { message: ERROR_MESSAGES.REASON_REQUIRED }),
+});
+
+/**
+ * Unblock event schema
+ */
+export const UnblockEventSchema = BaseEventSchema.extend({
+  type: z.literal('unblock'),
+});
+
+/**
+ * Complete event schema
+ */
+export const CompleteEventSchema = BaseEventSchema.extend({
+  type: z.literal('complete'),
+});
+
+/**
+ * Checkpoint event schema (WU-1748: cross-agent visibility)
+ * Records progress checkpoints for abandoned WU detection
+ */
+export const CheckpointEventSchema = BaseEventSchema.extend({
+  type: z.literal('checkpoint'),
+  /** Checkpoint note/description */
+  note: z.string().min(1, { message: 'Checkpoint note is required' }),
+  /** Optional session ID */
+  sessionId: z.string().optional(),
+  /** Optional progress summary */
+  progress: z.string().optional(),
+  /** Optional next steps */
+  nextSteps: z.string().optional(),
+});
+
+/**
+ * Spawn event schema (WU-1947: parent-child relationships)
+ * Records WU spawn relationships for tracking parent-child WUs
+ */
+export const SpawnEventSchema = BaseEventSchema.extend({
+  type: z.literal('spawn'),
+  /** Parent WU ID that spawned this WU */
+  parentWuId: z.string().regex(WU_PATTERNS.WU_ID, { message: 'Parent WU ID must match pattern WU-XXX' }),
+  /** Unique spawn identifier */
+  spawnId: z.string().min(1, { message: 'Spawn ID is required' }),
+});
+
+/**
+ * Union schema for all event types
+ */
+export const WUEventSchema = z.discriminatedUnion('type', [
+  CreateEventSchema,
+  ClaimEventSchema,
+  BlockEventSchema,
+  UnblockEventSchema,
+  CompleteEventSchema,
+  CheckpointEventSchema,
+  SpawnEventSchema,
+]);
+
+/**
+ * TypeScript types inferred from schemas
+ *
+ * @typedef {import('zod').z.infer<typeof CreateEventSchema>} CreateEvent
+ * @typedef {import('zod').z.infer<typeof ClaimEventSchema>} ClaimEvent
+ * @typedef {import('zod').z.infer<typeof BlockEventSchema>} BlockEvent
+ * @typedef {import('zod').z.infer<typeof UnblockEventSchema>} UnblockEvent
+ * @typedef {import('zod').z.infer<typeof CompleteEventSchema>} CompleteEvent
+ * @typedef {import('zod').z.infer<typeof WUEventSchema>} WUEvent
+ */
+
+/**
+ * Validates WU event data against schema
+ *
+ * @param {unknown} data - Data to validate
+ * @returns {z.SafeParseReturnType<WUEvent, WUEvent>} Validation result
+ *
+ * @example
+ * const result = validateWUEvent(eventData);
+ * if (!result.success) {
+ *   result.error.issues.forEach(issue => {
+ *     console.error(`${issue.path.join('.')}: ${issue.message}`);
+ *   });
+ * }
+ */
+export function validateWUEvent(data) {
+  return WUEventSchema.safeParse(data);
+}
