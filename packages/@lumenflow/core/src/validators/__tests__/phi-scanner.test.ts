@@ -10,8 +10,8 @@
 
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { scanForSensitiveData, isPathExcluded } from '../pii-scanner.mjs';
-import { SENSITIVE_DATA_TYPES } from '../phi-constants.mjs';
+import { scanForSensitiveData, isPathExcluded } from '../pii-scanner.js';
+import { SENSITIVE_DATA_TYPES } from '../phi-constants.js';
 
 describe('PIIScanner', () => {
   describe('scanForSensitiveData', () => {
@@ -264,7 +264,7 @@ describe('PIIScanner', () => {
 
   describe('isPathExcluded', () => {
     it('should exclude __tests__ directories', () => {
-      assert.equal(isPathExcluded('tools/lib/__tests__/file.mjs'), true);
+      assert.equal(isPathExcluded('tools/lib/__tests__/file.js'), true);
     });
 
     it('should exclude test directories', () => {
@@ -300,7 +300,7 @@ describe('PIIScanner', () => {
     });
 
     it('should NOT exclude tool files', () => {
-      assert.equal(isPathExcluded('tools/file-write.mjs'), false);
+      assert.equal(isPathExcluded('tools/file-write.js'), false);
     });
 
     it('should handle empty path', () => {
