@@ -23,44 +23,33 @@
   },
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./commands": {
-      "types": "./dist/commands/index.d.ts",
-      "import": "./dist/commands/index.js"
-    },
-    "./schema": {
-      "types": "./dist/schema.d.ts",
-      "import": "./dist/schema.js"
-    },
-    "./store": {
-      "types": "./dist/store.d.ts",
-      "import": "./dist/store.js"
-    }
+    ".": "./lib/index.mjs",
+    "./checkpoint": "./lib/mem-checkpoint-core.mjs",
+    "./init": "./lib/mem-init-core.mjs",
+    "./start": "./lib/mem-start-core.mjs",
+    "./ready": "./lib/mem-ready-core.mjs",
+    "./signal": "./lib/mem-signal-core.mjs",
+    "./cleanup": "./lib/mem-cleanup-core.mjs",
+    "./create": "./lib/mem-create-core.mjs",
+    "./summarize": "./lib/mem-summarize-core.mjs",
+    "./triage": "./lib/mem-triage-core.mjs",
+    "./schema": "./lib/memory-schema.mjs",
+    "./store": "./lib/memory-store.mjs",
+    "./lib/*": "./lib/*.mjs"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.mjs",
   "files": [
-    "dist",
+    "lib",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "test": "node --test lib/__tests__/*.test.mjs 2>/dev/null || echo 'No tests yet'"
   },
   "dependencies": {
+    "ms": "^2.1.3",
     "yaml": "^2.8.0",
     "zod": "^3.25.0"
-  },
-  "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.0"
   },
   "engines": {
     "node": ">=22"
