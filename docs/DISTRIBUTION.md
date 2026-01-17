@@ -16,6 +16,85 @@ This document tracks the work to package LumenFlow for consultancy distribution.
 
 ---
 
+## Why Cloud Mode? (Local vs SaaS)
+
+Local LumenFlow doesn't work in cloud/CI environments:
+
+| Component | Local Mode | Cloud Blocker | SaaS Solution |
+|-----------|------------|---------------|---------------|
+| PID locks | File-based locks | Container restart = PID mismatch | GitHub labels |
+| Worktrees | Isolated directories | Ephemeral filesystem | Branch-only mode |
+| Memory layer | Session tracking | Lost on restart | Not needed (single agent) |
+| Lane locks | `.beacon/locks/` | Multiple runners = race conditions | Label-based WIP |
+
+**Key insight:** The memory layer is already ephemeral (git-ignored). No database needed for cloud mode.
+
+---
+
+## What's Persisted vs Ephemeral
+
+### Git-Tracked (Source of Truth)
+
+These survive container restarts and are the audit trail:
+
+```
+.beacon/stamps/WU-*.done      # Completion proof
+.beacon/agent-runs/*.stamp    # Mandatory agent audit trail
+docs/04-operations/tasks/wu/  # WU specs (YAML)
+```
+
+### Git-Ignored (Session-Local)
+
+These are ephemeral and rebuilt per session:
+
+```
+.beacon/memory/               # Memory layer (checkpoints, sessions)
+.beacon/locks/                # Lane locks (PID-based)
+.beacon/sessions/             # Active session state
+worktrees/                    # Git worktrees for isolation
+```
+
+**Implication:** Cloud mode only needs to create stamps - everything else is disposable.
+
+---
+
+## Value Proposition
+
+| Pitch | What It Means |
+|-------|---------------|
+| **"AI That Ships"** | Gates catch broken code before merge |
+| **"Structured AI"** | WU specs prevent scope creep |
+| **"Compliance-Ready"** | Mandatory agent stamps as audit trail |
+| **"Right-Sized Tasks"** | Lane + sizing guide = predictable work |
+
+---
+
+## Cost Model
+
+| Item | Cost | Notes |
+|------|------|-------|
+| GitHub App hosting | $0 | Vercel free tier (Edge Functions) |
+| GitHub API | $0 | Clients use their own quota |
+| Actions minutes | $0 | Runs in client's repo |
+| Domain | ~$15/year | lumenflow.dev |
+| **Total** | **~$30/month** | Mostly optional extras |
+
+**Margin:** 90%+ (GitHub Marketplace takes 25% first year, negotiable after)
+
+---
+
+## Update Propagation
+
+| Layer | How Updates Reach Clients | Client Action Required |
+|-------|---------------------------|------------------------|
+| Webhook App | `vercel --prod` | None (instant) |
+| Gates Action | `git tag v1.x` | Auto via semver pin (`@v1`) |
+| Templates | Changelog announcement | Manual copy |
+
+**Example:** Bug fix in WU validation → deploy webhook → all 100 clients get it instantly.
+
+---
+
 ## Architecture Overview
 
 ```
