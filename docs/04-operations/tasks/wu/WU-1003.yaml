@@ -2,26 +2,26 @@ id: WU-1003
 title: Add rate limiting to Gates Action
 lane: Infrastructure
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-18
 code_paths:
-  - 'actions/lumenflow-gates/action.yml'
-  - 'apps/github-app/api/validate-token.ts'
-  - 'apps/github-app/src/lib/billing.ts'
+  - actions/lumenflow-gates/action.yml
+  - apps/github-app/api/validate-token.ts
+  - apps/github-app/src/lib/billing.ts
 tests:
   manual:
-    - 'Gates Action rejects requests without token'
-    - 'Gates Action enforces 10 WU/month limit for free tier'
+    - Gates Action rejects requests without token
+    - Gates Action enforces 10 WU/month limit for free tier
   unit:
-    - 'apps/github-app/src/lib/__tests__/billing.test.ts'
+    - apps/github-app/src/lib/__tests__/billing.test.ts
   e2e: []
 artifacts:
   - .beacon/stamps/WU-1003.done
 dependencies:
   - WU-1002
 risks:
-  - 'Supabase schema changes may require migration'
+  - Supabase schema changes may require migration
 notes: ''
 requires_review: false
 assigned_to: tom@hellm.ai
@@ -43,8 +43,16 @@ description: |
   3. Usage tracking in Supabase (lumenflow_usage table)
   4. Limit enforcement (10 WUs/month free, 100 team, 500 business)
 acceptance:
-  - 'Gates Action has required token input'
-  - 'Validation endpoint checks tier and usage'
-  - 'Free tier limited to 10 gates runs/month'
-  - 'Usage tracked in Supabase'
+  - Gates Action has required token input
+  - Validation endpoint checks tier and usage
+  - Free tier limited to 10 gates runs/month
+  - Usage tracked in Supabase
   - pnpm format, lint, typecheck → PASS
+claimed_mode: worktree
+worktree_path: worktrees/infrastructure-wu-1003
+claimed_at: 2026-01-18T18:00:48.419Z
+baseline_main_sha: 07a62e9e890b65bdd9e949c103cb698eb12e4de2
+session_id: 263b1b7a-6cc9-4848-adf2-61ac26912541
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-18T18:00:48.426Z
