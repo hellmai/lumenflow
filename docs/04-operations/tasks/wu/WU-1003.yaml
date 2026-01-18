@@ -5,15 +5,23 @@ type: feature
 status: ready
 priority: P2
 created: 2026-01-18
-code_paths: []
+code_paths:
+  - 'actions/lumenflow-gates/action.yml'
+  - 'apps/github-app/api/validate-token.ts'
+  - 'apps/github-app/src/lib/billing.ts'
 tests:
-  manual: []
+  manual:
+    - 'Gates Action rejects requests without token'
+    - 'Gates Action enforces 10 WU/month limit for free tier'
+    - 'Validation endpoint returns correct tier info'
   unit: []
   e2e: []
 artifacts:
   - .beacon/stamps/WU-1003.done
-dependencies: []
-risks: []
+dependencies:
+  - WU-1002
+risks:
+  - 'Supabase schema changes may require migration'
 notes: ''
 requires_review: false
 assigned_to: tom@hellm.ai
@@ -23,11 +31,20 @@ requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
 description: |
-  [PLACEHOLDER] Describe the work to be done.
+  Add rate limiting to Gates Action before Marketplace launch.
 
-  Context: ...
-  Problem: ...
-  Solution: ...
+  Context: Gates Action is ready but has no usage limits.
+  Problem: Without limits, free tier would be unlimited (bad for monetization).
+  Solution: Add token validation endpoint + usage tracking in Supabase.
+
+  Components:
+  1. Token input in action.yml (required)
+  2. /api/validate-token endpoint in GitHub App
+  3. Usage tracking in Supabase (lumenflow_usage table)
+  4. Limit enforcement (10 WUs/month free, 100 team, 500 business)
 acceptance:
-  - '[PLACEHOLDER] Define acceptance criteria'
+  - 'Gates Action has required token input'
+  - 'Validation endpoint checks tier and usage'
+  - 'Free tier limited to 10 gates runs/month'
+  - 'Usage tracked in Supabase'
   - pnpm format, lint, typecheck → PASS
