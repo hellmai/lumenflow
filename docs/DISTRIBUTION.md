@@ -20,12 +20,12 @@ This document tracks the work to package LumenFlow for consultancy distribution.
 
 Local LumenFlow doesn't work in cloud/CI environments:
 
-| Component | Local Mode | Cloud Blocker | SaaS Solution |
-|-----------|------------|---------------|---------------|
-| PID locks | File-based locks | Container restart = PID mismatch | GitHub labels |
-| Worktrees | Isolated directories | Ephemeral filesystem | Branch-only mode |
-| Memory layer | Session tracking | Lost on restart | Not needed (single agent) |
-| Lane locks | `.beacon/locks/` | Multiple runners = race conditions | Label-based WIP |
+| Component    | Local Mode           | Cloud Blocker                      | SaaS Solution             |
+| ------------ | -------------------- | ---------------------------------- | ------------------------- |
+| PID locks    | File-based locks     | Container restart = PID mismatch   | GitHub labels             |
+| Worktrees    | Isolated directories | Ephemeral filesystem               | Branch-only mode          |
+| Memory layer | Session tracking     | Lost on restart                    | Not needed (single agent) |
+| Lane locks   | `.beacon/locks/`     | Multiple runners = race conditions | Label-based WIP           |
 
 **Key insight:** The memory layer is already ephemeral (git-ignored). No database needed for cloud mode.
 
@@ -60,24 +60,24 @@ worktrees/                    # Git worktrees for isolation
 
 ## Value Proposition
 
-| Pitch | What It Means |
-|-------|---------------|
-| **"AI That Ships"** | Gates catch broken code before merge |
-| **"Structured AI"** | WU specs prevent scope creep |
-| **"Compliance-Ready"** | Mandatory agent stamps as audit trail |
+| Pitch                   | What It Means                          |
+| ----------------------- | -------------------------------------- |
+| **"AI That Ships"**     | Gates catch broken code before merge   |
+| **"Structured AI"**     | WU specs prevent scope creep           |
+| **"Compliance-Ready"**  | Mandatory agent stamps as audit trail  |
 | **"Right-Sized Tasks"** | Lane + sizing guide = predictable work |
 
 ---
 
 ## Cost Model
 
-| Item | Cost | Notes |
-|------|------|-------|
-| GitHub App hosting | $0 | Vercel free tier (Edge Functions) |
-| GitHub API | $0 | Clients use their own quota |
-| Actions minutes | $0 | Runs in client's repo |
-| Domain | ~$15/year | lumenflow.dev |
-| **Total** | **~$30/month** | Mostly optional extras |
+| Item               | Cost           | Notes                             |
+| ------------------ | -------------- | --------------------------------- |
+| GitHub App hosting | $0             | Vercel free tier (Edge Functions) |
+| GitHub API         | $0             | Clients use their own quota       |
+| Actions minutes    | $0             | Runs in client's repo             |
+| Domain             | ~$15/year      | lumenflow.dev                     |
+| **Total**          | **~$30/month** | Mostly optional extras            |
 
 **Margin:** 90%+ (GitHub Marketplace takes 25% first year, negotiable after)
 
@@ -85,11 +85,11 @@ worktrees/                    # Git worktrees for isolation
 
 ## Update Propagation
 
-| Layer | How Updates Reach Clients | Client Action Required |
-|-------|---------------------------|------------------------|
-| Webhook App | `vercel --prod` | None (instant) |
-| Gates Action | `git tag v1.x` | Auto via semver pin (`@v1`) |
-| Templates | Changelog announcement | Manual copy |
+| Layer        | How Updates Reach Clients | Client Action Required      |
+| ------------ | ------------------------- | --------------------------- |
+| Webhook App  | `vercel --prod`           | None (instant)              |
+| Gates Action | `git tag v1.x`            | Auto via semver pin (`@v1`) |
+| Templates    | Changelog announcement    | Manual copy                 |
 
 **Example:** Bug fix in WU validation → deploy webhook → all 100 clients get it instantly.
 
@@ -138,14 +138,15 @@ worktrees/                    # Git worktrees for isolation
 
 Added distribution build tooling that produces compiled packages without source maps:
 
-| File | Purpose |
-|------|---------|
-| `tsconfig.build.json` (root) | Base config: declarations=true, sourceMap=false |
-| `packages/*/tsconfig.build.json` | Per-package build configs |
-| `turbo.json` tasks | `build:dist`, `pack:dist`, `clean` |
-| `package.json` scripts | `build:dist`, `pack:all`, `clean` |
+| File                             | Purpose                                         |
+| -------------------------------- | ----------------------------------------------- |
+| `tsconfig.build.json` (root)     | Base config: declarations=true, sourceMap=false |
+| `packages/*/tsconfig.build.json` | Per-package build configs                       |
+| `turbo.json` tasks               | `build:dist`, `pack:dist`, `clean`              |
+| `package.json` scripts           | `build:dist`, `pack:all`, `clean`               |
 
 **Usage:**
+
 ```bash
 pnpm build:dist   # Build all packages (JS + .d.ts, no source maps)
 pnpm pack:all     # Create .tgz files for each package
@@ -159,17 +160,18 @@ pnpm pack:all     # Create .tgz files for each package
 
 Added `apps/github-app/` with cloud-native workflow enforcement:
 
-| File | Purpose |
-|------|---------|
-| `src/webhooks/handler.ts` | Main webhook handler (~140 lines) |
-| `src/lib/billing.ts` | GitHub Marketplace subscription tiers |
-| `src/lib/wu-validator.ts` | Parse WU spec from PR body |
-| `src/lib/lane-enforcer.ts` | WIP limits via GitHub labels |
-| `src/lib/stamp-creator.ts` | Commit completion stamps on merge |
-| `templates/workflows/lumenflow-gates.yml` | Client CI workflow template |
-| `templates/PULL_REQUEST_TEMPLATE.md` | Client PR template |
+| File                                      | Purpose                               |
+| ----------------------------------------- | ------------------------------------- |
+| `src/webhooks/handler.ts`                 | Main webhook handler (~140 lines)     |
+| `src/lib/billing.ts`                      | GitHub Marketplace subscription tiers |
+| `src/lib/wu-validator.ts`                 | Parse WU spec from PR body            |
+| `src/lib/lane-enforcer.ts`                | WIP limits via GitHub labels          |
+| `src/lib/stamp-creator.ts`                | Commit completion stamps on merge     |
+| `templates/workflows/lumenflow-gates.yml` | Client CI workflow template           |
+| `templates/PULL_REQUEST_TEMPLATE.md`      | Client PR template                    |
 
 **Features:**
+
 - PR validation on open (WU spec, lane, acceptance criteria)
 - WIP limit enforcement via labels (no PID locks needed)
 - Automatic stamp creation on PR merge
@@ -185,24 +187,25 @@ Added `actions/lumenflow-gates/` with polyglot language presets:
 # Client usage
 - uses: hellmai/lumenflow-gates@v1
   with:
-    preset: auto  # Detects from package.json, pyproject.toml, go.mod
+    preset: auto # Detects from package.json, pyproject.toml, go.mod
 ```
 
 **Presets implemented:**
 
-| Preset | Detection | Gates |
-|--------|-----------|-------|
-| `node` | package.json | format, lint, typecheck, test |
+| Preset   | Detection      | Gates                                 |
+| -------- | -------------- | ------------------------------------- |
+| `node`   | package.json   | format, lint, typecheck, test         |
 | `python` | pyproject.toml | ruff format, ruff check, mypy, pytest |
-| `go` | go.mod | gofmt, golangci-lint, go test |
-| `rust` | Cargo.toml | cargo fmt, cargo clippy, cargo test |
-| `auto` | All above | Detect and run appropriate preset |
+| `go`     | go.mod         | gofmt, golangci-lint, go test         |
+| `rust`   | Cargo.toml     | cargo fmt, cargo clippy, cargo test   |
+| `auto`   | All above      | Detect and run appropriate preset     |
 
 ### 4. GitHub App Manifest ✅
 
 **Commit:** (2026-01-17)
 
 Added `apps/github-app/app.yml` for one-click GitHub App registration:
+
 - Webhook events: `pull_request`, `check_run`, `check_suite`
 - Permissions: `checks:write`, `contents:write`, `pull_requests:read`, `issues:write`
 - Marketplace categories: continuous-integration, code-quality, project-management
@@ -212,6 +215,7 @@ Added `apps/github-app/app.yml` for one-click GitHub App registration:
 **Commit:** (2026-01-17)
 
 Added deployment configuration:
+
 - `apps/github-app/vercel.json` - Vercel project config
 - `apps/github-app/api/webhook.ts` - Vercel API route
 - `apps/github-app/api/health.ts` - Health check endpoint
@@ -228,12 +232,12 @@ Added deployment configuration:
 
 Create Marketplace listing with pricing tiers:
 
-| Tier | Price | WUs/month | Features |
-|------|-------|-----------|----------|
-| Free | $0 | 10 | Basic validation, 1 lane |
-| Team | $29/mo | 100 | All lanes, email support |
-| Business | $99/mo | 500 | Priority support, custom lanes |
-| Enterprise | Custom | Unlimited | SSO, SLA, dedicated support |
+| Tier       | Price  | WUs/month | Features                       |
+| ---------- | ------ | --------- | ------------------------------ |
+| Free       | $0     | 10        | Basic validation, 1 lane       |
+| Team       | $29/mo | 100       | All lanes, email support       |
+| Business   | $99/mo | 500       | Priority support, custom lanes |
+| Enterprise | Custom | Unlimited | SSO, SLA, dedicated support    |
 
 ### 7. Register GitHub App ⏳
 
@@ -257,15 +261,15 @@ Required before Vercel deployment can receive webhooks.
 
 ## Package Status
 
-| Package | Build | Tests | Ready for npm |
-|---------|-------|-------|---------------|
-| @lumenflow/core | ✅ | ✅ | ✅ |
-| @lumenflow/cli | ✅ | ✅ | ✅ |
-| @lumenflow/memory | ✅ | ✅ | ✅ |
-| @lumenflow/agent | ✅ | ✅ | ✅ |
-| @lumenflow/metrics | ✅ | ✅ | ✅ |
-| @lumenflow/initiatives | ✅ | ✅ | ✅ |
-| @lumenflow/shims | ✅ | ✅ | ✅ |
+| Package                | Build | Tests | Ready for npm |
+| ---------------------- | ----- | ----- | ------------- |
+| @lumenflow/core        | ✅    | ✅    | ✅            |
+| @lumenflow/cli         | ✅    | ✅    | ✅            |
+| @lumenflow/memory      | ✅    | ✅    | ✅            |
+| @lumenflow/agent       | ✅    | ✅    | ✅            |
+| @lumenflow/metrics     | ✅    | ✅    | ✅            |
+| @lumenflow/initiatives | ✅    | ✅    | ✅            |
+| @lumenflow/shims       | ✅    | ✅    | ✅            |
 
 ---
 
@@ -296,6 +300,7 @@ For teams wanting cloud-native enforcement without local tooling:
 ### Mode 3: Hybrid
 
 Use local CLI for development, GitHub App for CI enforcement:
+
 - Local: `wu:claim`, `wu:done`, worktrees
 - Cloud: PR validation, WIP limits, stamps
 
@@ -319,12 +324,12 @@ This is unaffected by distribution packaging. The `file:` links point to source,
 
 ## Decision Log
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-01-17 | Compiled-only distribution | Protect IP while enabling external use |
-| 2026-01-17 | GitHub App for SaaS | ~$0 infrastructure, instant updates |
-| 2026-01-17 | GitHub Marketplace billing | Zero billing code, GitHub handles invoices |
-| 2026-01-17 | Apps in monorepo | `apps/github-app/` keeps related code together |
+| Date       | Decision                   | Rationale                                      |
+| ---------- | -------------------------- | ---------------------------------------------- |
+| 2026-01-17 | Compiled-only distribution | Protect IP while enabling external use         |
+| 2026-01-17 | GitHub App for SaaS        | ~$0 infrastructure, instant updates            |
+| 2026-01-17 | GitHub Marketplace billing | Zero billing code, GitHub handles invoices     |
+| 2026-01-17 | Apps in monorepo           | `apps/github-app/` keeps related code together |
 
 ---
 

@@ -149,47 +149,47 @@ apps/
 
 ### @lumenflow/cli (30+ commands)
 
-| Category | Commands |
-|----------|----------|
-| **WU Workflow** | `wu-claim`, `wu-done`, `wu-create`, `wu-edit`, `wu-block`, `wu-unblock` |
-| **Quality Gates** | `gates` (format, lint, typecheck, tests) |
-| **Memory Layer** | `mem-init`, `mem-checkpoint`, `mem-ready`, `mem-inbox`, `mem-signal` |
-| **Multi-WU Initiatives** | `initiative-create`, `initiative-status`, `initiative-add-wu` |
-| **Agent Coordination** | `wu-spawn`, `spawn-list`, `mem-triage` |
-| **Maintenance** | `wu-validate`, `wu-preflight`, `wu-repair`, `wu-prune`, `wu-cleanup` |
+| Category                 | Commands                                                                |
+| ------------------------ | ----------------------------------------------------------------------- |
+| **WU Workflow**          | `wu-claim`, `wu-done`, `wu-create`, `wu-edit`, `wu-block`, `wu-unblock` |
+| **Quality Gates**        | `gates` (format, lint, typecheck, tests)                                |
+| **Memory Layer**         | `mem-init`, `mem-checkpoint`, `mem-ready`, `mem-inbox`, `mem-signal`    |
+| **Multi-WU Initiatives** | `initiative-create`, `initiative-status`, `initiative-add-wu`           |
+| **Agent Coordination**   | `wu-spawn`, `spawn-list`, `mem-triage`                                  |
+| **Maintenance**          | `wu-validate`, `wu-preflight`, `wu-repair`, `wu-prune`, `wu-cleanup`    |
 
 ### GitHub App
 
-| Feature | Implementation |
-|---------|----------------|
-| WU Spec Validation | Parses PR body for `## WU-123: Title`, lane, acceptance criteria |
-| Lane WIP Enforcement | Blocks PR if lane already has one in progress |
-| Lane Labels | Adds `lane:core`, `lane:infrastructure`, etc. |
-| Stamp Creation | Creates completion stamp on merge |
-| Billing | Tracks WU usage per tier |
+| Feature              | Implementation                                                   |
+| -------------------- | ---------------------------------------------------------------- |
+| WU Spec Validation   | Parses PR body for `## WU-123: Title`, lane, acceptance criteria |
+| Lane WIP Enforcement | Blocks PR if lane already has one in progress                    |
+| Lane Labels          | Adds `lane:core`, `lane:infrastructure`, etc.                    |
+| Stamp Creation       | Creates completion stamp on merge                                |
+| Billing              | Tracks WU usage per tier                                         |
 
 ### Feature Comparison
 
-| LumenFlow Feature | CLI | GitHub App | Notes |
-|-------------------|-----|------------|-------|
-| WU specs | ✅ | ✅ (parse only) | App validates PR body |
-| Lanes/WIP | ✅ | ✅ | App uses labels |
-| Gates (format/lint/test) | ✅ | ✅ (via Action) | Action runs in their CI |
-| Memory layer | ✅ | ❌ | CLI-only feature |
-| Agent coordination | ✅ | ❌ | CLI-only feature |
-| Initiatives | ✅ | ❌ | CLI-only feature |
-| Worktree isolation | ✅ | ❌ | CLI-only feature |
-| Stamps | ✅ | ✅ | Both create stamps |
+| LumenFlow Feature        | CLI | GitHub App      | Notes                   |
+| ------------------------ | --- | --------------- | ----------------------- |
+| WU specs                 | ✅  | ✅ (parse only) | App validates PR body   |
+| Lanes/WIP                | ✅  | ✅              | App uses labels         |
+| Gates (format/lint/test) | ✅  | ✅ (via Action) | Action runs in their CI |
+| Memory layer             | ✅  | ❌              | CLI-only feature        |
+| Agent coordination       | ✅  | ❌              | CLI-only feature        |
+| Initiatives              | ✅  | ❌              | CLI-only feature        |
+| Worktree isolation       | ✅  | ❌              | CLI-only feature        |
+| Stamps                   | ✅  | ✅              | Both create stamps      |
 
 ---
 
 ## Infrastructure Costs
 
-| Tier | What Runs | Where | Cost to Operate |
-|------|-----------|-------|-----------------|
-| Free | App webhooks | Vercel (free tier) | $0 |
-| Team | App + Gates Action | Their CI (GitHub Actions) | $0 |
-| Pro | App + npm CLI | Their machine | $0 |
+| Tier | What Runs          | Where                     | Cost to Operate |
+| ---- | ------------------ | ------------------------- | --------------- |
+| Free | App webhooks       | Vercel (free tier)        | $0              |
+| Team | App + Gates Action | Their CI (GitHub Actions) | $0              |
+| Pro  | App + npm CLI      | Their machine             | $0              |
 
 **Key insight:** All compute runs on customer infrastructure. LumenFlow has near-zero operational costs.
 
@@ -197,11 +197,11 @@ apps/
 
 ## Component Independence
 
-| Component | Works Standalone? | What It Does Alone |
-|-----------|-------------------|-------------------|
-| **CLI** (`@lumenflow/cli`) | ✅ Yes | Full local workflow: claim, gates, done, memory |
-| **GitHub App** | ✅ Yes | PR validation, WIP enforcement, stamps |
-| **Both together** | Best | CLI for local + App for team enforcement |
+| Component                  | Works Standalone? | What It Does Alone                              |
+| -------------------------- | ----------------- | ----------------------------------------------- |
+| **CLI** (`@lumenflow/cli`) | ✅ Yes            | Full local workflow: claim, gates, done, memory |
+| **GitHub App**             | ✅ Yes            | PR validation, WIP enforcement, stamps          |
+| **Both together**          | Best              | CLI for local + App for team enforcement        |
 
 The CLI provides the workflow tools. The App enforces what it can observe (PRs, labels, merges). Neither requires the other, but together they provide complete enforcement.
 

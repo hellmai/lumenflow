@@ -12,7 +12,7 @@
 Four-phase plan to:
 
 1. **Dogfood LumenFlow** in hellmai/os (use LumenFlow to build LumenFlow)
-2. **Publish to npm** as @lumenflow/* packages (private)
+2. **Publish to npm** as @lumenflow/\* packages (private)
 3. **Migrate PatientPath** from file: links to npm packages
 4. **Launch SaaS Product** with Gates Action, tiers, and Marketplace listing
 
@@ -20,23 +20,25 @@ Four-phase plan to:
 
 ## Decisions Made
 
-| Question | Decision |
-|----------|----------|
-| npm org visibility | **Private** (requires paid npm org ~$7/user/month) |
-| npm org name | **@lumenflow** (fallback: @hellm-ai) |
-| npm publishConfig.access | **restricted** (not public) |
-| Initial version | **1.0.0** (production-ready signal) |
-| GitHub App | **For external customers** (PatientPath: optional) |
-| Git workflow | **Trunk-only** for PatientPath, **PR-based** for customers |
-| Bootstrap exception | **Yes** (hellmai/os only, one-time setup) |
+| Question                 | Decision                                                   |
+| ------------------------ | ---------------------------------------------------------- |
+| npm org visibility       | **Private** (requires paid npm org ~$7/user/month)         |
+| npm org name             | **@lumenflow** (fallback: @hellm-ai)                       |
+| npm publishConfig.access | **restricted** (not public)                                |
+| Initial version          | **1.0.0** (production-ready signal)                        |
+| GitHub App               | **For external customers** (PatientPath: optional)         |
+| Git workflow             | **Trunk-only** for PatientPath, **PR-based** for customers |
+| Bootstrap exception      | **Yes** (hellmai/os only, one-time setup)                  |
 
 ### Important: PR Flow Required for GitHub App
 
 The GitHub App can **only** validate/enforce via PR events:
+
 - `pull_request.opened` → validates WU spec, checks WIP, adds labels
 - `pull_request.closed` (merged) → creates stamp commit
 
 **If you use trunk-only (direct push to main):**
+
 - GitHub App won't fire (no PR events)
 - No automatic WU validation
 - No WIP enforcement
@@ -47,11 +49,11 @@ The GitHub App can **only** validate/enforce via PR events:
 
 ### Component Independence
 
-| Component | Works Without Other? | What It Does Alone |
-|-----------|---------------------|-------------------|
-| **CLI** (`@lumenflow/cli`) | ✅ Yes | Local workflow: `wu:claim`, `wu:done`, `gates`, memory layer |
-| **GitHub App** | ✅ Yes | PR validation, WIP enforcement, stamps (only observes PRs) |
-| **Both together** | Best | CLI for local work + App for enforcement/automation |
+| Component                  | Works Without Other? | What It Does Alone                                           |
+| -------------------------- | -------------------- | ------------------------------------------------------------ |
+| **CLI** (`@lumenflow/cli`) | ✅ Yes               | Local workflow: `wu:claim`, `wu:done`, `gates`, memory layer |
+| **GitHub App**             | ✅ Yes               | PR validation, WIP enforcement, stamps (only observes PRs)   |
+| **Both together**          | Best                 | CLI for local work + App for enforcement/automation          |
 
 The CLI provides the workflow tools. The App enforces what it can observe (PRs, labels, merges). Neither requires the other, but together they provide complete enforcement.
 
@@ -107,7 +109,7 @@ pnpm wu:done --id WU-OS-001
 
 ```yaml
 id: WU-OS-001
-title: "Complete LumenFlow dogfooding setup"
+title: 'Complete LumenFlow dogfooding setup'
 lane: Infrastructure
 type: chore
 status: ready
@@ -116,14 +118,14 @@ description: |
   Complete the LumenFlow dogfooding setup after minimal bootstrap commit.
   Adds wu:* scripts, .gitignore entries, and initializes memory layer.
 acceptance:
-  - "wu:* scripts wired in root package.json using pnpm exec"
-  - "Memory layer initialized with pnpm mem:init"
-  - ".gitignore updated with worktrees/, .beacon/memory/, etc."
-  - "pnpm gates passes in worktree"
+  - 'wu:* scripts wired in root package.json using pnpm exec'
+  - 'Memory layer initialized with pnpm mem:init'
+  - '.gitignore updated with worktrees/, .beacon/memory/, etc.'
+  - 'pnpm gates passes in worktree'
 code_paths:
-  - "package.json"
-  - ".gitignore"
-notes: ""
+  - 'package.json'
+  - '.gitignore'
+notes: ''
 ```
 
 ### Tasks
@@ -133,58 +135,58 @@ notes: ""
 **File:** `/home/tom/source/hellmai/os/.lumenflow.config.yaml`
 
 ```yaml
-version: "2.0"
+version: '2.0'
 project: lumenflow
 
 lanes:
-  - name: "Core"
+  - name: 'Core'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/core/**"
-  - name: "CLI"
+      - 'packages/@lumenflow/core/**'
+  - name: 'CLI'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/cli/**"
-  - name: "Memory"
+      - 'packages/@lumenflow/cli/**'
+  - name: 'Memory'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/memory/**"
-  - name: "Agent"
+      - 'packages/@lumenflow/memory/**'
+  - name: 'Agent'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/agent/**"
-  - name: "Metrics"
+      - 'packages/@lumenflow/agent/**'
+  - name: 'Metrics'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/metrics/**"
-  - name: "Initiatives"
+      - 'packages/@lumenflow/metrics/**'
+  - name: 'Initiatives'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/initiatives/**"
-  - name: "Shims"
+      - 'packages/@lumenflow/initiatives/**'
+  - name: 'Shims'
     wip_limit: 1
     code_paths:
-      - "packages/@lumenflow/shims/**"
-  - name: "Infrastructure"
+      - 'packages/@lumenflow/shims/**'
+  - name: 'Infrastructure'
     wip_limit: 1
     code_paths:
-      - "apps/**"
-      - "actions/**"
-  - name: "Documentation"
+      - 'apps/**'
+      - 'actions/**'
+  - name: 'Documentation'
     wip_limit: 1
     code_paths:
-      - "docs/**"
+      - 'docs/**'
 
 git:
   main_branch: main
-  branch_pattern: "lane/{lane}/{wu_id}"
+  branch_pattern: 'lane/{lane}/{wu_id}'
 
 directories:
-  wu_specs: "docs/tasks/wu"
-  backlog: "docs/tasks/backlog.md"
-  stamps: ".beacon/stamps"
+  wu_specs: 'docs/tasks/wu'
+  backlog: 'docs/tasks/backlog.md'
+  stamps: '.beacon/stamps'
 
-worktree_pattern: "worktrees/{lane}-{wu_id}"
+worktree_pattern: 'worktrees/{lane}-{wu_id}'
 ```
 
 #### 1.2 Create Directory Structure (Part of Bootstrap Commit)
@@ -196,7 +198,7 @@ touch /home/tom/source/hellmai/os/docs/tasks/backlog.md
 touch /home/tom/source/hellmai/os/docs/tasks/status.md
 ```
 
-**status.md** (required by wu:* tooling):
+**status.md** (required by wu:\* tooling):
 
 ```markdown
 # LumenFlow Status Board
@@ -437,12 +439,12 @@ grep -r "file:/home/tom/source/hellmai/os" /home/tom/source/hellmai/patientpath.
 
 **Expected findings (verified 2026-01-18):**
 
-| Location | Reference | Action |
-|----------|-----------|--------|
-| `package.json` | `"@lumenflow/core": "file:..."` | Replace with `^1.0.0` |
+| Location         | Reference                       | Action                                    |
+| ---------------- | ------------------------------- | ----------------------------------------- |
+| `package.json`   | `"@lumenflow/core": "file:..."` | Replace with `^1.0.0`                     |
 | `tools/wu-*.mjs` | `import from '@lumenflow/core'` | No change needed (uses installed package) |
 
-**If additional @lumenflow/* packages found:**
+**If additional @lumenflow/\* packages found:**
 
 - Add each to package.json dependencies
 - Update to `^1.0.0` (same version as core)
@@ -473,11 +475,13 @@ pnpm install  # Will pull from npm registry
 #### 3.3 GitHub App (Not Needed for Solo Work)
 
 PatientPath uses trunk-only workflow with CLI enforcement:
+
 ```
 wu:claim → worktree → implement → gates → wu:done → pushes to main
 ```
 
 **What you get with CLI alone:**
+
 - ✅ WU specs (right-sized work)
 - ✅ Lanes (domain separation)
 - ✅ Gates (quality enforcement)
@@ -485,6 +489,7 @@ wu:claim → worktree → implement → gates → wu:done → pushes to main
 - ✅ Stamps (completion proof)
 
 **GitHub App is for customers** who need:
+
 - Team coordination (multiple people)
 - Automated PR validation
 - Label-based WIP enforcement
@@ -512,17 +517,18 @@ wu:claim → worktree → implement → gates → wu:done → pushes to main
 Transform LumenFlow from internal tooling to revenue-generating SaaS product.
 
 **Key deliverables:**
+
 - lumenflow-gates GitHub Action (enables Team tier)
 - Product tiers with billing integration
 - GitHub Marketplace listing
 
 ### Product Tiers
 
-| Tier | Price | Includes |
-|------|-------|----------|
-| **Free** | $0/mo | GitHub App (PR validation, WIP limits), 10 WUs/month |
-| **Team** | $29/mo | App + Gates Action, unlimited WUs |
-| **Pro** | $99/mo | App + Gates + npm CLI access (@lumenflow/*) |
+| Tier     | Price  | Includes                                             |
+| -------- | ------ | ---------------------------------------------------- |
+| **Free** | $0/mo  | GitHub App (PR validation, WIP limits), 10 WUs/month |
+| **Team** | $29/mo | App + Gates Action, unlimited WUs                    |
+| **Pro**  | $99/mo | App + Gates + npm CLI access (@lumenflow/\*)         |
 
 ### Component Architecture
 
@@ -566,6 +572,7 @@ Transform LumenFlow from internal tooling to revenue-generating SaaS product.
 **Location:** `hellmai/os/.github/actions/lumenflow-gates/` (monorepo, not separate repo)
 
 **Structure:**
+
 ```
 .github/actions/lumenflow-gates/
 ├── action.yaml          # Action metadata
@@ -579,6 +586,7 @@ Transform LumenFlow from internal tooling to revenue-generating SaaS product.
 ```
 
 **action.yaml:**
+
 ```yaml
 name: 'LumenFlow Gates'
 description: 'Run LumenFlow quality gates in CI'
@@ -599,6 +607,7 @@ runs:
 ```
 
 **Customer usage:**
+
 ```yaml
 # .github/workflows/gates.yaml
 name: LumenFlow Gates
@@ -614,6 +623,7 @@ jobs:
 ```
 
 **Features:**
+
 - Auto-detects project type (package.json → Node, pyproject.toml → Python, go.mod → Go)
 - Runs appropriate gates for detected type
 - Reports results to GitHub Checks API
@@ -625,6 +635,7 @@ jobs:
 **Already scaffolded in:** `apps/github-app/src/lib/billing.ts`
 
 **Current state:**
+
 ```typescript
 const TIERS = {
   free: { wusPerMonth: 10, price: 0 },
@@ -635,6 +646,7 @@ const TIERS = {
 ```
 
 **Required updates:**
+
 - [ ] Rename `business` → `pro` for consistency
 - [ ] Wire to Supabase for usage tracking
 - [ ] Add token validation endpoint for Gates Action
@@ -643,6 +655,7 @@ const TIERS = {
 #### 4.3 GitHub Marketplace Listing
 
 **Steps:**
+
 1. Go to `https://github.com/marketplace`
 2. Register LumenFlow app (already created: App ID 2681145)
 3. Configure pricing plans matching tiers
@@ -651,15 +664,16 @@ const TIERS = {
 
 **Marketplace plan mapping:**
 
-| GitHub Plan | Our Tier | Price |
-|-------------|----------|-------|
-| Free | Free | $0 |
-| Team | Team | $29/mo |
-| Pro | Pro | $99/mo |
+| GitHub Plan | Our Tier | Price  |
+| ----------- | -------- | ------ |
+| Free        | Free     | $0     |
+| Team        | Team     | $29/mo |
+| Pro         | Pro      | $99/mo |
 
 #### 4.4 Landing Page (lumenflow.dev)
 
 **Minimal viable landing page:**
+
 - Hero: "AI-native workflow for software teams"
 - Feature comparison table (Free/Team/Pro)
 - "Install from GitHub Marketplace" CTA
@@ -682,69 +696,69 @@ const TIERS = {
 
 ### hellmai/os (Phase 1 - Bootstrap Commit, direct to main)
 
-| File | Action |
-|------|--------|
-| `.lumenflow.config.yaml` | Create (9 lanes covering all packages) |
-| `.beacon/stamps/.gitkeep` | Create directory placeholder |
-| `docs/tasks/wu/.gitkeep` | Create directory placeholder |
-| `docs/tasks/backlog.md` | Create |
-| `docs/tasks/status.md` | Create |
-| `docs/plans/distribution-dogfooding.md` | Create (this plan) |
+| File                                    | Action                                 |
+| --------------------------------------- | -------------------------------------- |
+| `.lumenflow.config.yaml`                | Create (9 lanes covering all packages) |
+| `.beacon/stamps/.gitkeep`               | Create directory placeholder           |
+| `docs/tasks/wu/.gitkeep`                | Create directory placeholder           |
+| `docs/tasks/backlog.md`                 | Create                                 |
+| `docs/tasks/status.md`                  | Create                                 |
+| `docs/plans/distribution-dogfooding.md` | Create (this plan)                     |
 
 ### hellmai/os (Phase 1 - WU-OS-001, via wu:claim/wu:done)
 
-| File | Action |
-|------|--------|
-| `docs/tasks/wu/WU-OS-001.yaml` | Created by `wu:create` command |
-| `package.json` | Add setup + wu:* scripts using `pnpm exec` |
-| `.gitignore` | Add worktrees/, .beacon/memory/, etc. |
+| File                           | Action                                      |
+| ------------------------------ | ------------------------------------------- |
+| `docs/tasks/wu/WU-OS-001.yaml` | Created by `wu:create` command              |
+| `package.json`                 | Add setup + wu:\* scripts using `pnpm exec` |
+| `.gitignore`                   | Add worktrees/, .beacon/memory/, etc.       |
 
 ### hellmai/os (Phase 2)
 
-| File | Action |
-|------|--------|
-| `packages/@lumenflow/*/package.json` | Add publishConfig (7 files) |
-| `.changeset/config.json` | Create with explicit package list |
-| `package.json` | Add release scripts with gates |
-| `docs/tasks/wu/WU-OS-002.yaml` | Create (meta-WU for Phase 2) |
+| File                                 | Action                            |
+| ------------------------------------ | --------------------------------- |
+| `packages/@lumenflow/*/package.json` | Add publishConfig (7 files)       |
+| `.changeset/config.json`             | Create with explicit package list |
+| `package.json`                       | Add release scripts with gates    |
+| `docs/tasks/wu/WU-OS-002.yaml`       | Create (meta-WU for Phase 2)      |
 
 ### patientpath.co.uk (Phase 3)
 
-| File | Action |
-|------|--------|
-| `package.json` | Change @lumenflow/core from file: to ^1.0.0 |
-| `docs/04-operations/tasks/wu/WU-XXXX.yaml` | Create (migration WU) |
+| File                                       | Action                                      |
+| ------------------------------------------ | ------------------------------------------- |
+| `package.json`                             | Change @lumenflow/core from file: to ^1.0.0 |
+| `docs/04-operations/tasks/wu/WU-XXXX.yaml` | Create (migration WU)                       |
 
 ### hellmai/os (Phase 4)
 
-| File | Action |
-|------|--------|
-| `.github/actions/lumenflow-gates/action.yaml` | Create action metadata |
-| `.github/actions/lumenflow-gates/src/index.ts` | Create entry point |
-| `.github/actions/lumenflow-gates/src/detect.ts` | Create project type detection |
-| `.github/actions/lumenflow-gates/src/gates.ts` | Create gates runner |
-| `.github/actions/lumenflow-gates/src/report.ts` | Create Checks API reporter |
-| `.github/actions/lumenflow-gates/dist/` | Compiled JS (committed) |
-| `apps/github-app/src/lib/billing.ts` | Update tiers, add Supabase integration |
-| `apps/github-app/api/validate-token.ts` | Create token validation endpoint |
-| `docs/tasks/wu/WU-OS-003.yaml` | Create (Gates Action WU) |
-| `docs/tasks/wu/WU-OS-004.yaml` | Create (Marketplace listing WU) |
+| File                                            | Action                                 |
+| ----------------------------------------------- | -------------------------------------- |
+| `.github/actions/lumenflow-gates/action.yaml`   | Create action metadata                 |
+| `.github/actions/lumenflow-gates/src/index.ts`  | Create entry point                     |
+| `.github/actions/lumenflow-gates/src/detect.ts` | Create project type detection          |
+| `.github/actions/lumenflow-gates/src/gates.ts`  | Create gates runner                    |
+| `.github/actions/lumenflow-gates/src/report.ts` | Create Checks API reporter             |
+| `.github/actions/lumenflow-gates/dist/`         | Compiled JS (committed)                |
+| `apps/github-app/src/lib/billing.ts`            | Update tiers, add Supabase integration |
+| `apps/github-app/api/validate-token.ts`         | Create token validation endpoint       |
+| `docs/tasks/wu/WU-OS-003.yaml`                  | Create (Gates Action WU)               |
+| `docs/tasks/wu/WU-OS-004.yaml`                  | Create (Marketplace listing WU)        |
 
 ---
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| npm org name `@lumenflow` taken | Use `@hellmai` scope as fallback |
-| Breaking changes post-1.0.0 | PatientPath can pin to exact version |
-| Private npm requires auth | Document team onboarding for npm access |
+| Risk                            | Mitigation                                                                    |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| npm org name `@lumenflow` taken | Use `@hellmai` scope as fallback                                              |
+| Breaking changes post-1.0.0     | PatientPath can pin to exact version                                          |
+| Private npm requires auth       | Document team onboarding for npm access                                       |
 | CLI bin not found after install | Verify bin entries in @lumenflow/cli package.json (confirmed: 30+ bins exist) |
-| Changesets glob pattern fails | Use explicit package names in linked array (fixed) |
-| Gates skipped before publish | prerelease script enforces gates (fixed) |
-| Marketplace approval delayed | Ship Gates Action first, add Marketplace later |
-| Token validation adds latency | Edge function on Vercel (~50ms) |
-| Multi-language gates complexity | Start with Node.js only, add Python/Go later |
+| Changesets glob pattern fails   | Use explicit package names in linked array (fixed)                            |
+| Gates skipped before publish    | prerelease script enforces gates (fixed)                                      |
+| Marketplace approval delayed    | Ship Gates Action first, add Marketplace later                                |
+| Token validation adds latency   | Edge function on Vercel (~50ms)                                               |
+| Multi-language gates complexity | Start with Node.js only, add Python/Go later                                  |
 
 ---
 
@@ -756,6 +770,7 @@ const TIERS = {
 4. **Phase 4** - Gates Action + billing + Marketplace
 
 **Dependency chain:**
+
 - Phase 2 depends on Phase 1 (need working workflow)
 - Phase 3 depends on Phase 2 (need published packages)
 - Phase 4 can start after Phase 1 (GitHub App already deployed)
@@ -766,13 +781,13 @@ const TIERS = {
 
 Per "Backlog is Law" principle, create WUs before execution:
 
-| Phase | WU ID | Title | Lane |
-|-------|-------|-------|------|
-| 1 | WU-OS-001 | Dogfood LumenFlow in hellmai/os | Infrastructure |
-| 2 | WU-OS-002 | Publish @lumenflow packages to npm | Infrastructure |
-| 3 | WU-PP-XXX | Migrate PatientPath to npm packages | Operations |
-| 4 | WU-OS-003 | Build lumenflow-gates GitHub Action | Infrastructure |
-| 4 | WU-OS-004 | GitHub Marketplace listing + billing | Infrastructure |
+| Phase | WU ID     | Title                                | Lane           |
+| ----- | --------- | ------------------------------------ | -------------- |
+| 1     | WU-OS-001 | Dogfood LumenFlow in hellmai/os      | Infrastructure |
+| 2     | WU-OS-002 | Publish @lumenflow packages to npm   | Infrastructure |
+| 3     | WU-PP-XXX | Migrate PatientPath to npm packages  | Operations     |
+| 4     | WU-OS-003 | Build lumenflow-gates GitHub Action  | Infrastructure |
+| 4     | WU-OS-004 | GitHub Marketplace listing + billing | Infrastructure |
 
 Each WU should include:
 

@@ -24,10 +24,10 @@ LumenFlow is an AI-native workflow framework that enables software teams to deli
 
 LumenFlow is distributed through two independent channels:
 
-| Product | Distribution | Audience | Revenue Model |
-|---------|--------------|----------|---------------|
-| **@lumenflow/cli** | Private npm | Power users, Pro tier | npm org membership |
-| **GitHub App** | GitHub Marketplace | Teams | Tiered subscription |
+| Product            | Distribution       | Audience              | Revenue Model       |
+| ------------------ | ------------------ | --------------------- | ------------------- |
+| **@lumenflow/cli** | Private npm        | Power users, Pro tier | npm org membership  |
+| **GitHub App**     | GitHub Marketplace | Teams                 | Tiered subscription |
 
 Both channels deliver LumenFlow value. Neither requires the other, but together they provide complete enforcement.
 
@@ -40,12 +40,14 @@ See [product-lines.md](product-lines.md) for detailed architecture and customer 
 **For AI-assisted development teams:**
 
 Without LumenFlow:
+
 - Agents wander, lose context, produce inconsistent work
 - No structure for parallel work; agents block each other
 - Quality varies; bugs ship to main
 - Context lost on session boundaries
 
 With LumenFlow:
+
 - WU specs scope work to shippable increments
 - Lanes enable safe parallelism
 - Gates enforce consistent quality
