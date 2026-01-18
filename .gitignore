@@ -38,3 +38,6 @@ coverage/
 /._legacy/memory/
 /._legacy/locks/
 /._legacy/sessions/
+/._legacy/telemetry/
+**/._legacy/
+.logs/
