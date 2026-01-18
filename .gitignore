@@ -43,3 +43,4 @@ coverage/
 /._legacy/skip-gates-audit.log
 /._legacy/checkpoints/
 .logs/
+*.tgz
