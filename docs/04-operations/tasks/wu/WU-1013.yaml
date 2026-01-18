@@ -17,6 +17,7 @@ artifacts:
   - ._legacy/stamps/WU-1013.done
 dependencies: []
 initiative: INIT-001
+phase: 2
 risks: []
 notes: ''
 requires_review: false
