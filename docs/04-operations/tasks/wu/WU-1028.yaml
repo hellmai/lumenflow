@@ -6,10 +6,8 @@ status: ready
 priority: P1
 created: 2026-01-19
 code_paths:
-  - CLAUDE.md
-  - CLAUDE-core.md
-  - .claude/constraints-capsule.md
-  - .claude/rules/**
+  - LUMENFLOW.md
+  - .lumenflow/**
   - ai/onboarding/**
   - packages/@lumenflow/cli/src/init.ts
   - packages/@lumenflow/cli/templates/**
