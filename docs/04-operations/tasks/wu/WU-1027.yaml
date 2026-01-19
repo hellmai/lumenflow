@@ -2,7 +2,7 @@ id: WU-1027
 title: Block agents from deleting worktrees
 lane: 'Operations: Infrastructure'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-01-19
 code_paths:
@@ -12,8 +12,8 @@ code_paths:
 tests:
   manual:
     - 'Verify agent cannot run: git worktree remove <path>'
-    - 'Verify wu:done can still remove worktrees'
-    - 'Verify wu:prune can still clean up worktrees'
+    - Verify wu:done can still remove worktrees
+    - Verify wu:prune can still clean up worktrees
   unit:
     - packages/@lumenflow/shims/__tests__/git-shim.test.ts
   e2e: []
@@ -44,3 +44,5 @@ session_id: c48001e8-6993-4d75-9038-9c1179868bae
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-01-19T15:10:34.446Z
+locked: true
+completed_at: 2026-01-19T15:33:48.359Z
