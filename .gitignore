@@ -42,6 +42,8 @@ coverage/
 /._legacy/telemetry/
 /._legacy/skip-gates-audit.log
 /._legacy/checkpoints/
+# Legacy locks anywhere (lane locking system, WU-1012 fix)
+**/._legacy/locks/
 .logs/
 *.tgz
 .npmrc
