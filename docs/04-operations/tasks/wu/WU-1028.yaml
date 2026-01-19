@@ -3,7 +3,7 @@ title: Fix agent wu:done amnesia - docs and distribution
 lane: 'Content: Documentation'
 type: feature
 exposure: documentation
-status: in_progress
+status: done
 priority: P1
 created: 2026-01-19
 code_paths:
@@ -152,3 +152,5 @@ session_id: c48001e8-6993-4d75-9038-9c1179868bae
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-01-19T17:18:22.830Z
+locked: true
+completed_at: 2026-01-19T17:37:31.724Z
