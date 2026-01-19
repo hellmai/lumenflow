@@ -7,20 +7,32 @@ priority: P1
 created: 2026-01-19
 code_paths:
   - LUMENFLOW.md
-  - .lumenflow/**
-  - ai/onboarding/**
+  - CLAUDE.md
+  - .lumenflow/constraints.md
+  - .lumenflow/rules/wu-workflow.md
+  - .lumenflow/rules/git-safety.md
+  - .lumenflow/rules/tdd-workflow.md
+  - ai/onboarding/troubleshooting-wu-done.md
+  - ai/onboarding/first-wu-mistakes.md
+  - ai/onboarding/agent-safety-card.md
+  - ai/onboarding/quick-ref-commands.md
   - packages/@lumenflow/cli/src/init.ts
-  - packages/@lumenflow/cli/templates/**
+  - packages/@lumenflow/cli/__tests__/init.test.ts
+  - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
+  - packages/@lumenflow/cli/templates/core/.lumenflow/constraints.md.template
+  - packages/@lumenflow/cli/templates/core/.lumenflow/rules/wu-workflow.md.template
+  - packages/@lumenflow/cli/templates/core/.lumenflow/rules/git-safety.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/troubleshooting-wu-done.md.template
+  - packages/@lumenflow/cli/templates/vendors/claude/.claude/CLAUDE.md.template
+  - packages/@lumenflow/cli/templates/vendors/claude/.claude/settings.json.template
+  - packages/@lumenflow/cli/templates/vendors/cursor/.cursor/rules.md.template
+  - packages/@lumenflow/cli/templates/vendors/aider/.aider.conf.yml.template
 tests:
   manual:
-    - After lumenflow init
-    - LUMENFLOW.md exists with wu:done warning
-    - After lumenflow init --vendor claude
-    - .claude/CLAUDE.md exists and references LUMENFLOW.md
-    - After lumenflow init
-    - .lumenflow/constraints.md exists with mini audit section
-  unit:
-    - init command copies template files correctly
+    - After lumenflow init, LUMENFLOW.md exists with wu:done warning
+    - After lumenflow init --vendor claude, .claude/CLAUDE.md exists and references LUMENFLOW.md
+    - After lumenflow init, .lumenflow/constraints.md exists with mini audit section
+  unit: []
   e2e: []
 artifacts:
   - .beacon/stamps/WU-1028.done
