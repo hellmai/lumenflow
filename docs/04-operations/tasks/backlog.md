@@ -20,8 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1028 — Fix agent wu:done amnesia - docs and distribution](wu/WU-1028.yaml) — Content: Documentation
-  (No items ready)
+(No items ready)
 
 ## 🔧 In progress
 
@@ -54,3 +53,4 @@ sections:
 - [WU-1025 — Block wu:create and wu:claim if spec contains PLACEHOLDER markers](wu/WU-1025.yaml)
 - [WU-1023 — Auto-setup worktree dependencies on wu:claim](wu/WU-1023.yaml)
 - [WU-1026 — Allow agent branches to bypass worktree requirements](wu/WU-1026.yaml)
+- [WU-1027 — Block agents from deleting worktrees](wu/WU-1027.yaml)
