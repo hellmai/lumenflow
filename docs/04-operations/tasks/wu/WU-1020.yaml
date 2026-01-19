@@ -1,7 +1,7 @@
 id: WU-1020
 title: Fix TypeScript error in metrics-snapshot.ts for readonly array cast
 lane: CLI
-type: bugfix
+type: bug
 status: ready
 priority: P2
 created: 2026-01-19
@@ -9,7 +9,8 @@ code_paths:
   - packages/@lumenflow/cli/src/metrics-snapshot.ts
 tests:
   manual: []
-  unit: []
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/metrics-snapshot.test.ts
   e2e: []
 artifacts:
   - ._legacy/stamps/WU-1020.done
