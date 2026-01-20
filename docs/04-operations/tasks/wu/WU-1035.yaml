@@ -2,7 +2,7 @@ id: WU-1035
 title: Update core references to new documentation paths
 lane: 'Framework: Core'
 type: chore
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-20
 code_paths:
@@ -46,3 +46,11 @@ acceptance:
   - Update core references to docs/lumenflow to the operations framework path.
   - Core tests referencing documentation paths updated and passing.
   - pnpm lint, pnpm typecheck -> PASS
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-wu-1035
+claimed_at: 2026-01-20T17:20:41.203Z
+baseline_main_sha: e2c0393e61570469b18ce14ab360404471311210
+session_id: 727106f4-8adf-47b3-a7f5-2b968b2a0d68
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-20T17:20:41.211Z
