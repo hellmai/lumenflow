@@ -15,8 +15,6 @@ code_paths:
   - docs/04-operations/tasks/backlog.md
   - docs/templates/wu-template.yaml
   - apps/docs/src/content/docs/
-  - apps/docs/src/content.config.ts
-  - apps/docs/astro.config.mjs
 tests:
   manual:
     - pnpm gates --docs-only
