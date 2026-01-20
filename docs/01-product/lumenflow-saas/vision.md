@@ -424,7 +424,7 @@ See: `docs/01-product/beacon/llm-migration-audit-2025-10-15.md` (PatientPath rep
 
 4. **Beautiful UX**: Liquid glass design (differentiated from boring enterprise UI)
 
-5. **Technical Excellence**: Built with modern stack (Next.js 15, Supabase, tRPC), fast, reliable
+5. **Technical Excellence**: Built with modern stack (Next.js 16, Supabase, tRPC), fast, reliable
 
 6. **Strong Product-Market Fit**: Validated problem (PatientPath audit), clear solution (gates + validators)
 

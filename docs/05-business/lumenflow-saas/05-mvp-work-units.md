@@ -56,7 +56,7 @@ Create the monorepo structure with Turborepo + pnpm workspaces, configure all bu
   ```
   lumenflow-saas/
   ├── apps/
-  │   ├── web/              # Next.js 15
+  │   ├── web/              # Next.js 16
   │   ├── mobile/           # Expo
   │   └── cli/              # Node.js CLI
   ├── packages/

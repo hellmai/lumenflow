@@ -28,7 +28,7 @@ All components communicate with a single hosted API backed by Supabase (PostgreS
 │                                                               │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │ Web Dashboard│  │ Mobile Apps  │  │ CLI Client   │      │
-│  │ (Next.js 15) │  │ (Expo/RN)    │  │ (Node.js)    │      │
+│  │ (Next.js 16) │  │ (Expo/RN)    │  │ (Node.js)    │      │
 │  │              │  │              │  │              │      │
 │  │ React 19     │  │ React Native │  │ Thin Client  │      │
 │  │ Tailwind v4  │  │ Tamagui      │  │ Commander.js │      │
@@ -740,7 +740,7 @@ lumenflow-saas/
 
 | Layer                 | Technology            | License            | Cost (Production)          |
 | --------------------- | --------------------- | ------------------ | -------------------------- |
-| **Frontend (Web)**    | Next.js 15            | MIT                | Free                       |
+| **Frontend (Web)**    | Next.js 16            | MIT                | Free                       |
 | **Frontend (Mobile)** | Expo                  | MIT                | Free (EAS Build: £88/mo)   |
 | **UI Library**        | shadcn/ui + Radix     | MIT                | Free                       |
 | **Styling**           | Tailwind v4           | MIT                | Free                       |

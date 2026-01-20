@@ -94,7 +94,7 @@ Read **[06-agent-starting-prompt.md](06-agent-starting-prompt.md)** for complete
 
 | Layer          | Technology                | Why                                      |
 | -------------- | ------------------------- | ---------------------------------------- |
-| **Web**        | Next.js 15 + React 19     | App Router, Server Components, streaming |
+| **Web**        | Next.js 16 + React 19     | App Router, Server Components, streaming |
 | **Mobile**     | Expo + React Native       | Code reuse with web, fast iteration      |
 | **Styling**    | Tailwind v4 + shadcn/ui   | Proven, fast, accessible                 |
 | **API**        | tRPC + Next.js API Routes | Type-safe, auto-generated clients        |

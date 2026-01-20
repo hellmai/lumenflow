@@ -34,7 +34,7 @@ LumenFlow is a SaaS platform that helps engineering teams using AI pair programm
 
 **Tech Stack**:
 
-- Frontend: Next.js 15 + React 19 + Tailwind v4 + shadcn/ui
+- Frontend: Next.js 16 + React 19 + Tailwind v4 + shadcn/ui
 - Mobile: Expo + React Native + Tamagui
 - API: tRPC + Next.js API Routes
 - Database: Supabase (PostgreSQL + Auth + Realtime + Storage)
