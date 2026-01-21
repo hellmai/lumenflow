@@ -8,7 +8,6 @@ created: 2026-01-21
 code_paths:
   - package.json
   - pnpm-lock.yaml
-  - packages/@lumenflow/core/src/wu-yaml.ts
   - packages/@lumenflow/core/src/backlog-sync-validator.ts
   - packages/@lumenflow/core/src/lane-checker.ts
   - packages/@lumenflow/core/src/token-counter.ts
@@ -19,7 +18,6 @@ code_paths:
   - packages/@lumenflow/cli/src/initiative-create.ts
   - packages/@lumenflow/cli/src/wu-infer-lane.ts
   - packages/@lumenflow/initiatives/src/initiative-yaml.ts
-  - packages/@lumenflow/memory/src/mem-init-core.ts
   - docs/04-operations/_frameworks/lumenflow/lumenflow-complete.md
   - apps/docs/src/content/docs/reference/wu-schema.mdx
 tests:
