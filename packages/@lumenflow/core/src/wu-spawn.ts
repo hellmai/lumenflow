@@ -11,7 +11,7 @@
  *
  * Output:
  *   A complete Task tool invocation block with:
- *   - Context loading preamble (CLAUDE-core.md, README, lumenflow, WU YAML)
+ *   - Context loading preamble (.claude/CLAUDE.md, README, lumenflow, WU YAML)
  *   - WU details and acceptance criteria
  *   - Skills Selection section (sub-agent reads catalogue and selects at runtime)
  *   - Mandatory agent advisory
@@ -41,7 +41,12 @@ import { checkLaneLock } from './lane-lock.js';
 import { minimatch } from 'minimatch';
 import { SpawnStrategyFactory, SpawnStrategy } from './spawn-strategy.js';
 import { getConfig } from './lumenflow-config.js';
-import type { ClientConfig } from './lumenflow-config-schema.js';
+import type { ClientConfig, LumenFlowConfig } from './lumenflow-config-schema.js';
+import {
+  generateClientSkillsGuidance,
+  generateSkillsSelectionSection,
+  resolveClientConfig,
+} from './wu-spawn-skills.js';
 // WU-2252: Import invariants loader for spawn output injection
 import { loadInvariants, INVARIANT_TYPES } from './invariants-runner.js';
 import {
@@ -64,30 +69,6 @@ const MANDATORY_TRIGGERS = {
 };
 
 const LOG_PREFIX = '[wu:spawn]';
-
-/** @type {string} */
-const AGENTS_DIR = '.claude/agents';
-
-/**
- * Load skills configured in agent's frontmatter
- *
- * @param {string} agentName - Agent name (e.g., 'general-purpose')
- * @returns {string[]} Array of skill names or empty array if not found
- */
-function loadAgentConfiguredSkills(agentName) {
-  const agentPath = `${AGENTS_DIR}/${agentName}.md`;
-
-  if (!existsSync(agentPath)) {
-    return [];
-  }
-
-  try {
-    const content = readFileSync(agentPath, { encoding: 'utf-8' });
-    return []; // Removed: vendor-specific skill loading
-  } catch {
-    return [];
-  }
-}
 
 /**
  * Detect mandatory agents based on code paths.
@@ -887,122 +868,6 @@ Then implement following all standards above.
 - Session tracking for context recovery`;
 }
 
-/**
- * Generate the Skills Selection section for sub-agents.
- *
- * Unlike /wu-prompt (human-facing, skills selected at generation time),
- * wu:spawn instructs the sub-agent to read the catalogue and select skills
- * at execution time based on WU context.
- *
- * If an agentName is provided, that agent's configured skills (from frontmatter)
- * are auto-loaded at the top.
- *
- * @param {object} doc - WU YAML document
- * @param {import('./spawn-strategy.js').SpawnStrategy} strategy - Client strategy
- * @param {string} [agentName='general-purpose'] - Agent to spawn
- * @returns {string} Skills Selection section
- */
-// eslint-disable-next-line sonarjs/cognitive-complexity -- WU-2025: Pre-existing complexity, refactor tracked
-function generateSkillsSection(doc, strategy, agentName = 'general-purpose') {
-  const lane = doc.lane || '';
-  const type = doc.type || 'feature';
-  const laneParent = lane.split(':')[0].trim();
-
-  // Load agent's configured skills from frontmatter
-  const agentSkills = loadAgentConfiguredSkills(agentName);
-  const hasAgentSkills = agentSkills.length > 0;
-
-  // Build auto-load section if agent has configured skills
-  const autoLoadSection = hasAgentSkills
-    ? `### Auto-Loaded Skills (from ${agentName} agent config)
-
-These skills are pre-configured for this agent and should be loaded first:
-
-${agentSkills.map((s) => `- \`${s}\` — Load via \`/skill ${s}\``).join('\n')}
-
-`
-    : '';
-
-  // Build context hints for the sub-agent
-  const contextHints = [];
-
-  // Universal baselines (only if not already in agent skills)
-  if (!agentSkills.includes('wu-lifecycle')) {
-    contextHints.push('- `wu-lifecycle` — ALL WUs need workflow automation');
-  }
-  if (!agentSkills.includes('worktree-discipline')) {
-    contextHints.push('- `worktree-discipline` — ALL WUs need path safety');
-  }
-
-  // Type-based hints
-  if ((type === 'feature' || type === 'enhancement') && !agentSkills.includes('tdd-workflow')) {
-    contextHints.push('- `tdd-workflow` — TDD is mandatory for feature/enhancement WUs');
-  }
-  if (type === 'bug' && !agentSkills.includes('bug-classification')) {
-    contextHints.push('- `bug-classification` — Bug severity assessment');
-  }
-
-  // Lane-based hints
-  if (
-    laneParent === 'Operations' &&
-    lane.includes('Tooling') &&
-    !agentSkills.includes('lumenflow-gates')
-  ) {
-    contextHints.push('- `lumenflow-gates` — Tooling often affects gates');
-  }
-  if (laneParent === 'Intelligence') {
-    if (!agentSkills.includes('beacon-compliance')) {
-      contextHints.push('- `beacon-compliance` — Intelligence lane requires Beacon validation');
-    }
-    if (!agentSkills.includes('prompt-management')) {
-      contextHints.push('- `prompt-management` — For prompt template work');
-    }
-  }
-  if (laneParent === 'Experience' && !agentSkills.includes('frontend-design')) {
-    contextHints.push('- `frontend-design` — For UI component work');
-  }
-
-  const softPolicySection =
-    contextHints.length > 0
-      ? `### Soft Policy (baselines for this WU)
-
-Based on WU context, consider loading:
-
-${contextHints.join('\n')}
-
-`
-      : '';
-
-  return `## Skills Selection
-
-**IMPORTANT**: Before starting work, select and load relevant skills.
-
-${autoLoadSection}### How to Select Skills
-
-${strategy ? strategy.getSkillLoadingInstruction() : ''}
-
-${softPolicySection}### Additional Skills (load if needed)
-
-| Skill | Use When |
-|-------|----------|
-| lumenflow-gates | Gates fail, debugging format/lint/typecheck errors |
-| bug-classification | Bug discovered mid-WU, need priority classification |
-| beacon-compliance | Code touches LLM, prompts, classification |
-| prompt-management | Working with prompt templates, golden datasets |
-| frontend-design | Building UI components, pages |
-| initiative-management | Multi-phase projects, INIT-XXX coordination |
-| multi-agent-coordination | Spawning sub-agents, parallel WU work |
-| orchestration | Agent coordination, mandatory agent checks |
-| ops-maintenance | Metrics, validation, health checks |
-
-### Graceful Degradation
-
-If the skill catalogue is missing or invalid:
-- Load baseline skills: \`/skill wu-lifecycle\`, \`/skill tdd-workflow\` (for features)
-- Continue with implementation using Mandatory Standards below
-`;
-}
-
 interface ClientContext {
   name: string;
   config?: ClientConfig;
@@ -1013,16 +878,7 @@ interface SpawnOptions {
   noThinking?: boolean;
   budget?: string;
   client?: ClientContext;
-}
-
-function resolveClientConfig(config, clientName) {
-  const clients = config?.agents?.clients || {};
-  if (!clientName) return undefined;
-  if (clients[clientName]) return clients[clientName];
-  const matchKey = Object.keys(clients).find(
-    (key) => key.toLowerCase() === clientName.toLowerCase(),
-  );
-  return matchKey ? clients[matchKey] : undefined;
+  config?: LumenFlowConfig;
 }
 
 function generateClientBlocksSection(clientContext) {
@@ -1031,24 +887,6 @@ function generateClientBlocksSection(clientContext) {
     .map((block) => `### ${block.title}\n\n${block.content}`)
     .join('\n\n');
   return `## Client Guidance (${clientContext.name})\n\n${blocks}`;
-}
-
-function generateClientSkillsGuidance(clientContext) {
-  const skills = clientContext?.config?.skills;
-  if (
-    !skills ||
-    (!skills.instructions && (!skills.recommended || skills.recommended.length === 0))
-  ) {
-    return '';
-  }
-
-  const instructions = skills.instructions ? `${skills.instructions.trim()}\n\n` : '';
-  const recommended =
-    skills.recommended && skills.recommended.length > 0
-      ? `Recommended skills:\n${skills.recommended.map((s) => `- \`${s}\``).join('\n')}\n`
-      : '';
-
-  return `### Client Skills Guidance (${clientContext.name})\n\n${instructions}${recommended}`;
 }
 
 /**
@@ -1070,9 +908,10 @@ export function generateTaskInvocation(doc, id, strategy, options: SpawnOptions 
   const preamble = generatePreamble(id, strategy);
   const tddDirective = generateTDDDirective();
   const clientContext = options.client;
+  const config = options.config || getConfig();
   const clientSkillsGuidance = generateClientSkillsGuidance(clientContext);
   const skillsSection =
-    generateSkillsSection(doc, strategy) +
+    generateSkillsSelectionSection(doc, config, clientContext?.name) +
     (clientSkillsGuidance ? `\n${clientSkillsGuidance}` : '');
   const clientBlocks = generateClientBlocksSection(clientContext);
   const mandatorySection = generateMandatoryAgentSection(mandatoryAgents, id);
@@ -1245,9 +1084,10 @@ export function generateCodexPrompt(doc, id, strategy, options: SpawnOptions = {
   const action = generateActionSection(doc, id);
   const constraints = generateCodexConstraints(id);
   const clientContext = options.client;
+  const config = options.config || getConfig();
   const clientSkillsGuidance = generateClientSkillsGuidance(clientContext);
   const skillsSection =
-    generateSkillsSection(doc, strategy) +
+    generateSkillsSelectionSection(doc, config, clientContext?.name) +
     (clientSkillsGuidance ? `\n${clientSkillsGuidance}` : '');
   const clientBlocks = generateClientBlocksSection(clientContext);
 
@@ -1517,6 +1357,7 @@ async function main() {
     const prompt = generateCodexPrompt(doc, id, strategy, {
       ...thinkingOptions,
       client: clientContext,
+      config,
     });
     console.log(`${LOG_PREFIX} Generated Codex/GPT prompt for ${id}`);
     console.log(`${LOG_PREFIX} Copy the Markdown below:\n`);
@@ -1526,6 +1367,7 @@ async function main() {
     const invocation = generateTaskInvocation(doc, id, strategy, {
       ...thinkingOptions,
       client: clientContext,
+      config,
     });
 
     console.log(`${LOG_PREFIX} Generated Task tool invocation for ${id}`);
