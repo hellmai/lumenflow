@@ -25,7 +25,7 @@ code_paths:
   - packages/@lumenflow/core/src/index.ts
   # wu:claim spec branch handling
   - packages/@lumenflow/cli/src/wu-claim.ts
-  - packages/@lumenflow/core/src/wu-claim.ts
+  - packages/@lumenflow/core/src/wu-claim-helpers.ts
   # Documentation updates
   - LUMENFLOW.md
   - docs/04-operations/_frameworks/lumenflow/playbook.md
@@ -44,7 +44,7 @@ artifacts:
   - .beacon/stamps/WU-1062.done
 dependencies: []
 spec_refs:
-  - ~/.lumenflow/plans/WU-1062-external-plan-storage.md
+  - $LUMENFLOW_HOME/plans/WU-1062-external-plan-storage.md
 risks:
   - External plans not version-controlled by default
   - Breaking change if wu:claim assumes WU always on main
