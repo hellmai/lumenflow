@@ -207,7 +207,7 @@ git commit -m "feat(wu-650): add dashboard + fix playwright cve"
 
 ### 4.5 Lane Worktrees (Parallel Execution)
 
-Use Git worktrees when multiple humans or agents need active WUs at the same time. **Default:** spin up a dedicated worktree as soon as you start a WU so branch switches, installs, and dev servers stay isolated (even if you are the only person active right now). Always mark the WU `in_progress` (backlog + status) on the shared checkout **before** creating the worktree so other agents see the lane is occupied. Use the helper `pnpm wu:claim` to bundle the claim commit (to `main`) followed by worktree creation in one step.
+Use Git worktrees when multiple humans or agents need active WUs at the same time. **Default:** spin up a dedicated worktree as soon as you start a WU so branch switches, installs, and dev servers stay isolated (even if you are the only person active right now). Always mark the WU `in_progress` (backlog + status) on canonical `origin/main` **before** creating the worktree so other agents see the lane is occupied. Use the helper `pnpm wu:claim` to update canonical state via push-only micro-worktree, then create the worktree and push the lane branch (global lock) in one step.
 
 - **One worktree per active lane WU** – e.g., `git worktree add worktrees/experience-wu341 -b lane/experience/wu-341`.
 - **Keep everything isolated** – run installs, dev servers, and tests inside that worktree only.
@@ -220,8 +220,8 @@ This keeps parallel agents from stepping on each other’s builds while still ho
 
 - Claim on shared checkout, then create the worktree:
   - Stage your claim edits (update `{PROJECT_ROOT}/tasks/status.md`, the WU YAML, and adjust `backlog.md`).
-  - Run: `pnpm wu:claim --id WU-341 --lane Experience [--worktree worktrees/experience-wu-341] [--branch lane/experience/wu-341]`.
-  - The helper commits and pushes the claim to `main`, then creates the worktree and branch (default location: `worktrees/<lane>-wu-xxx`).
+  - Run: `pnpm wu:claim --id WU-341 --lane Experience [--worktree worktrees/experience-wu-341] [--branch lane/experience/wu-341] [--no-push]`.
+  - The helper pushes canonical claim state to `origin/main`, then creates the worktree and pushes the lane branch (default location: `worktrees/<lane>-wu-xxx`). Use `--no-push` only for air-gapped/offline work (local-only claim).
   - **IMMEDIATELY `cd` into the new worktree:** `cd worktrees/experience-wu-341`
   - **ALL subsequent work MUST happen inside this worktree directory** — edits, commits, testing, gates.
   - NEVER return to the main directory to make edits for this WU. Stay in the worktree until completion; hooks now fail WU commits attempted from the main checkout.
