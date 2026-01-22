@@ -41,14 +41,14 @@ export class ClaudeCodeStrategy extends BaseSpawnStrategy {
     let preamble = this.getCorePreamble(wuId);
 
     // Vendor overlay
-    if (existsSync('CLAUDE.md')) {
+    if (existsSync('.claude/CLAUDE.md')) {
       // Insert after LUMENFLOW.md if possible, or just append/prepend
       // For simplicity and clarity, we'll prepend the vendor specific instructions
       // relying on the user to follow the specific order if stated.
       // Actually, checking original behavior: CLAUDE.md was #1.
       // But new plan says LUMENFLOW.md is core.
       // We will append it as an overlay step.
-      preamble += `\n6. Read CLAUDE.md (Claude-specific workflow overlay)`;
+      preamble += `\n6. Read .claude/CLAUDE.md (Claude-specific workflow overlay)`;
     }
 
     return preamble;

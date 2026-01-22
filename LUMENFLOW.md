@@ -84,7 +84,7 @@ air-gapped/offline work; it creates a local-only claim and warns explicitly.
 
 ### Vendor Integrations
 
-- **.claude/** - Claude Code (settings.json, hooks, CLAUDE.md)
+- **.claude/** - Claude Code (settings.json, hooks, .claude/CLAUDE.md)
 - **.cursor/** - Cursor (rules, settings)
 - **.aider.conf.yml** - Aider configuration
 - **.continue/** - Continue configuration

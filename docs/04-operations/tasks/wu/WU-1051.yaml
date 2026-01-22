@@ -9,11 +9,14 @@ code_paths:
   - packages/@lumenflow/core/src/wu-spawn.ts
   - packages/@lumenflow/cli/src/wu-spawn.ts
   - packages/@lumenflow/core/src/spawn-strategy.ts
+  - packages/@lumenflow/core/src/wu-spawn-skills.ts
   - packages/@lumenflow/core/src/lumenflow-config-schema.ts
   - packages/@lumenflow/core/src/__tests__/wu-spawn-refactor.test.ts
   - packages/@lumenflow/cli/__tests__/wu-spawn.test.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
   - LUMENFLOW.md
+  - .claude/CLAUDE.md
+  - docs/04-operations/plans/WU-1051-wu-spawn-skills-config.md
 tests:
   manual:
     - Run wu:spawn with --client claude-code
