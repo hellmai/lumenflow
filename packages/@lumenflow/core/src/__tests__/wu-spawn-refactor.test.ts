@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generateTaskInvocation, generateCodexPrompt } from '../wu-spawn.js';
 import { ClaudeCodeStrategy, GeminiCliStrategy, GenericStrategy } from '../spawn-strategy.js';
+import { LumenFlowConfigSchema } from '../lumenflow-config-schema.js';
 
 // Mock Config
 vi.mock('../lumenflow-config.js', () => ({
@@ -15,7 +16,9 @@ vi.mock('node:fs', async (importOriginal) => {
   return {
     ...actual,
     existsSync: (path) => {
-      if (path === 'CLAUDE.md' || path === 'GEMINI.md') return true;
+      if (path === '.claude/CLAUDE.md' || path === 'GEMINI.md') return true;
+      if (path === '.claude/skills') return true;
+      if (path === '.claude/agents') return true;
       if (path.includes('WU-TEST')) return true; // WU file
       return false;
     },
@@ -38,6 +41,12 @@ worktree_path: worktrees/test
 });
 
 describe('wu-spawn refactoring', () => {
+  const config = LumenFlowConfigSchema.parse({
+    directories: {
+      skillsDir: '.claude/skills',
+      agentsDir: '.claude/agents',
+    },
+  });
   const mockDoc = {
     title: 'Test WU',
     lane: 'Operations: Tooling',
@@ -54,30 +63,31 @@ describe('wu-spawn refactoring', () => {
   describe('generateTaskInvocation', () => {
     it('uses ClaudeCodeStrategy when provided', () => {
       const strategy = new ClaudeCodeStrategy();
-      const output = generateTaskInvocation(mockDoc, id, strategy);
+      const output = generateTaskInvocation(mockDoc, id, strategy, { config });
 
       // Check Preamble
-      expect(output).toContain('Read CLAUDE.md (Claude-specific workflow overlay)');
+      expect(output).toContain('Read .claude/CLAUDE.md (Claude-specific workflow overlay)');
 
       // Check Skills
-      expect(output).toContain('Check `.claude/agents` for Claude-specific overrides');
+      expect(output).toContain('Check `.claude/skills` for available skills');
+      expect(output).toContain('Check `.claude/agents` for agent configs');
     });
 
     it('uses GeminiCliStrategy when provided', () => {
       const strategy = new GeminiCliStrategy();
-      const output = generateTaskInvocation(mockDoc, id, strategy);
+      const output = generateTaskInvocation(mockDoc, id, strategy, { config });
 
       // Check Preamble
       expect(output).toContain('Read GEMINI.md (Gemini-specific workflow overlay)');
 
       // Check Skills (Gemini strategy doesn't mention .claude/agents)
       expect(output).not.toContain('Check `.claude/agents` for available skills');
-      expect(output).toContain('Check `.lumenflow/agents` for available skills');
+      expect(output).toContain('Check `.claude/skills` for available skills');
     });
 
     it('uses GenericStrategy when provided', () => {
       const strategy = new GenericStrategy();
-      const output = generateTaskInvocation(mockDoc, id, strategy);
+      const output = generateTaskInvocation(mockDoc, id, strategy, { config });
 
       // Check Preamble (No overlay)
       expect(output).not.toContain('Read CLAUDE.md (Claude-specific workflow overlay)');
@@ -103,6 +113,7 @@ describe('wu-spawn refactoring', () => {
             },
           },
         },
+        config,
       });
 
       expect(output).toContain('Client Guidance (claude-code)');
@@ -115,7 +126,7 @@ describe('wu-spawn refactoring', () => {
   describe('generateCodexPrompt', () => {
     it('uses strategy for Codex prompts too', () => {
       const strategy = new GeminiCliStrategy();
-      const output = generateCodexPrompt(mockDoc, id, strategy);
+      const output = generateCodexPrompt(mockDoc, id, strategy, { config });
 
       expect(output).toContain('Read GEMINI.md');
     });
