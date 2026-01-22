@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateTaskInvocation, generateCodexPrompt } from '../dist/wu-spawn.js';
 import { GenericStrategy } from '@lumenflow/core/dist/spawn-strategy.js';
+import { LumenFlowConfigSchema } from '@lumenflow/core/dist/lumenflow-config-schema.js';
 
 describe('wu-spawn client guidance injection', () => {
   const mockDoc = {
@@ -15,6 +16,12 @@ describe('wu-spawn client guidance injection', () => {
   };
 
   const id = 'WU-TEST';
+  const config = LumenFlowConfigSchema.parse({
+    directories: {
+      skillsDir: '.claude/skills',
+      agentsDir: '.claude/agents',
+    },
+  });
 
   it('injects client blocks and skills guidance in task invocation', () => {
     const strategy = new GenericStrategy();
@@ -34,6 +41,7 @@ describe('wu-spawn client guidance injection', () => {
           },
         },
       },
+      config,
     });
 
     expect(output).toContain('Client Guidance (claude-code)');
@@ -60,6 +68,7 @@ describe('wu-spawn client guidance injection', () => {
           },
         },
       },
+      config,
     });
 
     expect(output).toContain('Client Guidance (gemini-cli)');
