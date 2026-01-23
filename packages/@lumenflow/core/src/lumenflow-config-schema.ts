@@ -60,35 +60,35 @@ export const DirectoriesSchema = z.object({
 });
 
 /**
- * Legacy paths configuration (._legacy directory structure)
+ * Legacy paths configuration (.lumenflow directory structure)
  */
 export const LegacyPathsSchema = z.object({
-  /** Base legacy directory (default: '._legacy') */
-  base: z.string().default('._legacy'),
+  /** Base legacy directory (default: '.lumenflow') */
+  base: z.string().default('.lumenflow'),
 
-  /** State directory (default: '._legacy/state') */
-  stateDir: z.string().default('._legacy/state'),
+  /** State directory (default: '.lumenflow/state') */
+  stateDir: z.string().default('.lumenflow/state'),
 
-  /** Stamps directory (default: '._legacy/stamps') */
-  stampsDir: z.string().default('._legacy/stamps'),
+  /** Stamps directory (default: '.lumenflow/stamps') */
+  stampsDir: z.string().default('.lumenflow/stamps'),
 
-  /** Merge lock file (default: '._legacy/merge.lock') */
-  mergeLock: z.string().default('._legacy/merge.lock'),
+  /** Merge lock file (default: '.lumenflow/merge.lock') */
+  mergeLock: z.string().default('.lumenflow/merge.lock'),
 
-  /** Telemetry directory (default: '._legacy/telemetry') */
-  telemetry: z.string().default('._legacy/telemetry'),
+  /** Telemetry directory (default: '.lumenflow/telemetry') */
+  telemetry: z.string().default('.lumenflow/telemetry'),
 
-  /** Flow log file (default: '._legacy/flow.log') */
-  flowLog: z.string().default('._legacy/flow.log'),
+  /** Flow log file (default: '.lumenflow/flow.log') */
+  flowLog: z.string().default('.lumenflow/flow.log'),
 
-  /** Sessions directory (default: '._legacy/sessions') */
-  sessions: z.string().default('._legacy/sessions'),
+  /** Sessions directory (default: '.lumenflow/sessions') */
+  sessions: z.string().default('.lumenflow/sessions'),
 
-  /** Incidents directory (default: '._legacy/incidents') */
-  incidents: z.string().default('._legacy/incidents'),
+  /** Incidents directory (default: '.lumenflow/incidents') */
+  incidents: z.string().default('.lumenflow/incidents'),
 
-  /** Commands log file (default: '._legacy/commands.log') */
-  commandsLog: z.string().default('._legacy/commands.log'),
+  /** Commands log file (default: '.lumenflow/commands.log') */
+  commandsLog: z.string().default('.lumenflow/commands.log'),
 });
 
 /**

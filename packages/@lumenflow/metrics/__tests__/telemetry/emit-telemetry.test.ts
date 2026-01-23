@@ -16,11 +16,11 @@ describe('createTelemetryEmitter', () => {
 
   describe('TELEMETRY_PATHS', () => {
     it('exports default paths', () => {
-      expect(TELEMETRY_PATHS.GATES).toBe('._legacy/telemetry/gates.ndjson');
+      expect(TELEMETRY_PATHS.GATES).toBe('.lumenflow/telemetry/gates.ndjson');
       expect(TELEMETRY_PATHS.LLM_CLASSIFICATION).toBe(
-        '._legacy/telemetry/llm-classification.ndjson',
+        '.lumenflow/telemetry/llm-classification.ndjson',
       );
-      expect(TELEMETRY_PATHS.FLOW_LOG).toBe('._legacy/flow.log');
+      expect(TELEMETRY_PATHS.FLOW_LOG).toBe('.lumenflow/flow.log');
     });
   });
 

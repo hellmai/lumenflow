@@ -261,7 +261,7 @@ directories:
   # Agents directory
   agentsDir: "${defaultConfig.directories.agentsDir}"
 
-# Legacy paths (._legacy directory structure)
+# Legacy paths (.lumenflow directory structure)
 legacy:
   base: "${defaultConfig._legacy.base}"
   stampsDir: "${defaultConfig._legacy.stampsDir}"

@@ -23,7 +23,7 @@ tests:
     - packages/@lumenflow/core/src/__tests__/gates-config.test.ts
   e2e: []
 artifacts:
-  - ._legacy/stamps/WU-1067.done
+  - .lumenflow/stamps/WU-1067.done
 dependencies: []
 risks: []
 notes: ''

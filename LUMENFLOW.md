@@ -122,7 +122,7 @@ Main checkout becomes read-only after claim. Hooks will block WU commits from ma
 - Acceptance criteria satisfied
 - Gates green (`pnpm gates` or `pnpm gates --docs-only`)
 - WU YAML status = `done`
-- `._legacy/stamps/WU-<id>.done` exists
+- `.lumenflow/stamps/WU-<id>.done` exists
 - **wu:done has been run** (not just documented as "to do")
 
 ---

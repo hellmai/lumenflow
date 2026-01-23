@@ -345,7 +345,7 @@ const DOCS_ONLY_ALLOWED_PATTERNS = [
   /^memory-bank\//i,
   /^docs\//i,
   /\.md$/i,
-  /^\._legacy\/stamps\//i,
+  /^\.(?:legacy|lumenflow)\/stamps\//i, // Support both legacy ._legacy and .lumenflow
   /^\.claude\//i,
   /^ai\//i,
   /^README\.md$/i,
@@ -426,7 +426,7 @@ Allowed paths for documentation WUs:
   - ai/
   - .claude/
   - memory-bank/
-  - ._legacy/stamps/
+  - .lumenflow/stamps/ (or legacy ._legacy/stamps/)
   - *.md files
 
 After fixing, retry: pnpm wu:done --id ${id}

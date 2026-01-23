@@ -22,7 +22,7 @@ tests:
   unit: []
   e2e: []
 artifacts:
-  - ._legacy/stamps/WU-1033.done
+  - .lumenflow/stamps/WU-1033.done
 dependencies: []
 risks: []
 notes: ''

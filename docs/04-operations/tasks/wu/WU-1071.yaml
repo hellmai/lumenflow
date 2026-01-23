@@ -19,7 +19,7 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/cli-entry-point.test.ts
   e2e: []
 artifacts:
-  - ._legacy/stamps/WU-1071.done
+  - .lumenflow/stamps/WU-1071.done
 dependencies: []
 risks: []
 notes: ''

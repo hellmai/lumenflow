@@ -30,7 +30,7 @@ tests:
   unit: []
   e2e: []
 artifacts:
-  - ._legacy/stamps/WU-1032.done
+  - .lumenflow/stamps/WU-1032.done
 dependencies: []
 risks:
   - Major pnpm upgrade (v9 -> v10) may have breaking changes in lifecycle scripts

@@ -20,7 +20,7 @@ const CATEGORY_VALUES = ['workflow', 'tooling', 'confusion', 'violation', 'error
 
 /**
  * IncidentLog schema for structured issue tracking
- * Stored as NDJSON in ._legacy/incidents/<category>.ndjson
+ * Stored as NDJSON in .lumenflow/incidents/<category>.ndjson
  */
 export const IncidentLogSchema = z.object({
   timestamp: z.string().datetime(), // ISO 8601 with timezone
