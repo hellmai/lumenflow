@@ -2,7 +2,7 @@ id: WU-1075
 title: Rename .beacon to .lumenflow - remove PatientPath branding
 lane: 'Framework: Core'
 type: chore
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-23
 code_paths:
@@ -25,7 +25,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Rename .beacon/ directory to .lumenflow/ throughout the codebase. This removes PatientPath-specific branding and completes the constant consolidation work started in WU-1068. Changes BEACON_PATHS to LUMENFLOW_PATHS with expanded entries for memory/agent/CLI packages.
+description: Rename .beacon/ directory to .lumenflow/ throughout the codebase. This removes
+  PatientPath-specific branding and completes the constant consolidation work started in WU-1068.
+  Changes BEACON_PATHS to LUMENFLOW_PATHS with expanded entries for memory/agent/CLI packages.
 acceptance:
   - BEACON_PATHS renamed to LUMENFLOW_PATHS in wu-constants.ts
   - Config schema defaults use .lumenflow instead of .beacon
@@ -33,3 +35,11 @@ acceptance:
   - Memory/agent/CLI packages import from LUMENFLOW_PATHS
   - Migration script auto-renames existing .beacon/ to .lumenflow/
   - Gates pass
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-wu-1075
+claimed_at: 2026-01-23T12:40:30.533Z
+baseline_main_sha: 581f7a504a3e456d0d4366977efee562b619bbd7
+session_id: 25df3817-2382-4e4e-8914-95143534ede0
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-23T12:40:30.542Z

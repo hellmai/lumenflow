@@ -8,7 +8,7 @@ _Last updated: 2026-01-23_
 - [WU-1013 — Deploy docs to Vercel (lumenflow.dev)](wu/WU-1013.yaml)
 - [WU-1016 — Implement configurable WIP limits per lane](wu/WU-1016.yaml)
 - [WU-1074 — Add release command for npm publishing](wu/WU-1074.yaml)
-
+- [WU-1075 — Rename .beacon to .lumenflow - remove PatientPath branding](wu/WU-1075.yaml)
 
 ## Completed
 
