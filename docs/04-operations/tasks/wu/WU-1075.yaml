@@ -2,7 +2,7 @@ id: WU-1075
 title: Rename .beacon to .lumenflow - remove ExampleApp branding
 lane: 'Framework: Core'
 type: chore
-status: in_progress
+status: done
 priority: P2
 created: 2026-01-23
 code_paths:
@@ -44,3 +44,5 @@ session_id: 25df3817-2382-4e4e-8914-95143534ede0
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-01-23T12:40:30.542Z
+locked: true
+completed_at: 2026-01-23T13:59:12.423Z
