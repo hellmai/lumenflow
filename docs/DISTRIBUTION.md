@@ -211,13 +211,13 @@ gates:
 
 **Presets available:**
 
-| Preset   | Best For     | Example Config                          |
-| -------- | ------------ | --------------------------------------- |
-| `node`   | TypeScript   | `preset: 'node'`                        |
-| `python` | Python       | `preset: 'python'`                      |
-| `go`     | Go           | `preset: 'go'`                          |
-| `rust`   | Rust         | `preset: 'rust'`                        |
-| `dotnet` | .NET         | `preset: 'dotnet'`                      |
+| Preset   | Best For   | Example Config     |
+| -------- | ---------- | ------------------ |
+| `node`   | TypeScript | `preset: 'node'`   |
+| `python` | Python     | `preset: 'python'` |
+| `go`     | Go         | `preset: 'go'`     |
+| `rust`   | Rust       | `preset: 'rust'`   |
+| `dotnet` | .NET       | `preset: 'dotnet'` |
 
 **Backwards compatible:** Falls back to auto-detection if no config present.
 
