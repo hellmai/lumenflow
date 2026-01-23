@@ -37,12 +37,12 @@ pnpm release --version 1.3.0
 
 ### Options
 
-| Flag | Description |
-|------|-------------|
+| Flag                | Description                             |
+| ------------------- | --------------------------------------- |
 | `--version <X.Y.Z>` | **Required.** Semver version to release |
-| `--dry-run` | Preview changes without making them |
-| `--skip-publish` | Bump and tag only (no npm publish) |
-| `--skip-build` | Skip build step (use existing dist) |
+| `--dry-run`         | Preview changes without making them     |
+| `--skip-publish`    | Bump and tag only (no npm publish)      |
+| `--skip-build`      | Skip build step (use existing dist)     |
 
 ### Examples
 
