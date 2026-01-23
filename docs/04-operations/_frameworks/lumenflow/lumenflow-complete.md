@@ -315,7 +315,7 @@ NEVER run destructive or manual git commands on the main checkout during WU work
 git reset --hard HEAD  # ❌ Destroys uncommitted changes, breaks parallel WUs
 git merge lane/operations/wu-427  # ❌ Manual merge bypasses wu:done safety checks
 git rebase -i main  # ❌ Rewrites history, breaks worktree tracking
-touch .beacon/stamps/WU-427.done  # ❌ Manual stamp bypasses validation
+touch .lumenflow/stamps/WU-427.done  # ❌ Manual stamp bypasses validation
 ```
 
 **✅ RIGHT: Let wu:done handle everything**
@@ -344,7 +344,7 @@ The `pnpm wu:done` command is atomic and handles:
 
 1. **Gates validation** in the worktree (not main)
 2. **Fast-forward-only merge** to main (prevents conflicts)
-3. **Stamp creation** (`.beacon/stamps/WU-XXX.done`)
+3. **Stamp creation** (`.lumenflow/stamps/WU-XXX.done`)
 4. **Documentation updates** (backlog.md, status.md)
 5. **Worktree removal** (cleanup)
 6. **Push to origin** (publish)
@@ -366,7 +366,7 @@ These patterns were discovered during [WU-218](../tasks/wu/WU-218.yaml) when an 
 - [ ] Verify working directory with `pwd` before file operations
 - [ ] Use relative paths for ALL Write/Edit/Read operations
 - [ ] NEVER run `git reset`, `git merge`, `git rebase` on main during WU work
-- [ ] NEVER manually create `.beacon/stamps/*.done` files
+- [ ] NEVER manually create `.lumenflow/stamps/*.done` files
 - [ ] Use `pnpm wu:done --id WU-XXX` to complete (ONLY way to finish a WU)
 - [ ] If blocked, use `pnpm wu:block` (not manual edits to backlog/status)
 
@@ -408,7 +408,7 @@ Always run gates in the lane worktree that contains your change. Use `pnpm wu:do
 
 #### 6.4.2 Main is Docs‑Only
 
-The shared `main` checkout is for documentation changes only (`docs/**`, `docs/**`, `*.md`, `.beacon/stamps/**`). Hooks block code changes on `main` to prevent accidental manual merges. Claim a WU and work in a dedicated worktree/branch for any code.
+The shared `main` checkout is for documentation changes only (`docs/**`, `docs/**`, `*.md`, `.lumenflow/stamps/**`). Hooks block code changes on `main` to prevent accidental manual merges. Claim a WU and work in a dedicated worktree/branch for any code.
 
 #### 6.4.3 Troubleshooting `wu:done`
 
@@ -830,7 +830,7 @@ export class SupabaseExampleService implements ExampleService {
     - 'ModeDetectionService'
     - 'ObservabilityService'
   artifacts:
-    - '.beacon/stamps/WU-XXX.done'
+    - '.lumenflow/stamps/WU-XXX.done'
     - 'prompts/classification/mode-detection.yaml'
   # WU-1998: Exposure field (declares user-facing nature)
   exposure: 'api' # ui | api | backend-only | documentation
@@ -910,7 +910,7 @@ A WU is **done** when:
 5. ✅ Use case + adapter implemented
 6. ✅ **Documentation updated** (backlog, context, progress, relevant specs/manuals)
 7. ✅ Updated WU YAML with `status: done`, `locked: true`, and `completed: YYYY-MM-DD`
-8. ✅ `.done` stamp in `.beacon/stamps/WU-XXX.done`
+8. ✅ `.done` stamp in `.lumenflow/stamps/WU-XXX.done`
 9. ✅ **Code Quality Requirements**:
    - No TODO/FIXME/HACK/XXX comments in production code paths (tests excepted)
    - No classes/functions/methods named Mock, Stub, Fake, Placeholder in production code (test utilities excepted)
@@ -931,7 +931,7 @@ When a WU involves prompt changes (new prompts, prompt modifications, or prompt 
 2. Ensure pass rate ≥90% on golden examples
 3. Verify all guardrails passing (PII detection, toxicity, refusal, shock protocol)
 4. If pass rate drops >3pp vs baseline: justify in prompt version notes.md
-5. Update baseline metrics in `.beacon/artifacts/prompts/baselines/<version>.json`
+5. Update baseline metrics in `.lumenflow/artifacts/prompts/baselines/<version>.json`
 
 This requirement ensures the Intelligence lane has the same rigor as Experience/Core lanes.
 
@@ -1011,7 +1011,7 @@ pnpm wu:done --id WU-XXX --skip-gates --reason "Pre-existing failures from infra
 - Failures you haven't investigated
 - Skipping gates "just to finish quickly"
 
-All skip-gates events are logged to `.beacon/skip-gates-audit.log` with timestamp, user, reason, and fix-WU for accountability.
+All skip-gates events are logged to `.lumenflow/skip-gates-audit.log` with timestamp, user, reason, and fix-WU for accountability.
 
 This prevents merging broken code and maintains the integrity of the main branch.
 
@@ -1022,7 +1022,7 @@ Documentation-only WUs (type: `documentation`) streamline completion for changes
 **Characteristics:**
 
 - `type: documentation` in WU YAML
-- Modifies only: `docs/**`, `docs/**`, `*.md` files, `.beacon/stamps/**`
+- Modifies only: `docs/**`, `docs/**`, `*.md` files, `.lumenflow/stamps/**`
 - Does NOT modify: `apps/**`, `packages/**`, `supabase/**`, `tools/**` (except test files)
 
 **Gates behavior:**
@@ -1041,7 +1041,7 @@ Documentation-only WUs (type: `documentation`) streamline completion for changes
 
 1. ✅ Documentation format valid (Prettier, spec-linter)
 2. ✅ WU YAML updated (`status: done`, `locked: true`, `completed: YYYY-MM-DD`)
-3. ✅ `.done` stamp in `.beacon/stamps/WU-XXX.done`
+3. ✅ `.done` stamp in `.lumenflow/stamps/WU-XXX.done`
 4. ✅ Only docs paths modified (enforced by path validator)
 5. ❌ Code coverage NOT required (no code changes)
 6. ❌ Application tests NOT required (docs-only gates skip them)
@@ -1185,11 +1185,11 @@ pnpm gates
 # ... edit files ...
 
 # 3. Create done stamp
-mkdir -p .beacon/stamps
-touch .beacon/stamps/WU-XXX.done
+mkdir -p .lumenflow/stamps
+touch .lumenflow/stamps/WU-XXX.done
 
 # 4. Commit (includes docs + stamp)
-git add memory-bank/ ops/ci/ .beacon/stamps/ [code files]
+git add memory-bank/ ops/ci/ .lumenflow/stamps/ [code files]
 git commit -m "wu(WU-XXX): description"
 
 # 5. Push
@@ -1365,7 +1365,7 @@ test_paths:
 code_paths:
   - '<files to change>'
 artifacts:
-  - '.beacon/stamps/WU-####.done'
+  - '.lumenflow/stamps/WU-####.done'
 notes:
   - 'Repro steps:'
   - 'Root cause hypothesis:'
@@ -1780,7 +1780,7 @@ When a Bug WU is classified **P0** (production outage/data loss/auth breakage), 
 2. **Create a failing reproduction test** (unit/integration/e2e as appropriate)
 3. **Fix via TDD:** failing test → code fix → all gates green
 4. **Commit with** `fix(EMERGENCY): <description>` convention
-5. **Stamp and push:** create `.beacon/stamps/WU-####.done`, commit atomically to `main`
+5. **Stamp and push:** create `.lumenflow/stamps/WU-####.done`, commit atomically to `main`
 
 **Post-incident follow-up:**
 
@@ -1949,7 +1949,7 @@ pnpm board:validate             # Validate WU board
 Metrics are automatically collected via:
 
 - Gates execution telemetry (`tools/lib/telemetry.mjs`)
-- NDJSON logs (`.beacon/telemetry/gates.ndjson`)
+- NDJSON logs (`.lumenflow/telemetry/gates.ndjson`)
 - Weekly flow reports: `pnpm flow:report` → `reports/flow.md`
 
 Review flow reports weekly to identify bottlenecks and optimize delivery.

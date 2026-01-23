@@ -234,7 +234,7 @@ This keeps parallel agents from stepping on each other’s builds while still ho
     1. **Auto-merges** the lane branch (e.g., `lane/operations/wu-341`) to `main` if it exists
     2. Marks the WU `done` in the WU YAML (setting `status: done`, `locked: true`, `completed: YYYY-MM-DD`)
     3. Updates `status.md` and `backlog.md` (moves to Done with today's date)
-    4. Creates `.beacon/stamps/WU-341.done`
+    4. Creates `.lumenflow/stamps/WU-341.done`
     5. Commits and pushes to `main`
     6. Removes the associated worktree
   - Flags:
@@ -351,7 +351,7 @@ git stash pop
 **Symptoms:**
 
 - WU YAML still shows `status: in_progress`
-- No `.beacon/stamps/WU-<id>.done` file created
+- No `.lumenflow/stamps/WU-<id>.done` file created
 - `backlog.md` and `status.md` not updated
 - Worktree still exists after merge
 
@@ -693,7 +693,7 @@ If someone accidentally ran `git reset --hard`, `git stash`, or `git clean -fd` 
 
    ```bash
    # Log to audit file
-   echo "$(date): Destructive command run on main. Recovery: [describe]" >> .beacon/incidents.log
+   echo "$(date): Destructive command run on main. Recovery: [describe]" >> .lumenflow/incidents.log
 
    # Create incident WU if data loss occurred
    pnpm wu:create --title "INCIDENT: Data loss from <command> on main" --priority P0 --lane Operations
@@ -1213,11 +1213,11 @@ cd worktrees/operations-wu-506  # CRITICAL: Immediately cd into worktree
 - `--no-remove` — Skip worktree removal (leaves worktree in place)
 - `--no-merge` — Skip auto-merging lane branch (already merged manually)
 - `--delete-branch` — Delete lane branch after merge (both local and remote)
-- `--skip-gates` — **DANGER:** Skip gates check (requires `--reason` + `--fix-wu`, audited to `.beacon/skip-gates-audit.log`)
+- `--skip-gates` — **DANGER:** Skip gates check (requires `--reason` + `--fix-wu`, audited to `.lumenflow/skip-gates-audit.log`)
 - `--reason "<text>"` — (Required with `--skip-gates` or `--override-owner`) Why action is being taken
 - `--fix-wu WU-123` — (Required with `--skip-gates`) WU that will fix the pre-existing failures
 - `--allow-todo` — Allow TODO comments in code (requires justification in WU notes, use sparingly)
-- `--override-owner` — Override ownership check (requires `--reason`, audited to `.beacon/ownership-override-audit.log`)
+- `--override-owner` — Override ownership check (requires `--reason`, audited to `.lumenflow/ownership-override-audit.log`)
 - `--help, -h` — Show help
 
 **🚨 GUARDRAIL 2: Ownership Semantics (Never Complete WUs You Don't Own)**
@@ -1679,8 +1679,8 @@ The `wu:repair` command detects and fixes these consistency types:
 
 1. Stage stamp in THIS commit:
    ```bash
-   printf "WU WU-<ID> — <title>\nCompleted: <YYYY-MM-DD>\n" > .beacon/stamps/WU-<ID>.done
-   git add .beacon/stamps/WU-<ID>.done
+   printf "WU WU-<ID> — <title>\nCompleted: <YYYY-MM-DD>\n" > .lumenflow/stamps/WU-<ID>.done
+   git add .lumenflow/stamps/WU-<ID>.done
    git diff --cached --name-only | grep stamps || echo "Stamp not staged!"
    ```
 2. Edit YAML: `status: done`, `locked: true`, `completed: <YYYY-MM-DD>`
