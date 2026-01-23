@@ -180,25 +180,46 @@ Added `apps/github-app/` with cloud-native workflow enforcement:
 ### 3. lumenflow-gates Action ✅
 
 **Commit:** (2026-01-17)
+**Updated:** (2026-01-23) - WU-1067: Config-driven gates
 
-Added `actions/lumenflow-gates/` with polyglot language presets:
+Added `actions/lumenflow-gates/` with config-driven gates (TypeScript action):
 
 ```yaml
-# Client usage
+# Client usage - config-driven (recommended)
 - uses: hellmai/lumenflow-gates@v1
   with:
-    preset: auto # Detects from package.json, pyproject.toml, go.mod
+    token: ${{ secrets.LUMENFLOW_TOKEN }}
 ```
 
-**Presets implemented:**
+**Config example (.lumenflow.config.yaml):**
 
-| Preset   | Detection      | Gates                                 |
-| -------- | -------------- | ------------------------------------- |
-| `node`   | package.json   | format, lint, typecheck, test         |
-| `python` | pyproject.toml | ruff format, ruff check, mypy, pytest |
-| `go`     | go.mod         | gofmt, golangci-lint, go test         |
-| `rust`   | Cargo.toml     | cargo fmt, cargo clippy, cargo test   |
-| `auto`   | All above      | Detect and run appropriate preset     |
+```yaml
+# Custom commands for any language
+gates:
+  execution:
+    format: 'pnpm format:check'
+    lint: 'pnpm lint'
+    typecheck: 'pnpm typecheck'
+    test: 'pnpm test'
+
+# Or use a preset with overrides
+gates:
+  execution:
+    preset: 'python'
+    lint: 'ruff check . && mypy .'
+```
+
+**Presets available:**
+
+| Preset   | Best For     | Example Config                          |
+| -------- | ------------ | --------------------------------------- |
+| `node`   | TypeScript   | `preset: 'node'`                        |
+| `python` | Python       | `preset: 'python'`                      |
+| `go`     | Go           | `preset: 'go'`                          |
+| `rust`   | Rust         | `preset: 'rust'`                        |
+| `dotnet` | .NET         | `preset: 'dotnet'`                      |
+
+**Backwards compatible:** Falls back to auto-detection if no config present.
 
 ### 4. GitHub App Manifest ✅
 
