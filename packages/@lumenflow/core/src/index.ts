@@ -132,9 +132,8 @@ export * from './gates-config.js';
 // Branch check utilities
 export * from './branch-check.js';
 
-// WU-1062: External plan storage and spec branch helpers
+// WU-1062: External plan storage
 export * from './lumenflow-home.js';
-export * from './spec-branch-helpers.js';
 
 // WU-1070: Force bypass audit logging
 export * from './force-bypass-audit.js';
