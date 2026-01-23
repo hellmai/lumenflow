@@ -20,9 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1075 — Rename .beacon to .lumenflow - remove ExampleApp branding](wu/WU-1075.yaml) — Framework: Core
-- [WU-1074 — Add release command for npm publishing](wu/WU-1074.yaml) — Framework: CLI
-
+(No items ready)
 
 ## 🔧 In progress
 
@@ -30,7 +28,7 @@ sections:
 - [WU-1013 — Deploy docs to Vercel (lumenflow.dev)](wu/WU-1013.yaml) — Documentation
 - [WU-1016 — Implement configurable WIP limits per lane](wu/WU-1016.yaml) — Core
 - [WU-1074 — Add release command for npm publishing](wu/WU-1074.yaml) — Framework: CLI
-
+- [WU-1075 — Rename .beacon to .lumenflow - remove ExampleApp branding](wu/WU-1075.yaml) — Framework: Core
 
 ## ⛔ Blocked
 
