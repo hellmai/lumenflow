@@ -463,6 +463,58 @@ export const DEFAULTS = {
 
   /** Parent directory traversal depth from tools/lib to project root */
   PROJECT_ROOT_DEPTH: 2,
+
+  /**
+   * Default email domain for username -> email conversion
+   * WU-1068: Made configurable, no longer hardcoded to .co.uk
+   * @see user-normalizer.ts - Infers from git config first
+   */
+  EMAIL_DOMAIN: 'example.com',
+};
+
+/**
+ * Process argv indices (WU-1068)
+ *
+ * Centralized indices for process.argv access to eliminate magic numbers.
+ * In Node.js: argv[0] = node, argv[1] = script, argv[2+] = args
+ */
+export const ARGV_INDICES = {
+  /** Node executable path */
+  NODE: 0,
+  /** Script path */
+  SCRIPT: 1,
+  /** First user argument */
+  FIRST_ARG: 2,
+  /** Second user argument */
+  SECOND_ARG: 3,
+};
+
+/**
+ * Display limits for CLI output (WU-1068)
+ *
+ * Centralized limits for truncating display strings to avoid magic numbers.
+ */
+export const DISPLAY_LIMITS = {
+  /** Maximum items to show in lists before truncating */
+  LIST_ITEMS: 5,
+  /** Maximum items to show in short lists */
+  SHORT_LIST: 3,
+  /** Maximum characters for content preview */
+  CONTENT_PREVIEW: 200,
+  /** Maximum characters for short preview */
+  SHORT_PREVIEW: 60,
+  /** Maximum characters for title display */
+  TITLE: 50,
+  /** Maximum characters for truncated title */
+  TRUNCATED_TITLE: 40,
+  /** Maximum characters for command preview */
+  CMD_PREVIEW: 60,
+  /** Maximum lines to preview from files */
+  FILE_LINES: 10,
+  /** Maximum commits to show in lists */
+  COMMITS: 50,
+  /** Maximum overlaps to display */
+  OVERLAPS: 3,
 };
 
 /**
@@ -905,6 +957,9 @@ export const WU_DEFAULTS = {
  *
  * Validation is advisory only - never blocks wu:claim or wu:done.
  *
+ * WU-1068: Removed hardcoded @ references. These patterns
+ * should be configured in .lumenflow.config.yaml per-project.
+ *
  * @see {@link tools/lib/lane-validator.mjs} - Validation logic
  */
 export const LANE_PATH_PATTERNS = {
@@ -913,7 +968,7 @@ export const LANE_PATH_PATTERNS = {
    * These paths belong to the Intelligence lane.
    */
   Operations: {
-    exclude: ['ai/prompts/**', 'packages/@/prompts/**', 'apps/web/src/lib/prompts/**'],
+    exclude: ['ai/prompts/**', 'apps/web/src/lib/prompts/**'],
     allowExceptions: [],
   },
 
@@ -1127,12 +1182,14 @@ export const PKG_COMMANDS = {
  * Package names (monorepo workspaces)
  *
  * Centralized package names for --filter usage.
+ * WU-1068: Changed from @ to @lumenflow for framework reusability.
+ * Project-specific packages should be configured in .lumenflow.config.yaml.
  */
 export const PACKAGES = {
   WEB: 'web',
-  APPLICATION: '@/application',
-  DOMAIN: '@/domain',
-  INFRASTRUCTURE: '@/infrastructure',
+  APPLICATION: '@lumenflow/core',
+  DOMAIN: '@lumenflow/core',
+  INFRASTRUCTURE: '@lumenflow/cli',
 };
 
 /**
@@ -1585,6 +1642,9 @@ export const FILE_TOOLS = {
  *
  * Error codes for PIIdetection in file tools.
  * Used by file:write and file:edit to block PIIleakage.
+ *
+ * WU-1068: PII scanning is regulated-specific functionality.
+ * Enable via SENSITIVE_DATA_CONFIG.ENABLED flag or .lumenflow.config.yaml sensitive_scan.enabled: true
  */
 export const SENSITIVE_DATA_ERRORS = {
   /** PIIdetected in content - write blocked */
@@ -1592,6 +1652,31 @@ export const SENSITIVE_DATA_ERRORS = {
 
   /** PIIoverride requested - audit logged */
   SENSITIVE_DATA_OVERRIDE_ALLOWED: 'SENSITIVE_DATA_OVERRIDE_ALLOWED',
+};
+
+/**
+ * PII scanning configuration (WU-1068)
+ *
+ * Controls whether PII(Protected Health Information) scanning is enabled.
+ * This is regulated-specific functionality (national ID numbers, UK postcodes)
+ * that should only be enabled for regulated projects.
+ *
+ * Projects can enable via:
+ * 1. Setting SENSITIVE_DATA_CONFIG.ENABLED = true in code
+ * 2. Setting LUMENFLOW_SENSITIVE_SCAN_ENABLED=1 environment variable
+ * 3. Adding sensitive_scan.enabled: true to .lumenflow.config.yaml
+ */
+export const SENSITIVE_DATA_CONFIG = {
+  /**
+   * Whether PII scanning is enabled
+   * Default: false - projects must explicitly opt-in
+   */
+  ENABLED: process.env.LUMENFLOW_SENSITIVE_SCAN_ENABLED === '1',
+
+  /**
+   * Whether to block on PIIdetection (true) or just warn (false)
+   */
+  BLOCKING: process.env.LUMENFLOW_SENSITIVE_SCAN_BLOCKING === '1',
 };
 
 /**

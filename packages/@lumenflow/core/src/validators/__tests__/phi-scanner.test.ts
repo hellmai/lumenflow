@@ -6,12 +6,26 @@
  * and UK postcode detection with medical context using postcode library.
  *
  * Part of WU-1404: PIIScanner Integration
+ * WU-1068: PII scanning now gated behind SENSITIVE_DATA_CONFIG.ENABLED
  */
 
-import { describe, it, beforeEach } from 'node:test';
+import { describe, it, beforeEach, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { scanForSensitiveData, isPathExcluded } from '../pii-scanner.js';
 import { SENSITIVE_DATA_TYPES } from '../phi-constants.js';
+import { SENSITIVE_DATA_CONFIG } from '../../wu-constants.js';
+
+// Store original value to restore after tests
+const originalEnabled = SENSITIVE_DATA_CONFIG.ENABLED;
+
+// Enable PII scanning for tests (WU-1068)
+before(() => {
+  SENSITIVE_DATA_CONFIG.ENABLED = true;
+});
+
+after(() => {
+  SENSITIVE_DATA_CONFIG.ENABLED = originalEnabled;
+});
 
 describe('PIIScanner', () => {
   describe('scanForSensitiveData', () => {
