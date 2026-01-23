@@ -1,9 +1,9 @@
 /**
  * Tests for WU_CREATE_OPTIONS in arg-parser.ts
  *
- * WU-1062: External plan storage and no-main-write mode
+ * WU-1062: External plan storage
  *
- * Tests the new --plan and --direct flags for wu:create.
+ * Tests the --plan flag for wu:create.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -16,25 +16,9 @@ describe('WU_CREATE_OPTIONS', () => {
     expect(WU_CREATE_OPTIONS.plan.description).toContain('plan');
   });
 
-  it('should include --direct flag', () => {
-    expect(WU_CREATE_OPTIONS.direct).toBeDefined();
-    expect(WU_CREATE_OPTIONS.direct.flags).toBe('--direct');
-    expect(WU_CREATE_OPTIONS.direct.description).toContain('main');
-  });
-
   describe('--plan flag', () => {
     it('should be a boolean flag', () => {
       expect(WU_CREATE_OPTIONS.plan.flags).not.toContain('<');
-    });
-  });
-
-  describe('--direct flag', () => {
-    it('should be a boolean flag', () => {
-      expect(WU_CREATE_OPTIONS.direct.flags).not.toContain('<');
-    });
-
-    it('should have description mentioning legacy behavior', () => {
-      expect(WU_CREATE_OPTIONS.direct.description.toLowerCase()).toMatch(/legacy|direct|main/);
     });
   });
 });
