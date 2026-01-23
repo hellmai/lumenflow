@@ -129,7 +129,9 @@ export function findPackageJsonPaths(baseDir: string = process.cwd()): string[] 
  */
 export async function updatePackageVersions(paths: string[], version: string): Promise<void> {
   for (const packagePath of paths) {
-    const content = await readFile(packagePath, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
+    const content = await readFile(packagePath, {
+      encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+    });
     const pkg = JSON.parse(content);
 
     // Update version
@@ -363,7 +365,9 @@ async function main(): Promise<void> {
   if (dryRun) {
     console.log(`  - Run without --dry-run to execute the release`);
   } else {
-    console.log(`  - Create GitHub release: gh release create ${tagName} --title "Release ${tagName}"`);
+    console.log(
+      `  - Create GitHub release: gh release create ${tagName} --title "Release ${tagName}"`,
+    );
     if (skipPublish) {
       console.log(`  - Publish to npm: ${PKG_MANAGER} -r publish --access public --no-git-checks`);
     }
