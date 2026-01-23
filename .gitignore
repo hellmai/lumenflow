@@ -35,7 +35,20 @@ coverage/
 
 # LumenFlow
 /worktrees/
-# Legacy state directory (allow state/wu-events.jsonl for completion tracking)
+
+# LumenFlow runtime state (allow state/wu-events.jsonl for completion tracking)
+/.lumenflow/state/*.backup*
+/.lumenflow/memory/
+/.lumenflow/locks/
+/.lumenflow/sessions/
+/.lumenflow/telemetry/
+/.lumenflow/skip-gates-audit.log
+/.lumenflow/checkpoints/
+/.lumenflow/force-bypasses.log
+# LumenFlow locks anywhere (lane locking system)
+**/.lumenflow/locks/
+
+# Legacy ._legacy paths (deprecated, kept for transition)
 /._legacy/state/*.backup*
 /._legacy/memory/
 /._legacy/locks/
@@ -44,7 +57,6 @@ coverage/
 /._legacy/skip-gates-audit.log
 /._legacy/checkpoints/
 /._legacy/force-bypasses.log
-# Legacy locks anywhere (lane locking system, WU-1012 fix)
 **/._legacy/locks/
 .logs/
 *.tgz
