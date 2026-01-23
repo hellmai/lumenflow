@@ -31,7 +31,7 @@
 
 **Evidence, not claims**
 
-- Tests and tiny **artifacts** (e.g., `.beacon/artifacts/spec-linter/summary.json`, `glass-count/web.json`) show the rule is enforced.
+- Tests and tiny **artifacts** (e.g., `.lumenflow/artifacts/spec-linter/summary.json`, `glass-count/web.json`) show the rule is enforced.
 - Easy to demo and defend in safety/compliance reviews.
 
 ---
@@ -85,7 +85,7 @@
 - **Plan** → `{PROJECT_ROOT}/tasks/backlog.md` (Ready queue + Done history)
 - **What’s active** → `{PROJECT_ROOT}/tasks/status.md` + the live WU YAML
 - **What shipped** → the WU YAML (`notes`, `artifacts`) + `ops/ci/change-manifest.yml`
-- **Proof** → artifacts listed in each WU (`.beacon/artifacts/**`)
+- **Proof** → artifacts listed in each WU (`.lumenflow/artifacts/**`)
 
 If something isn’t clear, **edit the WU’s acceptance** (plain English). The agent follows that.
 

@@ -6,14 +6,15 @@ status: in_progress
 priority: P2
 created: 2026-01-23
 code_paths:
-  - packages/@lumenflow/initiatives/src/**
+  - packages/@lumenflow/core/src/wu-constants.ts
+  - packages/@lumenflow/core/src/beacon-migration.ts
 tests:
   manual: []
   unit:
-    - packages/@lumenflow/agent/__tests__/**
+    - packages/@lumenflow/core/src/__tests__/beacon-migration.test.ts
   e2e: []
 artifacts:
-  - .beacon/stamps/WU-1075.done
+  - .lumenflow/stamps/WU-1075.done
 dependencies: []
 risks: []
 notes: ''

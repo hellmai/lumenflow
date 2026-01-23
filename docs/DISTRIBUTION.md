@@ -25,7 +25,7 @@ Local LumenFlow doesn't work in cloud/CI environments:
 | PID locks    | File-based locks     | Container restart = PID mismatch   | GitHub labels             |
 | Worktrees    | Isolated directories | Ephemeral filesystem               | Branch-only mode          |
 | Memory layer | Session tracking     | Lost on restart                    | Not needed (single agent) |
-| Lane locks   | `.beacon/locks/`     | Multiple runners = race conditions | Label-based WIP           |
+| Lane locks   | `.lumenflow/locks/`  | Multiple runners = race conditions | Label-based WIP           |
 
 **Key insight:** The memory layer is already ephemeral (git-ignored). No database needed for cloud mode.
 
@@ -38,8 +38,8 @@ Local LumenFlow doesn't work in cloud/CI environments:
 These survive container restarts and are the audit trail:
 
 ```
-.beacon/stamps/WU-*.done      # Completion proof
-.beacon/agent-runs/*.stamp    # Mandatory agent audit trail
+.lumenflow/stamps/WU-*.done      # Completion proof
+.lumenflow/agent-runs/*.stamp    # Mandatory agent audit trail
 docs/04-operations/tasks/wu/  # WU specs (YAML)
 ```
 
@@ -48,9 +48,9 @@ docs/04-operations/tasks/wu/  # WU specs (YAML)
 These are ephemeral and rebuilt per session:
 
 ```
-.beacon/memory/               # Memory layer (checkpoints, sessions)
-.beacon/locks/                # Lane locks (PID-based)
-.beacon/sessions/             # Active session state
+.lumenflow/memory/               # Memory layer (checkpoints, sessions)
+.lumenflow/locks/                # Lane locks (PID-based)
+.lumenflow/sessions/             # Active session state
 worktrees/                    # Git worktrees for isolation
 ```
 

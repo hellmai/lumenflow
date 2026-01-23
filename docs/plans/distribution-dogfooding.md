@@ -65,7 +65,7 @@ The CLI provides the workflow tools. The App enforces what it can observe (PRs, 
 
 - hellmai/os contains LumenFlow source code (7 packages)
 - GitHub App deployed and working at `https://lumenflow-app.vercel.app`
-- **NOT dogfooding:** No `.lumenflow.config.yaml`, no WU specs, no root `.beacon/`
+- **NOT dogfooding:** No `.lumenflow.config.yaml`, no WU specs, no root `.lumenflow/`
 
 ### Bootstrap Problem (Chicken-and-Egg)
 
@@ -88,7 +88,7 @@ This keeps the exception minimal (just config files) and uses proper workflow fo
 docs/tasks/wu/.gitkeep
 docs/tasks/backlog.md
 docs/tasks/status.md
-.beacon/stamps/.gitkeep
+.lumenflow/stamps/.gitkeep
 ```
 
 #### Step 2: Proper WU Workflow
@@ -120,7 +120,7 @@ description: |
 acceptance:
   - 'wu:* scripts wired in root package.json using pnpm exec'
   - 'Memory layer initialized with pnpm mem:init'
-  - '.gitignore updated with worktrees/, .beacon/memory/, etc.'
+  - '.gitignore updated with worktrees/, .lumenflow/memory/, etc.'
   - 'pnpm gates passes in worktree'
 code_paths:
   - 'package.json'
@@ -184,7 +184,7 @@ git:
 directories:
   wu_specs: 'docs/tasks/wu'
   backlog: 'docs/tasks/backlog.md'
-  stamps: '.beacon/stamps'
+  stamps: '.lumenflow/stamps'
 
 worktree_pattern: 'worktrees/{lane}-{wu_id}'
 ```
@@ -192,7 +192,7 @@ worktree_pattern: 'worktrees/{lane}-{wu_id}'
 #### 1.2 Create Directory Structure (Part of Bootstrap Commit)
 
 ```bash
-mkdir -p /home/tom/source/hellmai/os/.beacon/stamps
+mkdir -p /home/tom/source/hellmai/os/.lumenflow/stamps
 mkdir -p /home/tom/source/hellmai/os/docs/tasks/wu
 touch /home/tom/source/hellmai/os/docs/tasks/backlog.md
 touch /home/tom/source/hellmai/os/docs/tasks/status.md
@@ -260,9 +260,9 @@ pnpm wu:claim --id WU-OS-001  # Works immediately
 
 ```gitignore
 /worktrees/
-/.beacon/memory/
-/.beacon/locks/
-/.beacon/sessions/
+/.lumenflow/memory/
+/.lumenflow/locks/
+/.lumenflow/sessions/
 ```
 
 #### 1.5 Initialize Memory Layer
@@ -699,7 +699,7 @@ const TIERS = {
 | File                                    | Action                                 |
 | --------------------------------------- | -------------------------------------- |
 | `.lumenflow.config.yaml`                | Create (9 lanes covering all packages) |
-| `.beacon/stamps/.gitkeep`               | Create directory placeholder           |
+| `.lumenflow/stamps/.gitkeep`            | Create directory placeholder           |
 | `docs/tasks/wu/.gitkeep`                | Create directory placeholder           |
 | `docs/tasks/backlog.md`                 | Create                                 |
 | `docs/tasks/status.md`                  | Create                                 |
@@ -711,7 +711,7 @@ const TIERS = {
 | ------------------------------ | ------------------------------------------- |
 | `docs/tasks/wu/WU-OS-001.yaml` | Created by `wu:create` command              |
 | `package.json`                 | Add setup + wu:\* scripts using `pnpm exec` |
-| `.gitignore`                   | Add worktrees/, .beacon/memory/, etc.       |
+| `.gitignore`                   | Add worktrees/, .lumenflow/memory/, etc.    |
 
 ### hellmai/os (Phase 2)
 
