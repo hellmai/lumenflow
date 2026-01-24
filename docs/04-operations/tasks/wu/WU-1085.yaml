@@ -10,7 +10,9 @@ code_paths:
 tests:
   manual: []
   unit:
-    - packages/@lumenflow/cli/__tests__/**
+    - packages/@lumenflow/cli/__tests__/init.test.ts
+    - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
+    - packages/@lumenflow/core/__tests__/color-support.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1085.done
