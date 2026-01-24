@@ -79,9 +79,7 @@ describe('resolveLocation', () => {
 
     it('sets cwd to the provided directory', async () => {
       // Arrange
-      mockGit.revparse
-        .mockResolvedValueOnce('/home/user/repo\n')
-        .mockResolvedValueOnce('.git\n');
+      mockGit.revparse.mockResolvedValueOnce('/home/user/repo\n').mockResolvedValueOnce('.git\n');
 
       vi.mocked(statSync).mockReturnValue({
         isFile: () => false,
@@ -101,9 +99,7 @@ describe('resolveLocation', () => {
       // Arrange
       mockGit.revparse
         .mockResolvedValueOnce('/home/user/repo/worktrees/framework-core-wu-1090\n') // --show-toplevel
-        .mockResolvedValueOnce(
-          '/home/user/repo/worktrees/framework-core-wu-1090/.git\n',
-        ); // --git-dir
+        .mockResolvedValueOnce('/home/user/repo/worktrees/framework-core-wu-1090/.git\n'); // --git-dir
 
       // In worktrees, .git is a file pointing to the main .git directory
       vi.mocked(statSync).mockReturnValue({
@@ -117,9 +113,7 @@ describe('resolveLocation', () => {
       );
 
       // Act
-      const result = await resolveLocation(
-        '/home/user/repo/worktrees/framework-core-wu-1090',
-      );
+      const result = await resolveLocation('/home/user/repo/worktrees/framework-core-wu-1090');
 
       // Assert
       expect(result.type).toBe(LOCATION_TYPES.WORKTREE);
@@ -163,9 +157,7 @@ describe('resolveLocation', () => {
       mockGit.raw.mockResolvedValueOnce('worktree /home/user/repo\n');
 
       // Act
-      const result = await resolveLocation(
-        '/home/user/repo/worktrees/framework-core-wu-1090',
-      );
+      const result = await resolveLocation('/home/user/repo/worktrees/framework-core-wu-1090');
 
       // Assert - WU ID should be uppercase
       expect(result.worktreeWuId).toBe('WU-1090');
@@ -254,9 +246,7 @@ describe('resolveLocation', () => {
     it('defaults cwd to process.cwd() when not provided', async () => {
       // Arrange
       const originalCwd = process.cwd();
-      mockGit.revparse
-        .mockResolvedValueOnce(`${originalCwd}\n`)
-        .mockResolvedValueOnce('.git\n');
+      mockGit.revparse.mockResolvedValueOnce(`${originalCwd}\n`).mockResolvedValueOnce('.git\n');
 
       vi.mocked(statSync).mockReturnValue({
         isFile: () => false,
@@ -274,9 +264,7 @@ describe('resolveLocation', () => {
   describe('gitRoot resolution', () => {
     it('returns trimmed gitRoot path', async () => {
       // Arrange - path with trailing newline
-      mockGit.revparse
-        .mockResolvedValueOnce('/home/user/repo\n')
-        .mockResolvedValueOnce('.git\n');
+      mockGit.revparse.mockResolvedValueOnce('/home/user/repo\n').mockResolvedValueOnce('.git\n');
 
       vi.mocked(statSync).mockReturnValue({
         isFile: () => false,

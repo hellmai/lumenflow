@@ -17,11 +17,7 @@
 import { simpleGit, type SimpleGit } from 'simple-git';
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import {
-  CONTEXT_VALIDATION,
-  PATTERNS,
-  type LocationType,
-} from '../wu-constants.js';
+import { CONTEXT_VALIDATION, PATTERNS, type LocationType } from '../wu-constants.js';
 
 const { LOCATION_TYPES } = CONTEXT_VALIDATION;
 

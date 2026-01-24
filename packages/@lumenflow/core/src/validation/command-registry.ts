@@ -12,11 +12,7 @@
  * @module
  */
 
-import {
-  CONTEXT_VALIDATION,
-  WU_STATUS,
-  type LocationType,
-} from '../wu-constants.js';
+import { CONTEXT_VALIDATION, WU_STATUS, type LocationType } from '../wu-constants.js';
 import type { CommandDefinition, CommandPredicate, WuContext } from './types.js';
 
 const { LOCATION_TYPES, COMMANDS, SEVERITY } = CONTEXT_VALIDATION;
@@ -190,10 +186,7 @@ export function getCommandDefinition(command: string): CommandDefinition | null 
 /**
  * Check if a command's location requirement is satisfied.
  */
-function isLocationValid(
-  def: CommandDefinition,
-  locationType: LocationType,
-): boolean {
+function isLocationValid(def: CommandDefinition, locationType: LocationType): boolean {
   // null means any location is valid
   if (def.requiredLocation === null) return true;
   return def.requiredLocation === locationType;
@@ -202,10 +195,7 @@ function isLocationValid(
 /**
  * Check if a command's WU status requirement is satisfied.
  */
-function isStatusValid(
-  def: CommandDefinition,
-  wuStatus: string | null,
-): boolean {
+function isStatusValid(def: CommandDefinition, wuStatus: string | null): boolean {
   // null requirement means no status check needed
   if (def.requiredWuStatus === null) return true;
   return def.requiredWuStatus === wuStatus;
@@ -218,9 +208,7 @@ function arePredicatesValid(def: CommandDefinition, context: WuContext): boolean
   if (!def.predicates || def.predicates.length === 0) return true;
 
   // Only check error-severity predicates for validity
-  return def.predicates
-    .filter((p) => p.severity === SEVERITY.ERROR)
-    .every((p) => p.check(context));
+  return def.predicates.filter((p) => p.severity === SEVERITY.ERROR).every((p) => p.check(context));
 }
 
 /**

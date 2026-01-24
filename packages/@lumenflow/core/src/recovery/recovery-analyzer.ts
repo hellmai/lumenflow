@@ -76,11 +76,7 @@ export interface RecoveryAnalysis {
 /**
  * Get expected worktree path for a WU.
  */
-function getExpectedWorktreePath(
-  mainCheckout: string,
-  lane: string,
-  wuId: string,
-): string {
+function getExpectedWorktreePath(mainCheckout: string, lane: string, wuId: string): string {
   const laneKebab = toKebab(lane);
   const wuIdLower = wuId.toLowerCase();
   return join(mainCheckout, DEFAULTS.WORKTREES_DIR, `${laneKebab}-${wuIdLower}`);

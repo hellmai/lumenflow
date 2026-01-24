@@ -173,9 +173,7 @@ describe('computeContext', () => {
     it('tracks when budget is exceeded', async () => {
       // Arrange - make location resolution slow
       vi.mocked(resolveLocation).mockImplementation(async () => {
-        await new Promise((resolve) =>
-          setTimeout(resolve, THRESHOLDS.CONTEXT_COMPUTATION_MS + 50),
-        );
+        await new Promise((resolve) => setTimeout(resolve, THRESHOLDS.CONTEXT_COMPUTATION_MS + 50));
         return mockLocation;
       });
 

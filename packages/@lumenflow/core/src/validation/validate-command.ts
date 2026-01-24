@@ -65,10 +65,7 @@ function locationName(type: LocationType): string {
 /**
  * Validate location requirement.
  */
-function validateLocation(
-  def: CommandDefinition,
-  context: WuContext,
-): ValidationError | null {
+function validateLocation(def: CommandDefinition, context: WuContext): ValidationError | null {
   if (def.requiredLocation === null) return null;
 
   const currentLocation = context.location.type;
@@ -84,9 +81,7 @@ function validateLocation(
   } else if (def.requiredLocation === LOCATION_TYPES.WORKTREE) {
     // If we know the WU ID, suggest the expected worktree path
     if (context.wu?.id) {
-      const laneKebab = (context.wu.lane || 'lane')
-        .toLowerCase()
-        .replace(/[: ]+/g, '-');
+      const laneKebab = (context.wu.lane || 'lane').toLowerCase().replace(/[: ]+/g, '-');
       const wuIdLower = context.wu.id.toLowerCase();
       fixCommand = `cd ${context.location.mainCheckout}/worktrees/${laneKebab}-${wuIdLower}`;
     }
@@ -106,10 +101,7 @@ function validateLocation(
 /**
  * Validate WU status requirement.
  */
-function validateWuStatus(
-  def: CommandDefinition,
-  context: WuContext,
-): ValidationError | null {
+function validateWuStatus(def: CommandDefinition, context: WuContext): ValidationError | null {
   // No status requirement means no WU needed
   if (def.requiredWuStatus === null) return null;
 
@@ -158,9 +150,7 @@ function validatePredicates(
     const passed = predicate.check(context);
 
     if (!passed) {
-      const fixMessage = predicate.getFixMessage
-        ? predicate.getFixMessage(context)
-        : null;
+      const fixMessage = predicate.getFixMessage ? predicate.getFixMessage(context) : null;
 
       if (predicate.severity === SEVERITY.ERROR) {
         errors.push(
@@ -193,10 +183,7 @@ function validatePredicates(
  * @param context - Current WU context
  * @returns ValidationResult
  */
-export function validateCommand(
-  command: string,
-  context: WuContext,
-): ValidationResult {
+export function validateCommand(command: string, context: WuContext): ValidationResult {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
