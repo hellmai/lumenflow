@@ -137,9 +137,51 @@ Main checkout becomes read-only after claim. Hooks will block WU commits from ma
 | `pnpm wu:block`                 | Block WU (transitions to blocked, frees lane)          |
 | `pnpm wu:unblock`               | Unblock WU (transitions to in_progress)                |
 | `pnpm wu:release`               | Release orphaned WU (in_progress to ready for reclaim) |
+| `pnpm wu:status`                | Show WU status, location, and valid commands           |
+| `pnpm wu:recover`               | Analyze and fix WU state inconsistencies               |
 | `pnpm gates`                    | Run quality gates                                      |
 | `pnpm mem:checkpoint`           | Save memory checkpoint                                 |
 | `pnpm exec lumenflow docs:sync` | Sync agent docs after upgrading LumenFlow packages     |
+
+### Context-Aware Validation (WU-1090)
+
+WU lifecycle commands include context-aware validation that automatically checks:
+
+- **Location**: Whether you are in main checkout or a worktree
+- **WU Status**: Whether the WU is in the correct state for the command
+- **Git State**: Uncommitted changes, commits ahead/behind
+
+When validation fails, commands provide copy-paste ready fix commands:
+
+```
+ERROR: WRONG_LOCATION - wu:done must be run from main checkout
+
+FIX: Run this command:
+  cd /home/user/repo && pnpm wu:done --id WU-1090
+```
+
+Configure validation behavior in `.lumenflow.config.yaml`:
+
+```yaml
+experimental:
+  context_validation: true     # Enable/disable validation
+  validation_mode: 'warn'      # 'off' | 'warn' | 'error'
+  show_next_steps: true        # Show guidance after command success
+```
+
+### Recovery Commands
+
+If WU state becomes inconsistent (e.g., worktree exists but status is 'ready'), use recovery:
+
+```bash
+# Analyze issues
+pnpm wu:recover --id WU-XXX
+
+# Apply suggested fix
+pnpm wu:recover --id WU-XXX --action resume   # Reconcile state, preserve work
+pnpm wu:recover --id WU-XXX --action reset    # Reset to ready, discard worktree
+pnpm wu:recover --id WU-XXX --action cleanup  # Remove leftover worktree
+```
 
 ---
 
