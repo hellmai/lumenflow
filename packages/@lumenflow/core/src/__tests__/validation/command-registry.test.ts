@@ -301,6 +301,49 @@ describe('getValidCommandsForContext', () => {
     expect(commandNames).not.toContain(COMMANDS.WU_CLAIM);
   });
 
+  it('excludes wu:done when git is dirty (predicate fails)', () => {
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: true, // Dirty git state
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: 'origin/main',
+        modifiedFiles: ['file.ts'],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: {
+        id: 'WU-1090',
+        status: 'in_progress',
+        lane: 'Framework: Core',
+        title: 'Test WU',
+        yamlPath: '/repo/docs/04-operations/tasks/wu/WU-1090.yaml',
+        isConsistent: true,
+        inconsistencyReason: null,
+      },
+      session: { isActive: true, sessionId: 'session-123' },
+    };
+
+    const validCommands = getValidCommandsForContext(context);
+    const commandNames = validCommands.map((c) => c.name);
+
+    // wu:done predicate checks for clean git state
+    expect(commandNames).not.toContain(COMMANDS.WU_DONE);
+    // Other commands still work
+    expect(commandNames).toContain(COMMANDS.WU_BLOCK);
+  });
+
   it('always includes wu:status (no restrictions)', () => {
     const contexts: WuContext[] = [
       // Main checkout
@@ -360,5 +403,450 @@ describe('getValidCommandsForContext', () => {
       const commandNames = validCommands.map((c) => c.name);
       expect(commandNames).toContain(COMMANDS.WU_STATUS);
     }
+  });
+});
+
+describe('getNextSteps', () => {
+  it('wu:create returns next steps with WU ID', () => {
+    const def = getCommandDefinition(COMMANDS.WU_CREATE);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: {
+        id: 'WU-1234',
+        status: 'ready',
+        lane: 'Framework: Core',
+        title: 'Test',
+        yamlPath: '/repo/wu.yaml',
+        isConsistent: true,
+        inconsistencyReason: null,
+      },
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.includes('WU-1234'))).toBe(true);
+  });
+
+  it('wu:create returns fallback WU-XXX when no WU in context', () => {
+    const def = getCommandDefinition(COMMANDS.WU_CREATE);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.includes('WU-XXX'))).toBe(true);
+  });
+
+  it('wu:claim returns next steps with worktree path', () => {
+    const def = getCommandDefinition(COMMANDS.WU_CLAIM);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: {
+        id: 'WU-1234',
+        status: 'ready',
+        lane: 'Framework: Core',
+        title: 'Test',
+        yamlPath: '/repo/wu.yaml',
+        isConsistent: true,
+        inconsistencyReason: null,
+      },
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.includes('worktrees/'))).toBe(true);
+    expect(nextSteps?.some((s) => s.includes('wu-1234'))).toBe(true);
+  });
+
+  it('wu:done returns success message', () => {
+    const def = getCommandDefinition(COMMANDS.WU_DONE);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.toLowerCase().includes('completed'))).toBe(true);
+  });
+
+  it('wu:block returns guidance about lane availability', () => {
+    const def = getCommandDefinition(COMMANDS.WU_BLOCK);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.toLowerCase().includes('blocked'))).toBe(true);
+  });
+
+  it('wu:unblock returns guidance with WU ID', () => {
+    const def = getCommandDefinition(COMMANDS.WU_UNBLOCK);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: {
+        id: 'WU-5555',
+        status: 'blocked',
+        lane: 'Test',
+        title: 'Test',
+        yamlPath: '/repo/wu.yaml',
+        isConsistent: true,
+        inconsistencyReason: null,
+      },
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.includes('WU-5555'))).toBe(true);
+  });
+
+  it('wu:recover returns guidance', () => {
+    const def = getCommandDefinition(COMMANDS.WU_RECOVER);
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const nextSteps = def?.getNextSteps?.(context);
+    expect(nextSteps).toBeDefined();
+    expect(nextSteps?.some((s) => s.toLowerCase().includes('recovery'))).toBe(true);
+  });
+});
+
+describe('predicate getFixMessage', () => {
+  it('worktree-clean predicate provides fix message', () => {
+    const def = getCommandDefinition(COMMANDS.WU_DONE);
+    const cleanPredicate = def?.predicates?.find((p) => p.id === 'worktree-clean');
+    expect(cleanPredicate).toBeDefined();
+    expect(cleanPredicate?.getFixMessage).toBeDefined();
+
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.WORKTREE,
+        cwd: '/repo/worktrees/test-wu-123',
+        gitRoot: '/repo/worktrees/test-wu-123',
+        mainCheckout: '/repo',
+        worktreeName: 'test-wu-123',
+        worktreeWuId: 'WU-123',
+      },
+      git: {
+        branch: 'lane/test/wu-123',
+        isDetached: false,
+        isDirty: true,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: ['file.ts'],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const fixMessage = cleanPredicate?.getFixMessage?.(context);
+    expect(fixMessage).toBeDefined();
+    expect(fixMessage?.toLowerCase()).toContain('commit');
+  });
+
+  it('worktree-clean predicate provides fallback message without worktree name', () => {
+    const def = getCommandDefinition(COMMANDS.WU_DONE);
+    const cleanPredicate = def?.predicates?.find((p) => p.id === 'worktree-clean');
+
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: true,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: ['file.ts'],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const fixMessage = cleanPredicate?.getFixMessage?.(context);
+    expect(fixMessage).toBeDefined();
+    expect(fixMessage).toContain('worktree');
+  });
+
+  it('has-commits predicate provides fix message', () => {
+    const def = getCommandDefinition(COMMANDS.WU_DONE);
+    const commitsPredicate = def?.predicates?.find((p) => p.id === 'has-commits');
+    expect(commitsPredicate).toBeDefined();
+    expect(commitsPredicate?.getFixMessage).toBeDefined();
+
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: null,
+      session: { isActive: false, sessionId: null },
+    };
+
+    const fixMessage = commitsPredicate?.getFixMessage?.(context);
+    expect(fixMessage).toBeDefined();
+    expect(fixMessage?.toLowerCase()).toContain('commit');
+  });
+
+  it('state-consistent predicate provides fix message', () => {
+    const def = getCommandDefinition(COMMANDS.WU_DONE);
+    const consistentPredicate = def?.predicates?.find((p) => p.id === 'state-consistent');
+    expect(consistentPredicate).toBeDefined();
+    expect(consistentPredicate?.getFixMessage).toBeDefined();
+
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: {
+        id: 'WU-123',
+        status: 'in_progress',
+        lane: 'Test',
+        title: 'Test',
+        yamlPath: '/repo/wu.yaml',
+        isConsistent: false,
+        inconsistencyReason: 'YAML says ready but state store says in_progress',
+      },
+      session: { isActive: false, sessionId: null },
+    };
+
+    const fixMessage = consistentPredicate?.getFixMessage?.(context);
+    expect(fixMessage).toBeDefined();
+    expect(fixMessage).toContain('YAML');
+  });
+
+  it('state-consistent predicate returns default message when no inconsistency reason', () => {
+    const def = getCommandDefinition(COMMANDS.WU_DONE);
+    const consistentPredicate = def?.predicates?.find((p) => p.id === 'state-consistent');
+
+    const context: WuContext = {
+      location: {
+        type: LOCATION_TYPES.MAIN,
+        cwd: '/repo',
+        gitRoot: '/repo',
+        mainCheckout: '/repo',
+        worktreeName: null,
+        worktreeWuId: null,
+      },
+      git: {
+        branch: 'main',
+        isDetached: false,
+        isDirty: false,
+        hasStaged: false,
+        ahead: 0,
+        behind: 0,
+        tracking: null,
+        modifiedFiles: [],
+        hasError: false,
+        errorMessage: null,
+      },
+      wu: {
+        id: 'WU-123',
+        status: 'in_progress',
+        lane: 'Test',
+        title: 'Test',
+        yamlPath: '/repo/wu.yaml',
+        isConsistent: false,
+        inconsistencyReason: null,
+      },
+      session: { isActive: false, sessionId: null },
+    };
+
+    const fixMessage = consistentPredicate?.getFixMessage?.(context);
+    expect(fixMessage).toBeDefined();
+    expect(fixMessage?.toLowerCase()).toContain('inconsistent');
   });
 });
