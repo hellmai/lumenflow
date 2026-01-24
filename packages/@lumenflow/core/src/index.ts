@@ -156,6 +156,7 @@ export * from './color-support.js';
 // WU-1090: Context-aware state machine for WU lifecycle commands
 export * from './context/index.js';
 export * from './validation/index.js';
+export * from './recovery/index.js';
 
 // WU-1090: Context validation constants
 export { CONTEXT_VALIDATION } from './wu-constants.js';
