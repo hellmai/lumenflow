@@ -75,15 +75,41 @@ Use "Parent: Sublane" format (e.g., `Framework: CLI`). See `.lumenflow.config.ya
 
 ## Commands Reference
 
-| Command               | Description                         |
-| --------------------- | ----------------------------------- |
-| `pnpm setup`          | Install deps and build CLI          |
-| `pnpm wu:create`      | Create new WU spec                  |
-| `pnpm wu:claim`       | Claim WU and create worktree        |
-| `pnpm wu:done`        | Complete WU (merge, stamp, cleanup) |
-| `pnpm gates`          | Run quality gates                   |
-| `pnpm mem:init`       | Initialize memory layer             |
-| `pnpm mem:checkpoint` | Save memory checkpoint              |
+| Command               | Description                                 |
+| --------------------- | ------------------------------------------- |
+| `pnpm setup`          | Install deps and build CLI                  |
+| `pnpm wu:create`      | Create new WU spec                          |
+| `pnpm wu:claim`       | Claim WU and create worktree                |
+| `pnpm wu:done`        | Complete WU (merge, stamp, cleanup)         |
+| `pnpm wu:status`      | Show WU status, location, valid commands    |
+| `pnpm wu:recover`     | Analyze and fix WU state inconsistencies    |
+| `pnpm gates`          | Run quality gates                           |
+| `pnpm mem:init`       | Initialize memory layer                     |
+| `pnpm mem:checkpoint` | Save memory checkpoint                      |
+
+### Context-Aware Validation (WU-1090)
+
+Commands now include context-aware validation that checks:
+- **Location**: Detects main checkout vs worktree
+- **WU Status**: Validates required status for each command
+- **Git State**: Checks for dirty files, commits ahead/behind
+
+When validation fails, commands provide copy-paste fix commands:
+
+```bash
+# Example: Running wu:done from worktree shows fix command
+ERROR: WRONG_LOCATION - wu:done must be run from main checkout
+FIX: cd /home/user/repo && pnpm wu:done --id WU-1090
+```
+
+Configure validation in `.lumenflow.config.yaml`:
+
+```yaml
+experimental:
+  context_validation: true     # Enable validation (default: true)
+  validation_mode: 'warn'      # 'off' | 'warn' | 'error'
+  show_next_steps: true        # Show guidance after success
+```
 
 ---
 
