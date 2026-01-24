@@ -164,9 +164,9 @@ Configure validation behavior in `.lumenflow.config.yaml`:
 
 ```yaml
 experimental:
-  context_validation: true     # Enable/disable validation
-  validation_mode: 'warn'      # 'off' | 'warn' | 'error'
-  show_next_steps: true        # Show guidance after command success
+  context_validation: true # Enable/disable validation
+  validation_mode: 'warn' # 'off' | 'warn' | 'error'
+  show_next_steps: true # Show guidance after command success
 ```
 
 ### Recovery Commands

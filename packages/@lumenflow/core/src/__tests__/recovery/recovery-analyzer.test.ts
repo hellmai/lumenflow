@@ -106,9 +106,7 @@ describe('analyzeRecovery', () => {
 
       // Assert
       expect(result.hasIssues).toBe(true);
-      const partialClaimIssue = result.issues.find(
-        (i) => i.code === RECOVERY_ISSUES.PARTIAL_CLAIM,
-      );
+      const partialClaimIssue = result.issues.find((i) => i.code === RECOVERY_ISSUES.PARTIAL_CLAIM);
       expect(partialClaimIssue).toBeDefined();
     });
 
@@ -153,9 +151,7 @@ describe('analyzeRecovery', () => {
       const result = await analyzeRecovery(context);
 
       // Assert
-      const resumeAction = result.actions.find(
-        (a) => a.type === RECOVERY_ACTIONS.RESUME,
-      );
+      const resumeAction = result.actions.find((a) => a.type === RECOVERY_ACTIONS.RESUME);
       expect(resumeAction).toBeDefined();
       expect(resumeAction?.description.toLowerCase()).toContain('reconcile');
     });
@@ -204,9 +200,7 @@ describe('analyzeRecovery', () => {
 
       // Assert
       expect(result.hasIssues).toBe(true);
-      const orphanClaimIssue = result.issues.find(
-        (i) => i.code === RECOVERY_ISSUES.ORPHAN_CLAIM,
-      );
+      const orphanClaimIssue = result.issues.find((i) => i.code === RECOVERY_ISSUES.ORPHAN_CLAIM);
       expect(orphanClaimIssue).toBeDefined();
     });
 
@@ -251,9 +245,7 @@ describe('analyzeRecovery', () => {
       const result = await analyzeRecovery(context);
 
       // Assert
-      const resetAction = result.actions.find(
-        (a) => a.type === RECOVERY_ACTIONS.RESET,
-      );
+      const resetAction = result.actions.find((a) => a.type === RECOVERY_ACTIONS.RESET);
       expect(resetAction).toBeDefined();
     });
   });
@@ -301,9 +293,7 @@ describe('analyzeRecovery', () => {
 
       // Assert
       expect(result.hasIssues).toBe(true);
-      const leftoverIssue = result.issues.find(
-        (i) => i.code === RECOVERY_ISSUES.LEFTOVER_WORKTREE,
-      );
+      const leftoverIssue = result.issues.find((i) => i.code === RECOVERY_ISSUES.LEFTOVER_WORKTREE);
       expect(leftoverIssue).toBeDefined();
     });
 
@@ -348,9 +338,7 @@ describe('analyzeRecovery', () => {
       const result = await analyzeRecovery(context);
 
       // Assert
-      const cleanupAction = result.actions.find(
-        (a) => a.type === RECOVERY_ACTIONS.CLEANUP,
-      );
+      const cleanupAction = result.actions.find((a) => a.type === RECOVERY_ACTIONS.CLEANUP);
       expect(cleanupAction).toBeDefined();
     });
   });

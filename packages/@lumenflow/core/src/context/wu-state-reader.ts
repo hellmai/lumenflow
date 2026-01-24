@@ -59,10 +59,7 @@ function getWuYamlPath(wuId: string, repoRoot: string): string {
  * @param repoRoot - Repository root path
  * @returns WuStateResult or null if WU not found
  */
-export async function readWuState(
-  wuId: string,
-  repoRoot: string,
-): Promise<WuStateResult | null> {
+export async function readWuState(wuId: string, repoRoot: string): Promise<WuStateResult | null> {
   const normalizedId = normalizeWuId(wuId);
   const yamlPath = getWuYamlPath(normalizedId, repoRoot);
 

@@ -93,9 +93,7 @@ describe('validateCommand', () => {
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
 
-      const locationError = result.errors.find(
-        (e) => e.code === ERROR_CODES.WRONG_LOCATION,
-      );
+      const locationError = result.errors.find((e) => e.code === ERROR_CODES.WRONG_LOCATION);
       expect(locationError).toBeDefined();
       // Should provide copy-paste fix command with actual path
       expect(locationError?.fixCommand).toContain('cd /repo');
@@ -130,9 +128,7 @@ describe('validateCommand', () => {
       const result = validateCommand(COMMANDS.WU_CREATE, context);
 
       expect(result.valid).toBe(false);
-      const locationError = result.errors.find(
-        (e) => e.code === ERROR_CODES.WRONG_LOCATION,
-      );
+      const locationError = result.errors.find((e) => e.code === ERROR_CODES.WRONG_LOCATION);
       expect(locationError?.fixCommand).toContain('cd /home/user/project');
     });
   });
@@ -214,9 +210,7 @@ describe('validateCommand', () => {
       const result = validateCommand(COMMANDS.WU_CLAIM, context);
 
       expect(result.valid).toBe(false);
-      const statusError = result.errors.find(
-        (e) => e.code === ERROR_CODES.WRONG_WU_STATUS,
-      );
+      const statusError = result.errors.find((e) => e.code === ERROR_CODES.WRONG_WU_STATUS);
       expect(statusError).toBeDefined();
       expect(statusError?.message).toContain('ready');
       expect(statusError?.message).toContain('in_progress');
@@ -251,9 +245,7 @@ describe('validateCommand', () => {
       const result = validateCommand(COMMANDS.WU_CLAIM, context);
 
       expect(result.valid).toBe(false);
-      const notFoundError = result.errors.find(
-        (e) => e.code === ERROR_CODES.WU_NOT_FOUND,
-      );
+      const notFoundError = result.errors.find((e) => e.code === ERROR_CODES.WU_NOT_FOUND);
       expect(notFoundError).toBeDefined();
     });
   });
@@ -298,9 +290,7 @@ describe('validateCommand', () => {
       // Should still be valid (warnings don't block)
       // Note: Other predicates may cause errors, so check warnings exist
       expect(result.warnings.length).toBeGreaterThan(0);
-      const hasCommitsWarning = result.warnings.find(
-        (w) => w.id === 'has-commits',
-      );
+      const hasCommitsWarning = result.warnings.find((w) => w.id === 'has-commits');
       expect(hasCommitsWarning).toBeDefined();
     });
 
@@ -341,9 +331,7 @@ describe('validateCommand', () => {
       const result = validateCommand(COMMANDS.WU_DONE, context);
 
       expect(result.valid).toBe(false);
-      const dirtyError = result.errors.find(
-        (e) => e.message.includes('uncommitted'),
-      );
+      const dirtyError = result.errors.find((e) => e.message.includes('uncommitted'));
       expect(dirtyError).toBeDefined();
     });
   });
