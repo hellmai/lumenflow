@@ -14,3 +14,5 @@
 
 export * from './location-resolver.js';
 export * from './git-state-reader.js';
+export * from './wu-state-reader.js';
+export * from './context-computer.js';
