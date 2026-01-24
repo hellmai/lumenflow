@@ -355,6 +355,46 @@ export const AgentsConfigSchema = z.object({
 });
 
 /**
+ * Validation mode for context-aware commands
+ * WU-1090: Context-aware state machine for WU lifecycle commands
+ */
+export const ValidationModeSchema = z.enum(['off', 'warn', 'error']).default('warn');
+
+/**
+ * Experimental features configuration
+ * WU-1090: Feature flags for gradual rollout
+ */
+export const ExperimentalConfigSchema = z.object({
+  /**
+   * Enable context-aware validation for wu:* commands
+   * When enabled, commands will check location, WU status, and predicates
+   * @default true
+   */
+  context_validation: z.boolean().default(true),
+
+  /**
+   * Validation behavior mode
+   * - 'off': No validation (legacy behavior)
+   * - 'warn': Show warnings but proceed
+   * - 'error': Block on validation failures
+   * @default 'warn'
+   */
+  validation_mode: ValidationModeSchema,
+
+  /**
+   * Show next steps guidance after successful command completion
+   * @default true
+   */
+  show_next_steps: z.boolean().default(true),
+
+  /**
+   * Enable wu:recover command for state recovery
+   * @default true
+   */
+  recovery_command: z.boolean().default(true),
+});
+
+/**
  * Complete LumenFlow configuration schema
  */
 export const LumenFlowConfigSchema = z.object({
@@ -387,6 +427,9 @@ export const LumenFlowConfigSchema = z.object({
 
   /** Agents configuration */
   agents: AgentsConfigSchema.default(() => AgentsConfigSchema.parse({})),
+
+  /** Experimental features (WU-1090) */
+  experimental: ExperimentalConfigSchema.default(() => ExperimentalConfigSchema.parse({})),
 });
 
 /**
@@ -407,6 +450,8 @@ export type ClientBlock = z.infer<typeof ClientBlockSchema>;
 export type ClientSkills = z.infer<typeof ClientSkillsSchema>;
 export type ClientConfig = z.infer<typeof ClientConfigSchema>;
 export type AgentsConfig = z.infer<typeof AgentsConfigSchema>;
+export type ExperimentalConfig = z.infer<typeof ExperimentalConfigSchema>;
+export type ValidationMode = z.infer<typeof ValidationModeSchema>;
 export type LumenFlowConfig = z.infer<typeof LumenFlowConfigSchema>;
 
 /**
