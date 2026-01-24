@@ -2,7 +2,7 @@ id: WU-1087
 title: 'CLI Best Practices Phase 2: Command Migrations, Docs Rebalance, npm Publish'
 lane: 'Framework: CLI'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-01-24
 code_paths:
@@ -27,7 +27,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Complete remaining work from WU-1085: migrate 12 commands to createWUParser, fix release-process.md, rebalance lumenflow.dev docs to showcase CLI properly, add agent-friendly help examples, publish npm package'
+description: 'Complete remaining work from WU-1085: migrate 12 commands to createWUParser, fix
+  release-process.md, rebalance lumenflow.dev docs to showcase CLI properly, add agent-friendly help
+  examples, publish npm package'
 acceptance:
   - gates.ts uses createWUParser with --help
   - release.ts uses createWUParser (keeping --release-version)
@@ -40,3 +42,11 @@ acceptance:
   - Update quickstart to remove Free/Pro tier framing
   - All --help output includes working examples
   - npm package published
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-1087
+claimed_at: 2026-01-24T16:31:35.688Z
+baseline_main_sha: 43f513fa778eb6793f3be5f904b30bbf44660d93
+session_id: ef187951-82b5-4e8c-95d1-307f5092ada7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-24T16:31:35.693Z
