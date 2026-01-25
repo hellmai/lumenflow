@@ -1,0 +1,52 @@
+id: WU-1096
+title: 'P3: Fix recovery commands and DETACHED location type in Core'
+lane: 'Framework: Core'
+type: bug
+status: done
+priority: P3
+created: 2026-01-25
+code_paths:
+  - packages/@lumenflow/core/src/recovery/recovery-analyzer.ts
+  - packages/@lumenflow/core/src/context/location-resolver.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/core/src/__tests__/recovery/recovery-analyzer.test.ts
+    - packages/@lumenflow/core/src/__tests__/context/location-resolver.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1096.done
+dependencies: []
+labels:
+  - cleanup
+  - wu-1090
+  - p3
+  - core
+risks: []
+notes: Shell escaping fix split to WU-1097 (CLI lane) for parallel execution
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Fix minor bugs discovered in WU-1090 code review: (1) Recovery analyzer suggests
+  non-existent wu:cleanup and wu:repair commands (2) DETACHED location type is defined but never
+  returned by location-resolver.ts. Shell escaping fix moved to WU-1097 (CLI lane).'
+acceptance:
+  - Recovery analyzer suggests wu:recover --action X instead of wu:cleanup/wu:repair
+  - DETACHED location type detected and returned when HEAD is detached
+  - Unit tests cover both fixes
+  - 'Documentation: Update LUMENFLOW.md recovery section if command suggestions change'
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-wu-1096
+claimed_at: 2026-01-25T12:41:17.273Z
+baseline_main_sha: 71f84fb1a1991ce16a8d8a83de918e690bba1daa
+session_id: 9a627aa4-a900-4d19-ab33-38cfe22a2d0d
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-25T12:41:17.276Z
+locked: true
+completed_at: 2026-01-25T12:47:23.018Z

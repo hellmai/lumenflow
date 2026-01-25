@@ -26,3 +26,17 @@
 {"type":"complete","wuId":"WU-1089","timestamp":"2026-01-24T17:45:43.502Z"}
 {"type":"claim","wuId":"WU-1090","lane":"Framework: Core","title":"Context-aware state machine for WU lifecycle commands","timestamp":"2026-01-24T19:26:37.900Z"}
 {"type":"complete","wuId":"WU-1090","timestamp":"2026-01-24T19:51:47.665Z"}
+{"type":"claim","wuId":"WU-1097","lane":"Framework: CLI","title":"P3: Fix shell escaping in wu-recover CLI","timestamp":"2026-01-25T11:19:33.621Z"}
+{"type":"claim","wuId":"WU-1091","lane":"Framework: Core","title":"P1: Fix ensureOnMain() blocking all web agent commands","timestamp":"2026-01-25T11:20:03.148Z"}
+{"type":"complete","wuId":"WU-1091","timestamp":"2026-01-25T11:26:37.636Z"}
+{"type":"complete","wuId":"WU-1097","timestamp":"2026-01-25T11:32:54.766Z"}
+{"type":"claim","wuId":"WU-1092","lane":"Framework: Core","title":"P2: Fix worktreeCleanPredicate checking wrong git state","timestamp":"2026-01-25T11:54:50.080Z"}
+{"type":"complete","wuId":"WU-1092","timestamp":"2026-01-25T12:01:47.293Z"}
+{"type":"claim","wuId":"WU-1093","lane":"Framework: Core","title":"INIT-002 Phase 1: Define ports and domain schemas for context/validation/recovery","timestamp":"2026-01-25T12:05:23.120Z"}
+{"type":"complete","wuId":"WU-1093","timestamp":"2026-01-25T12:24:15.500Z"}
+{"type":"claim","wuId":"WU-1094","lane":"Framework: Core","title":"INIT-002 Phase 2: Implement adapters and dependency injection","timestamp":"2026-01-25T12:28:35.731Z"}
+{"type":"complete","wuId":"WU-1094","timestamp":"2026-01-25T12:38:53.355Z"}
+{"type":"claim","wuId":"WU-1096","lane":"Framework: Core","title":"P3: Fix recovery commands and DETACHED location type in Core","timestamp":"2026-01-25T12:41:17.284Z"}
+{"type":"complete","wuId":"WU-1096","timestamp":"2026-01-25T12:47:23.033Z"}
+{"type":"claim","wuId":"WU-1095","lane":"Content: Documentation","title":"INIT-002 Phase 3: ADR for hex architecture + migration guide","timestamp":"2026-01-25T12:41:57.005Z"}
+{"type":"complete","wuId":"WU-1095","timestamp":"2026-01-25T12:48:59.123Z"}

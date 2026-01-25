@@ -169,3 +169,94 @@ export type {
   PredicateSeverity,
   ValidationMode,
 } from './wu-constants.js';
+
+// WU-1093: Port interfaces for context-aware validation (external injection points)
+export type { ILocationResolver, IGitStateReader, IWuStateReader } from './ports/context.ports.js';
+export type { ICommandRegistry } from './ports/validation.ports.js';
+export type { IRecoveryAnalyzer } from './ports/recovery.ports.js';
+
+// WU-1093: Domain schemas for context-aware validation (Zod schemas)
+// Note: Types like LocationContext, GitState are already exported from context/index.js
+// so we only export the Zod schemas, not the inferred types.
+export {
+  // Context schemas
+  LOCATION_TYPE_VALUES,
+  LocationTypeSchema,
+  LocationContextSchema,
+  GitStateSchema,
+  WuStateResultSchema,
+  SessionStateSchema,
+  WuContextSchema,
+} from './domain/context.schemas.js';
+
+export {
+  // Validation schemas
+  VALIDATION_ERROR_CODE_VALUES,
+  ValidationErrorCodeSchema,
+  PREDICATE_SEVERITY_VALUES,
+  PredicateSeveritySchema,
+  ValidationErrorSchema,
+  ValidationWarningSchema,
+  ValidationResultSchema,
+  CommandPredicateConfigSchema,
+  CommandDefinitionConfigSchema,
+  type CommandPredicateConfig,
+  type CommandDefinitionConfig,
+} from './domain/validation.schemas.js';
+
+export {
+  // Recovery schemas
+  RECOVERY_ISSUE_CODE_VALUES,
+  RecoveryIssueCodeSchema,
+  RECOVERY_ACTION_TYPE_VALUES,
+  RecoveryActionTypeSchema,
+  RecoveryIssueSchema,
+  RecoveryActionSchema,
+  RecoveryAnalysisSchema,
+} from './domain/recovery.schemas.js';
+
+// WU-1094: Adapters - Concrete implementations of port interfaces
+export {
+  // Context adapters
+  SimpleGitLocationAdapter,
+  SimpleGitStateAdapter,
+  FileSystemWuStateAdapter,
+  // Validation adapters
+  CommandRegistryAdapter,
+  // Recovery adapters
+  RecoveryAnalyzerAdapter,
+} from './adapters/index.js';
+
+// WU-1094: Use Cases - Application layer business logic
+export {
+  // Context use cases
+  ComputeContextUseCase,
+  type ComputeContextOptions,
+  // Validation use cases
+  ValidateCommandUseCase,
+  // Recovery use cases
+  AnalyzeRecoveryUseCase,
+} from './usecases/index.js';
+
+// WU-1094: Dependency Injection - Factory functions for wiring
+export {
+  // Adapter factory functions
+  createContextAdapters,
+  createValidationAdapters,
+  createRecoveryAdapters,
+  // Use case factory functions
+  createComputeContextUseCase,
+  createValidateCommandUseCase,
+  createAnalyzeRecoveryUseCase,
+  // Backwards compatible convenience functions
+  computeWuContext,
+  validateCommand,
+  analyzeRecoveryIssues,
+  // Types
+  type ContextAdapters,
+  type ValidationAdapters,
+  type RecoveryAdapters,
+  type CreateComputeContextOptions,
+  type CreateValidateCommandOptions,
+  type CreateAnalyzeRecoveryOptions,
+} from './context-di.js';

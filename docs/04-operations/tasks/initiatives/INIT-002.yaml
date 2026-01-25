@@ -1,39 +1,42 @@
 id: INIT-002
-slug: hex-architecture-refactor
-title: Hexagonal Architecture Refactor for @lumenflow/core
+slug: hex-architecture-core
+title: Hexagonal Architecture for @lumenflow/core Public API
 description: >-
-  Refactor @lumenflow/core to follow the hexagonal architecture mandated in
-  lumenflow-complete.md (§2.2, §4). Currently only ~4% of the codebase follows
-  hex patterns. This initiative will establish proper ports, application layer
-  (use cases), and infrastructure adapters to make LumenFlow a sellable,
-  well-architected product.
+  Refactor WU-1090 modules (context, validation, recovery) to hexagonal
+  architecture pattern. Required for public npm package: external users
+  need injectable interfaces and swappable implementations. Currently only
+  ~4% of @lumenflow/core uses hex (orchestration layer); this initiative
+  extends it to the context-aware validation system.
 status: open
-priority: P1
+priority: P2
 owner: tom@hellm.ai
-created: '2026-01-25'
+created: 2026-01-25
+target_date: 2026-02-15
 phases:
   - id: 1
-    title: Foundation - Domain Ports
+    title: Ports & Domain Layer
     status: pending
+    description: Define port interfaces and Zod schemas for context/validation/recovery
   - id: 2
-    title: Application Layer - Use Cases
+    title: Adapters & DI
     status: pending
+    description: Implement adapters and dependency injection with factory functions
   - id: 3
-    title: Infrastructure - Adapters
+    title: Documentation & ADR
     status: pending
-  - id: 4
-    title: Migration - Update Consumers
-    status: pending
-  - id: 5
-    title: Cleanup - Remove Legacy Code
-    status: pending
+    description: Create ADR documenting hex as target architecture plus migration guide
 success_metrics:
-  - All @lumenflow/core modules follow hexagonal architecture
-  - Zero direct infrastructure dependencies in application layer
-  - 100% of existing tests passing after refactor
-  - Architecture documentation updated in lumenflow-complete.md
+  - All context/validation/recovery exports have port interfaces
+  - External users can inject custom implementations
+  - Zod schemas as single source of truth for domain types
+  - ADR documents hex as target architecture
+  - Zero breaking changes to existing public API
 labels:
   - architecture
-  - refactor
-  - core
-wus: []
+  - public-api
+  - hex
+wus:
+  - WU-1093
+  - WU-1094
+  - WU-1095
+related_plan: lumenflow://plans/drifting-swimming-orbit.md
