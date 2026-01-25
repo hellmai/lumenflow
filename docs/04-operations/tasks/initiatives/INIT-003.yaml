@@ -35,6 +35,7 @@ success_metrics:
   - Hex architecture compliance
   - pnpm docs:generate runs without drift
 labels: []
+related_plan: lumenflow://plans/unified-rolling-music.md
 wus:
   - WU-1100
   - WU-1101
