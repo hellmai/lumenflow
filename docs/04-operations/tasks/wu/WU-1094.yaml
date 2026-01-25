@@ -2,7 +2,7 @@ id: WU-1094
 title: 'INIT-002 Phase 2: Implement adapters and dependency injection'
 lane: 'Framework: Core'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-25
 code_paths:
@@ -51,3 +51,11 @@ acceptance:
   - 'Documentation: Update Astral Starlight docs with DI and adapter examples'
   - 'Documentation: Update @lumenflow/core README with usecase examples'
   - 'Documentation: Update CHANGELOG.md for npm release notes'
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-wu-1094
+claimed_at: 2026-01-25T12:28:35.709Z
+baseline_main_sha: 21c891e9ab9ca3b35166d97005f4061c2681ffca
+session_id: 2d594681-c1bd-439e-be76-c49f710688a5
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-25T12:28:35.714Z
