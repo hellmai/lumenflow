@@ -2,7 +2,7 @@ id: WU-1110
 title: 'INIT-003 Phase 5a: Migrate metrics commands'
 lane: 'Framework: Metrics'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-01-25
 code_paths:
@@ -45,3 +45,5 @@ acceptance:
   - All metrics/application modules migrated
   - Existing tests ported to Vitest
   - '>80% coverage'
+locked: true
+completed_at: 2026-01-25T23:36:37.464Z
