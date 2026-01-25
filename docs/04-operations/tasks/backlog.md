@@ -24,7 +24,7 @@ sections:
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-1094 — INIT-002 Phase 2: Implement adapters and dependency injection](wu/WU-1094.yaml) — Framework: Core
 
 ## ⛔ Blocked
 
