@@ -6,6 +6,7 @@
 export * from './mem-checkpoint-core.js';
 export * from './mem-cleanup-core.js';
 export * from './mem-create-core.js';
+export * from './mem-export-core.js';
 export * from './mem-id.js';
 export * from './mem-init-core.js';
 export * from './mem-ready-core.js';
