@@ -91,6 +91,7 @@ This means `wu:edit` on an `in_progress` WU automatically propagates to the work
 | `pnpm mem:init --wu WU-XXX`       | Initialize memory for WU   |
 | `pnpm mem:checkpoint --wu WU-XXX` | Save progress checkpoint   |
 | `pnpm mem:ready --wu WU-XXX`      | Check pending nodes        |
+| `pnpm mem:export --wu WU-XXX`     | Export memory as markdown  |
 | `pnpm mem:inbox --wu WU-XXX`      | Check coordination signals |
 
 ---
