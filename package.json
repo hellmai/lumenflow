@@ -43,6 +43,7 @@
     "mem:checkpoint": "node packages/@lumenflow/cli/dist/mem-checkpoint.js",
     "mem:start": "node packages/@lumenflow/cli/dist/mem-start.js",
     "mem:ready": "node packages/@lumenflow/cli/dist/mem-ready.js",
+    "mem:export": "node packages/@lumenflow/cli/dist/mem-export.js",
     "mem:signal": "node packages/@lumenflow/cli/dist/mem-signal.js",
     "mem:cleanup": "node packages/@lumenflow/cli/dist/mem-cleanup.js",
     "mem:create": "node packages/@lumenflow/cli/dist/mem-create.js",

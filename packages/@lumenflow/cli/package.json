@@ -57,6 +57,7 @@
     "mem-checkpoint": "./dist/mem-checkpoint.js",
     "mem-start": "./dist/mem-start.js",
     "mem-ready": "./dist/mem-ready.js",
+    "mem-export": "./dist/mem-export.js",
     "mem-signal": "./dist/mem-signal.js",
     "mem-cleanup": "./dist/mem-cleanup.js",
     "mem-create": "./dist/mem-create.js",
