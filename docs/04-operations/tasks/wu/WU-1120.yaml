@@ -1,15 +1,18 @@
 id: WU-1120
 title: 'Docs Audit: Advanced & Polish - skills tutorial + TypeDoc + cookbook'
 lane: 'Content: Documentation'
-type: documentation
+type: feature
 status: in_progress
 priority: P3
 created: 2026-01-26
 code_paths:
   - apps/docs/src/content/docs/guides/custom-skills.mdx
   - apps/docs/src/content/docs/guides/a-day-with-lumenflow.mdx
-  - apps/docs/src/content/docs/reference/changelog.mdx
   - apps/docs/src/content/docs/guides/cookbook.mdx
+  - apps/docs/src/content/docs/reference/api.mdx
+  - apps/docs/src/content/docs/reference/changelog.mdx
+  - apps/docs/src/content/docs/reference/compatibility.mdx
+  - apps/docs/astro.config.mjs
 tests:
   manual: []
   unit: []
