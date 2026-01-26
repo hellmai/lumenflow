@@ -2,7 +2,7 @@ id: WU-1107
 title: 'INIT-003 Phase 3c: Migrate state:bootstrap command'
 lane: 'Framework: Core'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-01-25
 code_paths:
@@ -43,3 +43,5 @@ acceptance:
   - state-bootstrap.ts exists in packages/@lumenflow/cli/src/
   - bin entry added to CLI package.json
   - Tests written with >80% coverage
+locked: true
+completed_at: 2026-01-26T00:13:45.721Z
