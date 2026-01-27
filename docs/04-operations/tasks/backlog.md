@@ -20,6 +20,8 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1145 — Bug: wu:done metadata update overwrites concurrent backlog changes](wu/WU-1145.yaml) — Framework: CLI
+- [WU-1144 — Bug: wu:edit --notes and --acceptance overwrite instead of append](wu/WU-1144.yaml) — Framework: CLI
 - [WU-1142 — Make wu:spawn prompts type-aware for testing requirements](wu/WU-1142.yaml) — Framework: CLI
 - [WU-1143 — Fix backlog-sync gate - WU files missing from backlog.md](wu/WU-1143.yaml) — Operations: Infrastructure
 
