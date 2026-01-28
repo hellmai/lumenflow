@@ -1,5 +1,5 @@
 /**
- * @file migration-deployer.mjs
+ * @file migration-deployer.ts
  * @description Migration deployment utilities for Supabase schema sync
  * WU-1983: Sync production schema and establish migration deployment workflow
  *
