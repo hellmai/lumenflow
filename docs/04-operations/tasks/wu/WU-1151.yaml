@@ -2,7 +2,7 @@ id: WU-1151
 title: Add consumer integration tests for npm package usage
 lane: 'Framework: Core'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-27
 code_paths:
@@ -28,8 +28,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Add integration tests that install @lumenflow packages from npm into a temp project and verify all tool paths resolve correctly. This catches hardcoded monorepo paths that break consumer repos.
+description: Add integration tests that install @lumenflow packages from npm into a temp project and
+  verify all tool paths resolve correctly. This catches hardcoded monorepo paths that break consumer
+  repos.
 acceptance:
   - Test installs @lumenflow/cli and @lumenflow/core from npm registry
   - Test runs validate-backlog-sync and verifies it executes
   - Test runs gates command and verifies paths resolve
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-wu-1151
+claimed_at: 2026-01-28T15:17:01.281Z
+baseline_main_sha: ba3641e3e152c3b0d9033a5b37aeaed23f530b19
+session_id: 4268efd0-942d-4225-a4f7-12978d880b95
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-28T15:17:01.284Z
