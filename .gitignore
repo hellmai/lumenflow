@@ -50,6 +50,8 @@ coverage/
 /.lumenflow/force-bypasses.log
 # LumenFlow locks anywhere (lane locking system)
 **/.lumenflow/locks/
+# Ignore all memory directories anywhere to prevent worktree dirt
+**/.lumenflow/memory/
 
 # Legacy ._legacy paths (deprecated, kept for transition)
 /._legacy/state/*.backup*
