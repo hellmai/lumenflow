@@ -24,63 +24,123 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ## Commands
 
-### Work Unit Commands
+### Work Unit Management
 
-| Command         | Description                                          |
-| --------------- | ---------------------------------------------------- |
-| `wu-claim`      | Claim a WU and create a worktree                     |
-| `wu-done`       | Complete a WU (runs gates, merges, creates stamp)    |
-| `wu-block`      | Mark a WU as blocked with reason                     |
-| `wu-unblock`    | Remove blocked status from a WU                      |
-| `wu-create`     | Create a new WU specification                        |
-| `wu-edit`       | Edit an existing WU specification                    |
-| `wu-spawn`      | Generate spawn prompt for delegating WU to sub-agent |
-| `wu-validate`   | Validate WU YAML against schema                      |
-| `wu-preflight`  | Pre-claim validation checks                          |
-| `wu-repair`     | Repair corrupted WU state                            |
-| `wu-prune`      | Clean up stale worktrees                             |
-| `wu-cleanup`    | Post-merge cleanup for a WU                          |
-| `wu-deps`       | Display WU dependency graph                          |
-| `wu-infer-lane` | Infer lane from WU content                           |
+| Command | Description |
+| ------- | ----------- |
+| `wu-block` | Block a work unit and move it from in-progress to blocked status |
+| `wu-claim` | Claim a work unit by creating a worktree/branch and updating status |
+| `wu-cleanup` | Clean up worktree and branch after PR merge (PR-based completion workflow) |
+| `wu-create` | Create a new Work Unit with micro-worktree isolation (race-safe) |
+| `wu-delete` | Safely delete WU YAML files with micro-worktree isolation |
+| `wu-deps` | Visualize WU dependency graph |
+| `wu-done` | Complete a WU (runs gates, merges, creates stamp) |
+| `wu-edit` | Edit WU spec files with micro-worktree isolation |
+| `wu-infer-lane` | Suggest sub-lane for a WU based on content |
+| `wu-preflight` | Fast validation of code paths and test paths before gates |
+| `wu-prune` | Maintain worktree hygiene (prune stale worktrees, detect orphans) |
+| `wu-recover` | Analyze and fix WU state inconsistencies |
+| `wu-release` | Release an orphaned WU from in_progress back to ready state |
+| `wu-repair` | Unified WU repair tool - detect and fix WU state issues |
+| `wu-spawn` | Generate Task tool invocation for sub-agent WU execution |
+| `wu-status` | Show WU status, location, and valid commands |
+| `wu-unblock` | Unblock a work unit and move it from blocked to in-progress status |
+| `wu-unlock-lane` | Safely unlock a lane lock with audit logging |
+| `wu-validate` | Validate WU YAML files against schema |
 
-### Memory Commands
+### Memory & Session
 
-| Command          | Description                              |
-| ---------------- | ---------------------------------------- |
-| `mem-init`       | Initialize memory directory structure    |
-| `mem-start`      | Start a new memory session               |
-| `mem-checkpoint` | Create a progress checkpoint             |
-| `mem-ready`      | Query pending nodes for a WU             |
-| `mem-signal`     | Send coordination signal to other agents |
-| `mem-inbox`      | Check incoming coordination signals      |
-| `mem-create`     | Create a memory node                     |
-| `mem-summarize`  | Roll up nodes for context compaction     |
-| `mem-triage`     | Triage discovered bugs                   |
-| `mem-cleanup`    | Clean up expired memory nodes            |
+| Command | Description |
+| ------- | ----------- |
+| `agent-issues-query` | Show summary of logged issues |
+| `agent-log-issue` | Log a workflow issue or incident |
+| `agent-session` | Start an agent session |
+| `agent-session-end` | End the current agent session |
+| `mem-checkpoint` | Create a checkpoint node for context snapshots |
+| `mem-cleanup` | Prune closed memory nodes based on lifecycle policy and TTL |
+| `mem-create` | Create a memory node with optional provenance tracking |
+| `mem-export` | Export memory nodes as markdown or JSON |
+| `mem-inbox` | Read coordination signals from other agents |
+| `mem-init` | Initialize memory layer in repository |
+| `mem-ready` | Query ready nodes for a WU (deterministic ordering) |
+| `mem-signal` | Send a coordination signal to other agents |
+| `mem-start` | Create a session node linked to a WU |
+| `mem-summarize` | Rollup older memory nodes into summary nodes for compaction |
+| `mem-triage` | Review discovery nodes and promote to WUs or archive |
+| `session-coordinator` | Manage agent sessions for WU work coordination |
 
-### Initiative Commands
+### Initiative Orchestration
 
-| Command             | Description                         |
-| ------------------- | ----------------------------------- |
-| `initiative-create` | Create a new initiative             |
-| `initiative-edit`   | Edit an existing initiative         |
-| `initiative-list`   | List all initiatives                |
-| `initiative-status` | Show initiative status and progress |
-| `initiative-add-wu` | Link a WU to an initiative          |
+| Command | Description |
+| ------- | ----------- |
+| `init-plan` | Link a plan file to an initiative |
+| `initiative-add-wu` | Link a WU to an initiative bidirectionally |
+| `initiative-bulk-assign-wus` | Bulk-assign orphaned WUs to initiatives based on lane rules |
+| `initiative-create` | Create a new Initiative with micro-worktree isolation |
+| `initiative-edit` | Edit Initiative YAML files with micro-worktree isolation |
+| `initiative-list` | List all initiatives with progress percentages |
+| `initiative-status` | Show detailed initiative view with phases and WUs |
+| `orchestrate-init-status` | Show initiative progress status |
+| `orchestrate-initiative` | Orchestrate initiative execution with parallel agent spawning |
+| `orchestrate-monitor` | Monitor spawned agent progress |
+| `rotate-progress` | Move completed WUs from status.md to Completed section |
+| `spawn-list` | Display spawn trees for WUs or initiatives |
 
-### Setup Commands
+### Metrics & Analytics
 
-| Command     | Description                                         |
-| ----------- | --------------------------------------------------- |
-| `init`      | Scaffold LumenFlow into a project                   |
-| `docs-sync` | Sync agent onboarding docs (for upgrading projects) |
+| Command | Description |
+| ------- | ----------- |
+| `flow-bottlenecks` | Analyze WU dependency graph for bottlenecks and critical paths |
+| `flow-report` | Generate DORA/SPACE flow report from telemetry and WU data |
+| `lumenflow-metrics` | LumenFlow metrics CLI (lanes, dora, flow) |
+| `metrics` | Alias for `lumenflow-metrics` |
+| `metrics-snapshot` | Capture DORA metrics, lane health, and flow state snapshot |
+| `trace-gen` | Generate traceability reports linking WUs to code changes |
 
-### Other Commands
+### Verification & Gates
 
-| Command      | Description                                        |
-| ------------ | -------------------------------------------------- |
-| `gates`      | Run quality gates (format, lint, typecheck, tests) |
-| `spawn-list` | List active spawned agents                         |
+| Command | Description |
+| ------- | ----------- |
+| `gates` | Run quality gates (format, lint, typecheck, tests) |
+| `guard-locked` | Check if a WU is locked (exits 1 if locked) |
+| `guard-main-branch` | Check if current branch is protected and block operations |
+| `guard-worktree-commit` | Check if a WU commit should be blocked from main checkout |
+| `lumenflow-gates` | Alias for `gates` |
+| `lumenflow-validate` | Validate WU YAML files for schema and quality |
+| `validate` | Alias for `lumenflow-validate` |
+| `validate-agent-skills` | Validate agent skill definitions |
+| `validate-agent-sync` | Validate agent configuration and sync state |
+| `validate-backlog-sync` | Validate that backlog.md is in sync with WU YAML files |
+| `validate-skills-spec` | Validate skill specification format |
+
+### System & Setup
+
+| Command | Description |
+| ------- | ----------- |
+| `backlog-prune` | Maintain backlog hygiene (archive old WUs) |
+| `deps-add` | Add dependencies with worktree discipline enforcement |
+| `deps-remove` | Remove dependencies with worktree discipline enforcement |
+| `lumenflow` | CLI entry point (scaffold/init) |
+| `lumenflow-docs-sync` | Sync agent onboarding docs to existing projects |
+| `lumenflow-init` | Initialize LumenFlow in a project |
+| `lumenflow-release` | Release @lumenflow/* packages to npm |
+| `lumenflow-sync-templates` | Sync internal docs to CLI templates |
+| `lumenflow-upgrade` | Upgrade all @lumenflow/* packages to a specified version |
+| `state-bootstrap` | One-time migration utility for state sourcing |
+| `sync-templates` | Alias for `lumenflow-sync-templates` |
+
+### File & Git Operations
+
+| Command       | Description                                                    |
+| ------------- | -------------------------------------------------------------- |
+| `file-delete` | Delete a file or directory with audit logging                  |
+| `file-edit`   | Edit file by replacing exact string matches with audit logging |
+| `file-read`   | Read file content with audit logging                           |
+| `file-write`  | Write content to a file with audit logging                     |
+| `git-branch`  | List, create, or delete branches                               |
+| `git-diff`    | Show changes between commits, commit and working tree          |
+| `git-log`     | Show commit logs                                               |
+| `git-status`  | Show the working tree status                                   |
 
 ## Usage
 
