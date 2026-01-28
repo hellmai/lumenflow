@@ -36,6 +36,10 @@
 // eslint-disable-next-line no-unused-vars -- Validates @lumenflow/core package link
 import { VERSION as LUMENFLOW_VERSION } from '@lumenflow/core';
 
+// WU-1153: wu:done guard for uncommitted code_paths is implemented in core package
+// The guard runs in executeWorktreeCompletion() before metadata transaction
+// See: packages/@lumenflow/core/src/wu-done-validation.ts
+
 import { execSync } from 'node:child_process';
 import prettyMs from 'pretty-ms';
 import { runGates } from './gates.js';
