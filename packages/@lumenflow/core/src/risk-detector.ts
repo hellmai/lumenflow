@@ -15,8 +15,8 @@
  * healthcare domain (PHI, RLS, auth). No standard library exists for this
  * domain-specific classification.
  *
- * @see {@link tools/gates.mjs} - Consumer of risk detection
- * @see {@link tools/lib/file-classifiers.mjs} - File classification utilities
+ * @see {@link packages/@lumenflow/cli/src/gates.ts} - Consumer of risk detection
+ * @see {@link packages/@lumenflow/cli/src/lib/file-classifiers.ts} - File classification utilities
  */
 
 import path from 'node:path';

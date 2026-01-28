@@ -2,7 +2,7 @@
  * Compliance Parser
  *
  * Parses markdown compliance documentation into structured data.
- * Used by compliance-snapshot.mjs tool to create snapshots.
+ * Used by compliance-snapshot.ts tool to create snapshots.
  *
  * @module tools/lib/compliance-parser
  */
