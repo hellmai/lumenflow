@@ -25,7 +25,6 @@ sections:
 - [WU-1161 — Document all CLI commands in README and verify completeness](wu/WU-1161.yaml) — Content: Documentation
 - [WU-1160 — Remove all stale .mjs references from TypeScript codebase](wu/WU-1160.yaml) — Framework: Core
 - [WU-1159 — Bug: templates/ not included in npm package - docs-sync broken](wu/WU-1159.yaml) — Framework: CLI
-- [WU-1158 — Bug: Validators use hardcoded paths instead of config](wu/WU-1158.yaml) — Framework: Core
 - [WU-1157 — Stabilize docs:generate formatting drift](wu/WU-1157.yaml) — Framework: CLI
 - [WU-1156 — Prevent agent memory logs from dirtying worktrees](wu/WU-1156.yaml) — Framework: Agent
 - [WU-1155 — Fix agent verification command references](wu/WU-1155.yaml) — Framework: CLI
