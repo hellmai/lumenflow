@@ -258,12 +258,44 @@ pnpm wu:claim --id WU-OS-001  # Works immediately
 
 #### 1.4 Add .gitignore Entries
 
+The following entries should be added to `.gitignore` to exclude LumenFlow runtime artifacts while preserving tracked state files.
+
+**Root-level entries** (for main checkout):
+
 ```gitignore
+# LumenFlow worktrees (isolated WU development)
 /worktrees/
+
+# LumenFlow runtime state (exclude transient files, keep tracked state)
 /.lumenflow/memory/
 /.lumenflow/locks/
 /.lumenflow/sessions/
+/.lumenflow/telemetry/
+/.lumenflow/checkpoints/
+/.lumenflow/artifacts/
+/.lumenflow/snapshots/
+/.lumenflow/incidents/
+/.lumenflow/feedback-drafts/
+/.lumenflow/agent-runs/
+/.lumenflow/flow.log
+/.lumenflow/skip-gates-audit.log
+/.lumenflow/force-bypasses.log
+/.lumenflow/state/*.backup*
 ```
+
+**Recursive patterns** (for nested packages and worktrees):
+
+```gitignore
+# Recursive patterns for monorepo/nested package support
+# These ensure runtime dirs are ignored in worktrees and nested packages
+**/.lumenflow/memory/
+**/.lumenflow/locks/
+**/.lumenflow/sessions/
+**/.lumenflow/telemetry/
+**/.lumenflow/checkpoints/
+```
+
+**Note:** The `.lumenflow/stamps/` directory is **tracked** (contains completion stamps). The `.lumenflow/state/wu-events.jsonl` is also tracked for WU completion tracking, but backup files (`*.backup*`) are excluded.
 
 #### 1.5 Initialize Memory Layer
 
