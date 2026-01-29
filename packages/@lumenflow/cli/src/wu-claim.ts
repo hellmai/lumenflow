@@ -17,8 +17,8 @@
  */
 
 // WU-2542: Import from @lumenflow/core to establish shim layer dependency
-// eslint-disable-next-line no-unused-vars -- Validates @lumenflow/core package link
-import { VERSION as LUMENFLOW_VERSION } from '@lumenflow/core';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/unused-import -- Validates @lumenflow/core package link
+import { VERSION as _LUMENFLOW_VERSION } from '@lumenflow/core';
 
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { access, readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -40,7 +40,9 @@ import {
   forceRemoveStaleLock,
 } from '@lumenflow/core/dist/lane-lock.js';
 // WU-1825: Import from unified code-path-validator (consolidates 3 validators)
+// WU-1213: Using deprecated sync API - async validate() requires larger refactor (separate WU)
 import {
+  // eslint-disable-next-line sonarjs/deprecation -- sync API required for current architecture
   validateLaneCodePaths,
   logLaneValidationWarnings,
 } from '@lumenflow/core/dist/code-path-validator.js';
@@ -65,6 +67,7 @@ import {
   EMOJI,
   FILE_SYSTEM,
   STRING_LITERALS,
+  LUMENFLOW_PATHS,
 } from '@lumenflow/core/dist/wu-constants.js';
 import { withMicroWorktree } from '@lumenflow/core/dist/micro-worktree.js';
 import { ensureOnMain, ensureMainUpToDate } from '@lumenflow/core/dist/wu-helpers.js';
@@ -519,7 +522,7 @@ async function appendClaimEventOnly(stateDir, id, title, lane) {
 export function getWorktreeCommitFiles(wuId) {
   return [
     `docs/04-operations/tasks/wu/${wuId}.yaml`,
-    '.lumenflow/state/wu-events.jsonl', // WU-1740: Event store is source of truth
+    LUMENFLOW_PATHS.WU_EVENTS, // WU-1740: Event store is source of truth
     // WU-1746: Explicitly NOT including:
     // - docs/04-operations/tasks/backlog.md
     // - docs/04-operations/tasks/status.md
@@ -589,12 +592,7 @@ async function applyCanonicalClaimUpdate(ctx, sessionId) {
   const filesToCommit =
     args.noAuto && stagedChanges.length > 0
       ? stagedChanges.map((change) => change.filePath).filter(Boolean)
-      : [
-          WU_PATHS.WU(id),
-          WU_PATHS.STATUS(),
-          WU_PATHS.BACKLOG(),
-          '.lumenflow/state/wu-events.jsonl',
-        ];
+      : [WU_PATHS.WU(id), WU_PATHS.STATUS(), WU_PATHS.BACKLOG(), LUMENFLOW_PATHS.WU_EVENTS];
 
   console.log(`${PREFIX} Updating canonical claim state (push-only)...`);
 
@@ -680,7 +678,11 @@ async function readWUTitle(id) {
   // Read file
   // eslint-disable-next-line security/detect-non-literal-fs-filename -- CLI tool validates WU files
   const text = await readFile(p, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
-  const m = text.match(/^title:\s*"?(.+?)"?$/m);
+  // Match title field - use RegExp.exec for sonarjs/prefer-regexp-exec compliance
+  // Regex is safe: runs on trusted WU YAML files with bounded input
+  // eslint-disable-next-line sonarjs/slow-regex -- Bounded input from WU YAML files
+  const titlePattern = /^title:\s*"?([^"\n]+)"?$/m;
+  const m = titlePattern.exec(text);
   return m ? m[1] : null;
 }
 
@@ -716,11 +718,12 @@ async function checkExistingBranchOnlyWU(statusPath, currentWU) {
   else endIdx = startIdx + 1 + endIdx;
 
   // Extract WU IDs from In Progress section
+  // Use RegExp.exec for sonarjs/prefer-regexp-exec compliance
   const wuPattern = /\[?(WU-\d+)/i;
   const inProgressWUs = lines
     .slice(startIdx + 1, endIdx)
     .map((line) => {
-      const match = line.match(wuPattern);
+      const match = wuPattern.exec(line);
       return match ? match[1].toUpperCase() : null;
     })
     .filter(Boolean)
@@ -799,7 +802,7 @@ async function handleOrphanCheck(lane, id) {
             WU_PATHS.BACKLOG(),
             WU_PATHS.STATUS(),
             `.lumenflow/stamps/${orphanId}.done`,
-            '.lumenflow/state/wu-events.jsonl',
+            LUMENFLOW_PATHS.WU_EVENTS,
           ],
         };
       },
@@ -906,10 +909,12 @@ function handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args) {
 
   if (overlapCheck.hasBlocker && !args.forceOverlap) {
     const conflictList = overlapCheck.conflicts
-      .map(
-        (c) =>
-          `  - ${c.wuid}: ${c.overlaps.slice(0, 3).join(', ')}${c.overlaps.length > 3 ? ` (+${c.overlaps.length - 3} more)` : ''}`,
-      )
+      .map((c) => {
+        const displayedOverlaps = c.overlaps.slice(0, 3).join(', ');
+        const remainingCount = c.overlaps.length - 3;
+        const suffix = remainingCount > 0 ? ` (+${remainingCount} more)` : '';
+        return `  - ${c.wuid}: ${displayedOverlaps}${suffix}`;
+      })
       .join(STRING_LITERALS.NEWLINE);
 
     die(
@@ -1037,10 +1042,12 @@ async function claimBranchOnlyMode(ctx) {
 
   // Summary
   console.log(`\n${PREFIX} Claim recorded in Branch-Only mode.`);
-  console.log(`- WU: ${id}${finalTitle ? ` — ${finalTitle}` : ''}`);
+  const wuDisplay = finalTitle ? `- WU: ${id} — ${finalTitle}` : `- WU: ${id}`;
+  console.log(wuDisplay);
   console.log(`- Lane: ${args.lane}`);
   console.log(`- Mode: Branch-Only (no worktree)`);
-  console.log(`${args.noPush ? `- Commit: ${msg}` : `- Branch: ${branch}`}`);
+  const refDisplay = args.noPush ? `- Commit: ${msg}` : `- Branch: ${branch}`;
+  console.log(refDisplay);
   console.log(
     '\n⚠️  LIMITATION: Branch-Only mode does not support parallel WUs (WIP=1 across ALL lanes)',
   );
@@ -1072,124 +1079,83 @@ async function claimBranchOnlyMode(ctx) {
 }
 
 /**
- * Execute worktree mode claim workflow
+ * WU-1213: Handle local-only claim metadata update (noPush mode).
+ * Extracted to reduce cognitive complexity of claimWorktreeMode.
  *
- * WU-1741: Removed micro-worktree pattern that committed to main during claim.
- * Branch existence (e.g. lane/operations/wu-1234) is the coordination lock.
- * Metadata updates happen IN the work worktree, NOT on main.
- *
- * New flow:
- * 1. Create work worktree+branch from main (branch = lock)
- * 2. Update metadata (WU YAML, status.md, backlog.md) IN worktree
- * 3. Commit metadata in worktree
- * 4. Main only changes via wu:done (single merge point)
- *
- * Benefits:
- * - Simpler mental model: main ONLY changes via wu:done
- * - Branch existence is natural coordination (git prevents duplicates)
- * - Less network traffic (no push during claim)
- * - Cleaner rollback: delete worktree+branch = claim undone
+ * @returns {Promise<{finalTitle: string, initPathToCommit: string | null}>}
  */
-async function claimWorktreeMode(ctx) {
+async function handleNoPushMetadataUpdate(ctx): Promise<{
+  finalTitle: string;
+  initPathToCommit: string | null;
+}> {
   const {
     args,
     id,
-    laneK,
-    title,
-    branch,
     worktree,
+    worktreePath,
     WU_PATH,
     BACKLOG_PATH,
     claimedMode,
-    fixableIssues, // Fixable issues from pre-flight validation
+    fixableIssues,
     sessionId,
+    title,
     updatedTitle,
     stagedChanges,
   } = ctx;
 
-  const originalCwd = process.cwd();
-  const worktreePath = path.resolve(worktree);
   let finalTitle = updatedTitle || title;
-  const commitMsg = COMMIT_FORMATS.CLAIM(id.toLowerCase(), laneK);
+  let initPathToCommit: string | null = null;
 
-  // WU-1741: Step 1 - Create work worktree+branch from main
-  // Branch creation IS the coordination lock (git prevents duplicate branch names)
-  console.log(`${PREFIX} Creating worktree (branch = coordination lock)...`);
-  const startPoint = args.noPush ? BRANCHES.MAIN : `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
-  await getGitForCwd().worktreeAdd(worktree, branch, startPoint);
-  console.log(`${PREFIX} ${EMOJI.SUCCESS} Worktree created at ${worktree}`);
+  if (args.noAuto) {
+    await applyStagedChangesToMicroWorktree(worktreePath, stagedChanges);
+  } else {
+    const wtWUPath = path.join(worktreePath, WU_PATH);
+    const wtBacklogPath = path.join(worktreePath, BACKLOG_PATH);
 
-  if (!args.noPush) {
-    const wtGit = createGitForPath(worktreePath);
-    await wtGit.push(REMOTES.ORIGIN, branch, { setUpstream: true });
-  }
-
-  if (args.noPush) {
-    // Local-only claim (air-gapped) - update metadata inside worktree branch
-    // WU-1211: Track initiative path at outer scope for commit (only set in !noAuto path)
-    let initPathToCommit: string | null = null;
-
-    if (args.noAuto) {
-      await applyStagedChangesToMicroWorktree(worktreePath, stagedChanges);
-    } else {
-      const wtWUPath = path.join(worktreePath, WU_PATH);
-      const wtBacklogPath = path.join(worktreePath, BACKLOG_PATH);
-
-      if (fixableIssues && fixableIssues.length > 0) {
-        console.log(`${PREFIX} Applying ${fixableIssues.length} YAML fix(es)...`);
-        autoFixWUYaml(wtWUPath);
-        console.log(`${PREFIX} YAML fixes applied successfully`);
-      }
-
-      // WU-1211: updateWUYaml now returns {title, initiative}
-      const updateResult = await updateWUYaml(
-        wtWUPath,
-        id,
-        args.lane,
-        claimedMode,
-        worktree,
-        sessionId,
-      );
-      finalTitle = updateResult.title || finalTitle;
-
-      // WU-1746: Only append claim event to state store - don't regenerate backlog.md/status.md
-      const wtStateDir = getStateStoreDirFromBacklog(wtBacklogPath);
-      await appendClaimEventOnly(wtStateDir, id, finalTitle, args.lane);
-
-      // WU-1211: Progress initiative status if needed
-      if (updateResult.initiative) {
-        const initProgress = await maybeProgressInitiativeStatus(
-          worktreePath,
-          updateResult.initiative,
-          id,
-        );
-        initPathToCommit = initProgress.initPath;
-      }
+    if (fixableIssues && fixableIssues.length > 0) {
+      console.log(`${PREFIX} Applying ${fixableIssues.length} YAML fix(es)...`);
+      autoFixWUYaml(wtWUPath);
+      console.log(`${PREFIX} YAML fixes applied successfully`);
     }
 
-    // Commit for BOTH noAuto and regular paths (outside if/else)
-    console.log(`${PREFIX} Committing claim metadata in worktree...`);
-    const wtGit = createGitForPath(worktreePath);
-    const filesToCommit = getWorktreeCommitFiles(id);
-    // WU-1211: Include initiative path in commit if it was updated
-    if (initPathToCommit) {
-      filesToCommit.push(initPathToCommit);
-    }
-    await wtGit.add(filesToCommit);
-    await wtGit.commit(commitMsg);
-
-    console.log(`${PREFIX} ${EMOJI.SUCCESS} Claim committed: ${commitMsg}`);
-    console.warn(
-      `${PREFIX} Warning: --no-push enabled. Claim is local-only and NOT visible to other agents.`,
+    const updateResult = await updateWUYaml(
+      wtWUPath,
+      id,
+      args.lane,
+      claimedMode,
+      worktree,
+      sessionId,
     );
+    finalTitle = updateResult.title || finalTitle;
+
+    const wtStateDir = getStateStoreDirFromBacklog(wtBacklogPath);
+    await appendClaimEventOnly(wtStateDir, id, finalTitle, args.lane);
+
+    if (updateResult.initiative) {
+      const initProgress = await maybeProgressInitiativeStatus(
+        worktreePath,
+        updateResult.initiative,
+        id,
+      );
+      initPathToCommit = initProgress.initPath;
+    }
   }
 
-  // WU-1023: Auto-setup worktree dependencies
-  // By default, run pnpm install to ensure all dependencies are built (including CLI dist)
-  // Use --skip-setup to use symlink-only approach for faster claims when deps are already built
-  if (args.skipSetup) {
+  return { finalTitle, initPathToCommit };
+}
+
+/**
+ * WU-1213: Setup worktree dependencies (symlink or full install).
+ * Extracted to reduce cognitive complexity of claimWorktreeMode.
+ */
+async function setupWorktreeDependencies(
+  worktreePath: string,
+  originalCwd: string,
+  skipSetup: boolean,
+): Promise<void> {
+  // eslint-disable-next-line sonarjs/no-selector-parameter -- skipSetup mirrors CLI flag semantics
+  if (skipSetup) {
     // WU-1443: Symlink-only mode for fast claims
-    // WU-2238: Pass mainRepoPath to detect broken worktree-path symlinks
     const symlinkResult = symlinkNodeModules(worktreePath, console, originalCwd);
     if (symlinkResult.created) {
       console.log(`${PREFIX} ${EMOJI.SUCCESS} node_modules symlinked (--skip-setup mode)`);
@@ -1209,29 +1175,89 @@ async function claimWorktreeMode(ctx) {
     }
   } else {
     // WU-1023: Full setup mode (default) - run pnpm install with progress indicator
-    // This ensures CLI dist is built and all dependencies are properly resolved
     console.log(`${PREFIX} Installing worktree dependencies (this may take a moment)...`);
     try {
       const { execSync } = await import('node:child_process');
       execSync('pnpm install --frozen-lockfile', {
         cwd: worktreePath,
-        stdio: 'inherit', // Shows progress output from pnpm
-        timeout: 300000, // 5 minute timeout for full install
+        stdio: 'inherit',
+        timeout: 300000, // 5 minute timeout
       });
       console.log(`${PREFIX} ${EMOJI.SUCCESS} Worktree dependencies installed`);
     } catch (installError) {
-      // Non-fatal: warn but don't block claim
       console.warn(`${PREFIX} Warning: pnpm install failed: ${installError.message}`);
       console.warn(`${PREFIX} You may need to run 'pnpm install' manually in the worktree`);
-
-      // Fall back to symlink approach so worktree is at least somewhat usable
       console.log(`${PREFIX} Falling back to symlink approach...`);
       applyFallbackSymlinks(worktreePath, originalCwd, console);
     }
   }
+}
+
+/**
+ * Execute worktree mode claim workflow
+ *
+ * WU-1741: Removed micro-worktree pattern that committed to main during claim.
+ * Branch existence (e.g. lane/operations/wu-1234) is the coordination lock.
+ * Metadata updates happen IN the work worktree, NOT on main.
+ *
+ * New flow:
+ * 1. Create work worktree+branch from main (branch = lock)
+ * 2. Update metadata (WU YAML, status.md, backlog.md) IN worktree
+ * 3. Commit metadata in worktree
+ * 4. Main only changes via wu:done (single merge point)
+ *
+ * Benefits:
+ * - Simpler mental model: main ONLY changes via wu:done
+ * - Branch existence is natural coordination (git prevents duplicates)
+ * - Less network traffic (no push during claim)
+ * - Cleaner rollback: delete worktree+branch = claim undone
+ */
+async function claimWorktreeMode(ctx) {
+  const { args, id, laneK, title, branch, worktree, WU_PATH, updatedTitle } = ctx;
+
+  const originalCwd = process.cwd();
+  const worktreePath = path.resolve(worktree);
+  let finalTitle = updatedTitle || title;
+  const commitMsg = COMMIT_FORMATS.CLAIM(id.toLowerCase(), laneK);
+
+  // WU-1741: Step 1 - Create work worktree+branch from main
+  console.log(`${PREFIX} Creating worktree (branch = coordination lock)...`);
+  const startPoint = args.noPush ? BRANCHES.MAIN : `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
+  await getGitForCwd().worktreeAdd(worktree, branch, startPoint);
+  console.log(`${PREFIX} ${EMOJI.SUCCESS} Worktree created at ${worktree}`);
+
+  if (!args.noPush) {
+    const wtGit = createGitForPath(worktreePath);
+    await wtGit.push(REMOTES.ORIGIN, branch, { setUpstream: true });
+  }
+
+  // Handle local-only claim metadata update (noPush mode)
+  if (args.noPush) {
+    const metadataResult = await handleNoPushMetadataUpdate({ ...ctx, worktreePath });
+    finalTitle = metadataResult.finalTitle;
+
+    // Commit metadata in worktree
+    console.log(`${PREFIX} Committing claim metadata in worktree...`);
+    const wtGit = createGitForPath(worktreePath);
+    const filesToCommit = getWorktreeCommitFiles(id);
+    if (metadataResult.initPathToCommit) {
+      filesToCommit.push(metadataResult.initPathToCommit);
+    }
+    await wtGit.add(filesToCommit);
+    await wtGit.commit(commitMsg);
+
+    console.log(`${PREFIX} ${EMOJI.SUCCESS} Claim committed: ${commitMsg}`);
+    console.warn(
+      `${PREFIX} Warning: --no-push enabled. Claim is local-only and NOT visible to other agents.`,
+    );
+  }
+
+  // WU-1023: Auto-setup worktree dependencies
+  await setupWorktreeDependencies(worktreePath, originalCwd, args.skipSetup);
 
   console.log(`${PREFIX} Claim recorded in worktree`);
-  console.log(`- WU: ${id}${finalTitle ? ` — ${finalTitle}` : ''}`);
+  const worktreeWuDisplay = finalTitle ? `- WU: ${id} — ${finalTitle}` : `- WU: ${id}`;
+  console.log(worktreeWuDisplay);
   console.log(`- Lane: ${args.lane}`);
   console.log(`- Worktree: ${worktreePath}`);
   console.log(`- Branch: ${branch}`);
@@ -1519,6 +1545,7 @@ async function main() {
   }
 
   // WU-1372: Lane-to-code_paths consistency check (advisory only, never blocks)
+  // eslint-disable-next-line sonarjs/deprecation -- sync API required for current architecture
   const laneValidation = validateLaneCodePaths(doc, args.lane);
   logLaneValidationWarnings(laneValidation, PREFIX);
 
@@ -1608,11 +1635,13 @@ async function main() {
     const title = (await readWUTitle(id)) || '';
     const branch = args.branch || `lane/${laneK}/${idK}`;
     const worktree = args.worktree || `worktrees/${laneK}-${idK}`;
-    const claimedMode = args.branchOnly
-      ? CLAIMED_MODES.BRANCH_ONLY
-      : args.prMode
-        ? CLAIMED_MODES.WORKTREE_PR
-        : CLAIMED_MODES.WORKTREE;
+    // Determine claimed mode based on flags (no nested ternaries for sonarjs compliance)
+    let claimedMode = CLAIMED_MODES.WORKTREE;
+    if (args.branchOnly) {
+      claimedMode = CLAIMED_MODES.BRANCH_ONLY;
+    } else if (args.prMode) {
+      claimedMode = CLAIMED_MODES.WORKTREE_PR;
+    }
 
     // Branch-Only mode validation
     if (args.branchOnly) {
@@ -1737,5 +1766,5 @@ async function main() {
 // path but import.meta.url resolves to the real path - they never match
 import { runCLI } from './cli-entry-point.js';
 if (import.meta.main) {
-  runCLI(main);
+  void runCLI(main);
 }
