@@ -122,6 +122,8 @@ agents:
 # WU-1203: Memory layer configuration
 # Controls memory persistence, checkpoints, and sub-agent coordination signals
 memory:
+  # Memory directory (default: 'memory-bank/')
+  directory: 'memory-bank/'
   # Progress signals for sub-agent coordination
   # When enabled, spawn prompts include mandatory signal directives
   # progress_signals:
