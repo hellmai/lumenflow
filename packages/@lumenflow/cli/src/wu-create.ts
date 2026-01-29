@@ -651,6 +651,7 @@ async function getDefaultAssignedTo() {
   }
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity -- main() orchestrates multi-step WU creation workflow
 async function main() {
   const args = createWUParser({
     name: 'wu-create',
@@ -882,5 +883,5 @@ async function main() {
 // path but import.meta.url resolves to the real path - they never match
 import { runCLI } from './cli-entry-point.js';
 if (import.meta.main) {
-  runCLI(main);
+  void runCLI(main);
 }
