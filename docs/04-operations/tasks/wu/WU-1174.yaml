@@ -1,0 +1,34 @@
+id: WU-1174
+title: Lock files pollute main checkout during wu:done
+lane: 'Framework: Core'
+type: bug
+status: ready
+priority: P2
+created: 2026-01-29
+code_paths:
+  - packages/@lumenflow/core/src/merge-lock.ts
+tests:
+  manual:
+    - Run wu:done and verify no lock files appear in main .lumenflow/
+  unit:
+    - packages/@lumenflow/core/src/__tests__/merge-lock.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1174.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: "Context: wu:done runs from main checkout and acquires cleanup/merge locks. Problem: Lock files (cleanup.lock, merge.lock) are created in main's .lumenflow/ directory because getLockPath() defaults to process.cwd(). This violates worktree discipline (main should be read-only) and can cause 'Working tree is not clean' errors if process crashes. Solution: Move lock files to a dedicated temp directory using existing LUMENFLOW_PATHS constants pattern."
+acceptance:
+  - Lock files created in temp directory, not main checkout
+  - Add LOCK_DIR constant to wu-constants.ts following existing pattern
+  - Update merge-lock.ts and cleanup-lock.ts to use LOCK_DIR
+  - Locks still work across processes (use os.tmpdir based path)
