@@ -2,7 +2,7 @@ id: WU-1204
 title: Add signal TTL cleanup to prevent unbounded growth
 lane: 'Framework: Memory'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-01-29
 code_paths:
@@ -44,3 +44,5 @@ session_id: 6a7bd798-f77a-4ae8-a906-08a0fe926ab3
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-01-29T20:21:12.238Z
+locked: true
+completed_at: 2026-01-29T20:42:54.611Z
