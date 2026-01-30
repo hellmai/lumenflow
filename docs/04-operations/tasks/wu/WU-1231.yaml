@@ -2,7 +2,7 @@ id: WU-1231
 title: Parallelize dependency validation in wu:spawn to reduce latency
 lane: 'Framework: Core'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-30
 code_paths:
@@ -25,8 +25,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:spawn takes 5+ minutes before generating prompt because validateSpawnDependencies() validates packages sequentially with await import(). Each import takes 1-2s, done one at a time. Should use Promise.all() for parallel validation.
+description: wu:spawn takes 5+ minutes before generating prompt because validateSpawnDependencies()
+  validates packages sequentially with await import(). Each import takes 1-2s, done one at a time.
+  Should use Promise.all() for parallel validation.
 acceptance:
   - dependency-validator.ts uses Promise.all() for parallel package validation
   - wu:spawn prompt generation completes in under 5 seconds
   - existing tests continue to pass
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-wu-1231
+claimed_at: 2026-01-30T10:25:40.148Z
+baseline_main_sha: 5f294ba4f11cc9fa5f7548a167faedfbeda1fe7d
+session_id: 1dc8d83b-c34b-4b6c-8915-553a7b96838a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-30T10:25:40.153Z
