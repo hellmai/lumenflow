@@ -14,6 +14,19 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { z } from 'zod';
+// WU-1262: Import resolvePolicy for methodology-driven coverage defaults
+// Note: resolvePolicy uses type-only import from lumenflow-config-schema, avoiding circular dependency
+import {
+  resolvePolicy,
+  getDefaultPolicy,
+  MethodologyConfigSchema,
+  type CoverageMode,
+} from './resolve-policy.js';
+
+/**
+ * Config file name constant to avoid duplicate string literals
+ */
+const CONFIG_FILE_NAME = '.lumenflow.config.yaml';
 
 /**
  * Default timeout for gate commands (2 minutes)
@@ -194,7 +207,7 @@ export function expandPreset(preset: string | undefined): Partial<GatesExecution
  * @returns Gates execution config, or null if not configured
  */
 export function loadGatesConfig(projectRoot: string): GatesExecutionConfig | null {
-  const configPath = path.join(projectRoot, '.lumenflow.config.yaml');
+  const configPath = path.join(projectRoot, CONFIG_FILE_NAME);
 
   if (!fs.existsSync(configPath)) {
     return null;
@@ -229,7 +242,7 @@ export function loadGatesConfig(projectRoot: string): GatesExecutionConfig | nul
   } catch (error) {
     // eslint-disable-next-line no-console -- Intentional warning for parse failure
     console.warn(
-      'Warning: Failed to parse .lumenflow.config.yaml:',
+      `Warning: Failed to parse ${CONFIG_FILE_NAME}:`,
       error instanceof Error ? error.message : String(error),
     );
     return null;
@@ -333,7 +346,7 @@ const DEFAULT_LANE_HEALTH_MODE: LaneHealthMode = 'warn';
  * @returns Lane health mode ('warn', 'error', or 'off'), defaults to 'warn'
  */
 export function loadLaneHealthConfig(projectRoot: string): LaneHealthMode {
-  const configPath = path.join(projectRoot, '.lumenflow.config.yaml');
+  const configPath = path.join(projectRoot, CONFIG_FILE_NAME);
 
   if (!fs.existsSync(configPath)) {
     return DEFAULT_LANE_HEALTH_MODE;
@@ -363,9 +376,106 @@ export function loadLaneHealthConfig(projectRoot: string): LaneHealthMode {
   } catch (error) {
     // eslint-disable-next-line no-console -- Intentional warning for parse failure
     console.warn(
-      'Warning: Failed to parse .lumenflow.config.yaml for lane_health config:',
+      `Warning: Failed to parse ${CONFIG_FILE_NAME} for lane_health config:`,
       error instanceof Error ? error.message : String(error),
     );
     return DEFAULT_LANE_HEALTH_MODE;
   }
+}
+
+/**
+ * WU-1262: Resolved coverage configuration
+ * Contains threshold and mode derived from methodology policy
+ */
+export interface CoverageConfig {
+  /** Coverage threshold (0-100) */
+  threshold: number;
+  /** Coverage mode (block, warn, or off) */
+  mode: CoverageMode;
+}
+
+/**
+ * WU-1262: Resolve coverage configuration from methodology policy
+ *
+ * Uses resolvePolicy() to determine coverage defaults based on methodology.testing:
+ * - tdd: 90% threshold, block mode
+ * - test-after: 70% threshold, warn mode
+ * - none: 0% threshold, off mode
+ *
+ * Precedence (highest to lowest):
+ * 1. Explicit gates.minCoverage / gates.enableCoverage
+ * 2. methodology.overrides.coverage_threshold / coverage_mode
+ * 3. methodology.testing template defaults
+ *
+ * @param projectRoot - Project root directory
+ * @returns Resolved coverage configuration
+ */
+export function resolveCoverageConfig(projectRoot: string): CoverageConfig {
+  const configPath = path.join(projectRoot, CONFIG_FILE_NAME);
+
+  // Load raw config to detect explicit vs default values
+  let rawConfig: Record<string, unknown> = {};
+
+  if (fs.existsSync(configPath)) {
+    try {
+      const content = fs.readFileSync(configPath, 'utf8');
+      rawConfig = yaml.parse(content) ?? {};
+    } catch {
+      // Fall through to use defaults
+      rawConfig = {};
+    }
+  }
+
+  // If no config file, use default policy
+  if (Object.keys(rawConfig).length === 0) {
+    const defaultPolicy = getDefaultPolicy();
+    return {
+      threshold: defaultPolicy.coverage_threshold,
+      mode: defaultPolicy.coverage_mode,
+    };
+  }
+
+  // Parse methodology config manually to avoid circular dependency with lumenflow-config-schema.ts
+  // (lumenflow-config-schema.ts imports GatesExecutionConfigSchema from this file)
+  const methodologyRaw = rawConfig.methodology as Record<string, unknown> | undefined;
+  const gatesRaw = rawConfig.gates as Record<string, unknown> | undefined;
+
+  // Build a minimal config object with only what resolvePolicy needs
+  // Parse methodology with Zod to get defaults
+  const methodology = MethodologyConfigSchema.parse(methodologyRaw ?? {});
+
+  // Build the config structure that resolvePolicy expects
+  const minimalConfig = {
+    methodology: methodologyRaw, // Pass raw methodology for explicit detection
+    gates: {
+      minCoverage: gatesRaw?.minCoverage as number | undefined,
+      enableCoverage: gatesRaw?.enableCoverage as boolean | undefined,
+    },
+  };
+
+  // Resolve policy using the methodology configuration
+  // Pass rawConfig to detect explicit gates.* settings vs Zod defaults
+  const policy = resolvePolicy(
+    {
+      methodology,
+      gates: {
+        // Default gates values from schema
+        maxEslintWarnings: 100,
+        enableCoverage:
+          gatesRaw?.enableCoverage !== undefined ? Boolean(gatesRaw.enableCoverage) : true,
+        minCoverage: typeof gatesRaw?.minCoverage === 'number' ? gatesRaw.minCoverage : 90,
+        enableSafetyCriticalTests: true,
+        enableInvariants: true,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Minimal type for config
+    } as any,
+    {
+      rawConfig: minimalConfig,
+    },
+  );
+
+  return {
+    threshold: policy.coverage_threshold,
+    mode: policy.coverage_mode,
+  };
 }
