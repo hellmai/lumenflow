@@ -6,11 +6,11 @@ status: in_progress
 priority: P2
 created: 2026-01-30
 code_paths:
-  - packages/@lumenflow/cli/src/orchestrate-initiative.ts
+  - packages/@lumenflow/initiatives/src/initiative-orchestrator.ts
 tests:
   manual: []
   unit:
-    - packages/@lumenflow/cli/__tests__/orchestrate-initiative.test.ts
+    - packages/@lumenflow/initiatives/__tests__/orchestrate-initiative-wu1251.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1251.done
