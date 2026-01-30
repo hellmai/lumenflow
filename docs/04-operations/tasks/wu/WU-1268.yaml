@@ -2,7 +2,7 @@ id: WU-1268
 title: CHANGELOG and release notes for methodology configurability
 lane: 'Content: Documentation'
 type: chore
-status: in_progress
+status: done
 priority: P2
 created: 2026-01-30
 code_paths:
@@ -47,3 +47,5 @@ session_id: ed1b6cc8-c42a-4b65-9857-84939f4f143d
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-01-30T23:35:21.484Z
+locked: true
+completed_at: 2026-01-30T23:41:13.853Z
