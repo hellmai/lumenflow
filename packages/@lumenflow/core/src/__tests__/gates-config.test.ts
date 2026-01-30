@@ -8,6 +8,7 @@
  * of relying on hardcoded language presets.
  */
 
+/* eslint-disable sonarjs/no-duplicate-string -- Test file uses repeated config file name for clarity */
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -558,6 +559,171 @@ gates:
       // Should fall back to default when invalid
       expect(config).toBe('warn');
       warnSpy.mockRestore();
+    });
+  });
+
+  /**
+   * WU-1262: Integration of resolvePolicy() with gates enforcement
+   * Tests for coverage threshold and mode defaults derived from methodology.testing
+   */
+  describe('coverage config from methodology policy (WU-1262)', () => {
+    const policyTestDir = path.join('/tmp', `test-lumenflow-policy-coverage-${Date.now()}`);
+    const policyConfigPath = path.join(policyTestDir, '.lumenflow.config.yaml');
+
+    beforeEach(() => {
+      fs.mkdirSync(policyTestDir, { recursive: true });
+    });
+
+    afterEach(() => {
+      try {
+        fs.rmSync(policyTestDir, { recursive: true, force: true });
+      } catch {
+        // Ignore cleanup errors
+      }
+    });
+
+    // Import the new function we need to create
+    let resolveCoverageConfig: typeof import('../gates-config.js').resolveCoverageConfig;
+    beforeEach(async () => {
+      const mod = await import('../gates-config.js');
+      resolveCoverageConfig = mod.resolveCoverageConfig;
+    });
+
+    it('should return TDD defaults (90%, block) when no config specified', () => {
+      // Empty config file - should get TDD defaults
+      const yamlContent = `
+version: "2.0"
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(90);
+      expect(result.mode).toBe('block');
+    });
+
+    it('should return TDD defaults (90%, block) for methodology.testing: tdd', () => {
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: tdd
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(90);
+      expect(result.mode).toBe('block');
+    });
+
+    it('should return test-after defaults (70%, warn) for methodology.testing: test-after', () => {
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: test-after
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(70);
+      expect(result.mode).toBe('warn');
+    });
+
+    it('should return none defaults (0%, off) for methodology.testing: none', () => {
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: none
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(0);
+      expect(result.mode).toBe('off');
+    });
+
+    it('should allow methodology.overrides.coverage_threshold to override template default', () => {
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: tdd
+  overrides:
+    coverage_threshold: 85
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(85);
+      expect(result.mode).toBe('block'); // Still TDD default mode
+    });
+
+    it('should allow methodology.overrides.coverage_mode to override template default', () => {
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: tdd
+  overrides:
+    coverage_mode: warn
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(90); // Still TDD default threshold
+      expect(result.mode).toBe('warn');
+    });
+
+    it('should prefer explicit gates.minCoverage over methodology defaults', () => {
+      // gates.minCoverage explicitly set should win over methodology
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: tdd
+gates:
+  minCoverage: 75
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(75); // Explicit gates override wins
+      expect(result.mode).toBe('block'); // Methodology mode still applies
+    });
+
+    it('should prefer explicit gates.enableCoverage: false over methodology defaults', () => {
+      // gates.enableCoverage: false should set mode to 'off'
+      const yamlContent = `
+version: "2.0"
+methodology:
+  testing: tdd
+gates:
+  enableCoverage: false
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      expect(result.threshold).toBe(90); // TDD threshold still applies
+      expect(result.mode).toBe('off'); // Explicit gates override wins
+    });
+
+    it('should maintain backwards compatibility - no methodology defaults to TDD', () => {
+      // Legacy configs without methodology should still work
+      const yamlContent = `
+version: "2.0"
+gates:
+  minCoverage: 80
+`;
+      fs.writeFileSync(policyConfigPath, yamlContent);
+
+      const result = resolveCoverageConfig(policyTestDir);
+
+      // Without methodology specified, gates.minCoverage wins
+      expect(result.threshold).toBe(80);
+      expect(result.mode).toBe('block'); // TDD default mode
     });
   });
 });
