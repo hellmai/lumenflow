@@ -149,6 +149,31 @@ import {
   buildDependencyGraphAsync,
   validateGraph,
 } from '@lumenflow/core/lib/dependency-graph.js';
+
+/**
+ * WU-1251: Helper to get all dependencies from a WU doc.
+ *
+ * Combines both `blocked_by` and `dependencies` arrays for dependency resolution.
+ * The WU YAML schema supports both:
+ * - `blocked_by`: Legacy/explicit blockers
+ * - `dependencies`: Semantic dependencies on other WUs
+ *
+ * Both arrays represent the same concept: WUs that must complete before this WU can start.
+ *
+ * @param {object} doc - WU document
+ * @returns {string[]} Combined list of all dependency WU IDs (deduplicated)
+ */
+function getAllDependencies(doc: {
+  blocked_by?: string[];
+  dependencies?: string[];
+}): string[] {
+  const blockedBy = doc.blocked_by ?? [];
+  const dependencies = doc.dependencies ?? [];
+
+  // Combine and deduplicate
+  const allDeps = new Set([...blockedBy, ...dependencies]);
+  return Array.from(allDeps);
+}
 import { createError, ErrorCodes } from '@lumenflow/core/lib/error-handler.js';
 import { WU_STATUS, STRING_LITERALS } from '@lumenflow/core/lib/wu-constants.js';
 import { WU_PATHS } from '@lumenflow/core/lib/wu-paths.js';
@@ -436,7 +461,8 @@ export function buildExecutionPlan(wus: WUEntry[]): ExecutionPlan {
   };
 
   for (const wu of readyWUs) {
-    const blockers = wu.doc.blocked_by ?? [];
+    // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+    const blockers = getAllDependencies(wu.doc);
     const externalBlockers = blockers.filter((blockerId: string) => !allWuIds.has(blockerId));
     const internalBlockers = blockers.filter((blockerId: string) => allWuIds.has(blockerId));
 
@@ -481,7 +507,8 @@ export function buildExecutionPlan(wus: WUEntry[]): ExecutionPlan {
       if (deferredIds.has(wu.id)) {
         continue;
       }
-      const blockers = wu.doc.blocked_by || [];
+      // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+      const blockers = getAllDependencies(wu.doc);
       const deferredInternal = blockers.filter(
         (blockerId) => allWuIds.has(blockerId) && deferredIds.has(blockerId),
       );
@@ -526,7 +553,8 @@ export function buildExecutionPlan(wus: WUEntry[]): ExecutionPlan {
 
   // Also treat stamped external deps as completed
   for (const wu of wus) {
-    const blockers = wu.doc.blocked_by || [];
+    // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+    const blockers = getAllDependencies(wu.doc);
     for (const blockerId of blockers) {
       if (!allWuIds.has(blockerId) && hasStamp(blockerId)) {
         completed.add(blockerId);
@@ -541,7 +569,8 @@ export function buildExecutionPlan(wus: WUEntry[]): ExecutionPlan {
 
     for (const id of remaining) {
       const wu = schedulableMap.get(id)!;
-      const blockers = wu.doc.blocked_by || [];
+      // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+      const blockers = getAllDependencies(wu.doc);
 
       // Check if all blockers are either done or completed in previous waves
       const allBlockersDone = blockers.every((blockerId) => completed.has(blockerId));
@@ -658,7 +687,8 @@ export async function buildExecutionPlanAsync(wus: WUEntry[]): Promise<Execution
   };
 
   for (const wu of readyWUs) {
-    const blockers = wu.doc.blocked_by ?? [];
+    // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+    const blockers = getAllDependencies(wu.doc);
     const externalBlockers = blockers.filter((blockerId: string) => !allWuIds.has(blockerId));
     const internalBlockers = blockers.filter((blockerId: string) => allWuIds.has(blockerId));
 
@@ -703,7 +733,8 @@ export async function buildExecutionPlanAsync(wus: WUEntry[]): Promise<Execution
       if (deferredIds.has(wu.id)) {
         continue;
       }
-      const blockers = wu.doc.blocked_by || [];
+      // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+      const blockers = getAllDependencies(wu.doc);
       const deferredInternal = blockers.filter(
         (blockerId) => allWuIds.has(blockerId) && deferredIds.has(blockerId),
       );
@@ -748,7 +779,8 @@ export async function buildExecutionPlanAsync(wus: WUEntry[]): Promise<Execution
 
   // Also treat stamped external deps as completed
   for (const wu of wus) {
-    const blockers = wu.doc.blocked_by || [];
+    // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+    const blockers = getAllDependencies(wu.doc);
     for (const blockerId of blockers) {
       if (!allWuIds.has(blockerId) && hasStamp(blockerId)) {
         completed.add(blockerId);
@@ -763,7 +795,8 @@ export async function buildExecutionPlanAsync(wus: WUEntry[]): Promise<Execution
 
     for (const id of remaining) {
       const wu = schedulableMap.get(id)!;
-      const blockers = wu.doc.blocked_by || [];
+      // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+      const blockers = getAllDependencies(wu.doc);
 
       // Check if all blockers are either done or completed in previous waves
       const allBlockersDone = blockers.every((blockerId) => completed.has(blockerId));
@@ -1042,7 +1075,8 @@ export function getBottleneckWUs(wus: WUEntry[], limit = 5): BottleneckWU[] {
 
   // Count how many WUs each WU blocks
   for (const wu of wus) {
-    const blockers = wu.doc.blocked_by || [];
+    // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+    const blockers = getAllDependencies(wu.doc);
     for (const blockerId of blockers) {
       if (blocksCounts.has(blockerId)) {
         blocksCounts.set(blockerId, blocksCounts.get(blockerId) + 1);
@@ -1138,7 +1172,8 @@ export function formatExecutionPlan(initiative: InitiativeDoc, plan: ExecutionPl
     lines.push(`Wave ${i} (${wave.length} WU${wave.length !== 1 ? 's' : ''} in parallel):`);
 
     for (const wu of wave) {
-      const blockers = wu.doc.blocked_by || [];
+      // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+      const blockers = getAllDependencies(wu.doc);
       const blockerStr = blockers.length > 0 ? ` [blocked by: ${blockers.join(', ')}]` : '';
       // Mark bottleneck WUs (WU-1596)
       const isBottleneck = bottleneckWUs.some((b) => b.id === wu.id);
@@ -1255,11 +1290,12 @@ function hasStamp(wuId: string): boolean {
 
 /**
  * WU-2040: Filter WUs by dependency stamp status.
+ * WU-1251: Now checks both blocked_by AND dependencies arrays.
  *
- * A WU is only spawnable if ALL its blocked_by dependencies have stamps.
+ * A WU is only spawnable if ALL its dependencies have stamps.
  * This implements the wait-for-completion pattern per Anthropic multi-agent research.
  *
- * @param {Array<{id: string, doc: {blocked_by?: string[], lane: string, status: string}}>} candidates - WU candidates
+ * @param {Array<{id: string, doc: {blocked_by?: string[], dependencies?: string[], lane: string, status: string}}>} candidates - WU candidates
  * @returns {{spawnable: Array<object>, blocked: Array<object>, blockingDeps: string[], waitingMessage: string}}
  */
 export function filterByDependencyStamps(candidates: WUEntry[]): DependencyFilterResult {
@@ -1268,7 +1304,8 @@ export function filterByDependencyStamps(candidates: WUEntry[]): DependencyFilte
   const blockingDeps = new Set<string>();
 
   for (const wu of candidates) {
-    const deps = wu.doc.blocked_by || [];
+    // WU-1251: Use getAllDependencies to combine blocked_by and dependencies arrays
+    const deps = getAllDependencies(wu.doc);
 
     // Check if ALL dependencies have stamps
     const unmetDeps = deps.filter((depId) => !hasStamp(depId));
