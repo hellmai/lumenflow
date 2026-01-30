@@ -65,7 +65,12 @@ import { runSupabaseDocsLinter } from '@lumenflow/core/dist/validators/supabase-
 import { runSystemMapValidation } from '@lumenflow/core/dist/system-map-validator.js';
 // WU-1067: Config-driven gates support (partial implementation - unused imports removed)
 // WU-1191: Lane health gate configuration
-import { loadLaneHealthConfig, type LaneHealthMode } from '@lumenflow/core/dist/gates-config.js';
+// WU-1262: Coverage config from methodology policy
+import {
+  loadLaneHealthConfig,
+  resolveCoverageConfig,
+  type LaneHealthMode,
+} from '@lumenflow/core/dist/gates-config.js';
 // WU-1191: Lane health check
 import { runLaneHealthCheck } from './lane-health.js';
 import {
@@ -1143,9 +1148,14 @@ async function executeGates(opts: {
   const isFullTests = opts.fullTests || false;
   // WU-2244: Full coverage flag forces full test suite and coverage gate (deterministic)
   const isFullCoverage = opts.fullCoverage || false;
+  // WU-1262: Resolve coverage config from methodology policy
+  // This derives coverage threshold and mode from methodology.testing setting
+  const resolvedCoverage = resolveCoverageConfig(process.cwd());
   // WU-1433: Coverage gate mode (warn or block)
   // WU-2334: Default changed from WARN to BLOCK for TDD enforcement
-  const coverageMode = opts.coverageMode || COVERAGE_GATE_MODES.BLOCK;
+  // WU-1262: CLI flag overrides resolved policy, which overrides methodology defaults
+  const coverageMode = opts.coverageMode || resolvedCoverage.mode || COVERAGE_GATE_MODES.BLOCK;
+  const coverageThreshold = resolvedCoverage.threshold;
   // WU-1191: Lane health gate mode (warn, error, or off)
   const laneHealthMode = loadLaneHealthConfig(process.cwd());
 
@@ -1328,13 +1338,21 @@ async function executeGates(opts: {
       }
 
       // WU-1433: Special handling for coverage gate
+      // WU-1262: Include threshold from resolved policy in log
       if (!useAgentMode) {
-        console.log(`\n> Coverage gate (mode: ${coverageMode})\n`);
+        console.log(
+          `\n> Coverage gate (mode: ${coverageMode}, threshold: ${coverageThreshold}%)\n`,
+        );
       } else {
-        writeSync(agentLog.logFd, `\n> Coverage gate (mode: ${coverageMode})\n\n`);
+        writeSync(
+          agentLog.logFd,
+          `\n> Coverage gate (mode: ${coverageMode}, threshold: ${coverageThreshold}%)\n\n`,
+        );
       }
       result = await runCoverageGate({
         mode: coverageMode,
+        // WU-1262: Pass resolved threshold from methodology policy
+        threshold: coverageThreshold,
         logger: useAgentMode
           ? {
               log: (msg) => {
