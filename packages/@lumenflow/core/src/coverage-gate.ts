@@ -15,7 +15,7 @@
 
 /* eslint-disable security/detect-non-literal-fs-filename, security/detect-object-injection */
 import { readFileSync, existsSync } from 'node:fs';
-import { EMOJI, FILE_SYSTEM, STRING_LITERALS } from './wu-constants.js';
+import { EMOJI, STRING_LITERALS } from './wu-constants.js';
 
 /**
  * Coverage gate modes
@@ -43,7 +43,9 @@ export const HEX_CORE_PATTERNS = Object.freeze([
 ]);
 
 /**
- * Coverage threshold for hex core files (percentage)
+ * Default coverage threshold for hex core files (percentage)
+ * WU-1262: This constant is kept for backwards compatibility.
+ * The actual threshold is now determined by resolveCoverageConfig() based on methodology.
  * @constant {number}
  */
 export const COVERAGE_THRESHOLD = 90;
@@ -108,13 +110,16 @@ export function parseCoverageJson(coveragePath) {
  * Check if coverage meets thresholds for hex core files.
  *
  * @param {object|null} coverageData - Parsed coverage data
+ * @param {number} [threshold] - Coverage threshold to use (defaults to COVERAGE_THRESHOLD)
  * @returns {{ pass: boolean, failures: Array<{ file: string, actual: number, threshold: number, metric: string }> }}
  */
-export function checkCoverageThresholds(coverageData) {
+export function checkCoverageThresholds(coverageData, threshold?: number) {
   if (!coverageData || !coverageData.files) {
     return { pass: true, failures: [] };
   }
 
+  // WU-1262: Use provided threshold or fall back to constant
+  const effectiveThreshold = threshold ?? COVERAGE_THRESHOLD;
   const failures = [];
 
   for (const [file, metricsValue] of Object.entries(coverageData.files)) {
@@ -125,11 +130,11 @@ export function checkCoverageThresholds(coverageData) {
     // Check lines coverage (primary metric)
     const metrics = metricsValue as { lines?: { pct: number } };
     const linesCoverage = metrics.lines?.pct ?? 0;
-    if (linesCoverage < COVERAGE_THRESHOLD) {
+    if (linesCoverage < effectiveThreshold) {
       failures.push({
         file,
         actual: linesCoverage,
-        threshold: COVERAGE_THRESHOLD,
+        threshold: effectiveThreshold,
         metric: 'lines',
       });
     }
@@ -195,6 +200,12 @@ export interface CoverageGateOptions {
   coveragePath?: string;
   /** Logger for output */
   logger?: CoverageGateLogger;
+  /**
+   * WU-1262: Coverage threshold override (0-100).
+   * When provided, overrides the default COVERAGE_THRESHOLD constant.
+   * This is typically populated from resolveCoverageConfig().
+   */
+  threshold?: number;
 }
 
 /**
@@ -209,6 +220,8 @@ export async function runCoverageGate(options: CoverageGateOptions = {}) {
   const coveragePath = options.coveragePath || DEFAULT_COVERAGE_PATH;
   const logger =
     options.logger && typeof options.logger.log === 'function' ? options.logger : console;
+  // WU-1262: Use provided threshold or default constant
+  const threshold = options.threshold ?? COVERAGE_THRESHOLD;
 
   // Parse coverage data
   const coverageData = parseCoverageJson(coveragePath);
@@ -220,8 +233,8 @@ export async function runCoverageGate(options: CoverageGateOptions = {}) {
     return { ok: true, mode, duration, message: 'No coverage data' };
   }
 
-  // Check thresholds
-  const { pass, failures } = checkCoverageThresholds(coverageData);
+  // Check thresholds (WU-1262: pass resolved threshold)
+  const { pass, failures } = checkCoverageThresholds(coverageData, threshold);
 
   // Format and display
   const output = formatCoverageDelta(coverageData);
@@ -230,7 +243,7 @@ export async function runCoverageGate(options: CoverageGateOptions = {}) {
   const duration = Date.now() - start;
 
   if (!pass) {
-    logger.log(`\n${EMOJI.FAILURE} Coverage below ${COVERAGE_THRESHOLD}% for hex core files:`);
+    logger.log(`\n${EMOJI.FAILURE} Coverage below ${threshold}% for hex core files:`);
     for (const failure of failures) {
       const shortFile = failure.file.replace('packages/@lumenflow/', '');
       logger.log(
