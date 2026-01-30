@@ -73,14 +73,11 @@ export async function validateDependencies(packages) {
     return { valid: true, missing: [] };
   }
 
-  const missing = [];
+  // WU-1231: Validate packages in parallel using Promise.all
+  // Previously sequential (for...of await) caused 5+ minute delays
+  const results = await Promise.all(packages.map((pkg) => canImport(pkg)));
 
-  for (const pkg of packages) {
-    const available = await canImport(pkg);
-    if (!available) {
-      missing.push(pkg);
-    }
-  }
+  const missing = packages.filter((_, index) => !results[index]);
 
   return {
     valid: missing.length === 0,
