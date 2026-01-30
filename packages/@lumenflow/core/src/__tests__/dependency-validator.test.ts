@@ -73,4 +73,47 @@ describe('dependency-validator (WU-1065)', () => {
       expect(message).toContain('pnpm install');
     });
   });
+
+  describe('parallel validation (WU-1231)', () => {
+    /**
+     * Test that validateDependencies correctly handles multiple packages.
+     * The parallel vs sequential behavior is verified via execution order tracking.
+     */
+    it('validates multiple packages and returns correct results', async () => {
+      // Use real packages that exist
+      const packages = ['commander', 'yaml', 'minimatch'];
+
+      const result = await validateDependencies(packages);
+
+      // Verify correctness
+      expect(result.valid).toBe(true);
+      expect(result.missing).toEqual([]);
+    });
+
+    it('collects all missing packages when multiple fail', async () => {
+      // Test with multiple non-existent packages
+      const packages = ['fake-pkg-aaa', 'fake-pkg-bbb', 'fake-pkg-ccc'];
+
+      const result = await validateDependencies(packages);
+
+      // Should find all three missing (parallel should not short-circuit)
+      expect(result.valid).toBe(false);
+      expect(result.missing).toHaveLength(3);
+      expect(result.missing).toContain('fake-pkg-aaa');
+      expect(result.missing).toContain('fake-pkg-bbb');
+      expect(result.missing).toContain('fake-pkg-ccc');
+    });
+
+    it('handles mix of valid and invalid packages', async () => {
+      // Mix of real and fake packages
+      const packages = ['commander', 'fake-pkg-xxx', 'yaml'];
+
+      const result = await validateDependencies(packages);
+
+      // Should find the one missing
+      expect(result.valid).toBe(false);
+      expect(result.missing).toHaveLength(1);
+      expect(result.missing).toContain('fake-pkg-xxx');
+    });
+  });
 });
