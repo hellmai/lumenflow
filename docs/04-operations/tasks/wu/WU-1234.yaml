@@ -12,6 +12,9 @@ code_paths:
   - packages/@lumenflow/memory/src/mem-context-core.ts
   - packages/@lumenflow/cli/src/mem-context.ts
   - packages/@lumenflow/core/src/wu-spawn.ts
+  - packages/@lumenflow/memory/src/mem-context-core.ts
+  - packages/@lumenflow/cli/src/mem-context.ts
+  - packages/@lumenflow/core/src/wu-spawn.ts
 tests:
   manual: []
   unit:
