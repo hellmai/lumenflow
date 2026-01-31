@@ -7,8 +7,8 @@ priority: P1
 created: 2026-01-30
 code_paths:
   - packages/@lumenflow/cli/src/orchestrate-monitor.ts
-  - packages/@lumenflow/core/src/spawn-monitor.ts
   - packages/@lumenflow/core/src/patrol-loop.ts
+  - packages/@lumenflow/core/src/index.ts
 tests:
   manual: []
   unit:
