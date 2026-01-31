@@ -16,6 +16,8 @@ tests:
 artifacts:
   - .lumenflow/stamps/WU-1282.done
 dependencies: []
+initiative: INIT-012
+phase: 1
 risks: []
 notes: ''
 requires_review: false
@@ -34,4 +36,3 @@ acceptance:
   - Investigate why hooks don't propagate to Task-spawned agents
   - Document root cause and propose fix
   - Implement fix to ensure hooks run in sub-agents
-initiative: INIT-012
