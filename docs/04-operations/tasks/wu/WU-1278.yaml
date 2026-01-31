@@ -11,6 +11,7 @@ tests:
   manual: []
   unit:
     - packages/@lumenflow/cli/src/__tests__/orchestrate-monitor.test.ts
+    - packages/@lumenflow/cli/__tests__/orchestrate-monitor.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1278.done
@@ -19,10 +20,17 @@ initiative: INIT-008
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-01-31T14:13:58.244Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-1278
+session_id: a285b8f7-5877-4bd8-9db5-ee027ed3e4ff
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-31T14:13:58.251Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -32,11 +40,3 @@ acceptance:
   - Path construction preserves .lumenflow/ prefix
   - Spawn registry loads correctly
   - Signal files are found and parsed
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-1278
-claimed_at: 2026-01-31T14:13:58.244Z
-baseline_main_sha: e04e40b2d29bc83c3ee70f5f72cd0cfc358bff5d
-session_id: a285b8f7-5877-4bd8-9db5-ee027ed3e4ff
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-01-31T14:13:58.251Z
