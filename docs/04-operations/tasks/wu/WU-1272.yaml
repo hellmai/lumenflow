@@ -2,7 +2,7 @@ id: WU-1272
 title: Create INIT-011 comprehensive test suite initiative
 lane: 'Content: Documentation'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-01-31
 code_paths:
@@ -26,8 +26,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Create initiative spec and WU specs for INIT-011: Comprehensive LumenFlow Test Suite. Includes 5 WUs covering CLI integration tests, memory layer tests, agent coordination tests, and initiative orchestration E2E tests.'
+description: 'Create initiative spec and WU specs for INIT-011: Comprehensive LumenFlow Test Suite.
+  Includes 5 WUs covering CLI integration tests, memory layer tests, agent coordination tests, and
+  initiative orchestration E2E tests.'
 acceptance:
   - INIT-011.yaml created with valid schema
   - WU-1273 through WU-1277 specs created
   - All specs pass schema validation
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-documentation-wu-1272
+claimed_at: 2026-01-31T10:16:49.645Z
+baseline_main_sha: a52c508681874244931f5a8491a00dde31810ffe
+session_id: 86a4220f-1422-4158-bd8f-a7825e2106ed
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-01-31T10:16:49.648Z
