@@ -1,6 +1,6 @@
 # Work Unit Status
 
-_Last updated: 2026-01-30_
+_Last updated: 2026-01-31_
 
 ## In Progress
 
@@ -8,11 +8,10 @@ _Last updated: 2026-01-30_
 - [WU-1142 — Make wu:spawn prompts type-aware for testing requirements](wu/WU-1142.yaml)
 - [WU-1204 — Add signal TTL cleanup to prevent unbounded growth](wu/WU-1204.yaml)
 - [WU-1222 — Add PreToolUse hook to block grep/cat/find via Bash](wu/WU-1222.yaml)
+- [WU-1272 — Create INIT-011 comprehensive test suite initiative](wu/WU-1272.yaml)
 
 ## Completed
 
-- [WU-1267 — Regression test: default methodology behavior unchanged](wu/WU-1267.yaml) — 2026-01-31
-- [WU-1269 — Migration guide: adopting methodology configurability](wu/WU-1269.yaml) — 2026-01-30
 - [WU-1001 — Complete LumenFlow dogfooding setup](wu/WU-1001.yaml) — 2026-01-18
 - [WU-1002 — Publish @lumenflow packages to npm](wu/WU-1002.yaml) — 2026-01-18
 - [WU-1003 — Add rate limiting to Gates Action](wu/WU-1003.yaml) — 2026-01-18
@@ -242,3 +241,5 @@ _Last updated: 2026-01-30_
 - [WU-1268 — CHANGELOG and release notes for methodology configurability](wu/WU-1268.yaml) — 2026-01-30
 - [WU-1266 — E2E test: methodology config → spawn → gates flow](wu/WU-1266.yaml) — 2026-01-30
 - [WU-1270 — Telemetry: methodology selection tracking (opt-in)](wu/WU-1270.yaml) — 2026-01-30
+- [WU-1269 — Migration guide: adopting methodology configurability](wu/WU-1269.yaml) — 2026-01-30
+- [WU-1267 — Regression test: default methodology behavior unchanged](wu/WU-1267.yaml) — 2026-01-31
