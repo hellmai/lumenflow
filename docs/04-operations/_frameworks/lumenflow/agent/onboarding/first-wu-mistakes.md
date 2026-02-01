@@ -1,6 +1,6 @@
 # First WU Mistakes
 
-**Last updated:** 2026-01-30
+**Last updated:** 2026-02-01
 
 Common mistakes agents make on their first WU, and how to avoid them.
 
@@ -162,7 +162,8 @@ Start coding immediately based on the title.
 2. Understand acceptance criteria
 3. Review code_paths
 4. Check dependencies
-5. Then start
+5. Check spec_refs for linked plans (if present, read the plan document)
+6. Then start
 
 ---
 
@@ -192,6 +193,7 @@ Before starting any WU:
 
 - [ ] Read the full WU spec
 - [ ] Understand acceptance criteria
+- [ ] Check spec_refs for plans (read linked plans if present)
 - [ ] Claim the WU with `pnpm wu:claim`
 - [ ] cd to the worktree IMMEDIATELY
 - [ ] Work only in the worktree

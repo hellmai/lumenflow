@@ -1,6 +1,6 @@
 # Quick Reference: LumenFlow Commands
 
-**Last updated:** 2026-01-31
+**Last updated:** 2026-02-01
 
 Complete reference for all CLI commands. Organized by category for quick discovery.
 
@@ -21,7 +21,6 @@ Complete reference for all CLI commands. Organized by category for quick discove
 | `pnpm sync:templates`    | Sync templates to project               |
 | `pnpm lumenflow:upgrade` | Upgrade LumenFlow packages              |
 | `pnpm lumenflow:doctor`  | Diagnose LumenFlow configuration        |
-| `pnpm init:plan`         | Initialize planning workspace           |
 
 ---
 
@@ -117,6 +116,50 @@ Complete reference for all CLI commands. Organized by category for quick discove
 
 ---
 
+## Plans
+
+Plans are markdown documents that capture goals, scope, approach, and success criteria before implementation begins. They link to WUs (via `spec_refs`) and initiatives (via `related_plan`).
+
+### Plan Storage
+
+Plans are stored in the repo at `docs/04-operations/plans/` by default (configurable via `directories.plansDir` in `.lumenflow.config.yaml`).
+
+| Command                                          | Description                                    |
+| ------------------------------------------------ | ---------------------------------------------- |
+| `pnpm initiative:plan --initiative INIT-XXX`     | Link existing plan to initiative               |
+| `pnpm initiative:plan --initiative INIT-XXX --create` | Create plan template and link to initiative |
+
+### Linking Plans
+
+**To an initiative:**
+
+```bash
+# Create a new plan template
+pnpm initiative:plan --initiative INIT-001 --create
+
+# Link an existing plan file
+pnpm initiative:plan --initiative INIT-001 --plan docs/04-operations/plans/my-plan.md
+```
+
+**To a WU (via spec_refs):**
+
+```bash
+# When creating a WU
+pnpm wu:create --id WU-123 --lane "Framework: Core" --title "Feature" \
+  --spec-refs "lumenflow://plans/WU-123-plan.md"
+
+# Or edit an existing WU
+pnpm wu:edit --id WU-123 --spec-refs "lumenflow://plans/WU-123-plan.md"
+```
+
+### Plan URI Format
+
+Plans use the `lumenflow://plans/` URI scheme for references:
+- `lumenflow://plans/INIT-001-auth-system.md` - Initiative plan
+- `lumenflow://plans/WU-123-plan.md` - WU-specific plan
+
+---
+
 ## Initiatives
 
 | Command                                     | Description                   |
@@ -126,7 +169,6 @@ Complete reference for all CLI commands. Organized by category for quick discove
 | `pnpm initiative:list`                      | List all initiatives          |
 | `pnpm initiative:status --id INIT-XXX`      | Show initiative status        |
 | `pnpm initiative:add-wu --id INIT-XXX ...`  | Add WU to initiative          |
-| `pnpm initiative:plan --id INIT-XXX`        | Generate initiative plan      |
 | `pnpm initiative:bulk-assign --id INIT-XXX` | Bulk assign WUs to initiative |
 
 ---
