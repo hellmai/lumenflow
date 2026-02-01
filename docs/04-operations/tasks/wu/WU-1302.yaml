@@ -2,7 +2,7 @@ id: WU-1302
 title: 'wu:create UX: lane errors, required fields, local/offline mode'
 lane: 'Framework: CLI'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-01
 code_paths:
@@ -28,9 +28,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Improve wu:create user experience: clear lane inference errors, aggregate required field validation, git.requireRemote config for offline mode, and accurate quickstart docs.'
+description: 'Improve wu:create user experience: clear lane inference errors, aggregate required
+  field validation, git.requireRemote config for offline mode, and accurate quickstart docs.'
 acceptance:
   - Missing .lumenflow.lane-inference.yaml gives clear error with fix suggestion
   - Required field errors aggregated (not discovered iteratively)
   - git.requireRemote=false config allows wu:create without remote
   - Quickstart docs show complete wu:create example with all required fields
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-1302
+claimed_at: 2026-02-01T18:16:45.012Z
+baseline_main_sha: 3e6f81d54f60d72f1ffda497f0f20d9b6fb5bfd5
+session_id: 394435a7-1ab9-425c-93c5-83065d45d992
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-01T18:16:45.017Z
