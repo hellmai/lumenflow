@@ -243,6 +243,64 @@ pnpm initiative:list --format json
 pnpm initiative:list --format mermaid
 ```
 
+## Linking Plans to Initiatives
+
+Plans capture goals, scope, approach, and success criteria before implementation. Link a plan to an initiative to document the high-level strategy.
+
+### Create a New Plan
+
+```bash
+pnpm initiative:plan --initiative INIT-001 --create
+```
+
+This creates a plan template at `docs/04-operations/plans/INIT-001-<slug>.md` and links it to the initiative via the `related_plan` field.
+
+### Link an Existing Plan
+
+```bash
+pnpm initiative:plan --initiative INIT-001 --plan docs/04-operations/plans/my-plan.md
+```
+
+### Plan URI Format
+
+Plans are referenced using the `lumenflow://plans/` URI scheme:
+
+```yaml
+# In initiative YAML
+related_plan: lumenflow://plans/INIT-001-user-authentication.md
+```
+
+### Plan Template Structure
+
+```markdown
+# INIT-001 Plan - User Authentication
+
+## Goal
+Primary objective of this initiative
+
+## Scope
+What is in scope and out of scope
+
+## Approach
+Key phases, milestones, and technical decisions
+
+## Success Criteria
+Measurable outcomes that define completion
+
+## Risks
+What could go wrong and mitigation strategies
+
+## References
+- Initiative: INIT-001
+- Created: 2026-02-01
+```
+
+<Aside type="tip">
+  Create plans before breaking down into WUs. The plan helps identify phases and dependencies.
+</Aside>
+
+---
+
 ## Best Practices
 
 <Steps>

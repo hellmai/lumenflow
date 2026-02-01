@@ -915,6 +915,9 @@ export class SupabaseExampleService implements ExampleService {
   # Optional: ui_pairing_wus (recommended for api exposure)
   ui_pairing_wus:
     - 'WU-YYY' # UI WU that consumes this API
+  # Optional: spec_refs (links to plan documents)
+  spec_refs:
+    - 'lumenflow://plans/WU-XXX-plan.md'
 ```
 
 #### 6.1.1 Exposure Field (WU-1998)
@@ -1288,6 +1291,88 @@ git commit -m "wu(WU-XXX): concise description"
 # Push directly to main (trunk-based)
 git push origin main
 ```
+
+### 6.8 Plans
+
+Plans are markdown documents that capture goals, scope, approach, and success criteria before implementation begins. They provide high-level context for WUs and initiatives.
+
+#### Plan Storage
+
+Plans are stored in the repository at `docs/04-operations/plans/` (configurable via `directories.plansDir` in `.lumenflow.config.yaml`).
+
+#### Linking Plans to Initiatives
+
+Use `initiative:plan` to link a plan to an initiative:
+
+```bash
+# Create a new plan template and link it
+pnpm initiative:plan --initiative INIT-001 --create
+
+# Link an existing plan file
+pnpm initiative:plan --initiative INIT-001 --plan docs/04-operations/plans/my-plan.md
+```
+
+This sets the `related_plan` field in the initiative YAML:
+
+```yaml
+# In INIT-001.yaml
+related_plan: lumenflow://plans/INIT-001-user-authentication.md
+```
+
+#### Linking Plans to WUs
+
+WUs link to plans via the `spec_refs` field:
+
+```bash
+# When creating a WU
+pnpm wu:create --id WU-123 --lane "Framework: Core" --title "Feature" \
+  --spec-refs "lumenflow://plans/WU-123-plan.md"
+```
+
+Or in the WU YAML:
+
+```yaml
+spec_refs:
+  - 'lumenflow://plans/WU-123-plan.md'
+```
+
+#### Plan URI Format
+
+Plans use the `lumenflow://plans/` URI scheme:
+
+- `lumenflow://plans/INIT-001-auth-system.md` - Initiative plan
+- `lumenflow://plans/WU-123-plan.md` - WU-specific plan
+
+#### Plan Template
+
+```markdown
+# [INIT-XXX | WU-XXX] Plan - Title
+
+## Goal
+Primary objective
+
+## Scope
+In scope and out of scope
+
+## Approach
+Key phases, milestones, technical decisions
+
+## Success Criteria
+Measurable outcomes
+
+## Risks
+What could go wrong and mitigation
+
+## References
+- Initiative/WU: [ID]
+- Created: [date]
+```
+
+#### When to Create Plans
+
+- **Initiatives**: Always create a plan before breaking down into WUs
+- **Feature WUs**: Create a plan for complex features (type: feature requires spec_refs)
+- **Bug/Refactor WUs**: Plans optional, use notes field instead
 
 ---
 
