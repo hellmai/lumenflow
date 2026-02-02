@@ -73,10 +73,18 @@ interface LumenflowConfig {
 
 /** WU-1016: Extended LaneConfig with wip_limit support */
 /** WU-1187: Added wip_justification field for soft WIP enforcement */
+/** WU-1325: Added lock_policy field for lane-level lock behavior */
 interface LaneConfigWithWip extends LaneConfig {
   wip_limit?: number;
   /** WU-1187: Required justification when wip_limit > 1 */
   wip_justification?: string;
+  /**
+   * WU-1325: Lock policy for this lane
+   * - 'all' (default): Lock held through block/unblock cycle
+   * - 'active': Lock released on block, re-acquired on unblock
+   * - 'none': No lock files, WIP checking disabled
+   */
+  lock_policy?: 'all' | 'active' | 'none';
 }
 
 interface WUDoc {
@@ -542,6 +550,95 @@ export function getWipLimitForLane(lane: string, options: GetWipLimitOptions = {
   } catch {
     // If config parsing fails, return default
     return DEFAULT_WIP_LIMIT;
+  }
+}
+
+/** WU-1325: Default lock policy when not specified in config */
+const DEFAULT_LOCK_POLICY: 'all' | 'active' | 'none' = 'all';
+
+/** WU-1325: Options for getLockPolicyForLane */
+interface GetLockPolicyOptions {
+  /** Path to .lumenflow.config.yaml (for testing) */
+  configPath?: string;
+}
+
+/**
+ * WU-1325: Get lock policy for a lane from config
+ *
+ * Reads the lock_policy field from .lumenflow.config.yaml for the specified lane.
+ * Returns DEFAULT_LOCK_POLICY ('all') if the lane is not found or lock_policy is not specified.
+ *
+ * Lock policies:
+ * - 'all' (default): Lock held through entire WU lifecycle (claim to done)
+ * - 'active': Lock released on block, re-acquired on unblock
+ * - 'none': No lock files created, WIP checking disabled for this lane
+ *
+ * @param {string} lane - Lane name (e.g., "Framework: Core", "Content: Documentation")
+ * @param {GetLockPolicyOptions} options - Options including configPath for testing
+ * @returns {'all' | 'active' | 'none'} The lock policy for the lane (default: 'all')
+ */
+export function getLockPolicyForLane(
+  lane: string,
+  options: GetLockPolicyOptions = {},
+): 'all' | 'active' | 'none' {
+  // Determine config path
+  let resolvedConfigPath = options.configPath;
+  if (!resolvedConfigPath) {
+    const projectRoot = findProjectRoot();
+    resolvedConfigPath = path.join(projectRoot, CONFIG_FILES.LUMENFLOW_CONFIG);
+  }
+
+  // Check if config file exists
+  if (!existsSync(resolvedConfigPath)) {
+    return DEFAULT_LOCK_POLICY;
+  }
+
+  try {
+    const configContent = readFileSync(resolvedConfigPath, { encoding: 'utf-8' });
+    const config = parseYAML(configContent) as LumenflowConfig;
+
+    if (!config.lanes) {
+      return DEFAULT_LOCK_POLICY;
+    }
+
+    // Normalize lane name for case-insensitive comparison
+    const normalizedLane = lane.toLowerCase().trim();
+
+    // Extract all lanes with their lock_policy
+    let allLanes: LaneConfigWithWip[] = [];
+    if (Array.isArray(config.lanes)) {
+      // Flat array format: lanes: [{name: "Core", lock_policy: "none"}, ...]
+      allLanes = config.lanes;
+    } else {
+      // New format with definitions
+      if (config.lanes.definitions) {
+        allLanes.push(...config.lanes.definitions);
+      }
+      // Legacy nested format: lanes: {engineering: [...], business: [...]}
+      if (config.lanes.engineering) {
+        allLanes.push(...config.lanes.engineering);
+      }
+      if (config.lanes.business) {
+        allLanes.push(...config.lanes.business);
+      }
+    }
+
+    // Find matching lane (case-insensitive)
+    const matchingLane = allLanes.find((l) => l.name.toLowerCase().trim() === normalizedLane);
+
+    if (!matchingLane) {
+      return DEFAULT_LOCK_POLICY;
+    }
+
+    // Return lock_policy if specified and valid, otherwise default
+    const policy = matchingLane.lock_policy;
+    if (policy === 'all' || policy === 'active' || policy === 'none') {
+      return policy;
+    }
+    return DEFAULT_LOCK_POLICY;
+  } catch {
+    // If config parsing fails, return default
+    return DEFAULT_LOCK_POLICY;
   }
 }
 
