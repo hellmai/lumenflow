@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console -- CLI tool requires console output */
 /**
  * WU Unblock Helper
  *
@@ -17,7 +18,9 @@
 import { existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { assertTransition } from '@lumenflow/core/dist/state-machine.js';
-import { checkLaneFree } from '@lumenflow/core/dist/lane-checker.js';
+import { checkLaneFree, getLockPolicyForLane } from '@lumenflow/core/dist/lane-checker.js';
+// WU-1325: Import lane lock functions for policy-based lock acquisition on unblock
+import { acquireLaneLock } from '@lumenflow/core/dist/lane-lock.js';
 import { getGitForCwd } from '@lumenflow/core/dist/git-adapter.js';
 import { die } from '@lumenflow/core/dist/error-handler.js';
 import { todayISO } from '@lumenflow/core/dist/date-utils.js';
@@ -266,6 +269,33 @@ async function main() {
   }
 
   handleWorktreeCreation(args, doc);
+
+  // WU-1325: Re-acquire lane lock when WU is unblocked (only for lock_policy=active)
+  // For policy=all, lock was retained through the block cycle
+  // For policy=none, no lock exists to acquire
+  try {
+    if (lane && lane !== 'Unknown') {
+      const lockPolicy = getLockPolicyForLane(lane);
+      if (lockPolicy === 'active') {
+        const lockResult = acquireLaneLock(lane, id);
+        if (lockResult.acquired && !lockResult.skipped) {
+          console.log(`${PREFIX} Lane lock re-acquired for "${lane}" (lock_policy=active)`);
+        } else if (!lockResult.acquired) {
+          // Lock acquisition failed - another WU claimed the lane while we were blocked
+          console.warn(`${PREFIX} Warning: Could not re-acquire lane lock: ${lockResult.error}`);
+          console.warn(
+            `${PREFIX} Another WU may have claimed lane "${lane}" while this WU was blocked.`,
+          );
+        }
+      } else if (lockPolicy === 'all') {
+        console.log(`${PREFIX} Lane lock retained for "${lane}" (lock_policy=all)`);
+      }
+      // For policy=none, no lock exists - nothing to do
+    }
+  } catch (err) {
+    // Non-blocking: lock acquisition failure should not block the unblocking operation
+    console.warn(`${PREFIX} Warning: Could not acquire lane lock: ${err.message}`);
+  }
 
   console.log(`\n${PREFIX} Marked in progress and pushed.`);
   console.log(`- WU: ${id} — ${title}`);

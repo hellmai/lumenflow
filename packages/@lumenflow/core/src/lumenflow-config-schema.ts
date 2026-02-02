@@ -15,6 +15,28 @@ import { GatesExecutionConfigSchema } from './gates-config.js';
 import { MethodologyConfigSchema } from './resolve-policy.js';
 
 /**
+ * WU-1325: Lock policy for lane-level WIP enforcement
+ *
+ * Controls how lane locks behave:
+ * - 'all' (default): Lock acquired on claim, held through block, released on done
+ * - 'active': Lock acquired on claim, released on block, re-acquired on unblock
+ * - 'none': No lock files created, WIP checking disabled
+ *
+ * @example
+ * ```yaml
+ * lanes:
+ *   definitions:
+ *     - name: 'Content: Documentation'
+ *       wip_limit: 4
+ *       lock_policy: 'none'  # Docs don't need lock coordination
+ * ```
+ */
+export const LockPolicySchema = z.enum(['all', 'active', 'none']).default('all');
+
+/** WU-1325: TypeScript type for lock policy */
+export type LockPolicy = z.infer<typeof LockPolicySchema>;
+
+/**
  * Event archival configuration (WU-1207)
  *
  * Configures archival of old WU events from .lumenflow/state/wu-events.jsonl
