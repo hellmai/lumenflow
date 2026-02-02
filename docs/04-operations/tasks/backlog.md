@@ -60,7 +60,6 @@ sections:
 - [WU-1222 — Add PreToolUse hook to block grep/cat/find via Bash](wu/WU-1222.yaml) — Framework: Core
 - [WU-1325 — Update CLI commands to enforce lock_policy](wu/WU-1325.yaml) — Framework: CLI
 - [WU-1326 — Update orchestrator wave building for lock_policy](wu/WU-1326.yaml) — Framework: Initiatives
-- [WU-1327 — Document lock_policy and pilot guidance](wu/WU-1327.yaml) — Content: Documentation
 
 ## ⛔ Blocked
 
@@ -353,3 +352,4 @@ sections:
 - [WU-1333 — Ensure initiative:add/remove-wu handles moving origin](wu/WU-1333.yaml)
 - [WU-1336 — Centralize retry exhaustion handling for micro-worktree operations](wu/WU-1336.yaml)
 - [WU-1337 — Add retry/rebase for push-only micro-worktree operations](wu/WU-1337.yaml)
+- [WU-1327 — Document lock_policy and pilot guidance](wu/WU-1327.yaml)
