@@ -13,7 +13,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { getWipLimitForLane, checkWipJustification } from '../lane-checker.js';
+import {
+  getWipLimitForLane,
+  checkWipJustification,
+  getLockPolicyForLane,
+} from '../lane-checker.js';
 import { stringifyYAML } from '../wu-yaml.js';
 import { CONFIG_FILES } from '../wu-constants.js';
 
@@ -271,6 +275,218 @@ describe('lane-checker WIP justification', () => {
       expect(docsResult.valid).toBe(true);
       expect(docsResult.requiresJustification).toBe(true); // Needs justification because wip_limit > 1
       expect(docsResult.warning).toBeTruthy();
+    });
+  });
+});
+
+/**
+ * WU-1325: Tests for lock_policy feature
+ *
+ * Lock policies:
+ * - 'all' (default): Lock held through entire WU lifecycle (claim to done)
+ * - 'active': Lock released on block, re-acquired on unblock
+ * - 'none': No lock files created, WIP checking disabled for this lane
+ */
+describe('lane-checker lock_policy (WU-1325)', () => {
+  let testBaseDir: string;
+  let configPath: string;
+
+  beforeEach(() => {
+    // Create a unique test directory for each test
+    testBaseDir = join(
+      tmpdir(),
+      // eslint-disable-next-line sonarjs/pseudo-random -- Test isolation needs unique temp dirs
+      `${TEST_DIR_PREFIX}lock-policy-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    );
+    mkdirSync(testBaseDir, { recursive: true });
+
+    // Create docs/04-operations/tasks directory structure
+    const tasksDir = join(testBaseDir, 'docs', '04-operations', 'tasks');
+    mkdirSync(tasksDir, { recursive: true });
+    mkdirSync(join(tasksDir, 'wu'), { recursive: true });
+
+    configPath = join(testBaseDir, '.lumenflow.config.yaml');
+  });
+
+  afterEach(() => {
+    // Clean up test directory
+    try {
+      rmSync(testBaseDir, { recursive: true, force: true });
+    } catch {
+      // Ignore cleanup errors
+    }
+  });
+
+  describe('getLockPolicyForLane', () => {
+    it('should return default "all" when no lock_policy specified', () => {
+      const config = {
+        lanes: {
+          definitions: [{ name: TEST_LANE_FRAMEWORK_CORE, wip_limit: 1 }],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_FRAMEWORK_CORE, { configPath });
+
+      expect(result).toBe('all');
+    });
+
+    it('should return "all" when lock_policy is explicitly set to "all"', () => {
+      const config = {
+        lanes: {
+          definitions: [{ name: TEST_LANE_FRAMEWORK_CORE, wip_limit: 1, lock_policy: 'all' }],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_FRAMEWORK_CORE, { configPath });
+
+      expect(result).toBe('all');
+    });
+
+    it('should return "active" when lock_policy is set to "active"', () => {
+      const config = {
+        lanes: {
+          definitions: [{ name: TEST_LANE_FRAMEWORK_CORE, wip_limit: 1, lock_policy: 'active' }],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_FRAMEWORK_CORE, { configPath });
+
+      expect(result).toBe('active');
+    });
+
+    it('should return "none" when lock_policy is set to "none"', () => {
+      const config = {
+        lanes: {
+          definitions: [
+            {
+              name: TEST_LANE_CONTENT_DOCS,
+              wip_limit: 4,
+              lock_policy: 'none',
+            },
+          ],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_CONTENT_DOCS, { configPath });
+
+      expect(result).toBe('none');
+    });
+
+    it('should return default "all" when lane not found in config', () => {
+      const config = {
+        lanes: {
+          definitions: [{ name: TEST_LANE_FRAMEWORK_CORE, wip_limit: 1 }],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_NONEXISTENT, { configPath });
+
+      expect(result).toBe('all');
+    });
+
+    it('should return default "all" when config file does not exist', () => {
+      const result = getLockPolicyForLane(TEST_LANE_FRAMEWORK_CORE, {
+        configPath: '/nonexistent/path.yaml',
+      });
+
+      expect(result).toBe('all');
+    });
+
+    it('should return default "all" when lock_policy has invalid value', () => {
+      const config = {
+        lanes: {
+          definitions: [
+            {
+              name: TEST_LANE_FRAMEWORK_CORE,
+              wip_limit: 1,
+              lock_policy: 'invalid_value',
+            },
+          ],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_FRAMEWORK_CORE, { configPath });
+
+      expect(result).toBe('all');
+    });
+
+    it('should work with flat array config format', () => {
+      const config = {
+        lanes: [{ name: TEST_LANE_FRAMEWORK, wip_limit: 1, lock_policy: 'none' }],
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane(TEST_LANE_FRAMEWORK, { configPath });
+
+      expect(result).toBe('none');
+    });
+
+    it('should work with legacy nested format (engineering/business)', () => {
+      const config = {
+        lanes: {
+          engineering: [{ name: TEST_LANE_FRAMEWORK, wip_limit: 1, lock_policy: 'active' }],
+          business: [{ name: TEST_LANE_CONTENT, wip_limit: 1 }],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const engineeringResult = getLockPolicyForLane(TEST_LANE_FRAMEWORK, { configPath });
+      const businessResult = getLockPolicyForLane(TEST_LANE_CONTENT, { configPath });
+
+      expect(engineeringResult).toBe('active');
+      expect(businessResult).toBe('all'); // Default when not specified
+    });
+
+    it('should be case-insensitive for lane name matching', () => {
+      const config = {
+        lanes: {
+          definitions: [
+            {
+              name: 'Framework: Core',
+              wip_limit: 1,
+              lock_policy: 'active',
+            },
+          ],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      const result = getLockPolicyForLane('framework: core', { configPath });
+
+      expect(result).toBe('active');
+    });
+  });
+
+  describe('lock_policy integration with LaneConfigWithWip', () => {
+    it('should coexist with wip_limit and wip_justification', () => {
+      const config = {
+        lanes: {
+          definitions: [
+            {
+              name: TEST_LANE_CONTENT_DOCS,
+              wip_limit: 4,
+              wip_justification: 'Docs are low-conflict parallel work',
+              lock_policy: 'none',
+            },
+          ],
+        },
+      };
+      writeFileSync(configPath, stringifyYAML(config));
+
+      // All three fields should work together
+      const wipLimit = getWipLimitForLane(TEST_LANE_CONTENT_DOCS, { configPath });
+      const justification = checkWipJustification(TEST_LANE_CONTENT_DOCS, { configPath });
+      const lockPolicy = getLockPolicyForLane(TEST_LANE_CONTENT_DOCS, { configPath });
+
+      expect(wipLimit).toBe(4);
+      expect(justification.justification).toBe('Docs are low-conflict parallel work');
+      expect(lockPolicy).toBe('none');
     });
   });
 });
