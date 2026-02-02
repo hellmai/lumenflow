@@ -2,7 +2,7 @@ id: WU-1327
 title: Document lock_policy and pilot guidance
 lane: 'Content: Documentation'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-02
 code_paths:
@@ -43,3 +43,5 @@ session_id: ee6f4e8a-ffee-416b-9702-a087d9c96dbf
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-02T12:25:30.158Z
+locked: true
+completed_at: 2026-02-02T12:28:04.869Z
