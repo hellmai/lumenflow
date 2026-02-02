@@ -37,7 +37,9 @@ import { parseYAML } from '@lumenflow/core/dist/wu-yaml.js';
 import { die } from '@lumenflow/core/dist/error-handler.js';
 import { WU_STATUS, PATTERNS, FILE_SYSTEM, EMOJI } from '@lumenflow/core/dist/wu-constants.js';
 // WU-1603: Check lane lock status before spawning
+// WU-1325: Import lock policy getter for lane availability check
 import { checkLaneLock } from '@lumenflow/core/dist/lane-lock.js';
+import { getLockPolicyForLane } from '@lumenflow/core/dist/lane-checker.js';
 import { minimatch } from 'minimatch';
 // WU-2252: Import invariants loader for spawn output injection
 import { loadInvariants, INVARIANT_TYPES } from '@lumenflow/core/dist/invariants-runner.js';
@@ -1369,6 +1371,7 @@ ${SPAWN_END_SENTINEL}
 
 /**
  * WU-1603: Check if a lane is currently occupied by another WU
+ * WU-1325: Now considers lock_policy - lanes with policy=none are never occupied
  *
  * @param {string} lane - Lane name (e.g., "Operations: Tooling")
  * @returns {import('@lumenflow/core/dist/lane-lock.js').LockMetadata|null} Lock metadata if occupied, null otherwise
@@ -1376,6 +1379,12 @@ ${SPAWN_END_SENTINEL}
 export function checkLaneOccupation(
   lane: string,
 ): ReturnType<typeof checkLaneLock>['metadata'] | null {
+  // WU-1325: Lanes with lock_policy=none never report as occupied
+  const lockPolicy = getLockPolicyForLane(lane);
+  if (lockPolicy === 'none') {
+    return null;
+  }
+
   const lockStatus = checkLaneLock(lane);
   if (lockStatus.locked && lockStatus.metadata) {
     return lockStatus.metadata;

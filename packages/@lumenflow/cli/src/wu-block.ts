@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console -- CLI tool requires console output */
 /**
  * WU Block Helper
  *
@@ -48,6 +49,8 @@ import { withMicroWorktree } from '@lumenflow/core/dist/micro-worktree.js';
 import { WUStateStore } from '@lumenflow/core/dist/wu-state-store.js';
 // WU-1603: Atomic lane locking - release lock when WU is blocked
 import { releaseLaneLock } from '@lumenflow/core/dist/lane-lock.js';
+// WU-1325: Import lock policy getter to determine release behavior
+import { getLockPolicyForLane } from '@lumenflow/core/dist/lane-checker.js';
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
 // ensureStaged() moved to git-staged-validator.ts (WU-1341)
@@ -253,15 +256,22 @@ async function main() {
 
   await handleWorktreeRemoval(args, doc);
 
-  // WU-1603: Release lane lock when WU is blocked
-  // This allows another WU to be claimed in the same lane
+  // WU-1325: Release lane lock when WU is blocked (only for lock_policy=active)
+  // For policy=all, lock is held through block/unblock cycle
+  // For policy=none, no lock exists to release
   try {
     const lane = doc.lane;
     if (lane) {
-      const releaseResult = releaseLaneLock(lane, { wuId: id });
-      if (releaseResult.released && !releaseResult.notFound) {
-        console.log(`${LOG_PREFIX.BLOCK} Lane lock released for "${lane}"`);
+      const lockPolicy = getLockPolicyForLane(lane);
+      if (lockPolicy === 'active') {
+        const releaseResult = releaseLaneLock(lane, { wuId: id });
+        if (releaseResult.released && !releaseResult.notFound) {
+          console.log(`${LOG_PREFIX.BLOCK} Lane lock released for "${lane}" (lock_policy=active)`);
+        }
+      } else if (lockPolicy === 'all') {
+        console.log(`${LOG_PREFIX.BLOCK} Lane lock retained for "${lane}" (lock_policy=all)`);
       }
+      // For policy=none, no lock exists - nothing to do
     }
   } catch (err) {
     // Non-blocking: lock release failure should not block the blocking operation

@@ -24,9 +24,10 @@ import {
   existsSync,
   mkdirSync,
 } from 'node:fs';
-import type { WriteFileOptions } from 'node:fs';
 import path from 'node:path';
-import { toKebab, FILE_SYSTEM, LUMENFLOW_PATHS, getProjectRoot } from './wu-constants.js';
+import { toKebab, LUMENFLOW_PATHS, getProjectRoot } from './wu-constants.js';
+// WU-1325: Import lock policy getter
+import { getLockPolicyForLane } from './lane-checker.js';
 
 // Type definitions (exported for declaration generation)
 export interface LockMetadata {
@@ -42,6 +43,8 @@ interface LockResult {
   error: string | null;
   existingLock: LockMetadata | null;
   isStale: boolean;
+  /** WU-1325: True if lock acquisition was skipped due to lock_policy=none */
+  skipped?: boolean;
 }
 
 interface UnlockResult {
@@ -246,6 +249,20 @@ export function acquireLaneLock(
   options: AcquireLockOptions = {},
 ): LockResult {
   const { agentSession = null, baseDir = null } = options;
+
+  // WU-1325: Check lock policy before acquiring
+  const lockPolicy = getLockPolicyForLane(lane);
+  if (lockPolicy === 'none') {
+    // eslint-disable-next-line no-console -- CLI tool status message
+    console.log(`${LOG_PREFIX} Skipping lock acquisition for "${lane}" (lock_policy=none)`);
+    return {
+      acquired: true,
+      error: null,
+      existingLock: null,
+      isStale: false,
+      skipped: true,
+    };
+  }
 
   try {
     ensureLocksDir(baseDir);
