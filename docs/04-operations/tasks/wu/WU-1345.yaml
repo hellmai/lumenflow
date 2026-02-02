@@ -2,14 +2,15 @@ id: WU-1345
 title: Add lanes field to LumenFlowConfigSchema (WU-1340 bug fix)
 lane: 'Framework: Core'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-02
 code_paths:
   - packages/@lumenflow/core/src/lumenflow-config-schema.ts
 tests:
   manual:
-    - Run orchestrate:init-status and verify Lane Availability shows correct wip_limit values from config
+    - Run orchestrate:init-status and verify Lane Availability shows correct wip_limit values from
+      config
   unit:
     - packages/@lumenflow/core/src/__tests__/lumenflow-config-schema.test.ts
     - packages/@lumenflow/initiatives/__tests__/lane-config-resolver.test.ts
@@ -51,3 +52,5 @@ session_id: 4e8c428a-0fcc-4298-8752-58d62a98f3d1
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-02T16:03:39.016Z
+locked: true
+completed_at: 2026-02-02T16:15:10.687Z
