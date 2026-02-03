@@ -1,4 +1,4 @@
-id: WU-1389
+id: WU-1394
 title: Add --retrospective flag to mem:checkpoint
 lane: 'Framework: Memory'
 type: feature
@@ -7,7 +7,7 @@ priority: P2
 created: 2026-02-03
 description: >
   Context: Checkpoints capture state but not reasoning.
-  Problem: Post-mortems and handoffs lack context on what worked/didn't.
+  Problem: Post-mortems and handoffs lack context on what worked/didnt.
   Solution: Add optional --retrospective flag to capture reasoning in JSONL.
   Research source: AgentWorkforce/trajectories pattern.
 acceptance:

@@ -1,0 +1,39 @@
+id: WU-1397
+title: Create vendor-agnostic rules directory
+lane: 'Framework: Core'
+type: feature
+status: ready
+priority: P2
+created: 2026-02-03
+description: >
+  Context: Rules currently duplicated in .claude/, .cursor/, .windsurf/.
+  Problem: DRY violation, rules drift between clients.
+  Solution: Create .lumenflow/rules/ as single source of truth.
+acceptance:
+  - Create .lumenflow/rules/ directory structure
+  - Move shared rules from .claude/ to .lumenflow/rules/
+  - Document rule format in README
+  - Update lumenflow:init to create rules directory
+code_paths:
+  - .lumenflow/rules/
+  - packages/@lumenflow/cli/src/commands/init.ts
+tests:
+  manual:
+    - Verify rules directory created by init
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/init.test.ts
+  e2e: []
+artifacts: []
+dependencies: []
+risks: []
+notes: Phase 1 of INIT-014. Infrastructure foundation.
+spec_refs:
+  - lumenflow://initiatives/INIT-014
+requires_review: false
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+initiative: INIT-014
