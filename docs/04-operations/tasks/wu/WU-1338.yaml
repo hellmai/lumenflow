@@ -2,7 +2,7 @@ id: WU-1338
 title: Fix consumer-integration test failure for hardcoded paths in gates binary
 lane: 'Framework: Core'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-02
 code_paths:
@@ -38,3 +38,5 @@ session_id: b44b24b9-29f7-4899-9c2e-6eddf30a9205
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-02T23:55:35.629Z
+locked: true
+completed_at: 2026-02-03T00:03:11.202Z
