@@ -1,4 +1,4 @@
-id: WU-1388
+id: WU-1398
 title: Extend lumenflow:integrate for Cursor and Windsurf
 lane: 'Framework: CLI'
 type: feature
@@ -8,31 +8,27 @@ created: 2026-02-03
 description: >
   Context: integrate command only supports claude-code.
   Problem: Cursor/Windsurf rules manually maintained, DRY violation.
-  Solution: Add --client cursor and --client windsurf to generate rules from .lumenflow/rules/.
+  Solution: Add --client cursor and --client windsurf options.
 acceptance:
   - Add --client cursor option to lumenflow:integrate
   - Add --client windsurf option to lumenflow:integrate
   - Generate .cursor/rules/lumenflow.md from .lumenflow/rules/
   - Generate .windsurf/rules/lumenflow.md from .lumenflow/rules/
   - Unit tests for new generators
-  - Update --help output to show new options
 code_paths:
   - packages/@lumenflow/cli/src/commands/integrate.ts
 tests:
   manual:
     - Run lumenflow:integrate --client cursor and verify output
-    - Run lumenflow:integrate --client windsurf and verify output
   unit:
     - packages/@lumenflow/cli/src/__tests__/integrate.test.ts
   e2e: []
 artifacts: []
 dependencies: []
 blocked_by:
-  - WU-1387
-risks:
-  - Different client rule formats may need transformation
-notes: >
-  Phase 2 of INIT-014. Depends on WU-1387 (.lumenflow/rules/ must exist).
+  - WU-1397
+risks: []
+notes: Phase 2 of INIT-014. Depends on WU-1397.
 spec_refs:
   - lumenflow://initiatives/INIT-014
 requires_review: false
