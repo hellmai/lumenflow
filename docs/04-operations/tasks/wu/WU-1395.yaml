@@ -2,7 +2,7 @@ id: WU-1395
 title: Fix init docs paths for simple structure
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-03
 code_paths:
@@ -26,7 +26,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: lumenflow init (simple structure) writes arc42 doc paths in config/templates. Problem: simple setups reference docs/04-operations, breaking guidance and config defaults. Solution: align generated config and scaffolding templates with detected docs structure.'
+description: 'Context: lumenflow init (simple structure) writes arc42 doc paths in config/templates.
+  Problem: simple setups reference docs/04-operations, breaking guidance and config defaults.
+  Solution: align generated config and scaffolding templates with detected docs structure.'
 acceptance:
   - Simple docs structure writes docs/tasks paths in .lumenflow.config.yaml
   - Scaffolded onboarding templates use docs/tasks paths when docsStructure is simple
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-1395
+claimed_at: 2026-02-03T22:36:27.615Z
+baseline_main_sha: 72fb4951825c9cf292af8599466454052a78941b
+session_id: d00d0149-38e8-4bca-8ec8-821df75ae261
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-03T22:36:27.623Z
