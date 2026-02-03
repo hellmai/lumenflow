@@ -18,6 +18,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import * as ts from 'typescript';
 // Note: Using Zod 4's native .toJSONSchema() instead of zod-to-json-schema library
 // which doesn't support Zod 4
 
@@ -90,6 +91,209 @@ function buildExampleCommand(cmd: CommandMetadata): string {
 
   const suffix = requiredFlags.length ? ` ${requiredFlags.join(' ')}` : '';
   return `pnpm ${cmd.pnpmCommand}${suffix}`;
+}
+
+// ============================================================================
+// WU-1358: AST-based option extraction
+//
+// Uses TypeScript compiler API to statically extract inline option objects
+// (e.g., EDIT_OPTIONS in wu-edit.ts) without runtime execution.
+// ============================================================================
+
+/**
+ * Extract inline option objects from a TypeScript source file using AST parsing.
+ *
+ * This function parses TypeScript source code and extracts option definitions
+ * from const declarations like:
+ *
+ *   const EDIT_OPTIONS = {
+ *     specFile: { name: 'specFile', flags: '--spec-file <path>', description: '...' },
+ *     ...
+ *   }
+ *
+ * WU-1358 requirement: No runtime execution - pure AST/static analysis only.
+ *
+ * @param srcContent - TypeScript source code content
+ * @returns Array of extracted WUOption objects
+ */
+function extractOptionsFromAST(srcContent: string): WUOption[] {
+  const options: WUOption[] = [];
+
+  // Create a source file from the content
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    srcContent,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+
+  // Helper to extract string value from a string literal or template literal
+  function getStringValue(node: ts.Node | undefined): string | undefined {
+    if (!node) return undefined;
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
+      return node.text;
+    }
+    return undefined;
+  }
+
+  // Helper to extract boolean value
+  function getBooleanValue(node: ts.Node | undefined): boolean | undefined {
+    if (!node) return undefined;
+    if (node.kind === ts.SyntaxKind.TrueKeyword) return true;
+    if (node.kind === ts.SyntaxKind.FalseKeyword) return false;
+    return undefined;
+  }
+
+  // Helper to extract option properties from an object literal
+  function extractOptionFromObject(obj: ts.ObjectLiteralExpression): WUOption | null {
+    const option: Partial<WUOption> = {};
+
+    for (const prop of obj.properties) {
+      if (!ts.isPropertyAssignment(prop)) continue;
+
+      const propName = prop.name.getText(sourceFile);
+      const value = prop.initializer;
+
+      switch (propName) {
+        case 'name':
+          option.name = getStringValue(value);
+          break;
+        case 'flags':
+          option.flags = getStringValue(value);
+          break;
+        case 'description':
+          option.description = getStringValue(value);
+          break;
+        case 'isRepeatable':
+          option.isRepeatable = getBooleanValue(value);
+          break;
+        case 'isNegated':
+          option.isNegated = getBooleanValue(value);
+          break;
+      }
+    }
+
+    // Validate required fields
+    if (option.name && option.flags && option.description) {
+      return option as WUOption;
+    }
+    return null;
+  }
+
+  // Visit all nodes to find option object declarations
+  function visit(node: ts.Node) {
+    // Look for const declarations like: const EDIT_OPTIONS = { ... }
+    // or const XXX_OPTIONS = { ... }
+    if (ts.isVariableStatement(node) && node.declarationList.declarations.length > 0) {
+      for (const decl of node.declarationList.declarations) {
+        if (
+          ts.isIdentifier(decl.name) &&
+          decl.name.text.endsWith('_OPTIONS') &&
+          !decl.name.text.startsWith('WU_') && // Skip WU_OPTIONS - handled via import
+          decl.initializer &&
+          ts.isObjectLiteralExpression(decl.initializer)
+        ) {
+          // Found an inline options object like EDIT_OPTIONS
+          for (const prop of decl.initializer.properties) {
+            if (ts.isPropertyAssignment(prop) && ts.isObjectLiteralExpression(prop.initializer)) {
+              const option = extractOptionFromObject(prop.initializer);
+              if (option) {
+                options.push(option);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return options;
+}
+
+/**
+ * Extract option references from createWUParser options array, including
+ * both WU_OPTIONS references and inline option object references.
+ *
+ * Handles patterns like:
+ *   options: [
+ *     WU_OPTIONS.id,
+ *     EDIT_OPTIONS.specFile,
+ *     EDIT_OPTIONS.description,
+ *   ]
+ *
+ * @param srcContent - TypeScript source code content
+ * @param inlineOptions - Map of inline option objects extracted via AST
+ * @returns Array of option names found in the options array
+ */
+function extractOptionRefsFromAST(
+  srcContent: string,
+  inlineOptions: WUOption[],
+): { wuOptionsRefs: string[]; inlineOptionsRefs: WUOption[] } {
+  const wuOptionsRefs: string[] = [];
+  const inlineOptionsRefs: WUOption[] = [];
+
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    srcContent,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+
+  // Build a map of inline options by name for quick lookup
+  const inlineOptionsMap = new Map<string, WUOption>();
+  for (const opt of inlineOptions) {
+    inlineOptionsMap.set(opt.name, opt);
+  }
+
+  function visit(node: ts.Node) {
+    // Look for createWUParser({ options: [...] })
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'createWUParser' &&
+      node.arguments.length > 0 &&
+      ts.isObjectLiteralExpression(node.arguments[0])
+    ) {
+      const configObj = node.arguments[0] as ts.ObjectLiteralExpression;
+
+      for (const prop of configObj.properties) {
+        if (
+          ts.isPropertyAssignment(prop) &&
+          ts.isIdentifier(prop.name) &&
+          prop.name.text === 'options' &&
+          ts.isArrayLiteralExpression(prop.initializer)
+        ) {
+          // Found the options array
+          for (const element of prop.initializer.elements) {
+            if (ts.isPropertyAccessExpression(element)) {
+              const objName = element.expression.getText(sourceFile);
+              const propName = element.name.getText(sourceFile);
+
+              if (objName === 'WU_OPTIONS' || objName === 'WU_CREATE_OPTIONS') {
+                wuOptionsRefs.push(propName);
+              } else if (objName.endsWith('_OPTIONS')) {
+                // Inline options like EDIT_OPTIONS.specFile
+                const inlineOpt = inlineOptionsMap.get(propName);
+                if (inlineOpt) {
+                  inlineOptionsRefs.push(inlineOpt);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return { wuOptionsRefs, inlineOptionsRefs };
 }
 
 // ============================================================================
@@ -243,27 +447,26 @@ function extractCommandMetadata(): CommandMetadata[] {
         }
       }
 
-      // Extract options array - look for WU_OPTIONS / WU_CREATE_OPTIONS references
-      const optionsMatch = srcContent.match(/options:\s*\[\s*([\s\S]*?)\s*\]\s*,/);
-      if (optionsMatch) {
-        const optionRefs = [
-          ...(optionsMatch[1].match(/WU_OPTIONS\.(\w+)/g) || []),
-          ...(optionsMatch[1].match(/WU_CREATE_OPTIONS\.(\w+)/g) || []),
-        ];
-        for (const ref of optionRefs) {
-          if (ref.startsWith('WU_OPTIONS.')) {
-            const optName = ref.replace('WU_OPTIONS.', '');
-            if (WU_OPTIONS[optName]) {
-              options.push(WU_OPTIONS[optName]);
-            }
-          } else if (ref.startsWith('WU_CREATE_OPTIONS.')) {
-            const optName = ref.replace('WU_CREATE_OPTIONS.', '');
-            if (WU_CREATE_OPTIONS[optName]) {
-              options.push(WU_CREATE_OPTIONS[optName]);
-            }
-          }
+      // WU-1358: Extract inline option objects via AST (e.g., EDIT_OPTIONS)
+      const inlineOptions = extractOptionsFromAST(srcContent);
+
+      // WU-1358: Extract option references from createWUParser using AST
+      const { wuOptionsRefs, inlineOptionsRefs } = extractOptionRefsFromAST(
+        srcContent,
+        inlineOptions,
+      );
+
+      // Add WU_OPTIONS and WU_CREATE_OPTIONS references
+      for (const optName of wuOptionsRefs) {
+        if (WU_OPTIONS[optName]) {
+          options.push(WU_OPTIONS[optName]);
+        } else if (WU_CREATE_OPTIONS[optName]) {
+          options.push(WU_CREATE_OPTIONS[optName]);
         }
       }
+
+      // Add inline option references (e.g., EDIT_OPTIONS.specFile)
+      options.push(...inlineOptionsRefs);
 
       // Extract required options
       const requiredMatch = srcContent.match(/required:\s*\[\s*([\s\S]*?)\s*\]/);
