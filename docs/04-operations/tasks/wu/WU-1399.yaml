@@ -1,4 +1,4 @@
-id: WU-1392
+id: WU-1399
 title: Create Claude prompt-debugging skill
 lane: 'Framework: Agent'
 type: feature
@@ -6,31 +6,27 @@ status: ready
 priority: P2
 created: 2026-02-03
 description: >
-  Context: Prompt debugging pattern documented in WU-1391.
+  Context: Prompt debugging pattern documented in WU-1396.
   Problem: Pattern not loadable via /skill command in Claude Code.
   Solution: Create Claude-specific skill binding that references pattern doc.
 acceptance:
   - Create .claude/skills/prompt-debugging/SKILL.md
-  - Skill references pattern doc from WU-1391
+  - Skill references pattern doc from WU-1396
   - Loadable via /skill prompt-debugging
   - Includes quick reference checklist
-  - Follows existing skill format conventions
 code_paths:
   - .claude/skills/prompt-debugging/SKILL.md
 tests:
   manual:
     - Verify skill loads with /skill prompt-debugging
-    - Verify content matches pattern doc
   unit: []
   e2e: []
 artifacts: []
 dependencies: []
 blocked_by:
-  - WU-1391
+  - WU-1396
 risks: []
-notes: >
-  Phase 3 of INIT-014. Depends on WU-1391 (pattern doc must exist first).
-  Claude-specific binding - other clients may get similar bindings later.
+notes: Phase 3 of INIT-014. Depends on WU-1396.
 spec_refs:
   - lumenflow://initiatives/INIT-014
 requires_review: false

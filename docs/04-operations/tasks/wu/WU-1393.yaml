@@ -1,48 +1,49 @@
 id: WU-1393
-title: Fix WU spec:linter issues on main
+title: Research agent frameworks and create INIT-014
 lane: 'Content: Documentation'
 type: documentation
-status: done
+status: in_progress
 priority: P2
 created: 2026-02-03
+description: >
+  Research AgentWorkforce/relay, Claude Code best practices, Claude-Flow swarm patterns,
+  and Prompt Engineer Master framework. Create INIT-014 initiative with 6 WUs for
+  vendor-agnostic multi-client architecture. Establishes foundation for IDE-agnostic
+  LumenFlow positioning.
+acceptance:
+  - INIT-014 initiative created with phases and success metrics
+  - 6 WUs created for vendor-agnostic multi-client architecture (WU-1387 through WU-1392)
+  - Research findings documented in WU descriptions and acceptance criteria
 code_paths:
-  - docs/04-operations/tasks/wu/WU-1368.yaml
-  - docs/04-operations/tasks/wu/WU-1385.yaml
+  - docs/04-operations/tasks/initiatives/INIT-014.yaml
+  - docs/04-operations/tasks/wu/WU-1387.yaml
+  - docs/04-operations/tasks/wu/WU-1388.yaml
+  - docs/04-operations/tasks/wu/WU-1389.yaml
   - docs/04-operations/tasks/wu/WU-1390.yaml
   - docs/04-operations/tasks/wu/WU-1391.yaml
   - docs/04-operations/tasks/wu/WU-1392.yaml
 tests:
-  manual: []
+  manual:
+    - Verify INIT-014.yaml exists and is valid
+    - Verify 6 WUs are linked to INIT-014
   unit: []
   e2e: []
-artifacts:
-  - .lumenflow/stamps/WU-1393.done
+artifacts: []
 dependencies: []
 risks: []
-notes: ''
+notes: >
+  Research sources: AgentWorkforce/trajectories, Claude Code best practices,
+  Claude-Flow patterns, Prompt Engineer Master framework.
+spec_refs:
+  - lumenflow://research/agent-frameworks
 requires_review: false
-claimed_mode: worktree
-assigned_to: tom@hellm.ai
-claimed_at: 2026-02-03T18:48:48.308Z
-worktree_path: /home/tom/source/hellmai/os/worktrees/content-documentation-wu-1393
-session_id: 846c293a-0a77-4afd-bbe5-3b4d5097ea83
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-03T18:48:48.314Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: spec:linter fails on main due to missing required fields and mismatched
-  acceptance references in WU-1368, WU-1385, WU-1390, WU-1391. Problem: Blocks unrelated WU prep
-  runs. Solution: Update those WU specs to add notes/tests.manual/spec_refs and fix acceptance path
-  reference.'
-acceptance:
-  - WU-1368 includes notes, tests.manual, spec_refs
-  - WU-1390 includes notes, tests.manual, spec_refs
-  - WU-1391 includes notes
-  - WU-1385 acceptance references only files listed in code_paths
-locked: true
-completed_at: 2026-02-03T18:52:40.539Z
+initiative: null
+claimed_mode: worktree
+worktree_path: /home/user/os/worktrees/content-documentation-wu-1372
+claimed_at: 2026-02-03T12:10:00.000Z
