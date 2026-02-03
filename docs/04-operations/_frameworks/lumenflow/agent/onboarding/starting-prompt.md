@@ -356,6 +356,24 @@ Before reporting a WU complete, verify:
 2. **Read error messages:** They usually include fix commands
 3. **Check gate logs:** `.logs/gates-*.log` in worktree
 4. **Recovery command:** `pnpm wu:recover --id WU-XXX`
+5. **Use --help for full options:** `<package_manager> <command> --help`
+
+### Rule: Always Check --help for Full Options (WU-1358)
+
+CLI documentation may not include all available options. Before using a command, **always run `--help`** to see the complete list:
+
+```bash
+# Examples (substitute your package manager)
+pnpm wu:edit --help
+npm run wu:claim -- --help
+yarn wu:create --help
+```
+
+This ensures you see:
+
+- All available flags (including inline options not in generated docs)
+- Required vs optional parameters
+- Default values and descriptions
 
 ---
 

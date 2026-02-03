@@ -162,6 +162,23 @@ Edit Initiative YAML files with micro-worktree isolation
 pnpm initiative:edit
 ```
 
+**Options:**
+
+| Flag                                | Description                                                                 | Required |
+| ----------------------------------- | --------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;initId&gt;`           | Initiative ID (e.g., INIT-001)                                              | No       |
+| `--blocked-by &lt;initId&gt;`       | Initiative ID that blocks this initiative                                   | No       |
+| `--blocked-reason &lt;text&gt;`     | Reason for blocking (required with --blocked-by)                            | No       |
+| `--unblock`                         | Remove blocked_by and blocked_reason fields                                 | No       |
+| `--add-lane &lt;lane&gt;`           | Lane to add (repeatable)                                                    | No       |
+| `--remove-lane &lt;lane&gt;`        | Lane to remove (repeatable)                                                 | No       |
+| `--notes &lt;text&gt;`              | Note to append to notes array                                               | No       |
+| `--description &lt;text&gt;`        | Replace the initiative description field                                    | No       |
+| `--add-phase &lt;title&gt;`         | Append a new phase with auto-incremented id and pending status (repeatable) | No       |
+| `--add-success-metric &lt;text&gt;` | Append to success_metrics array, avoiding duplicates (repeatable)           | No       |
+| `--phase-id &lt;id&gt;`             | Phase ID to update (use with --phase-status)                                | No       |
+| `--created &lt;date&gt;`            | Set created date (YYYY-MM-DD format)                                        | No       |
+
 ### initiative:list
 
 List all initiatives with progress percentages
@@ -220,9 +237,16 @@ pnpm mem:checkpoint
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | No       |
+| Flag                          | Description                                    | Required |
+| ----------------------------- | ---------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`           | Work Unit ID to link (e.g., WU-123)            | No       |
+| `-n, --note &lt;text&gt;`     | Checkpoint note (required if not positional)   | No       |
+| `-s, --session &lt;id&gt;`    | Session ID to link checkpoint to (UUID)        | No       |
+| `-p, --progress &lt;text&gt;` | Progress summary                               | No       |
+| `--next-steps &lt;text&gt;`   | Next steps description                         | No       |
+| `-t, --trigger &lt;type&gt;`  | Handoff trigger type (e.g., clear, handoff)    | No       |
+| `-d, --base-dir &lt;path&gt;` | Base directory (defaults to current directory) | No       |
+| `-q, --quiet`                 | Suppress output except errors                  | No       |
 
 ### mem:cleanup
 
@@ -231,6 +255,17 @@ Prune closed memory nodes based on lifecycle policy and TTL
 ```bash
 pnpm mem:cleanup
 ```
+
+**Options:**
+
+| Flag                          | Description                                                                           | Required |
+| ----------------------------- | ------------------------------------------------------------------------------------- | -------- |
+| `--dry-run`                   | Preview cleanup without making changes                                                | No       |
+| `--ttl &lt;duration&gt;`      | Remove nodes older than duration (e.g., 30d, 7d, 24h). Active sessions are protected. | No       |
+| `--session-id &lt;uuid&gt;`   | Session ID to consider closed (removes session lifecycle nodes)                       | No       |
+| `--json`                      | Output as JSON                                                                        | No       |
+| `-q, --quiet`                 | Suppress output except errors                                                         | No       |
+| `-b, --base-dir &lt;path&gt;` | Base directory (defaults to current directory)                                        | No       |
 
 ### mem:context
 
@@ -242,9 +277,17 @@ pnpm mem:context --wu <wuId>
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | Yes      |
+| Flag                                     | Description                                                          | Required |
+| ---------------------------------------- | -------------------------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`                      | Work Unit ID to link (e.g., WU-123)                                  | Yes      |
+| `-m, --max-size &lt;bytes&gt;`           | Maximum context size in bytes (default: 4096)                        | No       |
+| `--spawn-context-max-size &lt;bytes&gt;` | Alias for --max-size (for config parity with spawn_context_max_size) | No       |
+| `-l, --lane &lt;lane&gt;`                | Filter project memories by lane (e.g., "Framework: CLI")             | No       |
+| `--max-recent-summaries &lt;count&gt;`   | Maximum number of recent summaries to include (default: 5)           | No       |
+| `--max-project-nodes &lt;count&gt;`      | Maximum number of project nodes to include (default: 10)             | No       |
+| `-f, --format &lt;format&gt;`            | Output format: json or human (default: human)                        | No       |
+| `-d, --base-dir &lt;path&gt;`            | Base directory (defaults to current directory)                       | No       |
+| `-q, --quiet`                            | Suppress header/footer output, only show context block               | No       |
 
 ### mem:create
 
@@ -256,9 +299,16 @@ pnpm mem:create
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | No       |
+| Flag                               | Description                                              | Required |
+| ---------------------------------- | -------------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`                | Work Unit ID to link (e.g., WU-123)                      | No       |
+| `-t, --title &lt;text&gt;`         | Node title/content (required if not positional)          | No       |
+| `-d, --discovered-from &lt;id&gt;` | Parent node ID for provenance tracking (mem-XXXX format) | No       |
+| `-s, --session &lt;id&gt;`         | Session ID to link node to (UUID)                        | No       |
+| `--tags &lt;tags&gt;`              | Comma-separated tags for categorization                  | No       |
+| `-p, --priority &lt;level&gt;`     | Priority level (P0, P1, P2, P3)                          | No       |
+| `-b, --base-dir &lt;path&gt;`      | Base directory (defaults to current directory)           | No       |
+| `-q, --quiet`                      | Suppress output except errors                            | No       |
 
 ### mem:delete
 
@@ -267,6 +317,17 @@ Delete memory nodes (soft delete via metadata.status=deleted)
 ```bash
 pnpm mem:delete
 ```
+
+**Options:**
+
+| Flag                            | Description                                               | Required |
+| ------------------------------- | --------------------------------------------------------- | -------- |
+| `--dry-run`                     | Preview deletion without making changes                   | No       |
+| `--tag &lt;tag&gt;`             | Delete all nodes matching this tag                        | No       |
+| `--older-than &lt;duration&gt;` | Delete nodes older than duration (e.g., 30d, 7d, 24h, 2w) | No       |
+| `--json`                        | Output as JSON                                            | No       |
+| `-q, --quiet`                   | Suppress output except errors                             | No       |
+| `-b, --base-dir &lt;path&gt;`   | Base directory (defaults to current directory)            | No       |
 
 ### mem:export
 
@@ -278,9 +339,13 @@ pnpm mem:export
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | No       |
+| Flag                                | Description                                           | Required |
+| ----------------------------------- | ----------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`                 | Work Unit ID to link (e.g., WU-123)                   | No       |
+| `-l, --lifecycle &lt;lifecycle&gt;` | Filter by lifecycle (ephemeral, session, wu, project) | No       |
+| `-f, --format &lt;format&gt;`       | Output format (markdown, json). Default: markdown     | No       |
+| `-d, --base-dir &lt;path&gt;`       | Base directory (defaults to current directory)        | No       |
+| `-q, --quiet`                       | Suppress header/footer output                         | No       |
 
 ### mem:inbox
 
@@ -292,10 +357,15 @@ pnpm mem:inbox
 
 **Options:**
 
-| Flag                      | Description                             | Required |
-| ------------------------- | --------------------------------------- | -------- |
-| `--wu &lt;wuId&gt;`       | Work Unit ID to link (e.g., WU-123)     | No       |
-| `-l, --lane &lt;lane&gt;` | Lane name (e.g., "Operations: Tooling") | No       |
+| Flag                       | Description                                                      | Required |
+| -------------------------- | ---------------------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`        | Work Unit ID to link (e.g., WU-123)                              | No       |
+| `-l, --lane &lt;lane&gt;`  | Lane name (e.g., "Operations: Tooling")                          | No       |
+| `-s, --since &lt;time&gt;` | Filter signals since time (e.g., "1h", "30m", "2025-12-09")      | No       |
+| `-w, --watch`              | Continuously monitor for new signals                             | No       |
+| `-q, --quiet`              | Suppress output except signal content                            | No       |
+| `--no-mark`                | Do not mark signals as read after display                        | No       |
+| `-c, --count`              | Output only signal count (lightweight polling for orchestrators) | No       |
 
 ### mem:init
 
@@ -304,6 +374,13 @@ Initialize memory layer in repository
 ```bash
 pnpm mem:init
 ```
+
+**Options:**
+
+| Flag                          | Description                                                  | Required |
+| ----------------------------- | ------------------------------------------------------------ | -------- |
+| `-d, --base-dir &lt;path&gt;` | Base directory to initialize (defaults to current directory) | No       |
+| `-q, --quiet`                 | Suppress output except errors                                | No       |
 
 ### mem:ready
 
@@ -315,9 +392,12 @@ pnpm mem:ready --wu <wuId>
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | Yes      |
+| Flag                          | Description                                    | Required |
+| ----------------------------- | ---------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`           | Work Unit ID to link (e.g., WU-123)            | Yes      |
+| `-f, --format &lt;format&gt;` | Output format (json, human). Default: human    | No       |
+| `-d, --base-dir &lt;path&gt;` | Base directory (defaults to current directory) | No       |
+| `-q, --quiet`                 | Suppress header/footer output, only show nodes | No       |
 
 ### mem:signal
 
@@ -329,10 +409,12 @@ pnpm mem:signal
 
 **Options:**
 
-| Flag                      | Description                             | Required |
-| ------------------------- | --------------------------------------- | -------- |
-| `--wu &lt;wuId&gt;`       | Work Unit ID to link (e.g., WU-123)     | No       |
-| `-l, --lane &lt;lane&gt;` | Lane name (e.g., "Operations: Tooling") | No       |
+| Flag                         | Description                                            | Required |
+| ---------------------------- | ------------------------------------------------------ | -------- |
+| `--wu &lt;wuId&gt;`          | Work Unit ID to link (e.g., WU-123)                    | No       |
+| `-l, --lane &lt;lane&gt;`    | Lane name (e.g., "Operations: Tooling")                | No       |
+| `-m, --message &lt;text&gt;` | Signal message (required if not positional)            | No       |
+| `-q, --quiet`                | Suppress output except errors (outputs signal ID only) | No       |
 
 ### mem:start
 
@@ -344,17 +426,31 @@ pnpm mem:start --wu <wuId>
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | Yes      |
+| Flag                              | Description                                                | Required |
+| --------------------------------- | ---------------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`               | Work Unit ID to link (e.g., WU-123)                        | Yes      |
+| `-a, --agent-type &lt;type&gt;`   | Agent type (e.g., general-purpose, explore, test-engineer) | No       |
+| `-c, --context-tier &lt;tier&gt;` | Context tier (core, full, minimal)                         | No       |
+| `-d, --base-dir &lt;path&gt;`     | Base directory (defaults to current directory)             | No       |
+| `-q, --quiet`                     | Suppress output except errors                              | No       |
 
 ### mem:summarize
 
 Rollup older memory nodes into summary nodes for compaction
 
 ```bash
-pnpm mem:summarize
+pnpm mem:summarize --wu <id>
 ```
+
+**Options:**
+
+| Flag                          | Description                                    | Required |
+| ----------------------------- | ---------------------------------------------- | -------- |
+| `--wu &lt;id&gt;`             | WU ID to summarize (e.g., WU-1234)             | Yes      |
+| `--dry-run`                   | Preview summary without making changes         | No       |
+| `--json`                      | Output as JSON                                 | No       |
+| `-q, --quiet`                 | Suppress output except errors                  | No       |
+| `-b, --base-dir &lt;path&gt;` | Base directory (defaults to current directory) | No       |
 
 ### mem:triage
 
@@ -363,6 +459,23 @@ Review discovery nodes and promote to WUs or archive
 ```bash
 pnpm mem:triage
 ```
+
+**Options:**
+
+| Flag                           | Description                                           | Required |
+| ------------------------------ | ----------------------------------------------------- | -------- |
+| `-l, --list`                   | List open discoveries (default action)                | No       |
+| `-p, --promote &lt;nodeId&gt;` | Promote discovery to WU (mem-XXXX format)             | No       |
+| `-a, --archive &lt;nodeId&gt;` | Archive discovery without promotion (mem-XXXX format) | No       |
+| `-r, --reason &lt;text&gt;`    | Reason for archiving (required with --archive)        | No       |
+| `--title &lt;text&gt;`         | Custom title for promoted WU (optional)               | No       |
+| `--lane &lt;lane&gt;`          | Lane for promoted WU (required with --promote)        | No       |
+| `--wu-id &lt;id&gt;`           | Explicit WU ID for promotion (optional)               | No       |
+| `--wu &lt;id&gt;`              | Filter discoveries by WU ID (or "unlinked")           | No       |
+| `--tag &lt;tag&gt;`            | Filter discoveries by tag                             | No       |
+| `--dry-run`                    | Preview promotion without creating WU                 | No       |
+| `--json`                       | Output as JSON                                        | No       |
+| `-q, --quiet`                  | Suppress output except errors                         | No       |
 
 ## Metrics
 
@@ -629,6 +742,18 @@ Prune old signals based on TTL policy to prevent unbounded growth
 pnpm signal:cleanup
 ```
 
+**Options:**
+
+| Flag                            | Description                                       | Required |
+| ------------------------------- | ------------------------------------------------- | -------- |
+| `--dry-run`                     | Preview cleanup without making changes            | No       |
+| `--ttl &lt;duration&gt;`        | TTL for read signals (e.g., 7d, 24h). Default: 7d | No       |
+| `--unread-ttl &lt;duration&gt;` | TTL for unread signals (e.g., 30d). Default: 30d  | No       |
+| `--max-entries &lt;count&gt;`   | Maximum signals to retain. Default: 500           | No       |
+| `--json`                        | Output as JSON                                    | No       |
+| `-q, --quiet`                   | Suppress output except errors                     | No       |
+| `-b, --base-dir &lt;path&gt;`   | Base directory (defaults to current directory)    | No       |
+
 ### state:bootstrap
 
 State Bootstrap Command
@@ -645,6 +770,18 @@ Orchestrate all state cleanup: signals, memory, events
 pnpm state:cleanup
 ```
 
+**Options:**
+
+| Flag                          | Description                                    | Required |
+| ----------------------------- | ---------------------------------------------- | -------- |
+| `--dry-run`                   | Preview cleanup without making changes         | No       |
+| `--signals-only`              | Only execute signal cleanup                    | No       |
+| `--memory-only`               | Only execute memory cleanup                    | No       |
+| `--events-only`               | Only execute event archival                    | No       |
+| `--json`                      | Output as JSON                                 | No       |
+| `-q, --quiet`                 | Suppress output except errors and summary      | No       |
+| `-b, --base-dir &lt;path&gt;` | Base directory (defaults to current directory) | No       |
+
 ### state:doctor
 
 Check state integrity and optionally repair issues
@@ -652,6 +789,16 @@ Check state integrity and optionally repair issues
 ```bash
 pnpm state:doctor
 ```
+
+**Options:**
+
+| Flag                          | Description                                    | Required |
+| ----------------------------- | ---------------------------------------------- | -------- |
+| `--fix`                       | Auto-repair safe issues                        | No       |
+| `--dry-run`                   | Preview repairs without making changes         | No       |
+| `--json`                      | Output as JSON                                 | No       |
+| `-q, --quiet`                 | Suppress output except errors and summary      | No       |
+| `-b, --base-dir &lt;path&gt;` | Base directory (defaults to current directory) | No       |
 
 ### sync:templates
 
@@ -801,9 +948,11 @@ pnpm spawn:list
 
 **Options:**
 
-| Flag                | Description                         | Required |
-| ------------------- | ----------------------------------- | -------- |
-| `--wu &lt;wuId&gt;` | Work Unit ID to link (e.g., WU-123) | No       |
+| Flag                          | Description                                           | Required |
+| ----------------------------- | ----------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`           | Work Unit ID to link (e.g., WU-123)                   | No       |
+| `--initiative &lt;initId&gt;` | Initiative ID to show all spawns for (e.g., INIT-001) | No       |
+| `--json`                      | Output as JSON                                        | No       |
 
 ## Work Units
 
@@ -866,6 +1015,7 @@ pnpm wu:cleanup
 | Flag                    | Description                                                                      | Required |
 | ----------------------- | -------------------------------------------------------------------------------- | -------- |
 | `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | No       |
+| `--artifacts`           | Remove build artifacts (dist, tsbuildinfo) in current worktree                   | No       |
 
 ### wu:create
 
@@ -901,8 +1051,8 @@ pnpm wu:create --lane <lane> --title <title>
 | `--exposure &lt;type&gt;`           | Exposure level (ui, api, backend-only, documentation)                                                                 | No       |
 | `--user-journey &lt;text&gt;`       | User journey description (recommended for ui/api exposure)                                                            | No       |
 | `--ui-pairing-wus &lt;wuIds&gt;`    | UI WU IDs that consume this API (repeatable or comma-separated, for api exposure)                                     | No       |
-| `--no-strict`                       | Bypass strict validation (skip code_paths/test_paths existence checks, treat warnings as advisory). Logged when used. | No       |
 | `--plan`                            | Create plan template in $LUMENFLOW_HOME/plans/ (external plan storage)                                                | No       |
+| `--no-strict`                       | Bypass strict validation (skip code_paths/test_paths existence checks, treat warnings as advisory). Logged when used. | No       |
 
 ### wu:delete
 
@@ -917,6 +1067,8 @@ pnpm wu:delete
 | Flag                    | Description                                                                      | Required |
 | ----------------------- | -------------------------------------------------------------------------------- | -------- |
 | `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | No       |
+| `--dry-run`             | Show what would be deleted without making changes                                | No       |
+| `--batch &lt;ids&gt;`   | Delete multiple WUs atomically (comma-separated: WU-1,WU-2,WU-3)                 | No       |
 
 ### wu:deps
 
@@ -961,6 +1113,26 @@ pnpm wu:edit --id <wuId>
 | `--test-paths-e2e &lt;paths&gt;`    | E2E test file paths (repeatable)                                                                                      | No       |
 | `--exposure &lt;type&gt;`           | Exposure level (ui, api, backend-only, documentation)                                                                 | No       |
 | `--no-strict`                       | Bypass strict validation (skip code_paths/test_paths existence checks, treat warnings as advisory). Logged when used. | No       |
+| `--spec-file &lt;path&gt;`          | Path to YAML file with updated spec content                                                                           | No       |
+| `--description &lt;text&gt;`        | New description text (replaces existing)                                                                              | No       |
+| `--acceptance &lt;criterion&gt;`    | Acceptance criterion (repeatable, appends to existing; use --replace-acceptance to overwrite)                         | No       |
+| `--notes &lt;text&gt;`              | Notes text (appends to existing; use --replace-notes to overwrite)                                                    | No       |
+| `--replace-notes`                   | Replace existing notes instead of appending                                                                           | No       |
+| `--replace-acceptance`              | Replace existing acceptance criteria instead of appending                                                             | No       |
+| `--code-paths &lt;path&gt;`         | Code path (repeatable, appends to existing; use --replace-code-paths to overwrite)                                    | No       |
+| `--replace-code-paths`              | Replace existing code_paths instead of appending                                                                      | No       |
+| `--risks &lt;risk&gt;`              | Risk entry (repeatable, appends to existing; use --replace-risks to overwrite)                                        | No       |
+| `--replace-risks`                   | Replace existing risks instead of appending                                                                           | No       |
+| `--append`                          | [DEPRECATED] Arrays now append by default. Use --replace-\* flags to replace.                                         | No       |
+| `--lane &lt;lane&gt;`               | New lane assignment (e.g., "Operations: Tooling")                                                                     | No       |
+| `--type &lt;type&gt;`               | New WU type (feature, bug, refactor, documentation)                                                                   | No       |
+| `--priority &lt;priority&gt;`       | New priority (P0, P1, P2, P3)                                                                                         | No       |
+| `--initiative &lt;initId&gt;`       | Initiative ID (e.g., INIT-001). Updates WU and initiative wus: arrays bidirectionally.                                | No       |
+| `--phase &lt;number&gt;`            | Phase number within initiative (e.g., 1, 2)                                                                           | No       |
+| `--blocked-by &lt;wuIds&gt;`        | Comma-separated WU IDs that block this WU (appends to existing; use --replace-blocked-by to overwrite)                | No       |
+| `--replace-blocked-by`              | Replace existing blocked_by instead of appending                                                                      | No       |
+| `--add-dep &lt;wuIds&gt;`           | Comma-separated WU IDs to add to dependencies array (appends to existing; use --replace-dependencies to overwrite)    | No       |
+| `--replace-dependencies`            | Replace existing dependencies instead of appending                                                                    | No       |
 
 ### wu:infer-lane
 
@@ -998,6 +1170,7 @@ pnpm wu:prep --id <wuId>
 | Flag                    | Description                                                                      | Required |
 | ----------------------- | -------------------------------------------------------------------------------- | -------- |
 | `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
+| `--docs-only`           | Run docs-only gates (format, spec-linter)                                        | No       |
 
 ### wu:proto
 
@@ -1092,12 +1265,6 @@ Show WU status, location, and valid commands (WU-1090)
 ```bash
 pnpm wu:status
 ```
-
-**Options:**
-
-| Flag                    | Description                                                                      | Required |
-| ----------------------- | -------------------------------------------------------------------------------- | -------- |
-| `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | No       |
 
 ### wu:unblock
 
