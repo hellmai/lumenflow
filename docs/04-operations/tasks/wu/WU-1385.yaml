@@ -7,7 +7,7 @@ priority: P2
 created: 2026-02-03
 code_paths:
   - packages/@lumenflow/cli/src/init.ts
-  - docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md
+  - packages/@lumenflow/cli/src/__tests__/init.test.ts
 tests:
   manual:
     - Run `pnpm exec lumenflow init --full` and verify onboarding docs include `wu-sizing-guide.md`.
