@@ -3,14 +3,27 @@
  *
  * TDD: These tests define expected behavior BEFORE implementation.
  *
+ * These tests use execSync to run pnpm scripts. The sonarjs security rules
+ * are disabled at file level because:
+ * 1. Commands are hardcoded constants, not user input
+ * 2. This is test code that runs in controlled CI environments
+ * 3. The pnpm scripts are part of this trusted monorepo
+ *
  * @module docs-generate.test
  */
+
+/* eslint-disable sonarjs/no-os-command-from-path, sonarjs/os-command */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { execSync } from 'child_process';
+
+// Test-specific constants for pnpm commands
+const DOCS_GENERATE_CMD = 'pnpm docs:generate';
+const DOCS_VALIDATE_CMD = 'pnpm docs:validate';
+const CLI_MDX_PATH = 'apps/docs/src/content/docs/reference/cli.mdx';
 
 describe('docs:generate', () => {
   const ROOT = join(__dirname, '../../../..');
@@ -37,7 +50,7 @@ describe('docs:generate', () => {
       expect(Object.keys(WU_OPTIONS).length).toBeGreaterThan(50);
 
       // Each option should have required fields
-      for (const [_key, option] of Object.entries(WU_OPTIONS)) {
+      for (const option of Object.values(WU_OPTIONS)) {
         expect(option).toHaveProperty('name');
         expect(option).toHaveProperty('flags');
         expect(option).toHaveProperty('description');
@@ -63,7 +76,7 @@ describe('docs:generate', () => {
 
     it('should run docs:generate and create cli.mdx', { timeout: 60000 }, () => {
       // Run the generator
-      const result = execSync('pnpm docs:generate', {
+      const result = execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
         timeout: 30000,
@@ -72,7 +85,7 @@ describe('docs:generate', () => {
       expect(result).toContain('Documentation generated successfully');
 
       // Check output file exists
-      const cliPath = join(ROOT, 'apps/docs/src/content/docs/reference/cli.mdx');
+      const cliPath = join(ROOT, CLI_MDX_PATH);
       expect(existsSync(cliPath)).toBe(true);
 
       // Read and validate content
@@ -109,7 +122,7 @@ describe('docs:generate', () => {
 
     it('should run docs:generate and create config.mdx', { timeout: 60000 }, () => {
       // Run the generator
-      execSync('pnpm docs:generate', {
+      execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
         timeout: 30000,
@@ -137,9 +150,8 @@ describe('docs:generate', () => {
     it('should use Zod 4 native toJSONSchema() for schema extraction', async () => {
       const { DirectoriesSchema } = await import('@lumenflow/core');
 
-      // Zod 4 has native toJSONSchema() method
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const schema = DirectoriesSchema as any;
+      // Zod 4 has native toJSONSchema() method - needs 'any' for dynamic schema access
+      const schema = DirectoriesSchema as unknown as { toJSONSchema: () => object };
       expect(typeof schema.toJSONSchema).toBe('function');
 
       const jsonSchema = schema.toJSONSchema();
@@ -151,14 +163,14 @@ describe('docs:generate', () => {
   describe('docs:validate', () => {
     it('should detect drift when generated differs from committed', { timeout: 60000 }, () => {
       // First ensure we have fresh generated docs
-      execSync('pnpm docs:generate', {
+      execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
         timeout: 30000,
       });
 
       // Now modify the file to create drift
-      const cliPath = join(ROOT, 'apps/docs/src/content/docs/reference/cli.mdx');
+      const cliPath = join(ROOT, CLI_MDX_PATH);
       const original = readFileSync(cliPath, 'utf-8');
 
       // Add fake content to simulate drift
@@ -166,7 +178,7 @@ describe('docs:generate', () => {
 
       try {
         // Validate should detect drift and exit with code 1
-        execSync('pnpm docs:validate', {
+        execSync(DOCS_VALIDATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
           timeout: 30000,
@@ -185,14 +197,14 @@ describe('docs:generate', () => {
 
     it('should pass when docs are in sync', { timeout: 60000 }, () => {
       // Generate fresh docs
-      execSync('pnpm docs:generate', {
+      execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
         timeout: 30000,
       });
 
       // Validate should pass (exit 0)
-      const result = execSync('pnpm docs:validate', {
+      const result = execSync(DOCS_VALIDATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
         timeout: 30000,
@@ -202,16 +214,154 @@ describe('docs:generate', () => {
     });
   });
 
-  describe('Quality requirements', () => {
-    it('should escape MDX special characters in generated CLI output', { timeout: 60000 }, () => {
+  /**
+   * WU-1358: AST-based option extraction tests
+   *
+   * The docs generator must extract options from:
+   * 1. WU_OPTIONS/WU_CREATE_OPTIONS in @lumenflow/core (existing)
+   * 2. Inline option objects (e.g., EDIT_OPTIONS in wu-edit.ts)
+   * 3. Commander .option() calls in CLI source files
+   *
+   * Implementation MUST use TypeScript AST parsing (not runtime execution)
+   * to safely extract options without side effects.
+   */
+  describe('WU-1358: AST-based option extraction', () => {
+    it('should extract inline option objects (EDIT_OPTIONS) via AST', { timeout: 60000 }, () => {
       // Generate docs
-      execSync('pnpm docs:generate', {
+      execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
         timeout: 30000,
       });
 
-      const cliPath = join(ROOT, 'apps/docs/src/content/docs/reference/cli.mdx');
+      const cliPath = join(ROOT, CLI_MDX_PATH);
+      const content = readFileSync(cliPath, 'utf-8');
+
+      // wu:edit should have EDIT_OPTIONS extracted
+      // These are defined inline in wu-edit.ts, not in WU_OPTIONS
+      expect(content).toContain('--spec-file');
+      expect(content).toContain('--replace-notes');
+      expect(content).toContain('--replace-acceptance');
+      expect(content).toContain('--replace-code-paths');
+      expect(content).toContain('--replace-risks');
+    });
+
+    it(
+      'should show wu:edit --replace-* flags in generated documentation',
+      { timeout: 60000 },
+      () => {
+        // Generate docs
+        execSync(DOCS_GENERATE_CMD, {
+          cwd: ROOT,
+          encoding: 'utf-8',
+          timeout: 30000,
+        });
+
+        const cliPath = join(ROOT, CLI_MDX_PATH);
+        const content = readFileSync(cliPath, 'utf-8');
+
+        // Find the wu:edit section
+        const wuEditSection = content.substring(
+          content.indexOf('### wu:edit'),
+          content.indexOf('### wu:infer-lane') || content.indexOf('### wu:preflight'),
+        );
+
+        // Should contain all EDIT_OPTIONS flags
+        expect(wuEditSection).toContain('--replace-notes');
+        expect(wuEditSection).toContain('--replace-acceptance');
+        expect(wuEditSection).toContain('--replace-code-paths');
+        expect(wuEditSection).toContain('Replace existing');
+      },
+    );
+
+    it('should use AST parsing, not runtime execution', () => {
+      // The generator should NOT execute CLI files to extract options
+      // Verify by checking the generator uses TypeScript compiler API
+      const generatorPath = join(ROOT, 'tools/generate-cli-docs.ts');
+      const generatorContent = readFileSync(generatorPath, 'utf-8');
+
+      // Should use TypeScript for AST parsing (or ts-morph)
+      expect(
+        generatorContent.includes('typescript') ||
+          generatorContent.includes('ts-morph') ||
+          generatorContent.includes('ts.createSourceFile') ||
+          generatorContent.includes('extractOptionsFromAST'),
+      ).toBe(true);
+
+      // Should NOT execute CLI binaries during docs generation
+      expect(generatorContent).not.toContain('execSync(binName');
+      expect(generatorContent).not.toContain('spawn(binPath');
+    });
+
+    it(
+      'should extract options from createWUParser inline options arrays',
+      { timeout: 60000 },
+      () => {
+        // Generate docs
+        execSync(DOCS_GENERATE_CMD, {
+          cwd: ROOT,
+          encoding: 'utf-8',
+          timeout: 30000,
+        });
+
+        const cliPath = join(ROOT, CLI_MDX_PATH);
+        const content = readFileSync(cliPath, 'utf-8');
+
+        // wu:edit uses both WU_OPTIONS and EDIT_OPTIONS in createWUParser
+        // The docs should show options from both sources
+        const wuEditSection = content.substring(
+          content.indexOf('### wu:edit'),
+          content.indexOf('### wu:infer-lane') || content.indexOf('### wu:preflight'),
+        );
+
+        // From WU_OPTIONS
+        expect(wuEditSection).toContain('--id');
+
+        // From EDIT_OPTIONS (inline)
+        expect(wuEditSection).toContain('--spec-file');
+        expect(wuEditSection).toContain('--description');
+        expect(wuEditSection).toContain('--acceptance');
+        expect(wuEditSection).toContain('--notes');
+      },
+    );
+
+    it('should document all commands with complete option lists', { timeout: 60000 }, () => {
+      // Generate docs
+      execSync(DOCS_GENERATE_CMD, {
+        cwd: ROOT,
+        encoding: 'utf-8',
+        timeout: 30000,
+      });
+
+      const cliPath = join(ROOT, CLI_MDX_PATH);
+      const content = readFileSync(cliPath, 'utf-8');
+
+      // Commands that define inline options should have them documented
+      // wu:edit has EDIT_OPTIONS
+      expect(content).toContain('Replace existing notes');
+      expect(content).toContain('Replace existing acceptance');
+
+      // wu:claim should have its options documented (from WU_OPTIONS)
+      const wuClaimSection = content.substring(
+        content.indexOf('### wu:claim'),
+        content.indexOf('### wu:cleanup'),
+      );
+      expect(wuClaimSection).toContain('--id');
+      expect(wuClaimSection).toContain('--lane');
+      expect(wuClaimSection).toContain('--branch-only');
+    });
+  });
+
+  describe('Quality requirements', () => {
+    it('should escape MDX special characters in generated CLI output', { timeout: 60000 }, () => {
+      // Generate docs
+      execSync(DOCS_GENERATE_CMD, {
+        cwd: ROOT,
+        encoding: 'utf-8',
+        timeout: 30000,
+      });
+
+      const cliPath = join(ROOT, CLI_MDX_PATH);
       const content = readFileSync(cliPath, 'utf-8');
 
       // Angle brackets in tables should be escaped
