@@ -83,9 +83,13 @@ export function parseInitOptions(): {
   vendor?: ClientType; // Alias for backwards compatibility
   preset?: GatePresetType;
 } {
+  // WU-1378: Description includes subcommand hint
   const opts = createWUParser({
     name: 'lumenflow-init',
-    description: 'Initialize LumenFlow in a project',
+    description:
+      'Initialize LumenFlow in a project\n\n' +
+      'Subcommands:\n' +
+      '  lumenflow commands    List all available CLI commands',
     options: Object.values(INIT_OPTIONS),
   });
 
@@ -3233,8 +3237,21 @@ function writeNewFile(
  * CLI entry point
  * WU-1085: Updated to use parseInitOptions for proper --help support
  * WU-1171: Added --merge and --client support
+ * WU-1378: Added subcommand routing for 'commands' subcommand
  */
 export async function main(): Promise<void> {
+  // WU-1378: Check for subcommands before parsing init options
+  const subcommand = process.argv[2];
+
+  if (subcommand === 'commands') {
+    // Route to commands subcommand
+    const { main: commandsMain } = await import('./commands.js');
+    // Remove 'commands' from argv so the subcommand parser sees clean args
+    process.argv.splice(2, 1);
+    await commandsMain();
+    return;
+  }
+
   const opts = parseInitOptions();
   const targetDir = process.cwd();
 
