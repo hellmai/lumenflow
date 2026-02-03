@@ -99,6 +99,7 @@
     "lumenflow-init": "./dist/init.js",
     "lumenflow": "./dist/init.js",
     "lumenflow-doctor": "./dist/doctor.js",
+    "lumenflow-commands": "./dist/commands.js",
     "lumenflow-release": "./dist/release.js",
     "lumenflow-docs-sync": "./dist/docs-sync.js",
     "lumenflow-sync-templates": "./dist/sync-templates.js",
