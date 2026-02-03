@@ -4,6 +4,16 @@
 
 Complete reference for all CLI commands. Organized by category for quick discovery.
 
+> **Tip (WU-1358):** For complete option lists, always run `<package_manager> <command> --help`.
+> This shows all available flags including inline options that may not appear in generated docs.
+>
+> ```bash
+> # Examples
+> pnpm wu:edit --help      # See all wu:edit options
+> npm run wu:claim -- --help
+> yarn wu:create --help
+> ```
+
 ---
 
 ## Setup & Development
