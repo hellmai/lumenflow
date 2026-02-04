@@ -6,10 +6,15 @@ status: in_progress
 priority: P2
 created: 2026-02-04
 code_paths:
-  - packages/@lumenflow/core/src/beacon-migration.ts
-  - packages/@lumenflow/core/src/__tests__/beacon-migration.test.ts
   - packages/@lumenflow/core/src/wu-constants.ts
   - packages/@lumenflow/core/src/index.ts
+  - packages/@lumenflow/core/src/wu-done-validation.ts
+  - packages/@lumenflow/core/src/telemetry.ts
+  - packages/@lumenflow/core/src/docs-path-validator.ts
+  - packages/@lumenflow/core/src/wu-done-metadata.ts
+  - packages/@lumenflow/core/src/wu-done-concurrent-merge.ts
+  - packages/@lumenflow/core/src/wu-spawn.ts
+  - packages/@lumenflow/core/src/wu-spawn-skills.ts
 tests:
   manual:
     - Run rg beacon --type ts and verify no results
