@@ -184,8 +184,8 @@ export function getResolvedPaths(options: { projectRoot?: string } = {}): {
     backlogPath: path.join(projectRoot, config.directories.backlogPath),
     statusPath: path.join(projectRoot, config.directories.statusPath),
     worktrees: path.join(projectRoot, config.directories.worktrees),
-    stampsDir: path.join(projectRoot, config._legacy.stampsDir),
-    stateDir: path.join(projectRoot, config._legacy.stateDir),
+    stampsDir: path.join(projectRoot, config.state.stampsDir),
+    stateDir: path.join(projectRoot, config.state.stateDir),
     skillsDir: path.join(projectRoot, config.directories.skillsDir),
     agentsDir: path.join(projectRoot, config.directories.agentsDir),
     memoryBank: path.join(projectRoot, config.directories.memoryBank),
@@ -273,11 +273,11 @@ directories:
   # Onboarding directory
   onboardingDir: "${defaultConfig.directories.onboardingDir}"
 
-# Legacy paths (.lumenflow directory structure)
-legacy:
-  base: "${defaultConfig._legacy.base}"
-  stampsDir: "${defaultConfig._legacy.stampsDir}"
-  stateDir: "${defaultConfig._legacy.stateDir}"
+# State paths (.lumenflow directory structure)
+state:
+  base: "${defaultConfig.state.base}"
+  stampsDir: "${defaultConfig.state.stampsDir}"
+  stateDir: "${defaultConfig.state.stateDir}"
 
 # Git configuration
 git:
@@ -307,7 +307,7 @@ gates:
 export type {
   LumenFlowConfig,
   Directories,
-  LegacyPaths,
+  StatePaths,
   PushRetryConfig,
   GitConfig,
   WuConfig,

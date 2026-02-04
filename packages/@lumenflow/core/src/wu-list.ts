@@ -120,7 +120,7 @@ export async function listWUs(options: ListWUsOptions = {}): Promise<WUListEntry
     // Get configuration for paths
     const config = getConfig({ projectRoot });
     wuDir = wuDirOverride ?? join(projectRoot, config.directories.wuDir);
-    stateDir = stateDirOverride ?? join(projectRoot, config._legacy.stateDir);
+    stateDir = stateDirOverride ?? join(projectRoot, config.state.stateDir);
   }
 
   // Load state store for runtime statuses

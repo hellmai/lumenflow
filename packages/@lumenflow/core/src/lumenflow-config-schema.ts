@@ -207,10 +207,13 @@ export const DirectoriesSchema = z.object({
 });
 
 /**
- * Legacy paths configuration (.lumenflow directory structure)
+ * State paths configuration (.lumenflow directory structure)
+ *
+ * WU-1423: Renamed from LegacyPathsSchema to StatePathsSchema as part of
+ * the legacy→lumenflow migration. The config key changed from 'legacy' to 'state'.
  */
-export const LegacyPathsSchema = z.object({
-  /** Base legacy directory (default: '.lumenflow') */
+export const StatePathsSchema = z.object({
+  /** Base state directory (default: '.lumenflow') */
   base: z.string().default('.lumenflow'),
 
   /** State directory (default: '.lumenflow/state') */
@@ -1011,8 +1014,8 @@ export const LumenFlowConfigSchema = z.object({
   /** Directory paths */
   directories: DirectoriesSchema.default(() => DirectoriesSchema.parse({})),
 
-  /** Legacy paths */
-  legacy: LegacyPathsSchema.default(() => LegacyPathsSchema.parse({})),
+  /** State paths (.lumenflow directory structure) */
+  state: StatePathsSchema.default(() => StatePathsSchema.parse({})),
 
   /** Git configuration */
   git: GitConfigSchema.default(() => GitConfigSchema.parse({})),
@@ -1138,7 +1141,7 @@ export const LumenFlowConfigSchema = z.object({
  * TypeScript types inferred from schemas
  */
 export type Directories = z.infer<typeof DirectoriesSchema>;
-export type LegacyPaths = z.infer<typeof LegacyPathsSchema>;
+export type StatePaths = z.infer<typeof StatePathsSchema>;
 export type PushRetryConfig = z.infer<typeof PushRetryConfigSchema>;
 export type GitConfig = z.infer<typeof GitConfigSchema>;
 export type WuConfig = z.infer<typeof WuConfigSchema>;

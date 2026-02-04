@@ -29,7 +29,7 @@ import {
   WU_CREATE_OPTIONS,
   type WUOption,
   DirectoriesSchema,
-  LegacyPathsSchema,
+  StatePathsSchema,
   GitConfigSchema,
   WuConfigSchema,
   GatesConfigSchema,
@@ -524,9 +524,9 @@ const SCHEMA_DEFINITIONS: SchemaDefinition[] = [
     schema: DirectoriesSchema,
   },
   {
-    name: 'legacy',
-    description: 'Legacy paths configuration (._legacy directory structure)',
-    schema: LegacyPathsSchema,
+    name: 'state',
+    description: 'State paths configuration (.lumenflow directory structure)',
+    schema: StatePathsSchema,
   },
   {
     name: 'git',

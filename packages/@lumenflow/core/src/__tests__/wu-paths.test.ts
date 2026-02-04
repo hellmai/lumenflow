@@ -44,7 +44,7 @@ vi.mock('../lumenflow-config.js', () => ({
       templatesDir: '.lumenflow/templates',
       onboardingDir: 'docs/04-operations/_frameworks/lumenflow/agent/onboarding',
     },
-    legacy: {
+    state: {
       stampsDir: '.lumenflow/stamps',
       stateDir: '.lumenflow/state',
     },

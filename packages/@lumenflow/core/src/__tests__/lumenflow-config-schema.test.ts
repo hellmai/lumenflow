@@ -15,7 +15,7 @@ import {
   ProgressSignalsConfigSchema,
   EventArchivalConfigSchema,
   MemoryConfigSchema,
-  LegacyPathsSchema,
+  StatePathsSchema,
   LumenFlowConfigSchema,
   parseConfig,
   getDefaultConfig,
@@ -291,9 +291,9 @@ describe('WU-1203: Progress Signals Config Schema', () => {
       });
     });
 
-    describe('LegacyPathsSchema with eventArchival', () => {
-      it('should include eventArchival in legacy paths', () => {
-        const result = LegacyPathsSchema.safeParse({});
+    describe('StatePathsSchema with eventArchival', () => {
+      it('should include eventArchival in state paths', () => {
+        const result = StatePathsSchema.safeParse({});
 
         expect(result.success).toBe(true);
         if (result.success) {
@@ -304,7 +304,7 @@ describe('WU-1203: Progress Signals Config Schema', () => {
       });
 
       it('should accept custom eventArchival configuration', () => {
-        const result = LegacyPathsSchema.safeParse({
+        const result = StatePathsSchema.safeParse({
           eventArchival: {
             archiveAfter: 60 * 24 * 60 * 60 * 1000, // 60 days
             keepArchives: false,
