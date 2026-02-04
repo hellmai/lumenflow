@@ -20,7 +20,8 @@ tests:
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1433.done
-dependencies: []
+dependencies:
+  - WU-1432
 spec_refs:
   - lumenflow://plans/WU-1433-plan.md
 risks: []
@@ -33,9 +34,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: New customer onboarding relies on lumenflow init to scaffold scripts and docs. Problem: init injects only a subset of CLI scripts and templates hardcode arc42 paths, causing missing commands and path mismatches in simple structure. Solution: generate scripts for all CLI binaries with key aliases, and parameterize templates/config to respect selected docs structure (simple or arc42).'
+description: 'Context: New customer onboarding relies on lumenflow init to scaffold scripts and
+  docs. Problem: init injects only a subset of CLI scripts and templates hardcode arc42 paths,
+  causing missing commands and path mismatches in simple structure. WU-1432 defines a public CLI
+  manifest as source of truth, so init must derive scripts from that manifest to avoid drift.
+  Solution: generate pnpm scripts from the public manifest (with required aliases) and parameterize
+  templates/config to respect selected docs structure (simple or arc42).'
 acceptance:
-  - All CLI binaries are accessible via pnpm scripts after init (including docs:sync, sync:templates, gates:docs).
-  - Simple docs structure yields config + templates referencing docs/tasks and docs/_frameworks paths.
+  - pnpm scripts are generated from the public CLI manifest (WU-1432) and expose all public
+    commands, including required aliases (docs:sync, sync:templates, gates:docs).
+  - Simple docs structure yields config + templates referencing docs/tasks and docs/_frameworks
+    paths.
   - Arc42 docs structure yields config + templates referencing docs/04-operations paths.
   - Init scaffolding tests cover scripts + docs structure and pass.
