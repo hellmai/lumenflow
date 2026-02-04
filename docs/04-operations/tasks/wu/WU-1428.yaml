@@ -1,0 +1,36 @@
+id: WU-1428
+title: 'Remove all beacon references: delete migration utility and purge codebase'
+lane: 'Framework: Core'
+type: refactor
+status: ready
+priority: P2
+created: 2026-02-04
+code_paths:
+  - packages/@lumenflow/core/src/beacon-migration.ts
+  - packages/@lumenflow/core/src/__tests__/beacon-migration.test.ts
+  - packages/@lumenflow/core/src/wu-constants.ts
+  - packages/@lumenflow/core/src/index.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/core/src/__tests__/wu-constants.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1428.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: "Context: WU-1423 renamed config schema but left ~19 files with beacon references. 'Beacon' was the ExampleApp AI name - not LumenFlow related. Problem: beacon-migration.ts exists as migration utility but migration is complete. Comments, regex patterns, and ExampleApp terms still reference beacon. Solution: Delete beacon-migration.ts and tests, remove all beacon references from comments/regex/constants. Zero beacon references should remain."
+acceptance:
+  - beacon-migration.ts deleted
+  - beacon-migration.test.ts deleted
+  - No TypeScript files contain 'beacon' (rg beacon --type ts returns empty)
+  - Regex patterns like STAMP no longer support .beacon paths
