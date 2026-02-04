@@ -21,7 +21,7 @@ No. LumenFlow works for human-only teams too. The workflow (WUs, gates, lanes) b
 
 ### Is LumenFlow free?
 
-The CLI and methodology are open source (Apache-2.0). The GitHub App has free and paid tiers based on usage.
+Yes. The CLI and methodology are open source (Apache-2.0).
 
 ## Work Units (WUs)
 
@@ -142,7 +142,7 @@ Worktrees provide true isolation:
 
 ### Do I need to install the CLI?
 
-The CLI provides the full LumenFlow experience (worktrees, gates, memory). Without it, you can still use LumenFlow with manual WU YAML management and the GitHub App.
+The CLI provides the full LumenFlow experience (worktrees, gates, memory). Without it, you can still use LumenFlow with manual WU YAML management.
 
 ### What Node.js version do I need?
 
@@ -159,25 +159,6 @@ npx wu-create --title "Update README" --lane "Operations: Documentation" \
   --description "Clarify setup steps" \
   --acceptance "README includes updated setup instructions"
 ```
-
-## GitHub App
-
-### What does the GitHub App do?
-
-The GitHub App:
-
-- Validates WU specs on PRs
-- Runs gates in CI
-- Enforces WIP limits
-- Reports usage metrics
-
-### Do I need the GitHub App?
-
-No. The CLI works standalone. The GitHub App adds enforcement and team visibility.
-
-### How do I get a LUMENFLOW_TOKEN?
-
-Sign up at [lumenflow.dev](https://lumenflow.dev), create an organization, and generate a token in settings.
 
 ## AI Agents
 
