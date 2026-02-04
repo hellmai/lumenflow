@@ -10,8 +10,8 @@ code_paths:
   - packages/@lumenflow/core/src/lumenflow-config.ts
   - packages/@lumenflow/core/src/wu-paths.ts
   - packages/@lumenflow/core/src/wu-list.ts
-  - packages/@lumenflow/core/src/wu-constants.ts
-  - packages/@lumenflow/core/src/wu-done-validation.ts
+  - packages/@lumenflow/cli/src/state-doctor.ts
+  - tools/generate-cli-docs.ts
 tests:
   manual:
     - Verify `rg beacon --type ts` returns only beacon-migration files and legacy support regex
@@ -20,6 +20,8 @@ tests:
   unit:
     - packages/@lumenflow/core/src/__tests__/lumenflow-config-schema.test.ts
     - packages/@lumenflow/core/src/__tests__/wu-paths.test.ts
+    - packages/@lumenflow/core/src/__tests__/path-centralization.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-spawn-progress-signals.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1423.done
