@@ -1,0 +1,325 @@
+---
+title: MCP Server Reference
+description: Model Context Protocol server for LumenFlow
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+LumenFlow provides an MCP (Model Context Protocol) server that exposes workflow tools and resources to AI assistants. The MCP server enables AI agents to interact with LumenFlow programmatically through a standardized protocol.
+
+<Aside type="tip">
+  MCP is an open protocol for AI-to-tool communication. Learn more at
+  [modelcontextprotocol.io](https://modelcontextprotocol.io/).
+</Aside>
+
+## Package
+
+The MCP server is provided by `@lumenflow/mcp`:
+
+```bash
+pnpm add @lumenflow/mcp
+```
+
+## Running the Server
+
+The MCP server runs over stdio and is typically configured in your AI client:
+
+```bash
+# Direct execution
+npx @lumenflow/mcp
+
+# Or via the CLI binary
+lumenflow-mcp
+```
+
+### Environment Variables
+
+| Variable                  | Description                          | Default         |
+| ------------------------- | ------------------------------------ | --------------- |
+| `LUMENFLOW_PROJECT_ROOT`  | Project root directory               | `process.cwd()` |
+| `LUMENFLOW_MCP_LOG_LEVEL` | Log level (debug, info, warn, error) | `info`          |
+
+## Tools
+
+The MCP server exposes 7 tools for LumenFlow operations:
+
+### context_get
+
+Get current LumenFlow context including location, git state, and active WU.
+
+**Input:** None
+
+**Output:**
+
+```json
+{
+  "location": {
+    "type": "worktree",
+    "cwd": "/path/to/worktrees/lane-wu-xxx",
+    "mainCheckout": "/path/to/repo"
+  },
+  "git": {
+    "branch": "lane/operations/wu-123",
+    "dirty": false
+  },
+  "wu": {
+    "id": "WU-123",
+    "status": "in_progress"
+  }
+}
+```
+
+### wu_list
+
+List all Work Units with optional filtering.
+
+**Input:**
+| Parameter | Type | Description |
+| --------- | ------ | ------------------------------------------------ |
+| `status` | string | Filter by status (ready, in_progress, blocked, waiting, done) |
+| `lane` | string | Filter by lane name |
+
+**Output:** Array of WU objects matching filters.
+
+### wu_status
+
+Get detailed status of a specific Work Unit.
+
+**Input:**
+| Parameter | Type | Required | Description |
+| --------- | ------ | -------- | ------------------------ |
+| `id` | string | Yes | WU ID (e.g., `WU-1234`) |
+
+**Output:** Full WU status including spec, location, and valid commands.
+
+### wu_create
+
+Create a new Work Unit specification.
+
+**Input:**
+| Parameter | Type | Required | Description |
+| ------------- | -------- | -------- | ------------------------------------------ |
+| `id` | string | No | WU ID (auto-generated if omitted) |
+| `lane` | string | Yes | Lane name (e.g., `Framework: CLI`) |
+| `title` | string | Yes | WU title |
+| `description` | string | No | Context/Problem/Solution description |
+| `acceptance` | string[] | No | Acceptance criteria |
+| `code_paths` | string[] | No | Code paths this WU will modify |
+| `exposure` | string | No | Exposure level (ui, api, backend-only, documentation) |
+
+**Output:** Confirmation message with created WU ID.
+
+### wu_claim
+
+Claim a Work Unit and create a worktree for implementation.
+
+**Input:**
+| Parameter | Type | Required | Description |
+| --------- | ------ | -------- | ---------------------------------- |
+| `id` | string | Yes | WU ID to claim |
+| `lane` | string | Yes | Lane for the WU |
+
+**Output:** Confirmation with worktree path.
+
+### wu_done
+
+Complete a Work Unit (merge, stamp, cleanup).
+
+<Aside type="caution">
+  `wu_done` must be called from the main checkout, not from a worktree. Run `wu_prep` from the
+  worktree first, then call `wu_done` from main.
+</Aside>
+
+**Input:**
+| Parameter | Type | Required | Description |
+| ------------ | ------- | -------- | ---------------------------------------- |
+| `id` | string | Yes | WU ID to complete |
+| `skip_gates` | boolean | No | Skip gates (requires reason) |
+| `reason` | string | No | Reason for skipping gates |
+| `fix_wu` | string | No | WU ID that will fix the skipped issue |
+
+**Output:** Confirmation message or error if called from worktree.
+
+### gates_run
+
+Run LumenFlow quality gates (lint, typecheck, tests).
+
+**Input:**
+| Parameter | Type | Required | Description |
+| ----------- | ------- | -------- | ------------------------------------------------ |
+| `docs_only` | boolean | No | Run docs-only gates (skip lint/typecheck/tests) |
+
+**Output:** Gate results or error details.
+
+## Resources
+
+The MCP server exposes 3 resources for reading LumenFlow data:
+
+### lumenflow://context
+
+**Type:** Static resource
+
+Current LumenFlow context including location, git state, and active WU.
+
+```json
+{
+  "uri": "lumenflow://context",
+  "mimeType": "application/json"
+}
+```
+
+### lumenflow://wu/{id}
+
+**Type:** Resource template
+
+Work Unit specification by ID. Replace `{id}` with the WU ID.
+
+```json
+{
+  "uriTemplate": "lumenflow://wu/{id}",
+  "mimeType": "application/json"
+}
+```
+
+**Example:** `lumenflow://wu/WU-1427`
+
+### lumenflow://backlog
+
+**Type:** Static resource
+
+Current LumenFlow backlog with all WUs grouped by status.
+
+```json
+{
+  "uri": "lumenflow://backlog",
+  "mimeType": "text/markdown"
+}
+```
+
+## Client Configuration
+
+### Claude Code
+
+Add to your Claude Code MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "lumenflow": {
+      "command": "npx",
+      "args": ["@lumenflow/mcp"],
+      "env": {
+        "LUMENFLOW_PROJECT_ROOT": "/path/to/your/project"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to your Cursor MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "lumenflow": {
+      "command": "npx",
+      "args": ["@lumenflow/mcp"]
+    }
+  }
+}
+```
+
+### Generic MCP Client
+
+```typescript
+import { createMcpServer } from '@lumenflow/mcp';
+
+const server = createMcpServer({
+  projectRoot: '/path/to/project',
+  logLevel: 'info',
+});
+
+await server.start();
+```
+
+## Programmatic Usage
+
+The MCP package exports tools and resources for direct use:
+
+```typescript
+import {
+  createMcpServer,
+  allTools,
+  allResources,
+  contextGetTool,
+  wuListTool,
+} from '@lumenflow/mcp';
+
+// List available tools
+const tools = allTools.map((t) => ({ name: t.name, description: t.description }));
+
+// Execute a tool directly
+const result = await contextGetTool.execute({}, { projectRoot: process.cwd() });
+```
+
+## Error Handling
+
+All tools return a consistent result structure:
+
+```typescript
+interface ToolResult {
+  success: boolean;
+  data?: unknown;
+  error?: {
+    message: string;
+    code?: string;
+  };
+}
+```
+
+### Error Codes
+
+| Code                | Description                          |
+| ------------------- | ------------------------------------ |
+| `MISSING_PARAMETER` | Required parameter not provided      |
+| `CONTEXT_ERROR`     | Failed to compute LumenFlow context  |
+| `WU_LIST_ERROR`     | Failed to list WUs                   |
+| `WU_STATUS_ERROR`   | Failed to get WU status              |
+| `WU_CREATE_ERROR`   | Failed to create WU                  |
+| `WU_CLAIM_ERROR`    | Failed to claim WU                   |
+| `WU_DONE_ERROR`     | Failed to complete WU                |
+| `WRONG_LOCATION`    | Operation called from wrong location |
+| `GATES_ERROR`       | Gates failed                         |
+
+## Architecture
+
+The MCP server follows a thin wrapper pattern:
+
+- **Read operations** (context_get) use `@lumenflow/core` directly
+- **Write operations** (wu_create, wu_claim, wu_done, gates_run) shell out to CLI commands
+
+This ensures consistency with CLI behavior and respects all safety hooks.
+
+```
+MCP Server (@lumenflow/mcp)
+├── Tools (7)
+│   ├── context_get → @lumenflow/core
+│   ├── wu_list → CLI: wu:validate
+│   ├── wu_status → CLI: wu:status
+│   ├── wu_create → CLI: wu:create
+│   ├── wu_claim → CLI: wu:claim
+│   ├── wu_done → CLI: wu:done
+│   └── gates_run → CLI: gates
+└── Resources (3)
+    ├── lumenflow://context → @lumenflow/core
+    ├── lumenflow://wu/{id} → CLI: wu:status
+    └── lumenflow://backlog → File read
+```
+
+## Next Steps
+
+- [CLI Commands](/reference/cli) - Full CLI command reference
+- [AI Integrations](/guides/ai-integrations) - Configure your AI assistant
+- [MCP Setup Guide](/guides/mcp-setup) - Detailed setup instructions
