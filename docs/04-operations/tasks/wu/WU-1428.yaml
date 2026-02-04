@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/core/src/wu-constants.ts
   - packages/@lumenflow/core/src/index.ts
 tests:
-  manual: []
+  manual:
+    - Run rg beacon --type ts and verify no results
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-constants.test.ts
   e2e: []
@@ -19,7 +20,7 @@ artifacts:
   - .lumenflow/stamps/WU-1428.done
 dependencies: []
 risks: []
-notes: ''
+notes: Complete purge of beacon references. Renamed beacon-guardian agent example to code-reviewer and llm-reviewer. Updated BEACON_PATHS usages to LUMENFLOW_PATHS. Removed deprecated BEACON_PATHS export.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
