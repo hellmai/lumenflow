@@ -2,7 +2,7 @@ id: WU-1428
 title: 'Remove all beacon references: delete migration utility and purge codebase'
 lane: 'Framework: Core'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-04
 code_paths:
@@ -28,9 +28,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: WU-1423 renamed config schema but left ~19 files with beacon references. 'Beacon' was the ExampleApp AI name - not LumenFlow related. Problem: beacon-migration.ts exists as migration utility but migration is complete. Comments, regex patterns, and ExampleApp terms still reference beacon. Solution: Delete beacon-migration.ts and tests, remove all beacon references from comments/regex/constants. Zero beacon references should remain."
+description: "Context: WU-1423 renamed config schema but left ~19 files with beacon references.
+  'Beacon' was the ExampleApp AI name - not LumenFlow related. Problem: beacon-migration.ts exists
+  as migration utility but migration is complete. Comments, regex patterns, and ExampleApp terms
+  still reference beacon. Solution: Delete beacon-migration.ts and tests, remove all beacon
+  references from comments/regex/constants. Zero beacon references should remain."
 acceptance:
   - beacon-migration.ts deleted
   - beacon-migration.test.ts deleted
   - No TypeScript files contain 'beacon' (rg beacon --type ts returns empty)
   - Regex patterns like STAMP no longer support .beacon paths
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-wu-1428
+claimed_at: 2026-02-04T17:19:16.328Z
+baseline_main_sha: 3a7a5688532791d1ed20107df7f51a3362c0a915
+session_id: ea17dc92-8d82-4712-a6ab-e3b7ba48e2d3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-04T17:19:16.334Z
