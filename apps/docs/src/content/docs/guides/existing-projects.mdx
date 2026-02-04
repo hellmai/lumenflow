@@ -12,7 +12,7 @@ Adding LumenFlow to an existing project takes about 15 minutes. This guide walks
 Before starting:
 
 - Git repository (any platform)
-- Node.js 22+ (for CLI) or skip CLI and use GitHub App only
+- Node.js 22+ (for CLI)
 - Understanding of [Work Units](/concepts/work-units) and [Gates](/concepts/gates)
 
 ## Quick Overview
@@ -128,11 +128,13 @@ The CLI provides the fastest path to adoption.
    }
    ```
 
-5. **Install git hooks (optional)**
+5. **Git hooks (auto-scaffolded)**
+
+   `lumenflow init` automatically creates `.husky/pre-commit` (blocks main commits) and `scripts/safe-git` (blocks dangerous git operations). To also run gates on commit:
 
    ```bash
-   npx husky init
-   npx husky add .husky/pre-commit "npx gates --quick"
+   # Optional: Add gates to pre-commit
+   echo 'npx gates --quick' >> .husky/pre-commit
    ```
 
 </Steps>
@@ -325,8 +327,7 @@ Run LumenFlow alongside existing workflow:
 
 1. All new work uses WUs
 2. Close out ticket system (or keep for roadmap/epics)
-3. Install GitHub App for enforcement
-4. Enable git hooks
+3. Enable git hooks (auto-scaffolded by `lumenflow init`)
 
 ## Coexistence Strategies
 

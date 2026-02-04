@@ -11,13 +11,7 @@ export default defineConfig({
       plugins: [starlightThemeNova()],
       title: 'LumenFlow',
       description: 'AI-native workflow for software teams',
-      social: [
-        {
-          icon: 'github',
-          label: 'GitHub App',
-          href: 'https://github.com/apps/lumenflow-by-hellmai',
-        },
-      ],
+      social: [],
       sidebar: [
         {
           label: 'Getting Started',
@@ -25,7 +19,6 @@ export default defineConfig({
             { label: 'Quickstart (Agents)', slug: 'getting-started/quickstart' },
             { label: 'What is LumenFlow?', slug: 'getting-started/introduction' },
             { label: 'Why LumenFlow?', slug: 'getting-started/why-lumenflow' },
-            { label: 'Install GitHub App', slug: 'getting-started/github-app' },
             { label: 'Upgrading', slug: 'getting-started/upgrade' },
             { label: 'FAQ', slug: 'getting-started/faq' },
           ],

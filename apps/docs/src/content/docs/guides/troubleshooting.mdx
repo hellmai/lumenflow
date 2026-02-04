@@ -445,36 +445,6 @@ pnpm mem:checkpoint --wu WU-042
 pnpm mem:checkpoint --wu WU-XXX
 ```
 
-## GitHub App Issues
-
-### PR checks don't run
-
-**Possible causes:**
-
-1. GitHub App not installed on the repository
-2. `LUMENFLOW_TOKEN` not set in repository secrets
-3. Workflow file missing or incorrect
-
-**Fix:**
-
-1. Check [GitHub App installation](https://github.com/apps/lumenflow-by-hellmai)
-2. Add `LUMENFLOW_TOKEN` to repository secrets
-3. Verify `.github/workflows/gates.yml` exists
-
-### Token invalid error
-
-**Symptom:**
-
-```
-ERROR: Invalid or expired LUMENFLOW_TOKEN
-```
-
-**Fix:**
-
-1. Go to [lumenflow.dev/settings](https://lumenflow.dev/settings)
-2. Regenerate your token
-3. Update the repository secret
-
 ## Still Stuck?
 
 If these solutions don't help:

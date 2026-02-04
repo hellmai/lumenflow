@@ -44,13 +44,13 @@ If you don't know the user's client, ask before running init. If their client is
 
 ## If `lumenflow-doctor` reports errors
 
-Setup is incomplete. Do not install Husky, copy safe-git, or edit hooks during setup.
+`lumenflow init` automatically scaffolds `scripts/safe-git` and `.husky/pre-commit`. If doctor still reports errors:
 
-1. Tell the user: "Setup incomplete—enforcement failed (Husky/safe-git). Creating a WU to fix this."
-2. Create a WU: `pnpm wu:create --lane "Operations: Infrastructure" --title "Fix LumenFlow enforcement" --type refactor`
-3. Stop. Do not proceed to create feature WUs or claim work.
+1. **Check if Husky is installed**: Run `pnpm add -D husky && pnpm exec husky` if missing
+2. **Check node_modules**: Run `pnpm install` to ensure dependencies are set up
+3. **Read the specific error message**: Doctor explains what's wrong and how to fix it
 
-If the user explicitly accepts incomplete enforcement, record that in the WU notes and stop anyway. No repo writes occur after setup completes.
+If errors persist after these steps, ask the user for help. Do not proceed to work until doctor passes.
 
 **Lane overlap warnings:** Informational only. Do not edit `.lumenflow.config.yaml` during setup.
 

@@ -97,8 +97,8 @@ npx wu-done --id WU-123
 ```
 
 <Aside type="note">
-  If you truly don't want worktrees, use the GitHub App-only workflow and manage WUs manually.
-  `wu:prep` requires a worktree.
+  `wu:prep` requires a worktree. If you truly don't want worktrees, manage WU YAML files manually
+  and skip `wu:prep`.
 </Aside>
 
 ## Simplified Configuration
@@ -332,21 +332,6 @@ When your solo project grows:
 3. Lower WIP limits: `wip_limit: 1`
 4. Enable review: `requires_review: true`
 
-### Adding GitHub App
-
-For enforcement with collaborators:
-
-```bash
-# Install GitHub App
-# https://github.com/apps/lumenflow-gates
-
-# Update config
-# .lumenflow.config.yaml
-github_app:
-  enforce_wip: true
-  require_gates: true
-```
-
 ### Multi-Repo Setup
 
 If you have multiple solo projects:
@@ -399,13 +384,14 @@ description: |
 
 ### Run Gates Before Commit
 
-Add a pre-commit hook:
+`lumenflow init` automatically creates a pre-commit hook that blocks direct commits to main. To also run gates on commit, you can extend the hook:
 
 ```bash
-npx husky add .husky/pre-commit "npx gates --quick"
+# Optional: Add gates to pre-commit (in addition to main-branch blocking)
+echo 'npx gates --quick' >> .husky/pre-commit
 ```
 
-Or run manually before important commits.
+Or run gates manually before important commits.
 
 ## Configuration Examples
 
