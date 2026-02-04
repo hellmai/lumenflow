@@ -225,6 +225,36 @@ const useCase = new ComputeContextUseCase(
 | `ValidateCommandUseCase` | `ICommandRegistry`                                       | Validate command against context |
 | `AnalyzeRecoveryUseCase` | `IRecoveryAnalyzer`                                      | Detect and suggest recovery      |
 
+## External Interfaces
+
+The hexagonal architecture enables multiple ways to interact with LumenFlow:
+
+| Interface    | Package           | Description                                     |
+| ------------ | ----------------- | ----------------------------------------------- |
+| **CLI**      | `@lumenflow/cli`  | Command-line tools for humans and scripts       |
+| **MCP**      | `@lumenflow/mcp`  | Model Context Protocol server for AI assistants |
+| **Core API** | `@lumenflow/core` | Programmatic TypeScript API                     |
+
+The MCP server (`@lumenflow/mcp`) acts as an adapter layer that exposes LumenFlow operations to AI assistants via the [Model Context Protocol](https://modelcontextprotocol.io/). It uses `@lumenflow/core` for read operations and shells out to CLI for write operations, ensuring consistency with all safety hooks.
+
+```
+AI Assistant
+     ↓ MCP Protocol
++--------------------+
+| @lumenflow/mcp     |  ← Adapter (external interface)
++--------------------+
+     ↓
++--------------------+
+| @lumenflow/core    |  ← Application + Ports
++--------------------+
+     ↓
++--------------------+
+| Adapters (git, fs) |  ← Infrastructure
++--------------------+
+```
+
+See the [MCP Reference](/reference/mcp) for available tools and resources.
+
 ## Further Reading
 
 <CardGrid>
@@ -232,6 +262,11 @@ const useCase = new ComputeContextUseCase(
     title="Port Interfaces"
     description="Complete reference for all port interfaces"
     href="/reference/ports/"
+  />
+  <LinkCard
+    title="MCP Server"
+    description="MCP tools and resources for AI assistants"
+    href="/reference/mcp/"
   />
   <LinkCard
     title="ADR-001"
