@@ -27,9 +27,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: WU-1427 documented MCP before all tools were implemented. Problem: Docs missing Flow + Validation + Setup tools from WU-1426 and public manifest from WU-1432. Solution: Update MCP reference page with complete tool list after all implementation WUs are done.'
+description: 'Context: WU-1427 documented MCP before all tools were implemented. Problem: Docs
+  missing Flow + Validation + Setup tools from WU-1426 and public manifest from WU-1432. Solution:
+  Update MCP reference page with complete tool list after all implementation WUs are done.'
 acceptance:
   - MCP reference page includes all Flow/Metrics tools (4)
   - MCP reference page includes all Validation tools (5)
   - MCP reference page includes all Setup tools (8)
   - Tool list matches public CLI manifest from WU-1432
+initiative: INIT-MCP-FULL

@@ -31,3 +31,5 @@ success_metrics:
   - MCP setup guide published
   - Public CLI manifest defines source of truth
 labels: []
+wus:
+  - WU-1434
