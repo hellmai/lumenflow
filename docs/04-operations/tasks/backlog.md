@@ -20,12 +20,11 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1426 — MCP: Flow + Validation + Setup tools (+17)](wu/WU-1426.yaml) — Framework: CLI
-- [WU-1425 — MCP: Agent + Orchestration + Spawn tools (+8)](wu/WU-1425.yaml) — Framework: CLI
-- [WU-1424 — MCP: Initiative + Memory tools (+21)](wu/WU-1424.yaml) — Framework: CLI
-- [WU-1423 — Complete beacon→lumenflow migration: rename config schema and all references](wu/WU-1423.yaml) — Framework: Core
-- [WU-1422 — MCP: Complete WU tools (+17)](wu/WU-1422.yaml) — Framework: CLI
 - [WU-1384 — Relax spec completeness checks for done/cancelled WUs](wu/WU-1384.yaml) — Framework: Core
+- [WU-1422 — MCP: Complete WU tools (+17)](wu/WU-1422.yaml) — Framework: CLI
+- [WU-1424 — MCP: Initiative + Memory tools (+21)](wu/WU-1424.yaml) — Framework: CLI
+- [WU-1425 — MCP: Agent + Orchestration + Spawn tools (+8)](wu/WU-1425.yaml) — Framework: CLI
+- [WU-1426 — MCP: Flow + Validation + Setup tools (+17)](wu/WU-1426.yaml) — Framework: CLI
 
 ## 🔧 In progress
 
@@ -33,6 +32,7 @@ sections:
 - [WU-1204 — Add signal TTL cleanup to prevent unbounded growth](wu/WU-1204.yaml) — Framework: Memory
 - [WU-1222 — Add PreToolUse hook to block grep/cat/find via Bash](wu/WU-1222.yaml) — Framework: Core
 - [WU-1412 — Add @lumenflow/mcp stdio server](wu/WU-1412.yaml) — Framework: CLI
+- [WU-1423 — Complete beacon→lumenflow migration: rename config schema and all references](wu/WU-1423.yaml) — Framework: Core
 
 ## ⛔ Blocked
 
