@@ -9,12 +9,14 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-create.ts
   - packages/@lumenflow/cli/src/wu-create-validators.ts
   - packages/@lumenflow/cli/src/arg-parser.ts
+  - packages/@lumenflow/cli/src/wu-create.ts
 tests:
   manual:
     - Run wu:create with empty spec_refs array for feature type and verify error
     - Run wu:create with --initiative that has phases but omit --phase and verify warning
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-create.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-create-required-fields.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1429.done
