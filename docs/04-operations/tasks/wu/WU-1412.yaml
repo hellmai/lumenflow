@@ -2,7 +2,7 @@ id: WU-1412
 title: Add @lumenflow/mcp stdio server
 lane: 'Framework: CLI'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-04
 code_paths:
@@ -63,3 +63,5 @@ acceptance:
   - 'Resources available: context, wu/{id}, backlog'
   - wu_done fails fast if not on main checkout
   - 'Environment variables supported: LUMENFLOW_PROJECT_ROOT and LUMENFLOW_MCP_LOG_LEVEL'
+locked: true
+completed_at: 2026-02-04T14:39:13.214Z
