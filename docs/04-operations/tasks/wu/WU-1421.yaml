@@ -7,12 +7,13 @@ priority: P2
 created: 2026-02-04
 code_paths:
   - packages/@lumenflow/core/src/spawn-monitor.ts
+  - packages/@lumenflow/core/src/spawn-escalation.ts
   - packages/@lumenflow/core/src/spawn-recovery.ts
   - packages/@lumenflow/core/src/wu-constants.ts
-  - packages/@lumenflow/.beacon
 tests:
   manual:
-    - Verify no .beacon directory exists after migration
+    - Run pnpm test spawn-monitor to verify checkZombieLocks uses LUMENFLOW_PATHS.LOCKS_DIR
+    - Verify no .beacon directory exists in the repository root
     - Verify spawn locks are created under .lumenflow/locks/
   unit:
     - packages/@lumenflow/core/src/__tests__/spawn-monitor.test.ts
@@ -21,7 +22,11 @@ artifacts:
   - .lumenflow/stamps/WU-1421.done
 dependencies: []
 risks: []
-notes: 'ExampleApp to LumenFlow naming cleanup'
+notes: >
+  Implementation notes: Fixed spawn-monitor.ts and spawn-escalation.ts to use
+  LUMENFLOW_PATHS constants instead of hardcoded .beacon paths. Removed the legacy
+  .beacon/state/wu-events.jsonl file. Migration utilities (beacon-migration.ts) and
+  backward compatibility patterns preserved for legacy project support.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
