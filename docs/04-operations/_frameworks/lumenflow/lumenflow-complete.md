@@ -2135,10 +2135,13 @@ pnpm --filter web test:e2e      # Playwright E2E
 pnpm test:db                    # Database tests
 
 # Validation
-pnpm tasks:validate             # Validate backlog
+pnpm tasks:validate             # Informational stub (not an enforced quality gate)
 pnpm spec:linter                # Lint spec files
 pnpm board:validate             # Validate WU board
 ```
+
+> `prompts:lint`, `cos:gates`, and `tasks:validate` are informational stubs in this repo.
+> Enforced quality gates are `format:check`, `lint`, `typecheck`, and `test` (via `pnpm gates` / CI).
 
 ---
 
