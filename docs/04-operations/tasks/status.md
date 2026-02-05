@@ -4,7 +4,7 @@ _Last updated: 2026-02-05_
 
 ## In Progress
 
-- [WU-1459 — Fix initiative:add-wu orphaned temp worktree cleanup](wu/WU-1459.yaml)
+(No items currently in progress)
 
 ## Blocked
 
@@ -410,3 +410,4 @@ _Last updated: 2026-02-05_
 - [WU-1449 — Fix flaky orchestrate-initiative-wu1251 test timeout](wu/WU-1449.yaml) — 2026-02-05
 - [WU-1450 — Remove remaining ._legacy mentions from onboarding/public docs](wu/WU-1450.yaml) — 2026-02-05
 - [WU-1451 — Fix astro-d2 configuration for D2 diagram rendering](wu/WU-1451.yaml) — 2026-02-05
+- [WU-1459 — Fix initiative:add-wu orphaned temp worktree cleanup](wu/WU-1459.yaml) — 2026-02-05
