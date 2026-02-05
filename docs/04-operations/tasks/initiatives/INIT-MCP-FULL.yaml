@@ -29,7 +29,7 @@ phases:
     status: done
   - id: 7
     title: Final documentation update
-    status: pending
+    status: done
   - id: 8
     title: MCP parity audit + regression tests
     status: pending
