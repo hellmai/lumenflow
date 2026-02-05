@@ -92,6 +92,7 @@ import {
   GIT,
   SESSION,
   WU_STATUS,
+  WU_EXPOSURE,
   PKG_MANAGER,
   SCRIPTS,
   CLI_FLAGS,
@@ -106,6 +107,7 @@ import {
   // WU-1223: Location types for worktree detection
   CONTEXT_VALIDATION,
 } from '@lumenflow/core/dist/wu-constants.js';
+import { isDocumentationType } from '@lumenflow/core/dist/wu-type-helpers.js';
 import { printGateFailureBox, printStatusPreview } from '@lumenflow/core/dist/wu-done-ui.js';
 import { ensureOnMain } from '@lumenflow/core/dist/wu-helpers.js';
 import { WU_PATHS, createWuPaths } from '@lumenflow/core/dist/wu-paths.js';
@@ -342,12 +344,12 @@ export function validateDocsOnlyFlag(
   const codePaths = wu.code_paths as string[] | undefined;
 
   // Check 1: exposure is 'documentation'
-  if (exposure === 'documentation') {
+  if (exposure === WU_EXPOSURE.DOCUMENTATION) {
     return { valid: true, errors: [] };
   }
 
   // Check 2: type is 'documentation'
-  if (type === 'documentation') {
+  if (isDocumentationType(type)) {
     return { valid: true, errors: [] };
   }
 
