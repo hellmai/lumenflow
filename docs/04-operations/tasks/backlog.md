@@ -27,7 +27,6 @@ sections:
 
 - [WU-1007 — List LumenFlow GitHub App on Marketplace (Free tier)](wu/WU-1007.yaml) — Core
 - [WU-1222 — Add PreToolUse hook to block grep/cat/find via Bash](wu/WU-1222.yaml) — Framework: Core
-- [WU-1442 — Fix push-only retry rebase onto origin/main](wu/WU-1442.yaml) — Framework: Core
 
 ## ⛔ Blocked
 
@@ -422,3 +421,4 @@ sections:
 - [WU-1440 — Harden WU template defaults + document plan-less flow](wu/WU-1440.yaml)
 - [WU-1204 — Add signal TTL cleanup to prevent unbounded growth](wu/WU-1204.yaml)
 - [WU-1441 — Spec-linter: scoped-first + pre-existing failure detection](wu/WU-1441.yaml)
+- [WU-1442 — Fix push-only retry rebase onto origin/main](wu/WU-1442.yaml)

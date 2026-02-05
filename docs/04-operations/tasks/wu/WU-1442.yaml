@@ -2,7 +2,7 @@ id: WU-1442
 title: Fix push-only retry rebase onto origin/main
 lane: 'Framework: Core'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-05
 code_paths:
@@ -20,7 +20,8 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/WU-1442-plan.md
 risks: []
-notes: 'Fixes push-only retry rebase to use origin/main (not local main) so state:doctor/wu:claim repairs can converge even when local main is intentionally stale.'
+notes: Fixes push-only retry rebase to use origin/main (not local main) so state:doctor/wu:claim
+  repairs can converge even when local main is intentionally stale.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -47,3 +48,5 @@ session_id: 5c9a7d24-64e6-4d35-ba8b-fdfab7b154e7
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-05T10:17:02.836Z
+locked: true
+completed_at: 2026-02-05T10:23:15.812Z
