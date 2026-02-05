@@ -18,12 +18,14 @@ code_paths:
   - apps/docs/src/content/docs/guides/agent-onboarding.mdx
   - apps/docs/src/content/docs/guides/ai-agents.mdx
   - packages/@lumenflow/agent/README.md
+  - packages/@lumenflow/cli/src/__tests__/no-beacon-references.test.ts
 tests:
   manual:
     - 'Run: rg -n \"\\.beacon\" -S . and confirm no results (excluding git history)'
     - 'Run: pnpm test --filter @lumenflow/cli'
   unit:
     - packages/@lumenflow/cli/src/__tests__/safe-git.test.ts
+    - packages/@lumenflow/cli/src/__tests__/no-beacon-references.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1447.done
@@ -49,6 +51,7 @@ description: 'Context: LumenFlow has standardized on .lumenflow/ (state, locks, 
 acceptance:
   - No runtime scripts write to or create .beacon (audit logs only use .lumenflow)
   - Docs/templates no longer instruct users to use .beacon paths
+  - Guardrail unit test prevents .beacon reintroduction
   - pnpm gates passes
 claimed_mode: worktree
 worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-1447
