@@ -2,7 +2,7 @@ id: WU-1459
 title: Fix initiative:add-wu orphaned temp worktree cleanup
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-05
 code_paths:
@@ -49,4 +49,8 @@ acceptance:
 claimed_mode: worktree
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-05T19:46:32.337Z
+approved_at: 2026-02-05T19:47:42.737Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-1459
+claimed_at: 2026-02-05T19:47:42.732Z
+baseline_main_sha: 170a89f7e530875aa3e479b68d6716069812cc63
+session_id: 7a4ce36c-5996-4205-8e7e-05f93e2bc2ac
