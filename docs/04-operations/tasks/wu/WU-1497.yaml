@@ -10,7 +10,12 @@ code_paths:
   - packages/@lumenflow/cli/src/init.ts
   - apps/docs/src/content/docs/getting-started/quickstart.mdx
 tests:
-  manual: []
+  manual:
+    - Run lumenflow init in a fresh repo with git init --initial-branch=master and verify branch is
+      renamed to main
+    - Run initiative:edit with requireRemote:false config and verify no origin fetch attempt
+    - Verify quickstart.mdx step 3 is pnpm init
+    - Verify quickstart.mdx wu:create example mentions --spec-refs as optional
   unit:
     - packages/@lumenflow/cli/src/__tests__/initiative-edit.test.ts
     - packages/@lumenflow/cli/src/__tests__/init.test.ts
@@ -23,10 +28,17 @@ spec_refs:
 risks: []
 notes: Discovered during Haven onboarding test 5. See plan file for full friction analysis.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-06T17:56:34.043Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-1497
+session_id: bd72b437-ffe4-4fb7-98d3-f27df3474ae3
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-06T17:56:34.048Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +53,3 @@ acceptance:
   - lumenflow-init handles master branch by renaming to main automatically
   - Quickstart has pnpm init as explicit numbered step
   - Quickstart wu:create example includes --spec-refs or spec-refs is optional for non-plan WUs
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-1497
-claimed_at: 2026-02-06T17:56:34.043Z
-baseline_main_sha: 266685a06983c9630dc2cf6f5a82fde85123d5ef
-session_id: bd72b437-ffe4-4fb7-98d3-f27df3474ae3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-06T17:56:34.048Z
