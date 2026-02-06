@@ -2,7 +2,7 @@ id: WU-1495
 title: Add config-driven cloud auto-detection core
 lane: 'Framework: Core'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-06
 code_paths:
@@ -15,7 +15,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
 tests:
   manual:
-    - Verify precedence and env-signal behavior with cloud.auto_detect true/false and explicit cloud activation.
+    - Verify precedence and env-signal behavior with cloud.auto_detect true/false and explicit cloud
+      activation.
   unit:
     - packages/@lumenflow/core/src/__tests__/lumenflow-config-schema.test.ts
     - packages/@lumenflow/core/src/__tests__/cloud-detect.test.ts
@@ -40,10 +41,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: cloud mode activation must remain vendor-agnostic and explicit-first. Problem: no schema-backed cloud detection config exists yet for env-signal auto-detect behavior. Solution: add cloud.auto_detect and cloud.env_signals schema/defaults plus detection precedence so --cloud and LUMENFLOW_CLOUD=1 always win and env-signals are opt-in.'
+description: 'Context: cloud mode activation must remain vendor-agnostic and explicit-first.
+  Problem: no schema-backed cloud detection config exists yet for env-signal auto-detect behavior.
+  Solution: add cloud.auto_detect and cloud.env_signals schema/defaults plus detection precedence so
+  --cloud and LUMENFLOW_CLOUD=1 always win and env-signals are opt-in.'
 acceptance:
-  - Config schema includes cloud.auto_detect (default false) and cloud.env_signals ({name, equals?}[]).
+  - Config schema includes cloud.auto_detect (default false) and cloud.env_signals ({name,
+    equals?}[]).
   - 'Detection precedence enforces explicit activation first: --cloud/LUMENFLOW_CLOUD=1 always wins.'
   - Env-signal auto-detection runs only when cloud.auto_detect is true.
   - Core detection logic has no hardcoded vendor-specific environment signals.
   - wu:claim --cloud with LUMENFLOW_CLOUD=1 already set does not conflict or double-apply.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-wu-1495
+claimed_at: 2026-02-06T19:30:51.415Z
+baseline_main_sha: b2f973453540ed43ba8e95fc8ddc245b157c0147
+session_id: cbf65a81-b588-456d-b19a-f424a9e1ebef
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-06T19:30:51.422Z
