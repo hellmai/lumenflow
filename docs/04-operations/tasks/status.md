@@ -4,7 +4,7 @@ _Last updated: 2026-02-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1491 — Add wu:claim cloud mode and branch-pr mode resolution](wu/WU-1491.yaml)
 
 ## Blocked
 
