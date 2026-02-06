@@ -7,8 +7,8 @@ priority: P1
 created: 2026-02-06
 code_paths:
   - packages/@lumenflow/core/src/wu-done-branch-only.ts
-  - packages/@lumenflow/core/src/wu-done-pr.ts
   - packages/@lumenflow/core/src/wu-done-cleanup.ts
+  - packages/@lumenflow/core/src/wu-done-paths.ts
   - packages/@lumenflow/cli/src/wu-done.ts
   - packages/@lumenflow/cli/src/wu-edit.ts
   - packages/@lumenflow/core/src/__tests__/wu-done-branch-only.test.ts
@@ -37,10 +37,17 @@ spec_refs:
 risks: []
 notes: WU-C from branch-pr cloud initiative plan; includes branch-pr safety check for wu:edit pathing.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-06T18:50:27.135Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-wu-1492
+session_id: c99fca2f-dd59-4f52-bc9d-cee7afa8f1fd
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-06T18:50:27.143Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -56,11 +63,3 @@ acceptance:
   - Existing worktree/worktree-pr/branch-only flows remain unchanged.
   - Claimed-mode-sensitive CLI behavior (including wu:edit handling) does not misclassify branch-pr
     as worktree-only.
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-wu-1492
-claimed_at: 2026-02-06T18:50:27.135Z
-baseline_main_sha: f3314ee93bd233aa07927d4d1ee866c13c66d8da
-session_id: c99fca2f-dd59-4f52-bc9d-cee7afa8f1fd
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-06T18:50:27.143Z
