@@ -2,7 +2,7 @@ id: WU-1492
 title: Add wu:done branch-pr completion path
 lane: 'Framework: Core'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-06
 code_paths:
@@ -17,7 +17,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
 tests:
   manual:
-    - Run wu:done in branch-pr mode and verify PR creation + no main merge; verify wu:cleanup post-merge behavior.
+    - Run wu:done in branch-pr mode and verify PR creation + no main merge; verify wu:cleanup
+      post-merge behavior.
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-done-branch-only.test.ts
     - packages/@lumenflow/core/src/__tests__/wu-done-cleanup.test.ts
@@ -43,10 +44,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: branch-pr mode must complete WUs without switching to main merge flow. Problem: branch-only completion currently hard-switches to main and merge semantics; PR-mode cleanup checks only worktree-pr. Solution: add a branch-pr done path that commits metadata on lane branch, pushes, and creates PR while preserving cleanup behavior and backward compatibility.'
+description: 'Context: branch-pr mode must complete WUs without switching to main merge flow.
+  Problem: branch-only completion currently hard-switches to main and merge semantics; PR-mode
+  cleanup checks only worktree-pr. Solution: add a branch-pr done path that commits metadata on lane
+  branch, pushes, and creates PR while preserving cleanup behavior and backward compatibility.'
 acceptance:
-  - For claimed_mode=branch-pr, wu:done stays on lane branch, commits metadata, pushes, and creates PR.
+  - For claimed_mode=branch-pr, wu:done stays on lane branch, commits metadata, pushes, and creates
+    PR.
   - branch-pr flow never checks out or merges to main during completion.
   - Cleanup logic treats branch-pr as PR-mode and preserves wu:cleanup post-merge behavior.
   - Existing worktree/worktree-pr/branch-only flows remain unchanged.
-  - Claimed-mode-sensitive CLI behavior (including wu:edit handling) does not misclassify branch-pr as worktree-only.
+  - Claimed-mode-sensitive CLI behavior (including wu:edit handling) does not misclassify branch-pr
+    as worktree-only.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-wu-1492
+claimed_at: 2026-02-06T18:50:27.135Z
+baseline_main_sha: f3314ee93bd233aa07927d4d1ee866c13c66d8da
+session_id: c99fca2f-dd59-4f52-bc9d-cee7afa8f1fd
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-06T18:50:27.143Z
