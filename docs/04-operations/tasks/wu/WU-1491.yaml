@@ -2,7 +2,7 @@ id: WU-1491
 title: Add wu:claim cloud mode and branch-pr mode resolution
 lane: 'Framework: CLI'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-06
 code_paths:
@@ -15,7 +15,8 @@ code_paths:
   - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
 tests:
   manual:
-    - Validate claim mode outcomes for each flag combination and verify MCP tool argument passthrough.
+    - Validate claim mode outcomes for each flag combination and verify MCP tool argument
+      passthrough.
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
     - packages/@lumenflow/core/src/__tests__/arg-parser.test.ts
@@ -40,9 +41,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: branch-pr mode needs a claim entrypoint for cloud agents and MCP callers. Problem: wu:claim mode selection currently supports worktree, branch-only, and worktree-pr only. Solution: add --cloud and mode-resolution rules mapping --cloud or --branch-only --pr-mode to branch-pr, while preserving lane-level WIP semantics and MCP passthrough.'
+description: 'Context: branch-pr mode needs a claim entrypoint for cloud agents and MCP callers.
+  Problem: wu:claim mode selection currently supports worktree, branch-only, and worktree-pr only.
+  Solution: add --cloud and mode-resolution rules mapping --cloud or --branch-only --pr-mode to
+  branch-pr, while preserving lane-level WIP semantics and MCP passthrough.'
 acceptance:
   - wu:claim supports --cloud flag.
-  - Mode matrix resolves default/worktree-pr/branch-only/branch-pr correctly, including --branch-only --pr-mode.
+  - Mode matrix resolves default/worktree-pr/branch-only/branch-pr correctly, including
+    --branch-only --pr-mode.
   - branch-pr path skips global branch-only singleton guard but keeps lane lock + lane WIP checks.
   - MCP wu_claim schema/args can invoke --cloud, --branch-only, and --pr-mode passthrough.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-1491
+claimed_at: 2026-02-06T18:49:18.102Z
+baseline_main_sha: d5fd20cfc6081a9ffb66bac96fa72f738912afce
+session_id: c99fca2f-dd59-4f52-bc9d-cee7afa8f1fd
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-06T18:49:18.110Z
