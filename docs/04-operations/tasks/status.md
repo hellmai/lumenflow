@@ -4,7 +4,7 @@ _Last updated: 2026-02-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1495 — Add config-driven cloud auto-detection core](wu/WU-1495.yaml)
 
 ## Blocked
 
