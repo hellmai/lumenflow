@@ -2,7 +2,7 @@ id: WU-1482
 title: MCP parity remediation wave 1 (state/lane/gates/setup commands)
 lane: 'Framework: MCP'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-06
 code_paths:
@@ -69,3 +69,5 @@ acceptance:
     errors.
   - Manifest parity gate from WU-1481 shows a reduced missing-command set after wave-1
     implementation.
+locked: true
+completed_at: 2026-02-06T12:36:52.281Z
