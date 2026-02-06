@@ -43,18 +43,18 @@ lumenflow-mcp
 
 The MCP server exposes **68 tools** organized into 10 categories:
 
-| Category                 | Count | Description                                   |
-| ------------------------ | ----- | --------------------------------------------- |
-| Core WU Operations       | 7     | Basic WU lifecycle and context                |
-| Additional WU Operations | 16    | Extended WU management                        |
-| Initiative Operations    | 8     | Multi-phase project orchestration             |
-| Memory Operations        | 13    | Session tracking and agent coordination       |
-| Agent Operations         | 4     | Agent session management and issue logging    |
-| Orchestration Operations | 3     | Initiative execution and monitoring           |
-| Spawn Operations         | 1     | Sub-agent spawn tree management               |
-| Flow/Metrics Operations  | 3     | DORA metrics and flow analysis                |
-| Validation Operations    | 5     | WU and configuration validation               |
-| Setup Operations         | 8     | LumenFlow initialization and configuration    |
+| Category                 | Count | Description                                |
+| ------------------------ | ----- | ------------------------------------------ |
+| Core WU Operations       | 7     | Basic WU lifecycle and context             |
+| Additional WU Operations | 16    | Extended WU management                     |
+| Initiative Operations    | 8     | Multi-phase project orchestration          |
+| Memory Operations        | 13    | Session tracking and agent coordination    |
+| Agent Operations         | 4     | Agent session management and issue logging |
+| Orchestration Operations | 3     | Initiative execution and monitoring        |
+| Spawn Operations         | 1     | Sub-agent spawn tree management            |
+| Flow/Metrics Operations  | 3     | DORA metrics and flow analysis             |
+| Validation Operations    | 5     | WU and configuration validation            |
+| Setup Operations         | 8     | LumenFlow initialization and configuration |
 
 Tool inventory source of truth: `packages/@lumenflow/mcp/src/tools.ts` (`allTools`).
 
@@ -437,7 +437,7 @@ Bulk assign WUs to an initiative based on pattern matching.
 | Parameter | Type | Required | Description |
 | --------- | ------ | -------- | ---------------------------------------- |
 | `id` | string | Yes | Initiative ID |
-| `pattern` | string | No | Pattern to match WU titles (e.g., "MCP:*") |
+| `pattern` | string | No | Pattern to match WU titles (e.g., "MCP:\*") |
 | `phase` | number | No | Phase to assign matched WUs |
 
 ### initiative_plan
@@ -684,9 +684,7 @@ Display spawn trees for WUs or initiatives.
 | `initiative` | string | No | Initiative ID to show all spawns for |
 | `json` | boolean | No | Output as JSON |
 
-<Aside type="note">
-  Either `wu` or `initiative` is required.
-</Aside>
+<Aside type="note">Either `wu` or `initiative` is required.</Aside>
 
 ---
 
@@ -963,78 +961,78 @@ interface ToolResult {
 
 ### Error Codes
 
-| Code | Description |
-| ---- | ----------- |
-| `MISSING_PARAMETER` | Required parameter not provided |
-| `CONTEXT_ERROR` | Failed to compute LumenFlow context |
-| `WU_LIST_ERROR` | Failed to list WUs |
-| `WU_STATUS_ERROR` | Failed to get WU status |
-| `WU_CREATE_ERROR` | Failed to create WU |
-| `WU_CLAIM_ERROR` | Failed to claim WU |
-| `WU_DONE_ERROR` | Failed to complete WU |
-| `WRONG_LOCATION` | Operation called from wrong location |
-| `GATES_ERROR` | Gates failed |
-| `WU_BLOCK_ERROR` | Failed to block WU |
-| `WU_UNBLOCK_ERROR` | Failed to unblock WU |
-| `WU_EDIT_ERROR` | Failed to edit WU |
-| `WU_RELEASE_ERROR` | Failed to release WU |
-| `WU_RECOVER_ERROR` | Failed to recover WU |
-| `WU_REPAIR_ERROR` | Failed to repair WU |
-| `WU_DEPS_ERROR` | Failed to get WU dependencies |
-| `WU_PREP_ERROR` | Failed to prep WU |
-| `WU_PREFLIGHT_ERROR` | Failed to preflight WU |
-| `WU_PRUNE_ERROR` | Failed to prune worktrees |
-| `WU_DELETE_ERROR` | Failed to delete WU |
-| `WU_CLEANUP_ERROR` | Failed to cleanup WU |
-| `WU_SPAWN_ERROR` | Failed to spawn WU |
-| `WU_VALIDATE_ERROR` | Failed to validate WU |
-| `WU_INFER_LANE_ERROR` | Failed to infer lane |
-| `WU_UNLOCK_LANE_ERROR` | Failed to unlock lane |
-| `INITIATIVE_LIST_ERROR` | Failed to list initiatives |
-| `INITIATIVE_STATUS_ERROR` | Failed to get initiative status |
-| `INITIATIVE_CREATE_ERROR` | Failed to create initiative |
-| `INITIATIVE_EDIT_ERROR` | Failed to edit initiative |
-| `INITIATIVE_ADD_WU_ERROR` | Failed to add WU to initiative |
-| `INITIATIVE_REMOVE_WU_ERROR` | Failed to remove WU from initiative |
-| `INITIATIVE_BULK_ASSIGN_ERROR` | Failed to bulk assign WUs |
-| `INITIATIVE_PLAN_ERROR` | Failed to link plan |
-| `MEM_INIT_ERROR` | Failed to initialize memory |
-| `MEM_START_ERROR` | Failed to start session |
-| `MEM_READY_ERROR` | Failed to check ready nodes |
-| `MEM_CHECKPOINT_ERROR` | Failed to save checkpoint |
-| `MEM_CLEANUP_ERROR` | Failed to cleanup memory |
-| `MEM_CONTEXT_ERROR` | Failed to get memory context |
-| `MEM_CREATE_ERROR` | Failed to create memory node |
-| `MEM_DELETE_ERROR` | Failed to delete memory node |
-| `MEM_EXPORT_ERROR` | Failed to export memory |
-| `MEM_INBOX_ERROR` | Failed to check inbox |
-| `MEM_SIGNAL_ERROR` | Failed to send signal |
-| `MEM_SUMMARIZE_ERROR` | Failed to summarize memory |
-| `MEM_TRIAGE_ERROR` | Failed to triage issues |
-| `AGENT_SESSION_ERROR` | Failed to start agent session |
-| `AGENT_SESSION_END_ERROR` | Failed to end agent session |
-| `AGENT_LOG_ISSUE_ERROR` | Failed to log issue |
-| `AGENT_ISSUES_QUERY_ERROR` | Failed to query issues |
-| `ORCHESTRATE_INITIATIVE_ERROR` | Failed to orchestrate initiative |
-| `ORCHESTRATE_INIT_STATUS_ERROR` | Failed to get initiative status |
-| `ORCHESTRATE_MONITOR_ERROR` | Failed to monitor spawns |
-| `SPAWN_LIST_ERROR` | Failed to list spawns |
-| `FLOW_BOTTLENECKS_ERROR` | Failed to analyze bottlenecks |
-| `FLOW_REPORT_ERROR` | Failed to generate flow report |
-| `METRICS_SNAPSHOT_ERROR` | Failed to capture metrics |
-| `VALIDATE_ERROR` | Validation failed |
-| `VALIDATE_AGENT_SKILLS_ERROR` | Failed to validate skills |
-| `VALIDATE_AGENT_SYNC_ERROR` | Failed to validate agent sync |
-| `VALIDATE_BACKLOG_SYNC_ERROR` | Failed to validate backlog sync |
-| `VALIDATE_SKILLS_SPEC_ERROR` | Failed to validate skills spec |
-| `LUMENFLOW_INIT_ERROR` | Failed to initialize LumenFlow |
-| `LUMENFLOW_DOCTOR_ERROR` | Doctor found issues |
-| `LUMENFLOW_INTEGRATE_ERROR` | Failed to integrate hooks |
-| `LUMENFLOW_UPGRADE_ERROR` | Failed to upgrade |
-| `LUMENFLOW_COMMANDS_ERROR` | Failed to list commands |
-| `LUMENFLOW_DOCS_SYNC_ERROR` | Failed to sync docs |
-| `LUMENFLOW_RELEASE_ERROR` | Failed to run release |
-| `LUMENFLOW_SYNC_TEMPLATES_ERROR` | Failed to sync templates |
+| Code                             | Description                          |
+| -------------------------------- | ------------------------------------ |
+| `MISSING_PARAMETER`              | Required parameter not provided      |
+| `CONTEXT_ERROR`                  | Failed to compute LumenFlow context  |
+| `WU_LIST_ERROR`                  | Failed to list WUs                   |
+| `WU_STATUS_ERROR`                | Failed to get WU status              |
+| `WU_CREATE_ERROR`                | Failed to create WU                  |
+| `WU_CLAIM_ERROR`                 | Failed to claim WU                   |
+| `WU_DONE_ERROR`                  | Failed to complete WU                |
+| `WRONG_LOCATION`                 | Operation called from wrong location |
+| `GATES_ERROR`                    | Gates failed                         |
+| `WU_BLOCK_ERROR`                 | Failed to block WU                   |
+| `WU_UNBLOCK_ERROR`               | Failed to unblock WU                 |
+| `WU_EDIT_ERROR`                  | Failed to edit WU                    |
+| `WU_RELEASE_ERROR`               | Failed to release WU                 |
+| `WU_RECOVER_ERROR`               | Failed to recover WU                 |
+| `WU_REPAIR_ERROR`                | Failed to repair WU                  |
+| `WU_DEPS_ERROR`                  | Failed to get WU dependencies        |
+| `WU_PREP_ERROR`                  | Failed to prep WU                    |
+| `WU_PREFLIGHT_ERROR`             | Failed to preflight WU               |
+| `WU_PRUNE_ERROR`                 | Failed to prune worktrees            |
+| `WU_DELETE_ERROR`                | Failed to delete WU                  |
+| `WU_CLEANUP_ERROR`               | Failed to cleanup WU                 |
+| `WU_SPAWN_ERROR`                 | Failed to spawn WU                   |
+| `WU_VALIDATE_ERROR`              | Failed to validate WU                |
+| `WU_INFER_LANE_ERROR`            | Failed to infer lane                 |
+| `WU_UNLOCK_LANE_ERROR`           | Failed to unlock lane                |
+| `INITIATIVE_LIST_ERROR`          | Failed to list initiatives           |
+| `INITIATIVE_STATUS_ERROR`        | Failed to get initiative status      |
+| `INITIATIVE_CREATE_ERROR`        | Failed to create initiative          |
+| `INITIATIVE_EDIT_ERROR`          | Failed to edit initiative            |
+| `INITIATIVE_ADD_WU_ERROR`        | Failed to add WU to initiative       |
+| `INITIATIVE_REMOVE_WU_ERROR`     | Failed to remove WU from initiative  |
+| `INITIATIVE_BULK_ASSIGN_ERROR`   | Failed to bulk assign WUs            |
+| `INITIATIVE_PLAN_ERROR`          | Failed to link plan                  |
+| `MEM_INIT_ERROR`                 | Failed to initialize memory          |
+| `MEM_START_ERROR`                | Failed to start session              |
+| `MEM_READY_ERROR`                | Failed to check ready nodes          |
+| `MEM_CHECKPOINT_ERROR`           | Failed to save checkpoint            |
+| `MEM_CLEANUP_ERROR`              | Failed to cleanup memory             |
+| `MEM_CONTEXT_ERROR`              | Failed to get memory context         |
+| `MEM_CREATE_ERROR`               | Failed to create memory node         |
+| `MEM_DELETE_ERROR`               | Failed to delete memory node         |
+| `MEM_EXPORT_ERROR`               | Failed to export memory              |
+| `MEM_INBOX_ERROR`                | Failed to check inbox                |
+| `MEM_SIGNAL_ERROR`               | Failed to send signal                |
+| `MEM_SUMMARIZE_ERROR`            | Failed to summarize memory           |
+| `MEM_TRIAGE_ERROR`               | Failed to triage issues              |
+| `AGENT_SESSION_ERROR`            | Failed to start agent session        |
+| `AGENT_SESSION_END_ERROR`        | Failed to end agent session          |
+| `AGENT_LOG_ISSUE_ERROR`          | Failed to log issue                  |
+| `AGENT_ISSUES_QUERY_ERROR`       | Failed to query issues               |
+| `ORCHESTRATE_INITIATIVE_ERROR`   | Failed to orchestrate initiative     |
+| `ORCHESTRATE_INIT_STATUS_ERROR`  | Failed to get initiative status      |
+| `ORCHESTRATE_MONITOR_ERROR`      | Failed to monitor spawns             |
+| `SPAWN_LIST_ERROR`               | Failed to list spawns                |
+| `FLOW_BOTTLENECKS_ERROR`         | Failed to analyze bottlenecks        |
+| `FLOW_REPORT_ERROR`              | Failed to generate flow report       |
+| `METRICS_SNAPSHOT_ERROR`         | Failed to capture metrics            |
+| `VALIDATE_ERROR`                 | Validation failed                    |
+| `VALIDATE_AGENT_SKILLS_ERROR`    | Failed to validate skills            |
+| `VALIDATE_AGENT_SYNC_ERROR`      | Failed to validate agent sync        |
+| `VALIDATE_BACKLOG_SYNC_ERROR`    | Failed to validate backlog sync      |
+| `VALIDATE_SKILLS_SPEC_ERROR`     | Failed to validate skills spec       |
+| `LUMENFLOW_INIT_ERROR`           | Failed to initialize LumenFlow       |
+| `LUMENFLOW_DOCTOR_ERROR`         | Doctor found issues                  |
+| `LUMENFLOW_INTEGRATE_ERROR`      | Failed to integrate hooks            |
+| `LUMENFLOW_UPGRADE_ERROR`        | Failed to upgrade                    |
+| `LUMENFLOW_COMMANDS_ERROR`       | Failed to list commands              |
+| `LUMENFLOW_DOCS_SYNC_ERROR`      | Failed to sync docs                  |
+| `LUMENFLOW_RELEASE_ERROR`        | Failed to run release                |
+| `LUMENFLOW_SYNC_TEMPLATES_ERROR` | Failed to sync templates             |
 
 ## Architecture
 
