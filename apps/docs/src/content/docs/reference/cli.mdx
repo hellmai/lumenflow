@@ -106,10 +106,10 @@ pnpm flow:report
 
 ### initiative:add-wu
 
-Link a WU to an initiative bidirectionally
+Link one or more WUs to an initiative bidirectionally
 
 ```bash
-pnpm initiative:add-wu --initiative <ref> --wu <wuId>
+pnpm initiative:add-wu --initiative <ref>
 ```
 
 **Options:**
@@ -117,7 +117,6 @@ pnpm initiative:add-wu --initiative <ref> --wu <wuId>
 | Flag                       | Description                          | Required |
 | -------------------------- | ------------------------------------ | -------- |
 | `--initiative &lt;ref&gt;` | Parent initiative (INIT-XXX or slug) | Yes      |
-| `--wu &lt;wuId&gt;`        | Work Unit ID to link (e.g., WU-123)  | Yes      |
 
 ### initiative:bulk-assign-wus
 
