@@ -10,7 +10,6 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/init-scripts.test.ts
   - packages/@lumenflow/cli/src/__tests__/init-docs-structure.test.ts
   - packages/@lumenflow/cli/src/__tests__/init-onboarding-docs.test.ts
-  - packages/@lumenflow/cli/templates
 tests:
   manual:
     - Run pnpm exec lumenflow init in a clean temp repo and verify package.json scripts include

@@ -172,4 +172,90 @@ describe('onboarding docs scaffold', () => {
       }
     });
   });
+
+  // ===========================================================================
+  // WU-1433: Onboarding docs use parameterized paths per structure
+  // ===========================================================================
+  describe('onboarding docs parameterized paths (WU-1433)', () => {
+    it('simple: first-15-mins should reference docs/tasks paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: 'simple',
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const onboardingDir = getOnboardingDir('simple');
+      const content = fs.readFileSync(path.join(onboardingDir, FIRST_15_MINS_FILE), 'utf-8');
+
+      // In simple mode, paths like "cat docs/04-operations/tasks/status.md"
+      // should become "cat docs/tasks/status.md"
+      expect(content).toContain('docs/tasks');
+      expect(content).not.toContain('docs/04-operations');
+    });
+
+    it('simple: starting-prompt should reference docs/tasks paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: 'simple',
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const onboardingDir = getOnboardingDir('simple');
+      const content = fs.readFileSync(path.join(onboardingDir, STARTING_PROMPT_FILE), 'utf-8');
+
+      // starting-prompt references WU spec paths - should use simple paths
+      expect(content).not.toContain('docs/04-operations');
+    });
+
+    it('simple: wu-create-checklist should reference docs/tasks paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: 'simple',
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const onboardingDir = getOnboardingDir('simple');
+      const content = fs.readFileSync(path.join(onboardingDir, 'wu-create-checklist.md'), 'utf-8');
+
+      // wu-create-checklist has "cat docs/04-operations/tasks/wu/WU-XXX.yaml"
+      // In simple mode this should be "cat docs/tasks/wu/WU-XXX.yaml"
+      expect(content).not.toContain('docs/04-operations');
+    });
+
+    it('arc42: first-15-mins should reference docs/04-operations paths', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const onboardingDir = getOnboardingDir();
+      const content = fs.readFileSync(path.join(onboardingDir, FIRST_15_MINS_FILE), 'utf-8');
+
+      expect(content).toContain('docs/04-operations/tasks');
+    });
+
+    it('all docs: no unresolved template placeholders', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: 'simple',
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const onboardingDir = getOnboardingDir('simple');
+      const docs = fs.readdirSync(onboardingDir).filter((f) => f.endsWith('.md'));
+
+      for (const doc of docs) {
+        const content = fs.readFileSync(path.join(onboardingDir, doc), 'utf-8');
+        // No unresolved {{...}} tokens should remain
+        expect(content, `${doc} should not have unresolved template tokens`).not.toMatch(
+          /\{\{[A-Z_]+\}\}/,
+        );
+      }
+    });
+  });
 });
