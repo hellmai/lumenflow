@@ -101,7 +101,7 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 | Command                      | Description                                                        |
 | ---------------------------- | ------------------------------------------------------------------ |
-| `initiative-add-wu`          | Link a WU to an initiative bidirectionally                         |
+| `initiative-add-wu`          | Link one or more WUs to an initiative bidirectionally              |
 | `initiative-bulk-assign-wus` | Bulk-assign orphaned WUs to initiatives based on lane prefix rules |
 | `initiative-create`          | Create a new Initiative with micro-worktree isolation (race-safe)  |
 | `initiative-edit`            | Edit Initiative YAML files with micro-worktree isolation           |
@@ -279,3 +279,5 @@ For detailed upgrade instructions, migration guides, and troubleshooting, see [U
 ## License
 
 Apache-2.0
+
+<!-- MODIFIED -->
