@@ -22,7 +22,6 @@ sections:
 
 - [WU-1384 — Relax spec completeness checks for done/cancelled WUs](wu/WU-1384.yaml) — Framework: Core
 - [WU-1433 — Init onboarding parity for scripts and docs paths](wu/WU-1433.yaml) — Framework: CLI
-- [WU-1452 — MCP: Fix CLI/MCP JSON flag mismatches](wu/WU-1452.yaml) — Framework: CLI
 - [WU-1453 — MCP: Add real CLI integration tests](wu/WU-1453.yaml) — Framework: CLI
 - [WU-1454 — Shared Schemas: WU lifecycle commands](wu/WU-1454.yaml) — Framework: Core
 - [WU-1455 — Shared Schemas: Initiative commands](wu/WU-1455.yaml) — Framework: Core
@@ -32,7 +31,7 @@ sections:
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-1452 — MCP: Fix CLI/MCP JSON flag mismatches](wu/WU-1452.yaml) — Framework: CLI
 
 ## ⛔ Blocked
 
