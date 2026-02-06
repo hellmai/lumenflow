@@ -13,6 +13,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { scaffoldProject } from '../init.js';
+import { getPublicManifest } from '../public-manifest.js';
 
 /** Package.json file name - extracted to avoid duplicate string lint errors */
 const PACKAGE_JSON_FILE_NAME = 'package.json';
@@ -265,5 +266,92 @@ describe('init .claude directory creation (WU-1342)', () => {
     // Should have skills directory
     const skillsDir = path.join(claudeDir, 'skills');
     expect(fs.existsSync(skillsDir)).toBe(true);
+  });
+});
+
+// ============================================================================
+// WU-1433: Scripts generated from public CLI manifest
+// ============================================================================
+describe('init scripts from public manifest (WU-1433)', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lumenflow-manifest-scripts-'));
+  });
+
+  afterEach(() => {
+    if (tempDir && fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  function readPackageJsonScripts(): Record<string, string> {
+    const pkgPath = path.join(tempDir, PACKAGE_JSON_FILE_NAME);
+    const content = fs.readFileSync(pkgPath, 'utf-8');
+    const pkg = JSON.parse(content) as PackageJson;
+    return pkg.scripts ?? {};
+  }
+
+  it('should generate a script for every public manifest command', async () => {
+    await scaffoldProject(tempDir, { force: true, full: true });
+    const scripts = readPackageJsonScripts();
+    const manifest = getPublicManifest();
+
+    for (const cmd of manifest) {
+      expect(scripts[cmd.name], `Missing script for manifest command: ${cmd.name}`).toBeDefined();
+    }
+  });
+
+  it('should map script values to the binary names from the manifest', async () => {
+    await scaffoldProject(tempDir, { force: true, full: true });
+    const scripts = readPackageJsonScripts();
+    const manifest = getPublicManifest();
+
+    for (const cmd of manifest) {
+      const scriptValue = scripts[cmd.name];
+      expect(scriptValue).toBeDefined();
+      // Script value should contain the binName (may also have args like --docs-only)
+      expect(
+        scriptValue,
+        `Script "${cmd.name}" should reference binary "${cmd.binName}"`,
+      ).toContain(cmd.binName);
+    }
+  });
+
+  it('should include required alias: docs:sync', async () => {
+    await scaffoldProject(tempDir, { force: true, full: true });
+    const scripts = readPackageJsonScripts();
+
+    expect(scripts['docs:sync']).toBeDefined();
+    expect(scripts['docs:sync']).toContain('lumenflow-docs-sync');
+  });
+
+  it('should include required alias: sync:templates', async () => {
+    await scaffoldProject(tempDir, { force: true, full: true });
+    const scripts = readPackageJsonScripts();
+
+    expect(scripts['sync:templates']).toBeDefined();
+    expect(scripts['sync:templates']).toContain('sync-templates');
+  });
+
+  it('should include required alias: gates:docs with --docs-only', async () => {
+    await scaffoldProject(tempDir, { force: true, full: true });
+    const scripts = readPackageJsonScripts();
+
+    expect(scripts['gates:docs']).toBeDefined();
+    expect(scripts['gates:docs']).toContain('--docs-only');
+  });
+
+  it('should have at least as many scripts as public manifest commands', async () => {
+    await scaffoldProject(tempDir, { force: true, full: true });
+    const scripts = readPackageJsonScripts();
+    const manifest = getPublicManifest();
+
+    const manifestNames = new Set(manifest.map((cmd) => cmd.name));
+    const scriptNames = new Set(Object.keys(scripts));
+
+    for (const name of manifestNames) {
+      expect(scriptNames.has(name), `Script missing for: ${name}`).toBe(true);
+    }
   });
 });
