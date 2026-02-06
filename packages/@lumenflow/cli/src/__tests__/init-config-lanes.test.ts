@@ -187,3 +187,83 @@ describe('init config default lanes (WU-1307)', () => {
     }
   });
 });
+
+/** WU template file name - extracted to avoid duplicate string lint errors */
+const WU_TEMPLATE_FILE_NAME = 'wu-template.yaml';
+
+describe('init WU template lane neutrality (WU-1499)', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lumenflow-init-wu-template-'));
+  });
+
+  afterEach(() => {
+    if (tempDir && fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  /** Helper to read the generated WU template YAML as raw text */
+  function readWuTemplate(): string {
+    // The template is scaffolded under the docs tasks path templates dir.
+    // With arc42 (default), that is docs/04-operations/tasks/templates/wu-template.yaml
+    const templatePath = path.join(
+      tempDir,
+      'docs',
+      '04-operations',
+      'tasks',
+      'templates',
+      WU_TEMPLATE_FILE_NAME,
+    );
+    if (!fs.existsSync(templatePath)) {
+      // Try simple docs structure fallback
+      const simplePath = path.join(tempDir, 'docs', 'tasks', 'templates', WU_TEMPLATE_FILE_NAME);
+      return fs.readFileSync(simplePath, 'utf-8');
+    }
+    return fs.readFileSync(templatePath, 'utf-8');
+  }
+
+  /** Helper to parse the generated WU template YAML */
+  function parseWuTemplate(): Record<string, unknown> {
+    return YAML.parse(readWuTemplate()) as Record<string, unknown>;
+  }
+
+  it('should NOT hardcode "Framework: CLI" as the default lane value', async () => {
+    // Act
+    await scaffoldProject(tempDir, { force: true, full: true });
+
+    // Assert
+    const template = parseWuTemplate();
+    expect(template.lane).not.toBe('Framework: CLI');
+  });
+
+  it('should use a neutral placeholder lane value that requires explicit selection', async () => {
+    // Act
+    await scaffoldProject(tempDir, { force: true, full: true });
+
+    // Assert
+    const template = parseWuTemplate();
+    const laneValue = template.lane as string;
+
+    // The placeholder should indicate it needs to be replaced (angle brackets or similar)
+    // It should NOT be any specific real lane
+    expect(laneValue).toContain('<');
+    expect(laneValue).toContain('>');
+    // Should demonstrate the Parent: Sublane format
+    expect(laneValue).toContain(':');
+  });
+
+  it('should include the lane format pattern in the raw template', async () => {
+    // Act
+    await scaffoldProject(tempDir, { force: true, full: true });
+
+    // Assert
+    const rawTemplate = readWuTemplate();
+
+    // The raw template should contain the lane field with a placeholder
+    expect(rawTemplate).toContain("lane: '<Parent: Sublane>'");
+    // Should NOT contain the biased default
+    expect(rawTemplate).not.toContain("lane: 'Framework: CLI'");
+  });
+});
