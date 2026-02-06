@@ -919,3 +919,4 @@
 {"type":"claim","wuId":"WU-1490","timestamp":"2026-02-06T18:41:01.984Z","lane":"Framework: Core","title":"Add branch-pr claimed mode primitives"}
 {"type":"complete","wuId":"WU-1490","timestamp":"2026-02-06T18:47:14.937Z"}
 {"type":"claim","wuId":"WU-1491","lane":"Framework: CLI","title":"Add wu:claim cloud mode and branch-pr mode resolution","timestamp":"2026-02-06T18:49:18.134Z"}
+{"type":"claim","wuId":"WU-1492","lane":"Framework: Core","title":"Add wu:done branch-pr completion path","timestamp":"2026-02-06T18:50:27.167Z"}
