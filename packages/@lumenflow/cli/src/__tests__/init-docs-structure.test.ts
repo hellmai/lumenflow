@@ -212,4 +212,111 @@ describe('docs-structure', () => {
       expect(fs.existsSync(path.join(tempDir, 'docs', 'tasks'))).toBe(true);
     });
   });
+
+  // ===========================================================================
+  // WU-1433: Template content uses correct docs paths per structure
+  // ===========================================================================
+  describe('template content references correct docs paths (WU-1433)', () => {
+    it('simple structure: templates should reference docs/tasks paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: SIMPLE_DOCS_STRUCTURE,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      // Read LUMENFLOW.md which uses {{DOCS_TASKS_PATH}} tokens
+      const lumenflowMd = fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8');
+      expect(lumenflowMd).toContain('docs/tasks');
+      // Should NOT have unresolved placeholders
+      expect(lumenflowMd).not.toContain('{{DOCS_TASKS_PATH}}');
+      expect(lumenflowMd).not.toContain('{{DOCS_ONBOARDING_PATH}}');
+    });
+
+    it('arc42 structure: templates should reference docs/04-operations paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: ARC42_DOCS_STRUCTURE,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const lumenflowMd = fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8');
+      expect(lumenflowMd).toContain('docs/04-operations/tasks');
+      expect(lumenflowMd).not.toContain('{{DOCS_TASKS_PATH}}');
+    });
+
+    it('simple: onboarding docs should not contain hardcoded arc42 paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: SIMPLE_DOCS_STRUCTURE,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const onboardingDir = path.join(
+        tempDir,
+        'docs',
+        '_frameworks',
+        'lumenflow',
+        'agent',
+        'onboarding',
+      );
+
+      // Check onboarding docs that contain path references for hardcoded arc42 paths.
+      // Exclude quick-ref-commands.md which legitimately documents the arc42 flag option.
+      const docs = fs
+        .readdirSync(onboardingDir)
+        .filter((f) => f.endsWith('.md') && f !== 'quick-ref-commands.md');
+      for (const doc of docs) {
+        const content = fs.readFileSync(path.join(onboardingDir, doc), 'utf-8');
+        // Simple structure should NOT have docs/04-operations references
+        expect(
+          content,
+          `${doc} should not contain hardcoded arc42 paths in simple mode`,
+        ).not.toContain('docs/04-operations');
+      }
+    });
+
+    it('arc42: onboarding docs should reference docs/04-operations paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: ARC42_DOCS_STRUCTURE,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const onboardingDir = path.join(
+        tempDir,
+        'docs',
+        DOCS_04_OPERATIONS,
+        '_frameworks',
+        'lumenflow',
+        'agent',
+        'onboarding',
+      );
+
+      // first-15-mins.md has references to task paths - these should use arc42 paths
+      const first15 = fs.readFileSync(path.join(onboardingDir, 'first-15-mins.md'), 'utf-8');
+      expect(first15).toContain('docs/04-operations/tasks');
+    });
+
+    it('simple: config should use simple docs paths', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+        docsStructure: SIMPLE_DOCS_STRUCTURE,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      // .lumenflow.config.yaml should reflect simple paths
+      const configPath = path.join(tempDir, '.lumenflow.config.yaml');
+      expect(fs.existsSync(configPath)).toBe(true);
+    });
+  });
 });

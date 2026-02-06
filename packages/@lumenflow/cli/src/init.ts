@@ -22,6 +22,8 @@ import { updateMergeBlock } from './merge-block.js';
 import { isMainBranch, isInWorktree } from '@lumenflow/core/dist/core/worktree-guard.js';
 // WU-1386: Import doctor for auto-run after init
 import { runDoctorForInit } from './doctor.js';
+// WU-1433: Import public manifest to derive scripts (no hardcoded subset)
+import { getPublicManifest } from './public-manifest.js';
 
 /**
  * WU-1085: CLI option definitions for init command
@@ -882,7 +884,7 @@ const BACKLOG_TEMPLATE = `---\nsections:\n  ready:\n    heading: '## 🚀 Ready 
 const STATUS_TEMPLATE = `# Status (active work)\n\n## In Progress\n\n(No items in progress)\n\n## Blocked\n\n(No items blocked)\n\n## Completed\n\n(No items completed yet)\n`;
 
 // Template for docs tasks WU template YAML (scaffolded to {{DOCS_TASKS_PATH}}/templates/wu-template.yaml)
-const WU_TEMPLATE_YAML = `# Work Unit Template (LumenFlow WU Schema)\n#\n# Copy this template when creating new WUs. Fill in all required fields and\n# remove optional fields if not needed.\n#\n# If you used "lumenflow init --full", this template lives at:\n# {{DOCS_TASKS_PATH}}/templates/wu-template.yaml\n\n# Required: Unique work unit identifier (format: WU-NNN)\nid: WU-XXX\n\n# Required: Short, descriptive title (max 80 chars)\ntitle: 'Your WU title here'\n\n# Required: Lane (Parent: Sublane format)\nlane: 'Framework: CLI'\n\n# Required: Type of work\ntype: 'feature' # feature | bug | documentation | process | tooling | chore | refactor\n\n# Required: Current status\nstatus: 'ready' # ready | in_progress | blocked | done | cancelled\n\n# Required: Priority\npriority: P2 # P0 | P1 | P2 | P3\n\n# Required: Creation date (YYYY-MM-DD)\ncreated: {{DATE}}\n\n# Required: Owner/assignee (email)\nassigned_to: 'unassigned@example.com'\n\n# Required: Description\ndescription: |\n  Context: ...\n  Problem: ...\n  Solution: ...\n\n# Required: Acceptance criteria (testable, binary)\nacceptance:\n  - Criterion 1 (specific, measurable, testable)\n  - Criterion 2 (binary pass/fail)\n  - Documentation updated\n\n# Required: References to plans/specs (required for type: feature)\n# Tip: use pnpm wu:create --plan to generate a plan stub at lumenflow://plans/WU-XXX-plan.md\nspec_refs:\n  - lumenflow://plans/WU-XXX-plan.md\n\n# Required: Code files changed or created (empty only for docs/process WUs)\n# Docs-only WUs should use docs/ or *.md paths to avoid docs-only gate failures.\ncode_paths:\n  - path/to/file.ts\n\n# Required: Test paths (at least one of manual/unit/e2e/integration for non-doc WUs)\ntests:\n  manual:\n    - Manual check: Verify behavior or docs output\n  unit:\n    - path/to/test.test.ts\n  e2e: []\n  integration: []\n\n# Required: Exposure level\nexposure: 'backend-only' # ui | api | backend-only | documentation\n\n# Optional: User journey (recommended for ui/api)\n# user_journey: |\n#   User navigates to ...\n#   User performs ...\n\n# Optional: UI pairing WUs (for api exposure)\n# ui_pairing_wus:\n#   - WU-1234\n\n# Optional: Navigation path (required when exposure=ui and no page file)\n# navigation_path: '/settings'\n\n# Required: Deliverable artifacts (stamps, docs, etc.)\nartifacts:\n  - .lumenflow/stamps/WU-XXX.done\n\n# Optional: Dependencies (other WUs that must complete first)\ndependencies: []\n\n# Optional: Risks\nrisks:\n  - Risk 1\n\n# Optional: Notes (required by spec linter)\nnotes: 'Implementation notes, rollout context, or plan summary.'\n\n# Optional: Requires human review\nrequires_review: false\n\n# Optional: Claimed mode (worktree or branch-only)\n# Automatically set by wu:claim, usually don't need to specify\n# claimed_mode: worktree\n\n# Optional: Assigned to (email of current claimant)\n# Automatically set by wu:claim\n# assigned_to: engineer@example.com\n\n# Optional: Locked status (prevents concurrent edits)\n# Automatically set by wu:claim and wu:done\n# locked: false\n\n# Optional: Completion date (ISO 8601 format)\n# Automatically set by wu:done\n# completed: 2025-10-23\n\n# Optional: Completion notes (added by wu:done)\n# completion_notes: |\n#   Additional notes added during wu:done.\n#   Any deviations from original plan.\n#   Lessons learned.\n\n# ============================================================================\n# GOVERNANCE BLOCK (WU Schema v2.0)\n# ============================================================================\n# Optional: COS governance rules that apply to this WU\n# Only include if this WU needs specific governance enforcement\n\n# governance:\n#   # Rules that apply to this WU (evaluated during cos:gates)\n#   rules:\n#     - rule_id: UPAIN-01\n#       satisfied: false  # Initially false, set true when evidence provided\n#       evidence:\n#         - type: link\n#           value: docs/product/voc/feature-user-pain.md\n#           description: "Voice of Customer analysis showing user pain"\n#       notes: |\n#         VOC analysis shows 40% of support tickets request this feature.\n#         Average time wasted: 15min/user/week.\n#\n#     - rule_id: CASH-03\n#       satisfied: false\n#       evidence:\n#         - type: link\n#           value: docs/finance/spend-reviews/2025-10-cloud-infra.md\n#           description: "Spend review for £1200/month cloud infrastructure"\n#         - type: approval\n#           value: owner@example.com\n#           description: "Owner approval for spend commitment"\n#       notes: |\n#         New cloud infrastructure commitment: £1200/month for 12 months.\n#         ROI: Reduces latency by 50%, improves user retention.\n#\n#   # Gate checks (enforced by cos-gates.ts)\n#   gates:\n#     narrative: "pending"  # Status: pending, passed, skipped, failed\n#     finance: "pending"\n#\n#   # Exemptions (only if rule doesn't apply)\n#   exemptions:\n#     - rule_id: FAIR-01\n#       reason: "No user-facing pricing changes in this WU"\n#       approved_by: product-owner@example.com\n#       approved_at: 2025-10-23\n\n# ============================================================================\n# USAGE NOTES\n# ============================================================================\n#\n# 1. Remove this entire governance block if no COS rules apply to your WU\n# 2. Only include rules that require enforcement (not all rules apply to all WUs)\n# 3. Evidence types: link:, metric:, screenshot:, approval:\n# 4. Gates are checked during wu:done (before merge)\n# 5. Exemptions require approval from rule owner\n#\n# For more details, see:\n# - docs/04-operations/_frameworks/cos/system-prompt-v1.3.md\n# - docs/04-operations/_frameworks/cos/evidence-format.md\n`;
+const WU_TEMPLATE_YAML = `# Work Unit Template (LumenFlow WU Schema)\n#\n# Copy this template when creating new WUs. Fill in all required fields and\n# remove optional fields if not needed.\n#\n# If you used "lumenflow init --full", this template lives at:\n# {{DOCS_TASKS_PATH}}/templates/wu-template.yaml\n\n# Required: Unique work unit identifier (format: WU-NNN)\nid: WU-XXX\n\n# Required: Short, descriptive title (max 80 chars)\ntitle: 'Your WU title here'\n\n# Required: Lane (Parent: Sublane format)\nlane: 'Framework: CLI'\n\n# Required: Type of work\ntype: 'feature' # feature | bug | documentation | process | tooling | chore | refactor\n\n# Required: Current status\nstatus: 'ready' # ready | in_progress | blocked | done | cancelled\n\n# Required: Priority\npriority: P2 # P0 | P1 | P2 | P3\n\n# Required: Creation date (YYYY-MM-DD)\ncreated: {{DATE}}\n\n# Required: Owner/assignee (email)\nassigned_to: 'unassigned@example.com'\n\n# Required: Description\ndescription: |\n  Context: ...\n  Problem: ...\n  Solution: ...\n\n# Required: Acceptance criteria (testable, binary)\nacceptance:\n  - Criterion 1 (specific, measurable, testable)\n  - Criterion 2 (binary pass/fail)\n  - Documentation updated\n\n# Required: References to plans/specs (required for type: feature)\n# Tip: use pnpm wu:create --plan to generate a plan stub at lumenflow://plans/WU-XXX-plan.md\nspec_refs:\n  - lumenflow://plans/WU-XXX-plan.md\n\n# Required: Code files changed or created (empty only for docs/process WUs)\n# Docs-only WUs should use docs/ or *.md paths to avoid docs-only gate failures.\ncode_paths:\n  - path/to/file.ts\n\n# Required: Test paths (at least one of manual/unit/e2e/integration for non-doc WUs)\ntests:\n  manual:\n    - Manual check: Verify behavior or docs output\n  unit:\n    - path/to/test.test.ts\n  e2e: []\n  integration: []\n\n# Required: Exposure level\nexposure: 'backend-only' # ui | api | backend-only | documentation\n\n# Optional: User journey (recommended for ui/api)\n# user_journey: |\n#   User navigates to ...\n#   User performs ...\n\n# Optional: UI pairing WUs (for api exposure)\n# ui_pairing_wus:\n#   - WU-1234\n\n# Optional: Navigation path (required when exposure=ui and no page file)\n# navigation_path: '/settings'\n\n# Required: Deliverable artifacts (stamps, docs, etc.)\nartifacts:\n  - .lumenflow/stamps/WU-XXX.done\n\n# Optional: Dependencies (other WUs that must complete first)\ndependencies: []\n\n# Optional: Risks\nrisks:\n  - Risk 1\n\n# Optional: Notes (required by spec linter)\nnotes: 'Implementation notes, rollout context, or plan summary.'\n\n# Optional: Requires human review\nrequires_review: false\n\n# Optional: Claimed mode (worktree or branch-only)\n# Automatically set by wu:claim, usually don't need to specify\n# claimed_mode: worktree\n\n# Optional: Assigned to (email of current claimant)\n# Automatically set by wu:claim\n# assigned_to: engineer@example.com\n\n# Optional: Locked status (prevents concurrent edits)\n# Automatically set by wu:claim and wu:done\n# locked: false\n\n# Optional: Completion date (ISO 8601 format)\n# Automatically set by wu:done\n# completed: 2025-10-23\n\n# Optional: Completion notes (added by wu:done)\n# completion_notes: |\n#   Additional notes added during wu:done.\n#   Any deviations from original plan.\n#   Lessons learned.\n\n# ============================================================================\n# GOVERNANCE BLOCK (WU Schema v2.0)\n# ============================================================================\n# Optional: COS governance rules that apply to this WU\n# Only include if this WU needs specific governance enforcement\n\n# governance:\n#   # Rules that apply to this WU (evaluated during cos:gates)\n#   rules:\n#     - rule_id: UPAIN-01\n#       satisfied: false  # Initially false, set true when evidence provided\n#       evidence:\n#         - type: link\n#           value: docs/product/voc/feature-user-pain.md\n#           description: "Voice of Customer analysis showing user pain"\n#       notes: |\n#         VOC analysis shows 40% of support tickets request this feature.\n#         Average time wasted: 15min/user/week.\n#\n#     - rule_id: CASH-03\n#       satisfied: false\n#       evidence:\n#         - type: link\n#           value: docs/finance/spend-reviews/2025-10-cloud-infra.md\n#           description: "Spend review for £1200/month cloud infrastructure"\n#         - type: approval\n#           value: owner@example.com\n#           description: "Owner approval for spend commitment"\n#       notes: |\n#         New cloud infrastructure commitment: £1200/month for 12 months.\n#         ROI: Reduces latency by 50%, improves user retention.\n#\n#   # Gate checks (enforced by cos-gates.ts)\n#   gates:\n#     narrative: "pending"  # Status: pending, passed, skipped, failed\n#     finance: "pending"\n#\n#   # Exemptions (only if rule doesn't apply)\n#   exemptions:\n#     - rule_id: FAIR-01\n#       reason: "No user-facing pricing changes in this WU"\n#       approved_by: product-owner@example.com\n#       approved_at: 2025-10-23\n\n# ============================================================================\n# USAGE NOTES\n# ============================================================================\n#\n# 1. Remove this entire governance block if no COS rules apply to your WU\n# 2. Only include rules that require enforcement (not all rules apply to all WUs)\n# 3. Evidence types: link:, metric:, screenshot:, approval:\n# 4. Gates are checked during wu:done (before merge)\n# 5. Exemptions require approval from rule owner\n#\n# For more details, see:\n# - {{DOCS_OPERATIONS_PATH}}/_frameworks/cos/system-prompt-v1.3.md\n# - {{DOCS_OPERATIONS_PATH}}/_frameworks/cos/evidence-format.md\n`;
 
 // Template for .lumenflow.framework.yaml
 const FRAMEWORK_HINT_TEMPLATE = `# LumenFlow Framework Hint\n# Generated by: lumenflow init --framework {{FRAMEWORK_NAME}}\n\nframework: "{{FRAMEWORK_NAME}}"\nslug: "{{FRAMEWORK_SLUG}}"\n`;
@@ -1346,7 +1348,7 @@ If same error happens 3 times:
 
 \`\`\`bash
 # Check lane availability
-cat docs/04-operations/tasks/status.md
+cat {{DOCS_TASKS_PATH}}/status.md
 
 # Claim a WU
 pnpm wu:claim --id WU-XXX --lane <Lane>
@@ -1655,7 +1657,7 @@ LumenFlow uses Work Units (WUs) to track all changes:
 
 ## Step 5: When Stuck
 
-1. Read the WU spec at \`docs/04-operations/tasks/wu/WU-XXX.yaml\`
+1. Read the WU spec at \`{{DOCS_TASKS_PATH}}/wu/WU-XXX.yaml\`
 2. Check [troubleshooting-wu-done.md](troubleshooting-wu-done.md)
 3. Review [first-wu-mistakes.md](first-wu-mistakes.md)
 
@@ -1778,7 +1780,7 @@ pnpm wu:create \\
 
 ## After Creation
 
-1. Review the created YAML: \`cat docs/04-operations/tasks/wu/WU-XXX.yaml\`
+1. Review the created YAML: \`cat {{DOCS_TASKS_PATH}}/wu/WU-XXX.yaml\`
 2. Claim the WU: \`pnpm wu:claim --id WU-XXX --lane "Lane"\`
 3. cd to worktree: \`cd worktrees/<lane>-wu-xxx\`
 `;
@@ -1816,10 +1818,10 @@ pnpm exec lumenflow doctor
 
 \`\`\`bash
 # Check status board
-cat docs/04-operations/tasks/status.md
+cat {{DOCS_TASKS_PATH}}/status.md
 
 # List ready WUs
-ls docs/04-operations/tasks/wu/*.yaml | head -5
+ls {{DOCS_TASKS_PATH}}/wu/*.yaml | head -5
 \`\`\`
 
 ---
@@ -2759,36 +2761,31 @@ ${linesToAdd.join('\n')}
 }
 
 /**
- * WU-1307: LumenFlow scripts to inject into package.json
- * WU-1342: Expanded to include all 17 essential commands
- * Uses standalone binaries (wu-claim, wu-done, gates) that work in consumer projects
- * after installing @lumenflow/cli.
+ * WU-1433: Script argument overrides for commands that need extra flags.
+ * Most commands map simply to their binName, but some aliases need arguments.
+ * Key = command name (colon notation), Value = full script command string.
  */
-const LUMENFLOW_SCRIPTS: Record<string, string> = {
-  // Core WU lifecycle
-  'wu:claim': 'wu-claim',
-  'wu:done': 'wu-done',
-  'wu:create': 'wu-create',
-  'wu:proto': 'wu-proto', // WU-1359: Prototype WU with relaxed validation
-  'wu:status': 'wu-status',
-  'wu:block': 'wu-block',
-  'wu:unblock': 'wu-unblock',
-  // WU-1342: Additional critical commands
-  'wu:prep': 'wu-prep',
-  'wu:recover': 'wu-recover',
-  'wu:spawn': 'wu-spawn',
-  'wu:validate': 'wu-validate',
-  'wu:infer-lane': 'wu-infer-lane',
-  // Memory commands
-  'mem:init': 'mem-init',
-  'mem:checkpoint': 'mem-checkpoint',
-  'mem:inbox': 'mem-inbox',
-  // Lane commands
-  'lane:suggest': 'lane-suggest',
-  // Gates
-  gates: 'gates',
+const SCRIPT_ARG_OVERRIDES: Record<string, string> = {
   'gates:docs': 'gates --docs-only',
 };
+
+/**
+ * WU-1307: LumenFlow scripts to inject into package.json
+ * WU-1342: Expanded to include essential commands
+ * WU-1433: Now derived from the public CLI manifest (WU-1432) instead of
+ * hardcoded list. Ensures all public commands are exposed and avoids drift.
+ */
+function generateLumenflowScripts(): Record<string, string> {
+  const scripts: Record<string, string> = {};
+  const manifest = getPublicManifest();
+
+  for (const cmd of manifest) {
+    // Use override if defined, otherwise map to the binary name
+    scripts[cmd.name] = SCRIPT_ARG_OVERRIDES[cmd.name] ?? cmd.binName;
+  }
+
+  return scripts;
+}
 
 /** WU-1408: Safety script path constants */
 const SCRIPTS_DIR = 'scripts';
@@ -2955,8 +2952,9 @@ async function injectPackageJsonScripts(
   const scripts = packageJson.scripts as Record<string, string>;
   let modified = false;
 
-  // Add LumenFlow scripts (only if not already present, unless --force)
-  for (const [scriptName, scriptCommand] of Object.entries(LUMENFLOW_SCRIPTS)) {
+  // WU-1433: Derive scripts from public manifest (not hardcoded)
+  const lumenflowScripts = generateLumenflowScripts();
+  for (const [scriptName, scriptCommand] of Object.entries(lumenflowScripts)) {
     if (options.force || !(scriptName in scripts)) {
       if (!(scriptName in scripts)) {
         scripts[scriptName] = scriptCommand;
