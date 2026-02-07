@@ -2725,13 +2725,14 @@ export async function scaffoldProject(
 
 /**
  * WU-1342: .gitignore template with required exclusions
- * Includes node_modules, .lumenflow/state, and worktrees
+ * WU-1519: Removed .lumenflow/state/ (must be tracked for wu-events.jsonl)
+ * Includes node_modules, .lumenflow/telemetry, and worktrees
  */
 const GITIGNORE_TEMPLATE = `# Dependencies
 node_modules/
 
-# LumenFlow state (local only, not shared)
-.lumenflow/state/
+# LumenFlow telemetry (local only, not shared)
+.lumenflow/telemetry/
 
 # Worktrees (isolated parallel work directories)
 worktrees/
@@ -2777,9 +2778,10 @@ async function scaffoldGitignore(
     const linesToAdd: string[] = [];
 
     // Check each required exclusion
+    // WU-1519: Replaced .lumenflow/state with .lumenflow/telemetry
     const requiredExclusions = [
       { pattern: 'node_modules', line: 'node_modules/' },
-      { pattern: '.lumenflow/state', line: '.lumenflow/state/' },
+      { pattern: '.lumenflow/telemetry', line: '.lumenflow/telemetry/' },
       { pattern: 'worktrees', line: 'worktrees/' },
     ];
 
