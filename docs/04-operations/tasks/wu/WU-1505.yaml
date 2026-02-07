@@ -7,7 +7,6 @@ priority: P1
 created: 2026-02-07
 code_paths:
   - .claude/hooks/session-start-recovery.sh
-  - .claude/settings.json
   - packages/@lumenflow/cli/src/hooks/enforcement-generator.ts
   - packages/@lumenflow/cli/src/init.ts
   - packages/@lumenflow/cli/templates/
