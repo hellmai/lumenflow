@@ -1,0 +1,40 @@
+id: WU-1518
+title: Scaffold spec:linter and remaining gate scripts in lumenflow init
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-02-07
+code_paths:
+  - packages/@lumenflow/cli/src/init.ts
+  - packages/@lumenflow/cli/templates/
+tests:
+  manual:
+    - Run lumenflow init in fresh dir, run pnpm gates --docs-only on first WU
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/init-scripts.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1518.done
+dependencies: []
+initiative: INIT-018
+phase: 1
+spec_refs:
+  - docs/04-operations/tasks/initiatives/INIT-018.yaml
+risks: []
+notes: 'Haven test: gates crashed with ERR_PNPM_NO_SCRIPT for spec:linter, lint, typecheck.'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: gates invoke spec:linter, lint, typecheck scripts that dont exist in scaffolded projects. Problem: gates hard-fail with ERR_PNPM_NO_SCRIPT. Solution: scaffold these scripts in lumenflow init as real commands or clearly-messaged stubs.'
+acceptance:
+  - lumenflow init adds spec:linter script
+  - lumenflow init adds lint script
+  - lumenflow init adds typecheck script
+  - pnpm gates --docs-only passes on a fresh docs-only WU without manual script additions
+  - Scripts that are stubs log a clear message indicating how to enable them
