@@ -183,23 +183,23 @@ Run LumenFlow quality gates (lint, typecheck, tests).
 
 These tools were added to close ops/setup parity gaps against the public CLI manifest.
 
-| MCP Tool             | CLI Command          | Purpose                         |
-| -------------------- | -------------------- | ------------------------------- |
-| `backlog_prune`      | `backlog:prune`      | Prune stale backlog entries     |
-| `docs_sync`          | `docs:sync`          | Sync onboarding docs/templates  |
-| `gates`              | `gates`              | Run quality gates               |
-| `gates_docs`         | `gates --docs-only`  | Run docs-only gates             |
-| `lane_health`        | `lane:health`        | Report lane overlap/health      |
-| `lane_suggest`       | `lane:suggest`       | Suggest lane from scope/context |
-| `lumenflow`          | `lumenflow`          | Main CLI entrypoint             |
-| `lumenflow_gates`    | `gates`              | Framework gates wrapper         |
-| `lumenflow_validate` | `validate`           | Framework validation wrapper    |
-| `lumenflow_metrics`  | `lumenflow:metrics`  | Framework metrics wrapper       |
-| `metrics`            | `metrics`            | Metrics CLI                     |
-| `state_bootstrap`    | `state:bootstrap`    | Bootstrap state store           |
-| `state_cleanup`      | `state:cleanup`      | Cleanup state artifacts         |
-| `state_doctor`       | `state:doctor`       | Diagnose/repair state issues    |
-| `sync_templates`     | `sync:templates`     | Sync framework templates        |
+| MCP Tool             | CLI Command         | Purpose                         |
+| -------------------- | ------------------- | ------------------------------- |
+| `backlog_prune`      | `backlog:prune`     | Prune stale backlog entries     |
+| `docs_sync`          | `docs:sync`         | Sync onboarding docs/templates  |
+| `gates`              | `gates`             | Run quality gates               |
+| `gates_docs`         | `gates --docs-only` | Run docs-only gates             |
+| `lane_health`        | `lane:health`       | Report lane overlap/health      |
+| `lane_suggest`       | `lane:suggest`      | Suggest lane from scope/context |
+| `lumenflow`          | `lumenflow`         | Main CLI entrypoint             |
+| `lumenflow_gates`    | `gates`             | Framework gates wrapper         |
+| `lumenflow_validate` | `validate`          | Framework validation wrapper    |
+| `lumenflow_metrics`  | `lumenflow:metrics` | Framework metrics wrapper       |
+| `metrics`            | `metrics`           | Metrics CLI                     |
+| `state_bootstrap`    | `state:bootstrap`   | Bootstrap state store           |
+| `state_cleanup`      | `state:cleanup`     | Cleanup state artifacts         |
+| `state_doctor`       | `state:doctor`      | Diagnose/repair state issues    |
+| `sync_templates`     | `sync:templates`    | Sync framework templates        |
 
 <Aside type="note">
   MCP command execution is canonical-first with compatibility fallback aliases where needed (for
@@ -890,9 +890,8 @@ Run LumenFlow release workflow (versioning, npm publish).
 | `dry_run` | boolean | No | Preview release without publishing |
 
 <Aside type="note">
-  Publish auth for `lumenflow_release` follows CLI `lumenflow:release` behavior: prefer
-  `NPM_TOKEN` in
-  automation, with support for `NODE_AUTH_TOKEN` or a `_authToken=` entry in `~/.npmrc` for local
+  Publish auth for `lumenflow_release` follows CLI `lumenflow:release` behavior: prefer `NPM_TOKEN`
+  in automation, with support for `NODE_AUTH_TOKEN` or a `_authToken=` entry in `~/.npmrc` for local
   environments.
 </Aside>
 
