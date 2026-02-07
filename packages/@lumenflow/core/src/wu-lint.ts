@@ -21,7 +21,40 @@ export const WU_LINT_ERROR_TYPES = {
   ACCEPTANCE_PATH_NOT_IN_CODE_PATHS: 'acceptance_path_not_in_code_paths',
   CODE_PATH_CONFLICTS_INVARIANT: 'code_path_conflicts_invariant',
   ACCEPTANCE_CONFLICTS_INVARIANT: 'acceptance_conflicts_invariant',
+  /** WU-1504: CLI command registration parity missing */
+  REGISTRATION_PARITY_MISSING: 'registration_parity_missing',
 };
+
+/**
+ * WU-1504: Registration surface paths that must be present when CLI commands change
+ */
+export const REGISTRATION_SURFACES = {
+  PUBLIC_MANIFEST: 'packages/@lumenflow/cli/src/public-manifest.ts',
+  MCP_TOOLS: 'packages/@lumenflow/mcp/src/tools.ts',
+} as const;
+
+/**
+ * WU-1504: Patterns that indicate a CLI command implementation file.
+ * Files matching these patterns (but NOT excluded patterns) trigger parity checks.
+ */
+export const CLI_COMMAND_PATTERNS: string[] = [
+  'packages/@lumenflow/cli/src/',
+  'packages/@lumenflow/cli/package.json',
+];
+
+/**
+ * WU-1504: Patterns that exclude files from parity check trigger.
+ * Test files, lib/shared helpers, and the registration surfaces themselves
+ * do not imply a new command registration.
+ */
+const CLI_COMMAND_EXCLUDE_PATTERNS: string[] = [
+  '__tests__/',
+  '/lib/',
+  '/shared/',
+  '/commands/',
+  REGISTRATION_SURFACES.PUBLIC_MANIFEST,
+  REGISTRATION_SURFACES.MCP_TOOLS,
+];
 
 /**
  * Regex to detect file paths in acceptance criteria text
@@ -204,6 +237,73 @@ export function validateInvariantsCompliance(wu, invariants) {
 }
 
 /**
+ * WU-1504: Check if a code_path indicates a CLI command implementation
+ * that would require registration in public-manifest and MCP tools.
+ *
+ * A path triggers parity checks if it:
+ * 1. Matches any CLI_COMMAND_PATTERNS prefix
+ * 2. Does NOT match any exclusion pattern (tests, lib, shared, etc.)
+ */
+function isCliCommandPath(codePath: string): boolean {
+  const matchesCommand = CLI_COMMAND_PATTERNS.some((pattern) => codePath.includes(pattern));
+  if (!matchesCommand) return false;
+
+  const isExcluded = CLI_COMMAND_EXCLUDE_PATTERNS.some((pattern) => codePath.includes(pattern));
+  return !isExcluded;
+}
+
+/**
+ * WU-1504: Validate CLI command registration parity.
+ *
+ * When WU code_paths include new/changed CLI command implementations or
+ * package.json bin entries, registration surfaces (public-manifest.ts and
+ * MCP tools.ts) must also be present in code_paths.
+ *
+ * @param wu - WU spec object with id and code_paths
+ * @returns Validation result with errors for missing registration surfaces
+ */
+export function validateRegistrationParity(wu: {
+  id: string;
+  code_paths?: string[];
+}): { valid: boolean; errors: Array<{ type: string; wuId: string; message: string; suggestion: string }> } {
+  const { id, code_paths = [] } = wu;
+  const errors: Array<{ type: string; wuId: string; message: string; suggestion: string }> = [];
+
+  // Check if any code_path triggers the parity heuristic
+  const hasCliCommandPath = code_paths.some((p) => isCliCommandPath(p));
+  if (!hasCliCommandPath) {
+    return { valid: true, errors };
+  }
+
+  // Check for missing registration surfaces
+  const hasPublicManifest = code_paths.includes(REGISTRATION_SURFACES.PUBLIC_MANIFEST);
+  const hasMcpTools = code_paths.includes(REGISTRATION_SURFACES.MCP_TOOLS);
+
+  if (!hasPublicManifest) {
+    errors.push({
+      type: WU_LINT_ERROR_TYPES.REGISTRATION_PARITY_MISSING,
+      wuId: id,
+      message: `CLI command change detected but '${REGISTRATION_SURFACES.PUBLIC_MANIFEST}' (public-manifest.ts) is not in code_paths`,
+      suggestion: `Add '${REGISTRATION_SURFACES.PUBLIC_MANIFEST}' to code_paths if this WU adds or changes a CLI command`,
+    });
+  }
+
+  if (!hasMcpTools) {
+    errors.push({
+      type: WU_LINT_ERROR_TYPES.REGISTRATION_PARITY_MISSING,
+      wuId: id,
+      message: `CLI command change detected but '${REGISTRATION_SURFACES.MCP_TOOLS}' (tools.ts) is not in code_paths`,
+      suggestion: `Add '${REGISTRATION_SURFACES.MCP_TOOLS}' to code_paths if this WU adds or changes a CLI command`,
+    });
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
  * Options for linting WU spec
  */
 export interface LintWUSpecOptions {
@@ -244,6 +344,10 @@ export function lintWUSpec(wu, options: LintWUSpecOptions = {}) {
     const invariantsResult = validateInvariantsCompliance(wu, invariants);
     allErrors.push(...invariantsResult.errors);
   }
+
+  // 4. WU-1504: Validate CLI command registration parity
+  const parityResult = validateRegistrationParity(wu);
+  allErrors.push(...parityResult.errors);
 
   return {
     valid: allErrors.length === 0,
