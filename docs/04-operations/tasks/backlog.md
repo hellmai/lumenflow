@@ -20,15 +20,17 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1511 — Fix wu:delete to fully clean projections and initiative links](wu/WU-1511.yaml) — Framework: CLI WU Commands
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml) — Framework: Core Lifecycle
 - [WU-1498 — Add passive lane-signal telemetry and agent lane-fit reasoning](wu/WU-1498.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-1504 — Add wu:validate lint for CLI command registration parity](wu/WU-1504.yaml) — Framework: CLI Enforcement
+- [WU-1511 — Fix wu:delete to fully clean projections and initiative links](wu/WU-1511.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
+
+- [WU-1007 — List LumenFlow GitHub App on Marketplace (Free tier)](wu/WU-1007.yaml) — Core
 
 ## ✅ Done
 
