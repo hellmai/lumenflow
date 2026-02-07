@@ -3,7 +3,7 @@ slug: init-wu-done
 title: Init/WU Done Friction Elimination
 description: Eliminate remaining lifecycle friction around WU deletion, state consistency, and
   completion flow safety so agents can run WUs end-to-end without manual cleanup loops.
-status: in_progress
+status: done
 priority: P1
 owner: workflow
 created: 2026-02-07
