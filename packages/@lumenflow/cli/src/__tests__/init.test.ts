@@ -1081,6 +1081,93 @@ describe('lumenflow init', () => {
     });
   });
 
+  // WU-1519: Stop gitignoring .lumenflow/state/ in scaffold template
+  describe('WU-1519: .gitignore should not ignore .lumenflow/state/', () => {
+    const GITIGNORE_FILE = '.gitignore';
+    const STATE_PATTERN = '.lumenflow/state/';
+    const TELEMETRY_PATTERN = '.lumenflow/telemetry/';
+
+    describe('scaffolded .gitignore content', () => {
+      it('should NOT include .lumenflow/state/ in scaffolded .gitignore', async () => {
+        const options: ScaffoldOptions = {
+          force: false,
+          full: false,
+        };
+
+        await scaffoldProject(tempDir, options);
+
+        const gitignorePath = path.join(tempDir, GITIGNORE_FILE);
+        expect(fs.existsSync(gitignorePath)).toBe(true);
+
+        const content = fs.readFileSync(gitignorePath, 'utf-8');
+        expect(content).not.toContain(STATE_PATTERN);
+      });
+
+      it('should still include .lumenflow/telemetry/ in scaffolded .gitignore', async () => {
+        const options: ScaffoldOptions = {
+          force: false,
+          full: false,
+        };
+
+        await scaffoldProject(tempDir, options);
+
+        const gitignorePath = path.join(tempDir, GITIGNORE_FILE);
+        const content = fs.readFileSync(gitignorePath, 'utf-8');
+        expect(content).toContain(TELEMETRY_PATTERN);
+      });
+
+      it('should still ignore node_modules, dist, worktrees, and env files', async () => {
+        const options: ScaffoldOptions = {
+          force: false,
+          full: false,
+        };
+
+        await scaffoldProject(tempDir, options);
+
+        const gitignorePath = path.join(tempDir, GITIGNORE_FILE);
+        const content = fs.readFileSync(gitignorePath, 'utf-8');
+        expect(content).toContain('node_modules/');
+        expect(content).toContain('dist/');
+        expect(content).toContain('worktrees/');
+        expect(content).toContain('.env');
+      });
+    });
+
+    describe('merge mode should not add .lumenflow/state/', () => {
+      it('should NOT add .lumenflow/state/ when merging into existing .gitignore', async () => {
+        // Create existing .gitignore without LumenFlow patterns
+        fs.writeFileSync(path.join(tempDir, GITIGNORE_FILE), 'node_modules/\n');
+
+        const options: ScaffoldOptions = {
+          force: false,
+          full: false,
+          merge: true,
+        };
+
+        await scaffoldProject(tempDir, options);
+
+        const content = fs.readFileSync(path.join(tempDir, GITIGNORE_FILE), 'utf-8');
+        expect(content).not.toContain(STATE_PATTERN);
+      });
+
+      it('should add .lumenflow/telemetry/ when merging into existing .gitignore', async () => {
+        // Create existing .gitignore without LumenFlow patterns
+        fs.writeFileSync(path.join(tempDir, GITIGNORE_FILE), 'node_modules/\n');
+
+        const options: ScaffoldOptions = {
+          force: false,
+          full: false,
+          merge: true,
+        };
+
+        await scaffoldProject(tempDir, options);
+
+        const content = fs.readFileSync(path.join(tempDir, GITIGNORE_FILE), 'utf-8');
+        expect(content).toContain(TELEMETRY_PATTERN);
+      });
+    });
+  });
+
   // WU-1413: MCP server configuration scaffolding
   describe('WU-1413: .mcp.json scaffolding', () => {
     const MCP_JSON_FILE = '.mcp.json';
