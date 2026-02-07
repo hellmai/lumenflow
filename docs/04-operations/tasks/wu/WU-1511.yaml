@@ -2,7 +2,7 @@ id: WU-1511
 title: Fix wu:delete to fully clean projections and initiative links
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-07
 code_paths:
@@ -27,8 +27,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: deleting WU-1007 removed the WU file but left stale references in status and initiative linkage. Problem: wu:delete can leave task projections inconsistent (dangling references to non-existent WU), which breaks trust in state views. Solution: harden wu:delete to atomically remove all references (WU file, backlog/status projections, initiative links) and validate no stale WU links remain after delete.'
+description: 'Context: deleting WU-1007 removed the WU file but left stale references in status and
+  initiative linkage. Problem: wu:delete can leave task projections inconsistent (dangling
+  references to non-existent WU), which breaks trust in state views. Solution: harden wu:delete to
+  atomically remove all references (WU file, backlog/status projections, initiative links) and
+  validate no stale WU links remain after delete.'
 acceptance:
-  - Deleting a WU removes references from status/backlog projections and initiative linkage in one transaction
-  - After wu:delete, no references to the deleted WU remain in docs/04-operations/tasks/{status,backlog}.md or linked initiatives
+  - Deleting a WU removes references from status/backlog projections and initiative linkage in one
+    transaction
+  - After wu:delete, no references to the deleted WU remain in
+    docs/04-operations/tasks/{status,backlog}.md or linked initiatives
   - Add regression tests that fail before fix and pass after fix
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1511
+claimed_at: 2026-02-07T13:04:57.108Z
+baseline_main_sha: 56ac4d8e72b462c8712a9228b03f51d12da581da
+session_id: 20c5804d-6db9-420e-bf71-1344e7e2c43b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-07T13:04:57.114Z
