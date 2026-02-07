@@ -1,6 +1,6 @@
 # LumenFlow Manifesto
 
-**Purpose:** LumenFlow is our open, stack-agnostic delivery methodology for AI-augmented teams. It combines ports-first engineering, test-driven development, and hexagonal architecture with a lane-based flow system that keeps work visible, parallel, and humane.
+**Purpose:** LumenFlow is our vendor-agnostic, stack-agnostic delivery methodology for AI-augmented teams. It combines ports-first engineering, test-driven development, and hexagonal architecture with a lane-based flow system that keeps work visible, parallel, and humane.
 
 ## Why LumenFlow Exists
 
