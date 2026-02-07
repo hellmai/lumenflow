@@ -12,7 +12,12 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-delete.test.ts
   - packages/@lumenflow/cli/src/__tests__/state-doctor.test.ts
 tests:
-  manual: []
+  manual:
+    - Seed .lumenflow/state/wu-events.jsonl with one deleted-WU event and one valid WU event, run
+      wu:delete on a different WU, then verify orphaned deleted-WU events are removed while valid
+      WU events remain.
+    - Run pnpm state:doctor after delete cleanup and verify Broken Event count does not include the
+      deleted WU.
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-delete.test.ts
     - packages/@lumenflow/cli/src/__tests__/state-doctor.test.ts
