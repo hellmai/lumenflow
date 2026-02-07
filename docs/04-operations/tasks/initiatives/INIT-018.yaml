@@ -1,11 +1,26 @@
 id: INIT-018
 slug: launch-1
 title: 'Launch-1: Haven Pre-Launch Scaffolding Fixes'
-description: ''
-status: draft
+description: Fix all scaffolding gaps discovered during Haven pre-launch testing. A fresh lumenflow
+  init project must be able to complete its first WU with gates passing and zero manual
+  intervention. Covers prettier/format scaffold, gitignore fixes, gates degradation, wu:claim
+  atomicity, flow.log lifecycle, and state rendering.
+status: open
 priority: P0
 owner: workflow
 created: 2026-02-07
-phases: []
-success_metrics: []
+phases:
+  - id: 1
+    title: Scaffold completeness
+    status: pending
+  - id: 2
+    title: Runtime resilience
+    status: pending
+  - id: 3
+    title: State rendering and verification
+    status: pending
+success_metrics:
+  - Fresh lumenflow init project completes first WU with gates green (no --skip-gates)
+  - Zero manual fixes needed between init and first wu:done
+  - Haven re-test passes end-to-end without intervention
 labels: []
