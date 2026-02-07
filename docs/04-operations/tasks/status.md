@@ -4,7 +4,7 @@ _Last updated: 2026-02-07_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1526 — Expand Medium article with CLI examples and usage guide](wu/WU-1526.yaml)
 
 ## Blocked
 
