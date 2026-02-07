@@ -1,12 +1,26 @@
 id: INIT-019
 slug: init-wu-done
 title: Init/WU Done Friction Elimination
-description: ''
-status: draft
+description: Eliminate remaining lifecycle friction around WU deletion, state consistency, and
+  completion flow safety so agents can run WUs end-to-end without manual cleanup loops.
+status: in_progress
 priority: P1
 owner: workflow
 created: 2026-02-07
 target_date: 2026-02-14
-phases: []
-success_metrics: []
+phases:
+  - id: 1
+    title: Delete and state-store consistency
+    status: pending
+  - id: 2
+    title: wu:done completion-path reliability
+    status: pending
+  - id: 3
+    title: Regression harness and operator visibility
+    status: pending
+success_metrics:
+  - state:doctor reports zero broken-event inconsistencies after delete operations
+  - wu:delete never leaves stale references in projections, initiatives, or state event streams
+  - wu:done no longer enters post-merge dirty-state failure loops in standard flows
+  - New regression coverage prevents reintroduction of delete/done lifecycle inconsistencies
 labels: []
