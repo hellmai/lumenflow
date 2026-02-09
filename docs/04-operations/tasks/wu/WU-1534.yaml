@@ -2,7 +2,7 @@ id: WU-1534
 title: Harden CLI command execution surfaces
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-09
 code_paths:
@@ -54,3 +54,5 @@ worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-enforcement-
 claimed_at: 2026-02-09T22:51:56.735Z
 baseline_main_sha: 6bb16006cf1e24144cae4d0070404eb3290671c2
 session_id: 284d882f-ecf2-4c8d-a361-f60a56c5fdfc
+locked: true
+completed: 2026-02-09
