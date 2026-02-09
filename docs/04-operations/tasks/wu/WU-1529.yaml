@@ -2,7 +2,7 @@ id: WU-1529
 title: Purge remaining live .beacon references from hooks and agent overlays
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-09
 code_paths:
@@ -25,7 +25,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/no-beacon-references-docs.test.ts
 tests:
   manual:
-    - Run rg -n '\.beacon' .claude .husky .lumenflow packages/@lumenflow/cli/templates and verify no live-path matches
+    - Run rg -n '\.beacon' .claude .husky .lumenflow packages/@lumenflow/cli/templates and verify no
+      live-path matches
   unit:
     - packages/@lumenflow/cli/src/__tests__/no-beacon-references.test.ts
     - packages/@lumenflow/cli/src/__tests__/no-beacon-references-docs.test.ts
@@ -34,7 +35,8 @@ artifacts:
   - .lumenflow/stamps/WU-1529.done
 dependencies: []
 risks: []
-notes: Scope intentionally excludes immutable historical records (closed WU YAMLs, changelog snapshots, wu-events history). Focus is live operational and scaffolded files.
+notes: Scope intentionally excludes immutable historical records (closed WU YAMLs, changelog
+  snapshots, wu-events history). Focus is live operational and scaffolded files.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -43,9 +45,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: .beacon was renamed to .lumenflow, but several live operational files still reference .beacon paths (not just historical WU records). Problem: Claude overlays, Husky hooks, and templates still instruct or write to .beacon, causing workflow drift and incorrect agent behavior. Solution: update live runtime/docs/templates to .lumenflow consistently, and expand guardrail coverage so .beacon cannot regress in active files.'
+description: 'Context: .beacon was renamed to .lumenflow, but several live operational files still
+  reference .beacon paths (not just historical WU records). Problem: Claude overlays, Husky hooks,
+  and templates still instruct or write to .beacon, causing workflow drift and incorrect agent
+  behavior. Solution: update live runtime/docs/templates to .lumenflow consistently, and expand
+  guardrail coverage so .beacon cannot regress in active files.'
 acceptance:
-  - All live operational references in .claude/, .husky/, .lumenflow/{constraints,rules}, and scaffold templates use .lumenflow (no .beacon)
+  - All live operational references in .claude/, .husky/, .lumenflow/{constraints,rules}, and
+    scaffold templates use .lumenflow (no .beacon)
   - Claude enforcer/doc-sync guidance references .lumenflow stamp/state paths only
   - Hook bypass/audit logging writes to .lumenflow paths (no .beacon write targets)
   - Guardrail tests cover these paths and fail on reintroduced .beacon references
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1529
+claimed_at: 2026-02-09T09:47:33.858Z
+baseline_main_sha: f2a0b15ae42d21ad729c9bc81557cc5cba8874d2
+session_id: 3edce95a-d599-4453-a9c4-732c726b8a5b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-09T09:47:33.866Z
