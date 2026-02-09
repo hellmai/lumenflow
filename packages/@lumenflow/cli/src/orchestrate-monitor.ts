@@ -490,7 +490,14 @@ export function createWatchModeRunner(options: CreateWatchModeRunnerOptions): Wa
     if (!running) return;
 
     timer = setTimeout(() => {
-      void runCycle().then(() => scheduleNext());
+      // WU-1551: Add .catch() to prevent unhandled promise rejections
+      void runCycle()
+        .then(() => scheduleNext())
+        .catch(() => {
+          // Error already handled in runCycle's try/catch.
+          // This .catch() is a safety net for unhandled rejections.
+          scheduleNext();
+        });
     }, currentIntervalMs);
   }
 
