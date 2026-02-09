@@ -140,12 +140,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@lumenflow/core": "workspace:*",
-    "@lumenflow/metrics": "workspace:*",
-    "@lumenflow/memory": "workspace:*",
-    "@lumenflow/initiatives": "workspace:*",
     "@lumenflow/agent": "workspace:*",
+    "@lumenflow/core": "workspace:*",
+    "@lumenflow/initiatives": "workspace:*",
+    "@lumenflow/memory": "workspace:*",
+    "@lumenflow/metrics": "workspace:*",
     "chalk": "^5.6.2",
+    "chokidar": "^5.0.0",
     "cli-table3": "^0.6.5",
     "commander": "^14.0.2",
     "fast-glob": "^3.3.3",
