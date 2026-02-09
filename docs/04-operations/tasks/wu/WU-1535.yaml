@@ -2,7 +2,7 @@ id: WU-1535
 title: Enable strict TypeScript build configuration
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-09
 code_paths:
@@ -54,6 +54,8 @@ approved_at: 2026-02-09T22:50:11.832Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
+locked: true
+completed_at: '2026-02-09T23:48:00.000Z'
 description: 'Context: tsconfig.build.json has strict: false and noEmitOnError: false while IDE
   config has strict: true (split-brain). Problem: production builds accept code that fails strict
   checks. Solution: enable strict: true and noEmitOnError: true in tsconfig.build.json and
