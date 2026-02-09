@@ -14,6 +14,7 @@ import { exportMemory } from '@lumenflow/memory/dist/mem-export-core.js';
 import { MEMORY_NODE_TYPES } from '@lumenflow/memory/dist/memory-schema.js';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/dist/arg-parser.js';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/dist/wu-constants.js';
+import { runCLI } from './cli-entry-point.js';
 
 const LOG_PREFIX = '[mem:export]';
 const TOOL_NAME = 'mem:export';
@@ -153,7 +154,7 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(`${LOG_PREFIX} Unexpected error:`, err);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

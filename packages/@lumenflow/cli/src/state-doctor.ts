@@ -47,6 +47,7 @@ import { getConfig, getResolvedPaths } from '@lumenflow/core/dist/lumenflow-conf
 import { existsSync } from 'node:fs';
 import { createStamp } from '@lumenflow/core/dist/stamp-utils.js';
 import { createStateDoctorFixDeps } from './state-doctor-fix.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Log prefix for state:doctor output
@@ -597,7 +598,7 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((e) => {
-  console.error(`${LOG_PREFIX} ${(e as Error).message}`);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

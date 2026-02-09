@@ -51,6 +51,7 @@ import { WUStateStore } from '@lumenflow/core/dist/wu-state-store.js';
 import { releaseLaneLock } from '@lumenflow/core/dist/lane-lock.js';
 // WU-1325: Import lock policy getter to determine release behavior
 import { getLockPolicyForLane } from '@lumenflow/core/dist/lane-checker.js';
+import { runCLI } from './cli-entry-point.js';
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
 // ensureStaged() moved to git-staged-validator.ts (WU-1341)
@@ -341,7 +342,7 @@ async function main() {
   if (args.reason) console.log(`- Reason: ${args.reason}`);
 }
 
-main().catch((e) => {
-  console.error(e.message);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

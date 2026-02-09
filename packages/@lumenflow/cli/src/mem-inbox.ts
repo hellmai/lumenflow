@@ -28,6 +28,7 @@ import {
   validateInboxDependencies,
   formatDependencyError,
 } from '@lumenflow/core/dist/dependency-validator.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Log prefix for mem:inbox output
@@ -432,7 +433,7 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(`${LOG_PREFIX} ${e.message}`);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

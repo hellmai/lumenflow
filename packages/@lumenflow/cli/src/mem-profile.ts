@@ -25,6 +25,7 @@ import path from 'node:path';
 import { generateProfile, DEFAULT_PROFILE_LIMIT } from '@lumenflow/memory/dist/mem-profile-core.js';
 import { createWUParser } from '@lumenflow/core/dist/arg-parser.js';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/dist/wu-constants.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Log prefix for mem:profile output
@@ -233,7 +234,7 @@ async function main(): Promise<void> {
   });
 }
 
-main().catch((e) => {
-  console.error(`${LOG_PREFIX} ${(e as Error).message}`);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}
