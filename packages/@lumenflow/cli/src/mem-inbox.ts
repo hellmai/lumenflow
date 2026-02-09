@@ -21,6 +21,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import ms from 'ms';
+import { watch as chokidarWatch } from 'chokidar';
 import { loadSignals, markSignalsAsRead } from '@lumenflow/memory/signal';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
@@ -41,9 +42,14 @@ const LOG_PREFIX = '[mem:inbox]';
 const TOOL_NAME = 'mem:inbox';
 
 /**
- * Watch mode polling interval in milliseconds
+ * Signals file name within the memory directory
  */
-const WATCH_INTERVAL_MS = 1000;
+const SIGNALS_FILE_NAME = 'signals.jsonl';
+
+/**
+ * Memory directory relative to project root
+ */
+const MEMORY_DIR = '.lumenflow/memory';
 
 /**
  * CLI argument options specific to mem:inbox
@@ -198,7 +204,9 @@ async function checkInbox(baseDir, options, markAsRead) {
 }
 
 /**
- * Run watch mode - continuously poll for new signals
+ * Run watch mode - use chokidar file watching for signal monitoring
+ * WU-1551: Replaced setInterval polling with chokidar.watch() for
+ * efficient file-change-driven monitoring instead of CPU-wasting polling.
  *
  * @param {string} baseDir - Project base directory
  * @param {object} filterOptions - Filter options
@@ -217,8 +225,8 @@ async function runWatchMode(baseDir, filterOptions, markAsRead, quiet) {
   const initialSignals = await checkInbox(baseDir, filterOptions, markAsRead);
   displaySignals(initialSignals, quiet);
 
-  // Poll for new signals
-  const poll = async () => {
+  // Check for new signals on file change
+  const onFileChange = async () => {
     try {
       // Check for signals since last check, combined with original filters
       const watchOptions = {
@@ -240,12 +248,34 @@ async function runWatchMode(baseDir, filterOptions, markAsRead, quiet) {
     }
   };
 
-  // Set up polling interval
-  const intervalId = globalThis.setInterval(poll, WATCH_INTERVAL_MS);
+  // Watch the signals file for changes using chokidar
+  const signalsPath = path.join(baseDir, MEMORY_DIR, SIGNALS_FILE_NAME);
+  const watcher = chokidarWatch(signalsPath, {
+    // Watch parent directory so we detect file creation too
+    ignoreInitial: true,
+    awaitWriteFinish: {
+      stabilityThreshold: 100,
+      pollInterval: 50,
+    },
+  });
+
+  watcher.on('change', () => {
+    onFileChange().catch((err) => {
+      console.error(`${LOG_PREFIX} Watch error: ${err.message}`);
+    });
+  });
+
+  watcher.on('add', () => {
+    onFileChange().catch((err) => {
+      console.error(`${LOG_PREFIX} Watch error: ${err.message}`);
+    });
+  });
 
   // Handle graceful shutdown
   const cleanup = () => {
-    globalThis.clearInterval(intervalId);
+    watcher.close().catch(() => {
+      // Watcher cleanup is non-fatal
+    });
     if (!quiet) {
       console.log(`\n${LOG_PREFIX} Watch mode stopped`);
     }
