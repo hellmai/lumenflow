@@ -34,8 +34,8 @@ if [ "$LUMENFLOW_FORCE" = "1" ]; then
     echo "Please provide a reason for the audit trail." >&2
     echo "" >&2
   fi
-  # Log bypass to ._legacy/ for audit trail
-  LUMENFLOW_DIR="$(git rev-parse --show-toplevel 2>/dev/null)/._legacy"
+  # Log bypass to .lumenflow/ for audit trail
+  LUMENFLOW_DIR="$(git rev-parse --show-toplevel 2>/dev/null)/.lumenflow"
   if [ -n "$LUMENFLOW_DIR" ]; then
     mkdir -p "$LUMENFLOW_DIR"
     TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

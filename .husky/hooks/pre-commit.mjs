@@ -12,7 +12,7 @@
  * - ALLOW commits on lane branches (message validation in commit-msg)
  * - RESPECT Branch-Only mode (check claimed_mode in WU YAML)
  *
- * Escape hatch: LUMENFLOW_FORCE=1 (logged to ._legacy/force-bypasses.log)
+ * Escape hatch: LUMENFLOW_FORCE=1 (logged to .lumenflow/force-bypasses.log)
  */
 
 import { execFileSync, execSync } from 'node:child_process';
@@ -180,11 +180,11 @@ function logForceBypass(hookName, projectRoot) {
     } catch {}
 
     const logLine = `${timestamp} | ${hookName} | ${user} | ${branch} | ${reason || '(no reason provided)'} | ${projectRoot}\n`;
-    const legacyDir = join(projectRoot, '._legacy');
-    const logPath = join(legacyDir, 'force-bypasses.log');
+    const lumenflowDir = join(projectRoot, '.lumenflow');
+    const logPath = join(lumenflowDir, 'force-bypasses.log');
 
-    if (!existsSync(legacyDir)) {
-      mkdirSync(legacyDir, { recursive: true });
+    if (!existsSync(lumenflowDir)) {
+      mkdirSync(lumenflowDir, { recursive: true });
     }
     appendFileSync(logPath, logLine);
   } catch (error) {

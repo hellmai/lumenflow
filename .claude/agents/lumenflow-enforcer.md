@@ -25,7 +25,7 @@ Before starting work, load and audit against `.lumenflow/constraints.md`:
 1. **Completion Validation**: Verify WU meets all acceptance criteria
 2. **Gates Enforcement**: Ensure all quality gates pass
 3. **Documentation Check**: Confirm WU YAML, status.md, backlog.md updated
-4. **Stamp Verification**: Create/verify `._legacy/stamps/WU-XXX.done`
+4. **Stamp Verification**: Create/verify `.lumenflow/stamps/WU-XXX.done`
 5. **Block Non-Compliant**: Reject completion attempts that skip requirements
 
 ## Key Documents to Reference
@@ -85,8 +85,8 @@ pnpm gates --docs-only
 ### Step 5: Stamp Creation
 
 ```bash
-mkdir -p ._legacy/stamps
-touch ._legacy/stamps/WU-XXX.done
+mkdir -p .lumenflow/stamps
+touch .lumenflow/stamps/WU-XXX.done
 ```
 
 ## Blocking Conditions
