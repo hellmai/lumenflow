@@ -2,7 +2,7 @@ id: WU-1535
 title: Enable strict TypeScript build configuration
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: ready
 priority: P0
 created: 2026-02-09
 code_paths:
@@ -49,10 +49,6 @@ acceptance:
     justification.
   - pnpm typecheck and pnpm build pass with strict mode enabled.
 claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/operations-tooling-wu-1535
-claimed_at: 2026-02-09T22:50:11.824Z
-baseline_main_sha: e3ea995ea858471ca51a8368ee4ef9589dbb392f
-session_id: 284d882f-ecf2-4c8d-a361-f60a56c5fdfc
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-09T22:50:11.832Z
