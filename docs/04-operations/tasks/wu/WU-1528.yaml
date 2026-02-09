@@ -10,6 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-delete.test.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/mcp/src/tools.ts
+  - packages/@lumenflow/cli/src/wu-delete.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-delete.test.ts
 tests:
   manual:
     - Run pnpm wu:delete --id <temp-wu> and verify command exits 0 with no pathspec error
@@ -24,10 +26,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-09T09:55:34.007Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1528
+session_id: 3edce95a-d599-4453-a9c4-732c726b8a5b
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-09T09:55:34.013Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +50,3 @@ acceptance:
   - Deleted WU file, wu-events cleanup, and backlog/status regeneration are committed and pushed
     atomically
   - Regression test reproduces the pathspec failure case and passes after fix
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1528
-claimed_at: 2026-02-09T09:55:34.007Z
-baseline_main_sha: 44dfd3afef9a4ec050e1f545af0e7bc235fb0936
-session_id: 3edce95a-d599-4453-a9c4-732c726b8a5b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-09T09:55:34.013Z
