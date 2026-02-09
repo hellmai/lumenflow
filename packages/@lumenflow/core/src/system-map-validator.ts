@@ -16,6 +16,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import fg from 'fast-glob';
 import { parseYAML } from './wu-yaml.js';
+import { ProcessExitError } from './error-handler.js';
 
 /**
  * Canonical list of valid audience tags as defined in SYSTEM-MAP.yaml header
@@ -408,19 +409,22 @@ async function runCLI() {
     emitErrors('Invalid audiences', result.audienceErrors);
     emitErrors('Invalid quick queries', result.queryErrors);
     emitErrors('Classification routing violations', result.classificationErrors);
-    process.exit(1);
+    throw new ProcessExitError('[system-map] Validation failed', 1);
   }
 
   if (result.skipped) {
-    process.exit(0);
+    throw new ProcessExitError('[system-map] Skipped (no map found)', 0);
   }
 
   console.log('[system-map] Validation passed');
-  process.exit(0);
+  throw new ProcessExitError('[system-map] Validation passed', 0);
 }
 
 if (import.meta.main) {
   runCLI().catch((error) => {
+    if (error instanceof ProcessExitError) {
+      process.exit(error.exitCode);
+    }
     console.error('[system-map] Validation failed:', error);
     process.exit(1);
   });
