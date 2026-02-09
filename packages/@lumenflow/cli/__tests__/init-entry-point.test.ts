@@ -39,15 +39,19 @@ describe('init.ts CLI entry point (WU-1297)', () => {
   /**
    * Test that the import.meta.main block includes error handling.
    * CLI entry points should catch errors and exit with non-zero code.
+   * WU-1537: runCLI(main) provides error handling via its internal try/catch.
    */
   it('should have error handling in the entry point block', () => {
     const initPath = path.join(__dirname, '..', 'src', 'init.ts');
     const content = fs.readFileSync(initPath, 'utf-8');
 
-    // The entry point should have .catch() error handling
+    // The entry point should use runCLI(main) which provides error handling,
+    // or have explicit .catch() / process.exit(1) error handling
     const hasErrorHandling =
       content.includes(ENTRY_POINT_PATTERN) &&
-      (content.includes('.catch(') || content.includes('process.exit(1)'));
+      (content.includes('runCLI(main)') ||
+        content.includes('.catch(') ||
+        content.includes('process.exit(1)'));
 
     expect(hasErrorHandling).toBe(true);
   });

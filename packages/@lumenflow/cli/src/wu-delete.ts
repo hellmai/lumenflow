@@ -45,6 +45,7 @@ import { withMicroWorktree } from '@lumenflow/core/dist/micro-worktree.js';
 import { INIT_PATHS } from '@lumenflow/initiatives/dist/initiative-paths.js';
 import { INIT_PATTERNS } from '@lumenflow/initiatives/dist/initiative-constants.js';
 import { readInitiative, writeInitiative } from '@lumenflow/initiatives/dist/initiative-yaml.js';
+import { runCLI } from './cli-entry-point.js';
 
 const PREFIX = LOG_PREFIX.DELETE || '[wu:delete]';
 
@@ -496,9 +497,7 @@ export async function main() {
   }
 }
 
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
 if (import.meta.main) {
-  void main().catch((err) => {
-    console.error(`${PREFIX} ❌ ${err.message}`);
-    process.exit(EXIT_CODES.ERROR);
-  });
+  runCLI(main);
 }

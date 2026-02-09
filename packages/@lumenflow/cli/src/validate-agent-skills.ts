@@ -20,6 +20,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { FILE_SYSTEM, EMOJI } from '@lumenflow/core/dist/wu-constants.js';
+import { runCLI } from './cli-entry-point.js';
 
 const LOG_PREFIX = '[validate-agent-skills]';
 
@@ -259,9 +260,7 @@ Examples:
 // WU-1181: Use import.meta.main instead of process.argv[1] comparison
 // The old pattern fails with pnpm symlinks because process.argv[1] is the symlink
 // path but import.meta.url resolves to the real path - they never match
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error(`${LOG_PREFIX} Unexpected error:`, error);
-    process.exit(1);
-  });
+  runCLI(main);
 }

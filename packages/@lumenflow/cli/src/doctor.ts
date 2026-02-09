@@ -11,6 +11,7 @@ import * as path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createWUParser } from '@lumenflow/core';
 import { loadLaneDefinitions, detectLaneOverlaps } from './lane-health.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Check result for a single component
@@ -1090,9 +1091,7 @@ export async function main(): Promise<void> {
 }
 
 // CLI invocation when run directly
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error('Doctor failed:', error);
-    process.exit(2);
-  });
+  runCLI(main);
 }

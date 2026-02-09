@@ -26,6 +26,7 @@ import { runDoctorForInit } from './doctor.js';
 import { generateSessionStartRecoveryScript } from './hooks/enforcement-generator.js';
 // WU-1433: Import public manifest to derive scripts (no hardcoded subset)
 import { getPublicManifest } from './public-manifest.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * WU-1085: CLI option definitions for init command
@@ -3841,9 +3842,7 @@ export async function main(): Promise<void> {
 
 // WU-1297: Use import.meta.main instead of exporting main() without calling it
 // This ensures main() runs when the script is executed as a CLI entry point
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
 if (import.meta.main) {
-  main().catch((err: unknown) => {
-    console.error('[lumenflow init] Error:', err instanceof Error ? err.message : String(err));
-    process.exit(1);
-  });
+  runCLI(main);
 }

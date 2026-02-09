@@ -18,6 +18,7 @@ import path from 'node:path';
 import { initMemory } from '@lumenflow/memory/dist/mem-init-core.js';
 import { createWUParser } from '@lumenflow/core/dist/arg-parser.js';
 import { EXIT_CODES, STRING_LITERALS, LUMENFLOW_PATHS } from '@lumenflow/core/dist/wu-constants.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Log prefix for mem:init output
@@ -154,7 +155,7 @@ async function main() {
   console.log('');
 }
 
-main().catch((e) => {
-  console.error(`${LOG_PREFIX} ${e.message}`);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}
