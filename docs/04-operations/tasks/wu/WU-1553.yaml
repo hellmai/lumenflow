@@ -2,7 +2,7 @@ id: WU-1553
 title: Fix commitCleanupChanges to stage archive files alongside state files
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: ready
 priority: P2
 created: 2026-02-09
 code_paths:
@@ -38,10 +38,6 @@ acceptance:
   - Tests cover archive file staging in wu-done-auto-cleanup.test.ts
   - Main checkout is clean after wu:done when archival runs
 claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1553
-claimed_at: 2026-02-09T22:38:22.616Z
-baseline_main_sha: a12ff37f3dd86859139915904c97e0d426bfb7e4
-session_id: 284d882f-ecf2-4c8d-a361-f60a56c5fdfc
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-09T22:38:22.621Z
