@@ -2,7 +2,7 @@ id: WU-1529
 title: Purge remaining live .beacon references from hooks and agent overlays
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-09
 code_paths:
@@ -66,3 +66,5 @@ session_id: 3edce95a-d599-4453-a9c4-732c726b8a5b
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-09T09:47:33.866Z
+locked: true
+completed_at: 2026-02-09T09:58:07.832Z
