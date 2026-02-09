@@ -181,7 +181,7 @@ export async function writeFileWithAudit(args: FileWriteArgs): Promise<FileWrite
     if (args.scanPII) {
       try {
         // Dynamic import to avoid hard dependency
-        const { scanForSensitiveData } = await import('@lumenflow/core/dist/validators/pii-scanner.js');
+        const { scanForSensitiveData } = await import('@lumenflow/core/validators/pii-scanner');
         const scanResult = scanForSensitiveData(content);
         if (scanResult.hasPII) {
           warnings.push(
