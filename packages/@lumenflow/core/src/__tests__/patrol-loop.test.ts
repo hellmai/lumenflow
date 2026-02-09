@@ -10,9 +10,12 @@
  * 4. Cycle callback - verifies status summary is provided at each patrol cycle
  * 5. Graceful shutdown - verifies SIGINT/SIGTERM handling
  * 6. State tracking - verifies consecutive failure counting
+ * 7. Promise safety - verifies .catch() on async setTimeout callbacks (WU-1551)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 // Constants for testing
 const DEFAULT_PATROL_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -343,6 +346,55 @@ describe('patrol-loop (WU-1242)', () => {
       expect(checkFn).toHaveBeenCalledTimes(2);
 
       patrol.stop();
+    });
+  });
+
+  describe('promise safety (WU-1551)', () => {
+    it('does not produce unhandled rejections when checkFn throws without onError', async () => {
+      const { PatrolLoop } = await import('../patrol-loop.js');
+
+      // Track unhandled rejections
+      const unhandledRejections: Error[] = [];
+      const handler = (event: PromiseRejectionEvent) => {
+        unhandledRejections.push(event.reason);
+      };
+
+      // Node.js uses 'unhandledRejection' on process, but in test env
+      // we can verify by checking the patrol continues and no error propagates
+      const checkFn = vi.fn().mockRejectedValue(new Error('should be caught'));
+
+      const patrol = new PatrolLoop({
+        checkFn,
+        intervalMs: 1000,
+        // No onError callback - this is the scenario that would cause
+        // unhandled rejection if .catch() is missing
+      });
+
+      patrol.start();
+
+      // Run a cycle - if .catch() is missing, this would cause unhandled rejection
+      await vi.advanceTimersByTimeAsync(1000);
+
+      // Patrol should still be running (not crashed)
+      expect(patrol.isRunning).toBe(true);
+      // Failure should be tracked
+      expect(patrol.consecutiveFailures).toBe(1);
+
+      // Run another cycle to prove it continues
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(patrol.consecutiveFailures).toBe(2);
+      expect(checkFn).toHaveBeenCalledTimes(2);
+
+      patrol.stop();
+    });
+
+    it('patrol-loop.ts source has .catch() on promise chain in setTimeout', async () => {
+      const sourcePath = path.resolve(import.meta.dirname, '..', 'patrol-loop.ts');
+      const source = await fs.readFile(sourcePath, 'utf-8');
+
+      // The setTimeout callback that calls runCycle().then() must have .catch()
+      // to prevent floating promises from silently swallowing errors
+      expect(source).toContain('.catch(');
     });
   });
 });

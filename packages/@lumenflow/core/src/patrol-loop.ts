@@ -229,7 +229,15 @@ export class PatrolLoop {
     const intervalMs = calculateBackoff(this.failures, this.baseIntervalMs);
 
     this.timer = setTimeout(() => {
-      void this.runCycle().then(() => this.scheduleNextCycle());
+      // WU-1551: Add .catch() to prevent unhandled promise rejections
+      void this.runCycle()
+        .then(() => this.scheduleNextCycle())
+        .catch(() => {
+          // Error already handled in runCycle's try/catch.
+          // This .catch() is a safety net to prevent unhandled rejections
+          // if runCycle itself throws before reaching its try/catch.
+          this.scheduleNextCycle();
+        });
     }, intervalMs);
   }
 
