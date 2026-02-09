@@ -48,6 +48,7 @@ import { withMicroWorktree } from '@lumenflow/core/dist/micro-worktree.js';
 import { WUStateStore } from '@lumenflow/core/dist/wu-state-store.js';
 // WU-1574: Import backlog generator to replace BacklogManager
 import { generateBacklog, generateStatus } from '@lumenflow/core/dist/backlog-generator.js';
+import { runCLI } from './cli-entry-point.js';
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
 // ensureStaged() moved to git-staged-validator.ts (WU-1341)
@@ -303,7 +304,7 @@ async function main() {
   if (args.createWorktree) console.log(`- Worktree: ${args.worktree || defaultWorktreeFrom(doc)}`);
 }
 
-main().catch((e) => {
-  console.error(e.message);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

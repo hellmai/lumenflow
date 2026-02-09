@@ -23,6 +23,7 @@ import { createWUParser, WU_OPTIONS } from '@lumenflow/core/dist/arg-parser.js';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/dist/wu-constants.js';
 // WU-1456: Import shared validator for CLI/MCP parity
 import { validateMemSignalArgs } from '@lumenflow/core/dist/schemas/memory-arg-validators.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Log prefix for mem:signal output
@@ -234,7 +235,7 @@ async function main() {
   printSignalDetails(result);
 }
 
-main().catch((e) => {
-  console.error(`${LOG_PREFIX} ${e.message}`);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

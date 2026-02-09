@@ -48,6 +48,7 @@ import {
   STATUS_INDICATORS,
 } from '@lumenflow/core/dist/spawn-tree.js';
 import { SpawnStatus } from '@lumenflow/core/dist/spawn-registry-schema.js';
+import { runCLI } from './cli-entry-point.js';
 
 /** SpawnEvent type for spawn records */
 interface SpawnEvent {
@@ -185,9 +186,7 @@ async function main() {
 // WU-1181: Use import.meta.main instead of process.argv[1] comparison
 // The old pattern fails with pnpm symlinks because process.argv[1] is the symlink
 // path but import.meta.url resolves to the real path - they never match
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
 if (import.meta.main) {
-  main().catch((err) => {
-    console.error(`${LOG_PREFIX} ${EMOJI.ERROR} ${err.message}`);
-    process.exit(1);
-  });
+  runCLI(main);
 }

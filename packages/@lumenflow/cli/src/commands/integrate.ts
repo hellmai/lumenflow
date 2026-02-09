@@ -26,6 +26,7 @@ import {
   generateWarnIncompleteScript,
   type GeneratedHooks,
 } from '../hooks/enforcement-generator.js';
+import { runCLI } from '../cli-entry-point.js';
 
 /**
  * CLI options for integrate command
@@ -316,9 +317,7 @@ agents:
 }
 
 // Run if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((err) => {
-    console.error('[integrate] Error:', err.message);
-    process.exit(1);
-  });
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
 }
