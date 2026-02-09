@@ -2,7 +2,7 @@ id: WU-1536
 title: Add subpath exports and codemod dist imports
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: done
+status: in_progress
 priority: P1
 created: 2026-02-09
 code_paths:
@@ -31,8 +31,13 @@ phase: 3
 spec_refs:
   - lumenflow://plans/polished-frolicking-whale.md
 risks: []
-notes: 'Track C1 from enterprise hardening initiative. Split from original scope per
-  wu-sizing-guide.md. See WU-1547 (C2: lock down + verify) which depends on this completing first.'
+notes: >-
+  Track C1 from enterprise hardening initiative. Split from original scope per wu-sizing-guide.md.
+  See WU-1547 (C2: lock down + verify) which depends on this completing first.
+
+
+  [ADMIN-REPAIR 2026-02-09]: status changed from 'done' to 'in_progress'; locked changed from true
+  to false
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
@@ -56,5 +61,5 @@ acceptance:
   - Explicit subpath exports added to core, memory, initiatives, and agent package.json files.
   - All consumer imports migrated from @lumenflow/*/dist/* to supported public subpaths.
   - pnpm build, pnpm typecheck, and pnpm test pass after codemod.
-locked: true
+locked: false
 completed_at: 2026-02-09T23:18:57.958Z
