@@ -31,6 +31,7 @@ import {
 } from '@lumenflow/metrics';
 import { die } from '@lumenflow/core/dist/error-handler.js';
 import { WU_PATHS } from '@lumenflow/core/dist/wu-paths.js';
+import { runCLI } from './cli-entry-point.js';
 
 /** Log prefix for console output */
 const LOG_PREFIX = '[flow:report]';
@@ -382,8 +383,7 @@ async function main() {
 // WU-1181: Use import.meta.main instead of process.argv[1] comparison
 // The old pattern fails with pnpm symlinks because process.argv[1] is the symlink
 // path but import.meta.url resolves to the real path - they never match
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
 if (import.meta.main) {
-  main().catch((err) => {
-    die(`Flow report failed: ${err.message}`);
-  });
+  runCLI(main);
 }

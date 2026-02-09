@@ -40,6 +40,7 @@ import { ensureOnMain } from '@lumenflow/core/dist/wu-helpers.js';
 import { withMicroWorktree } from '@lumenflow/core/dist/micro-worktree.js';
 import { WUStateStore } from '@lumenflow/core/dist/wu-state-store.js';
 import { releaseLaneLock } from '@lumenflow/core/dist/lane-lock.js';
+import { runCLI } from './cli-entry-point.js';
 
 const PREFIX = '[wu-release]';
 
@@ -167,7 +168,7 @@ async function main() {
   );
 }
 
-main().catch((e) => {
-  console.error(e.message);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

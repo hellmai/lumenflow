@@ -110,6 +110,7 @@ import {
   type GateResult,
   SKIPPABLE_GATE_SCRIPTS,
 } from './gates-graceful-degradation.js';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * WU-1087: Gates-specific option definitions for createWUParser.
@@ -1855,17 +1856,18 @@ async function executeGates(opts: {
   return true;
 }
 
+// WU-1537: Wrap executeGates in a standard main() for runCLI consistency
+async function main(): Promise<void> {
+  const opts = parseGatesArgs();
+  const ok = await executeGates({ ...opts, argv: process.argv.slice(2) });
+  if (!ok) {
+    process.exit(EXIT_CODES.ERROR);
+  }
+}
+
 // WU-1071: Use import.meta.main instead of process.argv[1] comparison
 // The old pattern fails with pnpm symlinks because process.argv[1] is the symlink
 // path but import.meta.url resolves to the real path - they never match
 if (import.meta.main) {
-  const opts = parseGatesArgs();
-  executeGates({ ...opts, argv: process.argv.slice(2) })
-    .then((ok) => {
-      process.exit(ok ? EXIT_CODES.SUCCESS : EXIT_CODES.ERROR);
-    })
-    .catch((error) => {
-      console.error('Gates failed:', error);
-      process.exit(EXIT_CODES.ERROR);
-    });
+  runCLI(main);
 }

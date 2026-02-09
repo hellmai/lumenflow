@@ -44,6 +44,7 @@ import {
 import { getConfig } from '@lumenflow/core/dist/lumenflow-config.js';
 import fg from 'fast-glob';
 import { parse as parseYaml } from 'yaml';
+import { runCLI } from './cli-entry-point.js';
 
 /**
  * Log prefix for state:cleanup output
@@ -402,7 +403,7 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((e) => {
-  console.error(`${LOG_PREFIX} ${(e as Error).message}`);
-  process.exit(EXIT_CODES.ERROR);
-});
+// WU-1537: Use import.meta.main + runCLI for consistent EPIPE and error handling
+if (import.meta.main) {
+  runCLI(main);
+}

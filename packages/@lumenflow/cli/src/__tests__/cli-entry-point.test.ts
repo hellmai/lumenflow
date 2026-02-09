@@ -8,9 +8,12 @@
  *
  * WU-1071: Also verifies that CLI entry points use import.meta.main pattern
  * instead of the broken process.argv[1] === fileURLToPath(import.meta.url) pattern.
+ *
+ * WU-1537: Verifies ALL CLI entry points use runCLI(main) wrapper instead of
+ * inline main().catch() patterns, ensuring consistent EPIPE and error handling.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { runCLI } from '../cli-entry-point.js';
 import { EXIT_CODES } from '@lumenflow/core/dist/wu-constants.js';
@@ -80,6 +83,10 @@ describe('runCLI', () => {
  * handles symlinks.
  *
  * WU-1181: Extended to validate ALL CLI files with entry guards, not just a subset.
+ *
+ * WU-1537: Extended to validate ALL CLI entry points use runCLI(main) wrapper
+ * instead of inline main().catch() patterns, ensuring consistent EPIPE handling
+ * and error lifecycle behavior across all commands.
  */
 describe('WU-1071/WU-1181: CLI entry point patterns', () => {
   // Files that should NOT be checked for entry guards
@@ -96,50 +103,81 @@ describe('WU-1071/WU-1181: CLI entry point patterns', () => {
     'orchestrate-init-status.ts', // Not a CLI entry point (helper module)
     'orchestrate-initiative.ts', // Not a CLI entry point (helper module)
     'orchestrate-monitor.ts', // Not a CLI entry point (helper module)
-    'initiative-edit.ts', // Not a CLI entry point (no main guard)
-    'wu-block.ts', // Not a CLI entry point (no main guard)
-    'wu-unblock.ts', // Not a CLI entry point (no main guard)
-    'wu-release.ts', // Not a CLI entry point (no main guard)
-    'wu-delete.ts', // Not a CLI entry point (no main guard)
-    'init.ts', // Not a CLI entry point (no main guard)
   ]);
 
   // Old broken pattern that fails with pnpm symlinks
   const OLD_BROKEN_PATTERN =
     /if\s*\(\s*process\.argv\[1\]\s*===\s*fileURLToPath\(import\.meta\.url\)\s*\)/;
 
+  // Legacy import.meta.url entrypoint pattern (WU-1537)
+  const LEGACY_IMPORT_META_URL_PATTERN =
+    /if\s*\(\s*import\.meta\.url\s*===\s*`file:\/\/\$\{process\.argv\[1\]\}`\s*\)/;
+
   // New working pattern using import.meta.main
   const NEW_WORKING_PATTERN = /if\s*\(\s*import\.meta\.main\s*\)/;
 
-  /**
-   * Discovers all CLI files with entry guards by scanning the src directory.
-   * A file is considered to have an entry guard if it contains either:
-   * - The old broken pattern: if (process.argv[1] === fileURLToPath(import.meta.url))
-   * - The new working pattern: if (import.meta.main)
-   */
-  function discoverCLIFilesWithEntryGuards(): string[] {
-    const srcDir = path.resolve(__dirname, '..');
-    const files = readdirSync(srcDir).filter(
-      (f) => f.endsWith('.ts') && !f.endsWith('.test.ts') && !EXCLUDED_FILES.has(f),
-    );
+  // Inline main().catch() pattern that should be replaced by runCLI(main) (WU-1537)
+  const MAIN_CATCH_PATTERN = /main\(\)\.catch\(/;
 
-    return files.filter((file) => {
-      const content = readFileSync(path.join(srcDir, file), 'utf-8');
-      return OLD_BROKEN_PATTERN.test(content) || NEW_WORKING_PATTERN.test(content);
-    });
+  // Correct runCLI(main) pattern (WU-1537)
+  const RUN_CLI_PATTERN = /runCLI\(main\)/;
+
+  /**
+   * Discovers all CLI files with entry points by scanning the src directory
+   * and subdirectories. A CLI entry point file has an exported main() function
+   * and either an entry guard or a top-level main() invocation.
+   *
+   * WU-1537: Now scans subdirectories (e.g., commands/) to catch all entry points.
+   */
+  function discoverCLIFilesWithEntryPoints(): string[] {
+    const srcDir = path.resolve(__dirname, '..');
+    const results: string[] = [];
+
+    function scanDir(dir: string, prefix: string): void {
+      const entries = readdirSync(dir);
+      for (const entry of entries) {
+        if (entry === '__tests__' || entry === 'hooks') continue;
+        const fullPath = path.join(dir, entry);
+        const relativeName = prefix ? `${prefix}/${entry}` : entry;
+
+        if (statSync(fullPath).isDirectory()) {
+          scanDir(fullPath, relativeName);
+          continue;
+        }
+
+        if (!entry.endsWith('.ts') || entry.endsWith('.test.ts')) continue;
+        if (EXCLUDED_FILES.has(entry)) continue;
+
+        const content = readFileSync(fullPath, 'utf-8');
+        const hasEntryGuard =
+          OLD_BROKEN_PATTERN.test(content) ||
+          NEW_WORKING_PATTERN.test(content) ||
+          LEGACY_IMPORT_META_URL_PATTERN.test(content);
+        const hasTopLevelMainCall = MAIN_CATCH_PATTERN.test(content);
+        const hasRunCLI = RUN_CLI_PATTERN.test(content);
+
+        if (hasEntryGuard || hasTopLevelMainCall || hasRunCLI) {
+          results.push(relativeName);
+        }
+      }
+    }
+
+    scanDir(srcDir, '');
+    return results;
   }
 
-  it('should discover all CLI files with entry guards', () => {
-    const cliFiles = discoverCLIFilesWithEntryGuards();
+  it('should discover all CLI files with entry points', () => {
+    const cliFiles = discoverCLIFilesWithEntryPoints();
 
     // WU-1181: There should be a significant number of CLI files with entry guards
     // This test ensures we're actually discovering files, not returning an empty list
+    // WU-1537: Updated to include files that were previously excluded but have entry points
     expect(cliFiles.length).toBeGreaterThan(40);
   });
 
   it('should use import.meta.main instead of process.argv[1] comparison in ALL CLI files', () => {
     const srcDir = path.resolve(__dirname, '..');
-    const cliFiles = discoverCLIFilesWithEntryGuards();
+    const cliFiles = discoverCLIFilesWithEntryPoints();
 
     const errors: string[] = [];
 
@@ -150,6 +188,11 @@ describe('WU-1071/WU-1181: CLI entry point patterns', () => {
       // Should NOT have old broken pattern
       if (OLD_BROKEN_PATTERN.test(content)) {
         errors.push(`${file} uses the old broken pattern (process.argv[1] === fileURLToPath)`);
+      }
+
+      // Should NOT have legacy import.meta.url pattern (WU-1537)
+      if (LEGACY_IMPORT_META_URL_PATTERN.test(content)) {
+        errors.push(`${file} uses the legacy import.meta.url entrypoint pattern`);
       }
 
       // Should have new working pattern
@@ -163,9 +206,68 @@ describe('WU-1071/WU-1181: CLI entry point patterns', () => {
     }
   });
 
+  /**
+   * WU-1537: Verify all CLI entry points use runCLI(main) wrapper.
+   *
+   * The inline main().catch() pattern lacks EPIPE handling and produces
+   * inconsistent error lifecycle behavior. All entry points must use
+   * runCLI(main) from cli-entry-point.ts for consistent behavior.
+   */
+  it('should use runCLI(main) instead of main().catch() in ALL CLI entry points', () => {
+    const srcDir = path.resolve(__dirname, '..');
+    const cliFiles = discoverCLIFilesWithEntryPoints();
+
+    const errors: string[] = [];
+
+    for (const file of cliFiles) {
+      const filePath = path.join(srcDir, file);
+      const content = readFileSync(filePath, 'utf-8');
+
+      // Should NOT have inline main().catch() pattern
+      if (MAIN_CATCH_PATTERN.test(content)) {
+        errors.push(`${file} uses inline main().catch() instead of runCLI(main)`);
+      }
+
+      // Should have runCLI(main) call
+      if (!RUN_CLI_PATTERN.test(content)) {
+        errors.push(`${file} does not use runCLI(main) wrapper`);
+      }
+    }
+
+    if (errors.length > 0) {
+      expect.fail(`WU-1537 runCLI(main) violations (${errors.length}):\n${errors.join('\n')}`);
+    }
+  });
+
+  /**
+   * WU-1537: Verify all CLI entry points import runCLI from cli-entry-point.
+   *
+   * Files using runCLI(main) must import it from the shared entry point module.
+   */
+  it('should import runCLI from cli-entry-point in ALL CLI entry points', () => {
+    const srcDir = path.resolve(__dirname, '..');
+    const cliFiles = discoverCLIFilesWithEntryPoints();
+
+    const runCLIImportPattern = /import\s*\{[^}]*runCLI[^}]*\}\s*from\s*['"][^'"]*cli-entry-point/;
+    const errors: string[] = [];
+
+    for (const file of cliFiles) {
+      const filePath = path.join(srcDir, file);
+      const content = readFileSync(filePath, 'utf-8');
+
+      if (RUN_CLI_PATTERN.test(content) && !runCLIImportPattern.test(content)) {
+        errors.push(`${file} uses runCLI but does not import it from cli-entry-point`);
+      }
+    }
+
+    if (errors.length > 0) {
+      expect.fail(`Missing runCLI imports:\n${errors.join('\n')}`);
+    }
+  });
+
   it('should not have unused fileURLToPath imports in CLI files with entry guards', () => {
     const srcDir = path.resolve(__dirname, '..');
-    const cliFiles = discoverCLIFilesWithEntryGuards();
+    const cliFiles = discoverCLIFilesWithEntryPoints();
 
     const errors: string[] = [];
 
