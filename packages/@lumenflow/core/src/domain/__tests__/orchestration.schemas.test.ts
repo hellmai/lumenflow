@@ -40,10 +40,12 @@ describe('Orchestration Schemas', () => {
       gatesFailing: 0,
       longestRunning: {
         wuId: 'WU-1234',
-        lane: 'Intelligence',
+        lane: 'Framework: Core',
         durationMs: 2700000,
       },
-      pendingMandatory: [{ wuId: 'WU-1235', agent: 'security-auditor' }],
+      pendingMandatory: [{ wuId: 'WU-1235', agent: 'general-purpose' }],
+      activeSession: null,
+      worktreesWithUncommittedChanges: [],
     };
 
     it('validates valid global status with longestRunning', () => {
@@ -190,12 +192,11 @@ describe('Orchestration Schemas', () => {
   describe('WUProgressSchema', () => {
     const validWUProgress = {
       wuId: 'WU-1234',
-      lane: 'Intelligence',
+      lane: 'Framework: Core',
       title: 'LLM Classification Feature',
       dodProgress: 8,
       dodTotal: DOD_TOTAL,
       agents: {
-        'llm-reviewer': 'pass',
         'test-engineer': 'pass',
         'code-reviewer': 'pending',
       },
@@ -465,9 +466,11 @@ describe('Orchestration Schemas', () => {
         gatesFailing: 0,
         longestRunning: null,
         pendingMandatory: [],
+        activeSession: null,
+        worktreesWithUncommittedChanges: [],
       },
       agentMetrics: {
-        'security-auditor': {
+        'general-purpose': {
           invoked: 3,
           passRate: 100,
           avgDurationMs: 120000,
@@ -477,7 +480,7 @@ describe('Orchestration Schemas', () => {
       wuProgress: [
         {
           wuId: 'WU-1234',
-          lane: 'Intelligence',
+          lane: 'Framework: Core',
           title: 'Test WU',
           dodProgress: 5,
           dodTotal: DOD_TOTAL,
@@ -539,8 +542,8 @@ describe('Orchestration Schemas', () => {
       const data = {
         ...validDashboardData,
         agentMetrics: {
-          'security-auditor': {
-            ...validDashboardData.agentMetrics['security-auditor'],
+          'general-purpose': {
+            ...validDashboardData.agentMetrics['general-purpose'],
             passRate: 150,
           },
         },
