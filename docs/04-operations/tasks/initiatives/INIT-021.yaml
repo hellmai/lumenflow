@@ -25,7 +25,7 @@ phases:
     status: done
   - id: 5
     title: Enforce --help-first rule for CLI commands via hook
-    status: pending
+    status: done
 success_metrics:
   - Zero process.exit() calls in core library functions (only at CLI entrypoint boundaries)
   - Zero process.chdir() calls in production CLI code
