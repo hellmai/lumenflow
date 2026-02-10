@@ -1,13 +1,32 @@
 id: INIT-021
 slug: enterprise-hardening-mopup
 title: Enterprise Hardening Mop-Up
-description: ''
+description: 'Context: INIT-020 Enterprise Hardening Sweep completed 13/15 success metrics. Problem:
+  3 process.exit() calls remain in core library functions, 1 process.chdir() site in gates.ts,
+  injection tests missing for WU-1534, and INIT-020 YAML is stale. Solution: Mop-up initiative to
+  close residual gaps and fix administrative issues.'
 status: draft
 priority: P1
 owner: platform
 created: 2026-02-10
 target_date: 2026-02-28
-phases: []
-success_metrics: []
+phases:
+  - id: 1
+    title: Fix remaining process.exit in core library functions
+    status: pending
+  - id: 2
+    title: Eliminate process.chdir from gates.ts
+    status: pending
+  - id: 3
+    title: Add injection-focused tests for WU-1534
+    status: pending
+  - id: 4
+    title: INIT-020 YAML cleanup and WU-1534 notes fix
+    status: pending
+success_metrics:
+  - Zero process.exit() calls in core library functions (only at CLI entrypoint boundaries)
+  - Zero process.chdir() calls in production CLI code
+  - Injection-focused tests exist for deps-add, deps-remove, and trace-gen
+  - INIT-020.yaml status is done with all phases marked done
 labels: []
 related_plan: lumenflow://plans/polished-frolicking-minsky.md
