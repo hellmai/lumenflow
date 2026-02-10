@@ -2,7 +2,7 @@ id: WU-1547
 title: Lock down dist imports and verify boundary
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-09
 code_paths:
@@ -13,7 +13,8 @@ code_paths:
   - packages/@lumenflow/agent/package.json
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -26,7 +27,8 @@ blocked_by:
 spec_refs:
   - lumenflow://plans/polished-frolicking-whale.md
 risks: []
-notes: Track C2 from enterprise hardening initiative. Split from WU-1536. Depends on C1 (WU-1536) completing first.
+notes: Track C2 from enterprise hardening initiative. Split from WU-1536. Depends on C1 (WU-1536)
+  completing first.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -35,8 +37,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: After C1 codemods all dist imports to public subpaths, wildcard exports still exist. Problem: new dist imports can still be introduced. Solution: add no-restricted-imports lint rule, remove wildcard exports from all 4 packages, run full validation, verify zero dist-path usage repo-wide.'
+description: 'Context: After C1 codemods all dist imports to public subpaths, wildcard exports still
+  exist. Problem: new dist imports can still be introduced. Solution: add no-restricted-imports lint
+  rule, remove wildcard exports from all 4 packages, run full validation, verify zero dist-path
+  usage repo-wide.'
 acceptance:
   - no-restricted-imports lint rule blocks new dist/* imports as errors.
-  - Wildcard dist and lib exports removed from core, memory, initiatives, and agent package.json files.
+  - Wildcard dist and lib exports removed from core, memory, initiatives, and agent package.json
+    files.
   - rg @lumenflow/.+/dist/ packages/ apps/ tools/ actions/ returns zero results.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1547
+claimed_at: 2026-02-10T00:07:44.355Z
+baseline_main_sha: 61415fad3533ea4098a9dc5f113309788b3c8feb
+session_id: cc01dbf5-c705-46bb-a813-2b7f2d534251
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-10T00:07:44.362Z
