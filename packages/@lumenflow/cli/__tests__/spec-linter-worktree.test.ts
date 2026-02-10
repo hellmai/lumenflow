@@ -106,4 +106,24 @@ describe('spec:linter worktree fallback (WU-1218)', () => {
     expect(wuPrepScript).toContain(CLI_ENTRY_SCRIPT);
     expect(memCheckpointScript).toContain(CLI_ENTRY_SCRIPT);
   });
+
+  it('lifecycle integrity scripts should use cli-entry.mjs', () => {
+    const packageJsonPath = path.resolve(__dirname, '../../../../package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+
+    const wuClaimScript = packageJson.scripts?.['wu:claim'];
+    const wuDoneScript = packageJson.scripts?.['wu:done'];
+    const wuRepairScript = packageJson.scripts?.['wu:repair'];
+    const stateDoctorScript = packageJson.scripts?.['state:doctor'];
+
+    expect(wuClaimScript).toBeDefined();
+    expect(wuDoneScript).toBeDefined();
+    expect(wuRepairScript).toBeDefined();
+    expect(stateDoctorScript).toBeDefined();
+
+    expect(wuClaimScript).toContain(CLI_ENTRY_SCRIPT);
+    expect(wuDoneScript).toContain(CLI_ENTRY_SCRIPT);
+    expect(wuRepairScript).toContain(CLI_ENTRY_SCRIPT);
+    expect(stateDoctorScript).toContain(CLI_ENTRY_SCRIPT);
+  });
 });
