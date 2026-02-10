@@ -23,21 +23,26 @@ const COMMANDS = {
   NPM: 'npm',
   YARN: 'yarn',
   BUN: 'bun',
-  FILTER: '--filter',
   BUILD: 'build',
   NODE: 'node',
   RUN: 'run',
-  WORKSPACE: '--workspace',
+  ARG_SEPARATOR: '--',
 };
 
 /**
  * WU-1356: Default build commands by package manager
  */
 const DEFAULT_BUILD_COMMANDS = {
-  pnpm: ['pnpm', '--filter', '@lumenflow/cli', 'build'],
-  npm: ['npm', 'run', 'build', '--workspace', '@lumenflow/cli'],
-  yarn: ['yarn', 'workspace', '@lumenflow/cli', 'build'],
-  bun: ['bun', 'run', '--filter', '@lumenflow/cli', 'build'],
+  pnpm: [COMMANDS.PNPM, COMMANDS.BUILD, '--filter=@lumenflow/cli'],
+  npm: [
+    COMMANDS.NPM,
+    COMMANDS.RUN,
+    COMMANDS.BUILD,
+    COMMANDS.ARG_SEPARATOR,
+    '--filter=@lumenflow/cli',
+  ],
+  yarn: [COMMANDS.YARN, COMMANDS.BUILD, '--filter=@lumenflow/cli'],
+  bun: [COMMANDS.BUN, COMMANDS.RUN, COMMANDS.BUILD, '--filter=@lumenflow/cli'],
 };
 
 const EXIT_CODES = {
@@ -46,6 +51,28 @@ const EXIT_CODES = {
 };
 
 const DEFAULT_ENTRY = 'gates';
+
+/**
+ * Commands that must execute against freshly built dist artifacts.
+ *
+ * These commands mutate or validate lifecycle state and cannot safely run
+ * against stale dist output.
+ */
+const STRICT_LIFECYCLE_ENTRIES = new Set(['wu-claim', 'wu-done', 'wu-repair', 'state-doctor']);
+
+function buildCliDist({ repoRoot, entryPath, exists, spawn }) {
+  const { command, args } = getBuildCommand(repoRoot);
+  const buildResult = spawn(command, args, {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
+
+  if (buildResult.status === EXIT_CODES.OK && exists(entryPath)) {
+    return { path: entryPath, built: true, source: 'repo' };
+  }
+
+  return { path: null, built: false, source: 'none' };
+}
 
 /**
  * WU-1356: Parse simple YAML for package_manager and build_command
@@ -158,6 +185,12 @@ export function ensureCliDist({
   logger = console,
 }) {
   const entryPath = resolveCliDistEntry(repoRoot, entry);
+
+  if (STRICT_LIFECYCLE_ENTRIES.has(entry)) {
+    logger.log(`[cli-entry] ${entry} requires fresh dist; building before execution...`);
+    return buildCliDist({ repoRoot, entryPath, exists, spawn });
+  }
+
   if (exists(entryPath)) {
     return { path: entryPath, built: false, source: 'repo' };
   }
@@ -175,20 +208,7 @@ export function ensureCliDist({
 
   // No existing dist found - attempt build
   logger.log(`[cli-entry] Missing CLI dist for ${entry}; building...`);
-
-  // WU-1356: Use configured package manager and build command
-  const { command, args } = getBuildCommand(repoRoot);
-  const buildResult = spawn(command, args, {
-    cwd: repoRoot,
-    stdio: 'inherit',
-  });
-
-  if (buildResult.status === EXIT_CODES.OK && exists(entryPath)) {
-    return { path: entryPath, built: true, source: 'repo' };
-  }
-
-  // Build failed or dist still doesn't exist
-  return { path: null, built: false, source: 'none' };
+  return buildCliDist({ repoRoot, entryPath, exists, spawn });
 }
 
 export function runCliEntry({
