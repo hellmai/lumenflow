@@ -31,6 +31,7 @@ const LOG_PREFIX = '[trace:gen]';
  * Valid format: WU-<digits> (e.g., WU-1112, WU-1, WU-99999)
  */
 const WU_ID_PATTERN = /^WU-\d+$/;
+const MAX_WU_ID_LENGTH = 32;
 
 /**
  * Output formats for trace report
@@ -101,7 +102,7 @@ export interface TraceEntry {
  * @returns true if the WU ID matches the WU-<digits> pattern
  */
 export function validateWuId(wuId: string): boolean {
-  if (!wuId) {
+  if (!wuId || wuId.length > MAX_WU_ID_LENGTH) {
     return false;
   }
   return WU_ID_PATTERN.test(wuId);

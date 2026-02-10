@@ -285,6 +285,15 @@ describe('WU-1534: injection prevention', () => {
       expect(validatePackageName('react\nmalicious')).toBe(false);
     });
 
+    it('should reject package names with null bytes', () => {
+      expect(validatePackageName('react\u0000evil')).toBe(false);
+      expect(validatePackageName('@lumenflow/cli\u0000')).toBe(false);
+    });
+
+    it('should reject overlength package names', () => {
+      expect(validatePackageName('a'.repeat(215))).toBe(false);
+    });
+
     it('should reject package names with shell redirection', () => {
       expect(validatePackageName('react > /tmp/out')).toBe(false);
       expect(validatePackageName('react < /etc/passwd')).toBe(false);
@@ -312,6 +321,16 @@ describe('WU-1534: injection prevention', () => {
       const cmd = buildPnpmAddCommand(args);
       expect(cmd).toContain('$(whoami)');
       expect(cmd.length).toBe(2);
+    });
+
+    it('should keep malicious --filter values as literal argv elements', () => {
+      const args: DepsAddArgs = {
+        packages: ['react'],
+        filter: '@lumenflow/cli; rm -rf /',
+      };
+      const cmd = buildPnpmAddCommand(args);
+
+      expect(cmd).toEqual(['add', '--filter', '@lumenflow/cli; rm -rf /', 'react']);
     });
   });
 
