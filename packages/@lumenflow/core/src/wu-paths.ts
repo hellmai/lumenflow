@@ -136,6 +136,13 @@ export function createWuPaths(options: { projectRoot?: string } = {}) {
     INITIATIVES_DIR: () => config.directories.initiativesDir,
 
     /**
+     * Get path to initiative YAML file
+     * @param id - Initiative ID (e.g., 'INIT-001')
+     * @returns Path to initiative YAML file
+     */
+    INITIATIVE: (id: string) => path.join(config.directories.initiativesDir, `${id}.yaml`),
+
+    /**
      * Get path to worktrees directory
      * @returns Path to worktrees directory
      */
