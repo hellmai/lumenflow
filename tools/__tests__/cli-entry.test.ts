@@ -118,6 +118,25 @@ describe('cli-entry.mjs fallback behavior (WU-1366)', () => {
       expect(spawn).not.toHaveBeenCalled();
     });
 
+    it('should force rebuild for strict lifecycle entries even when dist exists', () => {
+      const exists = vi.fn().mockReturnValue(true);
+      const spawn = vi.fn().mockReturnValue({ status: 0 });
+      const logger = { log: vi.fn(), warn: vi.fn() };
+
+      const result = ensureCliDist({
+        repoRoot: '/worktree',
+        entry: 'wu-done',
+        mainRepoPath: '/main',
+        exists,
+        spawn,
+        logger,
+      });
+
+      expect(spawn).toHaveBeenCalled();
+      expect(result.source).toBe('repo');
+      expect(result.built).toBe(true);
+    });
+
     it('should try main repo fallback before building when worktree dist missing', () => {
       // Primary (worktree) doesn't exist, but main repo does
       const exists = vi.fn().mockImplementation((path) => {
