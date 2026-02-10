@@ -167,7 +167,7 @@ export function formatMigrationReport(comparison) {
  * @param {string} sql - Migration SQL content
  * @returns {string} MCP command description
  */
-export function buildMCPDeploymentHint(migrationName, sql) {
+export function buildMCPDeploymentHint(migrationName, _sql) {
   return `To deploy ${migrationName} to production:
 
 Use mcp__supabase__apply_migration with:
