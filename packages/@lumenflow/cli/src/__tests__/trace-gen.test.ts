@@ -166,6 +166,14 @@ describe('WU-1534: trace-gen injection prevention', () => {
       expect(validateWuId('WU-')).toBe(false);
       expect(validateWuId('WU-abc')).toBe(false);
     });
+
+    it('should reject WU IDs containing null bytes', () => {
+      expect(validateWuId('WU-1112\u0000evil')).toBe(false);
+    });
+
+    it('should reject overlength WU IDs', () => {
+      expect(validateWuId(`WU-${'1'.repeat(40)}`)).toBe(false);
+    });
   });
 
   describe('buildGitLogArgs', () => {
@@ -189,6 +197,14 @@ describe('WU-1534: trace-gen injection prevention', () => {
       // Verify the format arg uses | as a field delimiter within git's --format, not as shell pipe
       const formatArg = args.find((a) => a.startsWith('--format='));
       expect(formatArg).toBeDefined();
+    });
+
+    it('should keep injection attempts as literal --grep values', () => {
+      const args = buildGitLogArgs('WU-1112 && rm -rf /');
+      const grepArg = args.find((a) => a.startsWith('--grep='));
+      expect(grepArg).toBe('--grep=WU-1112 && rm -rf /');
+      expect(args).not.toContain('rm');
+      expect(args).not.toContain('-rf');
     });
   });
 
