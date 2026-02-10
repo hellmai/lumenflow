@@ -1,0 +1,39 @@
+id: WU-1577
+title: Prevent wu:done rollback leaks on main during merge failure
+lane: 'Framework: Core Lifecycle'
+type: bug
+status: ready
+priority: P0
+created: 2026-02-10
+code_paths:
+  - packages/@lumenflow/cli/src/wu-done.ts
+  - packages/@lumenflow/core/src/wu-done-worktree.ts
+  - packages/@lumenflow/core/src/wu-done-validation.ts
+  - packages/@lumenflow/core/src/__tests__/wu-done-worktree.test.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+tests:
+  manual:
+    - Reproduce wu:done failure with main behind origin and verify main remains clean
+  unit:
+    - packages/@lumenflow/core/src/__tests__/wu-done-worktree.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1577.done
+dependencies: []
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: A failed wu:done retry for WU-1575 leaked .lumenflow/state/wu-events.jsonl changes into the local main checkout, including a complete event that should not persist after rollback. Problem: the failure path rolls back lane branch state but can leave main dirty when main is behind origin or merge/rebase fails after metadata mutation. Solution: hard-fail early when main is behind origin before any transaction writes, and extend rollback/recovery to restore main checkout state so wu-events/backlog/status never leak after failed wu:done.'
+acceptance:
+  - wu:done aborts before transaction writes when local main is behind origin/main
+  - on merge/rebase failure after metadata mutation, main checkout remains clean (no wu-events/backlog/status leakage)
+  - failed wu:done does not leave a local complete event for the target WU in .lumenflow/state/wu-events.jsonl
+  - idempotent retry path still succeeds after syncing main
