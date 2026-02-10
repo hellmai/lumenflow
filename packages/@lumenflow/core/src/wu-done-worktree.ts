@@ -269,6 +269,8 @@ export async function executeWorktreeCompletion(context) {
   // WU-2310: Track snapshot for file rollback on git commit failure
   /** @type {Map<string, string|null>|null} */
   let transactionSnapshot = null;
+  let stagedMetadataAllowlist: string[] = [];
+  let initiativeMetadataPath: string | null = null;
 
   try {
     // WU-1541: Use explicit worktree paths and git adapter instead of process.chdir
@@ -354,7 +356,20 @@ export async function executeWorktreeCompletion(context) {
       backlogPath: workingBacklogPath,
       stampPath: workingStampPath,
       transaction,
+      projectRoot: worktreePath,
     });
+
+    const pendingWrites = transaction.getPendingWrites();
+    stagedMetadataAllowlist = pendingWrites
+      .map((write) => path.relative(worktreePath, write.path).split(path.sep).join('/'))
+      .filter(
+        (relativePath) =>
+          Boolean(relativePath) && !relativePath.startsWith('..') && !path.isAbsolute(relativePath),
+      );
+    const initiativeMetadataWrite = pendingWrites.find(
+      (write) => write.description === 'initiative YAML',
+    );
+    initiativeMetadataPath = initiativeMetadataWrite?.path ?? null;
 
     // Validate the transaction itself
     const txValidation = transaction.validate();
@@ -376,13 +391,9 @@ export async function executeWorktreeCompletion(context) {
     // This allows rollback if git commit fails AFTER files are written
     // WU-1541: Use absolute path via worktree metadata paths instead of relative path after chdir
     const workingEventsPath = worktreeMetadataPaths.eventsPath;
-    const pathsToSnapshot = [
-      workingWUPath,
-      workingStatusPath,
-      workingBacklogPath,
-      workingStampPath,
-      workingEventsPath,
-    ];
+    const pathsToSnapshot = Array.from(
+      new Set(transaction.getPendingWrites().map((write) => write.path)),
+    );
     transactionSnapshot = createTransactionSnapshot(pathsToSnapshot);
     console.log(`${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-2310: Snapshot captured for rollback`);
 
@@ -440,12 +451,13 @@ export async function executeWorktreeCompletion(context) {
       statusPath: workingStatusPath,
       backlogPath: workingBacklogPath,
       stampsDir: workingStampsDir,
+      initiativePath: initiativeMetadataPath,
       gitAdapter: worktreeGit,
       repoRoot: worktreePath,
     });
 
     // Validate staged files
-    await validateStagedFiles(id, isDocsOnly);
+    await validateStagedFiles(id, isDocsOnly, { metadataAllowlist: stagedMetadataAllowlist });
 
     // ======================================================================
     // WU-1584 Fix #1: Squash previous completion attempts before new commit

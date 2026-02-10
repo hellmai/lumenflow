@@ -1351,7 +1351,12 @@ async function runGatesInWorktree(
   }
 }
 
-async function validateStagedFiles(id, isDocsOnly = false, gitAdapter?) {
+async function validateStagedFiles(
+  id,
+  isDocsOnly = false,
+  gitAdapter?,
+  options: { metadataAllowlist?: string[] } = {},
+) {
   // WU-1541: Accept optional gitAdapter to avoid process.chdir dependency
   const staged = await listStaged(gitAdapter);
 
@@ -1366,6 +1371,10 @@ async function validateStagedFiles(id, isDocsOnly = false, gitAdapter?) {
     config.directories.backlogPath,
     LUMENFLOW_PATHS.WU_EVENTS,
   ];
+  const metadataAllowlist = (options.metadataAllowlist ?? []).filter(
+    (file): file is string => typeof file === 'string' && file.length > 0,
+  );
+  const whitelistSet = new Set([...whitelist, ...metadataAllowlist]);
 
   if (isDocsOnly) {
     // For docs-only WUs, validate that all staged files are in allowed paths
@@ -1381,7 +1390,7 @@ async function validateStagedFiles(id, isDocsOnly = false, gitAdapter?) {
 
   const unexpected = staged.filter((file) => {
     // Whitelist exact matches
-    if (whitelist.includes(file)) return false;
+    if (whitelistSet.has(file)) return false;
     // Whitelist stamps directory pattern
     if (file.startsWith(`${LUMENFLOW_PATHS.STAMPS_DIR}/`)) return false;
     // WU-1072: Whitelist apps/docs/**/*.mdx for auto-generated docs from turbo docs:generate
@@ -1401,7 +1410,7 @@ async function validateStagedFiles(id, isDocsOnly = false, gitAdapter?) {
       );
     } else {
       die(
-        `Unexpected files staged (only current WU YAML, status.md, backlog.md, .lumenflow/stamps/<id>.done allowed):\n  ${unexpected.join(`${STRING_LITERALS.NEWLINE}  `)}`,
+        `Unexpected files staged (only current WU metadata, current parent initiative YAML, and .lumenflow/stamps/<id>.done allowed):\n  ${unexpected.join(`${STRING_LITERALS.NEWLINE}  `)}`,
       );
     }
   }
@@ -2773,8 +2782,8 @@ async function main() {
         const worktreeContext = {
           ...baseContext,
           worktreePath,
-          validateStagedFiles: (wuId, docsOnly) =>
-            validateStagedFiles(wuId, docsOnly, worktreeGitForValidation),
+          validateStagedFiles: (wuId, docsOnly, options) =>
+            validateStagedFiles(wuId, docsOnly, worktreeGitForValidation, options),
         };
         completionResult = await executeWorktreeCompletion(worktreeContext);
       }

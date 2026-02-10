@@ -230,6 +230,9 @@ export interface IWuPaths {
   /** Get path to initiatives directory */
   INITIATIVES_DIR(): string;
 
+  /** Get path to initiative YAML file */
+  INITIATIVE(id: string): string;
+
   /** Get path to worktrees directory */
   WORKTREES_DIR(): string;
 }
