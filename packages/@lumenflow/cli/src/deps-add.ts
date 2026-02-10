@@ -31,6 +31,7 @@ const LOG_PREFIX = '[deps:add]';
  */
 // eslint-disable-next-line security/detect-unsafe-regex -- static validation pattern; input bounded by CLI arg length
 const PACKAGE_NAME_PATTERN = /^(@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*(@[^\s;|&`$()<>'"\\]+)?$/i;
+const MAX_PACKAGE_NAME_LENGTH = 214;
 
 /**
  * Arguments for deps-add command
@@ -81,10 +82,14 @@ export interface WorktreeValidationResult {
  * @returns true if the name is safe
  */
 export function validatePackageName(name: string): boolean {
-  if (!name || !name.trim()) {
+  const trimmedName = name.trim();
+  if (!trimmedName) {
     return false;
   }
-  return PACKAGE_NAME_PATTERN.test(name);
+  if (trimmedName.length > MAX_PACKAGE_NAME_LENGTH) {
+    return false;
+  }
+  return PACKAGE_NAME_PATTERN.test(trimmedName);
 }
 
 /**
