@@ -12,7 +12,7 @@ _Last updated: 2026-02-10_
 - [WU-1547 — Lock down dist imports and verify boundary](wu/WU-1547.yaml)
 - [WU-1550 — Introduce gate and validator registry patterns](wu/WU-1550.yaml)
 - [WU-1544 — Re-enable TypeScript lint rules](wu/WU-1544.yaml)
-- [WU-1543 — Re-enable security lint rules](wu/WU-1543.yaml)
+- [WU-1545 — Lock down dist imports and verify boundary](wu/WU-1545.yaml)
 
 ## Completed
 
@@ -504,5 +504,4 @@ _Last updated: 2026-02-10_
 - [WU-1536 — Add subpath exports and codemod dist imports](wu/WU-1536.yaml) — 2026-02-09
 - [WU-1535 — Enable strict TypeScript build configuration](wu/WU-1535.yaml) — 2026-02-09
 - [WU-1539 — Centralize duplicated stamp and events path literals](wu/WU-1539.yaml) — 2026-02-10
-- [WU-1545 — Lock down dist imports and verify boundary](wu/WU-1545.yaml) — 2026-02-10
 - [WU-1549 — Decompose wu-constants and segregate fat interfaces](wu/WU-1549.yaml) — 2026-02-10
