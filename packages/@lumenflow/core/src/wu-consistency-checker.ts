@@ -21,6 +21,7 @@ import { createWuPaths, WU_PATHS } from './wu-paths.js';
 import {
   CONSISTENCY_TYPES,
   CONSISTENCY_MESSAGES,
+  LUMENFLOW_PATHS,
   LOG_PREFIX,
   REMOTES,
   STRING_LITERALS,
@@ -28,7 +29,7 @@ import {
   WU_STATUS,
   YAML_OPTIONS,
 } from './wu-constants.js';
-import { todayISO } from './date-utils.js';
+import { todayISO, normalizeToDateString } from './date-utils.js';
 import { createGitForPath } from './git-adapter.js';
 import { withMicroWorktree } from './micro-worktree.js';
 
@@ -432,7 +433,7 @@ export async function repairWUInconsistency(
                 const result = await repairSingleErrorInWorktree(
                   error,
                   worktreePath,
-                  effectiveProjectRoot,
+                  worktreePath,
                 );
                 if (result.success && result.files) {
                   filesModified.push(...result.files);
@@ -677,26 +678,39 @@ async function updateYamlToDoneInWorktree(
   const wuRelPath = paths.WU(id);
   const wuSrcPath = path.join(projectRoot, wuRelPath);
   const wuDestPath = path.join(worktreePath, wuRelPath);
+  const wuReadPath = existsSync(wuDestPath) ? wuDestPath : wuSrcPath;
 
-  // Read current YAML from project root
-  const content = readFileSync(wuSrcPath, { encoding: 'utf-8' });
+  // Read current YAML (prefer destination copy if already modified in this batch)
+  const content = readFileSync(wuReadPath, { encoding: 'utf-8' });
   const wuDoc = parseYAML(content) as {
     status?: string;
     locked?: boolean;
     completed?: string;
+    completed_at?: string | Date;
+    lane?: string;
+    title?: string;
   } | null;
 
   if (!wuDoc) {
-    throw new Error(`Failed to parse WU YAML: ${wuSrcPath}`);
+    throw new Error(`Failed to parse WU YAML: ${wuReadPath}`);
   }
 
   // Update fields
   wuDoc.status = WU_STATUS.DONE;
   wuDoc.locked = true;
-  // Preserve existing completed date if present, otherwise set to today
-  if (!wuDoc.completed) {
-    wuDoc.completed = todayISO();
-  }
+  const existingCompletedAt = wuDoc.completed_at;
+  const completionTimestamp =
+    typeof existingCompletedAt === 'string'
+      ? existingCompletedAt
+      : existingCompletedAt instanceof Date
+        ? existingCompletedAt.toISOString()
+        : new Date().toISOString();
+  wuDoc.completed_at = completionTimestamp;
+
+  // Keep legacy completed date in sync with completed_at for compatibility.
+  wuDoc.completed =
+    normalizeToDateString(wuDoc.completed ?? completionTimestamp) ??
+    completionTimestamp.slice(0, 10);
 
   // Ensure directory exists in worktree
   const wuDir = path.dirname(wuDestPath);
@@ -708,7 +722,112 @@ async function updateYamlToDoneInWorktree(
   const updatedContent = stringifyYAML(wuDoc, { lineWidth: YAML_OPTIONS.LINE_WIDTH });
   writeFileSync(wuDestPath, updatedContent, { encoding: 'utf-8' });
 
-  return [wuRelPath];
+  const eventFiles = appendReconciliationEventsInWorktree({
+    id,
+    lane: wuDoc.lane,
+    title: wuDoc.title,
+    projectRoot,
+    worktreePath,
+  });
+
+  return [wuRelPath, ...eventFiles];
+}
+
+function deriveStatusFromEvents(eventsContent: string, wuId: string): string | undefined {
+  let status: string | undefined;
+  const lines = eventsContent.split(/\r?\n/);
+
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    try {
+      const event = JSON.parse(line) as { wuId?: string; type?: string };
+      if (event.wuId !== wuId || !event.type) continue;
+
+      switch (event.type) {
+        case 'claim':
+        case 'create':
+          status = WU_STATUS.IN_PROGRESS;
+          break;
+        case 'release':
+          status = WU_STATUS.READY;
+          break;
+        case 'complete':
+          status = WU_STATUS.DONE;
+          break;
+        case 'block':
+          status = WU_STATUS.BLOCKED;
+          break;
+        case 'unblock':
+          status = WU_STATUS.IN_PROGRESS;
+          break;
+      }
+    } catch {
+      // Ignore malformed lines; preserve file as-is and append corrective events.
+    }
+  }
+
+  return status;
+}
+
+function appendReconciliationEventsInWorktree({
+  id,
+  lane,
+  title,
+  projectRoot,
+  worktreePath,
+}: {
+  id: string;
+  lane?: string;
+  title?: string;
+  projectRoot: string;
+  worktreePath: string;
+}): string[] {
+  const eventsRelPath = LUMENFLOW_PATHS.WU_EVENTS;
+  const eventsSrcPath = path.join(projectRoot, eventsRelPath);
+  const eventsDestPath = path.join(worktreePath, eventsRelPath);
+  const eventsReadPath = existsSync(eventsDestPath) ? eventsDestPath : eventsSrcPath;
+  const existingContent = existsSync(eventsReadPath)
+    ? readFileSync(eventsReadPath, { encoding: 'utf-8' })
+    : '';
+  const derivedStatus = deriveStatusFromEvents(existingContent, id);
+
+  if (derivedStatus === WU_STATUS.DONE) {
+    return [];
+  }
+
+  const now = new Date().toISOString();
+  const appendEvents: Array<Record<string, string>> = [];
+  if (derivedStatus !== WU_STATUS.IN_PROGRESS) {
+    appendEvents.push({
+      type: 'claim',
+      wuId: id,
+      lane: typeof lane === 'string' && lane.trim().length > 0 ? lane : 'Operations: Tooling',
+      title: typeof title === 'string' && title.trim().length > 0 ? title : `WU ${id}`,
+      timestamp: now,
+    });
+  }
+  appendEvents.push({
+    type: 'complete',
+    wuId: id,
+    reason: 'wu:repair consistency reconciliation for stamp/yaml mismatch',
+    timestamp: now,
+  });
+
+  const destDir = path.dirname(eventsDestPath);
+  if (!existsSync(destDir)) {
+    mkdirSync(destDir, { recursive: true });
+  }
+  const suffix = appendEvents.map((event) => JSON.stringify(event)).join(STRING_LITERALS.NEWLINE);
+  const normalizedExisting = existingContent
+    ? existingContent.endsWith(STRING_LITERALS.NEWLINE)
+      ? existingContent
+      : `${existingContent}${STRING_LITERALS.NEWLINE}`
+    : '';
+  writeFileSync(eventsDestPath, `${normalizedExisting}${suffix}${STRING_LITERALS.NEWLINE}`, {
+    encoding: 'utf-8',
+  });
+
+  return [eventsRelPath];
 }
 
 /**

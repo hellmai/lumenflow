@@ -27,7 +27,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { stringifyYAML } from './wu-yaml.js';
 import { parseBacklogFrontmatter } from './backlog-parser.js';
 import { getSectionHeadingsWithDefaults } from './section-headings.js';
-import { todayISO } from './date-utils.js';
+import { todayISO, normalizeToDateString } from './date-utils.js';
 import { createError, ErrorCodes } from './error-handler.js';
 import { STRING_LITERALS, WU_STATUS } from './wu-constants.js';
 // WU-1145, WU-1319: Import concurrent merge utilities
@@ -51,6 +51,8 @@ export function computeWUYAMLContent(doc) {
   doc.status = WU_STATUS.DONE;
   doc.locked = true;
   doc.completed_at = new Date().toISOString();
+  // Keep legacy completion date in sync for tooling that still reads `completed`.
+  doc.completed = normalizeToDateString(doc.completed ?? doc.completed_at) ?? doc.completed_at.slice(0, 10);
 
   // Serialize to YAML
   return stringifyYAML(doc);

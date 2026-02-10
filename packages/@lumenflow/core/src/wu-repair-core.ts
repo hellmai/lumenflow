@@ -690,7 +690,8 @@ export async function repairSingleWU(id, options) {
  * @param {object} options - CLI options
  * @returns {Promise<{success: boolean, repaired: number, failed: number}>}
  */
-export async function repairAllWUs(options: { dryRun?: boolean } = {}) {
+export async function repairAllWUs(options: { dryRun?: boolean; check?: boolean } = {}) {
+  const dryRun = options.dryRun === true || options.check === true;
   console.log(`${PREFIX} Checking all WUs...`);
   const report = await checkAllWUConsistency();
 
@@ -710,7 +711,7 @@ export async function repairAllWUs(options: { dryRun?: boolean } = {}) {
   }
   console.log();
 
-  if (options.dryRun) {
+  if (dryRun) {
     return { success: false, repaired: 0, failed: report.errors.length };
   }
 
@@ -744,7 +745,10 @@ export async function runConsistencyRepairMode(options) {
   let result;
   try {
     if (options.all) {
-      result = await repairAllWUs(options);
+      result = await repairAllWUs({
+        ...options,
+        dryRun: options.dryRun === true || options.check === true,
+      });
     } else {
       result = await repairSingleWU(options.id, options);
     }
