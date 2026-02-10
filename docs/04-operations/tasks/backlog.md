@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1584 — Core strict wave 2A: lifecycle strict hotspots](wu/WU-1584.yaml) — Framework: Core Lifecycle
 - [WU-1583 — CLI strict wave 1C: remaining fixes and strict enablement](wu/WU-1583.yaml) — Framework: CLI Enforcement
 - [WU-1582 — CLI strict wave 1B: initiative and gates command fixes](wu/WU-1582.yaml) — Framework: CLI Orchestration
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
