@@ -19,6 +19,7 @@ import {
   computeWUEventsContentAfterComplete,
   computeStampContent,
 } from './wu-transaction-collectors.js';
+import { computeInitiativeSyncWriteOnWUComplete } from './wu-done-initiative-sync.js';
 import {
   DEFAULTS,
   LOG_PREFIX,
@@ -33,6 +34,7 @@ import { applyExposureDefaults } from './wu-done-validation.js';
 import { createFileNotFoundError, createValidationError } from './wu-done-errors.js';
 import { writeWU } from './wu-yaml.js';
 import { normalizeToDateString } from './date-utils.js';
+import { findProjectRoot } from './lumenflow-config.js';
 
 const execAsync = promisify(execCallback);
 
@@ -191,6 +193,7 @@ export async function updateMetadataFiles({ id, title, doc, wuPath, statusPath, 
  * @param {string} params.backlogPath - Path to backlog.md file
  * @param {string} params.stampPath - Path to stamp file
  * @param {WUTransaction} params.transaction - Transaction to add writes to
+ * @param {string} [params.projectRoot] - Repository root for config/path resolution
  */
 // WU-1574: Made async for computeBacklogContent
 export async function collectMetadataToTransaction({
@@ -202,6 +205,7 @@ export async function collectMetadataToTransaction({
   backlogPath,
   stampPath,
   transaction,
+  projectRoot = null,
 }) {
   // WU-1369: Fail fast before any computations
   validateMetadataFilesExist({ statusPath, backlogPath });
@@ -230,6 +234,20 @@ export async function collectMetadataToTransaction({
     transaction.addWrite(wuEventsUpdate.eventsPath, wuEventsUpdate.content, 'wu-events.jsonl');
   }
 
+  const resolvedProjectRoot = projectRoot ?? findProjectRoot(path.dirname(backlogPath));
+  const initiativeSyncWrite = computeInitiativeSyncWriteOnWUComplete({
+    wuId: id,
+    wuDoc: doc,
+    projectRoot: resolvedProjectRoot,
+  });
+  if (initiativeSyncWrite) {
+    transaction.addWrite(
+      initiativeSyncWrite.initiativePath,
+      initiativeSyncWrite.content,
+      'initiative YAML',
+    );
+  }
+
   // Compute stamp content
   const stampContent = computeStampContent(id, title);
   transaction.addWrite(stampPath, stampContent, 'completion stamp');
@@ -249,6 +267,7 @@ export async function collectMetadataToTransaction({
  * @param {string} params.statusPath - Path to status.md file
  * @param {string} params.backlogPath - Path to backlog.md file
  * @param {string} params.stampsDir - Path to stamps directory
+ * @param {string} [params.initiativePath] - Optional parent initiative YAML path
  * @param {object} [params.gitAdapter] - Git adapter instance (WU-1541: explicit instead of getGitForCwd)
  * @param {string} [params.repoRoot] - Absolute repo root path for resolving relative paths
  * @throws {Error} If formatting fails
@@ -259,6 +278,7 @@ export async function stageAndFormatMetadata({
   statusPath,
   backlogPath,
   stampsDir,
+  initiativePath = null,
   gitAdapter = null,
   repoRoot = null,
 }) {
@@ -272,6 +292,9 @@ export async function stageAndFormatMetadata({
     ? path.join(repoRoot, LUMENFLOW_PATHS.STATE_DIR, WU_EVENTS_FILE_NAME)
     : path.join(LUMENFLOW_PATHS.STATE_DIR, WU_EVENTS_FILE_NAME);
   const filesToStage = [wuPath, statusPath, backlogPath, stampsDir];
+  if (initiativePath) {
+    filesToStage.push(initiativePath);
+  }
   if (existsSync(wuEventsPath)) {
     filesToStage.push(wuEventsPath);
   }
@@ -280,9 +303,14 @@ export async function stageAndFormatMetadata({
   // Format documentation
   console.log(`${LOG_PREFIX.DONE} Formatting auto-generated documentation...`);
   try {
-    const prettierCmd = `${PKG_MANAGER} ${SCRIPTS.PRETTIER} ${PRETTIER_FLAGS.WRITE} "${wuPath}" "${statusPath}" "${backlogPath}"`;
+    const filesToFormat = [wuPath, statusPath, backlogPath];
+    if (initiativePath) {
+      filesToFormat.push(initiativePath);
+    }
+    const prettierTargets = filesToFormat.map((file) => `"${file}"`).join(' ');
+    const prettierCmd = `${PKG_MANAGER} ${SCRIPTS.PRETTIER} ${PRETTIER_FLAGS.WRITE} ${prettierTargets}`;
     await execAsync(prettierCmd);
-    await gitCwd.add([wuPath, statusPath, backlogPath]);
+    await gitCwd.add(filesToFormat);
     console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Documentation formatted`);
   } catch (err) {
     throw createValidationError(`Failed to format documentation: ${err.message}`, {
