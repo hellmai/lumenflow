@@ -7,12 +7,21 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync, existsSync, rmSync, readFileSync } from 'node:fs';
+import {
+  mkdtempSync,
+  mkdirSync,
+  writeFileSync,
+  existsSync,
+  rmSync,
+  readFileSync,
+  cpSync,
+} from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 
 // Track withMicroWorktree calls to verify it's NOT called when projectRoot is provided
 let withMicroWorktreeCalls: Array<{ operation: string; id: string; pushOnly?: boolean }> = [];
+let lastMicroWorktreeFiles = new Map<string, string>();
 
 // Mock git adapter before importing modules that use it
 const mockGitForCwd = {
@@ -70,11 +79,29 @@ vi.mock('../micro-worktree.js', async () => {
           // Create a temp directory to simulate micro-worktree
           const microWorktreePath = mkdtempSync(path.join(tmpdir(), 'micro-worktree-test-'));
 
-          // Copy project structure to micro-worktree for the execute function
+          // Copy minimal project structure from cwd to micro-worktree
+          const sourceRoot = process.cwd();
+          const docsSource = path.join(sourceRoot, 'docs');
+          const lumenflowSource = path.join(sourceRoot, '.lumenflow');
+          if (existsSync(docsSource)) {
+            cpSync(docsSource, path.join(microWorktreePath, 'docs'), { recursive: true });
+          }
+          if (existsSync(lumenflowSource)) {
+            cpSync(lumenflowSource, path.join(microWorktreePath, '.lumenflow'), { recursive: true });
+          }
+
           const result = await options.execute({
             worktreePath: microWorktreePath,
             gitWorktree: mockGitForWorktree,
           });
+
+          lastMicroWorktreeFiles = new Map();
+          for (const file of result.files ?? []) {
+            const absPath = path.join(microWorktreePath, file);
+            if (existsSync(absPath)) {
+              lastMicroWorktreeFiles.set(file, readFileSync(absPath, 'utf-8'));
+            }
+          }
 
           // Clean up temp dir
           rmSync(microWorktreePath, { recursive: true, force: true });
@@ -91,6 +118,7 @@ describe('wu-consistency-checker (WU-1370)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     withMicroWorktreeCalls = [];
+    lastMicroWorktreeFiles = new Map();
 
     // Create a test project structure
     testProjectRoot = mkdtempSync(path.join(tmpdir(), 'wu-consistency-test-'));
@@ -225,6 +253,88 @@ acceptance:
       expect(result.failed).toBe(0);
       expect(result.skipped).toBe(0);
     });
+
+    it('should repair stamp/yaml mismatch and append complete event to reconcile state', async () => {
+      const { repairWUInconsistency } = await import('../wu-consistency-checker.js');
+      const { parseYAML } = await import('../wu-yaml.js');
+
+      const wuPath = path.join(testProjectRoot, 'docs/04-operations/tasks/wu/WU-2000.yaml');
+      writeFileSync(
+        wuPath,
+        `id: WU-2000
+title: Test WU for State Reconcile
+lane: 'Operations: Tooling'
+type: bug
+status: in_progress
+priority: P1
+created: 2026-02-10
+code_paths: []
+tests:
+  manual: []
+  unit: []
+  e2e: []
+artifacts: []
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+description: Test WU for repair testing
+acceptance:
+  - Test acceptance criteria
+`,
+      );
+      writeFileSync(
+        path.join(testProjectRoot, '.lumenflow/stamps/WU-2000.done'),
+        'WU WU-2000 — Test\nCompleted: 2026-02-10\n',
+      );
+      writeFileSync(
+        path.join(testProjectRoot, '.lumenflow/state/wu-events.jsonl'),
+        JSON.stringify({
+          type: 'claim',
+          wuId: 'WU-2000',
+          lane: 'Operations: Tooling',
+          title: 'Test WU for State Reconcile',
+          timestamp: '2026-02-10T01:00:00.000Z',
+        }) + '\n',
+      );
+
+      const report = {
+        valid: false,
+        errors: [
+          {
+            type: 'STAMP_EXISTS_YAML_NOT_DONE',
+            wuId: 'WU-2000',
+            title: 'Test WU for State Reconcile',
+            description: 'Stamp exists but YAML status is not done',
+            repairAction: 'Update YAML to done+locked+completed',
+            canAutoRepair: true,
+          },
+        ],
+      };
+
+      const result = await repairWUInconsistency(report, { projectRoot: testProjectRoot });
+      expect(result.repaired).toBe(1);
+      expect(result.failed).toBe(0);
+
+      const updatedWU = parseYAML(readFileSync(wuPath, 'utf-8')) as {
+        status?: string;
+        locked?: boolean;
+        completed?: string;
+        completed_at?: string;
+      };
+      expect(updatedWU.status).toBe('done');
+      expect(updatedWU.locked).toBe(true);
+      expect(updatedWU.completed_at).toBeDefined();
+      expect(updatedWU.completed).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(updatedWU.completed).toBe(String(updatedWU.completed_at).slice(0, 10));
+
+      const events = readFileSync(path.join(testProjectRoot, '.lumenflow/state/wu-events.jsonl'), 'utf-8')
+        .trim()
+        .split('\n')
+        .map((line) => JSON.parse(line) as { type: string; wuId: string });
+      const wuEvents = events.filter((event) => event.wuId === 'WU-2000');
+      expect(wuEvents.some((event) => event.type === 'complete')).toBe(true);
+    });
   });
 
   describe('repairWUInconsistency without projectRoot (CLI behavior)', () => {
@@ -262,6 +372,61 @@ acceptance:
         expect(withMicroWorktreeCalls[0]).toMatchObject({
           operation: expect.stringContaining('repair'),
         });
+      } finally {
+        process.cwd = originalCwd;
+      }
+    });
+
+    it('should apply cumulative removals for multiple status.md inconsistencies in one batch', async () => {
+      const { repairWUInconsistency } = await import('../wu-consistency-checker.js');
+
+      mkdirSync(path.join(testProjectRoot, 'docs/04-operations/tasks'), { recursive: true });
+      writeFileSync(
+        path.join(testProjectRoot, 'docs/04-operations/tasks/status.md'),
+        `# Work Unit Status
+
+## In Progress
+
+- [WU-3001 — First](wu/WU-3001.yaml)
+- [WU-3002 — Second](wu/WU-3002.yaml)
+
+## Completed
+
+(No items completed yet)
+`,
+      );
+
+      const originalCwd = process.cwd;
+      vi.spyOn(process, 'cwd').mockReturnValue(testProjectRoot);
+
+      try {
+        const report = {
+          valid: false,
+          errors: [
+            {
+              type: 'YAML_DONE_STATUS_IN_PROGRESS',
+              wuId: 'WU-3001',
+              description: 'WU-3001 should be removed from status.md In Progress',
+              repairAction: 'Remove from status.md In Progress section',
+              canAutoRepair: true,
+            },
+            {
+              type: 'YAML_DONE_STATUS_IN_PROGRESS',
+              wuId: 'WU-3002',
+              description: 'WU-3002 should be removed from status.md In Progress',
+              repairAction: 'Remove from status.md In Progress section',
+              canAutoRepair: true,
+            },
+          ],
+        };
+
+        const result = await repairWUInconsistency(report);
+        expect(result.repaired).toBe(2);
+
+        const statusOutput = lastMicroWorktreeFiles.get('docs/04-operations/tasks/status.md');
+        expect(statusOutput).toBeDefined();
+        expect(statusOutput).not.toContain('WU-3001');
+        expect(statusOutput).not.toContain('WU-3002');
       } finally {
         process.cwd = originalCwd;
       }

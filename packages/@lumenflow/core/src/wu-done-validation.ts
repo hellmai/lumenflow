@@ -26,6 +26,7 @@ import { PLACEHOLDER_SENTINEL } from './wu-schema.js';
 import { resolveExposureDefault } from './wu-validation.js';
 import { validateAutomatedTestRequirement } from './manual-test-validator.js';
 import { isDocumentationPath } from './file-classifiers.js';
+import { normalizeToDateString } from './date-utils.js';
 
 interface ExposureDefaultResult {
   applied: boolean;
@@ -225,6 +226,44 @@ export function validateSpecCompleteness(doc, _id) {
   return { valid: errors.length === 0, errors };
 }
 
+function deriveStatusFromEventsContent(
+  eventsContent: string,
+  wuId: string,
+): typeof WU_STATUS[keyof typeof WU_STATUS] | undefined {
+  let status: typeof WU_STATUS[keyof typeof WU_STATUS] | undefined;
+
+  for (const line of eventsContent.split('\n')) {
+    if (!line.trim()) continue;
+    try {
+      const event = JSON.parse(line) as { wuId?: string; type?: string };
+      if (event.wuId !== wuId || !event.type) continue;
+
+      switch (event.type) {
+        case 'claim':
+        case 'create':
+          status = WU_STATUS.IN_PROGRESS;
+          break;
+        case 'release':
+          status = WU_STATUS.READY;
+          break;
+        case 'complete':
+          status = WU_STATUS.DONE;
+          break;
+        case 'block':
+          status = WU_STATUS.BLOCKED;
+          break;
+        case 'unblock':
+          status = WU_STATUS.IN_PROGRESS;
+          break;
+      }
+    } catch {
+      // Ignore malformed lines; other guards handle structural integrity.
+    }
+  }
+
+  return status;
+}
+
 /**
  * WU-1617: Post-mutation validation for wu:done
  *
@@ -232,8 +271,9 @@ export function validateSpecCompleteness(doc, _id) {
  * 1. WU YAML has completed_at field with valid ISO datetime
  * 2. WU YAML has locked: true
  * 3. Stamp file exists
+ * 4. State store derives to done (when eventsPath is provided)
  */
-export function validatePostMutation({ id, wuPath, stampPath }) {
+export function validatePostMutation({ id, wuPath, stampPath, eventsPath = null }) {
   const errors = [];
 
   // Check stamp file exists
@@ -262,6 +302,18 @@ export function validatePostMutation({ id, wuPath, stampPath }) {
       }
     }
 
+    // Keep legacy completion date normalized for downstream tools.
+    if (!doc.completed) {
+      errors.push(`Missing required field 'completed' in ${id}.yaml`);
+    } else {
+      const normalizedCompleted = normalizeToDateString(doc.completed);
+      if (!normalizedCompleted) {
+        errors.push(`Invalid completed date: ${doc.completed}`);
+      } else if (normalizedCompleted !== doc.completed) {
+        errors.push(`Non-normalized completed date: ${doc.completed}`);
+      }
+    }
+
     // Verify locked is true
     if (doc.locked !== true) {
       errors.push(
@@ -277,6 +329,26 @@ export function validatePostMutation({ id, wuPath, stampPath }) {
     }
   } catch (err) {
     errors.push(`Failed to parse WU YAML after mutation: ${err.message}`);
+  }
+
+  if (eventsPath) {
+    if (!existsSync(eventsPath)) {
+      errors.push(`State store file not found after mutation: ${eventsPath}`);
+    } else {
+      try {
+        const eventsContent = readFileSync(eventsPath, {
+          encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+        });
+        const derivedStatus = deriveStatusFromEventsContent(eventsContent, id);
+        if (derivedStatus !== WU_STATUS.DONE) {
+          errors.push(
+            `WU ${id} state store is '${derivedStatus ?? 'missing'}' after mutation (expected: '${WU_STATUS.DONE}')`,
+          );
+        }
+      } catch (err) {
+        errors.push(`Failed to parse state store after mutation: ${err.message}`);
+      }
+    }
   }
 
   return { valid: errors.length === 0, errors };

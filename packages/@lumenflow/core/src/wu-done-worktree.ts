@@ -388,6 +388,7 @@ export async function executeWorktreeCompletion(context) {
       id,
       wuPath: workingWUPath,
       stampPath: workingStampPath,
+      eventsPath: workingEventsPath,
     });
 
     if (!postMutationResult.valid) {
