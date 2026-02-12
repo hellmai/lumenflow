@@ -11,8 +11,6 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-brief.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/mcp/src/tools.ts
-  - packages/@lumenflow/initiatives/src/initiative-orchestrator.ts
-  - packages/@lumenflow/cli/src/orchestrate-initiative.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
   - LUMENFLOW.md
   - AGENTS.md
