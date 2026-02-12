@@ -41,6 +41,13 @@ code_paths:
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
   - packages/@lumenflow/cli/templates/core/ai/onboarding/rapid-prototyping.md
   - apps/docs/src/content/docs/guides/migrating-methodology.mdx
+  - README.md
+  - apps/docs/src/content/docs/guides/solo-workflow.mdx
+  - docs/04-operations/_frameworks/lumenflow/invariants.md
+  - docs/04-operations/_frameworks/lumenflow/lumenflow-complete.md
+  - docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md
+  - packages/@lumenflow/core/src/arg-parser.ts
+  - packages/@lumenflow/memory/README.md
 tests:
   manual:
     - Run pnpm wu:brief --help and pnpm wu:delegate --help; verify wu:spawn is no longer listed in
@@ -53,6 +60,7 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/commands.test.ts
     - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
     - packages/@lumenflow/mcp/src/__tests__/tools.test.ts
+    - packages/@lumenflow/memory/__tests__/mem-recover-core.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1617.done
