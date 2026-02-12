@@ -358,6 +358,22 @@ describe('lumenflow-upgrade', () => {
       const execCall = mockExecSync.mock.calls[0][0];
       expect(execCall).toContain('@lumenflow/core@latest');
     });
+
+    // WU-1622: After micro-worktree merge, sync main's node_modules before push
+    it('should run pnpm install --frozen-lockfile on main after micro-worktree completes', async () => {
+      mockWithMicroWorktree.mockResolvedValue({});
+      mockExecSync.mockReturnValue('');
+
+      const args: UpgradeArgs = { version: '2.18.1' };
+      await executeUpgradeInMicroWorktree(args);
+
+      // After withMicroWorktree resolves, pnpm install should be called on main
+      const installCall = mockExecSync.mock.calls.find(
+        (call: unknown[]) => typeof call[0] === 'string' && call[0].includes('pnpm install'),
+      );
+      expect(installCall).toBeDefined();
+      expect(installCall![0]).toContain('--frozen-lockfile');
+    });
   });
 
   describe('dry-run mode', () => {
