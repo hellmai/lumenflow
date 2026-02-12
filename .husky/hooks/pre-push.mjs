@@ -87,6 +87,7 @@ const ALLOWED_WU_TOOLS = new Set([
   'initiative-create', // WU-1255: Initiative creation with micro-worktree
   'initiative-edit', // WU-1255: Initiative editing with micro-worktree
   'release', // WU-1296: npm release with micro-worktree isolation
+  'lumenflow-upgrade', // WU-1622: Package upgrade with micro-worktree isolation
 ]);
 if (WU_TOOL_ENV && ALLOWED_WU_TOOLS.has(WU_TOOL_ENV)) {
   process.exit(0);

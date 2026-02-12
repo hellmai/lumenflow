@@ -102,4 +102,10 @@ describe('pre-push hook policy (WU-1030)', () => {
     const result = runHook({ LUMENFLOW_WU_TOOL: 'wu-admin-repair' });
     expect(result.status).toBe(0);
   });
+
+  // WU-1622: lumenflow:upgrade uses micro-worktree isolation for package upgrades
+  it('allows lumenflow-upgrade pushes to main when LUMENFLOW_WU_TOOL is set', () => {
+    const result = runHook({ LUMENFLOW_WU_TOOL: 'lumenflow-upgrade' });
+    expect(result.status).toBe(0);
+  });
 });
