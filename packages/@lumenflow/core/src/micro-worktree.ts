@@ -168,7 +168,7 @@ export const LUMENFLOW_FORCE_REASON_ENV = 'LUMENFLOW_FORCE_REASON';
  * WU-1365: Exported for use by CLI commands that use micro-worktree operations.
  * The pre-push hook checks this env var to allow micro-worktree pushes to main.
  * Valid values are: wu-create, wu-edit, wu-done, wu-delete, wu-claim, wu-block,
- * wu-unblock, initiative-create, initiative-edit, release
+ * wu-unblock, initiative-create, initiative-edit, release, lumenflow-upgrade
  */
 export const LUMENFLOW_WU_TOOL_ENV = 'LUMENFLOW_WU_TOOL';
 

@@ -252,6 +252,18 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
     },
   });
 
+  // WU-1622: Sync main checkout's node_modules after merge.
+  // The micro-worktree updated package.json + lockfile and merged to main,
+  // but main's node_modules still has the old packages. Without this step,
+  // git hooks (pre-push, pre-commit) that import from @lumenflow/* would
+  // crash because they resolve from the stale node_modules.
+  // Note: execSync is safe here — no user input in the command string.
+  console.log(`${LOG_PREFIX} Syncing node_modules with updated lockfile...`);
+  execSync(`${PKG_MANAGER} install --frozen-lockfile`, {
+    stdio: STDIO_MODES.INHERIT,
+  });
+  console.log(`${LOG_PREFIX} ✅ node_modules synced`);
+
   console.log(`\n${LOG_PREFIX} Upgrade complete!`);
   console.log(`${LOG_PREFIX} Upgraded to ${versionSpec}`);
   console.log(`\n${LOG_PREFIX} Next steps:`);
