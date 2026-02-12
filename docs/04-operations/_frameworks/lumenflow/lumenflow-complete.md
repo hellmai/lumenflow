@@ -649,6 +649,58 @@ CLI lifecycle commands surface unread signals and consume them at appropriate to
 
 All CLI integrations remain fail-open and do not block primary WU lifecycle commands on memory errors.
 
+### 5.3.1 Agent Launch Tracking (WU-1612)
+
+When agents spawn sub-agents via the Task tool, the orchestrating agent loses all awareness of those sub-agents after context compaction. The agent launch tracking hook closes this gap by recording each launch in the signal bus.
+
+**Three-hook recovery pipeline:**
+
+```
+PostToolUse(Task)           PreCompact              SessionStart
+─────────────────           ──────────              ────────────
+Agent spawns Task     →     Compaction triggers  →  Agent wakes up
+Hook records signal:        Recovery file includes  Hook surfaces:
+  agent ID                  recent signals from     "3 agents were running,
+  subagent type             mem:inbox               here are their IDs"
+  description                                       Agent resumes via
+  output file (if bg)                               Task(resume=agentId)
+```
+
+**Hook details** (`.claude/hooks/track-agent-launch.sh`):
+
+- **Trigger**: PostToolUse on `Task` tool calls
+- **Input**: Parses `tool_response.agent_id`, `tool_input.description`, `tool_input.subagent_type`, and `tool_input.run_in_background` from the hook JSON
+- **Output**: Writes a `mem:signal` scoped to the active WU (e.g., `agent-launch: agent-abc (Explore): Find API endpoints [background: /path/to/output]`)
+- **WU detection**: Extracts WU ID from git branch name (`lane/*/wu-NNNN`) — no pnpm dependency, fast
+- **Fail-open**: Always exits 0. No-ops when not in a WU context, when `.lumenflow/` is missing, or when the agent ID cannot be parsed
+- **Timeout**: Synchronous `mem:signal` call with 5-second timeout to ensure delivery without blocking
+
+**Configuration** (`.claude/settings.json`):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/track-agent-launch.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Limitations:**
+
+- Only tracks agents launched while on a WU branch (no WU = no signal target)
+- Does not auto-resume agents — surfaces IDs so the resumed agent can decide
+- Signal delivery depends on `mem:signal` CLI being available (fails silently otherwise)
+
 ### 5.4 Decay Policy (WU-1474)
 
 Decay-based archival removes stale memory nodes during lifecycle events, preventing unbounded memory accumulation.
