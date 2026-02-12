@@ -4,7 +4,7 @@ _Last updated: 2026-02-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1602 — Align docs terminology from spawn execution to delegation intent](wu/WU-1602.yaml)
 
 ## Completed
 
