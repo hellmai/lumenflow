@@ -30,7 +30,6 @@ sections:
 - [WU-1586 — Core strict wave 2C: backlog and compliance strict fixes](wu/WU-1586.yaml) — Framework: Core Lifecycle
 - [WU-1587 — Core strict wave 2D: infrastructure strict fixes](wu/WU-1587.yaml) — Framework: Core State Recovery
 - [WU-1588 — Core strict wave 2E: remaining fixes and strict enablement](wu/WU-1588.yaml) — Framework: Core Validation
-- [WU-1602 — Align docs terminology from spawn execution to delegation intent](wu/WU-1602.yaml) — Content: Framework Docs
 - [WU-1603 — Introduce wu:brief as pure prompt generator and deprecate wu:spawn alias](wu/WU-1603.yaml) — Framework: CLI Orchestration
 - [WU-1604 — Add wu:delegate for side-effectful lineage recording and orchestration integration](wu/WU-1604.yaml) — Framework: Initiatives
 - [WU-1605 — Add claim-time pickup evidence and enforce intent-vs-pickup provenance at wu:done](wu/WU-1605.yaml) — Framework: CLI WU Commands
@@ -38,7 +37,7 @@ sections:
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-1602 — Align docs terminology from spawn execution to delegation intent](wu/WU-1602.yaml) — Content: Framework Docs
 
 ## ⛔ Blocked
 
