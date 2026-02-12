@@ -1,0 +1,48 @@
+id: WU-1591
+title: 'Cloud State Commands: branch-pr support for edit/block/unblock/release/delete'
+lane: 'Operations: Tooling'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-12
+code_paths:
+  - packages/@lumenflow/cli/src/wu-edit.ts
+  - packages/@lumenflow/cli/src/wu-block.ts
+  - packages/@lumenflow/cli/src/wu-unblock.ts
+  - packages/@lumenflow/cli/src/wu-release.ts
+  - packages/@lumenflow/cli/src/wu-delete.ts
+  - packages/@lumenflow/cli/src/wu-claim.ts
+tests:
+  manual:
+    - 'Validate branch-pr state command sequence: edit, block, unblock, release/delete on cloud branch without main writes.'
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-delete.test.ts
+    - packages/@lumenflow/cli/src/__tests__/release.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1591.done
+dependencies: []
+initiative: INIT-023
+phase: 3
+blocked_by:
+  - WU-1590
+spec_refs:
+  - lumenflow://plans/zazzy-launching-pretzel.md
+risks: []
+notes: Pattern B decomposition WU-C state command layer. Depends on WU-1590 critical lifecycle patterns and branch resolver behavior.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: After the critical create-claim-done lifecycle works in cloud mode, state transition commands still assume micro-worktree updates on main. Problem: branch-pr agents cannot use wu:edit, wu:block, wu:unblock, wu:release, or wu:delete without breaking cloud workflow guarantees. Solution: add branch-pr cloud paths that apply state changes on the active branch, preserve local workflow defaults, and maintain consistent metadata transitions.'
+acceptance:
+  - Enable wu:edit for branch-pr WUs by removing hard block and supporting branch-local spec edits with commit/push.
+  - Add cloud branch-pr execution paths for wu:block and wu:unblock that avoid micro-worktree pushes to main.
+  - Add cloud branch-pr execution paths for wu:release and wu:delete that avoid micro-worktree pushes to main.
+  - Preserve existing worktree/local behavior when cloud mode is not active.
+  - Add/extend tests for branch-pr behavior across edit, block/unblock, release, and delete commands.
