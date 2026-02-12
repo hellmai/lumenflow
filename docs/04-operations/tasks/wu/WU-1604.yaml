@@ -2,7 +2,7 @@ id: WU-1604
 title: Add wu:delegate for side-effectful lineage recording and orchestration integration
 lane: 'Framework: Initiatives'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-12
 code_paths:
@@ -17,7 +17,8 @@ code_paths:
   - packages/@lumenflow/mcp/src/tools.ts
 tests:
   manual:
-    - Run delegation/orchestration flows and verify lineage intent is recorded only for explicit delegation paths.
+    - Run delegation/orchestration flows and verify lineage intent is recorded only for explicit
+      delegation paths.
   unit:
     - packages/@lumenflow/cli/__tests__/orchestrate-initiative.test.ts
     - packages/@lumenflow/cli/__tests__/orchestrate-monitor.test.ts
@@ -40,8 +41,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Introduce a side-effectful delegation command that records lineage intent explicitly while keeping prompt generation behavior pure. Integrate orchestration flows to use delegation semantics where appropriate without falsely implying automatic execution.
+description: Introduce a side-effectful delegation command that records lineage intent explicitly
+  while keeping prompt generation behavior pure. Integrate orchestration flows to use delegation
+  semantics where appropriate without falsely implying automatic execution.
 acceptance:
-  - wu:delegate records delegation lineage intentionally and emits or references briefing output for the target WU.
-  - Orchestration pathways use delegation semantics consistently without claiming execution when only prompts are generated.
-  - Spawn/delegation monitoring commands continue to function with the updated event model and messaging.
+  - wu:delegate records delegation lineage intentionally and emits or references briefing output for
+    the target WU.
+  - Orchestration pathways use delegation semantics consistently without claiming execution when
+    only prompts are generated.
+  - Spawn/delegation monitoring commands continue to function with the updated event model and
+    messaging.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-initiatives-wu-1604
+claimed_at: 2026-02-12T17:45:25.765Z
+baseline_main_sha: 88f9b2bba59637d0b28ea1d7a49774a35acd84ec
+session_id: 4bbe0e7b-8874-4547-9d23-3400cd238ae3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-12T17:45:25.770Z

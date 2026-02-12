@@ -4,7 +4,7 @@ _Last updated: 2026-02-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1604 — Add wu:delegate for side-effectful lineage recording and orchestration integration](wu/WU-1604.yaml)
 
 ## Completed
 
