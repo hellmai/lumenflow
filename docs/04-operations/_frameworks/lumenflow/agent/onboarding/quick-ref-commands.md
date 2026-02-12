@@ -27,7 +27,7 @@ Run `--help` first, then run the real command with explicit flags.
 | Memory & Sessions   | `pnpm mem:checkpoint --help`          | `pnpm mem:checkpoint --wu WU-1561`                        |
 | State Management    | `pnpm state:doctor --help`            | `pnpm state:doctor --json`                                |
 | Dependencies        | `pnpm deps:add --help`                | `pnpm deps:add --pkg zod`                                 |
-| Plans               | `pnpm initiative:plan --help`         | `pnpm initiative:plan --initiative INIT-021 --create`     |
+| Plans               | `pnpm plan:link --help`               | `pnpm plan:link --id INIT-021 --plan lumenflow://plans/INIT-021-plan.md` |
 | Initiatives         | `pnpm initiative:status --help`       | `pnpm initiative:status --id INIT-021`                    |
 | Orchestration       | `pnpm orchestrate:init-status --help` | `pnpm orchestrate:init-status --id INIT-021`              |
 | Metrics & Flow      | `pnpm flow:report --help`             | `pnpm flow:report`                                        |
@@ -225,14 +225,28 @@ If the plan exists only in conversation, use `--plan` on `wu:create` to generate
 stub in `$LUMENFLOW_HOME/plans/`, then summarize the conversation there and reference it via
 `spec_refs`. Feature WUs require `spec_refs`; notes do not replace the plan link.
 
-| Command                                               | Description                                 |
-| ----------------------------------------------------- | ------------------------------------------- |
-| `pnpm initiative:plan --initiative INIT-XXX`          | Link existing plan to initiative            |
-| `pnpm initiative:plan --initiative INIT-XXX --create` | Create plan template and link to initiative |
+| Command                                               | Description                                                |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| `pnpm plan:create --id INIT-XXX --title "..."`        | Create a repo-native plan file in `docs/04-operations/plans/` |
+| `pnpm plan:edit --id INIT-XXX --section Goal --content "..."` | Edit a section in a plan file                       |
+| `pnpm plan:link --id INIT-XXX --plan lumenflow://plans/INIT-XXX-plan.md` | Link plan URI to initiative or WU          |
+| `pnpm plan:promote --id INIT-XXX`                     | Promote plan status to approved                             |
+| `pnpm initiative:plan --initiative INIT-XXX --plan <path>` | Legacy-compatible initiative linking command               |
+| `pnpm initiative:plan --initiative INIT-XXX --create` | Legacy-compatible create-and-link flow                      |
 
 ### Linking Plans
 
-**To an initiative:**
+**To an initiative (canonical):**
+
+```bash
+# Create a plan
+pnpm plan:create --id INIT-001 --title "Auth System Rollout"
+
+# Link plan URI to initiative
+pnpm plan:link --id INIT-001 --plan lumenflow://plans/INIT-001-plan.md
+```
+
+**Legacy-compatible initiative command:**
 
 ```bash
 # Create a new plan template
