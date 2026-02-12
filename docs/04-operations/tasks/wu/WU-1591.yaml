@@ -1,6 +1,6 @@
 id: WU-1591
 title: 'Cloud State Commands: branch-pr support for edit/block/unblock/release/delete'
-lane: 'Operations: Tooling'
+lane: 'Framework: CLI WU Commands'
 type: feature
 status: ready
 priority: P1
