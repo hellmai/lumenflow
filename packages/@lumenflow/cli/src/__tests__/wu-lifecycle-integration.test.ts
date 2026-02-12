@@ -17,7 +17,10 @@ import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { parseYAML, stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { CLAIMED_MODES, WU_STATUS } from '@lumenflow/core/wu-constants';
-import { shouldApplyCanonicalClaimUpdate, shouldPersistClaimMetadataOnBranch } from '../wu-claim.js';
+import {
+  shouldApplyCanonicalClaimUpdate,
+  shouldPersistClaimMetadataOnBranch,
+} from '../wu-claim.js';
 
 // Test constants
 const TEST_WU_ID = 'WU-9901';
