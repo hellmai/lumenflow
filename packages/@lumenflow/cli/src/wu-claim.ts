@@ -52,8 +52,8 @@ import { die, getErrorMessage } from '@lumenflow/core/error-handler';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 // WU-1491: Mode resolution for --cloud and flag combinations
 import { resolveClaimMode } from './wu-claim-mode.js';
-// WU-1590: Cloud claim helpers for persisting claimed_branch and skipping branch-exists checks
-import { buildCloudClaimMetadata, shouldSkipBranchExistsCheck } from './wu-claim-cloud.js';
+// WU-1590: Cloud claim helpers for skipping branch-exists checks in cloud mode
+import { shouldSkipBranchExistsCheck } from './wu-claim-cloud.js';
 // WU-1495: Cloud auto-detection from config-driven env signals
 import { detectCloudMode } from '@lumenflow/core/cloud-detect';
 import { WU_PATHS, getStateStoreDirFromBacklog } from '@lumenflow/core/wu-paths';
