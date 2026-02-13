@@ -22,7 +22,6 @@ sections:
 
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
-- [WU-1621 — Harden initiative metadata writes against origin movement](wu/WU-1621.yaml) — Framework: CLI Orchestration
 - [WU-1581 — CLI strict wave 1A: high-impact WU command hotspots](wu/WU-1581.yaml) — Framework: CLI WU Commands
 - [WU-1582 — CLI strict wave 1B: initiative and gates command fixes](wu/WU-1582.yaml) — Framework: CLI Orchestration
 - [WU-1583 — CLI strict wave 1C: remaining fixes and strict enablement](wu/WU-1583.yaml) — Framework: CLI Enforcement
@@ -602,4 +601,5 @@ sections:
 - [WU-1606 — Sync internal and Starlight docs for wu:brief/delegate provenance changes](wu/WU-1606.yaml)
 - [WU-1622 — Fix lumenflow:upgrade push failure — missing ALLOWED_WU_TOOLS entry and stale node_modules](wu/WU-1622.yaml)
 - [WU-1624 — Prevent local state divergence after failed wu:done recovery](wu/WU-1624.yaml)
+- [WU-1621 — Harden initiative metadata writes against origin movement](wu/WU-1621.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
