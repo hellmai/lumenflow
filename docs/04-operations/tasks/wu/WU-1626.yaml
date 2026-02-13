@@ -2,7 +2,7 @@ id: WU-1626
 title: Extract micro-worktree shared helper surface
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-13
 code_paths:
@@ -32,8 +32,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Extract a stable helper surface from micro-worktree into micro-worktree-shared.ts so atomic merge can reuse temp branch/worktree/push-retry primitives without tight coupling. This WU is a pure move/re-export with no behavior change.
+description: Extract a stable helper surface from micro-worktree into micro-worktree-shared.ts so
+  atomic merge can reuse temp branch/worktree/push-retry primitives without tight coupling. This WU
+  is a pure move/re-export with no behavior change.
 acceptance:
-  - micro-worktree-shared.ts contains the extracted temp-branch/worktree and push-retry helpers with stable exports
+  - micro-worktree-shared.ts contains the extracted temp-branch/worktree and push-retry helpers with
+    stable exports
   - micro-worktree.ts imports/re-exports the shared helpers without behavior changes
   - core callers remain backward compatible via unchanged public exports
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1626
+claimed_at: 2026-02-13T10:31:25.005Z
+baseline_main_sha: cd51758cee642a5bd3c7259d372419c3f32a4323
+session_id: c061efa8-e834-49f9-a80d-685797f55cb4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-13T10:31:25.011Z

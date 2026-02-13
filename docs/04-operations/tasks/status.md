@@ -4,7 +4,7 @@ _Last updated: 2026-02-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1626 — Extract micro-worktree shared helper surface](wu/WU-1626.yaml)
 
 ## Completed
 
