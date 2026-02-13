@@ -2,7 +2,7 @@ id: WU-1650
 title: Extract wu-edit.ts validation and apply operations
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-13
 code_paths:
@@ -29,8 +29,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Mechanically split packages/@lumenflow/cli/src/wu-edit.ts into dedicated validation and edit-operation modules while keeping existing command contract and behavior.
+description: Mechanically split packages/@lumenflow/cli/src/wu-edit.ts into dedicated validation and
+  edit-operation modules while keeping existing command contract and behavior.
 acceptance:
   - Validation helpers are extracted and reused by wu-edit orchestrator without behavior changes.
   - Edit/apply operations are extracted into focused modules and preserve current semantics.
   - CLI output and exit behavior for wu:edit remain unchanged.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1650
+claimed_at: 2026-02-13T22:26:14.028Z
+baseline_main_sha: a158c6c6b3822902bf6a22b270677d81295aae76
+session_id: c65a9b89-e9f6-422c-844f-523d0e33216b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-13T22:26:14.032Z

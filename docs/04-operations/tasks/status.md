@@ -8,6 +8,7 @@ _Last updated: 2026-02-13_
 - [WU-1644 — Extract init.ts scaffolding and detection helpers](wu/WU-1644.yaml)
 - [WU-1662 — Define typed XState wu:done pipeline machine in core](wu/WU-1662.yaml)
 - [WU-1651 — Extract wu-create.ts validation, content, and readiness builders](wu/WU-1651.yaml)
+- [WU-1650 — Extract wu-edit.ts validation and apply operations](wu/WU-1650.yaml)
 
 ## Completed
 
