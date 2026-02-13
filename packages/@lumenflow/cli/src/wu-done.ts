@@ -36,6 +36,14 @@
 
 import '@lumenflow/core';
 
+// WU-1663: XState pipeline actor for state-driven orchestration
+import { createActor } from 'xstate';
+import {
+  wuDoneMachine,
+  WU_DONE_EVENTS,
+  WU_DONE_STATES,
+} from '@lumenflow/core/wu-done-machine';
+
 // WU-1153: wu:done guard for uncommitted code_paths is implemented in core package
 // The guard runs in executeWorktreeCompletion() before metadata transaction
 // See: packages/@lumenflow/core/src/wu-done-validation.ts
@@ -2595,6 +2603,32 @@ async function main() {
   // Capture main checkout path once. process.cwd() may drift later during recovery flows.
   const mainCheckoutPath = process.cwd();
 
+  // WU-1663: Determine prepPassed early for pipeline actor input.
+  // canSkipGates checks if wu:prep already ran gates successfully via checkpoint.
+  // This drives the isPrepPassed guard on the GATES_SKIPPED transition.
+  const earlySkipResult = canSkipGates(id, { currentHeadSha: undefined });
+  const prepPassed = earlySkipResult.canSkip;
+
+  // WU-1663: Create XState pipeline actor for state-driven orchestration.
+  // The actor tracks which pipeline stage we're in (validating, gating, committing, etc.)
+  // and provides explicit state/transition contracts. Existing procedural logic continues
+  // to do the real work; the actor provides structured state tracking alongside it.
+  const pipelineActor = createActor(wuDoneMachine, {
+    input: {
+      wuId: id,
+      worktreePath: derivedWorktree,
+      prepPassed,
+    },
+  });
+  pipelineActor.start();
+
+  // WU-1663: Send START event to transition from idle -> validating
+  pipelineActor.send({
+    type: WU_DONE_EVENTS.START,
+    wuId: id,
+    worktreePath: derivedWorktree || '',
+  });
+
   // WU-1590: branch-pr has no worktree, treat like branch-only for path resolution and ensureOnMain skip
   const isNoWorktreeMode = isBranchOnly || isBranchPR;
   const resolvedWorktreePath =
@@ -2629,18 +2663,32 @@ async function main() {
   }
 
   // Pre-flight checks (WU-1215: extracted to executePreFlightChecks function)
-  const preFlightResult = await executePreFlightChecks({
-    id,
-    args,
-    isBranchOnly: effectiveBranchOnly,
-    isDocsOnly,
-    docMain,
-    docForValidation: initialDocForValidation,
-    derivedWorktree: effectiveDerivedWorktree,
-  });
+  // WU-1663: Wrap in try/catch to send pipeline failure event before die() propagates
+  let preFlightResult: Awaited<ReturnType<typeof executePreFlightChecks>>;
+  try {
+    preFlightResult = await executePreFlightChecks({
+      id,
+      args,
+      isBranchOnly: effectiveBranchOnly,
+      isDocsOnly,
+      docMain,
+      docForValidation: initialDocForValidation,
+      derivedWorktree: effectiveDerivedWorktree,
+    });
+  } catch (preFlightErr) {
+    pipelineActor.send({
+      type: WU_DONE_EVENTS.VALIDATION_FAILED,
+      error: getErrorMessage(preFlightErr),
+    });
+    pipelineActor.stop();
+    throw preFlightErr;
+  }
   const title = preFlightResult.title;
   // Note: docForValidation is returned but not used after pre-flight checks
   // The metadata transaction uses docForUpdate instead
+
+  // WU-1663: Pre-flight checks passed - transition to preparing state
+  pipelineActor.send({ type: WU_DONE_EVENTS.VALIDATION_PASSED });
 
   // WU-1599: Enforce auditable spawn provenance for initiative-governed WUs.
   await enforceSpawnProvenanceForDone(id, docMain, {
@@ -2693,13 +2741,35 @@ async function main() {
     // Otherwise silently allow - fail-open
   }
 
-  const gateExecutionResult = await executeGates({
-    id,
-    args,
-    isBranchOnly: effectiveBranchOnly,
-    isDocsOnly,
-    worktreePath,
-  });
+  // WU-1663: Preparation complete - transition to gating state
+  pipelineActor.send({ type: WU_DONE_EVENTS.PREPARATION_COMPLETE });
+
+  // WU-1663: Wrap gates in try/catch to send pipeline failure event
+  let gateExecutionResult: Awaited<ReturnType<typeof executeGates>>;
+  try {
+    gateExecutionResult = await executeGates({
+      id,
+      args,
+      isBranchOnly: effectiveBranchOnly,
+      isDocsOnly,
+      worktreePath,
+    });
+  } catch (gateErr) {
+    pipelineActor.send({
+      type: WU_DONE_EVENTS.GATES_FAILED,
+      error: getErrorMessage(gateErr),
+    });
+    pipelineActor.stop();
+    throw gateErr;
+  }
+
+  // WU-1663: Gates passed - transition from gating state.
+  // Use GATES_SKIPPED if checkpoint dedup allowed skip, GATES_PASSED otherwise.
+  if (gateExecutionResult.skippedByCheckpoint) {
+    pipelineActor.send({ type: WU_DONE_EVENTS.GATES_SKIPPED });
+  } else {
+    pipelineActor.send({ type: WU_DONE_EVENTS.GATES_PASSED });
+  }
 
   // Print State HUD for visibility (WU-1215: extracted to printStateHUD function)
   printStateHUD({
@@ -2802,6 +2872,13 @@ async function main() {
         completionResult = await executeWorktreeCompletion(worktreeContext);
       }
 
+      // WU-1663: Mode-specific completion succeeded - send pipeline events.
+      // The completion modules handle commit, merge, and push internally.
+      // We send the corresponding pipeline events based on the completion result.
+      pipelineActor.send({ type: WU_DONE_EVENTS.COMMIT_COMPLETE });
+      pipelineActor.send({ type: WU_DONE_EVENTS.MERGE_COMPLETE });
+      pipelineActor.send({ type: WU_DONE_EVENTS.PUSH_COMPLETE });
+
       // Handle recovery mode (zombie state cleanup completed)
       if ('recovered' in completionResult && completionResult.recovered) {
         // P0 FIX: Release lane lock before early exit
@@ -2811,9 +2888,33 @@ async function main() {
         } catch {
           // Intentionally ignore lock release errors during cleanup
         }
+        pipelineActor.stop();
         process.exit(EXIT_CODES.SUCCESS);
       }
     } catch (err) {
+      // WU-1663: Mode execution failed - determine which stage failed
+      // based on completion result flags and send appropriate failure event.
+      const failureStage =
+        completionResult.committed === false
+          ? WU_DONE_EVENTS.COMMIT_FAILED
+          : completionResult.merged === false
+            ? WU_DONE_EVENTS.MERGE_FAILED
+            : completionResult.pushed === false
+              ? WU_DONE_EVENTS.PUSH_FAILED
+              : WU_DONE_EVENTS.COMMIT_FAILED; // Default to commit as earliest possible failure
+
+      pipelineActor.send({
+        type: failureStage,
+        error: getErrorMessage(err),
+      });
+
+      // WU-1663: Log pipeline state for diagnostics
+      const failedSnapshot = pipelineActor.getSnapshot();
+      console.error(
+        `${LOG_PREFIX.DONE} Pipeline state: ${failedSnapshot.value} (failedAt: ${failedSnapshot.context.failedAt})`,
+      );
+      pipelineActor.stop();
+
       // P0 FIX: Release lane lock before error exit
       try {
         const lane = docMain.lane;
@@ -2936,6 +3037,16 @@ async function main() {
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Decay archival error (fail-open): ${getErrorMessage(err)}`,
     );
   }
+
+  // WU-1663: Cleanup complete - transition to final done state
+  pipelineActor.send({ type: WU_DONE_EVENTS.CLEANUP_COMPLETE });
+
+  // WU-1663: Log final pipeline state for diagnostics
+  const finalSnapshot = pipelineActor.getSnapshot();
+  console.log(
+    `${LOG_PREFIX.DONE} Pipeline state: ${finalSnapshot.value} (WU-1663)`,
+  );
+  pipelineActor.stop();
 
   console.log(
     `\n${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Transaction COMMIT - all steps succeeded (WU-755)`,
