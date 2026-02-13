@@ -4,7 +4,7 @@ title: God File Decomposition Initiative
 description: Complete mechanical decomposition of 10 high-churn god files into command- and
   domain-focused modules, using merge-conflict-prioritized split strategy (11 WUs, 3 phases, no new
   abstractions).
-status: in_progress
+status: done
 priority: P1
 owner: Framework Team
 created: 2026-02-12
