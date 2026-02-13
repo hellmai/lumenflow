@@ -496,7 +496,12 @@ export class StateMachineRecoveryManager {
     const failedAt = this.failedAt;
 
     // Pre-write states: nothing to roll back
-    if (!failedAt || failedAt === 'validating' || failedAt === 'preparing' || failedAt === 'gating') {
+    if (
+      !failedAt ||
+      failedAt === 'validating' ||
+      failedAt === 'preparing' ||
+      failedAt === 'gating'
+    ) {
       return {
         snapshotRestore: false,
         branchRollback: false,
