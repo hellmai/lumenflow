@@ -4,7 +4,7 @@ _Last updated: 2026-02-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1640 — Prevent false initiative done when phases remain pending](wu/WU-1640.yaml)
 
 ## Completed
 

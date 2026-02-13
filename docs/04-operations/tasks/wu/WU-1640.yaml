@@ -2,14 +2,15 @@ id: WU-1640
 title: Prevent false initiative done when phases remain pending
 lane: 'Framework: CLI Orchestration'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-13
 code_paths:
   - packages/@lumenflow/core/src/wu-done-worktree.ts
 tests:
   manual:
-    - Complete a WU linked to an initiative with pending phases and verify initiative does not end at done unless phases are coherent.
+    - Complete a WU linked to an initiative with pending phases and verify initiative does not end
+      at done unless phases are coherent.
     - Run pnpm initiative:status --id INIT-025 and confirm status/phase consistency messaging.
   unit:
     - packages/@lumenflow/core/src/__tests__/initiative-sync-on-wu-done.test.ts
@@ -28,8 +29,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Initiatives can be marked done based on WU completion counts even when phase metadata remains pending, causing false completion states. Enforce completion consistency so initiative status cannot converge to done unless phase statuses and planned scope are coherent.
+description: Initiatives can be marked done based on WU completion counts even when phase metadata
+  remains pending, causing false completion states. Enforce completion consistency so initiative
+  status cannot converge to done unless phase statuses and planned scope are coherent.
 acceptance:
-  - initiative completion logic refuses/blocks status done when any initiative phase remains pending or blocked.
+  - initiative completion logic refuses/blocks status done when any initiative phase remains pending
+    or blocked.
   - initiative status output reflects unresolved phase inconsistency clearly.
   - WU completion flow no longer auto-closes initiatives into a false done state.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-orchestration-wu-1640
+claimed_at: 2026-02-13T16:56:29.180Z
+baseline_main_sha: 921d03ff6da0a3cdce640c57b8ab17979bbfda9f
+session_id: b8bf85fc-939e-4489-b859-6edc244b518b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-13T16:56:29.186Z
