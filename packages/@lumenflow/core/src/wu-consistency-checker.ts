@@ -36,6 +36,7 @@ import { listTrackedWUStampIds } from './stamp-tracking.js';
 
 interface CheckWUConsistencyOptions {
   trackedStampIds?: Set<string> | null;
+  activeWorktreeIds?: Set<string> | null;
 }
 
 /**
@@ -112,7 +113,11 @@ export async function checkWUConsistency(
   const { inProgress: statusInProgress } = parseStatusSections(statusContent, id);
 
   // Check for worktree
-  const hasWorktree = await checkWorktreeExists(id, projectRoot);
+  const normalizedId = id.toUpperCase();
+  const hasWorktree =
+    options.activeWorktreeIds !== undefined
+      ? options.activeWorktreeIds !== null && options.activeWorktreeIds.has(normalizedId)
+      : await checkWorktreeExists(id, projectRoot);
   const worktreePathExists = await checkWorktreePathExists(worktreePathFromYaml);
 
   // Detection logic
@@ -232,10 +237,14 @@ export async function checkAllWUConsistency(projectRoot = process.cwd()) {
     projectRoot,
     stampsDir: paths.STAMPS_DIR(),
   });
+  const activeWorktreeIds = await listActiveWorktreeIds(projectRoot);
 
   for (const file of wuFiles) {
     const id = file.replace('.yaml', '');
-    const report = await checkWUConsistency(id, projectRoot, { trackedStampIds });
+    const report = await checkWUConsistency(id, projectRoot, {
+      trackedStampIds,
+      activeWorktreeIds,
+    });
     allErrors.push(...report.errors);
   }
 
@@ -1188,6 +1197,28 @@ async function checkWorktreeExists(id, projectRoot) {
     return pattern.test(output);
   } catch {
     return false;
+  }
+}
+
+/**
+ * Precompute active WU IDs from git worktree list.
+ *
+ * Returns:
+ * - Set of normalized WU IDs (e.g. WU-1234) when query succeeds
+ * - null when git worktree listing is unavailable (caller should fall back)
+ */
+async function listActiveWorktreeIds(projectRoot): Promise<Set<string> | null> {
+  try {
+    const git = createGitForPath(projectRoot);
+    const output = await git.worktreeList();
+    const matches = output.match(/\bwu-\d+\b/gi) ?? [];
+    const ids = new Set<string>();
+    for (const match of matches) {
+      ids.add(match.toUpperCase());
+    }
+    return ids;
+  } catch {
+    return null;
   }
 }
 

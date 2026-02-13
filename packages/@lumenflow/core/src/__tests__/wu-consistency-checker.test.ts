@@ -521,4 +521,65 @@ acceptance:
       expect(report.stats.hasStamp).toBe(true);
     });
   });
+
+  describe('checkAllWUConsistency performance', () => {
+    it('fetches git worktree list once per full scan instead of once per WU', async () => {
+      const { checkAllWUConsistency } = await import('../wu-consistency-checker.js');
+
+      const wuPathA = path.join(testProjectRoot, 'docs/04-operations/tasks/wu/WU-7001.yaml');
+      const wuPathB = path.join(testProjectRoot, 'docs/04-operations/tasks/wu/WU-7002.yaml');
+      writeFileSync(
+        wuPathA,
+        `id: WU-7001
+title: Perf test A
+lane: 'Framework: Core'
+type: bug
+status: in_progress
+priority: P2
+created: 2026-02-13
+code_paths: []
+tests:
+  manual: []
+  unit: []
+  e2e: []
+artifacts: []
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+description: Perf test A
+acceptance:
+  - Perf test
+`,
+      );
+      writeFileSync(
+        wuPathB,
+        `id: WU-7002
+title: Perf test B
+lane: 'Framework: Core'
+type: bug
+status: in_progress
+priority: P2
+created: 2026-02-13
+code_paths: []
+tests:
+  manual: []
+  unit: []
+  e2e: []
+artifacts: []
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+description: Perf test B
+acceptance:
+  - Perf test
+`,
+      );
+
+      await checkAllWUConsistency(testProjectRoot);
+
+      expect(mockGitForWorktree.worktreeList).toHaveBeenCalledTimes(1);
+    });
+  });
 });
