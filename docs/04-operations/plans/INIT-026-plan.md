@@ -33,7 +33,11 @@ Execution strategy (no feature flag, direct replacement):
 
 ## Success Criteria
 
-<!-- How will you know when this is complete? Measurable outcomes? -->
+- Failure injection shows `main` remains clean on merge fail, push fail, callback fail, and retry exhaustion.
+- No orphaned temp branches/worktrees after failed attempts.
+- Idempotent rerun succeeds without duplicate events, stamps, backlog entries, or status corruption.
+- Branch-only non-PR mode converges under origin movement with clear retry-exhaustion guidance.
+- `pnpm gates` passes for each WU and across final integrated state.
 
 ## Risks
 
