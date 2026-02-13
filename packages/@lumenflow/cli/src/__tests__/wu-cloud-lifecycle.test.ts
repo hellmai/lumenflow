@@ -143,6 +143,17 @@ describe('wu:claim cloud canonical update strategy (WU-1598)', () => {
 
     expect(shouldPersist).toBe(true);
   });
+
+  it('should write claim metadata on working branch when remote operations are skipped', async () => {
+    const { shouldPersistClaimMetadataOnBranch } = await import('../wu-claim.js');
+    const shouldPersist = shouldPersistClaimMetadataOnBranch({
+      claimedMode: CLAIMED_MODES.BRANCH_ONLY,
+      noPush: false,
+      skipRemote: true,
+    });
+
+    expect(shouldPersist).toBe(true);
+  });
 });
 
 describe('WU-1609: command cloud-path suppression on protected main/master', () => {

@@ -245,6 +245,7 @@ interface ClaimCanonicalUpdateInput {
 interface ClaimBranchMetadataInput {
   claimedMode?: string;
   noPush?: boolean;
+  skipRemote?: boolean;
 }
 
 /**
@@ -266,7 +267,20 @@ export function shouldApplyCanonicalClaimUpdate(input: ClaimCanonicalUpdateInput
  * Decide whether wu:claim should write claim metadata directly to the active branch.
  */
 export function shouldPersistClaimMetadataOnBranch(input: ClaimBranchMetadataInput): boolean {
-  return input.noPush === true || input.claimedMode === CLAIMED_MODES.BRANCH_PR;
+  return (
+    input.noPush === true ||
+    input.claimedMode === CLAIMED_MODES.BRANCH_PR ||
+    input.skipRemote === true
+  );
+}
+
+/**
+ * Resolve which main reference should be used for claim baseline SHA.
+ *
+ * In local-only mode (git.requireRemote=false), origin/main may not exist.
+ */
+export function resolveClaimBaselineRef(input: { skipRemote?: boolean } = {}): string {
+  return input.skipRemote === true ? BRANCHES.MAIN : GIT_REFS.ORIGIN_MAIN;
 }
 
 /**
@@ -569,7 +583,8 @@ async function updateWUYaml(
   doc.claimed_at = new Date().toISOString();
   // WU-1382: Store baseline main SHA for parallel agent detection
   // wu:done will compare against this to detect if other WUs were merged during work
-  doc.baseline_main_sha = await git.getCommitHash(GIT_REFS.ORIGIN_MAIN);
+  const baselineRef = resolveClaimBaselineRef({ skipRemote: shouldSkipRemoteOperations() });
+  doc.baseline_main_sha = await git.getCommitHash(baselineRef);
   // WU-1438: Store agent session ID for tracking
   if (sessionId) {
     doc.session_id = sessionId;
@@ -1308,11 +1323,13 @@ async function claimBranchOnlyMode(ctx) {
     updatedTitle,
     currentBranchForCloud, // WU-1590: For persisting claimed_branch
   } = ctx;
+  const skipRemote = shouldSkipRemoteOperations();
 
   if (shouldCreateBranch) {
     // Create branch and switch to it from origin/main (avoids local main mutation)
     try {
-      await getGitForCwd().createBranch(branch, `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`);
+      const branchStartPoint = skipRemote ? BRANCHES.MAIN : `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
+      await getGitForCwd().createBranch(branch, branchStartPoint);
     } catch (error) {
       die(
         `Canonical claim state may be updated, but branch creation failed.\n\n` +
@@ -1337,6 +1354,7 @@ async function claimBranchOnlyMode(ctx) {
   const shouldPersistClaimMetadata = shouldPersistClaimMetadataOnBranch({
     claimedMode,
     noPush: Boolean(args.noPush),
+    skipRemote,
   });
 
   if (shouldPersistClaimMetadata) {
@@ -1376,10 +1394,16 @@ async function claimBranchOnlyMode(ctx) {
     await getGitForCwd().commit(msg);
   }
 
-  if (args.noPush) {
-    console.warn(
-      `${PREFIX} Warning: --no-push enabled. Claim is local-only and NOT visible to other agents.`,
-    );
+  if (args.noPush || skipRemote) {
+    if (skipRemote && !args.noPush) {
+      console.warn(
+        `${PREFIX} Local-only mode (git.requireRemote=false): skipping origin push; claim is local-only.`,
+      );
+    } else {
+      console.warn(
+        `${PREFIX} Warning: --no-push enabled. Claim is local-only and NOT visible to other agents.`,
+      );
+    }
   } else {
     await getGitForCwd().push(REMOTES.ORIGIN, branch, { setUpstream: true });
   }
@@ -1565,6 +1589,7 @@ async function claimWorktreeMode(ctx) {
 
   const originalCwd = process.cwd();
   const worktreePath = path.resolve(worktree);
+  const skipRemote = shouldSkipRemoteOperations();
   let finalTitle = updatedTitle || title;
   const commitMsg = COMMIT_FORMATS.CLAIM(id.toLowerCase(), laneK);
 
@@ -1572,20 +1597,18 @@ async function claimWorktreeMode(ctx) {
   console.log(`${PREFIX} Creating worktree (branch = coordination lock)...`);
   // WU-1653: Use local main when no remote (requireRemote=false)
   const startPoint =
-    args.noPush || shouldSkipRemoteOperations()
-      ? BRANCHES.MAIN
-      : `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
+    args.noPush || skipRemote ? BRANCHES.MAIN : `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
   await getGitForCwd().worktreeAdd(worktree, branch, startPoint);
   console.log(`${PREFIX} ${EMOJI.SUCCESS} Worktree created at ${worktree}`);
 
   // WU-1653: Skip push when requireRemote=false (no remote exists)
-  if (!args.noPush && !shouldSkipRemoteOperations()) {
+  if (!args.noPush && !skipRemote) {
     const wtGit = createGitForPath(worktreePath);
     await wtGit.push(REMOTES.ORIGIN, branch, { setUpstream: true });
   }
 
-  // Handle local-only claim metadata update (noPush mode)
-  if (args.noPush) {
+  // Handle local-only claim metadata update (--no-push or requireRemote=false)
+  if (args.noPush || skipRemote) {
     const metadataResult = await handleNoPushMetadataUpdate({ ...ctx, worktreePath });
     finalTitle = metadataResult.finalTitle;
 
@@ -1600,9 +1623,15 @@ async function claimWorktreeMode(ctx) {
     await wtGit.commit(commitMsg);
 
     console.log(`${PREFIX} ${EMOJI.SUCCESS} Claim committed: ${commitMsg}`);
-    console.warn(
-      `${PREFIX} Warning: --no-push enabled. Claim is local-only and NOT visible to other agents.`,
-    );
+    if (skipRemote && !args.noPush) {
+      console.log(
+        `${PREFIX} Local-only mode (git.requireRemote=false): claim metadata committed in worktree.`,
+      );
+    } else {
+      console.warn(
+        `${PREFIX} Warning: --no-push enabled. Claim is local-only and NOT visible to other agents.`,
+      );
+    }
   }
 
   // WU-1023: Auto-setup worktree dependencies

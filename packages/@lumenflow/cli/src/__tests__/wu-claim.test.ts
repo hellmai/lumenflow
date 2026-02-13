@@ -25,6 +25,8 @@ import {
   buildRollbackYamlDoc,
   resolveClaimStatus,
   recordClaimPickupEvidence,
+  resolveClaimBaselineRef,
+  shouldPersistClaimMetadataOnBranch,
 } from '../wu-claim.js';
 import { CLAIMED_MODES, WU_STATUS } from '@lumenflow/core/wu-constants';
 import { resolveBranchClaimExecution } from '../wu-claim-cloud.js';
@@ -126,6 +128,26 @@ describe('wu-claim cloud branch execution resolution (WU-1596)', () => {
 
     expect(result.executionBranch).toBe('lane/framework-cli-wu-commands/wu-1596');
     expect(result.shouldCreateBranch).toBe(true);
+  });
+});
+
+describe('wu-claim local-only remote fallback behavior (WU-1655)', () => {
+  it('should persist metadata on working branch when remote operations are skipped', () => {
+    const shouldPersist = shouldPersistClaimMetadataOnBranch({
+      claimedMode: CLAIMED_MODES.BRANCH_ONLY,
+      noPush: false,
+      skipRemote: true,
+    });
+
+    expect(shouldPersist).toBe(true);
+  });
+
+  it('should resolve baseline ref to local main when remote operations are skipped', () => {
+    const localRef = resolveClaimBaselineRef({ skipRemote: true });
+    const remoteRef = resolveClaimBaselineRef({ skipRemote: false });
+
+    expect(localRef).toBe('main');
+    expect(remoteRef).toBe('origin/main');
   });
 });
 
