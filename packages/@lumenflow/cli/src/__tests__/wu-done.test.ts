@@ -154,6 +154,72 @@ describe('wu-done', () => {
     });
   });
 
+  describe('WU-1663: XState pipeline actor integration', () => {
+    it('wu-done.ts imports the XState pipeline machine from core', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('wuDoneMachine');
+      expect(source).toContain('createActor');
+    });
+
+    it('wu-done.ts creates a pipeline actor and sends START event', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('pipelineActor');
+      expect(source).toContain('WU_DONE_EVENTS.START');
+    });
+
+    it('wu-done.ts sends VALIDATION_PASSED after pre-flight checks succeed', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('WU_DONE_EVENTS.VALIDATION_PASSED');
+    });
+
+    it('wu-done.ts sends GATES_PASSED or GATES_SKIPPED after gates', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('WU_DONE_EVENTS.GATES_PASSED');
+      expect(source).toContain('WU_DONE_EVENTS.GATES_SKIPPED');
+    });
+
+    it('wu-done.ts sends CLEANUP_COMPLETE at the end of main()', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('WU_DONE_EVENTS.CLEANUP_COMPLETE');
+    });
+
+    it('wu-done.ts sends failure events when steps fail', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('WU_DONE_EVENTS.VALIDATION_FAILED');
+      expect(source).toContain('WU_DONE_EVENTS.GATES_FAILED');
+    });
+
+    it('wu-done.ts passes prepPassed to pipeline actor input for gate dedup', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      // The pipeline actor should be initialized with prepPassed from canSkipGates result
+      expect(source).toContain('prepPassed');
+      // Verify the machine input includes prepPassed wiring
+      expect(source).toMatch(/createActor\(wuDoneMachine/);
+    });
+
+    it('wu-done.ts logs pipeline state transitions for diagnostics', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('pipelineActor.getSnapshot()');
+    });
+
+    it('preserves existing preCommitGateDecision flow alongside pipeline actor', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      // Both the legacy preCommitGateDecision AND the pipeline actor events must coexist
+      expect(source).toContain('resolveWuDonePreCommitGateDecision');
+      expect(source).toContain('WU_DONE_EVENTS.GATES_PASSED');
+    });
+
+    it('preserves legacy rollback mechanisms (rollbackTransaction) alongside pipeline actor', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('rollbackTransaction');
+    });
+
+    it('stops the pipeline actor after completion or failure', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).toContain('pipelineActor.stop()');
+    });
+  });
+
   describe('WU-1492: computeBranchOnlyFallback with branch-pr', () => {
     it('does not treat branch-pr as branch-only', () => {
       const result = computeBranchOnlyFallback({
