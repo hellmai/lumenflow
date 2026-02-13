@@ -4,7 +4,7 @@ _Last updated: 2026-02-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1624 — Prevent local state divergence after failed wu:done recovery](wu/WU-1624.yaml)
 
 ## Completed
 
