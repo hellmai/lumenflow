@@ -571,34 +571,34 @@ This section provides a single-page reference for how every `wu:*` command, memo
 
 Each command runs from a specific **location** (main checkout, worktree, or lane branch) and produces a defined **handoff** to the next step. Using a command from the wrong location triggers a context-validation error with a copy-paste fix.
 
-| Command | Worktree Mode | Cloud/Branch-PR Mode | Expected Location | Handoff |
-| --- | --- | --- | --- | --- |
-| `wu:create` | Creates WU YAML on main via micro-worktree push | Same (or `--cloud` writes on active branch) | Main checkout (or any branch with `--cloud`) | WU spec ready for `wu:claim` |
-| `wu:claim` | Updates canonical state on `origin/main`, creates worktree at `worktrees/<lane>-wu-xxx` | `--cloud` sets `claimed_mode: branch-pr`, no worktree created | Main checkout | `cd worktrees/<lane>-wu-xxx` (worktree) or stay on branch (cloud) |
-| `wu:brief` | Generates handoff prompt with memory context for another agent | Same | Main checkout or worktree | Copy prompt to new agent session |
-| `wu:delegate` | Generates prompt and records delegation lineage | Same | Main checkout or worktree | Delegation record + prompt |
-| `wu:prep` | Runs gates in worktree, prints `wu:done` copy-paste instruction | Validates branch, runs gates in-place | Worktree (worktree mode) or main checkout (branch-pr) | Copy-paste `wu:done` command |
-| `wu:done` | Fast-forward merge to main, stamp, cleanup, push | Creates PR (does NOT merge), stamp deferred to `wu:cleanup` | Main checkout | WU complete (worktree) or PR created (cloud) |
-| `wu:cleanup` | N/A (wu:done handles everything) | Post-PR-merge: stamp, YAML update, branch delete | Main checkout (after PR merge) | WU fully complete |
-| `wu:block` | Sets status to `blocked`, frees lane | Same | Worktree or main | Lane freed for new claim |
-| `wu:unblock` | Sets status to `in_progress`, re-acquires lane | Same | Worktree or main | Resume work |
-| `wu:recover` | Analyzes and fixes state inconsistencies | Applies branch-pr fixes on claimed branch | Main checkout or worktree | State reconciled |
-| `wu:release` | Releases orphaned WU (`in_progress` to `ready`) | Same | Main checkout | WU available for reclaim |
-| `wu:status` | Shows status, location, valid commands | Same | Any | Informational only |
+| Command       | Worktree Mode                                                                           | Cloud/Branch-PR Mode                                          | Expected Location                                     | Handoff                                                           |
+| ------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- |
+| `wu:create`   | Creates WU YAML on main via micro-worktree push                                         | Same (or `--cloud` writes on active branch)                   | Main checkout (or any branch with `--cloud`)          | WU spec ready for `wu:claim`                                      |
+| `wu:claim`    | Updates canonical state on `origin/main`, creates worktree at `worktrees/<lane>-wu-xxx` | `--cloud` sets `claimed_mode: branch-pr`, no worktree created | Main checkout                                         | `cd worktrees/<lane>-wu-xxx` (worktree) or stay on branch (cloud) |
+| `wu:brief`    | Generates handoff prompt with memory context for another agent                          | Same                                                          | Main checkout or worktree                             | Copy prompt to new agent session                                  |
+| `wu:delegate` | Generates prompt and records delegation lineage                                         | Same                                                          | Main checkout or worktree                             | Delegation record + prompt                                        |
+| `wu:prep`     | Runs gates in worktree, prints `wu:done` copy-paste instruction                         | Validates branch, runs gates in-place                         | Worktree (worktree mode) or main checkout (branch-pr) | Copy-paste `wu:done` command                                      |
+| `wu:done`     | Fast-forward merge to main, stamp, cleanup, push                                        | Creates PR (does NOT merge), stamp deferred to `wu:cleanup`   | Main checkout                                         | WU complete (worktree) or PR created (cloud)                      |
+| `wu:cleanup`  | N/A (wu:done handles everything)                                                        | Post-PR-merge: stamp, YAML update, branch delete              | Main checkout (after PR merge)                        | WU fully complete                                                 |
+| `wu:block`    | Sets status to `blocked`, frees lane                                                    | Same                                                          | Worktree or main                                      | Lane freed for new claim                                          |
+| `wu:unblock`  | Sets status to `in_progress`, re-acquires lane                                          | Same                                                          | Worktree or main                                      | Resume work                                                       |
+| `wu:recover`  | Analyzes and fixes state inconsistencies                                                | Applies branch-pr fixes on claimed branch                     | Main checkout or worktree                             | State reconciled                                                  |
+| `wu:release`  | Releases orphaned WU (`in_progress` to `ready`)                                         | Same                                                          | Main checkout                                         | WU available for reclaim                                          |
+| `wu:status`   | Shows status, location, valid commands                                                  | Same                                                          | Any                                                   | Informational only                                                |
 
 **Memory and orchestration tools** (run from worktree or main):
 
-| Command | Purpose | Typical Location |
-| --- | --- | --- |
-| `mem:checkpoint` | Save progress for context recovery | Worktree |
-| `mem:recover` | Generate recovery context after compaction | Main or worktree |
-| `mem:signal` | Broadcast coordination signal to other agents | Worktree |
-| `mem:inbox` | Read coordination signals from other agents | Main or worktree |
-| `mem:start` | Start session, surfaces unread signals | Worktree |
-| `orchestrate:initiative` | Orchestrate initiative wave execution | Main |
-| `orchestrate:init-status` | Compact initiative progress view | Main |
-| `orchestrate:monitor` | Monitor delegation/agent activity | Main |
-| `state:doctor` | Diagnose and auto-fix state store issues | Main |
+| Command                   | Purpose                                       | Typical Location |
+| ------------------------- | --------------------------------------------- | ---------------- |
+| `mem:checkpoint`          | Save progress for context recovery            | Worktree         |
+| `mem:recover`             | Generate recovery context after compaction    | Main or worktree |
+| `mem:signal`              | Broadcast coordination signal to other agents | Worktree         |
+| `mem:inbox`               | Read coordination signals from other agents   | Main or worktree |
+| `mem:start`               | Start session, surfaces unread signals        | Worktree         |
+| `orchestrate:initiative`  | Orchestrate initiative wave execution         | Main             |
+| `orchestrate:init-status` | Compact initiative progress view              | Main             |
+| `orchestrate:monitor`     | Monitor delegation/agent activity             | Main             |
+| `state:doctor`            | Diagnose and auto-fix state store issues      | Main             |
 
 #### 2.6.2 Lifecycle Flow (Worktree Mode)
 
@@ -2588,12 +2588,12 @@ pnpm lumenflow:integrate --client claude-code
 
 **When to use `wu:delegate` vs `wu:brief`:**
 
-| Scenario | Use | Reason |
-| --- | --- | --- |
-| Initiative work (INIT-XXX) | `wu:delegate` | Auditable lineage required for initiative tracking |
-| One-off handoff | `wu:brief` | No lineage needed, prompt-only |
-| Sub-agent spawn from orchestrator | `wu:delegate` | Parent-child relationship must be recorded |
-| Manual agent restart | `wu:brief` | Resuming same agent, not new delegation |
+| Scenario                          | Use           | Reason                                             |
+| --------------------------------- | ------------- | -------------------------------------------------- |
+| Initiative work (INIT-XXX)        | `wu:delegate` | Auditable lineage required for initiative tracking |
+| One-off handoff                   | `wu:brief`    | No lineage needed, prompt-only                     |
+| Sub-agent spawn from orchestrator | `wu:delegate` | Parent-child relationship must be recorded         |
+| Manual agent restart              | `wu:brief`    | Resuming same agent, not new delegation            |
 
 **Prevention:**
 
@@ -2613,13 +2613,13 @@ pnpm lumenflow:integrate --client claude-code
 
 **When to use `wu:recover`:**
 
-| Issue | Command | What It Does |
-| --- | --- | --- |
-| Worktree exists, YAML says `ready` | `wu:recover --id WU-XXX --action resume` | Emits claim event, reconciles state |
-| YAML says `in_progress`, no worktree | `wu:recover --id WU-XXX --action reset` | Emits release event, sets to `ready` |
-| WU is `done` but worktree lingers | `wu:recover --id WU-XXX --action cleanup` | Removes worktree, verifies stamp |
-| State store and YAML disagree | `pnpm state:doctor --fix` | Emits corrective events |
-| Lane stuck occupied | `pnpm wu:unlock-lane --lane "X"` | Clears stale lane lock |
+| Issue                                | Command                                   | What It Does                         |
+| ------------------------------------ | ----------------------------------------- | ------------------------------------ |
+| Worktree exists, YAML says `ready`   | `wu:recover --id WU-XXX --action resume`  | Emits claim event, reconciles state  |
+| YAML says `in_progress`, no worktree | `wu:recover --id WU-XXX --action reset`   | Emits release event, sets to `ready` |
+| WU is `done` but worktree lingers    | `wu:recover --id WU-XXX --action cleanup` | Removes worktree, verifies stamp     |
+| State store and YAML disagree        | `pnpm state:doctor --fix`                 | Emits corrective events              |
+| Lane stuck occupied                  | `pnpm wu:unlock-lane --lane "X"`          | Clears stale lane lock               |
 
 **Full diagnostic sequence:**
 
