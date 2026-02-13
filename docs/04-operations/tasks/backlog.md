@@ -45,7 +45,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-1658 — Add regression coverage for wu:done post-push reconciliation and cleanup](wu/WU-1658.yaml) — Framework: Core State Recovery
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -637,4 +637,5 @@ sections:
 - [WU-1656 — Fix CLI/MCP/docs parity gaps](wu/WU-1656.yaml)
 - [WU-1657 — wu:done stabilize post-push local catch-up and cleanup idempotency](wu/WU-1657.yaml)
 - [WU-1660 — Fix pre-existing terminal renderer global-status test regression](wu/WU-1660.yaml)
+- [WU-1658 — Add regression coverage for wu:done post-push reconciliation and cleanup](wu/WU-1658.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
