@@ -7,13 +7,14 @@
  * WU-1171: Added --merge mode, --client flag, AGENTS.md, updated vendor paths
  * WU-1362: Added branch guard to check branch before writing tracked files
  * WU-1643: Extracted template constants into init-templates.ts
+ * WU-1644: Extracted detection helpers into init-detection.ts,
+ *           scaffolding helpers into init-scaffolding.ts
  */
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 import {
   getDefaultConfig,
   createWUParser,
@@ -23,8 +24,6 @@ import {
 } from '@lumenflow/core';
 // WU-1067: Import GATE_PRESETS for --preset support
 import { GATE_PRESETS } from '@lumenflow/core/gates-config';
-// WU-1171: Import merge block utilities
-import { updateMergeBlock } from './merge-block.js';
 // WU-1362: Import worktree guard utilities for branch checking
 import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard';
 // WU-1386: Import doctor for auto-run after init
@@ -75,6 +74,43 @@ import {
   GATE_STUB_SCRIPTS,
   SCRIPT_ARG_OVERRIDES,
 } from './init-templates.js';
+// WU-1644: Import detection helpers from dedicated module
+import {
+  checkPrerequisites,
+  getDocsPath,
+  detectDocsStructure,
+  detectDefaultClient,
+  isGitRepo,
+  hasGitCommits,
+  detectGitStateConfig,
+} from './init-detection.js';
+// WU-1644: Re-export detection types for backwards compatibility
+export type {
+  DetectedIDE,
+  PrerequisiteResult,
+  PrerequisiteResults,
+  DocsStructureType,
+  DocsPathConfig,
+  DefaultClient,
+  GitStateConfig,
+} from './init-detection.js';
+// WU-1644: Re-export detection functions for backwards compatibility
+export {
+  detectIDEEnvironment,
+  checkPrerequisites,
+  getDocsPath,
+  detectDocsStructure,
+} from './init-detection.js';
+// WU-1644: Import scaffolding helpers from dedicated module
+import {
+  processTemplate,
+  loadTemplate,
+  createFile,
+  createDirectory,
+  createExecutableScript,
+} from './init-scaffolding.js';
+// WU-1644: Re-export scaffolding types for backwards compatibility
+export type { FileMode, ScaffoldResult } from './init-scaffolding.js';
 
 /**
  * WU-1085: CLI option definitions for init command
@@ -179,87 +215,12 @@ export type ClientType =
   | 'all'
   | 'none';
 
-/**
- * Detected IDE type from environment
- * WU-1177: Auto-detection support
- */
-export type DetectedIDE = 'claude' | 'cursor' | 'windsurf' | 'vscode' | undefined;
-
 /** @deprecated Use ClientType instead */
 // eslint-disable-next-line sonarjs/redundant-type-aliases -- Intentional backwards compatibility
 export type VendorType = ClientType;
 
-const DEFAULT_CLIENT_CLAUDE = LUMENFLOW_CLIENT_IDS.CLAUDE_CODE;
-
-export type DefaultClient = typeof DEFAULT_CLIENT_CLAUDE | 'none';
-
-/**
- * WU-1171: File creation mode
- */
-export type FileMode = 'skip' | 'merge' | 'force';
-
 // WU-1067: Supported gate presets for config-driven gates
 export type GatePresetType = 'node' | 'python' | 'go' | 'rust' | 'dotnet';
-
-/** WU-1300: Docs structure type for scaffolding */
-export type DocsStructureType = 'simple' | 'arc42';
-
-/**
- * WU-1309: Docs paths for different structure types
- */
-export interface DocsPathConfig {
-  /** Base operations directory */
-  operations: string;
-  /** Tasks directory */
-  tasks: string;
-  /** Agent onboarding docs directory */
-  onboarding: string;
-  /** Quick-ref link for AGENTS.md */
-  quickRefLink: string;
-}
-
-/**
- * WU-1309: Get docs paths based on structure type
- */
-export function getDocsPath(structure: DocsStructureType): DocsPathConfig {
-  if (structure === 'simple') {
-    return {
-      operations: 'docs',
-      tasks: 'docs/tasks',
-      onboarding: 'docs/_frameworks/lumenflow/agent/onboarding',
-      quickRefLink: 'docs/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
-    };
-  }
-  // arc42 structure
-  return {
-    operations: 'docs/04-operations',
-    tasks: 'docs/04-operations/tasks',
-    onboarding: 'docs/04-operations/_frameworks/lumenflow/agent/onboarding',
-    quickRefLink: 'docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
-  };
-}
-
-/**
- * WU-1309: Detect existing docs structure or return default
- * Auto-detects arc42 when docs/04-operations or any numbered dir (01-*, 02-*, etc.) exists
- */
-export function detectDocsStructure(targetDir: string): DocsStructureType {
-  const docsDir = path.join(targetDir, 'docs');
-
-  if (!fs.existsSync(docsDir)) {
-    return 'simple';
-  }
-
-  // Check for arc42 numbered directories (01-*, 02-*, ..., 04-operations, etc.)
-  const entries = fs.readdirSync(docsDir);
-  const hasNumberedDir = entries.some((entry) => /^\d{2}-/.test(entry));
-
-  if (hasNumberedDir) {
-    return 'arc42';
-  }
-
-  return 'simple';
-}
 
 export interface ScaffoldOptions {
   force: boolean;
@@ -271,23 +232,14 @@ export interface ScaffoldOptions {
   client?: ClientType;
   /** @deprecated Use client instead */
   vendor?: ClientType;
-  defaultClient?: DefaultClient;
+  defaultClient?: import('./init-detection.js').DefaultClient;
   /** WU-1067: Gate preset to populate in gates.execution */
   gatePreset?: GatePresetType;
   /** WU-1300: Docs structure (simple or arc42). Auto-detects if not specified. */
-  docsStructure?: DocsStructureType;
+  docsStructure?: import('./init-detection.js').DocsStructureType;
 }
 
-export interface ScaffoldResult {
-  created: string[];
-  skipped: string[];
-  /** WU-1171: Files that were merged (not overwritten) */
-  merged?: string[];
-  /** WU-1171: Warnings encountered during scaffolding */
-  warnings?: string[];
-  /** WU-1576: Files created by client integration adapters (enforcement hooks etc.) */
-  integrationFiles?: string[];
-}
+const DEFAULT_CLIENT_CLAUDE = LUMENFLOW_CLIENT_IDS.CLAUDE_CODE;
 
 const CONFIG_FILE_NAME = '.lumenflow.config.yaml';
 const FRAMEWORK_HINT_FILE = '.lumenflow.framework.yaml';
@@ -310,7 +262,10 @@ const CLAUDE_AGENTS_DIR = path.join(CLAUDE_DIR, 'agents');
  * @param targetDir - Directory where files will be written
  * @param result - ScaffoldResult to add warnings to
  */
-async function checkBranchGuard(targetDir: string, result: ScaffoldResult): Promise<void> {
+async function checkBranchGuard(
+  targetDir: string,
+  result: import('./init-scaffolding.js').ScaffoldResult,
+): Promise<void> {
   result.warnings = result.warnings ?? [];
 
   // Only check if target is a git repository
@@ -337,141 +292,6 @@ async function checkBranchGuard(targetDir: string, result: ScaffoldResult): Prom
   } catch {
     // Git error (e.g., not initialized) - silently allow
   }
-}
-
-/**
- * WU-1177: Detect IDE environment from environment variables
- * Auto-detects which AI coding assistant is running
- */
-export function detectIDEEnvironment(): DetectedIDE {
-  // Claude Code detection (highest priority - most specific)
-  if (process.env.CLAUDE_PROJECT_DIR || process.env.CLAUDE_CODE) {
-    return 'claude';
-  }
-
-  // Cursor detection
-  const cursorVars = Object.keys(process.env).filter((key) => key.startsWith('CURSOR_'));
-  if (cursorVars.length > 0) {
-    return 'cursor';
-  }
-
-  // Windsurf detection
-  const windsurfVars = Object.keys(process.env).filter((key) => key.startsWith('WINDSURF_'));
-  if (windsurfVars.length > 0) {
-    return 'windsurf';
-  }
-
-  // VS Code detection (lowest priority - most generic)
-  const vscodeVars = Object.keys(process.env).filter((key) => key.startsWith('VSCODE_'));
-  if (vscodeVars.length > 0) {
-    return 'vscode';
-  }
-
-  return undefined;
-}
-
-/**
- * WU-1177: Prerequisite check result
- */
-export interface PrerequisiteResult {
-  passed: boolean;
-  version: string;
-  required: string;
-  message?: string;
-}
-
-/**
- * WU-1177: All prerequisite results
- */
-export interface PrerequisiteResults {
-  node: PrerequisiteResult;
-  pnpm: PrerequisiteResult;
-  git: PrerequisiteResult;
-}
-
-/**
- * Get command version safely using execFileSync
- */
-function getCommandVersion(command: string, args: string[]): string {
-  try {
-    const output = execFileSync(command, args, {
-      encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }).trim();
-    return output;
-  } catch {
-    return 'not found';
-  }
-}
-
-/**
- * Parse semver version string to compare
- */
-function parseVersion(versionStr: string): number[] {
-  // Extract version numbers using a non-backtracking pattern
-  // eslint-disable-next-line security/detect-unsafe-regex -- static semver pattern; no backtracking risk
-  const match = /^v?(\d+)\.(\d+)(?:\.(\d+))?/.exec(versionStr);
-  if (!match) {
-    return [0, 0, 0];
-  }
-  return [parseInt(match[1], 10), parseInt(match[2], 10), parseInt(match[3] || '0', 10)];
-}
-
-/**
- * Compare versions: returns true if actual >= required
- */
-function compareVersions(actual: string, required: string): boolean {
-  const actualParts = parseVersion(actual);
-  const requiredParts = parseVersion(required);
-
-  for (let i = 0; i < 3; i++) {
-    if (actualParts[i] > requiredParts[i]) {
-      return true;
-    }
-    if (actualParts[i] < requiredParts[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
- * WU-1177: Check prerequisite versions
- * Non-blocking - returns results but doesn't fail init
- */
-export function checkPrerequisites(): PrerequisiteResults {
-  const nodeVersion = getCommandVersion('node', ['--version']);
-  const pnpmVersion = getCommandVersion('pnpm', ['--version']);
-  const gitVersion = getCommandVersion('git', ['--version']);
-
-  const requiredNode = '22.0.0';
-  const requiredPnpm = '9.0.0';
-  const requiredGit = '2.0.0';
-
-  const nodeOk = nodeVersion !== 'not found' && compareVersions(nodeVersion, requiredNode);
-  const pnpmOk = pnpmVersion !== 'not found' && compareVersions(pnpmVersion, requiredPnpm);
-  const gitOk = gitVersion !== 'not found' && compareVersions(gitVersion, requiredGit);
-
-  return {
-    node: {
-      passed: nodeOk,
-      version: nodeVersion,
-      required: `>=${requiredNode}`,
-      message: nodeOk ? undefined : `Node.js ${requiredNode}+ required`,
-    },
-    pnpm: {
-      passed: pnpmOk,
-      version: pnpmVersion,
-      required: `>=${requiredPnpm}`,
-      message: pnpmOk ? undefined : `pnpm ${requiredPnpm}+ required`,
-    },
-    git: {
-      passed: gitOk,
-      version: gitVersion,
-      required: `>=${requiredGit}`,
-      message: gitOk ? undefined : `Git ${requiredGit}+ required`,
-    },
-  };
 }
 
 /**
@@ -573,39 +393,13 @@ function normalizeFrameworkName(framework: string): { name: string; slug: string
 }
 
 /**
- * Process template content by replacing placeholders
- */
-function processTemplate(content: string, tokens: Record<string, string>): string {
-  let output = content;
-  for (const [key, value] of Object.entries(tokens)) {
-    // eslint-disable-next-line security/detect-non-literal-regexp -- key is from internal token map, not user input
-    output = output.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value);
-  }
-  return output;
-}
-
-function getRelativePath(targetDir: string, filePath: string): string {
-  return path.relative(targetDir, filePath).split(path.sep).join('/');
-}
-
-/**
- * Detect default client from environment
- */
-function detectDefaultClient(): DefaultClient {
-  if (process.env.CLAUDE_PROJECT_DIR || process.env.CLAUDE_CODE) {
-    return DEFAULT_CLIENT_CLAUDE;
-  }
-  return 'none';
-}
-
-/**
  * WU-1171: Resolve client type from options
  * --client takes precedence over --vendor (backwards compat)
  */
 function resolveClientType(
   client: ClientType | undefined,
   vendor: ClientType | undefined,
-  defaultClient: DefaultClient,
+  defaultClient: import('./init-detection.js').DefaultClient,
 ): ClientType {
   // Explicit --client or --vendor takes precedence
   if (client) {
@@ -621,7 +415,7 @@ function resolveClientType(
 /**
  * WU-1171: Determine file mode from options
  */
-function getFileMode(options: ScaffoldOptions): FileMode {
+function getFileMode(options: ScaffoldOptions): import('./init-scaffolding.js').FileMode {
   if (options.force) {
     return 'force';
   }
@@ -629,55 +423,6 @@ function getFileMode(options: ScaffoldOptions): FileMode {
     return 'merge';
   }
   return 'skip';
-}
-
-/**
- * WU-1364: Check if directory is a git repository
- */
-function isGitRepo(targetDir: string): boolean {
-  try {
-    // eslint-disable-next-line sonarjs/no-os-command-from-path -- git resolved from PATH; CLI tool requires git
-    execFileSync('git', ['rev-parse', '--git-dir'], {
-      cwd: targetDir,
-      stdio: 'pipe',
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * WU-1364: Check if git repo has any commits
- */
-function hasGitCommits(targetDir: string): boolean {
-  try {
-    // eslint-disable-next-line sonarjs/no-os-command-from-path -- git resolved from PATH; CLI tool requires git
-    execFileSync('git', ['rev-parse', 'HEAD'], {
-      cwd: targetDir,
-      stdio: 'pipe',
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * WU-1364: Check if git repo has an origin remote
- */
-function hasOriginRemote(targetDir: string): boolean {
-  try {
-    // eslint-disable-next-line sonarjs/no-os-command-from-path -- git resolved from PATH; CLI tool requires git
-    const result = execFileSync('git', ['remote', 'get-url', 'origin'], {
-      cwd: targetDir,
-      encoding: 'utf-8',
-      stdio: 'pipe',
-    });
-    return result.trim().length > 0;
-  } catch {
-    return false;
-  }
 }
 
 /**
@@ -690,9 +435,9 @@ function hasOriginRemote(targetDir: string): boolean {
  * Must run BEFORE the initial commit so all generated files are included.
  */
 
-// Vendor-agnostic dispatch map: client key in config → integration adapter.
+// Vendor-agnostic dispatch map: client key in config -> integration adapter.
 // Each adapter runs integration and returns relative paths of files it created.
-// init.ts has zero knowledge of client-specific paths — adapters own that.
+// init.ts has zero knowledge of client-specific paths -- adapters own that.
 type ClientIntegrationAdapter = (
   projectDir: string,
   enforcement: IntegrateEnforcementConfig,
@@ -709,7 +454,10 @@ const CLIENT_INTEGRATIONS: Record<string, ClientIntegration> = {
   // When new clients gain enforcement: add adapter entry here.
 };
 
-async function runClientIntegrations(targetDir: string, result: ScaffoldResult): Promise<string[]> {
+async function runClientIntegrations(
+  targetDir: string,
+  result: import('./init-scaffolding.js').ScaffoldResult,
+): Promise<string[]> {
   const integrationFiles: string[] = [];
   const configPath = path.join(targetDir, CONFIG_FILE_NAME);
   if (!fs.existsSync(configPath)) return integrationFiles;
@@ -719,7 +467,7 @@ async function runClientIntegrations(targetDir: string, result: ScaffoldResult):
     const content = fs.readFileSync(configPath, 'utf-8');
     config = yaml.parse(content) as Record<string, unknown> | null;
   } catch {
-    return integrationFiles; // Config unreadable — skip silently
+    return integrationFiles; // Config unreadable -- skip silently
   }
   if (!config) return integrationFiles;
 
@@ -807,59 +555,6 @@ export function renameMasterToMainIfNeeded(targetDir: string): boolean {
 }
 
 /**
- * WU-1364: Detect git state and return config overrides
- * Returns requireRemote: false if no origin remote is configured
- */
-interface GitStateConfig {
-  requireRemote: boolean;
-}
-
-function detectGitStateConfig(targetDir: string): GitStateConfig | null {
-  // If not a git repo, default to local-only mode for safety
-  if (!isGitRepo(targetDir)) {
-    return { requireRemote: false };
-  }
-
-  // If git repo but no origin remote, set requireRemote: false
-  if (!hasOriginRemote(targetDir)) {
-    return { requireRemote: false };
-  }
-
-  // Has origin remote - use default (requireRemote: true)
-  return null;
-}
-
-/**
- * WU-1171: Get templates directory path
- */
-function getTemplatesDir(): string {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  // Check for dist/templates (production) or ../templates (development)
-  const distTemplates = path.join(__dirname, '..', 'templates');
-  if (fs.existsSync(distTemplates)) {
-    return distTemplates;
-  }
-
-  throw new Error(`Templates directory not found at ${distTemplates}`);
-}
-
-/**
- * WU-1171: Load a template file
- */
-function loadTemplate(templatePath: string): string {
-  const templatesDir = getTemplatesDir();
-  const fullPath = path.join(templatesDir, templatePath);
-
-  if (!fs.existsSync(fullPath)) {
-    throw new Error(`Template not found: ${templatePath}`);
-  }
-
-  return fs.readFileSync(fullPath, 'utf-8');
-}
-
-/**
  * Scaffold a new LumenFlow project
  * WU-1171: Added AGENTS.md, --merge mode, updated vendor/client handling
  * WU-1362: Added branch guard to prevent main branch pollution
@@ -867,8 +562,8 @@ function loadTemplate(templatePath: string): string {
 export async function scaffoldProject(
   targetDir: string,
   options: ScaffoldOptions,
-): Promise<ScaffoldResult> {
-  const result: ScaffoldResult = {
+): Promise<import('./init-scaffolding.js').ScaffoldResult> {
+  const result: import('./init-scaffolding.js').ScaffoldResult = {
     created: [],
     skipped: [],
     merged: [],
@@ -1040,7 +735,7 @@ const GITIGNORE_FILE_NAME = '.gitignore';
 async function scaffoldGitignore(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
 ): Promise<void> {
   const gitignorePath = path.join(targetDir, GITIGNORE_FILE_NAME);
   const fileMode = getFileMode(options);
@@ -1093,7 +788,7 @@ const PRETTIERIGNORE_FILE_NAME = '.prettierignore';
 async function scaffoldPrettierignore(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
 ): Promise<void> {
   const prettierignorePath = path.join(targetDir, PRETTIERIGNORE_FILE_NAME);
   const fileMode = getFileMode(options);
@@ -1139,7 +834,7 @@ const PRE_COMMIT_TEMPLATE_PATH = 'core/.husky/pre-commit.template';
 async function scaffoldSafetyScripts(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
 ): Promise<void> {
   const fileMode = getFileMode(options);
 
@@ -1195,7 +890,7 @@ const FORMAT_CHECK_SCRIPT_COMMAND = 'prettier --check .';
 async function injectPackageJsonScripts(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
 ): Promise<void> {
   const packageJsonPath = path.join(targetDir, 'package.json');
   let packageJson: Record<string, unknown>;
@@ -1280,7 +975,7 @@ async function injectPackageJsonScripts(
 async function scaffoldFullDocs(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
   tokens: Record<string, string>,
 ): Promise<void> {
   // WU-1309: Use docs structure from tokens (computed in scaffoldProject)
@@ -1326,12 +1021,12 @@ async function scaffoldFullDocs(
 
 /**
  * WU-1307: Scaffold lane inference configuration
- * Uses hierarchical Parent→Sublane format required by lane-inference.ts
+ * Uses hierarchical Parent->Sublane format required by lane-inference.ts
  */
 async function scaffoldLaneInference(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
   tokens: Record<string, string>,
 ): Promise<void> {
   // WU-1307: Add framework-specific lanes in hierarchical format if framework is provided
@@ -1374,7 +1069,7 @@ async function scaffoldLaneInference(
 async function scaffoldAgentOnboardingDocs(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
   tokens: Record<string, string>,
 ): Promise<void> {
   // WU-1309: Use dynamic onboarding path from tokens
@@ -1474,7 +1169,7 @@ async function scaffoldAgentOnboardingDocs(
 async function scaffoldClaudeSkills(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
   tokens: Record<string, string>,
 ): Promise<void> {
   const skillsDir = path.join(targetDir, '.claude', 'skills');
@@ -1516,7 +1211,7 @@ async function scaffoldClaudeSkills(
 async function scaffoldFrameworkOverlay(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
   tokens: Record<string, string>,
 ): Promise<void> {
   if (!options.framework) {
@@ -1558,7 +1253,7 @@ async function scaffoldFrameworkOverlay(
 async function scaffoldClientFiles(
   targetDir: string,
   options: ScaffoldOptions,
-  result: ScaffoldResult,
+  result: import('./init-scaffolding.js').ScaffoldResult,
   tokens: Record<string, string>,
   client: ClientType,
 ): Promise<void> {
@@ -1729,148 +1424,6 @@ async function scaffoldClientFiles(
 }
 
 /**
- * Create a directory if missing
- */
-async function createDirectory(
-  dirPath: string,
-  result: ScaffoldResult,
-  targetDir: string,
-): Promise<void> {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-    result.created.push(getRelativePath(targetDir, dirPath));
-  }
-}
-
-/**
- * WU-1171: Create a file with support for skip, merge, and force modes
- *
- * @param filePath - Path to the file to create
- * @param content - Content to write (or merge block content in merge mode)
- * @param mode - 'skip' (default), 'merge', or 'force'
- * @param result - ScaffoldResult to track created/skipped/merged files
- * @param targetDir - Target directory for relative path calculation
- */
-async function createFile(
-  filePath: string,
-  content: string,
-  mode: FileMode | boolean,
-  result: ScaffoldResult,
-  targetDir: string,
-): Promise<void> {
-  const relativePath = getRelativePath(targetDir, filePath);
-
-  // Handle boolean for backwards compatibility (true = force, false = skip)
-  const resolvedMode = resolveBooleanToFileMode(mode);
-
-  // Ensure merged/warnings arrays exist
-  result.merged = result.merged ?? [];
-  result.warnings = result.warnings ?? [];
-
-  const fileExists = fs.existsSync(filePath);
-
-  if (fileExists && resolvedMode === 'skip') {
-    result.skipped.push(relativePath);
-    return;
-  }
-
-  if (fileExists && resolvedMode === 'merge') {
-    handleMergeMode(filePath, content, result, relativePath);
-    return;
-  }
-
-  // Force mode or file doesn't exist: write new content
-  writeNewFile(filePath, content, result, relativePath);
-}
-
-/**
- * Convert boolean or FileMode to FileMode
- */
-function resolveBooleanToFileMode(mode: FileMode | boolean): FileMode {
-  if (typeof mode === 'boolean') {
-    return mode ? 'force' : 'skip';
-  }
-  return mode;
-}
-
-/**
- * Handle merge mode file update
- */
-function handleMergeMode(
-  filePath: string,
-  content: string,
-  result: ScaffoldResult,
-  relativePath: string,
-): void {
-  const existingContent = fs.readFileSync(filePath, 'utf-8');
-  const mergeResult = updateMergeBlock(existingContent, content);
-
-  if (mergeResult.unchanged) {
-    result.skipped.push(relativePath);
-    return;
-  }
-
-  if (mergeResult.warning) {
-    result.warnings?.push(`${relativePath}: ${mergeResult.warning}`);
-  }
-
-  fs.writeFileSync(filePath, mergeResult.content);
-  result.merged?.push(relativePath);
-}
-
-/**
- * Write a new file, creating parent directories if needed
- */
-function writeNewFile(
-  filePath: string,
-  content: string,
-  result: ScaffoldResult,
-  relativePath: string,
-): void {
-  const parentDir = path.dirname(filePath);
-  if (!fs.existsSync(parentDir)) {
-    fs.mkdirSync(parentDir, { recursive: true });
-  }
-
-  fs.writeFileSync(filePath, content);
-  result.created.push(relativePath);
-}
-
-/**
- * WU-1394: Create an executable script file with proper permissions
- * Similar to createFile but sets 0o755 mode for shell scripts
- */
-async function createExecutableScript(
-  filePath: string,
-  content: string,
-  mode: FileMode | boolean,
-  result: ScaffoldResult,
-  targetDir: string,
-): Promise<void> {
-  const relativePath = getRelativePath(targetDir, filePath);
-  const resolvedMode = resolveBooleanToFileMode(mode);
-
-  result.merged = result.merged ?? [];
-  result.warnings = result.warnings ?? [];
-
-  const fileExists = fs.existsSync(filePath);
-
-  if (fileExists && resolvedMode === 'skip') {
-    result.skipped.push(relativePath);
-    return;
-  }
-
-  // Write file with executable permissions
-  const parentDir = path.dirname(filePath);
-  if (!fs.existsSync(parentDir)) {
-    fs.mkdirSync(parentDir, { recursive: true });
-  }
-
-  fs.writeFileSync(filePath, content, { mode: 0o755 });
-  result.created.push(relativePath);
-}
-
-/**
  * CLI entry point
  * WU-1085: Updated to use parseInitOptions for proper --help support
  * WU-1171: Added --merge and --client support
@@ -1937,7 +1490,7 @@ export async function main(): Promise<void> {
 
   if (result.warnings && result.warnings.length > 0) {
     console.log('\nWarnings:');
-    result.warnings.forEach((w) => console.log(`  ⚠ ${w}`));
+    result.warnings.forEach((w) => console.log(`  \u26A0 ${w}`));
   }
 
   // WU-1386: Run doctor auto-check (non-blocking)
@@ -1954,12 +1507,14 @@ export async function main(): Promise<void> {
 
   // WU-1359: Show complete lifecycle with auto-ID (no --id flag required)
   // WU-1364: Added initiative-first guidance for product visions
-  // WU-1576: Show enforcement hooks status — vendor-agnostic (any adapter that produced files)
+  // WU-1576: Show enforcement hooks status -- vendor-agnostic (any adapter that produced files)
   console.log('\n[lumenflow init] Done! Next steps:');
   console.log('  1. Review AGENTS.md and LUMENFLOW.md for workflow documentation');
   console.log(`  2. Edit ${CONFIG_FILE_NAME} to match your project structure`);
   if (result.integrationFiles && result.integrationFiles.length > 0) {
-    console.log('  \u2713 Enforcement hooks installed — regenerate with: pnpm lumenflow:integrate');
+    console.log(
+      '  \u2713 Enforcement hooks installed -- regenerate with: pnpm lumenflow:integrate',
+    );
   }
   console.log('');
   console.log('  For a product vision (multi-phase work):');
