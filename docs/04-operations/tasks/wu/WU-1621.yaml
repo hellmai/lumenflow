@@ -2,7 +2,7 @@ id: WU-1621
 title: Harden initiative metadata writes against origin movement
 lane: 'Framework: CLI Orchestration'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-12
 code_paths:
@@ -51,3 +51,6 @@ acceptance:
     edits
   - failed retries report clear terminal state and do not leave malformed initiative or plan linkage
     metadata
+locked: true
+completed_at: 2026-02-13T09:43:37.968Z
+completed: 2026-02-13
