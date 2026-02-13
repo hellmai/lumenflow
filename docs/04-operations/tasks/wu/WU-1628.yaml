@@ -7,7 +7,7 @@ priority: P0
 created: 2026-02-13
 code_paths:
   - packages/@lumenflow/core/src/wu-done-worktree.ts
-  - packages/@lumenflow/core/src/atomic-merge.ts
+  - packages/@lumenflow/core/src/__tests__/wu-done-rollback-leaks.test.ts
 tests:
   manual:
     - Complete a test WU in worktree mode and verify main stays clean across induced merge/push
@@ -27,10 +27,17 @@ spec_refs:
 risks: []
 notes: Phase 1B worktree integration. Depends on WU-1627.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-13T13:26:36.377Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1628
+session_id: 1bf8004e-8491-45b4-b06b-d1ab9595cdea
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-13T13:26:36.382Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +48,3 @@ acceptance:
   - wu-done-worktree uses withAtomicMerge for worktree-mode lane merge/push
   - legacy preMainMergeSha and main-rollback merge-failure path are removed from worktree-mode flow
   - existing completion semantics and preflight checks remain intact
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1628
-claimed_at: 2026-02-13T13:26:36.377Z
-baseline_main_sha: 8d9cce878161990f38d11b2c8c16a3509b52d627
-session_id: 1bf8004e-8491-45b4-b06b-d1ab9595cdea
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-13T13:26:36.382Z
