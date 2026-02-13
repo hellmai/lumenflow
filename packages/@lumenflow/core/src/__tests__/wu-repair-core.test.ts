@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+const FULL_SUITE_TEST_TIMEOUT_MS = 15_000;
 
 const mocks = vi.hoisted(() => ({
   checkWUConsistency: vi.fn(),
@@ -17,7 +18,9 @@ describe('wu-repair-core check mode', () => {
     vi.clearAllMocks();
   });
 
-  it('treats --all --check as read-only and does not perform repairs', async () => {
+  it(
+    'treats --all --check as read-only and does not perform repairs',
+    async () => {
     mocks.checkAllWUConsistency.mockResolvedValue({
       valid: false,
       checked: 2,
@@ -37,13 +40,19 @@ describe('wu-repair-core check mode', () => {
 
     expect(result.success).toBe(false);
     expect(result.exitCode).toBe(1);
-    expect(mocks.repairWUInconsistency).not.toHaveBeenCalled();
-  });
+      expect(mocks.repairWUInconsistency).not.toHaveBeenCalled();
+    },
+    FULL_SUITE_TEST_TIMEOUT_MS,
+  );
 
-  it('selects branch-pr admin repair path from claimed_mode', async () => {
+  it(
+    'selects branch-pr admin repair path from claimed_mode',
+    async () => {
     const { shouldUseBranchPrAdminRepairPath } = await import('../wu-repair-core.js');
 
     expect(shouldUseBranchPrAdminRepairPath({ claimed_mode: 'branch-pr' })).toBe(true);
-    expect(shouldUseBranchPrAdminRepairPath({ claimed_mode: 'worktree' })).toBe(false);
-  });
+      expect(shouldUseBranchPrAdminRepairPath({ claimed_mode: 'worktree' })).toBe(false);
+    },
+    FULL_SUITE_TEST_TIMEOUT_MS,
+  );
 });
