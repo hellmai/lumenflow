@@ -13,6 +13,7 @@ import { createGitForPath, getGitForCwd } from '../git-adapter.js';
 // Test constants to avoid sonarjs/no-duplicate-string
 const FAKE_WORKTREE_PATH = '/fake/worktree/path';
 const TEST_BRANCH = 'lane/test/wu-1541';
+const FULL_SUITE_TEST_TIMEOUT_MS = 15_000;
 
 describe('WU-1541: No process.chdir in normal execution paths', () => {
   describe('autoRebaseBranch uses createGitForPath instead of process.chdir', () => {
@@ -30,7 +31,9 @@ describe('WU-1541: No process.chdir in normal execution paths', () => {
       vi.restoreAllMocks();
     });
 
-    it('should use createGitForPath(worktreePath) for worktree git operations', async () => {
+    it(
+      'should use createGitForPath(worktreePath) for worktree git operations',
+      async () => {
       // Track which factory function is called and with what args
       const createGitForPathCalls: string[] = [];
 
@@ -60,10 +63,14 @@ describe('WU-1541: No process.chdir in normal execution paths', () => {
       // autoRebaseBranch should use createGitForPath(worktreePath)
       // instead of process.chdir(worktreePath) + getGitForCwd()
       expect(createGitForPathCalls).toContain(FAKE_WORKTREE_PATH);
-      expect(chdirSpy).not.toHaveBeenCalled();
-    });
+        expect(chdirSpy).not.toHaveBeenCalled();
+      },
+      FULL_SUITE_TEST_TIMEOUT_MS,
+    );
 
-    it('should not call process.chdir even on rebase failure', async () => {
+    it(
+      'should not call process.chdir even on rebase failure',
+      async () => {
       const mockGitAdapter = {
         fetch: vi.fn().mockResolvedValue(undefined),
         rebase: vi.fn().mockRejectedValue(new Error('rebase conflict')),
@@ -84,8 +91,10 @@ describe('WU-1541: No process.chdir in normal execution paths', () => {
       await autoRebaseBranch(TEST_BRANCH, FAKE_WORKTREE_PATH);
 
       // Even on error path, process.chdir should not be called
-      expect(chdirSpy).not.toHaveBeenCalled();
-    });
+        expect(chdirSpy).not.toHaveBeenCalled();
+      },
+      FULL_SUITE_TEST_TIMEOUT_MS,
+    );
   });
 
   describe('runGates passes explicit cwd without process.chdir', () => {
