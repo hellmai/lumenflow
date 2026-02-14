@@ -7,8 +7,10 @@ priority: P0
 created: 2026-02-14
 code_paths:
   - packages/@lumenflow/core/src/wu-done-worktree.ts
-  - packages/@lumenflow/core/src/wu-repair-core.ts
   - packages/@lumenflow/core/src/__tests__/no-process-chdir.test.ts
+  - packages/@lumenflow/core/src/__tests__/wu-state-store.test.ts
+  - packages/@lumenflow/cli/src/wu-repair.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-repair-state-mode.test.ts
 tests:
   manual:
     - Simulate concurrent completions with rebase conflict on wu-events.jsonl; verify wu:done either
@@ -24,10 +26,17 @@ risks: []
 notes: Incident follow-up for WU-1672/WU-1671 rebase conflict loop. Focus on preventing malformed
   state propagation to main and lane branches.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-14T09:04:47.577Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1673
+session_id: 9001309a-357f-43ba-a952-66f7b6684b02
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-14T09:04:47.582Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -42,11 +51,3 @@ acceptance:
   - wu:done aborts before commit if conflict markers exist in any transaction output file
   - regression tests cover append-only rebase conflict path and marker-detection guard
   - wu:repair --repair-state successfully restores malformed wu-events.jsonl from merge-marker state
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1673
-claimed_at: 2026-02-14T09:04:47.577Z
-baseline_main_sha: 38355f94d584e30db3855cec48a77814e76e5d0d
-session_id: 9001309a-357f-43ba-a952-66f7b6684b02
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-14T09:04:47.582Z
