@@ -8,13 +8,17 @@ created: 2026-02-14
 code_paths:
   - packages/@lumenflow/cli/src/wu-prep.ts
   - packages/@lumenflow/cli/src/gates.ts
-  - packages/@lumenflow/cli/src/wu-create.ts
+  - packages/@lumenflow/cli/src/gates-runners.ts
+  - packages/@lumenflow/cli/src/wu-create-validation.ts
   - packages/@lumenflow/cli/src/wu-validate.ts
+  - packages/@lumenflow/core/src/wu-lint.ts
 tests:
   manual:
     - Run wu:prep on a WU with tests.unit entries and verify only those files are tested
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-create-required-fields.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-lint-parity.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1676.done
@@ -31,15 +35,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: wu:prep runs pnpm turbo run test which executes all tests in every affected
-  package (123 files, 2096 tests for @lumenflow/cli alone). Problem: WU specs can omit tests.unit,
-  causing wu:prep to run the full suite where unrelated tests (OOM, timeout) block completion of WUs
-  whose actual tests pass in seconds. Solution: (1) spec linter requires tests.unit for
-  non-documentation WUs with code_paths, (2) wu:prep passes tests.unit paths to vitest instead of
-  running full turbo test suite.'
+description: 'Context: wu:prep default incremental gate runs vitest run --changed origin/main, which
+  picks up all changed files in affected packages (123 files, 2096 tests for @lumenflow/cli alone).
+  Problem: WU specs can omit tests.unit, causing wu:prep to run broad incremental tests where
+  unrelated failures (OOM, timeout) block WUs whose actual tests pass in seconds. Solution: (1) spec
+  linter requires tests.unit for non-documentation WUs with code_paths, (2) wu:prep replaces the
+  INCREMENTAL_TEST gate with scoped vitest run on tests.unit paths from the WU YAML.'
 acceptance:
   - Spec linter fails when tests.unit is empty for non-documentation WUs that have code_paths
   - wu:create enforces at least one --test-paths-unit entry for non-documentation WUs with code_paths
-  - wu:prep reads tests.unit from WU YAML and passes those paths to vitest run
-  - Full turbo test suite remains available via wu:prep --full-tests flag
+  - wu:prep replaces the INCREMENTAL_TEST gate with scoped vitest run on tests.unit paths;
+    SAFETY_CRITICAL_TEST and other gates remain unchanged
+  - Full incremental test suite remains available via wu:prep --full-tests flag
   - Targeted test run completes in under 30s for typical WUs
