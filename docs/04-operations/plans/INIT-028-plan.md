@@ -56,7 +56,7 @@ Mitigations:
 
 ## Open Questions
 
-<!-- Unresolved questions or decisions needed -->
+- Confirm whether we need a custom merge driver for append-only `.jsonl` state files as follow-on hardening, or if current conflict handling remains sufficient for this initiative.
 
 ## References
 
