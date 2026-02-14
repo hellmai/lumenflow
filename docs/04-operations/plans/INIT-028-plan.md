@@ -44,7 +44,15 @@ Execution is ordered: WU-B depends on WU-A.
 
 ## Risks
 
-<!-- What could go wrong? How will you mitigate? -->
+- Mechanical rename breadth can introduce cross-package import regressions
+- Migration/rebootstrap logic can corrupt state if archive and rebuild ordering is wrong
+- Docs and runtime command/tool surfaces can drift if parity updates lag
+
+Mitigations:
+
+- Execute in two ordered WUs with explicit dependency (WU-B blocked by WU-A)
+- Keep migration guard and rebootstrap covered by targeted tests before broad renames
+- Run docs parity and full gates before completion
 
 ## Open Questions
 
