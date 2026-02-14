@@ -1,0 +1,12 @@
+id: INIT-028
+slug: spawn-to-delegation-clean-slate-rename
+title: Spawn-to-Delegation Clean-Slate Rename
+description: ''
+status: draft
+priority: P0
+owner: 'Framework: Core/CLI'
+created: 2026-02-14
+target_date: 2026-03-14
+phases: []
+success_metrics: []
+labels: []
