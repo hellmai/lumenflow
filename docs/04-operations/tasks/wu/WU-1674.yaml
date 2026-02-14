@@ -12,10 +12,16 @@ code_paths:
   - packages/@lumenflow/core/src/schemas/setup-schemas.ts
   - packages/@lumenflow/core/src/schemas/setup-arg-validators.ts
   - packages/@lumenflow/core/src/template-loader.ts
-  - packages/@lumenflow/cli/src/wu-spawn.ts
-  - packages/@lumenflow/cli/src/spawn-list.ts
+  - packages/@lumenflow/core/src/wu-paths-constants.ts
+  - packages/@lumenflow/core/src/wu-spawn-context.ts
+  - packages/@lumenflow/core/src/delegation-registry-schema.ts
+  - packages/@lumenflow/core/src/delegation-tree.ts
+  - packages/@lumenflow/core/src/index.ts
+  - packages/@lumenflow/cli/src/delegation-list.ts
+  - packages/@lumenflow/cli/src/mem-context.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/mcp/src/tools/orchestration-tools.ts
+  - packages/@lumenflow/mcp/src/tools.ts
 tests:
   manual:
     - Simulate first-run with legacy state files and verify archive + rebootstrap complete without
@@ -37,10 +43,17 @@ risks: []
 notes: INIT-028 WU-A from PLAN-spawn-to-delegation-rename blueprint; includes migration guard +
   mechanical runtime rename.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-14T09:58:33.869Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1674
+session_id: fd676687-0c3e-4748-ba31-bfab91eaace0
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-14T09:58:33.876Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -56,11 +69,3 @@ acceptance:
   - Old config key memory.spawn_context_max_size and old CLI flag --spawn-context-max-size hard-fail
     with explicit guidance.
   - Typecheck and targeted parity suites pass after rename migration.
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1674
-claimed_at: 2026-02-14T09:58:33.869Z
-baseline_main_sha: e34b9cd89d5de3f5d56c9db7eb2ad0786a014561
-session_id: fd676687-0c3e-4748-ba31-bfab91eaace0
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-14T09:58:33.876Z
