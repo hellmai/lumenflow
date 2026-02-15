@@ -313,7 +313,7 @@ pnpm wu:brief --id WU-XXX --client <client>
 | :----------------------------------------------- | :------------------ | :------------------------------------------------------------ |
 | Bug fix, single file, <20 tool calls             | Simple              | Claim, fix, commit, `wu:done`                                 |
 | Feature spanning 50-100 tool calls, clear phases | Checkpoint-Resume   | Phase 1 → checkpoint → Phase 2 → checkpoint → done            |
-| Multi-domain feature, must land atomically       | Orchestrator-Worker | Main agent coordinates, spawns test-engineer, beacon-guardian |
+| Multi-domain feature, must land atomically       | Orchestrator-Worker | Main agent coordinates, spawns test-engineer, safety-reviewer |
 | Large refactor 100+ tool calls                   | Feature Flag Split  | WU-A: New behind flag → WU-B: Remove flag + old code          |
 | New integration, uncertain complexity            | Tracer Bullet       | WU-A: Prove skeleton works → WU-B: Real implementation        |
 | Docs-only, 30 markdown files                     | Simple (exception)  | Single session, document in notes, monitor for degradation    |

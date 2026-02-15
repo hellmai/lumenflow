@@ -98,8 +98,8 @@ See the [Migration Guide](https://lumenflow.dev/guides/migration) for detailed i
 
 - **Config version bump**: `.lumenflow.config.yaml` now requires `version: '2.0'`
 - **Lane format**: Lanes now use "Parent: Sublane" format (e.g., `Framework: Core`)
-- **Stamp location**: Stamps moved from `.beacon/stamps/` to `.lumenflow/stamps/`
-- **State directory**: State files moved from `.beacon/` to `.lumenflow/`
+- **Stamp location**: Stamps moved from `.lumenflow/stamps/` to `.lumenflow/stamps/`
+- **State directory**: State files moved from `.lumenflow/` to `.lumenflow/`
 
 ### Added
 

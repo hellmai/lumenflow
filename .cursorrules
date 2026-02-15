@@ -34,7 +34,7 @@ This blocks destructive operations like `git reset --hard`, `git clean -fd`, `gi
 
 Blocked actions are logged to:
 
-`./.beacon/safety-blocks.log`
+`./.lumenflow/safety-blocks.log`
 
 ## Key Reminders for Cursor Users
 
