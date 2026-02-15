@@ -2,7 +2,7 @@ id: WU-1683
 title: Add first-class plan field to WU schema for plan-to-WU linking
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -31,9 +31,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: Plans (Claude Code .claude/plans/, LumenFlow docs/04-operations/plans/) are created for WUs but have no formal link back to the WU YAML. Problem: spec_refs is a generic bag of links — it doesn't distinguish 'this is THE plan' from 'a reference doc'. Sub-agents spawned via wu:brief never see the plan. Solution: Add a first-class 'plan' field to the WU schema that links to the plan file, similar to how initiatives have plan files."
+description: "Context: Plans (Claude Code .claude/plans/, LumenFlow docs/04-operations/plans/) are
+  created for WUs but have no formal link back to the WU YAML. Problem: spec_refs is a generic bag
+  of links — it doesn't distinguish 'this is THE plan' from 'a reference doc'. Sub-agents spawned
+  via wu:brief never see the plan. Solution: Add a first-class 'plan' field to the WU schema that
+  links to the plan file, similar to how initiatives have plan files."
 acceptance:
   - WU schema supports an optional 'plan' field (path to plan file)
   - wu:create/wu:claim auto-populates plan field when a plan file is detected
   - wu:status surfaces the linked plan file path
   - Spec completeness validator checks plan file exists when field is set
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1683
+claimed_at: 2026-02-15T11:05:52.041Z
+baseline_main_sha: 31c29f7a35d733bd5ec204ac3d96edd12211dc6e
+session_id: 922892ea-bd00-46ff-a203-300cbc6676f8
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T11:05:52.047Z
