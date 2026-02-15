@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { existsSync, readFileSync, writeFileSync, promises as fs } from 'node:fs';
 import { parse, stringify } from 'yaml';
 import { createError, ErrorCodes } from './error-handler.js';
@@ -71,12 +72,6 @@ export const YAML_STRINGIFY_OPTIONS = Object.freeze({
   defaultKeyType: YAML_SCALAR_TYPES.PLAIN,
 });
 
-type WUDocument = Record<string, unknown> & {
-  id?: string;
-  notes?: unknown;
-  agent_sessions?: unknown[];
-};
-
 /**
  * Read and parse WU YAML file.
  *
@@ -90,7 +85,7 @@ type WUDocument = Record<string, unknown> & {
  * @returns {object} Parsed YAML document
  * @throws {Error} If file not found, YAML invalid, or ID mismatch
  */
-export function readWU(wuPath: string, expectedId: string): WUDocument {
+export function readWU(wuPath: string, expectedId: string): any {
   if (!existsSync(wuPath)) {
     throw createError(ErrorCodes.FILE_NOT_FOUND, `WU file not found: ${wuPath}`, {
       path: wuPath,
@@ -135,7 +130,7 @@ export function readWU(wuPath: string, expectedId: string): WUDocument {
  * @returns {Promise<object>} Parsed YAML document
  * @throws {Error} If file not found, YAML invalid, or ID mismatch
  */
-export async function readWUAsync(wuPath: string, expectedId: string): Promise<WUDocument> {
+export async function readWUAsync(wuPath: string, expectedId: string): Promise<any> {
   try {
     const text = await fs.readFile(wuPath, { encoding: 'utf-8' });
     let doc;
@@ -182,7 +177,7 @@ export async function readWUAsync(wuPath: string, expectedId: string): Promise<W
  * @returns {object} Parsed object
  * @throws {Error} If YAML is invalid
  */
-export function parseYAML(text: string): unknown {
+export function parseYAML(text: string): any {
   return parse(text);
 }
 
@@ -195,7 +190,7 @@ export function parseYAML(text: string): unknown {
  * @returns {string} YAML string
  */
 export function stringifyYAML(
-  doc: Record<string, unknown>,
+  doc: any,
   options: Record<string, unknown> = {},
 ): string {
   return stringify(doc, { ...YAML_STRINGIFY_OPTIONS, ...options });
@@ -209,7 +204,7 @@ export function stringifyYAML(
  * @returns {object} Parsed YAML document
  * @throws {Error} If file not found or YAML invalid
  */
-export function readWURaw(yamlPath: string): unknown {
+export function readWURaw(yamlPath: string): any {
   if (!existsSync(yamlPath)) {
     throw createError(ErrorCodes.FILE_NOT_FOUND, `YAML file not found: ${yamlPath}`, {
       path: yamlPath,
@@ -240,7 +235,7 @@ export function readWURaw(yamlPath: string): unknown {
  * @returns {Promise<object>} Parsed YAML document
  * @throws {Error} If file not found or YAML invalid
  */
-export async function readWURawAsync(yamlPath: string): Promise<unknown> {
+export async function readWURawAsync(yamlPath: string): Promise<any> {
   try {
     const text = await fs.readFile(yamlPath, { encoding: 'utf-8' });
 
@@ -273,7 +268,7 @@ export async function readWURawAsync(yamlPath: string): Promise<unknown> {
  * @param {string} wuPath - Path to WU YAML file
  * @param {object} doc - YAML document to write
  */
-export function writeWU(wuPath: string, doc: Record<string, unknown>): void {
+export function writeWU(wuPath: string, doc: any): void {
   const out = stringify(doc, YAML_STRINGIFY_OPTIONS);
   writeFileSync(wuPath, out, { encoding: 'utf-8' });
 }
@@ -291,7 +286,7 @@ export function writeWU(wuPath: string, doc: Record<string, unknown>): void {
  * @param {object} doc - WU document
  * @param {string} note - Note to append
  */
-export function appendNote(doc: { notes?: unknown }, note: string): void {
+export function appendNote(doc: any, note: string): void {
   // Do nothing if note is falsy
   if (!note) return;
 
@@ -321,7 +316,7 @@ export function appendNote(doc: { notes?: unknown }, note: string): void {
  * @param {object} sessionData - Session summary from endSession()
  * @throws {Error} if WU file not found
  */
-export function appendAgentSession(wuId: string, sessionData: Record<string, unknown>): void {
+export function appendAgentSession(wuId: string, sessionData: any): void {
   const paths = createWuPaths();
   const wuPath = paths.WU(wuId);
 
