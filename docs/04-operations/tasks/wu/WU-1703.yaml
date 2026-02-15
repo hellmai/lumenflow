@@ -1,0 +1,45 @@
+id: WU-1703
+title: Emergency PII/PHI cleanup across templates and docs
+lane: 'Content: Framework Docs'
+type: refactor
+status: ready
+priority: P2
+created: 2026-02-15
+code_paths:
+  - packages/@lumenflow/cli/src/init-templates.ts
+  - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
+  - packages/@lumenflow/core/src/wu-spawn.ts
+  - .lumenflow/constraints.md
+  - .lumenflow/templates/spawn-prompt/constraints.md
+  - packages/@lumenflow/cli/templates/core/.lumenflow/constraints.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/agent-safety-card.md.template
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-safety-card.md
+  - apps/docs/src/content/docs/concepts/constraints.mdx
+  - docs/04-operations/_frameworks/lumenflow/sub-lanes.md
+  - docs/04-operations/_frameworks/lumenflow/invariants.md
+  - docs/templates/project-rules.yaml
+  - apps/docs/src/content/docs/guides/migrating-methodology.mdx
+  - docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md
+tests:
+  manual:
+    - Verify no PII/PHI references remain
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/init-templates.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1703.done
+dependencies: []
+risks: []
+notes: 'Emergency cleanup: replace all PII/PHI with PII, remove healthcare-specific content'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: Templates and documentation contain PII/PHI references that should just be PII. Problem: Healthcare-specific content needs removal. Solution: Replace PII/PHI with PII across all affected files.'
+acceptance:
+  - All PII/PHI references replaced with PII
+  - Healthcare-specific content removed from templates
