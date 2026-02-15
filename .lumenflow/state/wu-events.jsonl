@@ -1316,6 +1316,7 @@
 {"type":"complete","wuId":"WU-1689","timestamp":"2026-02-15T15:26:57.540Z"}
 {"type":"complete","wuId":"WU-1688","timestamp":"2026-02-15T15:45:43.831Z"}
 {"type":"unblock","wuId":"WU-1687","timestamp":"2026-02-15T15:46:13.735Z"}
-{"type":"release","wuId":"WU-1687","reason":"Reset via wu:recover --action reset","timestamp":"2026-02-15T15:46:39.445Z"}
-{"type":"claim","wuId":"WU-1687","lane":"Framework: CLI Enforcement","title":"Wire public wu:sandbox command and wu:claim --sandbox to core sandbox engine","timestamp":"2026-02-15T15:47:00.882Z"}
-{"type":"claim","wuId":"WU-1690","lane":"Framework: CLI WU Commands","title":"Publish bare lumenflow npm package for npx lumenflow init","timestamp":"2026-02-15T15:52:41.886Z"}
+{"type":"release","wuId":"WU-1687","timestamp":"2026-02-15T15:46:39.445Z","reason":"Reset via wu:recover --action reset"}
+{"type":"claim","wuId":"WU-1687","timestamp":"2026-02-15T15:47:00.882Z","lane":"Framework: CLI Enforcement","title":"Wire public wu:sandbox command and wu:claim --sandbox to core sandbox engine"}
+{"type":"claim","wuId":"WU-1690","timestamp":"2026-02-15T15:52:41.886Z","lane":"Framework: CLI WU Commands","title":"Publish bare lumenflow npm package for npx lumenflow init"}
+{"type":"complete","wuId":"WU-1690","timestamp":"2026-02-15T15:59:37.112Z"}
