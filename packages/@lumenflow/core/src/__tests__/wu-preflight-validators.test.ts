@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { findSuggestedTestPaths } from '../wu-preflight-validators.js';
+import { findSuggestedTestPaths, formatPreflightWarnings } from '../wu-preflight-validators.js';
 import fg from 'fast-glob';
 
 vi.mock('fast-glob');
@@ -45,5 +45,20 @@ describe('findSuggestedTestPaths', () => {
       '**/missing.{ts,js,mjs,tsx,jsx}',
       expect.objectContaining({ cwd: '/root' }),
     );
+  });
+});
+
+describe('formatPreflightWarnings', () => {
+  it('returns consistently formatted warning lines', () => {
+    const lines = formatPreflightWarnings(
+      ['first warning', 'second warning'],
+      '[wu-prep] ⚠️ Reality preflight warnings:',
+    );
+
+    expect(lines).toEqual([
+      '[wu-prep] ⚠️ Reality preflight warnings:',
+      '  - first warning',
+      '  - second warning',
+    ]);
   });
 });

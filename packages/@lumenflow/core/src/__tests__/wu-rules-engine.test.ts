@@ -11,7 +11,9 @@ import { createGitForPath } from '../git-adapter.js';
 import {
   CLI_PACKAGE_JSON_PATH,
   RULE_CODES,
+  normalizeValidationIssue,
   resolveChangedFiles,
+  validationIssueToDisplayLines,
   validateWURules,
   validateWURulesSync,
 } from '../wu-rules-engine.js';
@@ -302,5 +304,48 @@ describe('wu-rules-engine', () => {
     if (result.ok) {
       expect(result.files).toEqual(['packages/@lumenflow/core/src/wu-lint.ts']);
     }
+  });
+
+  it('normalizes validation issues with shared metadata details', () => {
+    const issue = {
+      code: RULE_CODES.CODE_PATH_COVERAGE,
+      severity: 'error' as const,
+      message: 'coverage failed',
+      suggestion: 'fix coverage',
+      metadata: {
+        missingCodePaths: ['packages/@lumenflow/core/src/wu-lint.ts'],
+        changedFiles: [],
+      },
+    };
+
+    const normalized = normalizeValidationIssue(issue, {
+      wuId: 'WU-TEST',
+      typeByCode: {
+        [RULE_CODES.CODE_PATH_COVERAGE]: 'coverage_error',
+      },
+    });
+
+    expect(normalized.type).toBe('coverage_error');
+    expect(normalized.wuId).toBe('WU-TEST');
+    expect(normalized.details).toContain('  - packages/@lumenflow/core/src/wu-lint.ts');
+    expect(normalized.details).toContain('Changed files considered:');
+    expect(normalized.details).toContain('  - (none)');
+  });
+
+  it('builds preflight display lines from normalized issue details', () => {
+    const issue = {
+      code: RULE_CODES.TEST_EXISTENCE,
+      severity: 'error' as const,
+      message: 'missing test path',
+      suggestion: 'add test path',
+      metadata: {
+        missingTestPaths: ['packages/@lumenflow/core/src/__tests__/wu-rules-core.test.ts'],
+      },
+    };
+
+    expect(validationIssueToDisplayLines(issue)).toEqual([
+      'missing test path',
+      '  - packages/@lumenflow/core/src/__tests__/wu-rules-core.test.ts',
+    ]);
   });
 });
