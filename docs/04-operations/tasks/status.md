@@ -4,7 +4,7 @@ _Last updated: 2026-02-15_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1584 — Core strict wave 2A: lifecycle strict hotspots](wu/WU-1584.yaml)
 
 ## Completed
 

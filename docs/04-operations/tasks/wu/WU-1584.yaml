@@ -2,7 +2,7 @@ id: WU-1584
 title: 'Core strict wave 2A: lifecycle strict hotspots'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-10
 code_paths:
@@ -34,10 +34,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: core strict backlog remains concentrated in lifecycle-critical flows including spawn and wu:done orchestration helpers. Problem: these hotspots carry high operational risk and block later strict migration waves. Solution: remove strict debt in lifecycle hotspots first with explicit types, safe narrowing, and error normalization while preserving orchestration behavior.'
+description: 'Context: core strict backlog remains concentrated in lifecycle-critical flows
+  including spawn and wu:done orchestration helpers. Problem: these hotspots carry high operational
+  risk and block later strict migration waves. Solution: remove strict debt in lifecycle hotspots
+  first with explicit types, safe narrowing, and error normalization while preserving orchestration
+  behavior.'
 acceptance:
   - Strict errors are removed from targeted core lifecycle hotspot files
   - Lifecycle behavior and output contracts remain unchanged under existing tests
   - No net increase in as any usage in touched core files
   - Core lifecycle unit/integration tests pass
   - Core strict progress baseline reflects reduced debt for this wave
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1584
+claimed_at: 2026-02-15T18:36:19.685Z
+baseline_main_sha: 5f128a3bba172423e32189fe95d012c4c7138aa0
+session_id: a4f240a2-f6b8-4691-ab56-77f2152c66a7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T18:36:19.690Z
