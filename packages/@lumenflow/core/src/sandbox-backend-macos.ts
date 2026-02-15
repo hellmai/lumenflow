@@ -61,7 +61,9 @@ function buildInvocation(request: SandboxExecutionRequest) {
   };
 }
 
-export function createMacosSandboxBackend(options: MacosSandboxBackendOptions = {}): SandboxBackend {
+export function createMacosSandboxBackend(
+  options: MacosSandboxBackendOptions = {},
+): SandboxBackend {
   const commandExists = options.commandExists || defaultCommandExists;
 
   return {
