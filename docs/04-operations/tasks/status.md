@@ -4,7 +4,7 @@ _Last updated: 2026-02-15_
 
 ## In Progress
 
-- [WU-1700 — Strict debt slice: eliminate TS7006 in cli initiative-status](wu/WU-1700.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -649,3 +649,4 @@ _Last updated: 2026-02-15_
 - [WU-1697 — Strict debt slice: eliminate TS7006 in core wu-done-metadata](wu/WU-1697.yaml) — 2026-02-15
 - [WU-1698 — Strict debt slice: eliminate TS7006 in core backlog-generator](wu/WU-1698.yaml) — 2026-02-15
 - [WU-1699 — Strict debt slice: eliminate TS7006 in core backlog-editor](wu/WU-1699.yaml) — 2026-02-15
+- [WU-1700 — Strict debt slice: eliminate TS7006 in cli initiative-status](wu/WU-1700.yaml) — 2026-02-15
