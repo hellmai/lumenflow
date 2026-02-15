@@ -4,7 +4,7 @@ _Last updated: 2026-02-15_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1581 — CLI strict wave 1A: high-impact WU command hotspots](wu/WU-1581.yaml)
 
 ## Completed
 
