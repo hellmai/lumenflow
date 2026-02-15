@@ -4,7 +4,7 @@ _Last updated: 2026-02-15_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1703 — Emergency PII/PHI cleanup across templates and docs](wu/WU-1703.yaml)
 
 ## Completed
 
