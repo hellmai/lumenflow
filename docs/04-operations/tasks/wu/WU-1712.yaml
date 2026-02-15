@@ -2,7 +2,7 @@ id: WU-1712
 title: 'Strict debt slice: type wu-done-paths'
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -42,3 +42,6 @@ session_id: d7637a4d-8c07-4aab-adfc-f4de700d7b65
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-15T23:52:41.822Z
+locked: true
+completed_at: 2026-02-15T23:54:56.850Z
+completed: 2026-02-15
