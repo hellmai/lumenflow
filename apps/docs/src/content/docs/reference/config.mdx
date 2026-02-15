@@ -133,6 +133,7 @@ Memory layer configuration
 | `progress_signals`            | object  | `-`               |             |
 | `signalCleanup`               | object  | `[object Object]` |             |
 | `delegation_context_max_size` | integer | `4096`            |             |
+| `spawn_context_max_size`      | unknown | `-`               |             |
 | `enforcement`                 | object  | `-`               |             |
 | `decay`                       | object  | `-`               |             |
 
@@ -172,11 +173,11 @@ YAML serialization configuration
 
 Agents configuration
 
-| Field           | Type   | Default           | Description                                            |
-| --------------- | ------ | ----------------- | ------------------------------------------------------ |
-| `defaultClient` | string | `"claude-code"`   | Configure per project (bootstrap default: claude-code) |
-| `clients`       | object | `[object Object]` |                                                        |
-| `methodology`   | object | `[object Object]` |                                                        |
+| Field           | Type   | Default           | Description |
+| --------------- | ------ | ----------------- | ----------- |
+| `defaultClient` | string | `"claude-code"`   |             |
+| `clients`       | object | `[object Object]` |             |
+| `methodology`   | object | `[object Object]` |             |
 
 ### agents.methodology
 

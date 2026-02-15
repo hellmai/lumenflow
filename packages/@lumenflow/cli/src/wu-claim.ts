@@ -57,6 +57,7 @@ import {
   toKebab,
   LOG_PREFIX,
   EMOJI,
+  EXIT_CODES,
 } from '@lumenflow/core/wu-constants';
 import { shouldSkipRemoteOperations } from '@lumenflow/core/micro-worktree';
 import { ensureOnMain, ensureMainUpToDate } from '@lumenflow/core/wu-helpers';
@@ -89,6 +90,7 @@ import {
 import { claimWorktreeMode } from './wu-claim-worktree.js';
 import { claimBranchOnlyMode } from './wu-claim-branch.js';
 import { handleResumeMode } from './wu-claim-resume-handler.js';
+import { extractSandboxCommandFromArgv, runWuSandbox } from './wu-sandbox.js';
 
 // ============================================================================
 // RE-EXPORTS: Preserve public API for existing test consumers
@@ -124,6 +126,13 @@ export { applyFallbackSymlinks } from './wu-claim-worktree.js';
 // ============================================================================
 
 const PREFIX = LOG_PREFIX.CLAIM;
+const WU_CLAIM_SANDBOX_OPTION = {
+  name: 'sandbox',
+  flags: '--sandbox',
+  description:
+    'Launch a post-claim session via wu:sandbox (use -- <command> to override the default shell)',
+  type: 'boolean' as const,
+};
 
 interface ResolveClaimCloudActivationInput {
   cloudFlag: boolean;
@@ -149,6 +158,65 @@ export function resolveCloudActivationForClaim(
   return resolveEffectiveCloudActivation({
     detection,
     currentBranch: input.currentBranch,
+  });
+}
+
+export function resolveDefaultClaimSandboxCommand(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+  platform: NodeJS.Platform | string = process.platform,
+): string[] {
+  if (platform === 'win32') {
+    return ['powershell.exe', '-NoLogo'];
+  }
+
+  const shell = env.SHELL?.trim();
+  return shell && shell.length > 0 ? [shell] : ['/bin/sh'];
+}
+
+export function resolveClaimSandboxCommand(
+  argv: string[] = process.argv,
+  env: Readonly<Record<string, string | undefined>> = process.env,
+  platform: NodeJS.Platform | string = process.platform,
+): string[] {
+  const explicit = extractSandboxCommandFromArgv(argv);
+  if (explicit.length > 0) {
+    return explicit;
+  }
+
+  return resolveDefaultClaimSandboxCommand(env, platform);
+}
+
+export interface ClaimSandboxLaunchInput {
+  enabled: boolean;
+  id: string;
+  worktreePath: string;
+  argv?: string[];
+  env?: Readonly<Record<string, string | undefined>>;
+  platform?: NodeJS.Platform | string;
+}
+
+export async function maybeLaunchClaimSandboxSession(
+  input: ClaimSandboxLaunchInput,
+  deps: {
+    launchSandbox?: typeof runWuSandbox;
+  } = {},
+): Promise<number | null> {
+  if (!input.enabled) {
+    return null;
+  }
+
+  const launchSandbox = deps.launchSandbox || runWuSandbox;
+  const command = resolveClaimSandboxCommand(
+    input.argv || process.argv,
+    input.env || (process.env as Record<string, string | undefined>),
+    input.platform || process.platform,
+  );
+
+  console.log(`${PREFIX} Launching post-claim session via wu:sandbox...`);
+  return launchSandbox({
+    id: input.id,
+    worktree: input.worktreePath,
+    command,
   });
 }
 
@@ -178,6 +246,7 @@ async function main() {
       WU_OPTIONS.resume, // WU-2411: Agent handoff flag
       WU_OPTIONS.skipSetup, // WU-1023: Skip auto-setup for fast claims
       WU_OPTIONS.noPush, // Skip pushing claim state/branch (air-gapped)
+      WU_CLAIM_SANDBOX_OPTION,
     ],
     required: ['id', 'lane'],
     allowPositionalId: true,
@@ -312,6 +381,7 @@ async function main() {
   // WU-1521: Track canonical claim push state for rollback in finally block
   let canonicalClaimPushed = false;
   let claimTitle = '';
+  let postClaimSandboxWorktree: string | null = null;
   try {
     // Code paths overlap detection (WU-901)
     handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args);
@@ -513,6 +583,10 @@ async function main() {
 
     // Mark claim as successful - lock should remain for wu:done to release
     claimSucceeded = true;
+    postClaimSandboxWorktree =
+      claimedMode === CLAIMED_MODES.BRANCH_ONLY || claimedMode === CLAIMED_MODES.BRANCH_PR
+        ? process.cwd()
+        : path.resolve(worktree);
   } finally {
     // WU-1808: Release lane lock if claim did not complete successfully
     // This prevents orphan locks from blocking the lane when claim crashes or fails
@@ -529,6 +603,19 @@ async function main() {
         console.log(`${PREFIX} Lane lock released for "${args.lane}"`);
       }
     }
+  }
+
+  const sandboxExitCode = await maybeLaunchClaimSandboxSession({
+    enabled: Boolean(args.sandbox && claimSucceeded && postClaimSandboxWorktree),
+    id,
+    worktreePath: postClaimSandboxWorktree || process.cwd(),
+    argv: process.argv,
+  });
+  if (sandboxExitCode !== null && sandboxExitCode !== EXIT_CODES.SUCCESS) {
+    die(
+      `Post-claim sandbox command exited with code ${sandboxExitCode}.\n` +
+        `Claim for ${id} remains active. Resume from ${postClaimSandboxWorktree || process.cwd()}.`,
+    );
   }
 }
 

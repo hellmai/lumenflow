@@ -39,6 +39,7 @@ export {
   wuStatusTool,
   wuCreateTool,
   wuClaimTool,
+  wuSandboxTool,
   wuDoneTool,
   gatesRunTool,
   wuBlockTool,
@@ -175,6 +176,7 @@ import {
   wuStatusTool,
   wuCreateTool,
   wuClaimTool,
+  wuSandboxTool,
   wuDoneTool,
   gatesRunTool,
   wuBlockTool,
@@ -355,6 +357,7 @@ export const allTools: ToolDefinition[] = [
   wuStatusTool,
   wuCreateTool,
   wuClaimTool,
+  wuSandboxTool,
   wuDoneTool,
   gatesRunTool,
   // WU-1482: Wave-1 public parity tools

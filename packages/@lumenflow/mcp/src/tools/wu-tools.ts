@@ -144,11 +144,22 @@ export const wuCreateTool: ToolDefinition = {
  * WU-1431: Uses shared wuClaimSchema for CLI/MCP parity
  * WU-1491: Supports --cloud, --branch-only, and --pr-mode passthrough
  */
+const wuClaimToolSchema = wuClaimSchema.extend({
+  sandbox: z
+    .boolean()
+    .optional()
+    .describe('Launch post-claim session through wu:sandbox (requires sandbox_command in MCP)'),
+  sandbox_command: z
+    .array(z.string())
+    .optional()
+    .describe('Command argv to run with --sandbox (e.g., ["node", "-v"])'),
+});
+
 export const wuClaimTool: ToolDefinition = {
   name: 'wu_claim',
   description: 'Claim a Work Unit and create worktree for implementation',
-  // WU-1431: Use shared schema
-  inputSchema: wuClaimSchema,
+  // WU-1431: Extend shared schema with MCP-safe sandbox launch controls
+  inputSchema: wuClaimToolSchema,
 
   async execute(input, options) {
     if (!input.id) {
@@ -163,6 +174,18 @@ export const wuClaimTool: ToolDefinition = {
     if (input.cloud) args.push('--cloud');
     if (input.branch_only) args.push('--branch-only');
     if (input.pr_mode) args.push('--pr-mode');
+    if (input.sandbox) {
+      const sandboxCommand = Array.isArray(input.sandbox_command)
+        ? (input.sandbox_command as string[])
+        : [];
+      if (sandboxCommand.length === 0) {
+        return error(
+          'sandbox_command is required when sandbox=true for MCP execution',
+          ErrorCodes.MISSING_PARAMETER,
+        );
+      }
+      args.push('--sandbox', '--', ...sandboxCommand);
+    }
 
     const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
     const result = await runCliCommand('wu:claim', args, cliOptions);
@@ -172,6 +195,53 @@ export const wuClaimTool: ToolDefinition = {
     } else {
       return error(
         result.stderr || result.error?.message || 'wu:claim failed',
+        ErrorCodes.WU_CLAIM_ERROR,
+      );
+    }
+  },
+};
+
+/**
+ * wu_sandbox - Execute a command through the sandbox backend for this platform
+ */
+const wuSandboxSchema = z.object({
+  id: z.string().describe('WU ID (e.g., WU-1687)'),
+  worktree: z.string().optional().describe('Optional worktree path override'),
+  command: z
+    .array(z.string())
+    .min(1)
+    .describe('Command argv to execute (e.g., ["node", "-e", "process.exit(0)"])'),
+});
+
+export const wuSandboxTool: ToolDefinition = {
+  name: 'wu_sandbox',
+  description: 'Run a command through the hardened WU sandbox backend',
+  inputSchema: wuSandboxSchema,
+
+  async execute(input, options) {
+    if (!input.id) {
+      return error(ErrorMessages.ID_REQUIRED, ErrorCodes.MISSING_PARAMETER);
+    }
+
+    const command = Array.isArray(input.command) ? (input.command as string[]) : [];
+    if (command.length === 0) {
+      return error('command is required', ErrorCodes.MISSING_PARAMETER);
+    }
+
+    const args = ['--id', input.id as string];
+    if (input.worktree) {
+      args.push('--worktree', input.worktree as string);
+    }
+    args.push('--', ...command);
+
+    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
+    const result = await runCliCommand('wu:sandbox', args, cliOptions);
+
+    if (result.success) {
+      return success({ message: result.stdout || 'WU sandbox command completed successfully' });
+    } else {
+      return error(
+        result.stderr || result.error?.message || 'wu:sandbox failed',
         ErrorCodes.WU_CLAIM_ERROR,
       );
     }

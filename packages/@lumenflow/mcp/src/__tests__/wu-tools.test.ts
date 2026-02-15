@@ -21,6 +21,7 @@ import {
   wuPruneTool,
   wuDeleteTool,
   wuCleanupTool,
+  wuSandboxTool,
   wuDelegateTool,
   wuValidateTool,
   wuInferLaneTool,
@@ -175,6 +176,50 @@ describe('wu_claim cloud mode passthrough (WU-1491)', () => {
         'Framework: CLI',
         '--branch-only',
         '--pr-mode',
+      ]),
+      expect.any(Object),
+    );
+  });
+
+  it('should require sandbox_command when sandbox mode is requested', async () => {
+    const result = await wuClaimTool.execute({
+      id: 'WU-1687',
+      lane: 'Framework: CLI Enforcement',
+      sandbox: true,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error?.message).toContain('sandbox_command');
+  });
+
+  it('should pass sandbox mode and command args through to CLI', async () => {
+    mockRunCliCommand.mockResolvedValue({
+      success: true,
+      stdout: 'WU claimed with sandbox launch',
+      stderr: '',
+      exitCode: 0,
+    });
+
+    const result = await wuClaimTool.execute({
+      id: 'WU-1687',
+      lane: 'Framework: CLI Enforcement',
+      sandbox: true,
+      sandbox_command: ['node', '-e', 'process.exit(0)'],
+    });
+
+    expect(result.success).toBe(true);
+    expect(mockRunCliCommand).toHaveBeenCalledWith(
+      'wu:claim',
+      expect.arrayContaining([
+        '--id',
+        'WU-1687',
+        '--lane',
+        'Framework: CLI Enforcement',
+        '--sandbox',
+        '--',
+        'node',
+        '-e',
+        'process.exit(0)',
       ]),
       expect.any(Object),
     );
@@ -614,6 +659,48 @@ describe('WU MCP tools (WU-1422)', () => {
 
       expect(result.success).toBe(false);
       expect(result.error?.message).toContain('id');
+    });
+  });
+
+  describe('wu_sandbox', () => {
+    it('should run wu:sandbox via CLI shell-out', async () => {
+      mockRunCliCommand.mockResolvedValue({
+        success: true,
+        stdout: 'Sandbox command completed',
+        stderr: '',
+        exitCode: 0,
+      });
+
+      const result = await wuSandboxTool.execute({
+        id: 'WU-1687',
+        worktree: '/tmp/wu-1687',
+        command: ['node', '-e', 'process.exit(0)'],
+      });
+
+      expect(result.success).toBe(true);
+      expect(mockRunCliCommand).toHaveBeenCalledWith(
+        'wu:sandbox',
+        expect.arrayContaining([
+          '--id',
+          'WU-1687',
+          '--worktree',
+          '/tmp/wu-1687',
+          '--',
+          'node',
+          '-e',
+          'process.exit(0)',
+        ]),
+        expect.any(Object),
+      );
+    });
+
+    it('should require command parameter', async () => {
+      const result = await wuSandboxTool.execute({
+        id: 'WU-1687',
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.message).toContain('command');
     });
   });
 
