@@ -48,20 +48,53 @@ export const CANONICAL_CLASSIFICATIONS = ['public', 'internal', 'confidential', 
  */
 const PHI_RESTRICTED_AUDIENCES = ['investor', 'patient', 'clinician', 'public'];
 
+type SystemMapDocument = Record<string, unknown> & {
+  quick_queries?: Record<string, unknown>;
+};
+
+interface SystemMapEntry {
+  id?: unknown;
+  path?: unknown;
+  paths?: unknown;
+  audiences?: unknown;
+  classification?: unknown;
+}
+
+interface SystemMapValidationAggregate {
+  valid: boolean;
+  pathErrors: string[];
+  orphanDocs: string[];
+  audienceErrors: string[];
+  queryErrors: string[];
+  classificationErrors: string[];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function formatEntryId(entry: SystemMapEntry): string {
+  return String(entry.id);
+}
+
 /**
  * Extract all document entries from system map (flattens all layer arrays)
  *
  * @param {object} systemMap - Parsed SYSTEM-MAP.yaml
  * @returns {Array<{id: string, path?: string, paths?: string[], audiences: string[], classification: string, summary: string}>}
  */
-function extractAllEntries(systemMap) {
-  const entries = [];
+function extractAllEntries(systemMap: SystemMapDocument): SystemMapEntry[] {
+  const entries: SystemMapEntry[] = [];
   const skipKeys = ['quick_queries'];
 
   for (const [key, value] of Object.entries(systemMap)) {
     if (skipKeys.includes(key)) continue;
     if (Array.isArray(value)) {
-      entries.push(...value);
+      for (const entry of value) {
+        if (isRecord(entry)) {
+          entries.push(entry as SystemMapEntry);
+        }
+      }
     }
   }
 
@@ -74,10 +107,16 @@ function extractAllEntries(systemMap) {
  * @param {{path?: string, paths?: string[]}} entry - Document entry
  * @returns {string[]}
  */
-function getEntryPaths(entry) {
-  const result = [];
-  if (entry.path) result.push(entry.path);
-  if (entry.paths && Array.isArray(entry.paths)) result.push(...entry.paths);
+function getEntryPaths(entry: SystemMapEntry): string[] {
+  const result: string[] = [];
+  if (typeof entry.path === 'string') result.push(entry.path);
+  if (Array.isArray(entry.paths)) {
+    for (const entryPath of entry.paths) {
+      if (typeof entryPath === 'string') {
+        result.push(entryPath);
+      }
+    }
+  }
   return result;
 }
 
@@ -87,8 +126,8 @@ function getEntryPaths(entry) {
  * @param {object} systemMap - Parsed SYSTEM-MAP.yaml
  * @returns {Set<string>}
  */
-function buildIndexedPathsSet(systemMap) {
-  const indexedPaths = new Set();
+function buildIndexedPathsSet(systemMap: SystemMapDocument): Set<string> {
+  const indexedPaths = new Set<string>();
   const entries = extractAllEntries(systemMap);
 
   for (const entry of entries) {
@@ -111,12 +150,12 @@ function buildIndexedPathsSet(systemMap) {
  * @param {object} systemMap - Parsed SYSTEM-MAP.yaml
  * @returns {Set<string>}
  */
-function buildIdSet(systemMap) {
-  const idSet = new Set();
+function buildIdSet(systemMap: SystemMapDocument): Set<string> {
+  const idSet = new Set<string>();
   const entries = extractAllEntries(systemMap);
 
   for (const entry of entries) {
-    if (entry.id) {
+    if (typeof entry.id === 'string' && entry.id.length > 0) {
       idSet.add(entry.id);
     }
   }
@@ -131,15 +170,18 @@ function buildIdSet(systemMap) {
  * @param {{exists: (path: string) => boolean}} deps - Dependencies
  * @returns {Promise<string[]>} Array of error messages
  */
-export async function validatePaths(systemMap, deps) {
-  const errors = [];
+export async function validatePaths(
+  systemMap: SystemMapDocument,
+  deps: { exists: (path: string) => boolean },
+): Promise<string[]> {
+  const errors: string[] = [];
   const entries = extractAllEntries(systemMap);
 
   for (const entry of entries) {
     const paths = getEntryPaths(entry);
     for (const p of paths) {
       if (!deps.exists(p)) {
-        errors.push(`Path not found: ${p} (entry: ${entry.id})`);
+        errors.push(`Path not found: ${p} (entry: ${formatEntryId(entry)})`);
       }
     }
   }
@@ -154,13 +196,16 @@ export async function validatePaths(systemMap, deps) {
  * @param {{glob: (pattern: string) => Promise<string[]>}} deps - Dependencies
  * @returns {Promise<string[]>} Array of orphan file paths
  */
-export async function findOrphanDocs(systemMap, deps) {
+export async function findOrphanDocs(
+  systemMap: SystemMapDocument,
+  deps: { glob: (pattern: string) => Promise<string[]> },
+): Promise<string[]> {
   const indexedPaths = buildIndexedPathsSet(systemMap);
 
   // Get all docs files
   const allDocs = await deps.glob('docs/**/*.md');
 
-  const orphans = [];
+  const orphans: string[] = [];
   for (const docPath of allDocs) {
     // Check if this doc is directly indexed
     if (indexedPaths.has(docPath)) continue;
@@ -189,24 +234,27 @@ export async function findOrphanDocs(systemMap, deps) {
  * @param {object} systemMap - Parsed SYSTEM-MAP.yaml
  * @returns {string[]} Array of error messages
  */
-export function validateAudienceTags(systemMap) {
-  const errors = [];
+export function validateAudienceTags(systemMap: SystemMapDocument): string[] {
+  const errors: string[] = [];
   const entries = extractAllEntries(systemMap);
 
   for (const entry of entries) {
     if (!entry.audiences || !Array.isArray(entry.audiences)) {
-      errors.push(`Entry ${entry.id} missing audiences array`);
+      errors.push(`Entry ${formatEntryId(entry)} missing audiences array`);
       continue;
     }
 
     if (entry.audiences.length === 0) {
-      errors.push(`Entry ${entry.id} has empty audiences array (must have at least one)`);
+      errors.push(
+        `Entry ${formatEntryId(entry)} has empty audiences array (must have at least one)`,
+      );
       continue;
     }
 
     for (const audience of entry.audiences) {
-      if (!CANONICAL_AUDIENCES.includes(audience)) {
-        errors.push(`Invalid audience '${audience}' in entry ${entry.id}`);
+      const audienceLabel = typeof audience === 'string' ? audience : String(audience);
+      if (!CANONICAL_AUDIENCES.includes(audienceLabel)) {
+        errors.push(`Invalid audience '${audienceLabel}' in entry ${formatEntryId(entry)}`);
       }
     }
   }
@@ -220,27 +268,30 @@ export function validateAudienceTags(systemMap) {
  * @param {object} systemMap - Parsed SYSTEM-MAP.yaml
  * @returns {string[]} Array of error messages
  */
-export function validateQuickQueries(systemMap) {
-  const errors = [];
+export function validateQuickQueries(systemMap: SystemMapDocument): string[] {
+  const errors: string[] = [];
 
-  if (!systemMap.quick_queries) {
+  if (!isRecord(systemMap.quick_queries)) {
     return errors;
   }
 
   const validIds = buildIdSet(systemMap);
 
   for (const [queryKey, queryValue] of Object.entries(systemMap.quick_queries)) {
-    const query = queryValue as { primary?: string; related?: string[] };
+    const query = isRecord(queryValue) ? queryValue : {};
+    const primary = query.primary;
     // Check primary reference
-    if (query.primary && !validIds.has(query.primary)) {
-      errors.push(`Quick query '${queryKey}' references non-existent primary: ${query.primary}`);
+    if (primary && !validIds.has(primary as string)) {
+      errors.push(`Quick query '${queryKey}' references non-existent primary: ${String(primary)}`);
     }
 
     // Check related references
-    if (query.related && Array.isArray(query.related)) {
+    if (Array.isArray(query.related)) {
       for (const related of query.related) {
-        if (!validIds.has(related)) {
-          errors.push(`Quick query '${queryKey}' references non-existent related: ${related}`);
+        if (!validIds.has(related as string)) {
+          errors.push(
+            `Quick query '${queryKey}' references non-existent related: ${String(related)}`,
+          );
         }
       }
     }
@@ -259,13 +310,13 @@ export function validateQuickQueries(systemMap) {
  * @param {object} systemMap - Parsed SYSTEM-MAP.yaml
  * @returns {string[]} Array of error messages
  */
-export function validateClassificationRouting(systemMap) {
-  const errors = [];
+export function validateClassificationRouting(systemMap: SystemMapDocument): string[] {
+  const errors: string[] = [];
   const entries = extractAllEntries(systemMap);
 
   for (const entry of entries) {
     const classification = entry.classification;
-    const audiences = entry.audiences || [];
+    const audiences = Array.isArray(entry.audiences) ? entry.audiences : [];
 
     // Only check restricted classification (PHI data)
     // Confidential is OK for investors (investor materials are confidential by design)
@@ -275,9 +326,10 @@ export function validateClassificationRouting(systemMap) {
 
     // Check if any PHI-restricted audiences have access
     for (const audience of audiences) {
-      if (PHI_RESTRICTED_AUDIENCES.includes(audience)) {
+      const audienceLabel = typeof audience === 'string' ? audience : String(audience);
+      if (PHI_RESTRICTED_AUDIENCES.includes(audienceLabel)) {
         errors.push(
-          `PHI routing violation: ${entry.id} has restricted (PHI) classification but is accessible to '${audience}'`,
+          `PHI routing violation: ${formatEntryId(entry)} has restricted (PHI) classification but is accessible to '${audienceLabel}'`,
         );
       }
     }
@@ -293,7 +345,10 @@ export function validateClassificationRouting(systemMap) {
  * @param {{exists: (path: string) => boolean, glob: (pattern: string) => Promise<string[]>}} deps - Dependencies
  * @returns {Promise<{valid: boolean, pathErrors: string[], orphanDocs: string[], audienceErrors: string[], queryErrors: string[], classificationErrors: string[]}>}
  */
-export async function validateSystemMap(systemMap, deps) {
+export async function validateSystemMap(
+  systemMap: SystemMapDocument,
+  deps: { exists: (path: string) => boolean; glob: (pattern: string) => Promise<string[]> },
+): Promise<SystemMapValidationAggregate> {
   const pathErrors = await validatePaths(systemMap, deps);
   const orphanDocs = await findOrphanDocs(systemMap, deps);
   const audienceErrors = validateAudienceTags(systemMap);
@@ -356,10 +411,14 @@ export async function runSystemMapValidation(
     };
   }
 
-  let systemMap;
+  let systemMap: SystemMapDocument;
   try {
     const raw = readFileSync(resolvedPath, 'utf-8');
-    systemMap = parseYAML(raw);
+    const parsed = parseYAML(raw);
+    if (!isRecord(parsed)) {
+      throw new Error('SYSTEM-MAP.yaml root must be a mapping/object');
+    }
+    systemMap = parsed as SystemMapDocument;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error?.(`[system-map] Failed to read or parse ${resolvedPath}: ${message}`);
@@ -375,8 +434,8 @@ export async function runSystemMapValidation(
   }
 
   const result = await validateSystemMap(systemMap, {
-    exists: (path) => existsSync(path),
-    glob: (pattern) => fg(pattern, { dot: false }),
+    exists: (pathToCheck: string) => existsSync(pathToCheck),
+    glob: (pattern: string) => fg(pattern, { dot: false }),
   });
 
   return {
@@ -390,7 +449,7 @@ export async function runSystemMapValidation(
   };
 }
 
-function emitErrors(label, errors) {
+function emitErrors(label: string, errors: string[]): void {
   if (!errors || errors.length === 0) return;
   console.error(`\n${label}:`);
   for (const error of errors) {
