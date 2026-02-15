@@ -119,6 +119,37 @@ describe('generateBacklog', () => {
     expect(backlog.endsWith('\n')).toBe(true);
     expect(status.endsWith('\n')).toBe(true);
   });
+
+  it('escapes boundary underscores while preserving identifier underscores', async () => {
+    const events =
+      [
+        JSON.stringify({
+          type: 'create',
+          wuId: 'WU-778',
+          timestamp: '2026-02-07T10:00:00.000Z',
+          lane: 'Lane_name',
+          title: '_leading_ my_var trailing_',
+        }),
+        JSON.stringify({
+          type: 'claim',
+          wuId: 'WU-778',
+          timestamp: '2026-02-07T10:01:00.000Z',
+          lane: 'Lane_name',
+          title: '_leading_ my_var trailing_',
+        }),
+      ].join('\n') + '\n';
+
+    writeFileSync(join(stateDir, 'wu-events.jsonl'), events);
+
+    const store = new WUStateStore(stateDir);
+    await store.load();
+
+    const backlog = await generateBacklog(store, { wuDir });
+
+    expect(backlog).toContain('\\_leading\\_ my_var trailing\\_');
+    expect(backlog).not.toContain('my\\_var');
+    expect(backlog).toContain('— Lane_name');
+  });
 });
 
 /**
