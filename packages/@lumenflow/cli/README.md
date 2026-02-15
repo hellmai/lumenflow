@@ -71,6 +71,7 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 | `wu-recover`     | Analyze and fix WU state inconsistencies                      |
 | `wu-release`     | Release orphaned WU (in_progress to ready)                    |
 | `wu-repair`      | Repair WU state issues                                        |
+| `wu-sandbox`     | Run command through hardened WU sandbox backend               |
 | `wu-status`      | Show WU status, location, valid commands                      |
 | `wu-unblock`     | Unblock WU                                                    |
 | `wu-unlock-lane` | Unlock stuck lane                                             |
@@ -104,6 +105,7 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 | `agent-log-issue`            | Log issue during agent session            |
 | `agent-session`              | Start agent session                       |
 | `agent-session-end`          | End agent session                         |
+| `delegation-list`            | List active delegation records            |
 | `initiative-add-wu`          | Add WU to initiative                      |
 | `initiative-bulk-assign-wus` | Bulk assign WUs to initiative             |
 | `initiative-create`          | Create new initiative                     |
@@ -115,7 +117,6 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 | `orchestrate-init-status`    | Compact initiative progress view          |
 | `orchestrate-initiative`     | Orchestrate initiative execution          |
 | `orchestrate-monitor`        | Monitor spawn/agent activity              |
-| `spawn-list`                 | List active spawned agents                |
 
 ### Metrics & Analytics
 

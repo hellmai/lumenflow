@@ -21,11 +21,11 @@ LumenFlow provides a comprehensive CLI for managing Work Units, memory, initiati
 | Initiatives         | [`initiative:add-wu`](#initiativeadd-wu), [`initiative:bulk-assign`](#initiativebulk-assign), [`initiative:create`](#initiativecreate), [`initiative:edit`](#initiativeedit), [`initiative:list`](#initiativelist), [`initiative:plan`](#initiativeplan), [`initiative:remove-wu`](#initiativeremove-wu), [`initiative:status`](#initiativestatus)                                                                                                                                                                                                                                                                                                                                                             |
 | Memory & Sessions   | [`mem:checkpoint`](#memcheckpoint), [`mem:cleanup`](#memcleanup), [`mem:context`](#memcontext), [`mem:create`](#memcreate), [`mem:delete`](#memdelete), [`mem:export`](#memexport), [`mem:inbox`](#meminbox), [`mem:init`](#meminit), [`mem:ready`](#memready), [`mem:recover`](#memrecover), [`mem:signal`](#memsignal), [`mem:start`](#memstart), [`mem:summarize`](#memsummarize), [`mem:triage`](#memtriage), [`signal:cleanup`](#signalcleanup)                                                                                                                                                                                                                                                           |
 | Metrics & Flow      | [`flow:bottlenecks`](#flowbottlenecks), [`flow:report`](#flowreport), [`lumenflow:metrics`](#lumenflowmetrics), [`metrics`](#metrics), [`metrics:snapshot`](#metricssnapshot)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Orchestration       | [`agent:issues-query`](#agentissues-query), [`agent:log-issue`](#agentlog-issue), [`agent:session`](#agentsession), [`agent:session-end`](#agentsession-end), [`orchestrate:init-status`](#orchestrateinit-status), [`orchestrate:initiative`](#orchestrateinitiative), [`orchestrate:monitor`](#orchestratemonitor), [`delegation:list`](#delegationlist)                                                                                                                                                                                                                                                                                                                                                     |
+| Orchestration       | [`agent:issues-query`](#agentissues-query), [`agent:log-issue`](#agentlog-issue), [`agent:session`](#agentsession), [`agent:session-end`](#agentsession-end), [`delegation:list`](#delegationlist), [`orchestrate:init-status`](#orchestrateinit-status), [`orchestrate:initiative`](#orchestrateinitiative), [`orchestrate:monitor`](#orchestratemonitor)                                                                                                                                                                                                                                                                                                                                                     |
 | Plans               | [`init:plan`](#initplan), [`plan:create`](#plancreate), [`plan:edit`](#planedit), [`plan:link`](#planlink), [`plan:promote`](#planpromote)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | Setup & Development | [`backlog:prune`](#backlogprune), [`docs:sync`](#docssync), [`file:delete`](#filedelete), [`file:edit`](#fileedit), [`file:read`](#fileread), [`file:write`](#filewrite), [`git:branch`](#gitbranch), [`git:diff`](#gitdiff), [`git:log`](#gitlog), [`git:status`](#gitstatus), [`lumenflow`](#lumenflow), [`lumenflow-init`](#lumenflow-init), [`lumenflow:commands`](#lumenflowcommands), [`lumenflow:docs-sync`](#lumenflowdocs-sync), [`lumenflow:doctor`](#lumenflowdoctor), [`lumenflow:integrate`](#lumenflowintegrate), [`lumenflow:release`](#lumenflowrelease), [`lumenflow:sync-templates`](#lumenflowsync-templates), [`lumenflow:upgrade`](#lumenflowupgrade), [`sync:templates`](#synctemplates) |
 | State Management    | [`state:bootstrap`](#statebootstrap), [`state:cleanup`](#statecleanup), [`state:doctor`](#statedoctor)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| WU Lifecycle        | [`wu:block`](#wublock), [`wu:brief`](#wubrief), [`wu:claim`](#wuclaim), [`wu:create`](#wucreate), [`wu:delegate`](#wudelegate), [`wu:done`](#wudone), [`wu:edit`](#wuedit), [`wu:prep`](#wuprep), [`wu:recover`](#wurecover), [`wu:release`](#wurelease), [`wu:status`](#wustatus), [`wu:unblock`](#wuunblock), [`wu:validate`](#wuvalidate)                                                                                                                                                                                                                                                                                                                                                                   |
+| WU Lifecycle        | [`wu:block`](#wublock), [`wu:brief`](#wubrief), [`wu:claim`](#wuclaim), [`wu:create`](#wucreate), [`wu:delegate`](#wudelegate), [`wu:done`](#wudone), [`wu:edit`](#wuedit), [`wu:prep`](#wuprep), [`wu:recover`](#wurecover), [`wu:release`](#wurelease), [`wu:sandbox`](#wusandbox), [`wu:status`](#wustatus), [`wu:unblock`](#wuunblock), [`wu:validate`](#wuvalidate)                                                                                                                                                                                                                                                                                                                                       |
 | WU Maintenance      | [`wu:cleanup`](#wucleanup), [`wu:delete`](#wudelete), [`wu:deps`](#wudeps), [`wu:infer-lane`](#wuinfer-lane), [`wu:preflight`](#wupreflight), [`wu:proto`](#wuproto), [`wu:prune`](#wuprune), [`wu:repair`](#wurepair), [`wu:unlock-lane`](#wuunlock-lane)                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 ## Gates & Quality
@@ -599,11 +599,11 @@ pnpm agent:session --wu <wuId> --tier <tier>
 
 **Options:**
 
-| Flag                        | Description                                          | Required |
-| --------------------------- | ---------------------------------------------------- | -------- |
-| `--wu &lt;wuId&gt;`         | WU ID to work on (e.g., WU-1234)                     | Yes      |
-| `--tier &lt;tier&gt;`       | Context tier (1, 2, or 3)                            | Yes      |
-| `--agent-type &lt;type&gt;` | Agent type (e.g. claude-code, codex-cli, gemini-cli) | No       |
+| Flag                        | Description                       | Required |
+| --------------------------- | --------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`         | WU ID to work on (e.g., WU-1234)  | Yes      |
+| `--tier &lt;tier&gt;`       | Context tier (1, 2, or 3)         | Yes      |
+| `--agent-type &lt;type&gt;` | Agent type (default: claude-code) | No       |
 
 ### agent:session-end
 
@@ -612,6 +612,22 @@ End agent session
 ```bash
 pnpm agent:session-end
 ```
+
+### delegation:list
+
+List active delegation records
+
+```bash
+pnpm delegation:list
+```
+
+**Options:**
+
+| Flag                          | Description                                                | Required |
+| ----------------------------- | ---------------------------------------------------------- | -------- |
+| `--wu &lt;wuId&gt;`           | Work Unit ID to link (e.g., WU-123)                        | No       |
+| `--initiative &lt;initId&gt;` | Initiative ID to show all delegations for (e.g., INIT-001) | No       |
+| `--json`                      | Output as JSON                                             | No       |
 
 ### orchestrate:init-status
 
@@ -631,27 +647,11 @@ pnpm orchestrate:initiative
 
 ### orchestrate:monitor
 
-Monitor delegation/agent activity
+Monitor spawn/agent activity
 
 ```bash
 pnpm orchestrate:monitor
 ```
-
-### delegation:list
-
-List active delegation records
-
-```bash
-pnpm delegation:list
-```
-
-**Options:**
-
-| Flag                          | Description                                                | Required |
-| ----------------------------- | ---------------------------------------------------------- | -------- |
-| `--wu &lt;wuId&gt;`           | Work Unit ID to link (e.g., WU-123)                        | No       |
-| `--initiative &lt;initId&gt;` | Initiative ID to show all delegations for (e.g., INIT-001) | No       |
-| `--json`                      | Output as JSON                                             | No       |
 
 ## Plans
 
@@ -1086,22 +1086,23 @@ pnpm wu:edit --id <wuId>
 | `--replace-blocked-by`              | Replace existing blocked_by instead of appending                                                                      | No       |
 | `--add-dep &lt;wuIds&gt;`           | Comma-separated WU IDs to add to dependencies array (appends to existing; use --replace-dependencies to overwrite)    | No       |
 | `--replace-dependencies`            | Replace existing dependencies instead of appending                                                                    | No       |
+| `--plan &lt;uri&gt;`                | Plan file URI (lumenflow://plans/... or repo-relative path)                                                           | No       |
 
 ### wu:prep
 
 Run gates in worktree, prep for wu:done
 
 ```bash
-pnpm wu:prep --id <wuId> [--docs-only] [--full-tests]
+pnpm wu:prep --id <wuId>
 ```
 
 **Options:**
 
 | Flag                    | Description                                                                      | Required |
 | ----------------------- | -------------------------------------------------------------------------------- | -------- |
-| `-i, --id &lt;wuId&gt;` | Work Unit ID to prepare (e.g., WU-123)                                           | Yes      |
+| `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
 | `--docs-only`           | Run docs-only gates (format, spec-linter)                                        | No       |
-| `--full-tests`          | Disable `tests.unit` scoping and run default incremental/full test gate behavior | No       |
+| `--full-tests`          | Run full incremental test suite (disable tests.unit scoped execution)            | No       |
 
 ### wu:recover
 
@@ -1131,6 +1132,21 @@ pnpm wu:release --id <wuId> --reason <reason>
 | ----------------------------- | -------------------------------------------------------------------------------- | -------- |
 | `-i, --id &lt;wuId&gt;`       | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
 | `-r, --reason &lt;reason&gt;` | Reason for action (required with --skip-gates, --override-owner)                 | Yes      |
+
+### wu:sandbox
+
+Run command through hardened WU sandbox backend
+
+```bash
+pnpm wu:sandbox --id <wuId>
+```
+
+**Options:**
+
+| Flag                          | Description                                                                      | Required |
+| ----------------------------- | -------------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;wuId&gt;`       | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
+| `-w, --worktree &lt;path&gt;` | Override worktree path                                                           | No       |
 
 ### wu:status
 

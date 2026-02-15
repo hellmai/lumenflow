@@ -162,6 +162,7 @@ describe('public CLI manifest (WU-1432)', () => {
       // WU lifecycle - must be public
       expect(names).toContain('wu:create');
       expect(names).toContain('wu:claim');
+      expect(names).toContain('wu:sandbox');
       expect(names).toContain('wu:done');
       expect(names).toContain('wu:prep');
       expect(names).toContain('wu:status');
