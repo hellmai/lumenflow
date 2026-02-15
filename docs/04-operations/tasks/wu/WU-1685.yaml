@@ -2,7 +2,7 @@ id: WU-1685
 title: 'Validator V2 follow-up: normalize issue shaping and adapter boundaries'
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -52,3 +52,6 @@ acceptance:
   - CLI consumers (create/edit/validate/prep/done) read normalized warning/error output without
     duplicate mapping blocks.
   - Regression tests confirm backward-compatible command output while reducing adapter duplication.
+locked: true
+completed_at: 2026-02-15T12:23:33.715Z
+completed: 2026-02-15
