@@ -2,7 +2,7 @@ id: WU-1690
 title: Publish bare lumenflow npm package for npx lumenflow init
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -42,3 +42,6 @@ description: npx lumenflow init fails with 404 because only @lumenflow/cli exist
 acceptance:
   - npx lumenflow init resolves and delegates to @lumenflow/cli
   - Package is minimal wrapper with @lumenflow/cli as dependency
+locked: true
+completed_at: 2026-02-15T15:59:35.539Z
+completed: 2026-02-15
