@@ -14,18 +14,36 @@ import { parseYAML } from './wu-yaml.js';
 import { createError, ErrorCodes } from './error-handler.js';
 import { STRING_LITERALS } from './wu-constants.js';
 
+type TokenizerLike = ReturnType<typeof get_encoding>;
+
+interface PromptLoadResult {
+  text: string;
+  raw: string;
+}
+
+interface PromptAnalysisResult extends PromptLoadResult {
+  tokenCount: number;
+  hash: string;
+}
+
+interface LongestLine {
+  line: string;
+  length: number;
+  number: number;
+}
+
 // Cache tokenizer instance (expensive to create)
-let tokenizerCache = null;
+let tokenizerCache: TokenizerLike | null = null;
 
 /**
  * Get or create tiktoken instance with o200k_base encoding (gpt-5-nano)
  * @returns {Tiktoken} Tokenizer instance
  */
-function getTokenizer() {
+function getTokenizer(): TokenizerLike {
   if (!tokenizerCache) {
     tokenizerCache = get_encoding('o200k_base');
   }
-  return tokenizerCache;
+  return tokenizerCache as TokenizerLike;
 }
 
 /**
@@ -33,7 +51,7 @@ function getTokenizer() {
  * @param {string} text - Text to tokenize
  * @returns {number} Token count
  */
-export function countTokens(text) {
+export function countTokens(text: string): number {
   if (!text || typeof text !== 'string') {
     return 0;
   }
@@ -48,7 +66,7 @@ export function countTokens(text) {
  * @param {string} text - Text to hash
  * @returns {string} Hex hash
  */
-export function computeHash(text) {
+export function computeHash(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16);
 }
 
@@ -57,10 +75,10 @@ export function computeHash(text) {
  * @param {string} text - YAML text
  * @returns {string} Text with comments removed
  */
-function stripYAMLComments(text) {
+function stripYAMLComments(text: string): string {
   return text
     .split(STRING_LITERALS.NEWLINE)
-    .filter((line) => !line.trim().startsWith('#'))
+    .filter((line: string) => !line.trim().startsWith('#'))
     .join(STRING_LITERALS.NEWLINE);
 }
 
@@ -69,7 +87,7 @@ function stripYAMLComments(text) {
  * @param {string} promptPath - Absolute path to prompt YAML file
  * @returns {{text: string, raw: string}} Rendered text and raw YAML
  */
-export function loadPrompt(promptPath) {
+export function loadPrompt(promptPath: string): PromptLoadResult {
   try {
     const raw = readFileSync(promptPath, { encoding: 'utf-8' });
 
@@ -113,7 +131,7 @@ export function loadPrompt(promptPath) {
  * @param {string} promptPath - Absolute path to prompt YAML file
  * @returns {{tokenCount: number, hash: string, text: string, raw: string}}
  */
-export function analyzePrompt(promptPath) {
+export function analyzePrompt(promptPath: string): PromptAnalysisResult {
   const { text, raw } = loadPrompt(promptPath);
   const tokenCount = countTokens(text);
   const hash = computeHash(text);
@@ -132,9 +150,9 @@ export function analyzePrompt(promptPath) {
  * @param {number} n - Number of lines to return
  * @returns {Array<{line: string, length: number, number: number}>} Longest lines
  */
-export function getLongestLines(text, n = 3) {
+export function getLongestLines(text: string, n = 3): LongestLine[] {
   const lines = text.split(STRING_LITERALS.NEWLINE);
-  const linesWithMetadata = lines.map((line, index) => ({
+  const linesWithMetadata = lines.map((line: string, index: number) => ({
     line: line.trim(),
     length: line.length,
     number: index + 1,
@@ -142,15 +160,15 @@ export function getLongestLines(text, n = 3) {
 
   // Sort by length descending, take top N
   return linesWithMetadata
-    .filter((l) => l.line.length > 0)
-    .sort((a, b) => b.length - a.length)
+    .filter((lineInfo: LongestLine) => lineInfo.line.length > 0)
+    .sort((a: LongestLine, b: LongestLine) => b.length - a.length)
     .slice(0, n);
 }
 
 /**
  * Cleanup function (call on process exit to free tokenizer)
  */
-export function cleanup() {
+export function cleanup(): void {
   if (tokenizerCache) {
     tokenizerCache.free();
     tokenizerCache = null;
