@@ -6,6 +6,7 @@ _Last updated: 2026-02-15_
 
 - [WU-1680 — Validator Layer V2: unify phase-aware rules and adapters](wu/WU-1680.yaml)
 - [WU-1681 — Fix wu:brief client flag UX to avoid Claude-biased defaults](wu/WU-1681.yaml)
+- [WU-1683 — Add first-class plan field to WU schema for plan-to-WU linking](wu/WU-1683.yaml)
 
 ## Completed
 

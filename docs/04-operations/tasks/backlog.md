@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1683 — Add first-class plan field to WU schema for plan-to-WU linking](wu/WU-1683.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1581 — CLI strict wave 1A: high-impact WU command hotspots](wu/WU-1581.yaml) — Framework: CLI WU Commands
@@ -36,6 +35,7 @@ sections:
 
 - [WU-1680 — Validator Layer V2: unify phase-aware rules and adapters](wu/WU-1680.yaml) — Framework: CLI WU Commands
 - [WU-1681 — Fix wu:brief client flag UX to avoid Claude-biased defaults](wu/WU-1681.yaml) — Framework: CLI WU Commands
+- [WU-1683 — Add first-class plan field to WU schema for plan-to-WU linking](wu/WU-1683.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
