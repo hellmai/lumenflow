@@ -6,11 +6,21 @@ status: in_progress
 priority: P2
 created: 2026-02-15
 code_paths:
-  - packages/@lumenflow/*/package.json
-  - packages/@lumenflow/*/README.md
+  - packages/@lumenflow/cli/package.json
+  - packages/@lumenflow/core/package.json
+  - packages/@lumenflow/memory/package.json
+  - packages/@lumenflow/metrics/package.json
+  - packages/@lumenflow/initiatives/package.json
+  - packages/@lumenflow/agent/package.json
+  - packages/@lumenflow/mcp/package.json
+  - packages/@lumenflow/shims/package.json
+  - packages/@lumenflow/cli/README.md
+  - packages/@lumenflow/agent/README.md
+  - packages/@lumenflow/memory/README.md
+  - packages/@lumenflow/initiatives/README.md
   - CHANGELOG.md
   - README.md
-  - apps/docs/
+  - apps/docs/src/content/docs/
   - docs/
   - tools/generate-cli-docs.ts
   - packages/@lumenflow/cli/src/sync-templates.ts
@@ -19,8 +29,7 @@ code_paths:
 tests:
   manual:
     - grep -r hellmai/os confirms no remaining references in source files
-  unit:
-    - N/A - metadata-only changes, no unit tests needed
+  unit: []
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1679.done
