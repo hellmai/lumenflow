@@ -2,7 +2,7 @@ id: WU-1581
 title: 'CLI strict wave 1A: high-impact WU command hotspots'
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-10
 code_paths:
@@ -53,3 +53,6 @@ session_id: 69fbae70-dd44-4efa-a433-c82d5d74609e
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-15T18:00:20.205Z
+locked: true
+completed_at: 2026-02-15T18:18:53.063Z
+completed: 2026-02-15
