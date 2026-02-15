@@ -137,7 +137,10 @@ function validateSchema(doc: PreflightWUDoc, id: string): { valid: boolean; erro
 /**
  * Validate code_paths files/globs exist on disk.
  */
-export function validateCodePathsExistence(codePaths: unknown, rootDir: string): PathValidationResult {
+export function validateCodePathsExistence(
+  codePaths: unknown,
+  rootDir: string,
+): PathValidationResult {
   if (!codePaths || !Array.isArray(codePaths) || codePaths.length === 0) {
     return { valid: true, errors: [], missing: [] };
   }
