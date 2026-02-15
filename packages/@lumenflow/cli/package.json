@@ -35,6 +35,7 @@
   },
   "bin": {
     "wu-claim": "./dist/wu-claim.js",
+    "wu-sandbox": "./dist/wu-sandbox.js",
     "wu-done": "./dist/wu-done.js",
     "wu-prep": "./dist/wu-prep.js",
     "wu-block": "./dist/wu-block.js",

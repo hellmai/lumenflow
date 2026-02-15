@@ -74,6 +74,13 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     category: COMMAND_CATEGORIES.WU_LIFECYCLE,
   },
   {
+    name: 'wu:sandbox',
+    binName: 'wu-sandbox',
+    binPath: './dist/wu-sandbox.js',
+    description: 'Run command through hardened WU sandbox backend',
+    category: COMMAND_CATEGORIES.WU_LIFECYCLE,
+  },
+  {
     name: 'wu:prep',
     binName: 'wu-prep',
     binPath: './dist/wu-prep.js',

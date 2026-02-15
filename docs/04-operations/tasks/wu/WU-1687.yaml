@@ -13,10 +13,13 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
   - package.json
   - packages/@lumenflow/cli/package.json
+  - packages/@lumenflow/cli/README.md
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/mcp/src/tools.ts
   - packages/@lumenflow/mcp/src/tools/wu-tools.ts
   - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
+  - apps/docs/src/content/docs/reference/cli.mdx
+  - apps/docs/src/content/docs/reference/config.mdx
   - .lumenflow.config.yaml
 tests:
   manual:

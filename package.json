@@ -21,6 +21,7 @@
     "clean": "turbo clean && rm -rf node_modules/.cache",
     "gates": "node tools/cli-entry.mjs gates",
     "wu:claim": "node tools/cli-entry.mjs wu-claim",
+    "wu:sandbox": "node tools/cli-entry.mjs wu-sandbox",
     "wu:done": "node tools/cli-entry.mjs wu-done",
     "wu:prep": "node tools/cli-entry.mjs wu-prep",
     "wu:create": "node packages/@lumenflow/cli/dist/wu-create.js",

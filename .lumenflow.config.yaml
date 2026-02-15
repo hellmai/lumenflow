@@ -352,6 +352,17 @@ cloud:
   #     equals: '1'
   #   - name: CI
 
+# WU-1687: Sandbox policy controls for wu:sandbox and wu:claim --sandbox.
+sandbox:
+  # Explicit opt-in env var for unsandboxed fallback when hardened backends are unavailable.
+  allow_unsandboxed_fallback_env: 'LUMENFLOW_SANDBOX_ALLOW_UNSANDBOXED'
+  # Optional extra writable roots beyond the default worktree/.lumenflow/temp profile roots.
+  extra_writable_roots:
+    - 'memory-bank'
+  # Guardrail deny list applied to extra_writable_roots entries.
+  deny_writable_roots:
+    - '.git'
+
 # WU-1203: Memory layer configuration
 # Controls memory persistence, checkpoints, and sub-agent coordination signals
 memory:

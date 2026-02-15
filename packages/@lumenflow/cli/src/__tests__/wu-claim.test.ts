@@ -15,7 +15,7 @@
  * - --cloud --branch-only (conflict) -> error
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -27,6 +27,9 @@ import {
   recordClaimPickupEvidence,
   resolveClaimBaselineRef,
   shouldPersistClaimMetadataOnBranch,
+  resolveDefaultClaimSandboxCommand,
+  resolveClaimSandboxCommand,
+  maybeLaunchClaimSandboxSession,
 } from '../wu-claim.js';
 import { CLAIMED_MODES, WU_STATUS } from '@lumenflow/core/wu-constants';
 import { DELEGATION_REGISTRY_FILE_NAME } from '@lumenflow/core/delegation-registry-store';
@@ -520,5 +523,89 @@ describe('WU-1605: claim-time pickup evidence handshake', () => {
     } finally {
       rmSync(baseDir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('WU-1687: claim sandbox launch helpers', () => {
+  it('uses explicit sandbox command from argv when provided', () => {
+    const command = resolveClaimSandboxCommand([
+      'node',
+      'wu-claim',
+      '--id',
+      'WU-1687',
+      '--lane',
+      'Framework: CLI Enforcement',
+      '--sandbox',
+      '--',
+      'node',
+      '-v',
+    ]);
+
+    expect(command).toEqual(['node', '-v']);
+  });
+
+  it('falls back to SHELL when no explicit sandbox command is provided', () => {
+    const command = resolveClaimSandboxCommand(
+      ['node', 'wu-claim', '--id', 'WU-1687', '--lane', 'Framework: CLI Enforcement', '--sandbox'],
+      { SHELL: '/bin/zsh' },
+      'linux',
+    );
+
+    expect(command).toEqual(['/bin/zsh']);
+  });
+
+  it('defaults to powershell on win32 when shell is not configured', () => {
+    const command = resolveDefaultClaimSandboxCommand({}, 'win32');
+
+    expect(command).toEqual(['powershell.exe', '-NoLogo']);
+  });
+
+  it('launches sandbox runner with resolved command and worktree path', async () => {
+    const launchSandbox = vi.fn(async () => 0);
+
+    const exitCode = await maybeLaunchClaimSandboxSession(
+      {
+        enabled: true,
+        id: 'WU-1687',
+        worktreePath: '/tmp/wu-1687',
+        argv: [
+          'node',
+          'wu-claim',
+          '--id',
+          'WU-1687',
+          '--lane',
+          'Framework: CLI Enforcement',
+          '--sandbox',
+          '--',
+          'node',
+          '-e',
+          'process.exit(0)',
+        ],
+      },
+      { launchSandbox },
+    );
+
+    expect(exitCode).toBe(0);
+    expect(launchSandbox).toHaveBeenCalledWith({
+      id: 'WU-1687',
+      worktree: '/tmp/wu-1687',
+      command: ['node', '-e', 'process.exit(0)'],
+    });
+  });
+
+  it('returns null when sandbox launch is disabled', async () => {
+    const launchSandbox = vi.fn(async () => 0);
+
+    const exitCode = await maybeLaunchClaimSandboxSession(
+      {
+        enabled: false,
+        id: 'WU-1687',
+        worktreePath: '/tmp/wu-1687',
+      },
+      { launchSandbox },
+    );
+
+    expect(exitCode).toBeNull();
+    expect(launchSandbox).not.toHaveBeenCalled();
   });
 });
