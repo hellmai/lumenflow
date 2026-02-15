@@ -6,9 +6,6 @@ status: in_progress
 priority: P1
 created: 2026-02-15
 code_paths:
-  - packages/@lumenflow/mcp/src/server.ts
-  - packages/@lumenflow/mcp/src/tools-shared.ts
-  - packages/@lumenflow/mcp/src/tools
   - packages/@lumenflow/core/src/worktree-symlink.ts
 tests:
   manual:
@@ -48,6 +45,8 @@ description: 'Context: wu:prep for WU-1694 fails due pre-existing @lumenflow/mcp
   WUs and require audited skip-gates. Solution: restore mcp package typecheck baseline by fixing
   request parameter typing and package/module resolution so pnpm gates can pass without skip-gates.'
 acceptance:
-  - pnpm --filter @lumenflow/mcp typecheck passes from a clean checkout
-  - No TS7006 errors remain in packages/@lumenflow/mcp/src/server.ts
-  - Module resolution errors for zod/@lumenflow/core in mcp package are resolved
+  - pnpm --filter @lumenflow/mcp typecheck passes in a freshly claimed worktree using fallback
+    symlink setup
+  - NESTED_PACKAGE_PATHS includes packages/@lumenflow/mcp so nested node_modules symlinking covers
+    mcp
+  - Core test coverage validates nested symlink creation for packages/@lumenflow/mcp
