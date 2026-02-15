@@ -79,6 +79,7 @@ import {
   validateTypeVsCodePathsPreflight,
   buildTypeVsCodePathsErrorMessage,
 } from '@lumenflow/core/wu-done-validators';
+import { formatPreflightWarnings } from '@lumenflow/core/wu-preflight-validators';
 // WU-1825: validateCodePathsExist moved to unified code-path-validator
 import { validateCodePathsExist } from '@lumenflow/core/code-path-validator';
 import {
@@ -1959,9 +1960,12 @@ async function executePreFlightChecks({
     die(errorMessage);
   }
   if (Array.isArray(preflightResult.warnings) && preflightResult.warnings.length > 0) {
-    console.log(`${LOG_PREFIX.DONE} ${EMOJI.WARNING} Reality preflight warnings:`);
-    for (const warning of preflightResult.warnings) {
-      console.log(`${LOG_PREFIX.DONE}   - ${warning}`);
+    const warningLines = formatPreflightWarnings(
+      preflightResult.warnings,
+      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Reality preflight warnings:`,
+    );
+    for (const line of warningLines) {
+      console.log(line.startsWith('  - ') ? `${LOG_PREFIX.DONE} ${line}` : line);
     }
   }
 
