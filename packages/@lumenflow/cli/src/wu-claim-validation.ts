@@ -41,11 +41,64 @@ import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { validateSpecCompleteness } from '@lumenflow/core/wu-done-validators';
 import { hasManualTests, isDocsOrProcessType } from '@lumenflow/core/wu-type-helpers';
+import type { TestsLike } from '@lumenflow/core/wu-type-helpers';
 import { detectFixableIssues, applyFixes, formatIssues } from '@lumenflow/core/wu-yaml-fixer';
 import { getConfig } from '@lumenflow/core/config';
 import { MICRO_WORKTREE_OPERATIONS, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
 
 const PREFIX = LOG_PREFIX.CLAIM;
+
+type ClaimWUDoc = Record<string, unknown> & {
+  id?: string;
+  status?: unknown;
+  type?: unknown;
+  tests?: TestsLike;
+  claimed_mode?: string;
+  code_paths?: string[];
+};
+
+type ClaimValidationArgs = {
+  lane?: string;
+  fix?: boolean;
+  force?: boolean;
+  forceOverlap?: boolean;
+  reason?: string;
+  allowIncomplete?: boolean;
+};
+
+type FixableIssueList = ReturnType<typeof detectFixableIssues>;
+
+type BranchOnlyCheckResult = {
+  hasBranchOnly: boolean;
+  existingWU: string | null;
+};
+
+type LaneOccupancyResult = {
+  free: boolean;
+  occupiedBy: string | null;
+  error: string | null;
+  inProgressWUs?: string[];
+  wipLimit?: number;
+  currentCount?: number;
+};
+
+type OrphanConsistencyReport = Parameters<typeof repairWUInconsistency>[0];
+
+type OrphanCheckResult = {
+  valid: boolean;
+  orphans: string[];
+  reports?: OrphanConsistencyReport[];
+};
+
+type OverlapConflict = {
+  wuid: string;
+  overlaps: string[];
+};
+
+type OverlapCheckResult = {
+  conflicts: OverlapConflict[];
+  hasBlocker: boolean;
+};
 
 export function resolveClaimStatus(status: unknown) {
   return resolveWUStatus(status, WU_STATUS.READY);
@@ -55,7 +108,7 @@ export function resolveClaimStatus(status: unknown) {
  * Pre-flight validation: Check WU file exists and is valid BEFORE any git operations
  * Prevents zombie worktrees when WU YAML is missing or malformed
  */
-export function preflightValidateWU(WU_PATH, id) {
+export function preflightValidateWU(WU_PATH: string, id: string): ClaimWUDoc {
   // Check file exists
 
   if (!existsSync(WU_PATH)) {
@@ -72,7 +125,7 @@ export function preflightValidateWU(WU_PATH, id) {
   // Parse and validate YAML structure
 
   const text = readFileSync(WU_PATH, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
-  let doc;
+  let doc: ClaimWUDoc | null;
   try {
     doc = parseYAML(text);
   } catch (e) {
@@ -122,7 +175,11 @@ export function preflightValidateWU(WU_PATH, id) {
  * @param {boolean} args.fix - If true, issues will be fixed in worktree
  * @returns {Array} Array of fixable issues to apply in worktree
  */
-export function validateYAMLSchema(WU_PATH, doc, args) {
+export function validateYAMLSchema(
+  WU_PATH: string,
+  doc: ClaimWUDoc,
+  args: Pick<ClaimValidationArgs, 'fix'>,
+): FixableIssueList {
   // WU-1361: Detect fixable issues BEFORE schema validation
   // This allows --fix to work even when schema would fail
   const fixableIssues = detectFixableIssues(doc);
@@ -150,7 +207,10 @@ export function validateYAMLSchema(WU_PATH, doc, args) {
   const schemaResult = validateWU(doc);
   if (!schemaResult.success) {
     const issueList = schemaResult.error.issues
-      .map((i) => `  - ${i.path.join('.')}: ${i.message}`)
+      .map((i) => {
+        const pathText = i.path.map(String).join('.');
+        return `  - ${pathText}: ${i.message}`;
+      })
       .join(STRING_LITERALS.NEWLINE);
 
     const tip =
@@ -168,7 +228,10 @@ export function validateYAMLSchema(WU_PATH, doc, args) {
  * WU-1508: Enforce tests.manual at claim time for non-doc/process WUs.
  * This is non-bypassable (independent of --allow-incomplete) to fail early.
  */
-export function validateManualTestsForClaim(doc, id) {
+export function validateManualTestsForClaim(
+  doc: ClaimWUDoc,
+  id: string,
+): { valid: true } | { valid: false; error: string } {
   if (isDocsOrProcessType(doc?.type)) {
     return { valid: true };
   }
@@ -190,8 +253,8 @@ export function validateManualTestsForClaim(doc, id) {
  * WU-1426: Commits repair changes to avoid dirty working tree blocking claim
  * WU-1437: Use pushOnly micro-worktree to keep local main pristine
  */
-export async function handleOrphanCheck(lane, id) {
-  const orphanCheck = await checkLaneForOrphanDoneWU(lane, id);
+export async function handleOrphanCheck(lane: string, id: string): Promise<void> {
+  const orphanCheck = (await checkLaneForOrphanDoneWU(lane, id)) as OrphanCheckResult;
   if (orphanCheck.valid) return;
 
   // Try auto-repair for single orphan
@@ -207,7 +270,12 @@ export async function handleOrphanCheck(lane, id) {
       pushOnly: true,
       execute: async ({ worktreePath }) => {
         // Run repair inside micro-worktree using projectRoot option
-        const repairResult = await repairWUInconsistency(orphanCheck.reports[0], {
+        const report = orphanCheck.reports?.[0];
+        if (!report) {
+          throw new Error(`Lane ${lane} has orphan done WU: ${orphanId} with missing report`);
+        }
+
+        const repairResult = await repairWUInconsistency(report, {
           projectRoot: worktreePath,
         });
 
@@ -220,7 +288,10 @@ export async function handleOrphanCheck(lane, id) {
 
         if (repairResult.repaired === 0) {
           // Nothing to repair - return empty result
-          return { commitMessage: null, files: [] };
+          return { commitMessage: null, files: [] } as unknown as {
+            commitMessage: string;
+            files: string[];
+          };
         }
 
         // Return files for commit
@@ -250,7 +321,7 @@ export async function handleOrphanCheck(lane, id) {
 /**
  * Validate lane format with user-friendly error messages
  */
-export function validateLaneFormatWithError(lane) {
+export function validateLaneFormatWithError(lane: string): void {
   try {
     validateLaneFormat(lane);
   } catch (error) {
@@ -274,7 +345,12 @@ export function validateLaneFormatWithError(lane) {
  * WU-1016: Updated to support configurable WIP limits per lane.
  * The WIP limit is read from .lumenflow.config.yaml and defaults to 1.
  */
-export function handleLaneOccupancy(laneCheck, lane, id, force) {
+export function handleLaneOccupancy(
+  laneCheck: LaneOccupancyResult,
+  lane: string,
+  id: string,
+  force?: boolean,
+): void {
   if (laneCheck.free) return;
 
   if (laneCheck.error) {
@@ -316,16 +392,21 @@ export function handleLaneOccupancy(laneCheck, lane, id, force) {
 /**
  * Handle code path overlap detection (WU-901)
  */
-export function handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args) {
+export function handleCodePathOverlap(
+  WU_PATH: string,
+  STATUS_PATH: string,
+  id: string,
+  args: Pick<ClaimValidationArgs, 'forceOverlap' | 'reason'>,
+): void {
   if (!existsSync(WU_PATH)) return;
 
   const wuContent = readFileSync(WU_PATH, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
-  const wuDoc = parseYAML(wuContent);
-  const codePaths = wuDoc.code_paths || [];
+  const wuDoc = parseYAML(wuContent) as ClaimWUDoc | null;
+  const codePaths = Array.isArray(wuDoc?.code_paths) ? wuDoc.code_paths : [];
 
   if (codePaths.length === 0) return;
 
-  const overlapCheck = detectConflicts(STATUS_PATH, codePaths, id);
+  const overlapCheck = detectConflicts(STATUS_PATH, codePaths, id) as OverlapCheckResult;
 
   emitWUFlowEvent({
     script: 'wu-claim',
@@ -337,7 +418,7 @@ export function handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args) {
 
   if (overlapCheck.hasBlocker && !args.forceOverlap) {
     const conflictList = overlapCheck.conflicts
-      .map((c) => {
+      .map((c: OverlapConflict) => {
         const displayedOverlaps = c.overlaps.slice(0, 3).join(', ');
         const remainingCount = c.overlaps.length - 3;
         const suffix = remainingCount > 0 ? ` (+${remainingCount} more)` : '';
@@ -366,7 +447,10 @@ export function handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args) {
       wu_id: id,
       event: 'overlap_forced',
       reason: args.reason,
-      conflicts: overlapCheck.conflicts.map((c) => ({ wuid: c.wuid, files: c.overlaps })),
+      conflicts: overlapCheck.conflicts.map((c: OverlapConflict) => ({
+        wuid: c.wuid,
+        files: c.overlaps,
+      })),
     });
     console.warn(`${PREFIX} ⚠️  WARNING: Overlap forced with reason: ${args.reason}`);
   }
@@ -375,7 +459,7 @@ export function handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args) {
 /**
  * Validate branch-only mode can be used
  */
-export async function validateBranchOnlyMode(STATUS_PATH, id) {
+export async function validateBranchOnlyMode(STATUS_PATH: string, id: string): Promise<void> {
   const branchOnlyCheck = await checkExistingBranchOnlyWU(STATUS_PATH, id);
   if (branchOnlyCheck.hasBranchOnly) {
     die(
@@ -409,7 +493,10 @@ export async function validateBranchOnlyMode(STATUS_PATH, id) {
  * @param {string} currentWU - Current WU ID being claimed
  * @returns {Promise<{hasBranchOnly: boolean, existingWU: string|null}>}
  */
-async function checkExistingBranchOnlyWU(statusPath, currentWU) {
+async function checkExistingBranchOnlyWU(
+  statusPath: string,
+  currentWU: string,
+): Promise<BranchOnlyCheckResult> {
   // Check file exists
 
   try {
@@ -436,12 +523,12 @@ async function checkExistingBranchOnlyWU(statusPath, currentWU) {
   const wuPattern = /\[?(WU-\d+)/i;
   const inProgressWUs = lines
     .slice(startIdx + 1, endIdx)
-    .map((line) => {
+    .map((line: string) => {
       const match = wuPattern.exec(line);
       return match ? match[1].toUpperCase() : null;
     })
-    .filter(Boolean)
-    .filter((wuid) => wuid !== currentWU); // exclude the WU we're claiming
+    .filter((wuid): wuid is string => Boolean(wuid))
+    .filter((wuid: string) => wuid !== currentWU); // exclude the WU we're claiming
 
   // Check each in-progress WU for claimed_mode: branch-only
   for (const wuid of inProgressWUs) {
@@ -458,7 +545,7 @@ async function checkExistingBranchOnlyWU(statusPath, currentWU) {
       // Read file
 
       const text = await readFile(wuPath, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
-      const doc = parseYAML(text);
+      const doc = parseYAML(text) as ClaimWUDoc | null;
       if (doc && doc.claimed_mode === CLAIMED_MODES.BRANCH_ONLY) {
         return { hasBranchOnly: true, existingWU: wuid };
       }
@@ -477,28 +564,34 @@ async function checkExistingBranchOnlyWU(statusPath, currentWU) {
  * Returns the validated doc and fixable issues for worktree application.
  */
 export async function runPreflightValidations(
-  args,
+  args: ClaimValidationArgs,
   id: string,
   WU_PATH: string,
   STATUS_PATH: string,
-) {
+): Promise<{ doc: ClaimWUDoc; fixableIssues: FixableIssueList }> {
   // PRE-FLIGHT VALIDATION (on post-pull data)
   const doc = preflightValidateWU(WU_PATH, id);
   const manualTestsCheck = validateManualTestsForClaim(doc, id);
-  if (!manualTestsCheck.valid) {
+  if (manualTestsCheck.valid === false) {
     die(manualTestsCheck.error);
   }
-  await handleOrphanCheck(args.lane, id);
-  validateLaneFormatWithError(args.lane);
+
+  const lane = args.lane;
+  if (!lane) {
+    die('Missing required --lane argument for wu:claim.');
+  }
+
+  await handleOrphanCheck(lane, id);
+  validateLaneFormatWithError(lane);
 
   // WU-1187: Check for WIP justification when WIP > 1 (soft enforcement - warning only)
-  const wipJustificationCheck = checkWipJustification(args.lane);
+  const wipJustificationCheck = checkWipJustification(lane);
   if (wipJustificationCheck.warning) {
     console.warn(`${PREFIX} ${wipJustificationCheck.warning}`);
   }
 
   // WU-1372: Lane-to-code_paths consistency check (advisory only, never blocks)
-  const laneValidation = validateLaneCodePaths(doc, args.lane);
+  const laneValidation = validateLaneCodePaths(doc, lane);
   logLaneValidationWarnings(laneValidation, PREFIX);
 
   // WU-1361: YAML schema validation at claim time
@@ -509,7 +602,9 @@ export async function runPreflightValidations(
   // Two-tier validation: Schema errors (above) are never bypassable; spec completeness is bypassable
   const specResult = validateSpecCompleteness(doc, id);
   if (!specResult.valid) {
-    const errorList = specResult.errors.map((e) => `  - ${e}`).join(STRING_LITERALS.NEWLINE);
+    const errorList = specResult.errors
+      .map((e: string) => `  - ${e}`)
+      .join(STRING_LITERALS.NEWLINE);
     if (args.allowIncomplete) {
       console.warn(`${PREFIX} ⚠️  Spec completeness warnings (bypassed with --allow-incomplete):`);
       console.warn(errorList);
@@ -524,16 +619,16 @@ export async function runPreflightValidations(
   }
 
   // Check lane occupancy (WIP=1 per sub-lane)
-  const laneCheck = checkLaneFree(STATUS_PATH, args.lane, id);
+  const laneCheck = checkLaneFree(STATUS_PATH, lane, id);
   emitWUFlowEvent({
     script: 'wu-claim',
     wu_id: id,
-    lane: args.lane,
+    lane,
     step: 'lane_check',
     occupied: !laneCheck.free,
     occupiedBy: laneCheck.occupiedBy,
   });
-  handleLaneOccupancy(laneCheck, args.lane, id, args.force);
+  handleLaneOccupancy(laneCheck, lane, id, args.force);
 
   return { doc, fixableIssues };
 }
