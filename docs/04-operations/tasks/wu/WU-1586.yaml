@@ -2,7 +2,7 @@ id: WU-1586
 title: 'Core strict wave 2C: backlog and compliance strict fixes'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-10
 code_paths:
@@ -53,3 +53,6 @@ session_id: f6727e57-b9cf-419b-86cd-ce730e98dd47
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-15T18:56:26.682Z
+locked: true
+completed_at: 2026-02-15T19:01:08.630Z
+completed: 2026-02-15
