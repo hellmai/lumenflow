@@ -2,7 +2,7 @@ id: WU-1695
 title: Fix pre-existing @lumenflow/mcp typecheck failures blocking gates
 lane: 'Framework: MCP'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -28,8 +28,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: wu:prep for WU-1694 fails due pre-existing @lumenflow/mcp typecheck errors on main (implicit-any in server request handlers and missing module resolution for zod/@lumenflow/core in mcp sources). Problem: these failures block gate completion for unrelated WUs and require audited skip-gates. Solution: restore mcp package typecheck baseline by fixing request parameter typing and package/module resolution so pnpm gates can pass without skip-gates.'
+description: 'Context: wu:prep for WU-1694 fails due pre-existing @lumenflow/mcp typecheck errors on
+  main (implicit-any in server request handlers and missing module resolution for
+  zod/@lumenflow/core in mcp sources). Problem: these failures block gate completion for unrelated
+  WUs and require audited skip-gates. Solution: restore mcp package typecheck baseline by fixing
+  request parameter typing and package/module resolution so pnpm gates can pass without skip-gates.'
 acceptance:
   - pnpm --filter @lumenflow/mcp typecheck passes from a clean checkout
   - No TS7006 errors remain in packages/@lumenflow/mcp/src/server.ts
   - Module resolution errors for zod/@lumenflow/core in mcp package are resolved
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-mcp-wu-1695
+claimed_at: 2026-02-15T20:29:58.529Z
+baseline_main_sha: 79838e54f1f9d2476fa86558610545d1a58bb7ee
+session_id: d68b41fb-81f4-43e5-8bb5-6b0b07910144
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T20:29:58.537Z
