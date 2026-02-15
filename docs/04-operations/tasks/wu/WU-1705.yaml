@@ -6,7 +6,8 @@ status: in_progress
 priority: P2
 created: 2026-02-15
 code_paths:
-  - packages/@lumenflow/core/src/wu-consistency-checker.ts,packages/@lumenflow/core/src/__tests__/wu-consistency-checker.test.ts
+  - packages/@lumenflow/core/src/wu-consistency-checker.ts
+  - packages/@lumenflow/core/src/__tests__/wu-consistency-checker.test.ts
 tests:
   manual:
     - 'Run: pnpm --filter @lumenflow/core exec vitest run
@@ -20,10 +21,17 @@ dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-15T23:20:48.101Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-1705
+session_id: 1670ecea-8e08-4473-b94f-ebb72ba55f96
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T23:20:48.106Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +41,3 @@ acceptance:
   - No strictNullChecks/noImplicitAny errors in
     packages/@lumenflow/core/src/wu-consistency-checker.ts
   - Existing wu-consistency-checker tests pass
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-1705
-claimed_at: 2026-02-15T23:20:48.101Z
-baseline_main_sha: 71682f5332e873d1d70b6deb3ae0861a58872ba1
-session_id: 1670ecea-8e08-4473-b94f-ebb72ba55f96
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-15T23:20:48.106Z
