@@ -25,7 +25,9 @@ import {
   buildRollbackYamlDoc,
   resolveClaimStatus,
   recordClaimPickupEvidence,
+  shouldApplyCanonicalClaimUpdate,
   resolveClaimBaselineRef,
+  hasClaimPickupEvidence,
   shouldPersistClaimMetadataOnBranch,
   resolveDefaultClaimSandboxCommand,
   resolveClaimSandboxCommand,
@@ -136,6 +138,36 @@ describe('wu-claim cloud branch execution resolution (WU-1596)', () => {
 });
 
 describe('wu-claim local-only remote fallback behavior (WU-1655)', () => {
+  it('should skip canonical claim update when --no-push is enabled', () => {
+    const shouldApply = shouldApplyCanonicalClaimUpdate({
+      isCloud: false,
+      claimedMode: CLAIMED_MODES.WORKTREE,
+      noPush: true,
+    });
+
+    expect(shouldApply).toBe(false);
+  });
+
+  it('should skip canonical claim update for cloud branch-pr mode', () => {
+    const shouldApply = shouldApplyCanonicalClaimUpdate({
+      isCloud: true,
+      claimedMode: CLAIMED_MODES.BRANCH_PR,
+      noPush: false,
+    });
+
+    expect(shouldApply).toBe(false);
+  });
+
+  it('should apply canonical claim update for local worktree mode', () => {
+    const shouldApply = shouldApplyCanonicalClaimUpdate({
+      isCloud: false,
+      claimedMode: CLAIMED_MODES.WORKTREE,
+      noPush: false,
+    });
+
+    expect(shouldApply).toBe(true);
+  });
+
   it('should persist metadata on working branch when remote operations are skipped', () => {
     const shouldPersist = shouldPersistClaimMetadataOnBranch({
       claimedMode: CLAIMED_MODES.BRANCH_ONLY,
@@ -419,6 +451,23 @@ describe('WU-1574: strict claim status helpers', () => {
 });
 
 describe('WU-1605: claim-time pickup evidence handshake', () => {
+  it('detects when pickup evidence fields are present and non-empty', () => {
+    expect(
+      hasClaimPickupEvidence({
+        pickedUpAt: '2026-02-12T00:05:00.000Z',
+        pickedUpBy: 'agent@test.com',
+      }),
+    ).toBe(true);
+  });
+
+  it('returns false when pickup evidence is missing or blank', () => {
+    expect(hasClaimPickupEvidence({ pickedUpAt: '', pickedUpBy: 'agent@test.com' })).toBe(false);
+    expect(hasClaimPickupEvidence({ pickedUpAt: '2026-02-12T00:05:00.000Z', pickedUpBy: '' })).toBe(
+      false,
+    );
+    expect(hasClaimPickupEvidence({})).toBe(false);
+  });
+
   function createTempStateDir() {
     const baseDir = join(
       tmpdir(),

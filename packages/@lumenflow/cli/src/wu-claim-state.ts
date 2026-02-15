@@ -12,6 +12,7 @@ import path from 'node:path';
 import { parseYAML, stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { assertTransition } from '@lumenflow/core/state-machine';
 import { getGitForCwd, createGitForPath } from '@lumenflow/core/git-adapter';
+import type { GitAdapter } from '@lumenflow/core/git-adapter';
 import { die, getErrorMessage } from '@lumenflow/core/error-handler';
 import {
   BRANCHES,
@@ -44,6 +45,58 @@ import {
 import { resolveClaimStatus } from './wu-claim-validation.js';
 
 const PREFIX = LOG_PREFIX.CLAIM;
+
+type ClaimWUDoc = Record<string, unknown> & {
+  id?: string;
+  title?: string;
+  lane?: string;
+  status?: unknown;
+  type?: unknown;
+  tests?: unknown;
+  initiative?: string | null;
+  claimed_mode?: string;
+  claimed_branch?: string;
+  claimed_at?: string;
+  worktree_path?: string;
+  baseline_main_sha?: string;
+  session_id?: string;
+  assigned_to?: string;
+  approved_by?: string[];
+  approved_at?: string;
+  escalation_triggers?: string[];
+  requires_human_escalation?: boolean;
+};
+
+type ClaimCommandArgs = {
+  lane?: string;
+  noAuto?: boolean;
+};
+
+type ParsedStagedChange = {
+  status: string;
+  from?: string;
+  filePath?: string;
+};
+
+type CanonicalClaimContext = {
+  args: ClaimCommandArgs;
+  id: string;
+  laneK: string;
+  worktree: string;
+  WU_PATH: string;
+  STATUS_PATH: string;
+  BACKLOG_PATH: string;
+  claimedMode: string;
+  fixableIssues?: unknown[];
+  stagedChanges: ParsedStagedChange[];
+  currentBranchForCloud?: string | null;
+};
+
+type ClaimPickupEntry = {
+  id: string;
+  pickedUpAt?: string;
+  pickedUpBy?: string;
+};
 
 export interface ClaimCanonicalUpdateInput {
   isCloud?: boolean;
@@ -104,7 +157,7 @@ export function resolveClaimBaselineRef(input: { skipRemote?: boolean } = {}): s
  * @param doc - The claimed WU YAML document to roll back
  * @returns A new document with status=ready and claim metadata removed
  */
-export function buildRollbackYamlDoc(doc) {
+export function buildRollbackYamlDoc(doc: ClaimWUDoc): ClaimWUDoc {
   // Shallow-copy to avoid mutating the original
   const rolled = { ...doc };
 
@@ -133,7 +186,7 @@ export interface ClaimPickupEvidenceResult {
 /**
  * Returns true when a spawn record includes claim-time pickup evidence.
  */
-export function hasClaimPickupEvidence(entry): boolean {
+export function hasClaimPickupEvidence(entry: ClaimPickupEntry | null | undefined): boolean {
   const pickedUpAt =
     typeof entry?.pickedUpAt === 'string' && entry.pickedUpAt.trim().length > 0
       ? entry.pickedUpAt
@@ -189,15 +242,15 @@ export async function recordClaimPickupEvidence(
 }
 
 export async function updateWUYaml(
-  WU_PATH,
-  id,
-  lane,
-  claimedMode = 'worktree',
-  worktreePath = null,
-  sessionId = null,
-  gitAdapter = null,
+  WU_PATH: string,
+  id: string,
+  lane: string,
+  claimedMode: string = 'worktree',
+  worktreePath: string | null = null,
+  sessionId: string | null = null,
+  gitAdapter: GitAdapter | null = null,
   claimedBranch: string | null = null, // WU-1590: Persist claimed_branch for branch-pr cloud agents
-) {
+): Promise<{ title: string; initiative: string | null }> {
   // Check file exists
 
   try {
@@ -224,7 +277,7 @@ export async function updateWUYaml(
         `  2. Ensure you have read access to the repository`,
     );
   }
-  let doc;
+  let doc: ClaimWUDoc | null;
   try {
     doc = parseYAML(text);
   } catch (e) {
@@ -267,7 +320,7 @@ export async function updateWUYaml(
   if (worktreePath) {
     doc.worktree_path = worktreePath;
   }
-  const git = gitAdapter || getGitForCwd();
+  const git: GitAdapter = gitAdapter || getGitForCwd();
   // WU-1423: Record owner using validated email (no silent username fallback)
   // Fallback chain: git config user.email > GIT_AUTHOR_EMAIL > error
   // WU-1427: getAssignedEmail is now async to properly await gitAdapter.getConfigValue
@@ -370,7 +423,11 @@ export async function maybeProgressInitiativeStatus(
   }
 }
 
-export async function addOrReplaceInProgressStatus(statusPath, id, title) {
+export async function addOrReplaceInProgressStatus(
+  statusPath: string,
+  id: string,
+  title: string,
+): Promise<void> {
   // Check file exists
 
   try {
@@ -385,7 +442,8 @@ export async function addOrReplaceInProgressStatus(statusPath, id, title) {
 
   const content = await readFile(statusPath, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
   const lines = content.split(STRING_LITERALS.NEWLINE);
-  const findHeader = (h) => lines.findIndex((l) => l.trim().toLowerCase() === h.toLowerCase());
+  const findHeader = (h: string) =>
+    lines.findIndex((l: string) => l.trim().toLowerCase() === h.toLowerCase());
   const startIdx = findHeader(STATUS_SECTIONS.IN_PROGRESS);
   if (startIdx === -1) die(`Could not find "${STATUS_SECTIONS.IN_PROGRESS}" section in status.md`);
   let endIdx = lines.slice(startIdx + 1).findIndex((l) => l.startsWith('## '));
@@ -411,7 +469,12 @@ export async function addOrReplaceInProgressStatus(statusPath, id, title) {
   });
 }
 
-export async function removeFromReadyAndAddToInProgressBacklog(backlogPath, id, title, lane) {
+export async function removeFromReadyAndAddToInProgressBacklog(
+  backlogPath: string,
+  id: string,
+  title: string,
+  lane: string,
+): Promise<void> {
   // WU-1574: Use WUStateStore as single source of truth, generate backlog.md from state
   // WU-1593: Use centralized path helper to correctly resolve state dir from backlog path
   const stateDir = getStateStoreDirFromBacklog(backlogPath);
@@ -445,7 +508,12 @@ export async function removeFromReadyAndAddToInProgressBacklog(backlogPath, id, 
  * @param {string} title - WU title
  * @param {string} lane - Lane name
  */
-export async function appendClaimEventOnly(stateDir, id, title, lane) {
+export async function appendClaimEventOnly(
+  stateDir: string,
+  id: string,
+  title: string,
+  lane: string,
+): Promise<void> {
   const store = new WUStateStore(stateDir);
   await store.load();
   await store.claim(id, lane, title);
@@ -460,7 +528,7 @@ export async function appendClaimEventOnly(stateDir, id, title, lane) {
  * @param {string} wuId - WU ID (e.g., 'WU-1746')
  * @returns {string[]} List of files to commit
  */
-export function getWorktreeCommitFiles(wuId) {
+export function getWorktreeCommitFiles(wuId: string): string[] {
   // WU-1311: Use config-based paths instead of hardcoded docs/04-operations paths
   const config = getConfig();
   return [
@@ -471,7 +539,7 @@ export function getWorktreeCommitFiles(wuId) {
   ];
 }
 
-export async function readWUTitle(id) {
+export async function readWUTitle(id: string): Promise<string | null> {
   const p = WU_PATHS.WU(id);
   // Check file exists
 
@@ -491,7 +559,7 @@ export async function readWUTitle(id) {
   return m ? m[1] : null;
 }
 
-export function parseStagedChangeLine(line) {
+export function parseStagedChangeLine(line: string): ParsedStagedChange | null {
   const parts = line.trim().split(/\s+/);
   const status = parts[0];
   if (!status) return null;
@@ -501,17 +569,20 @@ export function parseStagedChangeLine(line) {
   return { status, filePath: parts.slice(1).join(' ') };
 }
 
-export async function getStagedChanges() {
+export async function getStagedChanges(): Promise<ParsedStagedChange[]> {
   const diff = await getGitForCwd().raw(['diff', '--cached', '--name-status']);
   if (!diff.trim()) return [];
   return diff
     .split(STRING_LITERALS.NEWLINE)
     .filter(Boolean)
     .map(parseStagedChangeLine)
-    .filter(Boolean);
+    .filter((change): change is ParsedStagedChange => Boolean(change));
 }
 
-export async function applyStagedChangesToMicroWorktree(worktreePath, stagedChanges) {
+export async function applyStagedChangesToMicroWorktree(
+  worktreePath: string,
+  stagedChanges: ParsedStagedChange[],
+): Promise<void> {
   for (const change of stagedChanges) {
     const filePath = change.filePath;
     if (!filePath) continue;
@@ -561,7 +632,10 @@ export async function ensureCleanOrClaimOnlyWhenNoAuto() {
  * Update canonical claim state on origin/main using push-only micro-worktree.
  * Ensures canonical state stays global while local main remains unchanged.
  */
-export async function applyCanonicalClaimUpdate(ctx, sessionId) {
+export async function applyCanonicalClaimUpdate(
+  ctx: CanonicalClaimContext,
+  sessionId: string | null,
+): Promise<string> {
   const {
     args,
     id,
@@ -576,12 +650,15 @@ export async function applyCanonicalClaimUpdate(ctx, sessionId) {
     currentBranchForCloud, // WU-1590: For persisting claimed_branch
   } = ctx;
   const commitMsg = COMMIT_FORMATS.CLAIM(id.toLowerCase(), laneK);
+  const laneForUpdate = args.lane ?? laneK;
   const worktreePathForYaml =
     claimedMode === CLAIMED_MODES.BRANCH_ONLY ? null : path.resolve(worktree);
   let updatedTitle = '';
-  const filesToCommit =
+  const filesToCommit: string[] =
     args.noAuto && stagedChanges.length > 0
-      ? stagedChanges.map((change) => change.filePath).filter(Boolean)
+      ? stagedChanges
+          .map((change: ParsedStagedChange) => change.filePath)
+          .filter((filePath): filePath is string => Boolean(filePath))
       : [WU_PATHS.WU(id), WU_PATHS.STATUS(), WU_PATHS.BACKLOG(), LUMENFLOW_PATHS.WU_EVENTS];
 
   console.log(`${PREFIX} Updating canonical claim state (push-only)...`);
@@ -610,12 +687,12 @@ export async function applyCanonicalClaimUpdate(ctx, sessionId) {
         const updateResult = await updateWUYaml(
           microWUPath,
           id,
-          args.lane,
+          laneForUpdate,
           claimedMode,
           worktreePathForYaml,
           sessionId,
           microGit,
-          currentBranchForCloud || null, // WU-1590: Persist claimed_branch for branch-pr
+          currentBranchForCloud ?? null, // WU-1590: Persist claimed_branch for branch-pr
         );
         updatedTitle = updateResult.title || updatedTitle;
         await addOrReplaceInProgressStatus(microStatusPath, id, updatedTitle);
@@ -623,7 +700,7 @@ export async function applyCanonicalClaimUpdate(ctx, sessionId) {
           microBacklogPath,
           id,
           updatedTitle,
-          args.lane,
+          laneForUpdate,
         );
 
         // WU-1211: Check and progress initiative status
@@ -734,8 +811,10 @@ export async function rollbackCanonicalClaim(
   } catch (rollbackErr) {
     // Rollback failure should not mask the original error.
     // Log the rollback failure but let the original error propagate.
+    const rollbackMessage =
+      rollbackErr instanceof Error ? rollbackErr.message : getErrorMessage(rollbackErr);
     console.error(
-      `${PREFIX} WARNING: Failed to rollback canonical claim for ${id}: ${rollbackErr.message}`,
+      `${PREFIX} WARNING: Failed to rollback canonical claim for ${id}: ${rollbackMessage}`,
     );
     console.error(`${PREFIX} Manual recovery required: pnpm wu:repair --id ${id} --claim`);
   }
