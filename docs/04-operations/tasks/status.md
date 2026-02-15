@@ -4,7 +4,7 @@ _Last updated: 2026-02-15_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1695 — Fix pre-existing @lumenflow/mcp typecheck failures blocking gates](wu/WU-1695.yaml)
 
 ## Completed
 
