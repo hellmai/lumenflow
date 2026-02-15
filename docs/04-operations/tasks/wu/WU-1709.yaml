@@ -2,7 +2,7 @@ id: WU-1709
 title: 'Strict debt slice: type generate-traceability'
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -43,3 +43,6 @@ session_id: e3cef198-5340-4cb4-b272-30785c849585
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-15T23:39:53.925Z
+locked: true
+completed_at: 2026-02-15T23:43:51.771Z
+completed: 2026-02-15
