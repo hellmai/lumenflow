@@ -2,7 +2,7 @@ id: WU-1695
 title: Fix pre-existing @lumenflow/mcp typecheck failures blocking gates
 lane: 'Framework: MCP'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -50,3 +50,6 @@ acceptance:
   - NESTED_PACKAGE_PATHS includes packages/@lumenflow/mcp so nested node_modules symlinking covers
     mcp
   - Core test coverage validates nested symlink creation for packages/@lumenflow/mcp
+locked: true
+completed_at: 2026-02-15T20:37:17.016Z
+completed: 2026-02-15
