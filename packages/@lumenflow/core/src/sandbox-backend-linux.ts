@@ -23,7 +23,8 @@ function buildUnavailablePlan(request: SandboxExecutionRequest): SandboxExecutio
       backendId: SANDBOX_BACKEND_IDS.LINUX,
       enforced: false,
       failClosed: false,
-      warning: 'Running unsandboxed because bwrap is unavailable and fallback was explicitly enabled.',
+      warning:
+        'Running unsandboxed because bwrap is unavailable and fallback was explicitly enabled.',
     };
   }
 
@@ -58,7 +59,9 @@ function buildInvocation(request: SandboxExecutionRequest) {
   };
 }
 
-export function createLinuxSandboxBackend(options: LinuxSandboxBackendOptions = {}): SandboxBackend {
+export function createLinuxSandboxBackend(
+  options: LinuxSandboxBackendOptions = {},
+): SandboxBackend {
   const commandExists = options.commandExists || defaultCommandExists;
 
   return {
