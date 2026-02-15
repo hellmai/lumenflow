@@ -33,7 +33,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-1693 — Clarify contributing workflows: trunk-based vs PR-based](wu/WU-1693.yaml) — Content: Framework Docs
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -667,6 +667,7 @@ sections:
 - [WU-1687 — Wire public wu:sandbox command and wu:claim --sandbox to core sandbox engine](wu/WU-1687.yaml)
 - [WU-1691 — Include bare lumenflow wrapper in release script version bumps](wu/WU-1691.yaml)
 - [WU-1692 — Add OSS governance docs and GitHub community templates](wu/WU-1692.yaml)
+- [WU-1693 — Clarify contributing workflows: trunk-based vs PR-based](wu/WU-1693.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

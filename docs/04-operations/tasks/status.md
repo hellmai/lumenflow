@@ -4,7 +4,7 @@ _Last updated: 2026-02-15_
 
 ## In Progress
 
-- [WU-1693 — Clarify contributing workflows: trunk-based vs PR-based](wu/WU-1693.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -634,3 +634,4 @@ _Last updated: 2026-02-15_
 - [WU-1687 — Wire public wu:sandbox command and wu:claim --sandbox to core sandbox engine](wu/WU-1687.yaml) — 2026-02-15
 - [WU-1691 — Include bare lumenflow wrapper in release script version bumps](wu/WU-1691.yaml) — 2026-02-15
 - [WU-1692 — Add OSS governance docs and GitHub community templates](wu/WU-1692.yaml) — 2026-02-15
+- [WU-1693 — Clarify contributing workflows: trunk-based vs PR-based](wu/WU-1693.yaml) — 2026-02-15
