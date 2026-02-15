@@ -2591,10 +2591,10 @@ pnpm delegation:list
 pnpm mem:inbox --wu WU-XXX
 
 # If delegation record is missing, add it retroactively
-pnpm wu:delegate --id WU-CHILD --parent-wu WU-PARENT --client claude-code
+pnpm wu:delegate --id WU-CHILD --parent-wu WU-PARENT --client <client>
 
 # If agent launch tracking hook is missing:
-pnpm lumenflow:integrate --client claude-code
+pnpm lumenflow:integrate --client <client>
 # This generates .claude/hooks/track-agent-launch.sh
 ```
 
