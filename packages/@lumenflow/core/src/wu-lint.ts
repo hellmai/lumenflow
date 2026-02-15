@@ -16,6 +16,7 @@ import {
   CLI_PACKAGE_JSON_PATH,
   REGISTRATION_SURFACES as RULE_REGISTRATION_SURFACES,
   RULE_CODES,
+  normalizeValidationIssue,
   type ValidationIssue,
   type ValidationPhase,
   validateWURulesSync,
@@ -219,24 +220,22 @@ const TERMINAL_STATUSES = new Set([
   WU_STATUS.SUPERSEDED,
 ]);
 
-function mapRuleIssueType(issueCode: string): string {
-  if (issueCode === RULE_CODES.MINIMUM_TEST_INTENT) {
-    return WU_LINT_ERROR_TYPES.MINIMUM_TEST_INTENT_REQUIRED;
-  }
-
-  if (issueCode === RULE_CODES.PARITY_MISSING_SURFACE) {
-    return WU_LINT_ERROR_TYPES.REGISTRATION_PARITY_MISSING;
-  }
-
-  return issueCode;
-}
+const LINT_TYPE_BY_RULE_CODE: Record<string, string> = {
+  [RULE_CODES.MINIMUM_TEST_INTENT]: WU_LINT_ERROR_TYPES.MINIMUM_TEST_INTENT_REQUIRED,
+  [RULE_CODES.PARITY_MISSING_SURFACE]: WU_LINT_ERROR_TYPES.REGISTRATION_PARITY_MISSING,
+};
 
 function toLintIssue(wuId: string, issue: ValidationIssue) {
-  return {
-    type: mapRuleIssueType(issue.code),
+  const normalized = normalizeValidationIssue(issue, {
     wuId,
-    message: issue.message,
-    suggestion: issue.suggestion,
+    typeByCode: LINT_TYPE_BY_RULE_CODE,
+  });
+
+  return {
+    type: normalized.type,
+    wuId,
+    message: normalized.message,
+    suggestion: normalized.suggestion,
   };
 }
 

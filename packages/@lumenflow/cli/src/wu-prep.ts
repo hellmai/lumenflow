@@ -39,7 +39,11 @@ import { die } from '@lumenflow/core/error-handler';
 import { resolveLocation } from '@lumenflow/core/context/location-resolver';
 import { readWU } from '@lumenflow/core/wu-yaml';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
-import { validatePreflight, formatPreflightResult } from '@lumenflow/core/wu-preflight-validators';
+import {
+  validatePreflight,
+  formatPreflightResult,
+  formatPreflightWarnings,
+} from '@lumenflow/core/wu-preflight-validators';
 import {
   CONTEXT_VALIDATION,
   PATTERNS,
@@ -528,9 +532,12 @@ async function main(): Promise<void> {
     die(formatPreflightResult(id, realityPreflight));
   }
   if (Array.isArray(realityPreflight.warnings) && realityPreflight.warnings.length > 0) {
-    console.log(`${PREP_PREFIX} ${EMOJI.WARNING} Reality preflight warnings:`);
-    for (const warning of realityPreflight.warnings) {
-      console.log(`${PREP_PREFIX}   - ${warning}`);
+    const warningLines = formatPreflightWarnings(
+      realityPreflight.warnings,
+      `${PREP_PREFIX} ${EMOJI.WARNING} Reality preflight warnings:`,
+    );
+    for (const line of warningLines) {
+      console.log(line.startsWith('  - ') ? `${PREP_PREFIX} ${line}` : line);
     }
   }
 

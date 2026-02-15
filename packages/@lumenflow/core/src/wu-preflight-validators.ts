@@ -18,7 +18,7 @@ import path from 'node:path';
 import {
   isPathLikeTestEntry,
   pathReferenceExistsSync,
-  RULE_CODES,
+  validationIssueToDisplayLines,
   type ValidationPhase,
   validateWURules,
   validateWURulesSync,
@@ -168,38 +168,6 @@ export interface ValidatePreflightOptions {
   headRef?: string;
 }
 
-function appendIssueDetails(target: string[], issue): void {
-  target.push(issue.message);
-
-  if (!issue.metadata || typeof issue.metadata !== 'object') {
-    return;
-  }
-
-  const metadata = issue.metadata as Record<string, unknown>;
-
-  const missingCodePaths = metadata.missingCodePaths;
-  if (Array.isArray(missingCodePaths) && missingCodePaths.length > 0) {
-    target.push(...missingCodePaths.map((entry) => `  - ${entry}`));
-  }
-
-  const missingTestPaths = metadata.missingTestPaths;
-  if (Array.isArray(missingTestPaths) && missingTestPaths.length > 0) {
-    target.push(...missingTestPaths.map((entry) => `  - ${entry}`));
-  }
-
-  if (issue.code === RULE_CODES.CODE_PATH_COVERAGE) {
-    const changedFiles = metadata.changedFiles;
-    if (Array.isArray(changedFiles)) {
-      target.push('Changed files considered:');
-      if (changedFiles.length === 0) {
-        target.push('  - (none)');
-      } else {
-        target.push(...changedFiles.map((entry) => `  - ${entry}`));
-      }
-    }
-  }
-}
-
 export async function validatePreflight(id, options: ValidatePreflightOptions = {}) {
   const rootDir = options.rootDir || process.cwd();
   const worktreePath = options.worktreePath || rootDir;
@@ -246,11 +214,11 @@ export async function validatePreflight(id, options: ValidatePreflightOptions = 
       : validateWURulesSync(rulesContext, { phase });
 
   for (const issue of rulesResult.errors) {
-    appendIssueDetails(allErrors, issue);
+    allErrors.push(...validationIssueToDisplayLines(issue));
   }
 
   for (const issue of rulesResult.warnings) {
-    appendIssueDetails(allWarnings, issue);
+    allWarnings.push(...validationIssueToDisplayLines(issue));
   }
 
   missingCodePaths.push(...rulesResult.metadata.missingCodePaths);
@@ -331,6 +299,20 @@ export function formatPreflightResult(id, result) {
   }
 
   return lines.join('\n');
+}
+
+/**
+ * Build display lines for preflight warnings with a consistent shape.
+ */
+export function formatPreflightWarnings(
+  warnings: string[] | undefined,
+  header = `${LOG_PREFIX.PREFLIGHT} ${EMOJI.WARNING} Warnings:`,
+): string[] {
+  if (!Array.isArray(warnings) || warnings.length === 0) {
+    return [];
+  }
+
+  return [header, ...warnings.map((warning) => `  - ${warning}`)];
 }
 
 export const PreflightResult = {};
