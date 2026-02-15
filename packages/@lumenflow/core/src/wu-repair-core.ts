@@ -328,9 +328,7 @@ export async function repairClaimMetadata(
       repaired.push(`Pushed to origin/${currentBranch}`);
     } catch (err: unknown) {
       // Don't fail the entire repair if commit/push fails
-      errors.push(
-        `Git operations failed: ${getErrorMessage(err)}. Manual commit may be required.`,
-      );
+      errors.push(`Git operations failed: ${getErrorMessage(err)}. Manual commit may be required.`);
     }
   }
 
