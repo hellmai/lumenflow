@@ -1359,3 +1359,4 @@
 {"type":"complete","wuId":"WU-1700","timestamp":"2026-02-15T21:41:26.688Z"}
 {"type":"claim","wuId":"WU-1703","lane":"Content: Framework Docs","title":"Emergency PII/PHI cleanup across templates and docs","timestamp":"2026-02-15T22:14:23.128Z"}
 {"type":"claim","wuId":"WU-1701","lane":"Framework: Core Validation","title":"Emergency cleanup: remove healthcare/PHI code from core package","timestamp":"2026-02-15T22:16:26.274Z"}
+{"type":"claim","wuId":"WU-1702","lane":"Framework: CLI Enforcement","title":"Emergency: remove healthcare/PHI code from CLI and MCP packages","timestamp":"2026-02-15T22:19:32.630Z"}
