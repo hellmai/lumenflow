@@ -2,7 +2,7 @@ id: WU-1709
 title: 'Strict debt slice: type generate-traceability'
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -35,3 +35,11 @@ acceptance:
   - No strict errors remain in packages/@lumenflow/core/src/generate-traceability.ts under
     --strictNullChecks --noImplicitAny
   - Targeted tests pass for generate-traceability helpers
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-validation-wu-1709
+claimed_at: 2026-02-15T23:39:53.918Z
+baseline_main_sha: c85fd57b1639704e029d4ebbd40dbe408d67c97f
+session_id: e3cef198-5340-4cb4-b272-30785c849585
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T23:39:53.925Z
