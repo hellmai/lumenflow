@@ -36,7 +36,7 @@ phases:
     status: done
   - id: 8
     title: 'Wave 2C: Core backlog and compliance strict fixes'
-    status: pending
+    status: done
   - id: 9
     title: 'Wave 2D: Core infrastructure strict fixes'
     status: pending
