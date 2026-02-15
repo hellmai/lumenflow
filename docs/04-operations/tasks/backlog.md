@@ -31,11 +31,11 @@ sections:
 - [WU-1587 — Core strict wave 2D: infrastructure strict fixes](wu/WU-1587.yaml) — Framework: Core State Recovery
 - [WU-1588 — Core strict wave 2E: remaining fixes and strict enablement](wu/WU-1588.yaml) — Framework: Core Validation
 - [WU-1684 — Add vendor-agnostic wu:sandbox command for kernel-enforced worktree isolation](wu/WU-1684.yaml) — Framework: CLI Enforcement
-- [WU-1685 — Validator V2 follow-up: normalize issue shaping and adapter boundaries](wu/WU-1685.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-1683 — Add first-class plan field to WU schema for plan-to-WU linking](wu/WU-1683.yaml) — Framework: CLI WU Commands
+- [WU-1685 — Validator V2 follow-up: normalize issue shaping and adapter boundaries](wu/WU-1685.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 

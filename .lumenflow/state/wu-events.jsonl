@@ -1300,3 +1300,4 @@
 {"type":"complete","wuId":"WU-1681","timestamp":"2026-02-15T11:05:51.169Z"}
 {"type":"claim","wuId":"WU-1683","timestamp":"2026-02-15T11:05:52.075Z","lane":"Framework: CLI WU Commands","title":"Add first-class plan field to WU schema for plan-to-WU linking"}
 {"type":"complete","wuId":"WU-1680","timestamp":"2026-02-15T11:45:14.677Z"}
+{"type":"claim","wuId":"WU-1685","lane":"Framework: CLI WU Commands","title":"Validator V2 follow-up: normalize issue shaping and adapter boundaries","timestamp":"2026-02-15T12:15:50.921Z"}
