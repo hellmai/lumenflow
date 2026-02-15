@@ -2,7 +2,7 @@ id: WU-1685
 title: 'Validator V2 follow-up: normalize issue shaping and adapter boundaries'
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -38,8 +38,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Validator Layer V2 is merged, but we still have adapter-level mapping spread across lint/preflight/CLI entrypoints. Problem: duplicated issue-shaping and warning projection increases drift risk and makes behavior harder to reason about. Solution: centralize validation result normalization and keep command-facing behavior stable while reducing duplicated mapping logic.'
+description: 'Context: Validator Layer V2 is merged, but we still have adapter-level mapping spread
+  across lint/preflight/CLI entrypoints. Problem: duplicated issue-shaping and warning projection
+  increases drift risk and makes behavior harder to reason about. Solution: centralize validation
+  result normalization and keep command-facing behavior stable while reducing duplicated mapping
+  logic.'
 acceptance:
-  - Validation issue shaping is produced from one shared normalization path reused by lint and preflight adapters.
-  - CLI consumers (create/edit/validate/prep/done) read normalized warning/error output without duplicate mapping blocks.
+  - Validation issue shaping is produced from one shared normalization path reused by lint and
+    preflight adapters.
+  - CLI consumers (create/edit/validate/prep/done) read normalized warning/error output without
+    duplicate mapping blocks.
   - Regression tests confirm backward-compatible command output while reducing adapter duplication.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1685
+claimed_at: 2026-02-15T12:15:50.897Z
+baseline_main_sha: e93dfb0ceda62571d1642ca835a0b432dd682f28
+session_id: 7345f13b-48b8-4746-83fb-8c414371bd24
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T12:15:50.903Z
