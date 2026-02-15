@@ -22,6 +22,7 @@ tests:
     - Run wu:status and verify plan path is displayed
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-schema.test.ts
+    - packages/@lumenflow/cli/__tests__/wu-1683-plan-field.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1683.done
