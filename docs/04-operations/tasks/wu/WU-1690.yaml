@@ -7,6 +7,8 @@ priority: P1
 created: 2026-02-15
 code_paths:
   - packages/lumenflow/package.json
+  - packages/lumenflow/bin/lumenflow.mjs
+  - pnpm-workspace.yaml
 tests:
   manual:
     - Run npx lumenflow init in a fresh /tmp directory
@@ -20,10 +22,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-15T15:52:41.836Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1690
+session_id: 8962eb57-43d1-4cc3-a4fb-2eca191a8cbd
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T15:52:41.844Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +42,3 @@ description: npx lumenflow init fails with 404 because only @lumenflow/cli exist
 acceptance:
   - npx lumenflow init resolves and delegates to @lumenflow/cli
   - Package is minimal wrapper with @lumenflow/cli as dependency
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1690
-claimed_at: 2026-02-15T15:52:41.836Z
-baseline_main_sha: a17eba4da3912c795ebe7572e28944bebc8664f4
-session_id: 8962eb57-43d1-4cc3-a4fb-2eca191a8cbd
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-15T15:52:41.844Z
