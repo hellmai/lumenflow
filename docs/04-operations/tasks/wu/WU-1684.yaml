@@ -93,3 +93,4 @@ acceptance:
     platform-specific branching in command logic.
   - Automated tests cover backend selection matrix and fail-closed/override behavior across
     supported platforms.
+  - wu:claim --sandbox flag auto-wraps the agent session in the sandbox after worktree creation
