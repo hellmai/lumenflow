@@ -2,7 +2,7 @@ id: WU-1703
 title: Emergency PII/PHI cleanup across templates and docs
 lane: 'Content: Framework Docs'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -39,7 +39,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Templates and documentation contain PII/PHI references that should just be PII. Problem: Healthcare-specific content needs removal. Solution: Replace PII/PHI with PII across all affected files.'
+description: 'Context: Templates and documentation contain PII/PHI references that should just be
+  PII. Problem: Healthcare-specific content needs removal. Solution: Replace PII/PHI with PII across
+  all affected files.'
 acceptance:
   - All PII/PHI references replaced with PII
   - Healthcare-specific content removed from templates
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-1703
+claimed_at: 2026-02-15T22:14:23.081Z
+baseline_main_sha: 620c823b06ae8c450279ffad2edd822b8cf924f6
+session_id: 2ba85473-6c7a-42d4-b5a0-04dd4a754ae9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-15T22:14:23.089Z
