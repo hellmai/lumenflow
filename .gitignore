@@ -66,16 +66,6 @@ coverage/
 **/.lumenflow/artifacts/
 **/.lumenflow/state/spawn-registry.jsonl
 
-# Legacy .beacon paths (deprecated, kept for transition)
-/.beacon/state/*.backup*
-/.beacon/memory/
-/.beacon/locks/
-/.beacon/sessions/
-/.beacon/telemetry/
-/.beacon/skip-gates-audit.log
-/.beacon/checkpoints/
-/.beacon/force-bypasses.log
-**/.beacon/locks/
 .logs/
 *.tgz
 .npmrc
