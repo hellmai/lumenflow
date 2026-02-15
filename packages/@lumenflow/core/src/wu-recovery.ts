@@ -29,7 +29,7 @@ import { writeWU } from './wu-yaml.js';
 import { updateStatusRemoveInProgress, addToStatusCompleted } from './wu-status-updater.js';
 import { moveWUToDoneBacklog } from './wu-backlog-updater.js';
 import { getGitForCwd } from './git-adapter.js';
-import { createError, ErrorCodes } from './error-handler.js';
+import { createError, ErrorCodes, getErrorMessage } from './error-handler.js';
 import { rollbackFiles } from './rollback-utils.js';
 import { LOG_PREFIX, EMOJI, WU_STATUS, getProjectRoot, LUMENFLOW_PATHS } from './wu-constants.js';
 
@@ -46,6 +46,55 @@ export const MAX_RECOVERY_ATTEMPTS = RETRY_PRESETS.recovery.maxAttempts;
  */
 const RECOVERY_MARKER_DIR = 'recovery';
 
+interface RecoveryMarkerData {
+  attempts?: number;
+  lastAttempt?: string;
+  wuId?: string;
+}
+
+interface RecoveryFilePaths {
+  wuPath: string;
+  statusPath: string;
+  backlogPath: string;
+  stampPath: string;
+}
+
+interface RecoveryTransactionState {
+  wuContent: string | null;
+  statusContent: string | null;
+  backlogContent: string | null;
+  stampExisted: boolean;
+  timestamp: string;
+}
+
+interface RecoveryDoc extends Record<string, unknown> {
+  title?: string;
+  status?: string;
+  locked?: boolean;
+  completed_at?: string;
+  completed?: string | boolean;
+}
+
+interface ResetWorktreeYAMLForRecoveryParams {
+  worktreePath: string;
+  id: string;
+  doc: RecoveryDoc;
+}
+
+interface RecoverZombieStateParams {
+  id: string;
+  doc: RecoveryDoc;
+  _worktreePath?: string;
+  _args?: unknown;
+}
+
+interface RecoverZombieStateResults {
+  stamp: { created: boolean; path: string; reason?: string } | null;
+  yaml: { updated: boolean; reason?: string } | null;
+  docs: { status: unknown | null; backlog: unknown | null };
+  commit?: { committed: boolean; reason?: string };
+}
+
 /**
  * WU-1335: Get the path to the recovery marker file for a WU
  *
@@ -53,7 +102,7 @@ const RECOVERY_MARKER_DIR = 'recovery';
  * @param {string} [baseDir=process.cwd()] - Base directory for .lumenflow
  * @returns {string} Path to recovery marker file
  */
-export function getRecoveryMarkerPath(id, baseDir = process.cwd()) {
+export function getRecoveryMarkerPath(id: string, baseDir = process.cwd()): string {
   return join(baseDir, LUMENFLOW_PATHS.BASE, RECOVERY_MARKER_DIR, `${id}.recovery`);
 }
 
@@ -64,14 +113,14 @@ export function getRecoveryMarkerPath(id, baseDir = process.cwd()) {
  * @param {string} [baseDir=process.cwd()] - Base directory for .lumenflow
  * @returns {number} Current attempt count (0 if no marker exists)
  */
-export function getRecoveryAttemptCount(id, baseDir = process.cwd()) {
+export function getRecoveryAttemptCount(id: string, baseDir = process.cwd()): number {
   const markerPath = getRecoveryMarkerPath(id, baseDir);
   if (!existsSync(markerPath)) {
     return 0;
   }
   try {
-    const data = JSON.parse(readFileSync(markerPath, { encoding: 'utf-8' }));
-    return data.attempts || 0;
+    const data = JSON.parse(readFileSync(markerPath, { encoding: 'utf-8' })) as RecoveryMarkerData;
+    return typeof data.attempts === 'number' ? data.attempts : 0;
   } catch {
     // Corrupted file - treat as 0
     return 0;
@@ -85,7 +134,7 @@ export function getRecoveryAttemptCount(id, baseDir = process.cwd()) {
  * @param {string} [baseDir=process.cwd()] - Base directory for .lumenflow
  * @returns {number} New attempt count
  */
-export function incrementRecoveryAttempt(id, baseDir = process.cwd()) {
+export function incrementRecoveryAttempt(id: string, baseDir = process.cwd()): number {
   const markerPath = getRecoveryMarkerPath(id, baseDir);
   const markerDir = join(baseDir, LUMENFLOW_PATHS.BASE, RECOVERY_MARKER_DIR);
 
@@ -113,7 +162,7 @@ export function incrementRecoveryAttempt(id, baseDir = process.cwd()) {
  * @param {string} id - WU ID
  * @param {string} [baseDir=process.cwd()] - Base directory for .lumenflow
  */
-export function clearRecoveryAttempts(id, baseDir = process.cwd()) {
+export function clearRecoveryAttempts(id: string, baseDir = process.cwd()): void {
   const markerPath = getRecoveryMarkerPath(id, baseDir);
   if (existsSync(markerPath)) {
     unlinkSync(markerPath);
@@ -126,7 +175,7 @@ export function clearRecoveryAttempts(id, baseDir = process.cwd()) {
  * @param {number} attempts - Current attempt count
  * @returns {boolean} True if should escalate
  */
-export function shouldEscalateToManualIntervention(attempts) {
+export function shouldEscalateToManualIntervention(attempts: number): boolean {
   return attempts >= MAX_RECOVERY_ATTEMPTS;
 }
 
@@ -140,7 +189,7 @@ export function shouldEscalateToManualIntervention(attempts) {
  * @param {string} paths.stampPath - Path to stamp file
  * @returns {object} Transaction state for rollback
  */
-function recordRecoveryState(paths) {
+function recordRecoveryState(paths: RecoveryFilePaths): RecoveryTransactionState {
   const { wuPath, statusPath, backlogPath, stampPath } = paths;
   return {
     wuContent: existsSync(wuPath) ? readFileSync(wuPath, { encoding: 'utf-8' }) : null,
@@ -159,7 +208,7 @@ function recordRecoveryState(paths) {
  * @param {object} state - Transaction state from recordRecoveryState
  * @param {object} paths - Object containing file paths
  */
-function rollbackRecoveryTransaction(state, paths) {
+function rollbackRecoveryTransaction(state: RecoveryTransactionState, paths: RecoveryFilePaths): void {
   const { wuPath, statusPath, backlogPath, stampPath } = paths;
 
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.WARNING} Rolling back recovery transaction...`);
@@ -195,8 +244,10 @@ function rollbackRecoveryTransaction(state, paths) {
     try {
       unlinkSync(stampPath);
       console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Removed stamp file`);
-    } catch (err) {
-      console.error(`${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Failed to remove stamp: ${err.message}`);
+    } catch (err: unknown) {
+      console.error(
+        `${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Failed to remove stamp: ${getErrorMessage(err)}`,
+      );
     }
   }
 
@@ -210,8 +261,11 @@ function rollbackRecoveryTransaction(state, paths) {
  * @param {string|null} worktreePath - Path to worktree
  * @returns {boolean} True if zombie state detected
  */
-export function detectZombieState(doc, worktreePath) {
-  return doc.status === WU_STATUS.DONE && worktreePath && existsSync(worktreePath);
+export function detectZombieState(doc: { status?: string }, worktreePath: string | null): boolean {
+  if (!worktreePath) {
+    return false;
+  }
+  return doc.status === WU_STATUS.DONE && existsSync(worktreePath);
 }
 
 /**
@@ -233,7 +287,11 @@ export function detectZombieState(doc, worktreePath) {
  * @param {object} params.doc - WU YAML document (will be mutated)
  * @returns {{ reset: boolean }} Reset result
  */
-export function resetWorktreeYAMLForRecovery({ worktreePath, id, doc }) {
+export function resetWorktreeYAMLForRecovery({
+  worktreePath,
+  id,
+  doc,
+}: ResetWorktreeYAMLForRecoveryParams): { reset: boolean } {
   const projectRoot = getProjectRoot(import.meta.url);
   const resolvedWorktreeRoot = isAbsolute(worktreePath)
     ? worktreePath
@@ -280,17 +338,17 @@ export function resetWorktreeYAMLForRecovery({ worktreePath, id, doc }) {
  * @param {object} params.args - Command-line args
  * @returns {object} Recovery results
  */
-export async function recoverZombieState({ id, doc, _worktreePath, _args }) {
+export async function recoverZombieState({
+  id,
+  doc,
+  _worktreePath,
+  _args,
+}: RecoverZombieStateParams): Promise<RecoverZombieStateResults> {
   console.log(`\n${RECOVERY.DETECTED}`);
   console.log(RECOVERY.RESUMING);
   console.log(RECOVERY.EXPLANATION);
 
-  const results: {
-    stamp: { created: boolean; path: string; reason?: string } | null;
-    yaml: { updated: boolean; reason?: string } | null;
-    docs: { status: unknown | null; backlog: unknown | null };
-    commit?: { committed: boolean; reason?: string };
-  } = {
+  const results: RecoverZombieStateResults = {
     stamp: null,
     yaml: null,
     docs: { status: null, backlog: null },
@@ -308,7 +366,7 @@ export async function recoverZombieState({ id, doc, _worktreePath, _args }) {
   try {
     // 1. Ensure stamp exists (idempotent)
     console.log(RECOVERY.CREATING_STAMP);
-    results.stamp = createStamp({ id, title: doc.title });
+    results.stamp = createStamp({ id, title: doc.title ?? id });
     console.log(RECOVERY.STAMP_CREATED);
 
     // 2. Ensure YAML completion markers (idempotent)
@@ -363,15 +421,16 @@ export async function recoverZombieState({ id, doc, _worktreePath, _args }) {
         }
         results.commit = { committed: true };
         console.log(RECOVERY.COMMIT_SUCCESS);
-      } catch (commitError) {
+      } catch (commitError: unknown) {
+        const commitMessage = getErrorMessage(commitError);
         // Commit failed - rollback all changes (WU-1303)
-        console.warn(RECOVERY.COMMIT_FAILED(commitError.message));
+        console.warn(RECOVERY.COMMIT_FAILED(commitMessage));
         rollbackRecoveryTransaction(initialState, paths);
 
         throw createError(
           ErrorCodes.GIT_ERROR,
-          `Recovery commit failed: ${commitError.message}\nFiles rolled back to clean state. Re-run wu:done to retry.`,
-          { originalError: commitError.message, wuId: id },
+          `Recovery commit failed: ${commitMessage}\nFiles rolled back to clean state. Re-run wu:done to retry.`,
+          { originalError: commitMessage, wuId: id },
         );
       }
     } else {
@@ -382,21 +441,28 @@ export async function recoverZombieState({ id, doc, _worktreePath, _args }) {
     console.log(RECOVERY.PROCEEDING_CLEANUP);
 
     return results;
-  } catch (error) {
+  } catch (error: unknown) {
     // WU-1303: Atomic rollback on ANY failure (not just commit)
     // Re-throw if it's already a structured error (from commit phase)
-    if (error.code === ErrorCodes.GIT_ERROR) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code?: string }).code === ErrorCodes.GIT_ERROR
+    ) {
       throw error;
     }
 
+    const message = getErrorMessage(error);
+
     // Rollback file changes for non-commit errors
-    console.error(`${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Recovery failed: ${error.message}`);
+    console.error(`${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Recovery failed: ${message}`);
     rollbackRecoveryTransaction(initialState, paths);
 
     throw createError(
       ErrorCodes.RECOVERY_ERROR,
-      `Recovery operation failed: ${error.message}\nFiles rolled back to clean state. Re-run wu:done to retry.`,
-      { originalError: error.message, wuId: id },
+      `Recovery operation failed: ${message}\nFiles rolled back to clean state. Re-run wu:done to retry.`,
+      { originalError: message, wuId: id },
     );
   }
 }
