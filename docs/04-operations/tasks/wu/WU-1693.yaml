@@ -2,7 +2,7 @@ id: WU-1693
 title: 'Clarify contributing workflows: trunk-based vs PR-based'
 lane: 'Content: Framework Docs'
 type: documentation
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -37,3 +37,6 @@ description: 'README contributing section needs to explain both workflows: maint
 acceptance:
   - README contributing section explains both internal (wu:done) and external (fork+PR) workflows
   - CONTRIBUTING.md created with detailed contributor guide
+locked: true
+completed_at: 2026-02-15T17:58:59.454Z
+completed: 2026-02-15
