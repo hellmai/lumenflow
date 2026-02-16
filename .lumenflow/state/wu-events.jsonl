@@ -1384,4 +1384,5 @@
 {"type":"complete","wuId":"WU-1713","timestamp":"2026-02-15T23:58:50.159Z"}
 {"type":"claim","wuId":"WU-1714","timestamp":"2026-02-16T00:00:12.273Z","lane":"Framework: Core Validation","title":"Strict debt slice: type orchestration-rules"}
 {"type":"complete","wuId":"WU-1714","timestamp":"2026-02-16T00:02:50.883Z"}
-{"type":"claim","wuId":"WU-1715","lane":"Framework: Core Validation","title":"Strict debt slice: type wu-done-preflight","timestamp":"2026-02-16T09:07:47.727Z"}
+{"type":"claim","wuId":"WU-1715","timestamp":"2026-02-16T09:07:47.727Z","lane":"Framework: Core Validation","title":"Strict debt slice: type wu-done-preflight"}
+{"type":"complete","wuId":"WU-1715","timestamp":"2026-02-16T09:10:22.306Z"}
