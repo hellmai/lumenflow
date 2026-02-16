@@ -77,18 +77,6 @@ function createSyntheticTaskSpec(taskId: string): TaskSpec {
   };
 }
 
-function cloneRun(run: Run): Run {
-  return { ...run };
-}
-
-function cloneTaskState(state: TaskState): TaskState {
-  return {
-    ...state,
-    current_run: state.current_run ? cloneRun(state.current_run) : undefined,
-    domain_state: state.domain_state ? { ...state.domain_state } : undefined,
-  };
-}
-
 export function verifyTaskSpecHash(taskSpec: TaskSpec, events: KernelEvent[]): void {
   const created = events.find((event) => event.kind === 'task_created');
   if (!created) {
@@ -108,7 +96,6 @@ export function verifyTaskSpecHash(taskSpec: TaskSpec, events: KernelEvent[]): v
 function reduceRunEvent(
   event: RunLifecycleEvent,
   runs: Map<string, Run>,
-  currentRunId: string | undefined,
 ): string | undefined {
   const runId = event.run_id;
   const existing =
@@ -201,7 +188,7 @@ export function projectTaskState(taskSpec: TaskSpec, events: KernelEvent[]): Tas
     }
 
     if (isRunLifecycleEvent(event)) {
-      currentRunId = reduceRunEvent(event, runs, currentRunId);
+      currentRunId = reduceRunEvent(event, runs);
     }
   }
 
