@@ -2,7 +2,7 @@ id: WU-1734
 title: Software delivery pack — Git tools + worktree + lane locks + delegation
 lane: 'Framework: Core State Recovery'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -62,3 +62,11 @@ acceptance:
   - git:commit execution produces receipt with artifacts_written field
   - Lane lock acquires and releases correctly with staleness detection
   - No side-effect imports (fs, child_process) in tools directory descriptor files
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-state-recovery-wu-1734
+claimed_at: 2026-02-16T23:36:02.792Z
+baseline_main_sha: daf164f442f63012ea1d6ef21dfa6cc932b8b49c
+session_id: e7af8927-f65c-487a-92c0-d50c22b4b2ba
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T23:36:02.797Z
