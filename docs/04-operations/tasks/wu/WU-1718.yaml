@@ -2,14 +2,15 @@ id: WU-1718
 title: 'Strict debt slice: null-safety in wu-spawn'
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-16
 code_paths:
   - packages/@lumenflow/core/src/wu-spawn.ts
 tests:
   manual:
-    - pnpm --filter @lumenflow/core exec tsc --noEmit --strictNullChecks --noImplicitAny --pretty false | rg 'src/wu-spawn.ts' -n
+    - pnpm --filter @lumenflow/core exec tsc --noEmit --strictNullChecks --noImplicitAny --pretty
+      false | rg 'src/wu-spawn.ts' -n
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-spawn.test.ts
   e2e: []
@@ -31,4 +32,13 @@ requires_cto_approval: false
 requires_design_approval: false
 description: Resolve strictNullChecks/noImplicitAny violations in wu-spawn without behavior changes.
 acceptance:
-  - wu-spawn.ts has no strict errors under --strictNullChecks --noImplicitAny; related wu-spawn tests pass; lint/prettier clean.
+  - wu-spawn.ts has no strict errors under --strictNullChecks --noImplicitAny; related wu-spawn
+    tests pass; lint/prettier clean.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-validation-wu-1718
+claimed_at: 2026-02-16T09:23:28.703Z
+baseline_main_sha: 50d1ca7455ad4e6e7502568a8fe551be359bcf2f
+session_id: 302a5425-2b44-455d-b86e-1d7d1b9bc879
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T09:23:28.710Z
