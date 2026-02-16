@@ -22,23 +22,28 @@ For detailed troubleshooting, common mistakes, and recovery steps, see [troubles
 # 1. Setup (first time only)
 pnpm setup
 
-# 2. Create a WU (--id is optional, auto-generates next sequential ID if omitted)
+# 2. Configure lane lifecycle once per project (after context/plan is clear)
+pnpm lane:setup
+pnpm lane:validate
+pnpm lane:lock
+
+# 3. Create a WU (--id is optional, auto-generates next sequential ID if omitted)
 pnpm wu:create --lane <Lane> --title "Title" \
   --description "..." --acceptance "..." --code-paths "..." \
   --test-paths-unit "..." --exposure backend-only \
   --spec-refs "lumenflow://plans/WU-XXXX-plan.md"
 
-# 3. Claim (auto-merges spec branch to main if needed)
+# 4. Claim (auto-merges spec branch to main if needed)
 pnpm wu:claim --id WU-XXXX --lane <Lane>
 cd worktrees/<lane>-wu-xxxx
 
-# 4. Implement in worktree
+# 5. Implement in worktree
 
-# 5. Prepare (runs gates in worktree) - WU-1223 NEW
+# 6. Prepare (runs gates in worktree) - WU-1223 NEW
 pnpm wu:prep --id WU-XXXX
 # This prints a copy-paste instruction for the next step
 
-# 6. Complete (from main checkout - copy-paste from wu:prep output)
+# 7. Complete (from main checkout - copy-paste from wu:prep output)
 cd /path/to/main && pnpm wu:done --id WU-XXXX
 ```
 
@@ -70,14 +75,17 @@ pnpm initiative:status --id INIT-001
 
 ## Setup Notes (Common First-Run Failures)
 
-### Lane inference (sub-lanes)
+### Lane lifecycle (deferred setup)
 
-If you use sub-lanes like `Experience: UI`, you must have a lane taxonomy:
+`lumenflow init` no longer finalizes delivery lanes. Lane setup is an explicit process:
 
-- Ensure `.lumenflow.lane-inference.yaml` exists, or
-- Generate it with `pnpm lane:suggest --output .lumenflow.lane-inference.yaml`
+```bash
+pnpm lane:setup      # creates/updates draft lane artifacts
+pnpm lane:validate   # validates draft lane artifacts
+pnpm lane:lock       # finalizes lane lifecycle for delivery WUs
+```
 
-Without this file, sub-lane validation will fail.
+`wu:create` requires lane lifecycle status `locked` and prints a deterministic next step when lanes are `unconfigured` or `draft`.
 
 ### Local-only / no remote
 
@@ -212,6 +220,10 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 | `pnpm wu:unblock`     | Unblock WU (transitions to in_progress)                |
 | `pnpm wu:release`     | Release orphaned WU (in_progress to ready for reclaim) |
 | `pnpm gates`          | Run quality gates (`--docs-only` for docs WUs)         |
+| `pnpm lane:status`    | Show lane lifecycle status + next step                 |
+| `pnpm lane:setup`     | Create/update draft lane artifacts                     |
+| `pnpm lane:validate`  | Validate lane artifacts before lock                    |
+| `pnpm lane:lock`      | Lock lane lifecycle for delivery WUs                   |
 | `pnpm mem:checkpoint` | Save memory checkpoint                                 |
 
 Commands include **context-aware validation** that checks location, WU status, and git state. When validation fails, commands provide copy-paste ready fix commands. Configure in `.lumenflow.config.yaml` under `experimental.context_validation`.

@@ -130,10 +130,14 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ### Lane Tooling
 
-| Command        | Description                 |
-| -------------- | --------------------------- |
-| `lane-health`  | Check lane config health    |
-| `lane-suggest` | Suggest lane for code paths |
+| Command         | Description                              |
+| --------------- | ---------------------------------------- |
+| `lane-health`   | Check lane config health                 |
+| `lane-lock`     | Lock lane lifecycle for delivery WUs     |
+| `lane-setup`    | Create/update draft lane artifacts       |
+| `lane-status`   | Show lane lifecycle status and next step |
+| `lane-suggest`  | Suggest lane for code paths              |
+| `lane-validate` | Validate lane artifacts before lock      |
 
 ### Verification & Gates
 

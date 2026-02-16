@@ -17,7 +17,7 @@ LumenFlow provides a comprehensive CLI for managing Work Units, memory, initiati
 
 | Category            | Commands                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Gates & Quality     | [`gates`](#gates), [`gates:docs`](#gatesdocs), [`lane:health`](#lanehealth), [`lane:suggest`](#lanesuggest), [`lumenflow-gates`](#lumenflow-gates), [`lumenflow-validate`](#lumenflow-validate), [`validate`](#validate)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Gates & Quality     | [`gates`](#gates), [`gates:docs`](#gatesdocs), [`lane:health`](#lanehealth), [`lane:lock`](#lanelock), [`lane:setup`](#lanesetup), [`lane:status`](#lanestatus), [`lane:suggest`](#lanesuggest), [`lane:validate`](#lanevalidate), [`lumenflow-gates`](#lumenflow-gates), [`lumenflow-validate`](#lumenflow-validate), [`validate`](#validate)                                                                                                                                                                                                                                                                                                                                                                 |
 | Initiatives         | [`initiative:add-wu`](#initiativeadd-wu), [`initiative:bulk-assign`](#initiativebulk-assign), [`initiative:create`](#initiativecreate), [`initiative:edit`](#initiativeedit), [`initiative:list`](#initiativelist), [`initiative:plan`](#initiativeplan), [`initiative:remove-wu`](#initiativeremove-wu), [`initiative:status`](#initiativestatus)                                                                                                                                                                                                                                                                                                                                                             |
 | Memory & Sessions   | [`mem:checkpoint`](#memcheckpoint), [`mem:cleanup`](#memcleanup), [`mem:context`](#memcontext), [`mem:create`](#memcreate), [`mem:delete`](#memdelete), [`mem:export`](#memexport), [`mem:inbox`](#meminbox), [`mem:init`](#meminit), [`mem:ready`](#memready), [`mem:recover`](#memrecover), [`mem:signal`](#memsignal), [`mem:start`](#memstart), [`mem:summarize`](#memsummarize), [`mem:triage`](#memtriage), [`signal:cleanup`](#signalcleanup)                                                                                                                                                                                                                                                           |
 | Metrics & Flow      | [`flow:bottlenecks`](#flowbottlenecks), [`flow:report`](#flowreport), [`lumenflow:metrics`](#lumenflowmetrics), [`metrics`](#metrics), [`metrics:snapshot`](#metricssnapshot)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -54,12 +54,44 @@ Check lane config health
 pnpm lane:health
 ```
 
+### lane:lock
+
+Lock lane lifecycle for delivery WUs
+
+```bash
+pnpm lane:lock
+```
+
+### lane:setup
+
+Create/update draft lane artifacts
+
+```bash
+pnpm lane:setup
+```
+
+### lane:status
+
+Show lane lifecycle status and next step
+
+```bash
+pnpm lane:status
+```
+
 ### lane:suggest
 
 Suggest lane for code paths
 
 ```bash
 pnpm lane:suggest
+```
+
+### lane:validate
+
+Validate lane artifacts before lock
+
+```bash
+pnpm lane:validate
 ```
 
 ### lumenflow-gates

@@ -46,6 +46,11 @@ import { ensureOnMain } from '@lumenflow/core/wu-helpers';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 // WU-1428: Use date-utils for consistent YYYY-MM-DD format (library-first)
 import { todayISO } from '@lumenflow/core/date-utils';
+import {
+  buildInitiativeCreateLaneLifecycleMessage,
+  ensureLaneLifecycleForProject,
+  LANE_LIFECYCLE_STATUS,
+} from './lane-lifecycle-process.js';
 
 /** Log prefix for console output */
 const LOG_PREFIX = '[initiative:create]';
@@ -169,6 +174,13 @@ async function main() {
   validateSlugFormat(args.slug);
   checkInitiativeExists(args.id);
   await ensureOnMain(getGitForCwd());
+
+  // WU-1748: initiative:create does not design lanes.
+  // It remains allowed pre-lane-lock but emits deterministic guidance.
+  const laneLifecycle = ensureLaneLifecycleForProject(process.cwd(), { persist: true });
+  if (laneLifecycle.status !== LANE_LIFECYCLE_STATUS.LOCKED) {
+    console.log(`\n${buildInitiativeCreateLaneLifecycleMessage(laneLifecycle.status)}\n`);
+  }
 
   // Transaction: micro-worktree isolation (WU-1439)
   // WU-1255: Set LUMENFLOW_WU_TOOL to allow pre-push hook bypass for micro-worktree pushes

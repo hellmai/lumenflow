@@ -123,6 +123,10 @@
     "state-bootstrap": "./dist/state-bootstrap.js",
     "lane-health": "./dist/lane-health.js",
     "lane-suggest": "./dist/lane-suggest.js",
+    "lane-status": "./dist/lane-status.js",
+    "lane-setup": "./dist/lane-setup.js",
+    "lane-validate": "./dist/lane-validate.js",
+    "lane-lock": "./dist/lane-lock.js",
     "state-cleanup": "./dist/state-cleanup.js",
     "state-doctor": "./dist/state-doctor.js",
     "lumenflow-integrate": "./dist/commands/integrate.js"

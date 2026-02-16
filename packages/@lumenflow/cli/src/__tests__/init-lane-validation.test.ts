@@ -1,8 +1,8 @@
 /**
  * @file init-lane-validation.test.ts
- * Test: lumenflow init validates lane definitions against lane-inference hierarchy
+ * Test: lane validation utility for lifecycle boundary checks.
  *
- * WU-1745: Validate lane config against inference hierarchy at init time
+ * WU-1748: Validation moved from init-time to lane lifecycle commands.
  *
  * When .lumenflow.config.yaml defines lanes with "Parent: Sublane" format,
  * the parent name must exist in .lumenflow.lane-inference.yaml.
@@ -15,17 +15,10 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import YAML from 'yaml';
 import { scaffoldProject } from '../init.js';
 import { validateLaneConfigAgainstInference } from '../init-lane-validation.js';
 
-/** Config file name constant */
-const CONFIG_FILE_NAME = '.lumenflow.config.yaml';
-
-/** Lane inference file name constant */
-const LANE_INFERENCE_FILE_NAME = '.lumenflow.lane-inference.yaml';
-
-describe('init lane validation against inference hierarchy (WU-1745)', () => {
+describe('lane validation utilities (WU-1748 boundary shift)', () => {
   let tempDir: string;
 
   beforeEach(() => {
@@ -143,35 +136,11 @@ describe('init lane validation against inference hierarchy (WU-1745)', () => {
   });
 
   describe('scaffoldProject integration', () => {
-    it('should produce warnings when config has lanes with invalid parents', async () => {
-      // Act: Scaffold with default settings first
+    it('does not run lane parent validation during init', async () => {
+      // Act: scaffold once (creates lifecycle status, not lane artifacts)
       const result = await scaffoldProject(tempDir, { force: true, full: true });
 
-      // Now overwrite config with invalid lane parent
-      const configPath = path.join(tempDir, CONFIG_FILE_NAME);
-      const configContent = fs.readFileSync(configPath, 'utf-8');
-      const config = YAML.parse(configContent) as Record<string, unknown>;
-      (config as Record<string, unknown>).lanes = {
-        definitions: [{ name: 'Foundation: Core', wip_limit: 1, code_paths: ['src/core/**'] }],
-      };
-      fs.writeFileSync(configPath, YAML.stringify(config));
-
-      // Re-scaffold to trigger validation
-      const result2 = await scaffoldProject(tempDir, { force: true, full: true });
-
-      // Assert: Should have warnings about invalid parent
-      expect(result2.warnings).toBeDefined();
-      // The initial scaffold with defaults should have no lane validation warnings
-      // since default lanes all use valid parents
-      const defaultLaneWarnings = (result.warnings ?? []).filter((w) => w.includes('lane parent'));
-      expect(defaultLaneWarnings).toHaveLength(0);
-    });
-
-    it('should NOT warn for default lane definitions (they should all be valid)', async () => {
-      // Act: Scaffold with defaults
-      const result = await scaffoldProject(tempDir, { force: true, full: true });
-
-      // Assert: No lane validation warnings for default config
+      // Assert: init should not emit lane-parent validation warnings
       const laneWarnings = (result.warnings ?? []).filter(
         (w) => w.includes('lane parent') || w.includes('invalid parent'),
       );

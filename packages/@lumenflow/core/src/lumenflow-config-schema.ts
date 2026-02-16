@@ -1186,6 +1186,19 @@ export const LanesEnforcementSchema = z.object({
 });
 
 /**
+ * WU-1748: Explicit lane lifecycle status for deferred lane process
+ */
+export const LaneLifecycleStatusSchema = z.enum(['unconfigured', 'draft', 'locked']);
+
+/** WU-1748: Lane lifecycle metadata */
+export const LaneLifecycleSchema = z.object({
+  status: LaneLifecycleStatusSchema,
+  updated_at: z.string().optional(),
+  migrated_at: z.string().optional(),
+  migration_reason: z.string().optional(),
+});
+
+/**
  * WU-1322: Lane definition schema for .lumenflow.config.yaml
  *
  * Extends the existing lane configuration with lock_policy field.
@@ -1248,6 +1261,9 @@ export const LaneDefinitionSchema = z.object({
 export const LanesConfigSchema = z.object({
   /** Lane enforcement configuration (validation rules) */
   enforcement: LanesEnforcementSchema.optional(),
+
+  /** WU-1748: Deferred lane lifecycle state */
+  lifecycle: LaneLifecycleSchema.optional(),
 
   /** Primary lane definitions array (recommended format) */
   definitions: z.array(LaneDefinitionSchema).optional(),
@@ -1441,6 +1457,8 @@ export type LumenFlowConfig = z.infer<typeof LumenFlowConfigSchema>;
 export type LaneDefinition = z.infer<typeof LaneDefinitionSchema>;
 // WU-1345: Lanes configuration types
 export type LanesEnforcement = z.infer<typeof LanesEnforcementSchema>;
+export type LaneLifecycleStatus = z.infer<typeof LaneLifecycleStatusSchema>;
+export type LaneLifecycle = z.infer<typeof LaneLifecycleSchema>;
 export type LanesConfig = z.infer<typeof LanesConfigSchema>;
 // WU-1356: Package manager, test runner, and gates commands types
 // Note: Types already exported via their schema definitions above

@@ -277,6 +277,34 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     description: 'Suggest lane for code paths',
     category: COMMAND_CATEGORIES.GATES_QUALITY,
   },
+  {
+    name: 'lane:status',
+    binName: 'lane-status',
+    binPath: './dist/lane-status.js',
+    description: 'Show lane lifecycle status and next step',
+    category: COMMAND_CATEGORIES.GATES_QUALITY,
+  },
+  {
+    name: 'lane:setup',
+    binName: 'lane-setup',
+    binPath: './dist/lane-setup.js',
+    description: 'Create/update draft lane artifacts',
+    category: COMMAND_CATEGORIES.GATES_QUALITY,
+  },
+  {
+    name: 'lane:validate',
+    binName: 'lane-validate',
+    binPath: './dist/lane-validate.js',
+    description: 'Validate lane artifacts before lock',
+    category: COMMAND_CATEGORIES.GATES_QUALITY,
+  },
+  {
+    name: 'lane:lock',
+    binName: 'lane-lock',
+    binPath: './dist/lane-lock.js',
+    description: 'Lock lane lifecycle for delivery WUs',
+    category: COMMAND_CATEGORIES.GATES_QUALITY,
+  },
 
   // ============================================================================
   // Memory & Sessions

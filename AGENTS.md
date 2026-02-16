@@ -10,6 +10,14 @@ This project uses LumenFlow workflow. For complete documentation, see [LUMENFLOW
 
 ## Quick Start (Local Worktree -- Default)
 
+First-time lane setup (once per project, after plan/context is known):
+
+```bash
+pnpm lane:setup
+pnpm lane:validate
+pnpm lane:lock
+```
+
 ```bash
 # 1. Claim a WU
 pnpm wu:claim --id WU-XXXX --lane <Lane>
@@ -77,6 +85,9 @@ For complete CLI command documentation (60+ commands), see [quick-ref-commands.m
 | `pnpm wu:status`      | Show WU status, location, valid commands       |
 | `pnpm wu:recover`     | Analyze and fix WU state inconsistencies       |
 | `pnpm gates`          | Run all quality gates (`--docs-only` for docs) |
+| `pnpm lane:status`    | Show lane lifecycle status and next step       |
+| `pnpm lane:setup`     | Create/update draft lane artifacts             |
+| `pnpm lane:lock`      | Lock lane lifecycle for delivery WUs           |
 | `pnpm mem:checkpoint` | Save progress checkpoint                       |
 
 **Two-step completion (wu:prep then wu:done):**

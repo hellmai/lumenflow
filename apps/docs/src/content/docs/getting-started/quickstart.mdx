@@ -11,7 +11,7 @@ You are here to set up LumenFlow. That is your **only** job in the setup phase.
 
 - ✅ Initialize LumenFlow in this repo
 - ✅ Create an Initiative if the user provided a vision doc or multi-phase plan
-- ✅ Create the first Work Unit (WU)
+- ✅ Complete lane lifecycle and create the first Work Unit (WU)
 - ✅ Stop and hand off
 - ❌ Do not implement features
 - ❌ Do not write schemas/models/components
@@ -32,7 +32,8 @@ You are here to set up LumenFlow. That is your **only** job in the setup phase.
 
 1. LumenFlow installed and activated. CLI installed; `pnpm exec lumenflow --client <client>` completed; `pnpm wu:create --help` works.
 2. LumenFlow enforced. Run `pnpm exec lumenflow-doctor`; errors are blockers. Work happens only in claimed WUs; no edits on main; gates run before `wu:done`.
-3. Next step chosen with the user. Create one of: Discovery WU, concrete task WU, or Initiative for multi-phase vision. Stop after selection.
+3. Lane lifecycle configured. Run `pnpm lane:setup`, `pnpm lane:validate`, `pnpm lane:lock` before first delivery WU.
+4. Next step chosen with the user. Create one of: Discovery WU, concrete task WU, or Initiative for multi-phase vision. Stop after selection.
 
 **Supported clients:** `claude`, `cursor`, `windsurf`, `codex`, `cline`, `aider`, `all`, `none`
 
@@ -99,6 +100,10 @@ If you are unsure about a command, run `<command> --help` first. Do not guess.
 | `pnpm exec lumenflow-integrate --client claude-code` | Regenerate enforcement hooks (auto-run by init) |
 | `pnpm exec initiative-create ...`                    | Create an initiative                            |
 | `pnpm exec initiative-edit ...`                      | Add initiative phases                           |
+| `pnpm lane:setup`                                    | Create/update draft lane artifacts              |
+| `pnpm lane:validate`                                 | Validate lane artifacts                         |
+| `pnpm lane:lock`                                     | Lock lane lifecycle for WU creation             |
+| `pnpm lane:status`                                   | Check lane lifecycle status                     |
 | `pnpm wu:create ...`                                 | Create first WU                                 |
 | `pnpm wu:status --id WU-XXX`                         | Confirm WU status                               |
 | `pnpm wu:claim --id WU-XXX --lane "..."`             | Only if user explicitly says "proceed"          |
@@ -222,7 +227,15 @@ If a script command is not found, use the binary via `pnpm exec` (e.g.,
     pnpm exec initiative-edit --id INIT-001 --add-phase "Phase 2: Core Features"
     ```
 
-10. **Create the first WU (do not implement)**
+10. **Configure lane lifecycle**
+
+    ```bash
+    pnpm lane:setup
+    pnpm lane:validate
+    pnpm lane:lock
+    ```
+
+11. **Create the first WU (do not implement)**
 
     ```bash
     pnpm wu:create \
@@ -299,7 +312,15 @@ If a script command is not found, use the binary via `pnpm exec` (e.g.,
       --owner "team@example.com"
     ```
 
-7.  **Create the first WU (do not implement)**
+7.  **Configure lane lifecycle**
+
+    ```bash
+    pnpm lane:setup
+    pnpm lane:validate
+    pnpm lane:lock
+    ```
+
+8.  **Create the first WU (do not implement)**
 
     ```bash
     pnpm wu:create \

@@ -23,6 +23,21 @@ fi
 
 MODE="${LUMENFLOW_TOOL_GUARD_MODE:-block}"
 
+# Derive repository context (best-effort)
+MAIN_REPO_PATH=""
+if [[ -n "${CLAUDE_PROJECT_DIR:-}" ]]; then
+  MAIN_REPO_PATH="${CLAUDE_PROJECT_DIR}"
+else
+  MAIN_REPO_PATH="$(git rev-parse --show-toplevel 2>/dev/null || echo "")"
+fi
+
+WORKTREES_DIR=""
+STATE_FILE=""
+if [[ -n "$MAIN_REPO_PATH" ]]; then
+  WORKTREES_DIR="${MAIN_REPO_PATH}/worktrees"
+  STATE_FILE="${MAIN_REPO_PATH}/.lumenflow/state/wu-events.jsonl"
+fi
+
 # Block helper function
 block_command() {
   local command_name="$1"
@@ -138,6 +153,71 @@ get_base_command() {
 }
 
 BASE_CMD=$(get_base_command "$COMMAND")
+
+has_active_worktrees() {
+  if [[ -z "$WORKTREES_DIR" || ! -d "$WORKTREES_DIR" ]]; then
+    return 1
+  fi
+
+  local count
+  count=$(find "$WORKTREES_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
+  [[ "$count" -gt 0 ]]
+}
+
+is_branch_pr_wu_active() {
+  if [[ -z "$STATE_FILE" || ! -f "$STATE_FILE" ]]; then
+    return 1
+  fi
+
+  if grep -q '"claimed_mode":"branch-pr"' "$STATE_FILE" 2>/dev/null && \
+     grep -q '"status":"in_progress"' "$STATE_FILE" 2>/dev/null; then
+    return 0
+  fi
+
+  return 1
+}
+
+is_main_checkout_context() {
+  if [[ -z "$MAIN_REPO_PATH" ]]; then
+    return 1
+  fi
+
+  local cwd
+  cwd="$(pwd -P 2>/dev/null || pwd)"
+
+  if [[ "$cwd" == "${MAIN_REPO_PATH}/worktrees/"* ]]; then
+    return 1
+  fi
+
+  [[ "$cwd" == "$MAIN_REPO_PATH" || "$cwd" == "${MAIN_REPO_PATH}/"* ]]
+}
+
+is_mutating_filesystem_command() {
+  local base_cmd="$1"
+  local raw_command="$2"
+  local redirect_regex='(^|[^0-9])(>>|>)'
+  local merge_redirect_regex='(^|[^0-9])&>'
+
+  case "$base_cmd" in
+    cp|mv|rm|mkdir|touch|ln|install|rsync|chmod|chown|chgrp|truncate|dd|tee)
+      return 0
+      ;;
+  esac
+
+  # Redirects write files (echo > file, cmd >> file, etc)
+  if [[ "$raw_command" =~ $redirect_regex ]] || [[ "$raw_command" =~ $merge_redirect_regex ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+if is_main_checkout_context && has_active_worktrees && ! is_branch_pr_wu_active && \
+   is_mutating_filesystem_command "$BASE_CMD" "$COMMAND"; then
+  block_command "$BASE_CMD" \
+    "cd worktrees/<lane>-wu-<id>/ and run the command there" \
+    "File-mutating Bash commands on main can bypass worktree safeguards. Run mutations inside the claimed worktree."
+fi
 
 # Check for blocked commands
 case "$BASE_CMD" in
