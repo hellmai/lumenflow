@@ -2,7 +2,7 @@ id: WU-1714
 title: 'Strict debt slice: type orchestration-rules'
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-15
 code_paths:
@@ -29,7 +29,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Eliminate strict typing errors in orchestration-rules and add focused unit tests for suggestion/compliance helpers.
+description: Eliminate strict typing errors in orchestration-rules and add focused unit tests for
+  suggestion/compliance helpers.
 acceptance:
-  - No strict errors remain in packages/@lumenflow/core/src/orchestration-rules.ts under --strictNullChecks --noImplicitAny
+  - No strict errors remain in packages/@lumenflow/core/src/orchestration-rules.ts under
+    --strictNullChecks --noImplicitAny
   - orchestration-rules unit tests pass
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-1714
+claimed_at: 2026-02-16T00:00:12.222Z
+baseline_main_sha: 88cd2c1f1733900dd0d662d8f279dec46a1f0a19
+session_id: eeaa731f-493d-48b4-a77a-4a3ada35f4f3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T00:00:12.230Z

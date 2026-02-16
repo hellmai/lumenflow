@@ -1,10 +1,11 @@
 # Work Unit Status
 
-_Last updated: 2026-02-15_
+_Last updated: 2026-02-16_
 
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove healthcare/PHI code from core package](wu/WU-1701.yaml)
+- [WU-1714 — Strict debt slice: type orchestration-rules](wu/WU-1714.yaml)
 
 ## Blocked
 
