@@ -1962,7 +1962,7 @@ async function checkOwnership(
   }
 
   // Get current user identity
-  let currentUser = null;
+  let currentUser: string | null;
   try {
     currentUser = (await getGitForCwd().getConfigValue(GIT_CONFIG_USER_EMAIL)).trim();
   } catch {

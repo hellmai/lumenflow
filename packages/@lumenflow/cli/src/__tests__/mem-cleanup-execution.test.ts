@@ -14,7 +14,9 @@ describe('mem:cleanup CLI execution', () => {
       expect(stdout).toContain('Usage: mem-cleanup');
     } catch (error: UnsafeAny) {
       // If it fails, we want to see why (expecting ReferenceError: require is not defined)
-      throw new Error(`Command failed: ${error.message}\nStderr: ${error.stderr}`);
+      throw new Error(`Command failed: ${error.message}\nStderr: ${error.stderr}`, {
+        cause: error,
+      });
     }
   });
 });

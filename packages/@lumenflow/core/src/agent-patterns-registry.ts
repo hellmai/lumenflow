@@ -377,7 +377,7 @@ export async function resolveAgentPatterns(
 
   // Try to fetch from registry
   let registryPatterns: string[] = [];
-  let fetchedSuccessfully = false;
+  let fetchedSuccessfully: boolean;
 
   try {
     registryPatterns = await registryFetcher({ cacheDir, timeoutMs });

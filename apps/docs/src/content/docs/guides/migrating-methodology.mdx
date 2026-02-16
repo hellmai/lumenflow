@@ -40,16 +40,16 @@ Understanding when to use each methodology is the first step in migration.
 
 ### Decision Matrix
 
-| Scenario                                    | Recommended              | Rationale                                   |
-| ------------------------------------------- | ------------------------ | ------------------------------------------- |
-| Greenfield product with clear requirements  | `tdd`                    | TDD ensures correct behavior from the start |
-| Legacy codebase with low test coverage      | `test-after`             | Focus on improving coverage gradually       |
-| Rapid prototype to validate idea            | `none`                   | Move fast, add tests if prototype succeeds  |
-| Production-critical regulated code          | `tdd` with 95% threshold | Maximum safety for regulated environments   |
-| Documentation-only work                     | `none`                   | No code to test                             |
-| Research spike exploring APIs               | `none`                   | Exploratory work doesn't need tests         |
-| Refactoring well-tested code                | `tdd`                    | Ensure refactoring doesn't break behavior   |
-| Adding features to legacy code              | `test-after`             | Add tests as you touch code                 |
+| Scenario                                   | Recommended              | Rationale                                   |
+| ------------------------------------------ | ------------------------ | ------------------------------------------- |
+| Greenfield product with clear requirements | `tdd`                    | TDD ensures correct behavior from the start |
+| Legacy codebase with low test coverage     | `test-after`             | Focus on improving coverage gradually       |
+| Rapid prototype to validate idea           | `none`                   | Move fast, add tests if prototype succeeds  |
+| Production-critical regulated code         | `tdd` with 95% threshold | Maximum safety for regulated environments   |
+| Documentation-only work                    | `none`                   | No code to test                             |
+| Research spike exploring APIs              | `none`                   | Exploratory work doesn't need tests         |
+| Refactoring well-tested code               | `tdd`                    | Ensure refactoring doesn't break behavior   |
+| Adding features to legacy code             | `test-after`             | Add tests as you touch code                 |
 
 ## Migration Paths
 

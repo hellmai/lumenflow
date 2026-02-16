@@ -455,7 +455,7 @@ export async function promoteDiscovery(
     validateLaneFormat(lane);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    throw new Error(`Invalid lane format: ${errMsg}`);
+    throw new Error(`Invalid lane format: ${errMsg}`, { cause: err });
   }
 
   const memory = await loadMemory(memoryDir);

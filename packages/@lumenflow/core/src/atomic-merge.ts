@@ -68,7 +68,9 @@ async function mergeLaneBranchWithRetry(options: {
       return;
     } catch (error) {
       if (attempt >= mergeRetries) {
-        throw new Error(buildMergeRetryExhaustionMessage(laneBranch, mergeRetries, command));
+        throw new Error(buildMergeRetryExhaustionMessage(laneBranch, mergeRetries, command), {
+          cause: error,
+        });
       }
 
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -151,7 +153,7 @@ export async function withAtomicMerge(
     return { tempBranchName, worktreePath };
   } catch (error) {
     if (error instanceof Error && isRetryExhaustionError(error)) {
-      throw new Error(formatRetryExhaustionError(error, { command }));
+      throw new Error(formatRetryExhaustionError(error, { command }), { cause: error });
     }
     throw error;
   } finally {

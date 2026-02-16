@@ -111,7 +111,7 @@ export class DelegationRegistryStore {
       try {
         parsed = JSON.parse(line);
       } catch (error) {
-        throw new Error(`Malformed JSON on line ${i + 1}: ${error.message}`);
+        throw new Error(`Malformed JSON on line ${i + 1}: ${error.message}`, { cause: error });
       }
 
       // Validate against schema

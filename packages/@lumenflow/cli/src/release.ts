@@ -266,7 +266,7 @@ function runCommand(
       encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
     });
   } catch (error) {
-    throw new Error(`Command failed: ${cmd}`);
+    throw new Error(`Command failed: ${cmd}`, { cause: error });
   }
 }
 

@@ -132,7 +132,7 @@ export const EXPOSURE_WARNING_MESSAGES = {
  */
 function hasUIVerificationInAcceptance(acceptance: WUAcceptance): boolean {
   // Flatten acceptance to array of strings
-  let criteria: string[] = [];
+  let criteria: string[];
   if (Array.isArray(acceptance)) {
     criteria = acceptance;
   } else {

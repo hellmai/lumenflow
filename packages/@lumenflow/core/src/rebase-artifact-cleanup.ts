@@ -227,8 +227,6 @@ export async function detectRebasedArtifacts(
   gitAdapter: GitAdapterLike,
 ): Promise<RebasedArtifactDetectionResult> {
   const stamps: string[] = [];
-  let yamlStatusDone = false;
-
   // Check for stamp file in worktree
   const stampPath = join(worktreePath, WU_PATHS.STAMP(wuId));
   const localStampExists = await fileExists(stampPath);
@@ -259,7 +257,7 @@ export async function detectRebasedArtifacts(
   if (stampOnMain) {
     stamps.push(stampPath);
   }
-  yamlStatusDone = yamlDoneOnMain;
+  const yamlStatusDone = yamlDoneOnMain;
 
   const hasArtifacts = stamps.length > 0 || yamlStatusDone;
 

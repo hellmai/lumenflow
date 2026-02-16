@@ -1142,13 +1142,7 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
     });
     expect(mockRunCliCommand).toHaveBeenCalledWith(
       'file:write',
-      expect.arrayContaining([
-        '--path',
-        'tmp/file.txt',
-        '--content',
-        'hello',
-        '--no-create-dirs',
-      ]),
+      expect.arrayContaining(['--path', 'tmp/file.txt', '--content', 'hello', '--no-create-dirs']),
       expect.any(Object),
     );
 

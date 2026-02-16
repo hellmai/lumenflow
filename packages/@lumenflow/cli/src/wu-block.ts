@@ -161,7 +161,7 @@ async function moveFromInProgressToBlocked(
 
   // WU-1365: Handle missing blocked section gracefully by creating it
   if (blockedIdx === -1) {
-    blockedIdx = createMissingBlockedSection(lines, inProgIdx);
+    createMissingBlockedSection(lines, inProgIdx);
   }
 
   removeFromInProgressSection(lines, inProgIdx, rel, id);

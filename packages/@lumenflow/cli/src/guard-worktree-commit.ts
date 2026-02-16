@@ -157,7 +157,7 @@ Examples:
 
   // Check context
   const inWorktree = isInWorktree();
-  let onMain = false;
+  let onMain: boolean;
 
   try {
     onMain = await isMainBranch();
