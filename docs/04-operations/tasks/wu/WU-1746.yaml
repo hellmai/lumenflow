@@ -2,7 +2,7 @@ id: WU-1746
 title: wu:done resilience when worktree deleted but branch already merged
 lane: 'Framework: Core State Recovery'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -50,3 +50,6 @@ acceptance:
   - wu:done detects when WU branch commits are already merged to main
   - wu:done completes stamping and state cleanup even when worktree is gone
   - wu:recover can handle released-but-not-done WUs with merged commits
+locked: true
+completed_at: 2026-02-16T14:45:06.701Z
+completed: 2026-02-16
