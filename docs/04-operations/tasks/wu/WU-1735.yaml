@@ -2,7 +2,7 @@ id: WU-1735
 title: KernelRuntime facade + initialization
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -58,3 +58,11 @@ acceptance:
   - inspectTask returns full TaskInspection with state, run history, receipts, policy decisions
   - claimTask and completeTask enforce lifecycle transitions via the kernel
     state-machine/assertTransition contract from WU-1727
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1735
+claimed_at: 2026-02-16T23:45:24.594Z
+baseline_main_sha: d687c8a519f9cbbf3c4b87981536660b13347f8f
+session_id: 4715d7a0-2f3c-4c67-ba71-5e6f1331c6c2
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T23:45:24.602Z
