@@ -2,7 +2,7 @@ id: WU-1730
 title: Kernel sandbox integration (bwrap port) + subprocess tool-runner worker
 lane: 'Framework: Core Validation'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -65,3 +65,11 @@ acceptance:
   - 'Write confinement enforced: only resolved write scope mounted as rw'
   - Deny overlays block ~/.ssh, ~/.aws, ~/.gnupg, .env from sandbox reads
   - scope_enforcement_note set to read confinement best-effort v1 when applicable
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-validation-wu-1730
+claimed_at: 2026-02-16T22:52:12.046Z
+baseline_main_sha: 0351faf4f6aad8b557367755a1d91e7f3d36bbb5
+session_id: 8ac5acab-dc70-4db2-8ecc-27fd4503b678
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T22:52:12.054Z

@@ -23,7 +23,6 @@ sections:
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
-- [WU-1730 — Kernel sandbox integration (bwrap port) + subprocess tool-runner worker](wu/WU-1730.yaml) — Framework: Core Validation
 - [WU-1731 — Kernel built-in tools (fs:read, fs:write, proc:exec) + ESLint boundary rules](wu/WU-1731.yaml) — Framework: Core Lifecycle
 - [WU-1732 — Kernel PolicyEngine + DomainPack manifest/loader + integrity pinning](wu/WU-1732.yaml) — Framework: Core Validation
 - [WU-1733 — Software delivery pack — WU extensions + gate policies](wu/WU-1733.yaml) — Framework: Core Lifecycle
@@ -39,6 +38,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1730 — Kernel sandbox integration (bwrap port) + subprocess tool-runner worker](wu/WU-1730.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
 
