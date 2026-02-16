@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1735 — KernelRuntime facade + initialization](wu/WU-1735.yaml) — Framework: Core Lifecycle
 - [WU-1734 — Software delivery pack — Git tools + worktree + lane locks + delegation](wu/WU-1734.yaml) — Framework: Core State Recovery
 - [WU-1733 — Software delivery pack — WU extensions + gate policies](wu/WU-1733.yaml) — Framework: Core Lifecycle
 - [WU-1732 — Kernel PolicyEngine + DomainPack manifest/loader + integrity pinning](wu/WU-1732.yaml) — Framework: Core Validation
