@@ -57,7 +57,7 @@ const OPERATION_NAME = 'initiative-create';
  * Validate Initiative ID format
  * @param {string} id - Initiative ID to validate
  */
-function validateInitIdFormat(id) {
+function validateInitIdFormat(id: any) {
   if (!INIT_PATTERNS.INIT_ID.test(id)) {
     die(`Invalid Initiative ID format: "${id}"\n\nExpected format: INIT-<number> (e.g., INIT-001)`);
   }
@@ -67,7 +67,7 @@ function validateInitIdFormat(id) {
  * Validate slug format (kebab-case)
  * @param {string} slug - Slug to validate
  */
-function validateSlugFormat(slug) {
+function validateSlugFormat(slug: any) {
   if (!INIT_PATTERNS.SLUG.test(slug)) {
     die(
       `Invalid slug format: "${slug}"\n\n` +
@@ -81,7 +81,7 @@ function validateSlugFormat(slug) {
  * Check if Initiative already exists
  * @param {string} id - Initiative ID to check
  */
-function checkInitiativeExists(id) {
+function checkInitiativeExists(id: any) {
   const initPath = INIT_PATHS.INITIATIVE(id);
   if (existsSync(initPath)) {
     die(`Initiative already exists: ${initPath}\n\nChoose a different Initiative ID`);
@@ -256,3 +256,4 @@ import { runCLI } from './cli-entry-point.js';
 if (import.meta.main) {
   void runCLI(main);
 }
+

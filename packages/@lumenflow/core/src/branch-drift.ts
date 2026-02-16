@@ -35,7 +35,7 @@ export const DRIFT_LEVELS = {
  * getDriftLevel(15)  // 'warning' - recommend rebasing
  * getDriftLevel(20)  // 'error' - hard block, must rebase
  */
-export function getDriftLevel(commitsBehind) {
+export function getDriftLevel(commitsBehind: any) {
   // Handle edge cases: negative or non-integer values
   const commits = Math.floor(commitsBehind);
 
@@ -57,3 +57,4 @@ export function getDriftLevel(commitsBehind) {
 
   return DRIFT_LEVELS.OK;
 }
+

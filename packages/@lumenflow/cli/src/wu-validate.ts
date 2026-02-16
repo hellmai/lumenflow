@@ -84,17 +84,21 @@ export function summarizeValidationResults(results: ValidationResult[]): Validat
  * @param {boolean} options.strict - Treat warnings as errors (default: true)
  * @returns {{valid: boolean, warnings: string[], errors: string[]}}
  */
-function validateSingleWU(wuPath, { strict = true } = {}) {
-  const errors = [];
-  const warnings = [];
+function validateSingleWU(
+  wuPath: string,
+  { strict = true }: { strict?: boolean } = {},
+): { valid: boolean; warnings: string[]; errors: string[] } {
+  const errors: string[] = [];
+  const warnings: string[] = [];
 
   // Read and parse YAML
   let doc;
   try {
     const text = readFileSync(wuPath, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
     doc = parseYAML(text);
-  } catch (e) {
-    errors.push(`Failed to parse YAML: ${e.message}`);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    errors.push(`Failed to parse YAML: ${message}`);
     return { valid: false, warnings, errors };
   }
 
@@ -140,7 +144,14 @@ function validateSingleWU(wuPath, { strict = true } = {}) {
  * @param {boolean} options.strict - Treat warnings as errors (default: true)
  * @returns {{totalValid: number, totalInvalid: number, totalWarnings: number, results: ValidationResult[]}}
  */
-function validateAllWUs({ strict = true } = {}) {
+function validateAllWUs(
+  { strict = true }: { strict?: boolean } = {},
+): {
+  totalValid: number;
+  totalInvalid: number;
+  totalWarnings: number;
+  results: ValidationResult[];
+} {
   const wuDir = WU_PATHS.WU_DIR();
 
   if (!existsSync(wuDir)) {
@@ -148,7 +159,7 @@ function validateAllWUs({ strict = true } = {}) {
   }
 
   const files = readdirSync(wuDir).filter((f) => f.endsWith('.yaml'));
-  const results = [];
+  const results: ValidationResult[] = [];
   let totalValid = 0;
   let totalInvalid = 0;
   let totalWarnings = 0;

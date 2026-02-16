@@ -22,7 +22,7 @@ import { getStateStoreDirFromBacklog } from './wu-paths.js';
  * @param {string} id - WU ID
  * @param {string} title - WU title (unused - state store has it)
  */
-export async function moveWUToDoneBacklog(backlogPath, id, _title) {
+export async function moveWUToDoneBacklog(backlogPath: any, id: any, _title: any) {
   const PREFIX = LOG_PREFIX.DONE;
   const stateDir = getStateStoreDirFromBacklog(backlogPath);
 
@@ -39,3 +39,4 @@ export async function moveWUToDoneBacklog(backlogPath, id, _title) {
   await writeFile(backlogPath, content, 'utf-8');
   console.log(`${PREFIX} Backlog.md regenerated from state store`);
 }
+

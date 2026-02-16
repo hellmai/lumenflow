@@ -146,7 +146,10 @@ export async function findWorktreePathForWU(id: string): Promise<string | null> 
       if (line.includes(idLower)) {
         const worktreeMatch = line.match(/^worktree\s+(.+)$/);
         if (worktreeMatch) {
-          return worktreeMatch[1].trim();
+          const matchedPath = worktreeMatch[1];
+          if (matchedPath) {
+            return matchedPath.trim();
+          }
         }
       }
     }
@@ -158,7 +161,10 @@ export async function findWorktreePathForWU(id: string): Promise<string | null> 
       if (entry.toLowerCase().includes(idLower)) {
         const pathMatch = entry.match(/^worktree\s+(.+)$/m);
         if (pathMatch) {
-          return pathMatch[1].trim();
+          const matchedPath = pathMatch[1];
+          if (matchedPath) {
+            return matchedPath.trim();
+          }
         }
       }
     }
@@ -354,7 +360,7 @@ export async function runClaimRepairMode(options: ClaimRepairOptions): Promise<R
   console.log(`${PREFIX} Checking claim metadata for ${id}...`);
 
   // Find worktree path
-  let worktreePath = worktree;
+  let worktreePath: string | null = worktree ?? null;
   if (!worktreePath) {
     worktreePath = await findWorktreePathForWU(id);
   }
@@ -628,7 +634,9 @@ export function applyAdminRepairs(
  */
 function generateAdminCommitMessage(id: string, changes: string[]): string {
   // Extract field names from changes
-  const fields = changes.map((c: string) => c.split(' ')[0]).filter((f: string) => f !== 'notes');
+  const fields = changes
+    .map((c: string) => c.split(' ')[0] ?? '')
+    .filter((f: string) => f !== 'notes');
   const uniqueFields = [...new Set(fields)];
   const fieldSummary = uniqueFields.length > 0 ? uniqueFields.join(', ') : 'notes';
   return `fix(${id.toLowerCase()}): admin-repair ${fieldSummary}`;
@@ -890,7 +898,11 @@ export async function runConsistencyRepairMode(
         dryRun: options.dryRun === true || options.check === true,
       });
     } else {
-      result = await repairSingleWU(options.id, options);
+      const wuId = options.id;
+      if (!wuId) {
+        return { success: false, exitCode: EXIT_CODES.FAILURE };
+      }
+      result = await repairSingleWU(wuId, options);
     }
   } catch (error: unknown) {
     console.error(`${PREFIX} Fatal error: ${getErrorMessage(error)}`);

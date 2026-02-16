@@ -21,7 +21,7 @@ import { STRING_LITERALS } from './wu-constants.js';
  * @param {string} statusPath - Path to status.md
  * @param {string} id - WU ID
  */
-export function updateStatusRemoveInProgress(statusPath, id) {
+export function updateStatusRemoveInProgress(statusPath: any, id: any) {
   if (!existsSync(statusPath)) {
     throw createError(ErrorCodes.FILE_NOT_FOUND, `Status file not found: ${statusPath}`, {
       path: statusPath,
@@ -53,7 +53,8 @@ export function updateStatusRemoveInProgress(statusPath, id) {
   // Remove WU entry (idempotent - safe to call if already removed)
   let removed = false;
   for (let i = startIdx + 1; i < endIdx; i++) {
-    if (lines[i] && (lines[i].includes(rel) || lines[i].includes(`[${id}`))) {
+    const line = lines[i];
+    if (line && (line.includes(rel) || line.includes(`[${id}`))) {
       lines.splice(i, 1);
       removed = true;
       endIdx--;
@@ -86,7 +87,7 @@ export function updateStatusRemoveInProgress(statusPath, id) {
  * @param {string} id - WU ID
  * @param {string} title - WU title
  */
-export function addToStatusCompleted(statusPath, id, title) {
+export function addToStatusCompleted(statusPath: any, id: any, title: any) {
   if (!existsSync(statusPath)) {
     throw createError(ErrorCodes.FILE_NOT_FOUND, `Status file not found: ${statusPath}`, {
       path: statusPath,
@@ -121,7 +122,11 @@ export function addToStatusCompleted(statusPath, id, title) {
 
   // Insert at top of Completed section (after header, skipping empty lines)
   let insertIdx = completedIdx + 1;
-  while (insertIdx < lines.length && lines[insertIdx].trim() === '') {
+  while (insertIdx < lines.length) {
+    const line = lines[insertIdx];
+    if (typeof line !== 'string' || line.trim() !== '') {
+      break;
+    }
     insertIdx++;
   }
 

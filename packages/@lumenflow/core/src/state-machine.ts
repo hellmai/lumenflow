@@ -23,12 +23,13 @@ import { createError, ErrorCodes } from './error-handler.js';
  * Valid WU states as defined in LumenFlow §2.4
  */
 const VALID_STATES = new Set(['ready', 'in_progress', 'blocked', 'waiting', 'done']);
+type WuState = 'ready' | 'in_progress' | 'blocked' | 'waiting' | 'done';
 
 /**
  * Transition table mapping each state to its allowed next states
  * Based on LumenFlow §2.4 Flow States & Lanes
  */
-const TRANSITIONS = {
+const TRANSITIONS: Record<WuState, WuState[]> = {
   ready: ['in_progress'],
   in_progress: ['blocked', 'waiting', 'done', 'ready'], // WU-1080: 'ready' via release for orphan recovery
   blocked: ['in_progress', 'done'],
@@ -44,7 +45,7 @@ const TRANSITIONS = {
  * @param {string} wuid - Work Unit ID (e.g., 'WU-416') for error messages
  * @throws {Error} If transition is illegal or states are invalid
  */
-export function assertTransition(from, to, wuid) {
+export function assertTransition(from: string | null | undefined, to: string | null | undefined, wuid: string) {
   // Validate states exist and are non-empty
   if (from === null || from === undefined || from === '') {
     throw createError(ErrorCodes.STATE_ERROR, `Invalid state: ${from}`, {
@@ -64,7 +65,7 @@ export function assertTransition(from, to, wuid) {
   }
 
   // Validate states are recognized
-  if (!VALID_STATES.has(from)) {
+  if (!VALID_STATES.has(from as WuState)) {
     throw createError(ErrorCodes.STATE_ERROR, `Invalid state: ${from}`, {
       wuid,
       from,
@@ -72,7 +73,7 @@ export function assertTransition(from, to, wuid) {
       validStates: Array.from(VALID_STATES),
     });
   }
-  if (!VALID_STATES.has(to)) {
+  if (!VALID_STATES.has(to as WuState)) {
     throw createError(ErrorCodes.STATE_ERROR, `Invalid state: ${to}`, {
       wuid,
       from,
@@ -82,8 +83,10 @@ export function assertTransition(from, to, wuid) {
   }
 
   // Check if transition is allowed
-  const allowedNextStates = TRANSITIONS[from];
-  if (!allowedNextStates.includes(to)) {
+  const fromState = from as WuState;
+  const toState = to as WuState;
+  const allowedNextStates = TRANSITIONS[fromState];
+  if (!allowedNextStates.includes(toState)) {
     const terminalHint = from === 'done' ? ' (done is a terminal state)' : '';
     throw createError(
       ErrorCodes.STATE_ERROR,

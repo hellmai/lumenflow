@@ -115,7 +115,7 @@ function readLockFile(options: MergeLockBaseDirOptions = {}) {
  * @param {LockInfo} lockInfo - Lock information to write
  * @param {MergeLockBaseDirOptions} [options]
  */
-function writeLockFile(lockInfo, options: MergeLockBaseDirOptions = {}) {
+function writeLockFile(lockInfo: any, options: MergeLockBaseDirOptions = {}) {
   const lockPath = getLockPath(options);
   const lockDir = path.dirname(lockPath);
 
@@ -145,7 +145,7 @@ function deleteLockFile(options: MergeLockBaseDirOptions = {}) {
  * @param {LockInfo} lockInfo - Lock info to check
  * @returns {boolean} True if lock is stale
  */
-function isLockStale(lockInfo) {
+function isLockStale(lockInfo: any) {
   if (!lockInfo || !lockInfo.createdAt) {
     return true;
   }
@@ -169,7 +169,7 @@ function generateLockId() {
  * @param {number} ms - Milliseconds to sleep
  * @returns {Promise<void>}
  */
-function sleep(ms) {
+function sleep(ms: any) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -221,7 +221,7 @@ export interface AcquireMergeLockOptions extends MergeLockBaseDirOptions {
  * @param {AcquireMergeLockOptions} [options]
  * @returns {Promise<AcquireResult>} Acquisition result
  */
-export async function acquireMergeLock(wuId, options: AcquireMergeLockOptions = {}) {
+export async function acquireMergeLock(wuId: any, options: AcquireMergeLockOptions = {}) {
   const { baseDir, waitMs = MERGE_LOCK_TIMEOUT_MS } = options;
   const startTime = Date.now();
 
@@ -288,7 +288,7 @@ export async function acquireMergeLock(wuId, options: AcquireMergeLockOptions = 
  * @param {MergeLockBaseDirOptions} [options]
  * @returns {boolean} True if lock was released
  */
-export function releaseMergeLock(lockId, options: MergeLockBaseDirOptions = {}) {
+export function releaseMergeLock(lockId: any, options: MergeLockBaseDirOptions = {}) {
   const existingLock = readLockFile(options);
 
   if (!existingLock) {
@@ -340,3 +340,4 @@ export async function withMergeLock<T>(
     releaseMergeLock(result.lockId, options);
   }
 }
+

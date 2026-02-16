@@ -137,7 +137,7 @@ async function yamlIsDoneOnMain(gitAdapter: GitAdapterLike, wuId: string): Promi
       `${REMOTES.ORIGIN}/${BRANCHES.MAIN}:${WU_PATHS.WU(wuId)}`,
     ]);
     const doc = parseYAML(content) as { status?: string } | null;
-    return doc && doc.status === WU_STATUS.DONE;
+    return doc?.status === WU_STATUS.DONE;
   } catch {
     return false;
   }

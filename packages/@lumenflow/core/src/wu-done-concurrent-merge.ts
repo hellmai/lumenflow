@@ -72,6 +72,7 @@ function parseEventsFile(content: string, sourceLabel: string): WUEvent[] {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    if (!line) continue;
     let parsed: unknown;
 
     try {

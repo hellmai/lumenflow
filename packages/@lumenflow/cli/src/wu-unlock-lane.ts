@@ -72,6 +72,10 @@ function showLaneStatus(lane: string) {
   }
 
   const { metadata } = lockStatus;
+  if (!metadata) {
+    console.log(`${PREFIX} Lane "${lane}" metadata is unavailable.`);
+    return;
+  }
   const stale = isLockStale(metadata);
   const zombie = isZombieLock(metadata);
 

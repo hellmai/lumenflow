@@ -95,7 +95,11 @@ export class DelegationRegistryStore {
     // Parse JSONL content
     const lines = content.split('\n');
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
+      const rawLine = lines[i];
+      if (typeof rawLine !== 'string') {
+        continue;
+      }
+      const line = rawLine.trim();
 
       // Skip empty lines
       if (!line) {
@@ -143,6 +147,9 @@ export class DelegationRegistryStore {
       this.byParent.set(parentWuId, []);
     }
     const parentDelegations = this.byParent.get(parentWuId);
+    if (!parentDelegations) {
+      return;
+    }
     if (!parentDelegations.includes(id)) {
       parentDelegations.push(id);
     }

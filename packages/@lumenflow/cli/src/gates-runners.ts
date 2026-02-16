@@ -61,24 +61,25 @@ export async function runFormatCheckGate({ agentLog, useAgentMode, cwd }: GateLo
   filesChecked?: string[];
 }> {
   const start = Date.now();
+  const effectiveCwd = cwd ?? process.cwd();
   const logLine = makeGateLogger({ agentLog, useAgentMode });
 
   let git;
   let isMainBranch = false;
 
   try {
-    git = createGitForPath(cwd);
+    git = createGitForPath(effectiveCwd);
     const currentBranch = await git.getCurrentBranch();
     isMainBranch = currentBranch === BRANCHES.MAIN || currentBranch === BRANCHES.MASTER;
   } catch (error) {
     logLine(`\u26A0\uFE0F  Failed to determine branch for format check: ${error.message}`);
-    const result = run(pnpmCmd(SCRIPTS.FORMAT_CHECK), { agentLog, cwd });
+    const result = run(pnpmCmd(SCRIPTS.FORMAT_CHECK), { agentLog, cwd: effectiveCwd });
     return { ...result, duration: Date.now() - start, fileCount: -1 };
   }
 
   if (isMainBranch) {
     logLine('\uD83D\uDCCB On main branch - running full format check');
-    const result = run(pnpmCmd(SCRIPTS.FORMAT_CHECK), { agentLog, cwd });
+    const result = run(pnpmCmd(SCRIPTS.FORMAT_CHECK), { agentLog, cwd: effectiveCwd });
     return { ...result, duration: Date.now() - start, fileCount: -1 };
   }
 
@@ -109,7 +110,7 @@ export async function runFormatCheckGate({ agentLog, useAgentMode, cwd }: GateLo
           : '';
 
     logLine(`\uD83D\uDCCB Running full format check${reason}`);
-    const result = run(pnpmCmd(SCRIPTS.FORMAT_CHECK), { agentLog, cwd });
+    const result = run(pnpmCmd(SCRIPTS.FORMAT_CHECK), { agentLog, cwd: effectiveCwd });
     return { ...result, duration: Date.now() - start, fileCount: -1 };
   }
 
@@ -121,7 +122,7 @@ export async function runFormatCheckGate({ agentLog, useAgentMode, cwd }: GateLo
   }
 
   logLine(`\n> format:check (incremental: ${existingFiles.length} files)\n`);
-  const result = run(buildPrettierCheckCommand(existingFiles), { agentLog, cwd });
+  const result = run(buildPrettierCheckCommand(existingFiles), { agentLog, cwd: effectiveCwd });
   return {
     ...result,
     duration: Date.now() - start,

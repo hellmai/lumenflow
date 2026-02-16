@@ -805,6 +805,7 @@ export function parseWUArgs(argv: string[]): OptionValues {
   ];
 
   for (const opt of allOptions) {
+    if (!opt) continue;
     program.option(opt.flags, opt.description, opt.default);
   }
 

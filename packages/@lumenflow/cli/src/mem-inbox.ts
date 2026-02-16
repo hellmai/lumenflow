@@ -84,7 +84,7 @@ const CLI_OPTIONS = {
  * @param {string} baseDir - Base directory
  * @param {object} entry - Audit log entry
  */
-async function writeAuditLog(baseDir, entry) {
+async function writeAuditLog(baseDir: any, entry: any) {
   try {
     const logPath = path.join(baseDir, LUMENFLOW_PATHS.AUDIT_LOG);
     const logDir = path.dirname(logPath);
@@ -106,7 +106,7 @@ async function writeAuditLog(baseDir, entry) {
  * @param {number} count - Number of unread signals
  * @returns {string} Formatted count string
  */
-export function formatCount(count) {
+export function formatCount(count: any) {
   return `${count} unread signal(s)`;
 }
 
@@ -117,7 +117,7 @@ export function formatCount(count) {
  * @param {string} timeStr - Time string like "1h", "30m", "2d", or ISO date
  * @returns {Date} Parsed date
  */
-export function parseTimeString(timeStr) {
+export function parseTimeString(timeStr: any) {
   // Try using ms package for relative time parsing (e.g., "1h", "30m", "2d", "1d")
   const msValue = ms(timeStr);
   if (typeof msValue === 'number') {
@@ -138,7 +138,7 @@ export function parseTimeString(timeStr) {
  * @param {object} signal - Signal object
  * @returns {string} Formatted signal string
  */
-function formatSignal(signal) {
+function formatSignal(signal: any) {
   const timestamp = new Date(signal.created_at).toLocaleString();
   const scope = [];
 
@@ -161,7 +161,7 @@ function formatSignal(signal) {
  * @param {object[]} signals - Array of signal objects
  * @param {boolean} quiet - Suppress headers
  */
-function displaySignals(signals, quiet) {
+function displaySignals(signals: any, quiet: any) {
   if (signals.length === 0) {
     if (!quiet) {
       console.log(`${LOG_PREFIX} No signals found`);
@@ -187,7 +187,7 @@ function displaySignals(signals, quiet) {
  * @param {boolean} markAsRead - Whether to mark signals as read
  * @returns {Promise<object[]>} Signals found
  */
-async function checkInbox(baseDir, options, markAsRead) {
+async function checkInbox(baseDir: any, options: any, markAsRead: any) {
   const signals = await loadSignals(baseDir, options);
 
   if (markAsRead && signals.length > 0) {
@@ -208,7 +208,7 @@ async function checkInbox(baseDir, options, markAsRead) {
  * @param {boolean} markAsRead - Whether to mark signals as read
  * @param {boolean} quiet - Suppress headers
  */
-async function runWatchMode(baseDir, filterOptions, markAsRead, quiet) {
+async function runWatchMode(baseDir: any, filterOptions: any, markAsRead: any, quiet: any) {
   if (!quiet) {
     console.log(`${LOG_PREFIX} Watch mode started (Ctrl+C to exit)\n`);
   }
@@ -354,7 +354,7 @@ function buildFilterOptions(args: ParsedArgs): FilterOptions {
  * @param {object} filterOptions - Filter options
  * @returns {Promise<number>} Signal count
  */
-async function runCountMode(baseDir, filterOptions) {
+async function runCountMode(baseDir: any, filterOptions: any) {
   const signals = await loadSignals(baseDir, filterOptions);
   const count = signals.length;
   console.log(formatCount(count));
@@ -370,7 +370,7 @@ async function runCountMode(baseDir, filterOptions) {
  * @param {boolean} quiet - Suppress headers
  * @returns {Promise<number>} Signal count
  */
-async function runStandardMode(baseDir, filterOptions, markAsRead, quiet) {
+async function runStandardMode(baseDir: any, filterOptions: any, markAsRead: any, quiet: any) {
   const signals = await checkInbox(baseDir, filterOptions, markAsRead);
   displaySignals(signals, quiet);
   return signals.length;
@@ -462,3 +462,4 @@ async function main() {
 if (import.meta.main) {
   void runCLI(main);
 }
+

@@ -73,7 +73,7 @@ export interface LogGitCommandOptions {
  * @param {LogGitCommandOptions} options - Additional logging options (WU-1552)
  */
 export function logGitCommand(
-  args,
+  args: any,
   logPath = DEFAULT_LOG_PATH,
   options: LogGitCommandOptions = {},
 ) {
@@ -119,7 +119,7 @@ export function logGitCommand(
  * @param {string} line - Log line to parse
  * @returns {{timestamp: string, command: string, branch: string, worktree: string, user: string, outcome: string} | null}
  */
-export function parseLogEntry(line) {
+export function parseLogEntry(line: any) {
   if (!line || !line.trim()) {
     return null;
   }
@@ -184,7 +184,7 @@ export function parseLogEntry(line) {
  * @param {string} worktree - The worktree it was run in
  * @returns {boolean}
  */
-function isViolation(command, branch, worktree) {
+function isViolation(command: any, branch: any, worktree: any) {
   // Protected context: main branch OR main worktree (.)
   const isProtected = branch === 'main' || worktree === '.';
 
@@ -195,7 +195,7 @@ function isViolation(command, branch, worktree) {
   // Parse command into args
   const args = command.replace(/^git\s+/, '').split(/\s+/);
   const commandName = args[0]?.toLowerCase();
-  const flags = args.slice(1).map((a) => a.toLowerCase());
+  const flags = args.slice(1).map((a: any) => a.toLowerCase());
 
   // Check banned flags
   for (const bannedFlag of BANNED_FLAGS) {
@@ -302,3 +302,4 @@ export function rotateLog(logPath = DEFAULT_LOG_PATH, retentionDays = 7) {
     console.error(`[commands-logger] Warning: Failed to rotate log: ${error.message}`);
   }
 }
+

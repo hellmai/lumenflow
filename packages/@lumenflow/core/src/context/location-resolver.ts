@@ -127,7 +127,7 @@ async function findMainCheckout(git: SimpleGit): Promise<string> {
     // First worktree listed is always the main checkout
     // Format: "worktree /path/to/repo\nHEAD ...\nbranch ...\n\nworktree ..."
     const match = result.match(/^worktree (.+)$/m);
-    return match ? match[1] : process.cwd();
+    return match?.[1] ?? process.cwd();
   } catch {
     return process.cwd();
   }

@@ -74,7 +74,7 @@ const CLI_OPTIONS = {
  * @param {string} baseDir - Base directory
  * @param {object} entry - Audit log entry
  */
-async function writeAuditLog(baseDir, entry) {
+async function writeAuditLog(baseDir: any, entry: any) {
   try {
     const logPath = path.join(baseDir, LUMENFLOW_PATHS.AUDIT_LOG);
     const logDir = path.dirname(logPath);
@@ -116,7 +116,7 @@ function parseArguments() {
  * @param {object} result - Summarization result
  * @param {boolean} quiet - Suppress verbose output
  */
-function printResult(result, quiet) {
+function printResult(result: any, quiet: any) {
   if (result.dryRun) {
     console.log(`${LOG_PREFIX} Dry-run: Would create summary with:`);
   } else {
@@ -228,3 +228,4 @@ async function main() {
 if (import.meta.main) {
   void runCLI(main);
 }
+

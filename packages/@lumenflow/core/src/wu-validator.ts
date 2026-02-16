@@ -154,7 +154,8 @@ export function scanFileForTODOs(filePath: string): TodoScanResult {
       // Does NOT match: // mentions @todo in documentation
       const atTagMatch = trimmed.match(/^\*\s+@(todo|fixme|hack|xxx)\b/i);
       if (atTagMatch) {
-        return { found: true, pattern: atTagMatch[1].toUpperCase() };
+        const atTag = atTagMatch[1];
+        return atTag ? { found: true, pattern: atTag.toUpperCase() } : { found: false, pattern: null };
       }
 
       // Pattern 2: Keyword at start of comment content
@@ -164,12 +165,16 @@ export function scanFileForTODOs(filePath: string): TodoScanResult {
         /^(?:\/\/|\/\*+|\*|<!--|#)\s*(TODO|FIXME|HACK|XXX)(?::|[\s]|$)/i,
       );
       if (commentStartMatch) {
+        const commentKeyword = commentStartMatch[1];
+        if (!commentKeyword) {
+          return { found: false, pattern: null };
+        }
         // Check it is not followed by / (slash-separated list)
         const afterKeyword = trimmed.slice(
-          trimmed.indexOf(commentStartMatch[1]) + commentStartMatch[1].length,
+          trimmed.indexOf(commentKeyword) + commentKeyword.length,
         );
         if (!afterKeyword.startsWith('/')) {
-          return { found: true, pattern: commentStartMatch[1].toUpperCase() };
+          return { found: true, pattern: commentKeyword.toUpperCase() };
         }
       }
 
@@ -179,6 +184,10 @@ export function scanFileForTODOs(filePath: string): TodoScanResult {
       // Does NOT match: error('// TODO'); (// inside string literal)
       const inlineCommentMatch = line.match(/\/\/\s*(TODO|FIXME|HACK|XXX)(?::|[\s]|$)/i);
       if (inlineCommentMatch && !line.match(/\/\/\s*(TODO|FIXME|HACK|XXX)\//i)) {
+        const inlineKeyword = inlineCommentMatch[1];
+        if (!inlineKeyword) {
+          return { found: false, pattern: null };
+        }
         // Verify the // is not inside a string literal
         const doubleSlashIndex = line.indexOf('//');
         const beforeSlash = line.slice(0, doubleSlashIndex);
@@ -196,7 +205,7 @@ export function scanFileForTODOs(filePath: string): TodoScanResult {
         const keywordIndex = commentPart.search(/\b(TODO|FIXME|HACK|XXX)\b/i);
         // Only flag if keyword appears within first 10 chars of comment
         if (keywordIndex >= 0 && keywordIndex <= 10) {
-          return { found: true, pattern: inlineCommentMatch[1].toUpperCase() };
+          return { found: true, pattern: inlineKeyword.toUpperCase() };
         }
       }
 

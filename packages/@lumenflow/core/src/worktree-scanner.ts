@@ -65,10 +65,10 @@ const WORKTREE_LINE_PATTERN = /^(\S+)\s+(\S+)\s+(?:\[([^\]]+)\]|\(([^)]+)\))$/;
  * @returns {WorktreeInfo[]} Parsed worktree information
  *
  * @example
- * const info = parseWorktreeList('/home/user/project abc1234 [main]');
- * // Returns: [{ path: '/home/user/project', sha: 'abc1234', branch: 'main', isMain: true }]
+ * const info = parseWorktreeList('/workspace/user/project abc1234 [main]');
+ * // Returns: [{ path: '/workspace/user/project', sha: 'abc1234', branch: 'main', isMain: true }]
  */
-export function parseWorktreeList(output) {
+export function parseWorktreeList(output: any) {
   if (!output || !output.trim()) {
     return [];
   }
@@ -126,7 +126,7 @@ interface WorktreeScannerOptions {
   execAsync?: (cmd: string) => Promise<{ stdout: string; stderr: string }>;
 }
 
-export async function getWorktreeStatus(worktreePath, options: WorktreeScannerOptions = {}) {
+export async function getWorktreeStatus(worktreePath: any, options: WorktreeScannerOptions = {}) {
   const runCmd = options.execAsync || execAsync;
 
   /** @type {WorktreeStatus} */
@@ -187,7 +187,7 @@ export async function getWorktreeStatus(worktreePath, options: WorktreeScannerOp
  *   console.log(`${wt.wuId}: ${wt.uncommittedFileCount} uncommitted files`);
  * }
  */
-export async function scanWorktrees(basePath, options: WorktreeScannerOptions = {}) {
+export async function scanWorktrees(basePath: any, options: WorktreeScannerOptions = {}) {
   const runCmd = options.execAsync || execAsync;
 
   // Get worktree list

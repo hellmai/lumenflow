@@ -36,7 +36,7 @@ import { LANE_PATH_PATTERNS } from './wu-constants.js';
  * @param {string} lane - Lane name (e.g., "Operations: Tooling")
  * @returns {LaneValidationResult} Validation result with warnings if any
  */
-export function validateLaneCodePaths(doc, lane) {
+export function validateLaneCodePaths(doc: any, lane: any) {
   const codePaths = doc.code_paths || [];
 
   // Skip validation if no code_paths
@@ -53,7 +53,7 @@ export function validateLaneCodePaths(doc, lane) {
   const parentLane = extractParent(lane);
 
   // Get patterns for this lane parent
-  const patterns = LANE_PATH_PATTERNS[parentLane];
+  const patterns = LANE_PATH_PATTERNS[parentLane as keyof typeof LANE_PATH_PATTERNS];
 
   // Skip validation if no patterns defined for this lane
   if (!patterns) {
@@ -68,7 +68,7 @@ export function validateLaneCodePaths(doc, lane) {
   const { exclude = [], allowExceptions = [] } = patterns;
 
   // Find violations: paths that match exclude patterns but NOT exception patterns
-  const violations = codePaths.filter((codePath) => {
+  const violations = codePaths.filter((codePath: any) => {
     // Check if path matches any exclude pattern
     const matchesExclude = micromatch.isMatch(codePath, exclude, { nocase: true });
 
@@ -97,7 +97,7 @@ export function validateLaneCodePaths(doc, lane) {
   }
 
   // Build warning messages
-  const warnings = violations.map((path) => {
+  const warnings = violations.map((path: any) => {
     return `Lane "${lane}" typically doesn't include "${path}" (expected for different lane)`;
   });
 
@@ -118,7 +118,7 @@ export function validateLaneCodePaths(doc, lane) {
  * @param {LaneValidationResult} result - Result from validateLaneCodePaths
  * @param {string} logPrefix - Log prefix (e.g., "[wu-claim]")
  */
-export function logLaneValidationWarnings(result, logPrefix = '[wu-claim]') {
+export function logLaneValidationWarnings(result: any, logPrefix = '[wu-claim]') {
   if (!result.hasWarnings) {
     return;
   }

@@ -34,7 +34,7 @@ const PREFIX = LOG_PREFIX.CLAIM;
  * @param {Object} args - CLI arguments
  * @param {string} id - WU ID
  */
-export async function handleResumeMode(args, id) {
+export async function handleResumeMode(args: any, id: any) {
   const laneK = toKebab(args.lane);
   const idK = id.toLowerCase();
   const worktree = args.worktree || `worktrees/${laneK}-${idK}`;
@@ -105,3 +105,4 @@ export async function handleResumeMode(args, id) {
     `\n${PREFIX} Tip: Run 'pnpm mem:ready --wu ${id}' to check for pending context from previous session.`,
   );
 }
+

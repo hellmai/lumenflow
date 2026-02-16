@@ -130,7 +130,8 @@ function removeWUFromSection(
   let newEndIdx = endIdx;
 
   for (let i = startIdx + 1; i < newEndIdx; i++) {
-    if (lines[i] && (lines[i].includes(rel) || lines[i].includes(`[${id}`))) {
+    const line = lines[i];
+    if (line && (line.includes(rel) || line.includes(`[${id}`))) {
       lines.splice(i, 1);
       removed = true;
       newEndIdx--;
@@ -162,7 +163,11 @@ function insertIntoCompleted(
   }
 
   let insertIdx = completedIdx + 1;
-  while (insertIdx < lines.length && lines[insertIdx].trim() === '') {
+  while (insertIdx < lines.length) {
+    const line = lines[insertIdx];
+    if (typeof line !== 'string' || line.trim() !== '') {
+      break;
+    }
     insertIdx++;
   }
   lines.splice(insertIdx, 0, entry);

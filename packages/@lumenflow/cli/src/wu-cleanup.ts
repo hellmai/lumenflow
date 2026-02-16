@@ -56,6 +56,21 @@ const CLEANUP_OPTIONS = {
 
 export const CLEANUP_GUARD_REASONS = CLEANUP_GUARD.REASONS;
 
+type CleanupGuardReason = keyof typeof CLEANUP_GUARD.MESSAGES;
+
+interface CleanupGuardInput {
+  hasUncommittedChanges: boolean;
+  hasUnpushedCommits: boolean;
+  hasStamp: boolean;
+  yamlStatus: string | undefined;
+  ghAvailable: boolean;
+  prMerged: boolean | null;
+}
+
+type CleanupGuardResult =
+  | { allowed: true; reason: null }
+  | { allowed: false; reason: CleanupGuardReason };
+
 export function evaluateCleanupGuards({
   hasUncommittedChanges,
   hasUnpushedCommits,
@@ -63,21 +78,21 @@ export function evaluateCleanupGuards({
   yamlStatus,
   ghAvailable,
   prMerged,
-}) {
+}: CleanupGuardInput): CleanupGuardResult {
   if (hasUncommittedChanges) {
-    return { allowed: false, reason: CLEANUP_GUARD_REASONS.UNCOMMITTED_CHANGES };
+    return { allowed: false, reason: CLEANUP_GUARD_REASONS.UNCOMMITTED_CHANGES as CleanupGuardReason };
   }
   if (hasUnpushedCommits) {
-    return { allowed: false, reason: CLEANUP_GUARD_REASONS.UNPUSHED_COMMITS };
+    return { allowed: false, reason: CLEANUP_GUARD_REASONS.UNPUSHED_COMMITS as CleanupGuardReason };
   }
   if (yamlStatus !== WU_STATUS.DONE) {
-    return { allowed: false, reason: CLEANUP_GUARD_REASONS.STATUS_NOT_DONE };
+    return { allowed: false, reason: CLEANUP_GUARD_REASONS.STATUS_NOT_DONE as CleanupGuardReason };
   }
   if (!hasStamp) {
-    return { allowed: false, reason: CLEANUP_GUARD_REASONS.MISSING_STAMP };
+    return { allowed: false, reason: CLEANUP_GUARD_REASONS.MISSING_STAMP as CleanupGuardReason };
   }
   if (ghAvailable && prMerged !== true) {
-    return { allowed: false, reason: CLEANUP_GUARD_REASONS.PR_NOT_MERGED };
+    return { allowed: false, reason: CLEANUP_GUARD_REASONS.PR_NOT_MERGED as CleanupGuardReason };
   }
   return { allowed: true, reason: null };
 }
@@ -118,7 +133,7 @@ export async function verifyPRMerged(laneBranch: string) {
   return { merged: null, method: 'gh_api' };
 }
 
-async function removeWorktree(worktreePath) {
+async function removeWorktree(worktreePath: string) {
   if (!existsSync(worktreePath)) {
     console.log(`[wu-cleanup] ✓ Worktree already removed: ${worktreePath}`);
     return;
@@ -129,7 +144,7 @@ async function removeWorktree(worktreePath) {
   console.log('[wu-cleanup] ✓ Worktree removed');
 }
 
-async function deleteBranch(laneBranch) {
+async function deleteBranch(laneBranch: string) {
   // Delete local branch
   const localExists = await getGitForCwd().branchExists(laneBranch);
   if (localExists) {
@@ -193,7 +208,7 @@ async function cleanupArtifactsInWorktree() {
   console.log(`${LOG_PREFIX.CLEANUP} ✓ Build artifact cleanup complete`);
 }
 
-async function hasUncommittedChanges(worktreePath) {
+async function hasUncommittedChanges(worktreePath: string) {
   if (!existsSync(worktreePath)) {
     return false;
   }
@@ -202,7 +217,7 @@ async function hasUncommittedChanges(worktreePath) {
   return status.length > 0;
 }
 
-async function hasUnpushedCommits(worktreePath) {
+async function hasUnpushedCommits(worktreePath: string) {
   if (!existsSync(worktreePath)) {
     return false;
   }
@@ -215,7 +230,7 @@ async function hasUnpushedCommits(worktreePath) {
   }
 }
 
-function hasStampFile(wuId) {
+function hasStampFile(wuId: string) {
   const stampPath = path.join(process.cwd(), WU_PATHS.STAMP(wuId));
   return existsSync(stampPath);
 }
@@ -307,14 +322,15 @@ async function main() {
 
   const guardResult = evaluateCleanupGuards(cleanupCheck);
   if (!guardResult.allowed) {
+    const { reason } = guardResult;
     console.error();
     console.error(BOX.TOP);
     console.error(`${BOX.SIDE}  ${CLEANUP_GUARD.TITLES.BLOCKED}`);
     console.error(BOX.MID);
-    console.error(`${BOX.SIDE}  ${CLEANUP_GUARD.MESSAGES[guardResult.reason]}`);
+    console.error(`${BOX.SIDE}  ${CLEANUP_GUARD.MESSAGES[reason]}`);
     console.error(`${BOX.SIDE}`);
     console.error(`${BOX.SIDE}  ${CLEANUP_GUARD.TITLES.NEXT_STEPS}`);
-    const steps = CLEANUP_GUARD.NEXT_STEPS[guardResult.reason] || CLEANUP_GUARD.NEXT_STEPS.DEFAULT;
+    const steps = CLEANUP_GUARD.NEXT_STEPS[reason] || CLEANUP_GUARD.NEXT_STEPS.DEFAULT;
     for (const step of steps) {
       const line = step.appendId ? `${step.text} ${args.id}` : step.text;
       console.error(`${BOX.SIDE}  ${line}`);

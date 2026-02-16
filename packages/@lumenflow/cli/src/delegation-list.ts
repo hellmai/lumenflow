@@ -165,10 +165,18 @@ async function main() {
 
     // Find unique root WUs (parents that are not targets of other delegations)
     const typedDelegations = delegations as DelegationEvent[];
-    const targetWuIds = new Set(typedDelegations.map((s) => s.targetWuId));
-    const rootWuIds = [...new Set(typedDelegations.map((s) => s.parentWuId))].filter(
-      (id) => !targetWuIds.has(id),
+    const targetWuIds = new Set(
+      typedDelegations
+        .map((s) => s.targetWuId)
+        .filter((targetWuId): targetWuId is string => typeof targetWuId === 'string'),
     );
+    const rootWuIds = [
+      ...new Set(
+        typedDelegations
+          .map((s) => s.parentWuId)
+          .filter((parentWuId): parentWuId is string => typeof parentWuId === 'string'),
+      ),
+    ].filter((rootId) => !targetWuIds.has(rootId));
 
     for (const rootWuId of rootWuIds) {
       const tree = buildDelegationTree(delegations, rootWuId);

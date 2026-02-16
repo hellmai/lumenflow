@@ -63,6 +63,12 @@ interface WorktreeEntry {
   head?: string;
 }
 
+interface WorktreeValidationResult {
+  valid: boolean;
+  warnings: string[];
+  errors: string[];
+}
+
 async function listWorktrees(): Promise<WorktreeEntry[]> {
   const output = await getGitForCwd().worktreeList();
   if (!output) return [];
@@ -95,9 +101,9 @@ async function listWorktrees(): Promise<WorktreeEntry[]> {
  * Validate a single worktree
  * @returns {Promise<{valid: boolean, warnings: string[], errors: string[]}>}
  */
-async function validateWorktree(wt) {
-  const warnings = [];
-  const errors = [];
+async function validateWorktree(wt: WorktreeEntry): Promise<WorktreeValidationResult> {
+  const warnings: string[] = [];
+  const errors: string[] = [];
 
   // Skip main worktree
   if (wt.branch === BRANCHES.MAIN) {
@@ -105,7 +111,7 @@ async function validateWorktree(wt) {
   }
 
   // Check branch naming convention
-  const branchValidation = validateBranchName(wt.branch);
+  const branchValidation = validateBranchName(wt.branch || '');
   if (!branchValidation.valid) {
     errors.push(
       `Invalid branch name: ${wt.branch}\n    Expected: lane/<lane>/<wu-id>\n    ${branchValidation.error}`,
@@ -113,7 +119,7 @@ async function validateWorktree(wt) {
     return { valid: false, warnings, errors }; // Can't continue validation without WU ID
   }
 
-  const wuid = extractWUFromBranch(wt.branch);
+  const wuid = extractWUFromBranch(wt.branch || '');
   if (!wuid) {
     errors.push(`Could not extract WU ID from branch: ${wt.branch}`);
     return { valid: false, warnings, errors };

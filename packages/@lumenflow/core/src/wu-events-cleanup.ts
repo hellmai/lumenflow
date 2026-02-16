@@ -333,7 +333,11 @@ function groupEventsByWuId(events: WUEvent[]): Map<string, WUEvent[]> {
  * @returns Most recent timestamp
  */
 function getMostRecentTimestamp(events: WUEvent[]): string {
-  let mostRecent = events[0].timestamp;
+  const firstEvent = events[0];
+  if (!firstEvent) {
+    return new Date(0).toISOString();
+  }
+  let mostRecent = firstEvent.timestamp;
   for (const event of events) {
     if (new Date(event.timestamp) > new Date(mostRecent)) {
       mostRecent = event.timestamp;

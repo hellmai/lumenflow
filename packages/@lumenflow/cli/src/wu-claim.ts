@@ -344,8 +344,13 @@ async function main() {
   // both reading a free status.md before either updates it
   const existingLock = checkLaneLock(args.lane);
   if (existingLock.locked && existingLock.isStale) {
-    console.log(`${PREFIX} Detected stale lock for "${args.lane}" (${existingLock.metadata.wuId})`);
-    console.log(`${PREFIX} Lock timestamp: ${existingLock.metadata.timestamp}`);
+    const staleMetadata = existingLock.metadata;
+    if (staleMetadata) {
+      console.log(`${PREFIX} Detected stale lock for "${args.lane}" (${staleMetadata.wuId})`);
+      console.log(`${PREFIX} Lock timestamp: ${staleMetadata.timestamp}`);
+    } else {
+      console.log(`${PREFIX} Detected stale lock for "${args.lane}"`);
+    }
     forceRemoveStaleLock(args.lane);
   }
 
@@ -409,6 +414,9 @@ async function main() {
       die(modeResult.error);
     }
     const claimedMode = modeResult.mode;
+    if (!claimedMode) {
+      die('Could not resolve claim mode from CLI flags.');
+    }
 
     // Branch-Only singleton guard: only for pure branch-only mode (not branch-pr)
     // branch-pr skips this guard because it supports parallel agents via PR isolation

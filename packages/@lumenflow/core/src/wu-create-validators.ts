@@ -65,7 +65,7 @@ export function buildRepoInternalPathError(path: string): string {
  * @param {number} confidence - Confidence score (0-100)
  * @returns {string} Warning message or empty string if lanes match
  */
-export function generateLaneMismatchWarning(providedLane, inferredLane, confidence) {
+export function generateLaneMismatchWarning(providedLane: any, inferredLane: any, confidence: any) {
   // Normalize lanes for comparison (handle parent-only vs sub-lane)
   const normalizedProvided = providedLane.trim();
   const normalizedInferred = inferredLane.trim();
@@ -94,7 +94,7 @@ export function generateLaneMismatchWarning(providedLane, inferredLane, confiden
  * @param {boolean} isSubLaneSuggestion - True if suggesting sub-lane for parent-only input
  * @returns {string} Formatted warning message
  */
-function formatWarningMessage(suggestedLane, confidence, isSubLaneSuggestion) {
+function formatWarningMessage(suggestedLane: any, confidence: any, isSubLaneSuggestion: any) {
   const confidenceStr = `${confidence}%`;
 
   if (confidence < CONFIDENCE_THRESHOLD_LOW) {
@@ -129,7 +129,7 @@ function formatWarningMessage(suggestedLane, confidence, isSubLaneSuggestion) {
  * @param {Function} inferSubLane - Lane inference function
  * @returns {{ shouldWarn: boolean, warning: string }} Validation result
  */
-export function validateLaneWithInference(providedLane, codePaths, description, inferSubLane) {
+export function validateLaneWithInference(providedLane: any, codePaths: any, description: any, inferSubLane: any) {
   // Skip inference if no code paths provided
   if (!codePaths || codePaths.length === 0) {
     return { shouldWarn: false, warning: '' };
@@ -250,3 +250,4 @@ export function normalizeSpecRefs(specRefs: string[]): string[] {
   }
   return specRefs.map((ref) => normalizeSpecRef(ref));
 }
+

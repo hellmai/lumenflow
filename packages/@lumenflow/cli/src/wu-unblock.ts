@@ -65,7 +65,7 @@ export function shouldUseBranchPrUnblockPath(doc: { claimed_mode?: string }): bo
   return shouldUseBranchPrStatePath(doc);
 }
 
-function branchExists(branch) {
+function branchExists(branch: any) {
   try {
     getGitForCwd().run(`git rev-parse --verify ${JSON.stringify(branch)}`);
     return true;
@@ -74,7 +74,7 @@ function branchExists(branch) {
   }
 }
 
-function createWorktree(doc, worktreePath, branchName) {
+function createWorktree(doc: any, worktreePath: any, branchName: any) {
   if (!worktreePath) die('Worktree path required to create a worktree');
 
   if (existsSync(worktreePath)) {
@@ -98,7 +98,7 @@ function createWorktree(doc, worktreePath, branchName) {
 /**
  * Handle lane occupancy check and enforce WIP=1 policy
  */
-function handleLaneOccupancy(laneCheck, lane, id, force) {
+function handleLaneOccupancy(laneCheck: any, lane: any, id: any, force: any) {
   if (laneCheck.free) return;
 
   if (laneCheck.error) {
@@ -129,7 +129,7 @@ function handleLaneOccupancy(laneCheck, lane, id, force) {
 /**
  * Handle optional worktree creation after unblock
  */
-function handleWorktreeCreation(args, doc) {
+function handleWorktreeCreation(args: any, doc: any) {
   if (!args.createWorktree) return;
 
   const worktreePath = args.worktree || defaultWorktreeFrom(doc);
@@ -363,3 +363,4 @@ async function main() {
 if (import.meta.main) {
   void runCLI(main);
 }
+

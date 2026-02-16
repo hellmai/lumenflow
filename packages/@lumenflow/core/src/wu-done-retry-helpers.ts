@@ -44,7 +44,7 @@ const COMPLETION_COMMIT_PATTERN = /wu\(([^)]+)\):\s*done\s*-/i;
  * @param {object} gitAdapter - Git adapter instance
  * @returns {Promise<number>} Number of completion attempt commits found
  */
-export async function countPreviousCompletionAttempts(wuId, gitAdapter) {
+export async function countPreviousCompletionAttempts(wuId: any, gitAdapter: any) {
   const normalizedId = wuId.toLowerCase();
 
   try {
@@ -98,9 +98,9 @@ export interface SquashCompletionAttemptsOptions {
 }
 
 export async function squashPreviousCompletionAttempts(
-  wuId,
-  count,
-  gitAdapter,
+  wuId: any,
+  count: any,
+  gitAdapter: any,
   options: SquashCompletionAttemptsOptions = {},
 ) {
   const { preserveIndex = true } = options;
@@ -166,7 +166,7 @@ export async function squashPreviousCompletionAttempts(
  * @param {object} gitAdapter - Git adapter instance
  * @returns {Promise<{ squashedCount: number }>} Result
  */
-export async function prepareRecoveryWithSquash(wuId, gitAdapter) {
+export async function prepareRecoveryWithSquash(wuId: any, gitAdapter: any) {
   console.log(
     `${LOG_PREFIX.DONE} ${EMOJI.INFO} Checking for previous completion attempts before recovery...`,
   );
@@ -211,9 +211,9 @@ export interface HandleParallelCompletionsOptions {
 }
 
 export async function handleParallelCompletions(
-  wuId,
-  doc,
-  gitAdapter,
+  wuId: any,
+  doc: any,
+  gitAdapter: any,
   options: HandleParallelCompletionsOptions = {},
 ) {
   const { worktreePath, autoRebase = true } = options;
@@ -292,3 +292,4 @@ export async function handleParallelCompletions(
     );
   }
 }
+

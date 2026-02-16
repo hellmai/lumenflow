@@ -70,7 +70,7 @@ const CLI_COMMAND_EXCLUDE_PATTERNS: string[] = [
  */
 const FILE_PATH_PATTERN = /(?:^|[\s'"`])([a-zA-Z0-9_-]+\/[a-zA-Z0-9_./-]+\.[a-zA-Z0-9]+)/g;
 
-function extractFilePaths(text) {
+function extractFilePaths(text: any) {
   const paths = [];
   let match;
 
@@ -85,7 +85,7 @@ function extractFilePaths(text) {
 /**
  * Check if a file path matches any pattern in code_paths
  */
-function pathMatchesCodePaths(filePath, codePaths) {
+function pathMatchesCodePaths(filePath: any, codePaths: any) {
   for (const pattern of codePaths) {
     if (filePath === pattern) {
       return true;
@@ -102,7 +102,7 @@ function pathMatchesCodePaths(filePath, codePaths) {
 /**
  * Validate that acceptance criteria only reference paths in code_paths
  */
-export function validateAcceptanceCodePaths(wu) {
+export function validateAcceptanceCodePaths(wu: any) {
   const { id, acceptance = [], code_paths = [] } = wu;
   const errors = [];
 
@@ -129,7 +129,7 @@ export function validateAcceptanceCodePaths(wu) {
   };
 }
 
-function checkForbiddenFileInvariant(invariant, wu) {
+function checkForbiddenFileInvariant(invariant: any, wu: any) {
   const { id, acceptance = [], code_paths = [] } = wu;
   const errors = [];
 
@@ -161,11 +161,11 @@ function checkForbiddenFileInvariant(invariant, wu) {
   return errors;
 }
 
-function checkMutualExclusivityInvariant(invariant, wu) {
+function checkMutualExclusivityInvariant(invariant: any, wu: any) {
   const { id, code_paths = [] } = wu;
   const errors = [];
 
-  const conflictingPaths = invariant.paths.filter((p) => code_paths.includes(p));
+  const conflictingPaths = invariant.paths.filter((p: any) => code_paths.includes(p));
   if (conflictingPaths.length > 1) {
     errors.push({
       type: WU_LINT_ERROR_TYPES.CODE_PATH_CONFLICTS_INVARIANT,
@@ -184,7 +184,7 @@ function checkMutualExclusivityInvariant(invariant, wu) {
 /**
  * Validate that code_paths and acceptance do not conflict with invariants
  */
-export function validateInvariantsCompliance(wu, invariants) {
+export function validateInvariantsCompliance(wu: any, invariants: any) {
   const errors = [];
 
   for (const invariant of invariants) {
@@ -368,7 +368,7 @@ export interface LintWUSpecOptions {
 /**
  * Lint a WU spec against all rules
  */
-export function lintWUSpec(wu, options: LintWUSpecOptions = {}) {
+export function lintWUSpec(wu: any, options: LintWUSpecOptions = {}) {
   const allErrors = [];
   const allWarnings = [];
   const phase = options.phase || 'structural';
@@ -424,7 +424,7 @@ export function lintWUSpec(wu, options: LintWUSpecOptions = {}) {
 /**
  * Format lint errors for display
  */
-export function formatLintErrors(errors) {
+export function formatLintErrors(errors: any) {
   if (errors.length === 0) {
     return '';
   }
@@ -441,3 +441,4 @@ export function formatLintErrors(errors) {
 
   return lines.join('\n');
 }
+
