@@ -36,7 +36,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: INIT-029 Phase 1 — Kernel Foundation. Depends on WU-1725 (schemas). Problem: The kernel needs an event-sourced state store for task lifecycle events. Current wu-state-store.ts has the right pattern (JSONL append-only, in-memory indexes, replay) but is entangled with WU-specific concerns. Solution: Implement a generic EventStore class with append(event), replay(filter), project(taskId). JSONL file backend porting patterns from wu-state-store.ts. In-memory indexes (byTask, byKind, byTimestamp). projectTaskState(spec, events) -> TaskState projection function. File locking using atomic wx flag pattern from lane-lock.ts. Reference: wu-state-store.ts, lane-lock.ts. Plan: .claude/plans/golden-prancing-cookie.md'
+description: 'Context: INIT-029 Phase 1 — Kernel Foundation. Depends on WU-1725 (schemas). Problem:
+  The kernel needs an event-sourced state store for task lifecycle events. Current wu-state-store.ts
+  has the right pattern (JSONL append-only, in-memory indexes, replay) but is entangled with
+  WU-specific concerns. Solution: Implement a generic EventStore class with append(event),
+  replay(filter), project(taskId). Events use KernelEvent discriminated union with prefixed kinds
+  (task_, run_, workspace_, spec_) and schema_version:1. JSONL file backend porting patterns from
+  wu-state-store.ts. In-memory indexes (byTask, byKind, byTimestamp). projectTaskState(spec, events)
+  -> TaskState projection function. File locking using atomic wx flag pattern from lane-lock.ts.
+  Spec hash verification: on task load, recompute canonical_json hash and verify against
+  task_created event spec_hash. Reference: wu-state-store.ts, lane-lock.ts. Plan:
+  .claude/plans/golden-prancing-cookie.md'
 acceptance:
   - EventStore class implements append(event), replay(filter), project(taskId)
   - JSONL file backend with atomic append (fs.appendFile)
@@ -44,5 +54,10 @@ acceptance:
   - projectTaskState(spec, events) correctly projects TaskState from event stream
   - File locking via atomic fs.open with wx flag prevents concurrent corruption
   - 'Append-replay roundtrip test: append N events, replay, verify all present and ordered'
-  - 'Projection correctness test: create->claim->block->unblock->complete produces correct final state'
+  - 'Projection correctness test: create->claim->block->unblock->complete produces correct final
+    state'
   - "Concurrent-append safety test: multiple appends don't corrupt JSONL"
+  - EventStore stores KernelEvent union (task_, run_, workspace_, spec_ prefixed kinds) with
+    schema_version:1
+  - 'Spec hash verification: recompute canonical_json() hash on load and verify against task_created
+    spec_hash'
