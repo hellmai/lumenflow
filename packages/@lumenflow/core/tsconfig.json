@@ -6,8 +6,6 @@
     "noEmit": false,
     "declaration": true,
     "strict": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
     "useUnknownInCatchVariables": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
