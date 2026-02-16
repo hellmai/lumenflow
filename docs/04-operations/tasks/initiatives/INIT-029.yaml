@@ -1,0 +1,12 @@
+id: INIT-029
+slug: agent-runtime-kernel
+title: LumenFlow Agent Runtime + Control Plane
+description: ''
+status: draft
+priority: P0
+owner: 'Framework: Core'
+created: 2026-02-16
+target_date: 2026-06-30
+phases: []
+success_metrics: []
+labels: []
