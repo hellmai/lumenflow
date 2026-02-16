@@ -36,7 +36,7 @@ const TOOL_NAME = 'mem:init';
  * @param {string} baseDir - Base directory
  * @param {object} entry - Audit log entry
  */
-async function writeAuditLog(baseDir, entry) {
+async function writeAuditLog(baseDir: any, entry: any) {
   try {
     const logPath = path.join(baseDir, LUMENFLOW_PATHS.AUDIT_LOG);
     const logDir = path.dirname(logPath);
@@ -84,13 +84,13 @@ async function main() {
   const startedAt = new Date().toISOString();
   const startTime = Date.now();
 
-  let result;
-  let error = null;
+  let result: Awaited<ReturnType<typeof initMemory>> | null = null;
+  let error: string | null = null;
 
   try {
     result = await initMemory(baseDir);
-  } catch (err) {
-    error = err.message;
+  } catch (err: unknown) {
+    error = err instanceof Error ? err.message : String(err);
   }
 
   const durationMs = Date.now() - startTime;
@@ -115,6 +115,11 @@ async function main() {
 
   if (error) {
     console.error(`${LOG_PREFIX} Error: ${error}`);
+    process.exit(EXIT_CODES.ERROR);
+  }
+
+  if (!result) {
+    console.error(`${LOG_PREFIX} Error: memory initialization failed with no result`);
     process.exit(EXIT_CODES.ERROR);
   }
 

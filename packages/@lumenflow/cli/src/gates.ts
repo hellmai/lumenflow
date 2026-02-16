@@ -287,6 +287,9 @@ async function executeGates(opts: {
   const lane = getCurrentLane();
   const useAgentMode = shouldUseGatesAgentMode({ argv, env: process.env });
   const agentLog = useAgentMode ? createAgentLogContext({ wuId: wu_id, lane, cwd }) : null;
+  if (useAgentMode && !agentLog) {
+    die('Failed to initialize agent-mode gate log context');
+  }
   // Parse command line arguments (now via Commander)
   const isDocsOnly = opts.docsOnly || false;
   const isFullLint = opts.fullLint || false;
@@ -315,7 +318,7 @@ async function executeGates(opts: {
 
   if (useAgentMode) {
     console.log(
-      `\uD83E\uDDFE gates (agent mode): output -> ${agentLog.logPath} (use --verbose for streaming)\n`,
+      `\uD83E\uDDFE gates (agent mode): output -> ${agentLog!.logPath} (use --verbose for streaming)\n`,
     );
   }
 
@@ -403,7 +406,7 @@ async function executeGates(opts: {
     if (!useAgentMode) {
       console.log(`${docsOnlyMessage}\n`);
     } else {
-      writeSync(agentLog.logFd, `${docsOnlyMessage}\n`);
+      writeSync(agentLog!.logFd, `${docsOnlyMessage}\n`);
     }
   }
 
@@ -464,7 +467,7 @@ async function executeGates(opts: {
     } else if (gate.cmd === GATE_COMMANDS.INVARIANTS) {
       // WU-2252: Invariants check runs first (non-bypassable)
       const logLine = useAgentMode
-        ? (line: string) => writeSync(agentLog.logFd, `${line}\n`)
+        ? (line: string) => writeSync(agentLog!.logFd, `${line}\n`)
         : (line: string) => console.log(line);
 
       logLine('\n> Invariants check\n');
@@ -504,7 +507,7 @@ async function executeGates(opts: {
         if (!useAgentMode) {
           console.log(`\n${msg}\n`);
         } else {
-          writeSync(agentLog.logFd, `\n${msg}\n\n`);
+          writeSync(agentLog!.logFd, `\n${msg}\n\n`);
         }
         // WU-1520: Track skipped coverage gate in summary
         gateResults.push({
@@ -524,7 +527,7 @@ async function executeGates(opts: {
         );
       } else {
         writeSync(
-          agentLog.logFd,
+          agentLog!.logFd,
           `\n> Coverage gate (mode: ${coverageMode}, threshold: ${coverageThreshold}%)\n\n`,
         );
       }
@@ -535,7 +538,7 @@ async function executeGates(opts: {
         logger: useAgentMode
           ? {
               log: (msg) => {
-                writeSync(agentLog.logFd, `${msg}\n`);
+                writeSync(agentLog!.logFd, `${msg}\n`);
               },
             }
           : console,
@@ -543,7 +546,7 @@ async function executeGates(opts: {
     } else if (gate.cmd === GATE_COMMANDS.ONBOARDING_SMOKE_TEST) {
       // WU-1315: Onboarding smoke test (init + wu:create validation)
       const logLine = useAgentMode
-        ? (line: string) => writeSync(agentLog.logFd, `${line}\n`)
+        ? (line: string) => writeSync(agentLog!.logFd, `${line}\n`)
         : (line: string) => console.log(line);
 
       logLine('\n> Onboarding smoke test\n');
@@ -552,6 +555,9 @@ async function executeGates(opts: {
         logger: { log: logLine },
       });
     } else {
+      if (!gate.cmd) {
+        die(`${gate.name} failed: gate command is not configured`);
+      }
       result = run(gate.cmd, { agentLog, cwd });
     }
 
@@ -571,7 +577,7 @@ async function executeGates(opts: {
         if (!useAgentMode) {
           console.log(`\n${warnMsg}\n`);
         } else {
-          writeSync(agentLog.logFd, `\n${warnMsg}\n\n`);
+          writeSync(agentLog!.logFd, `\n${warnMsg}\n\n`);
         }
         // WU-1520: Track warned gates in summary
         gateResults.push({
@@ -598,8 +604,8 @@ async function executeGates(opts: {
       logLine(`\n${formatGateSummary(gateResults)}\n`);
 
       if (useAgentMode) {
-        const tail = readLogTail(agentLog.logPath);
-        console.error(`\n\u274C ${gate.name} failed (agent mode). Log: ${agentLog.logPath}\n`);
+        const tail = readLogTail(agentLog!.logPath);
+        console.error(`\n\u274C ${gate.name} failed (agent mode). Log: ${agentLog!.logPath}\n`);
         if (tail) {
           console.error(`Last log lines:\n${tail}\n`);
         }
@@ -627,7 +633,7 @@ async function executeGates(opts: {
   if (!useAgentMode) {
     console.log('\n\u2705 All gates passed!\n');
   } else {
-    console.log(`\u2705 All gates passed (agent mode). Log: ${agentLog.logPath}\n`);
+    console.log(`\u2705 All gates passed (agent mode). Log: ${agentLog!.logPath}\n`);
   }
 
   return true;

@@ -47,7 +47,7 @@ export async function surfaceUnreadSignalsForDisplay(baseDir: string): Promise<v
  * @param {object} methodology - Methodology defaults config
  * @returns {string} Formatted output or empty string if disabled
  */
-export function formatProjectDefaults(methodology) {
+export function formatProjectDefaults(methodology: any) {
   if (!methodology || methodology.enabled === false) return '';
 
   const enforcement = methodology.enforcement || 'required';
@@ -70,7 +70,7 @@ export function formatProjectDefaults(methodology) {
  *
  * @param {object} methodology - Methodology defaults config
  */
-export function printProjectDefaults(methodology) {
+export function printProjectDefaults(methodology: any) {
   const output = formatProjectDefaults(methodology);
   if (output) {
     console.log(output);
@@ -83,9 +83,10 @@ export function printProjectDefaults(methodology) {
  *
  * @param {string} _id - WU ID being claimed (unused, kept for future use)
  */
-export function printLifecycleNudge(_id) {
+export function printLifecycleNudge(_id: any) {
   // Single line, concise, actionable
   console.log(
     `\n${PREFIX} 💡 Tip: pnpm session:recommend for context tier, mem:ready for pending work, pnpm file:*/git:* for audited wrappers`,
   );
 }
+

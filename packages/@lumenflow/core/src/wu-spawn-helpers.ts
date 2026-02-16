@@ -42,7 +42,7 @@ export const THINKING_OPTIONS = {
  * @param {string[]} argv - Process arguments
  * @returns {object} Parsed arguments with thinking options
  */
-export function parseSpawnArgs(argv) {
+export function parseSpawnArgs(argv: any) {
   const program = new Command()
     .name('wu-spawn')
     .description('Generate Task tool invocation for sub-agent WU execution')
@@ -90,7 +90,7 @@ export function parseSpawnArgs(argv) {
  * @param {object} args - Parsed arguments
  * @throws {Error} If validation fails
  */
-export function validateSpawnArgs(args) {
+export function validateSpawnArgs(args: any) {
   // Check mutually exclusive flags
   if (args.thinking && args.noThinking) {
     throw new Error('--thinking and --no-thinking are mutually exclusive');
@@ -119,7 +119,7 @@ export function validateSpawnArgs(args) {
  * @param {string} [options.budget] - Token budget for thinking
  * @returns {string} Execution Mode section or empty string if no thinking flags
  */
-export function generateExecutionModeSection(options) {
+export function generateExecutionModeSection(options: any) {
   const { thinking, noThinking, budget } = options;
 
   // No section if no thinking flags specified (default behavior)
@@ -153,7 +153,7 @@ export function generateExecutionModeSection(options) {
  * @param {boolean} [options.noThinking] - Whether thinking is explicitly disabled
  * @returns {string} Think tool guidance or empty string if not applicable
  */
-export function generateThinkToolGuidance(options) {
+export function generateThinkToolGuidance(options: any) {
   const { thinking, noThinking } = options;
 
   // No guidance if thinking is disabled or not specified
@@ -248,7 +248,7 @@ const LOG_PREFIX = '[wu:spawn]';
  *   console.log(`Recorded: ${result.spawnId}`);
  * }
  */
-export async function recordSpawnToRegistry(options) {
+export async function recordSpawnToRegistry(options: any) {
   const { parentWuId, targetWuId, lane, baseDir = LUMENFLOW_PATHS.STATE_DIR } = options;
 
   try {
@@ -287,7 +287,7 @@ export async function recordSpawnToRegistry(options) {
  * formatSpawnRecordedMessage(null, 'Registry unavailable');
  * // Returns: '[wu:spawn] Warning: Registry write skipped (Registry unavailable)'
  */
-export function formatSpawnRecordedMessage(spawnId, errorMessage = undefined) {
+export function formatSpawnRecordedMessage(spawnId: any, errorMessage = undefined) {
   if (spawnId) {
     return `${LOG_PREFIX} Spawn recorded ${spawnId}`;
   }
@@ -298,3 +298,4 @@ export function formatSpawnRecordedMessage(spawnId, errorMessage = undefined) {
 
   return `${LOG_PREFIX} Warning: Registry unavailable`;
 }
+

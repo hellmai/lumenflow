@@ -417,9 +417,10 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
 
   // Warn if WU is not in ready or in_progress status
   const validStatuses = [WU_STATUS.READY, WU_STATUS.IN_PROGRESS];
-  if (!validStatuses.includes(doc.status)) {
+  const status = doc.status || 'unknown';
+  if (!validStatuses.includes(status)) {
     console.warn(
-      `${effectiveLogPrefix} ${EMOJI.WARNING} Warning: ${id} has status '${doc.status}'.`,
+      `${effectiveLogPrefix} ${EMOJI.WARNING} Warning: ${id} has status '${status}'.`,
     );
     console.warn(
       `${effectiveLogPrefix} ${EMOJI.WARNING} Sub-agents typically work on ready or in_progress WUs.`,

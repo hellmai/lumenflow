@@ -161,7 +161,14 @@ export function parseAuditLogLine(line: string): AuditLogEntry | null {
     return null;
   }
 
-  const [timestamp, hook, user, branch, reason, cwd] = parts;
+  const [timestamp, hook, user, branch, reason, cwd] = parts as [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+  ];
 
   return {
     timestamp: timestamp.trim(),

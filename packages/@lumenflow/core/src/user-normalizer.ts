@@ -31,7 +31,7 @@ const MIN_LOCAL_PART_LENGTH = 1;
  * @param {string|null|undefined} value - Value to check
  * @returns {boolean} True if value is a valid email
  */
-export function isValidEmail(value) {
+export function isValidEmail(value: any) {
   if (!value || typeof value !== 'string') {
     return false;
   }
@@ -47,7 +47,7 @@ export function isValidEmail(value) {
  * @param {string} email - Email address
  * @returns {string|null} Domain part or null if invalid
  */
-function extractDomain(email) {
+function extractDomain(email: any) {
   if (!isValidEmail(email)) {
     return null;
   }
@@ -137,7 +137,7 @@ export async function inferDefaultDomain(cwd = process.cwd()) {
  * @param {string} [domain] - Optional domain override
  * @returns {Promise<string>} Normalized email address, or empty string for null/undefined
  */
-export async function normalizeToEmail(value, domain) {
+export async function normalizeToEmail(value: any, domain: any) {
   // Handle null/undefined/empty
   if (!value) {
     return '';
@@ -157,3 +157,4 @@ export async function normalizeToEmail(value, domain) {
   const effectiveDomain = domain || (await inferDefaultDomain());
   return `${str}@${effectiveDomain}`;
 }
+

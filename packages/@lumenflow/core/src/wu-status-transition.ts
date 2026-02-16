@@ -303,7 +303,8 @@ function updateStatusFile(
       else endIdx = sectionStart + endIdx;
 
       for (let i = sectionStart; i < endIdx; i++) {
-        if (lines[i] && lines[i].includes('No items currently in progress')) {
+        const line = lines[i];
+        if (line && line.includes('No items currently in progress')) {
           lines.splice(i, 1);
           endIdx--;
           break;
@@ -334,8 +335,13 @@ function removeFromSection(lines: string[], sectionIdx: number, rel: string, id:
 
   let i = sectionIdx + 1;
   while (i < lines.length) {
-    if (lines[i].startsWith('## ')) break;
-    if (lines[i].includes(rel) || lines[i].includes(`[${id}`)) {
+    const line = lines[i];
+    if (!line) {
+      i++;
+      continue;
+    }
+    if (line.startsWith('## ')) break;
+    if (line.includes(rel) || line.includes(`[${id}`)) {
       lines.splice(i, 1);
       continue;
     }

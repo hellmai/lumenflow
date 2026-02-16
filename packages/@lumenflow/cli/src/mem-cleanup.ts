@@ -104,7 +104,7 @@ const CLI_OPTIONS = {
  * @param {string} baseDir - Base directory
  * @param {object} entry - Audit log entry
  */
-async function writeAuditLog(baseDir, entry) {
+async function writeAuditLog(baseDir: any, entry: any) {
   try {
     const logPath = path.join(baseDir, LUMENFLOW_PATHS.AUDIT_LOG);
     const logDir = path.dirname(logPath);
@@ -125,7 +125,7 @@ async function writeAuditLog(baseDir, entry) {
  * @param {number} bytes - Number of bytes
  * @returns {string} Formatted string (e.g., "1.5 KB")
  */
-function formatBytes(bytes) {
+function formatBytes(bytes: any) {
   if (bytes < BYTES_PER_KB) {
     return `${bytes} B`;
   }
@@ -139,7 +139,7 @@ function formatBytes(bytes) {
  * @param {number} ratio - Compaction ratio (0-1)
  * @returns {string} Formatted percentage
  */
-function formatRatio(ratio) {
+function formatRatio(ratio: any) {
   return `${(ratio * 100).toFixed(1)}%`;
 }
 
@@ -173,7 +173,7 @@ function parseArguments() {
  * @param {boolean} quiet - Suppress verbose output
  * @param {string} [ttl] - TTL string if provided
  */
-function printResult(result, quiet, ttl) {
+function printResult(result: any, quiet: any, ttl: any) {
   if (result.dryRun) {
     console.log(`${LOG_PREFIX} Dry-run: Would remove ${result.removedIds.length} node(s)`);
   } else {
@@ -245,7 +245,7 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
  * @param {object} decayResult - Result from archiveByDecay
  * @param {boolean} quiet - Suppress verbose output
  */
-function printDecayResult(decayResult, quiet) {
+function printDecayResult(decayResult: any, quiet: any) {
   if (decayResult.dryRun) {
     console.log(
       `${LOG_PREFIX} Dry-run: Would archive ${decayResult.archivedIds.length} node(s) by decay`,
@@ -282,7 +282,7 @@ function printDecayResult(decayResult, quiet) {
  * @param {boolean} json - Output as JSON
  * @param {boolean} quiet - Suppress verbose output
  */
-async function runDecayMode(baseDir, dryRun, json, quiet) {
+async function runDecayMode(baseDir: any, dryRun: any, json: any, quiet: any) {
   const startedAt = new Date().toISOString();
   const startTime = Date.now();
 
@@ -416,3 +416,4 @@ async function main() {
 if (import.meta.main) {
   void runCLI(main);
 }
+

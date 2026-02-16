@@ -42,9 +42,9 @@ const DONE_SECTION_HEADERS = Object.freeze(['## done', '## completed']);
  * @param {readonly string[]} headers - Headers to match against
  * @returns {boolean} True if line matches any header
  */
-function matchesSectionHeader(line, headers) {
+function matchesSectionHeader(line: any, headers: any) {
   const normalized = line.trim().toLowerCase();
-  return headers.some((header) => normalized.startsWith(header));
+  return headers.some((header: any) => normalized.startsWith(header));
 }
 
 /**
@@ -57,7 +57,7 @@ function matchesSectionHeader(line, headers) {
  * @param {string} [currentWuId] - Optional WU_ID env var to include
  * @returns {Set<string>} Set of active WU IDs
  */
-export function extractActiveWuIds(backlogContent, statusContent, currentWuId = null) {
+export function extractActiveWuIds(backlogContent: any, statusContent: any, currentWuId = null) {
   const activeIds = new Set();
 
   // Process both backlog and status content
@@ -116,6 +116,7 @@ export function extractActiveWuIds(backlogContent, statusContent, currentWuId = 
  * @param {Set<string>} activeIds - Set of active WU IDs
  * @returns {boolean} True if WU is orphan (not in active set)
  */
-export function isOrphanWu(wuId, activeIds) {
+export function isOrphanWu(wuId: any, activeIds: any) {
   return !activeIds.has(wuId);
 }
+

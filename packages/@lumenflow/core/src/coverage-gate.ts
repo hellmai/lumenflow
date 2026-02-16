@@ -59,13 +59,13 @@ export const DEFAULT_COVERAGE_PATH = 'coverage/coverage-summary.json';
 /**
  * Check if a file path is in the hex core layer.
  *
- * WU-2448: Coverage reporters may emit absolute paths (e.g., /home/.../packages/...)
+ * WU-2448: Coverage reporters may emit absolute paths (e.g., <repo-root>/packages/...)
  * or file:// URLs; use substring matching so hex-core checks still apply.
  *
  * @param {string|null|undefined} filePath - File path to check
  * @returns {boolean} True if file is in hex core layer
  */
-export function isHexCoreFile(filePath) {
+export function isHexCoreFile(filePath: any) {
   if (!filePath || typeof filePath !== 'string') {
     return false;
   }
@@ -81,7 +81,7 @@ export function isHexCoreFile(filePath) {
  * @param {string} coveragePath - Path to coverage-summary.json
  * @returns {object|null} Parsed coverage data or null if invalid
  */
-export function parseCoverageJson(coveragePath) {
+export function parseCoverageJson(coveragePath: any) {
   if (!existsSync(coveragePath)) {
     return null;
   }
@@ -91,7 +91,7 @@ export function parseCoverageJson(coveragePath) {
     const data = JSON.parse(content);
 
     // Transform to consistent format
-    const files = {};
+    const files: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(data)) {
       if (key === 'total') continue;
       files[key] = value;
@@ -113,7 +113,7 @@ export function parseCoverageJson(coveragePath) {
  * @param {number} [threshold] - Coverage threshold to use (defaults to COVERAGE_THRESHOLD)
  * @returns {{ pass: boolean, failures: Array<{ file: string, actual: number, threshold: number, metric: string }> }}
  */
-export function checkCoverageThresholds(coverageData, threshold?: number) {
+export function checkCoverageThresholds(coverageData: any, threshold?: number) {
   if (!coverageData || !coverageData.files) {
     return { pass: true, failures: [] };
   }
@@ -152,7 +152,7 @@ export function checkCoverageThresholds(coverageData, threshold?: number) {
  * @param {object|null} coverageData - Parsed coverage data
  * @returns {string} Formatted output string
  */
-export function formatCoverageDelta(coverageData) {
+export function formatCoverageDelta(coverageData: any) {
   if (!coverageData) {
     return '';
   }

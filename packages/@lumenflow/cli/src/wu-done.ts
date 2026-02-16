@@ -759,7 +759,10 @@ export async function enforceSpawnProvenanceForDone(
     return;
   }
 
-  const initiativeId = doc.initiative.trim();
+  const initiativeId =
+    typeof doc.initiative === 'string' && doc.initiative.trim()
+      ? doc.initiative.trim()
+      : 'unknown';
   const baseDir = options.baseDir ?? process.cwd();
   const force = options.force === true;
   const store = new DelegationRegistryStore(path.join(baseDir, '.lumenflow', 'state'));
@@ -1290,14 +1293,15 @@ async function ensureNoAutoStagedOrNoop(
   const staged = await listStaged();
   const isStaged = (p: string): boolean =>
     staged.some((name: string) => name === p || name.startsWith(`${p}/`));
-  const present = paths.filter(Boolean).filter((p) => isStaged(p));
+  const definedPaths = paths.filter((p): p is string => typeof p === 'string' && p.length > 0);
+  const present = definedPaths.filter((p) => isStaged(p));
   if (present.length === 0) {
     console.log(
       `${LOG_PREFIX.DONE} No staged changes detected for --no-auto; treating as no-op finalisation (repo already in done state)`,
     );
     return { noop: true };
   }
-  const missing = paths.filter(Boolean).filter((p) => !isStaged(p));
+  const missing = definedPaths.filter((p) => !isStaged(p));
   if (missing.length > 0) {
     die(`Stage updates for: ${missing.join(', ')}`);
   }
@@ -2506,7 +2510,7 @@ async function executeGates({
   // WU-1588: Create pre-gates checkpoint for recovery if gates fail
   // Non-blocking: failures handled internally by createPreGatesCheckpoint
   // WU-1749 Bug 5: Pass worktreePath as baseDir to write to worktree's wu-events.jsonl, not main's
-  await createPreGatesCheckpoint(id, worktreePath, worktreePath);
+  await createPreGatesCheckpoint(id, worktreePath, worktreePath || process.cwd());
 
   // P0 EMERGENCY FIX: Restore wu-events.jsonl after checkpoint creation
   // WU-1748 added checkpoint persistence to wu-events.jsonl but doesn't commit it,
@@ -3043,6 +3047,9 @@ async function main() {
         // Worktree mode: update in worktree, commit, then merge or create PR
         // WU-1369: Uses atomic transaction pattern
         // WU-1541: Create worktree-aware validateStagedFiles to avoid process.chdir dependency
+        if (!worktreePath) {
+          die(`Missing worktree path for ${id} completion in worktree mode`);
+        }
         const worktreeGitForValidation = createGitForPath(worktreePath);
         const worktreeContext = {
           ...baseContext,
@@ -3169,10 +3176,13 @@ async function main() {
   try {
     const sessionResult = endSessionForWU();
     if (sessionResult.ended) {
+      const sessionId = sessionResult.summary?.session_id;
+      if (sessionId) {
       // Emergency fix Session 2: Use SESSION.ID_DISPLAY_LENGTH constant
-      console.log(
-        `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Agent session ended (${sessionResult.summary.session_id.slice(0, SESSION.ID_DISPLAY_LENGTH)}...)`,
-      );
+        console.log(
+          `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Agent session ended (${sessionId.slice(0, SESSION.ID_DISPLAY_LENGTH)}...)`,
+        );
+      }
     }
     // No warning if no active session - silent no-op is expected
   } catch (err) {
@@ -3330,10 +3340,10 @@ async function loadDiscoveriesForWU(
   try {
     const memory = await loadMemory(path.join(baseDir, '.lumenflow/memory'));
     const wuNodes = memory.byWu.get(wuId) || [];
-    const discoveries = wuNodes.filter((node) => node.type === 'discovery');
+    const discoveries = wuNodes.filter((node: any) => node.type === 'discovery');
     return {
       count: discoveries.length,
-      ids: discoveries.map((d) => d.id),
+      ids: discoveries.map((d: any) => d.id),
     };
   } catch {
     // Non-blocking: return empty on errors

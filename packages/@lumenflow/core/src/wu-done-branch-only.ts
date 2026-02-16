@@ -52,13 +52,22 @@ import { createPR, printPRCreatedMessage, WU_DONE_COMPLETION_MODES } from './wu-
 
 export const LANE_SIGNALS_NDJSON = path.join(LUMENFLOW_PATHS.TELEMETRY, 'lane-signals.ndjson');
 
+interface LaneCompletionSignalParams {
+  wuId: string;
+  lane?: string;
+  laneBranch?: string | null;
+  completionMode: string;
+  gitAdapter?: ReturnType<typeof getGitForCwd>;
+  emitFn?: typeof emit;
+}
+
 /**
  * Parse git diff --name-only output into actual file paths.
  *
  * @param {string} diffOutput - Raw diff output
  * @returns {string[]} Parsed file paths
  */
-export function parseActualFilesFromDiffOutput(diffOutput) {
+export function parseActualFilesFromDiffOutput(diffOutput: any) {
   return String(diffOutput)
     .split('\n')
     .map((line) => line.trim())
@@ -73,7 +82,7 @@ export function parseActualFilesFromDiffOutput(diffOutput) {
  * @param {object} [gitAdapter] - Optional git adapter (test injection)
  * @returns {Promise<string[]>} List of changed files
  */
-export async function collectActualFilesForLaneBranch(laneBranch, gitAdapter = getGitForCwd()) {
+export async function collectActualFilesForLaneBranch(laneBranch: any, gitAdapter = getGitForCwd()) {
   if (!laneBranch) return [];
   try {
     const diffOutput = await gitAdapter.raw([
@@ -109,7 +118,7 @@ export async function emitLaneSignalForCompletion({
   completionMode,
   gitAdapter = getGitForCwd(),
   emitFn = emit,
-}) {
+}: LaneCompletionSignalParams) {
   try {
     const actualFiles = await collectActualFilesForLaneBranch(laneBranch, gitAdapter);
     emitFn(LANE_SIGNALS_NDJSON, {
@@ -152,7 +161,7 @@ export async function emitLaneSignalForCompletion({
  * @returns {Promise<BranchOnlyResult>} Completion result
  * @throws {Error} On validation or git operation failure
  */
-export async function executeBranchOnlyCompletion(context) {
+export async function executeBranchOnlyCompletion(context: any) {
   const {
     id,
     args,
@@ -335,7 +344,7 @@ export async function executeBranchOnlyCompletion(context) {
 
   // Check for zombie state (recovery mode)
   if (detectZombieState(docForUpdate, null)) {
-    await recoverZombieState({ id, doc: docForUpdate, _worktreePath: null, _args: args });
+    await recoverZombieState({ id, doc: docForUpdate, _worktreePath: undefined, _args: args });
     console.log(`\n${RECOVERY.SUCCESS}`);
     console.log(`- WU: ${id} — ${title}`);
     return { success: true, committed: false, pushed: false, merged, recovered: true };
@@ -490,7 +499,7 @@ export async function executeBranchOnlyCompletion(context) {
  * @returns {Promise<BranchPRResult>} Completion result
  * @throws {Error} On validation or git operation failure
  */
-export async function executeBranchPRCompletion(context) {
+export async function executeBranchPRCompletion(context: any) {
   const { id, args, docMain, title, laneBranch, isDocsOnly, maxCommitLength, validateStagedFiles } =
     context;
 

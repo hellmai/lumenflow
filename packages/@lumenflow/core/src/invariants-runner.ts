@@ -134,6 +134,13 @@ function validateRequiredFile(
   invariant: InvariantDefinition,
   baseDir: string,
 ): InvariantDefinition | null {
+  if (typeof invariant.path !== 'string') {
+    return {
+      ...invariant,
+      valid: false,
+      path: invariant.path,
+    };
+  }
   const fullPath = path.join(baseDir, invariant.path);
 
   if (!existsSync(fullPath)) {
@@ -158,6 +165,9 @@ function validateForbiddenFile(
   invariant: InvariantDefinition,
   baseDir: string,
 ): InvariantDefinition | null {
+  if (typeof invariant.path !== 'string') {
+    return null;
+  }
   const fullPath = path.join(baseDir, invariant.path);
 
   if (existsSync(fullPath)) {
@@ -381,6 +391,7 @@ function validateForbiddenImport(
       // Check each forbidden module pattern
       for (let i = 0; i < forbiddenModulePatterns.length; i++) {
         const pattern = forbiddenModulePatterns[i];
+        if (!pattern) continue;
         const moduleName = cannot_import[i] ?? 'unknown-module';
 
         if (pattern.test(content)) {

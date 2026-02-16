@@ -102,7 +102,7 @@ const LOG_PREFIX = '[delegation-recovery]';
  * @param {string} lane - Lane name (e.g., "Operations: Tooling")
  * @returns {string} Kebab-case lane name (e.g., "operations-tooling")
  */
-function laneToKebab(lane) {
+function laneToKebab(lane: any) {
   return toKebab(lane);
 }
 
@@ -112,7 +112,7 @@ function laneToKebab(lane) {
  * @param {string} baseDir - Base directory
  * @returns {string} Path to .lumenflow/recovery/
  */
-function getRecoveryDir(baseDir) {
+function getRecoveryDir(baseDir: any) {
   return path.join(baseDir, LUMENFLOW_PATHS.BASE, RECOVERY_DIR_NAME);
 }
 
@@ -123,7 +123,7 @@ function getRecoveryDir(baseDir) {
  * @param {AuditLogEntry} entry - Audit log entry
  * @returns {Promise<void>}
  */
-async function createAuditLog(baseDir, entry) {
+async function createAuditLog(baseDir: any, entry: any) {
   const recoveryDir = getRecoveryDir(baseDir);
   await fs.mkdir(recoveryDir, { recursive: true });
 
@@ -169,6 +169,9 @@ async function getLastCheckpoint(
     checkpoints.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     const latest = checkpoints[0];
+    if (!latest) {
+      return null;
+    }
     return {
       timestamp: latest.timestamp,
       content: '',
@@ -185,7 +188,7 @@ async function getLastCheckpoint(
  * @param {string|null} checkpointTimestamp - ISO timestamp of last checkpoint
  * @returns {boolean} True if checkpoint is recent (within 1 hour)
  */
-function isCheckpointRecent(checkpointTimestamp) {
+function isCheckpointRecent(checkpointTimestamp: any) {
   if (!checkpointTimestamp) {
     return false;
   }
@@ -220,7 +223,7 @@ export interface RecoverStuckDelegationOptions {
 }
 
 export async function recoverStuckDelegation(
-  delegationId,
+  delegationId: any,
   options: RecoverStuckDelegationOptions = {},
 ) {
   const { baseDir = process.cwd() } = options;

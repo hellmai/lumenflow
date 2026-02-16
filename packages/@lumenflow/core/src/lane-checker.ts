@@ -775,6 +775,9 @@ function collectInProgressWUsForLane(
 
   for (const match of matches) {
     const activeWuid = match[1]; // e.g., "WU-334"
+    if (!activeWuid) {
+      continue;
+    }
     const matchedWu = checkWuLaneMatch(activeWuid, wuid, projectRoot, targetLane);
     if (matchedWu) {
       inProgressWUs.push(matchedWu);

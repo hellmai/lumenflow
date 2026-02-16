@@ -63,7 +63,7 @@ const PREFIX = LOG_PREFIX.REPAIR;
  * @param {string} id - Raw WU ID
  * @returns {string} Normalised WU ID
  */
-function normaliseWUId(id) {
+function normaliseWUId(id: any) {
   if (!id) return id;
   let normalised = id.toUpperCase();
   if (!normalised.startsWith('WU-')) {
@@ -77,7 +77,7 @@ function normaliseWUId(id) {
  * @param {string} id - WU ID to validate
  * @returns {boolean} True if valid
  */
-function isValidWUId(id) {
+function isValidWUId(id: any) {
   return PATTERNS.WU_ID.test(id);
 }
 
@@ -123,7 +123,7 @@ function createProgram() {
 /**
  * Validate options and exit with error if invalid
  */
-function validateOptions(options) {
+function validateOptions(options: any) {
   // Validate mode selection - only one mode at a time
   const modes = [options.claim, options.admin, options.repairState].filter(Boolean);
   if (modes.length > 1) {
@@ -147,7 +147,7 @@ function validateOptions(options) {
 /**
  * Validate mode-specific requirements
  */
-function validateModeRequirements(options) {
+function validateModeRequirements(options: any) {
   if (options.claim && !options.id) {
     console.error(`${PREFIX} Error: --id is required for claim mode`);
     console.error(`${PREFIX} Usage: pnpm wu:repair --claim --id WU-123`);
@@ -187,7 +187,7 @@ function validateModeRequirements(options) {
  * @param {string} [options.path] - Path to state file (defaults to .lumenflow/state/wu-events.jsonl)
  * @returns {Promise<{success: boolean, exitCode: number}>}
  */
-async function runStateRepairMode(options) {
+async function runStateRepairMode(options: any) {
   // Default path is .lumenflow/state/wu-events.jsonl relative to cwd
   const defaultPath = path.join(process.cwd(), '.lumenflow', 'state', WU_EVENTS_FILE_NAME);
   const filePath = options.path || defaultPath;
@@ -228,7 +228,7 @@ async function runStateRepairMode(options) {
 /**
  * Route to appropriate repair mode
  */
-async function routeToRepairMode(options) {
+async function routeToRepairMode(options: any) {
   if (options.claim) {
     return runClaimRepairMode(options);
   }
@@ -261,3 +261,4 @@ if (import.meta.main) {
 
 // Export for testing
 export { normaliseWUId, isValidWUId, runStateRepairMode };
+

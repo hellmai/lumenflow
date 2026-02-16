@@ -23,7 +23,7 @@
  * @param {string} message - Commit message (first line only)
  * @returns {string} Message with lowercased subject
  */
-export function lowercaseCommitSubject(message) {
+export function lowercaseCommitSubject(message: any) {
   if (!message || typeof message !== 'string') {
     return message;
   }
@@ -42,3 +42,4 @@ export function lowercaseCommitSubject(message) {
   // No conventional format - lowercase entire message
   return message.toLowerCase();
 }
+

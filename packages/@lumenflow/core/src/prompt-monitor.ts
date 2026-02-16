@@ -38,17 +38,23 @@ const NDJSON_LOG_PATH = resolve(ROOT_DIR, LUMENFLOW_PATHS.TELEMETRY, 'prompt-nig
 const WARN_THRESHOLD = 400;
 const DELTA_THRESHOLD = 50;
 
+interface PromptMetricsEntry {
+  tokenCount: number;
+  hash: string;
+  timestamp?: string;
+}
+
 /**
  * Load yesterday's metrics
  */
-async function loadYesterdayMetrics() {
+async function loadYesterdayMetrics(): Promise<Record<string, PromptMetricsEntry>> {
   try {
     const exists = await access(YESTERDAY_METRICS_PATH)
       .then(() => true)
       .catch(() => false);
     if (exists) {
       const data = await readFile(YESTERDAY_METRICS_PATH, { encoding: 'utf-8' });
-      return JSON.parse(data);
+      return JSON.parse(data) as Record<string, PromptMetricsEntry>;
     }
   } catch (error) {
     console.error('Failed to load yesterday metrics:', error);
@@ -59,7 +65,7 @@ async function loadYesterdayMetrics() {
 /**
  * Save today's metrics
  */
-async function saveMetrics(metrics) {
+async function saveMetrics(metrics: Record<string, PromptMetricsEntry>) {
   try {
     const dir = dirname(TODAY_METRICS_PATH);
     const dirExists = await access(dir)
@@ -77,7 +83,7 @@ async function saveMetrics(metrics) {
 /**
  * Log to NDJSON
  */
-async function log(event, data) {
+async function log(event: any, data: any) {
   const entry = {
     timestamp: new Date().toISOString(),
     event,
@@ -119,7 +125,7 @@ async function monitor() {
 
   // Load yesterday's metrics for delta calculation
   const yesterdayMetrics = await loadYesterdayMetrics();
-  const todayMetrics = {};
+  const todayMetrics: Record<string, PromptMetricsEntry> = {};
 
   let totalAlerts = 0;
 
@@ -173,7 +179,7 @@ async function monitor() {
       }
 
       // Alert: hash changed
-      if (hashChanged) {
+      if (hashChanged && yesterday) {
         totalAlerts++;
         await log('prompt.nightly.hash_changed', {
           prompt: filePath,

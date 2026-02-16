@@ -47,7 +47,7 @@ export const TOOL_DEPENDENCIES = Object.freeze({
  * @param {string} packageName - Name of the package to check
  * @returns {Promise<boolean>} True if package is available
  */
-async function canImport(packageName) {
+async function canImport(packageName: any) {
   try {
     await import(packageName);
     return true;
@@ -68,16 +68,16 @@ async function canImport(packageName) {
  *   console.error(`Missing: ${result.missing.join(', ')}`);
  * }
  */
-export async function validateDependencies(packages) {
+export async function validateDependencies(packages: any) {
   if (!packages || packages.length === 0) {
     return { valid: true, missing: [] };
   }
 
   // WU-1231: Validate packages in parallel using Promise.all
   // Previously sequential (for...of await) caused 5+ minute delays
-  const results = await Promise.all(packages.map((pkg) => canImport(pkg)));
+  const results = await Promise.all(packages.map((pkg: any) => canImport(pkg)));
 
-  const missing = packages.filter((_, index) => !results[index]);
+  const missing = packages.filter((_: any, index: any) => !results[index]);
 
   return {
     valid: missing.length === 0,
@@ -96,8 +96,8 @@ export async function validateDependencies(packages) {
  * const msg = formatDependencyError('wu:spawn', ['yaml']);
  * console.error(msg);
  */
-export function formatDependencyError(toolName, missing) {
-  const packageList = missing.map((p) => `  - ${p}`).join('\n');
+export function formatDependencyError(toolName: any, missing: any) {
+  const packageList = missing.map((p: any) => `  - ${p}`).join('\n');
 
   return `${EMOJI.FAILURE} ${toolName} cannot run: missing dependencies
 
@@ -152,8 +152,9 @@ export async function validateInboxDependencies() {
  *   process.exit(1);
  * }
  */
-export async function validateToolDependencies(toolName) {
-  const deps = TOOL_DEPENDENCIES[toolName] || [];
+export async function validateToolDependencies(toolName: string) {
+  const dependencyKey = toolName as keyof typeof TOOL_DEPENDENCIES;
+  const deps = dependencyKey in TOOL_DEPENDENCIES ? TOOL_DEPENDENCIES[dependencyKey] : [];
   const result = await validateDependencies(deps);
   return {
     ...result,

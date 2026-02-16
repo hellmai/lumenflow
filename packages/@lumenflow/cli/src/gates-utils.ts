@@ -228,7 +228,12 @@ export function createAgentLogContext({
   lane: string | null;
   cwd: string;
 }) {
-  const logPath = buildGatesLogPath({ cwd, env: process.env, wuId, lane });
+  const logPath = buildGatesLogPath({
+    cwd,
+    env: process.env,
+    wuId: wuId ?? undefined,
+    lane: lane ?? undefined,
+  });
   mkdirSync(path.dirname(logPath), { recursive: true });
   const logFd = openSync(logPath, 'a');
 

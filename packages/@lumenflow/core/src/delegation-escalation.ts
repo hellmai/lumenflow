@@ -106,7 +106,7 @@ export const SuggestedAction = Object.freeze({
  * @param {string} delegationId - Delegation ID to count attempts for
  * @returns {Promise<number>} Number of previous escalation attempts
  */
-async function countEscalationAttempts(baseDir, delegationId) {
+async function countEscalationAttempts(baseDir: any, delegationId: any) {
   // WU-1421: Use LUMENFLOW_PATHS.BASE for consistency
   const recoveryDir = path.join(baseDir, LUMENFLOW_PATHS.BASE, RECOVERY_DIR_NAME);
 
@@ -130,7 +130,7 @@ async function countEscalationAttempts(baseDir, delegationId) {
  * @param {number} attempts - Number of recovery attempts
  * @returns {{ severity: string, suggestedAction: string }}
  */
-function determineEscalationLevel(attempts) {
+function determineEscalationLevel(attempts: any) {
   if (attempts <= 1) {
     return {
       severity: SignalSeverity.WARNING,
@@ -156,7 +156,7 @@ function determineEscalationLevel(attempts) {
  * @param {string} delegationId - Delegation ID to find audit log for
  * @returns {Promise<AuditLogEntry|null>} Audit log entry or null if not found
  */
-async function findEscalationAuditLog(baseDir, delegationId) {
+async function findEscalationAuditLog(baseDir: any, delegationId: any) {
   // WU-1421: Use LUMENFLOW_PATHS.BASE for consistency
   const recoveryDir = path.join(baseDir, LUMENFLOW_PATHS.BASE, RECOVERY_DIR_NAME);
 
@@ -173,7 +173,11 @@ async function findEscalationAuditLog(baseDir, delegationId) {
     }
 
     // Read the most recent audit log
-    const auditPath = path.join(recoveryDir, delegationFiles[0]);
+    const latestFile = delegationFiles[0];
+    if (!latestFile) {
+      return null;
+    }
+    const auditPath = path.join(recoveryDir, latestFile);
     const content = await fs.readFile(auditPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
@@ -192,7 +196,7 @@ async function findEscalationAuditLog(baseDir, delegationId) {
  * @param {number} attempts - Number of recovery attempts
  * @returns {DelegationFailureSignal} Signal payload
  */
-function buildDelegationFailureSignal(delegation, auditLog, attempts) {
+function buildDelegationFailureSignal(delegation: any, auditLog: any, attempts: any) {
   const { severity, suggestedAction } = determineEscalationLevel(attempts);
   const lastCheckpoint = auditLog.context.lastCheckpoint || null;
 
@@ -246,7 +250,7 @@ export interface EscalateStuckDelegationOptions {
 }
 
 export async function escalateStuckDelegation(
-  delegationId,
+  delegationId: any,
   options: EscalateStuckDelegationOptions = {},
 ) {
   const { baseDir = process.cwd(), dryRun = false } = options;

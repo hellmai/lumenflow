@@ -116,13 +116,13 @@ const DANGEROUS_CHARS_REGEX = /[;&|`$]/;
 function parseShortlogFormat(line: string): { count: number; name: string } | null {
   // Skip leading whitespace
   let i = 0;
-  while (i < line.length && (line[i] === ' ' || line[i] === '\t')) {
+  while (i < line.length && (line.charAt(i) === ' ' || line.charAt(i) === '\t')) {
     i++;
   }
 
   // Parse digits
   const digitStart = i;
-  while (i < line.length && line[i] >= '0' && line[i] <= '9') {
+  while (i < line.length && line.charAt(i) >= '0' && line.charAt(i) <= '9') {
     i++;
   }
   if (i === digitStart) return null; // No digits found
@@ -130,7 +130,7 @@ function parseShortlogFormat(line: string): { count: number; name: string } | nu
   const count = parseInt(line.slice(digitStart, i), 10);
 
   // Skip whitespace after digits
-  while (i < line.length && (line[i] === ' ' || line[i] === '\t')) {
+  while (i < line.length && (line.charAt(i) === ' ' || line.charAt(i) === '\t')) {
     i++;
   }
 
@@ -333,7 +333,10 @@ function countFilePairs(commits: string[][]): Map<string, number> {
     // Generate all pairs
     for (let i = 0; i < files.length; i++) {
       for (let j = i + 1; j < files.length; j++) {
-        const pair = [files[i], files[j]]
+        const fileA = files[i];
+        const fileB = files[j];
+        if (!fileA || !fileB) continue;
+        const pair = [fileA, fileB]
           .slice()
           .sort((a, b) => a.localeCompare(b))
           .join('::');
@@ -377,6 +380,7 @@ export function getFileCoOccurrence(
     if (count >= 2) {
       // Only include pairs that co-occurred at least twice
       const [file1, file2] = pair.split('::');
+      if (!file1 || !file2) continue;
       coOccurrences.push({ file1, file2, count });
     }
   }
@@ -473,10 +477,14 @@ function parseNumstatLine(
 ): { additions: number; deletions: number; filePath: string } | null {
   const match = NUMSTAT_LINE_REGEX.exec(line);
   if (!match) return null;
+  const additions = match[1];
+  const deletions = match[2];
+  const filePath = match[3];
+  if (!additions || !deletions || !filePath) return null;
   return {
-    additions: match[1] === '-' ? 0 : parseInt(match[1], 10),
-    deletions: match[2] === '-' ? 0 : parseInt(match[2], 10),
-    filePath: match[3],
+    additions: additions === '-' ? 0 : parseInt(additions, 10),
+    deletions: deletions === '-' ? 0 : parseInt(deletions, 10),
+    filePath,
   };
 }
 

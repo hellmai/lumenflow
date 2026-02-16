@@ -19,7 +19,7 @@ const emailSchema = z.string().email();
  * @param {string} value - The string to validate
  * @returns {boolean} True if valid email, false otherwise
  */
-export function isValidEmail(value) {
+export function isValidEmail(value: any) {
   if (!value || typeof value !== 'string') {
     return false;
   }
@@ -38,7 +38,7 @@ export function isValidEmail(value) {
  * @returns {Promise<string>} Valid email address
  * @throws {Error} If no valid email can be determined
  */
-export async function getAssignedEmail(gitAdapter) {
+export async function getAssignedEmail(gitAdapter: any) {
   // Try git config user.email first (WU-1427: properly await async method)
   try {
     const gitEmail = await gitAdapter.getConfigValue('user.email');
@@ -68,3 +68,4 @@ export async function getAssignedEmail(gitAdapter) {
       '  OR export GIT_AUTHOR_EMAIL="you@example.com"',
   );
 }
+

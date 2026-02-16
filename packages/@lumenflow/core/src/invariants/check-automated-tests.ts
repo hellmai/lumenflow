@@ -55,7 +55,7 @@ interface CheckWUFileOptions {
  * @param {CheckWUFileOptions} [options={}] - Options
  * @returns {{ valid: boolean, wuId: string|null, error: string|null }} Check result
  */
-function checkWUFile(filePath, options: CheckWUFileOptions = {}) {
+function checkWUFile(filePath: any, options: CheckWUFileOptions = {}) {
   const { skipStatusCheck = false } = options;
 
   try {
@@ -100,7 +100,7 @@ function checkWUFile(filePath, options: CheckWUFileOptions = {}) {
  * @param {string[]} codePaths - Array of code paths
  * @returns {string[]} Code files that require automated tests
  */
-function getCodeFilesFromPaths(codePaths) {
+function getCodeFilesFromPaths(codePaths: any) {
   if (!codePaths || !Array.isArray(codePaths)) {
     return [];
   }
@@ -205,7 +205,7 @@ export function checkAutomatedTestsInvariant(options: CheckAutomatedTestsInvaria
  * @param {object} violation - Violation object
  * @returns {string} Formatted error message
  */
-export function formatAutomatedTestsViolation(violation) {
+export function formatAutomatedTestsViolation(violation: any) {
   const lines = [
     `INVARIANT VIOLATION: ${violation.id}`,
     `WU: ${violation.wuId}`,
@@ -223,3 +223,4 @@ export function formatAutomatedTestsViolation(violation) {
 
   return lines.join('\n');
 }
+

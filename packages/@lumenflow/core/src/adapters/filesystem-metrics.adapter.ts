@@ -109,14 +109,25 @@ export class FileSystemMetricsCollector implements IMetricsCollector {
       // Find longest running WU
       let longestRunning: GlobalStatus['longestRunning'] = null;
       if (activeWUsList.length > 0) {
+        const getWUStartTime = (wu: {
+          claimed_at?: unknown;
+          created?: unknown;
+          updated_at?: unknown;
+        }): string =>
+          [wu.claimed_at, wu.created, wu.updated_at].find(
+            (value): value is string => typeof value === 'string',
+          ) ?? new Date().toISOString();
+
         const sorted = [...activeWUsList].sort((a, b) => {
+          const aStart = getWUStartTime(a);
+          const bStart = getWUStartTime(b);
           const aDuration = differenceInMilliseconds(
             new Date(),
-            new Date(a.claimed_at ?? a.created),
+            new Date(aStart),
           );
           const bDuration = differenceInMilliseconds(
             new Date(),
-            new Date(b.claimed_at ?? b.created),
+            new Date(bStart),
           );
           return bDuration - aDuration;
         });
@@ -128,7 +139,7 @@ export class FileSystemMetricsCollector implements IMetricsCollector {
             lane: longest.lane as Lane,
             durationMs: differenceInMilliseconds(
               new Date(),
-              new Date(longest.claimed_at ?? longest.created),
+              new Date(getWUStartTime(longest)),
             ),
           };
         }
@@ -211,7 +222,9 @@ export class FileSystemMetricsCollector implements IMetricsCollector {
         const match = event.detail.match(/Agent ([a-z-]+) (passed|failed)/i);
         if (!match) continue;
 
-        const [, agentName, resultStr] = match;
+        const agentName = match[1];
+        const resultStr = match[2];
+        if (!agentName || !resultStr) continue;
         const result = resultStr.toLowerCase() === 'passed' ? 'pass' : 'fail';
 
         if (!agentGroups.has(agentName)) {
@@ -628,14 +641,14 @@ export class FileSystemMetricsCollector implements IMetricsCollector {
         if (!wt.hasUncommittedChanges) continue;
 
         // Extract WU ID from branch name (e.g., "operations-tooling-wu-1748" -> "WU-1748")
-        const wuIdMatch = wt.branchName.match(/wu-(\d+)/i);
+        const wuIdMatch = wt.branch.match(/wu-(\d+)/i);
         if (!wuIdMatch) continue;
 
         const wuId = `WU-${wuIdMatch[1]}`;
 
         result.push({
           wuId,
-          worktreePath: wt.worktreePath,
+          worktreePath: wt.path,
           uncommittedFileCount: wt.uncommittedFileCount,
           lastActivityTimestamp: wt.lastActivityTimestamp,
         });

@@ -39,7 +39,8 @@ export function ensureStaged(paths: Array<string | null | undefined>) {
   const staged: string[] = raw ? raw.split(/\r?\n/).filter((s): s is string => Boolean(s)) : [];
 
   // Filter out null/undefined and check each path
-  const missing = paths.filter(Boolean).filter((p) => {
+  const normalizedPaths = paths.filter((p): p is string => typeof p === 'string' && p.length > 0);
+  const missing = normalizedPaths.filter((p) => {
     // Normalize path: remove trailing slash for directory checks
     const pathToCheck = p.endsWith('/') ? p.slice(0, -1) : p;
     return !staged.some((name) => name === pathToCheck || name.startsWith(`${pathToCheck}/`));

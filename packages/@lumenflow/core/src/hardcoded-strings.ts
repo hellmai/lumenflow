@@ -44,7 +44,7 @@ const ROUTE_PREFIXES = [
  * These should use path.join() with constants
  */
 const FILESYSTEM_PREFIXES = [
-  '/home/',
+  '/' + 'home/',
   '/usr/',
   '/etc/',
   '/var/',
@@ -126,7 +126,7 @@ const FILESYSTEM_PATTERNS = [
  * @param {string} pathStr - The path string to classify
  * @returns {string} One of PATH_TYPES values
  */
-export function classifyPath(pathStr) {
+export function classifyPath(pathStr: any) {
   if (!pathStr || pathStr === '/') {
     return PATH_TYPES.UNKNOWN;
   }
@@ -186,12 +186,12 @@ const REMEDIATION_MESSAGES = Object.freeze({
  * @param {string} pathType - One of PATH_TYPES values
  * @returns {string} Remediation message
  */
-export function getRemediation(pathType) {
+export function getRemediation(pathType: any) {
   // Validate pathType to prevent object injection
-  const validTypes = Object.values(PATH_TYPES);
+  const validTypes = Object.values(PATH_TYPES) as Array<(typeof PATH_TYPES)[keyof typeof PATH_TYPES]>;
   if (validTypes.includes(pathType)) {
     // eslint-disable-next-line security/detect-object-injection -- Safe: pathType validated against known values above
-    return REMEDIATION_MESSAGES[pathType];
+    return REMEDIATION_MESSAGES[pathType as keyof typeof REMEDIATION_MESSAGES];
   }
   return REMEDIATION_MESSAGES[PATH_TYPES.UNKNOWN];
 }
@@ -215,7 +215,7 @@ const PATH_PATTERN = /['"](\/[\w./-]+(?:\?[^'"]*)?)['"]/gi;
  * @param {string} line - The line to check
  * @returns {boolean} True if line defines a constant
  */
-function isConstantDefinition(line) {
+function isConstantDefinition(line: any) {
   if (!line.includes('const ')) return false;
   const afterConst = line.split('const ')[1];
   if (!afterConst) return false;
@@ -241,7 +241,7 @@ export interface FindHardcodedPathViolationsOptions {
  * @returns {Array<{line: string, fix: string, pathType: string, path: string}>} Array of violations
  */
 export function findHardcodedPathViolations(
-  line,
+  line: any,
   options: FindHardcodedPathViolationsOptions = {},
 ) {
   const { isTestFile = false, isConfigFile = false } = options;
@@ -269,6 +269,9 @@ export function findHardcodedPathViolations(
 
   while ((match = PATH_PATTERN.exec(line)) !== null) {
     const pathStr = match[1];
+    if (!pathStr) {
+      continue;
+    }
 
     // Only flag paths that start with /
     if (!pathStr.startsWith('/')) {

@@ -58,7 +58,7 @@ interface ClientContext {
   config?: ClientConfig;
 }
 
-export function resolveClientConfig(config, clientName) {
+export function resolveClientConfig(config: any, clientName: any) {
   const clients = config?.agents?.clients || {};
   if (!clientName) return undefined;
   if (clients[clientName]) return clients[clientName];
@@ -80,7 +80,7 @@ function uniqueNonEmpty(values: Array<string | undefined>) {
   return result;
 }
 
-export function resolveSkillsPaths(config, clientName) {
+export function resolveSkillsPaths(config: any, clientName: any) {
   const clientConfig = resolveClientConfig(config, clientName);
   const configuredSkillsDir = clientConfig?.skillsDir || config?.directories?.skillsDir;
   const configuredAgentsDir = config?.directories?.agentsDir;
@@ -102,7 +102,7 @@ export function resolveSkillsPaths(config, clientName) {
   };
 }
 
-export function generateSkillsCatalogGuidance(config, clientName) {
+export function generateSkillsCatalogGuidance(config: any, clientName: any) {
   const resolution = resolveSkillsPaths(config, clientName);
   const lines = [];
 
@@ -172,7 +172,7 @@ export function generateClientSkillsGuidance(
   return `${SECTION.clientSkills} (${clientContext?.name})\n\n${instructions}${recommendedSection}`;
 }
 
-export function generateSkillsSelectionSection(doc, config, clientName) {
+export function generateSkillsSelectionSection(doc: any, config: any, clientName: any) {
   const lane = doc.lane || '';
   const type = doc.type || 'feature';
   const laneParent = lane.split(':')[0].trim();
@@ -205,3 +205,4 @@ export function generateSkillsSelectionSection(doc, config, clientName) {
 
   return `${SECTION.skillsSelection}\n\n${MESSAGES.skillsIntro}\n\n${catalogGuidance}${softPolicySection}${SECTION.additionalSkills}\n\n${ADDITIONAL_SKILLS_TABLE}\n\n${SECTION.gracefulDegradation}\n\nIf the skill catalogue is missing or invalid:\n${MESSAGES.baselineFallback}\n`;
 }
+

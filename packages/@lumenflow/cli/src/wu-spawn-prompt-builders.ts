@@ -283,15 +283,25 @@ export function generateImplementationContext(doc: WUDocument): string {
 function codePathMatchesInvariant(invariant: Invariant, codePaths: string[]): boolean {
   switch (invariant.type) {
     case INVARIANT_TYPES.FORBIDDEN_FILE:
-    case INVARIANT_TYPES.REQUIRED_FILE:
+    case INVARIANT_TYPES.REQUIRED_FILE: {
+      const invariantPath = invariant.path;
+      if (!invariantPath) {
+        return false;
+      }
       return codePaths.some(
-        (p) => p === invariant.path || minimatch(p, invariant.path) || minimatch(invariant.path, p),
+        (p) => p === invariantPath || minimatch(p, invariantPath) || minimatch(invariantPath, p),
       );
+    }
 
-    case INVARIANT_TYPES.MUTUAL_EXCLUSIVITY:
+    case INVARIANT_TYPES.MUTUAL_EXCLUSIVITY: {
+      const invariantPaths = invariant.paths;
+      if (!invariantPaths || invariantPaths.length === 0) {
+        return false;
+      }
       return codePaths.some((p) =>
-        invariant.paths.some((invPath) => p === invPath || minimatch(p, invPath)),
+        invariantPaths.some((invPath) => p === invPath || minimatch(p, invPath)),
       );
+    }
 
     case INVARIANT_TYPES.FORBIDDEN_PATTERN:
     case INVARIANT_TYPES.REQUIRED_PATTERN:
@@ -303,7 +313,7 @@ function codePathMatchesInvariant(invariant: Invariant, codePaths: string[]): bo
 
     // WU-2254: forbidden-import uses 'from' glob instead of 'scope'
     case INVARIANT_TYPES.FORBIDDEN_IMPORT:
-      return invariant.from ? codePaths.some((p) => minimatch(p, invariant.from)) : false;
+      return invariant.from ? codePaths.some((p) => minimatch(p, invariant.from!)) : false;
 
     default:
       return false;
@@ -1051,7 +1061,7 @@ export function generateTaskInvocation(
   // WU-1288: Use policy-based test guidance that respects methodology.testing config
   // WU-1253: Try template first, fall back to policy-based guidance
   const testGuidance =
-    templates.get('tdd-directive') || generatePolicyBasedTestGuidance(doc.type, policy);
+    templates.get('tdd-directive') || generatePolicyBasedTestGuidance(doc.type || 'feature', policy);
 
   // WU-1288: Generate enforcement summary from resolved policy
   const enforcementSummary = generateEnforcementSummary(policy);
@@ -1099,11 +1109,12 @@ export function generateTaskInvocation(
 
   // WU-2362: Worktree path guidance for sub-agents
   const worktreeGuidance = generateWorktreePathGuidance(doc.worktree_path);
+  const worktreePathHint = doc.worktree_path || `worktrees/<lane>-${id.toLowerCase()}`;
 
   // WU-1134: Worktree block recovery guidance
   // WU-1253: Try template for worktree-recovery
   const worktreeBlockRecovery =
-    templates.get('worktree-recovery') || generateWorktreeBlockRecoverySection(doc.worktree_path);
+    templates.get('worktree-recovery') || generateWorktreeBlockRecoverySection(worktreePathHint);
 
   // WU-1240: Memory context section
   // Include if explicitly enabled and not disabled via noContext
@@ -1253,7 +1264,7 @@ export function generateCodexPrompt(
 
   const preamble = generatePreamble(id, strategy);
   // WU-1142: Use type-aware test guidance instead of hardcoded TDD directive
-  const testGuidance = generateTestGuidance(doc.type);
+  const testGuidance = generateTestGuidance(doc.type || 'feature');
   const mandatorySection = generateMandatoryAgentSection(mandatoryAgents, id);
   const laneGuidance = generateLaneGuidance(doc.lane);
   const bugDiscoverySection = generateBugDiscoverySection(id);
@@ -1277,7 +1288,8 @@ export function generateCodexPrompt(
   const thinkingBlock = thinkingSections ? `${thinkingSections}\n\n---\n\n` : '';
 
   // WU-1134: Worktree block recovery guidance
-  const worktreeBlockRecovery = generateWorktreeBlockRecoverySection(doc.worktree_path);
+  const worktreePathHint = doc.worktree_path || `worktrees/<lane>-${id.toLowerCase()}`;
+  const worktreeBlockRecovery = generateWorktreeBlockRecoverySection(worktreePathHint);
 
   // WU-1240: Memory context section
   const shouldIncludeMemoryContext = options.includeMemoryContext && !options.noContext;

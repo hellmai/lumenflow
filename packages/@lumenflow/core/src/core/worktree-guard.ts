@@ -99,7 +99,7 @@ export async function isMainBranch(options: GitOptions = {}) {
  * @returns {string} Path with forward slashes
  * @private
  */
-function normalizePath(p) {
+function normalizePath(p: any) {
   // Replace both backslashes and path.sep with forward slashes
   // This handles Windows paths on Linux during testing
   return p.replace(/\\/g, '/').split(path.sep).join('/');
@@ -139,7 +139,7 @@ export function isInWorktree(options: CwdOptions = {}) {
  * @returns {Object|null} Context object or null if not a worktree path
  * @private
  */
-function extractFromWorktreePath(cwd) {
+function extractFromWorktreePath(cwd: any) {
   const normalizedPath = normalizePath(cwd);
   const match = normalizedPath.match(WORKTREE_PATH_PATTERN);
 
@@ -168,7 +168,7 @@ function extractFromWorktreePath(cwd) {
  * @returns {Promise<Object|null>} Context object or null if not a lane branch
  * @private
  */
-async function extractFromBranch(git) {
+async function extractFromBranch(git: any) {
   const branch = await git.getCurrentBranch();
   const match = branch.match(LANE_BRANCH_PATTERN);
 
@@ -301,3 +301,4 @@ For more information:
   // Pass if on a non-main branch (e.g., feature branch) - allow for flexibility
   // This case is less strict since it's not the main branch
 }
+

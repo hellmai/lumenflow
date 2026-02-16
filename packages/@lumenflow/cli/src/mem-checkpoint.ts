@@ -78,7 +78,7 @@ const CLI_OPTIONS = {
  * @param {string} baseDir - Base directory
  * @param {object} entry - Audit log entry
  */
-async function writeAuditLog(baseDir, entry) {
+async function writeAuditLog(baseDir: any, entry: any) {
   try {
     const logPath = path.join(baseDir, LUMENFLOW_PATHS.AUDIT_LOG);
     const logDir = path.dirname(logPath);
@@ -132,7 +132,7 @@ function parseArguments() {
  *
  * @param {object} checkpoint - The checkpoint node
  */
-function printCheckpointDetails(checkpoint) {
+function printCheckpointDetails(checkpoint: any) {
   console.log(`${LOG_PREFIX} Checkpoint created (${checkpoint.id})`);
   console.log('');
   console.log('Checkpoint Details:');
@@ -163,7 +163,7 @@ function printCheckpointDetails(checkpoint) {
  *
  * @param {object} metadata - Checkpoint metadata
  */
-function printMetadata(metadata) {
+function printMetadata(metadata: any) {
   console.log('');
   console.log('Metadata:');
   if (metadata.progress) {
@@ -195,8 +195,8 @@ async function main() {
   const startedAt = new Date().toISOString();
   const startTime = Date.now();
 
-  let result;
-  let error = null;
+  let result: Awaited<ReturnType<typeof createCheckpoint>> | null = null;
+  let error: string | null = null;
 
   try {
     result = await createCheckpoint(baseDir, {
@@ -207,8 +207,8 @@ async function main() {
       nextSteps: args.nextSteps,
       trigger: args.trigger,
     });
-  } catch (err) {
-    error = err.message;
+  } catch (err: unknown) {
+    error = err instanceof Error ? err.message : String(err);
   }
 
   const durationMs = Date.now() - startTime;
@@ -232,7 +232,7 @@ async function main() {
       ? {
           success: result.success,
           checkpointId: result.checkpoint?.id,
-          wuId: result.checkpoint?.wu_id,
+          wuId: args.wu,
         }
       : null,
     error: error ? { message: error } : null,
@@ -240,6 +240,11 @@ async function main() {
 
   if (error) {
     console.error(`${LOG_PREFIX} Error: ${error}`);
+    process.exit(EXIT_CODES.ERROR);
+  }
+
+  if (!result) {
+    console.error(`${LOG_PREFIX} Error: checkpoint creation failed with no result`);
     process.exit(EXIT_CODES.ERROR);
   }
 

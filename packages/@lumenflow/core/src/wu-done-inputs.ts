@@ -11,7 +11,7 @@ import { EXIT_CODES, PATTERNS } from './wu-constants.js';
  * @param {string[]} argv - Process arguments
  * @returns {{ args: object, id: string }} Parsed args and validated WU ID
  */
-export function validateInputs(argv) {
+export function validateInputs(argv: any) {
   const args = parseWUArgs(argv);
   if (args.help || !args.id) {
     console.log(
@@ -58,3 +58,4 @@ export function validateInputs(argv) {
 
   return { args, id };
 }
+

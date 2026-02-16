@@ -15,7 +15,9 @@ import { listInitiatives, getInitiativeProgress } from '@lumenflow/initiatives/y
 import { OUTPUT_FORMATS } from '@lumenflow/initiatives/constants';
 import Table from 'cli-table3';
 
-function renderTable(initiatives, useColor) {
+type InitiativeEntry = ReturnType<typeof listInitiatives>[number];
+
+function renderTable(initiatives: InitiativeEntry[], useColor: boolean) {
   if (initiatives.length === 0) {
     console.log('No initiatives found.');
     return;
@@ -33,16 +35,19 @@ function renderTable(initiatives, useColor) {
     const progress = getInitiativeProgress(id);
     const progressPct = `${progress.percentage}%`;
     const wuCount = `${progress.done}/${progress.total}`;
+    const title = typeof doc.title === 'string' ? doc.title : undefined;
+    const status = typeof doc.status === 'string' ? doc.status : 'unknown';
 
-    table.push([id, truncate(doc.title, 33), doc.status, progressPct, wuCount]);
+    table.push([id, truncate(title, 33), status, progressPct, wuCount]);
   }
 
   console.log(table.toString());
 
   // Summary
-  const statusCounts = {};
+  const statusCounts: Record<string, number> = {};
   for (const { doc } of initiatives) {
-    statusCounts[doc.status] = (statusCounts[doc.status] || 0) + 1;
+    const status = typeof doc.status === 'string' ? doc.status : 'unknown';
+    statusCounts[status] = (statusCounts[status] || 0) + 1;
   }
   const summary = Object.entries(statusCounts)
     .map(([status, count]) => `${count} ${status}`)
@@ -50,7 +55,7 @@ function renderTable(initiatives, useColor) {
   console.log(`\nTotal: ${initiatives.length} initiatives (${summary})`);
 }
 
-function renderJSON(initiatives) {
+function renderJSON(initiatives: InitiativeEntry[]) {
   const output = initiatives.map(({ id, doc }) => {
     const progress = getInitiativeProgress(id);
     return {
@@ -73,7 +78,7 @@ function renderJSON(initiatives) {
   console.log(JSON.stringify(output, null, 2));
 }
 
-function truncate(str, maxLen) {
+function truncate(str: string | undefined, maxLen: number): string {
   if (!str) return '';
   return str.length > maxLen ? `${str.substring(0, maxLen - 3)}...` : str;
 }
@@ -105,7 +110,7 @@ async function main() {
       break;
     case OUTPUT_FORMATS.TABLE:
     default:
-      renderTable(initiatives, args.color);
+      renderTable(initiatives, Boolean(args.color));
       break;
   }
 }

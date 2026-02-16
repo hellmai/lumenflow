@@ -9,20 +9,21 @@ import { createError, ErrorCodes } from './error-handler.js';
 /**
  * Create a validation error for wu:done validators.
  */
-export function createValidationError(message, details = {}) {
+export function createValidationError(message: any, details = {}) {
   return createError(ErrorCodes.VALIDATION_ERROR, message, details);
 }
 
 /**
  * Create a file-not-found error for wu:done validators.
  */
-export function createFileNotFoundError(message, details = {}) {
+export function createFileNotFoundError(message: any, details = {}) {
   return createError(ErrorCodes.FILE_NOT_FOUND, message, details);
 }
 
 /**
  * Create a recovery error for wu:done recovery flows.
  */
-export function createRecoveryError(message, details = {}) {
+export function createRecoveryError(message: any, details = {}) {
   return createError(ErrorCodes.RECOVERY_ERROR, message, details);
 }
+

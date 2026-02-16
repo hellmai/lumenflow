@@ -68,7 +68,7 @@ export const LOG_SOURCES = [
  * @param {string} line - JSON log line
  * @returns {object|null} Parsed log object or null if invalid
  */
-export function parseLogLine(line) {
+export function parseLogLine(line: any) {
   if (!line || typeof line !== 'string') {
     return null;
   }
@@ -148,7 +148,7 @@ export function filterLogs(logs: LogEntry[], options: FilterLogsOptions = {}): L
  * @param {string} source - Source identifier for tagging
  * @returns {object[]} Parsed log entries with _source field
  */
-function readLogFile(filePath, source) {
+function readLogFile(filePath: any, source: any) {
   if (!existsSync(filePath)) {
     return [];
   }
@@ -222,7 +222,10 @@ export function parseLogsArgs(args: string[]): ParsedLogsArgs {
 
     if (arg === '--last') {
       i++;
-      result.last = parseInt(args[i], 10);
+      const lastArg = args[i];
+      if (typeof lastArg === 'string' && lastArg.length > 0) {
+        result.last = parseInt(lastArg, 10);
+      }
     } else if (arg === '--level') {
       i++;
       result.level = args[i];
@@ -276,7 +279,7 @@ export function formatLogEntry(log: LogEntry) {
 
   // Build metadata string excluding known fields
   const knownFields = ['time', 'level', 'msg', 'message', 'event', '_source'];
-  const meta = {};
+  const meta: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(log)) {
     if (!knownFields.includes(key)) {
       meta[key] = value;

@@ -44,7 +44,11 @@ export function parseWuIdNumber(wuIdOrFilename: string): number | null {
     return null;
   }
 
-  const num = parseInt(regexResult[1], 10);
+  const idSegment = regexResult[1];
+  if (!idSegment) {
+    return null;
+  }
+  const num = parseInt(idSegment, 10);
   return isNaN(num) ? null : num;
 }
 

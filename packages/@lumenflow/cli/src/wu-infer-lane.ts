@@ -23,8 +23,14 @@ import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM, EXIT_CODES } from '@lumenflow/core/wu-constants';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 
-function parseArgs(argv) {
-  const args = { paths: [], desc: '', id: null };
+interface InferLaneArgs {
+  paths: string[];
+  desc: string;
+  id: string | null;
+}
+
+function parseArgs(argv: string[]): InferLaneArgs {
+  const args: InferLaneArgs = { paths: [], desc: '', id: null };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--id') {

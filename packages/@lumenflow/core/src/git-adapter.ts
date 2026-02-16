@@ -754,7 +754,7 @@ export const git = new Proxy(gitSingleton, {
       );
       singletonWarned = true;
     }
-    const value = target[prop];
+    const value = target[prop as keyof GitAdapter];
     // Bind methods to preserve 'this' context
     return typeof value === 'function' ? value.bind(target) : value;
   },

@@ -534,7 +534,11 @@ export class WUStateStore {
     // Parse JSONL content
     const lines = content.split('\n');
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
+      const rawLine = lines[i];
+      if (typeof rawLine !== 'string') {
+        continue;
+      }
+      const line = rawLine.trim();
 
       // Skip empty lines
       if (!line) {
@@ -1185,7 +1189,11 @@ export async function repairStateFile(filePath: string): Promise<RepairResult> {
   // Process each line
   const validLines: string[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const rawLine = lines[i];
+    if (typeof rawLine !== 'string') {
+      continue;
+    }
+    const line = rawLine.trim();
 
     // Skip empty lines
     if (!line) {

@@ -559,7 +559,9 @@ export function evaluateCondition(
   const eqRegex = /^([\w.]+)\s*===\s*['"](.+)['"]$/;
   const eqMatch = eqRegex.exec(condition);
   if (eqMatch) {
-    const [, key, value] = eqMatch;
+    const key = eqMatch[1];
+    const value = eqMatch[2];
+    if (!key) return true;
     return getNestedValue(context, key) === value;
   }
 
@@ -567,7 +569,9 @@ export function evaluateCondition(
   const neqRegex = /^([\w.]+)\s*!==\s*['"](.+)['"]$/;
   const neqMatch = neqRegex.exec(condition);
   if (neqMatch) {
-    const [, key, value] = neqMatch;
+    const key = neqMatch[1];
+    const value = neqMatch[2];
+    if (!key) return true;
     return getNestedValue(context, key) !== value;
   }
 
@@ -576,6 +580,7 @@ export function evaluateCondition(
   const truthyMatch = truthyRegex.exec(condition);
   if (truthyMatch) {
     const key = truthyMatch[1];
+    if (!key) return false;
     return Boolean(getNestedValue(context, key));
   }
 

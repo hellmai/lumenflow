@@ -24,7 +24,17 @@ import { UI, LOG_PREFIX, STRING_LITERALS } from './wu-constants.js';
  * @param {number} options.durationMs - Duration in milliseconds
  * @param {boolean} [options.isWorktreeMode=true] - True for worktree mode, false for branch-only
  */
-export function printGateFailureBox({ id, location, durationMs, isWorktreeMode = true }) {
+export function printGateFailureBox({
+  id,
+  location,
+  durationMs,
+  isWorktreeMode = true,
+}: {
+  id: string;
+  location: string;
+  durationMs: number;
+  isWorktreeMode?: boolean;
+}) {
   const width = UI.ERROR_BOX_WIDTH;
   const duration = prettyMs(durationMs, { secondsDecimalDigits: 0 });
 
@@ -63,8 +73,8 @@ export function printGateFailureBox({ id, location, durationMs, isWorktreeMode =
  *
  * @param {string} statusOutput - Raw git status --porcelain output
  */
-export function printStatusPreview(statusOutput) {
-  const lines = statusOutput.split(STRING_LITERALS.NEWLINE).filter((line) => line.trim());
+export function printStatusPreview(statusOutput: any) {
+  const lines = statusOutput.split(STRING_LITERALS.NEWLINE).filter((line: any) => line.trim());
   const previewLimit = UI.STATUS_PREVIEW_LINES;
   const preview = lines.slice(0, previewLimit);
 

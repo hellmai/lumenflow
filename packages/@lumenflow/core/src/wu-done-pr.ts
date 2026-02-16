@@ -50,7 +50,7 @@ export const WU_DONE_COMPLETION_MODES = Object.freeze({
  * @param {Object} args - CLI arguments
  * @returns {boolean} Whether PR mode is enabled
  */
-export function isPRModeEnabled(doc, args) {
+export function isPRModeEnabled(doc: any, args: any) {
   const claimedMode = doc.claimed_mode || 'worktree';
   const requiresReview = doc.requires_review === true;
   return claimedMode === 'worktree-pr' || args.createPR || requiresReview;
@@ -77,7 +77,7 @@ export function isGhCliAvailable() {
  * @param {PRContext} context - PR context
  * @returns {Promise<PRResult>} PR creation result
  */
-export async function createPR(context) {
+export async function createPR(context: any) {
   const { branch, id, title, doc, draft = false } = context;
   console.log(`\n${LOG_PREFIX.DONE} Creating PR for ${branch}...`);
 
@@ -128,7 +128,7 @@ export async function createPR(context) {
  * @param {string} id - WU ID
  * @returns {string} PR body markdown
  */
-export function buildPRBody(doc, id) {
+export function buildPRBody(doc: any, id: any) {
   const paths = createWuPaths();
   const wuPath = paths.WU(id);
   const description = doc.description || doc.problem || '';
@@ -144,7 +144,7 @@ export function buildPRBody(doc, id) {
         for (const item of criteria) {
           body += `- ${item}\n`;
         }
-      } else if (typeof criteria === 'object') {
+      } else if (criteria && typeof criteria === 'object') {
         for (const [subkey, items] of Object.entries(criteria)) {
           body += `- ${subkey}:\n`;
           if (Array.isArray(items)) {
@@ -170,7 +170,7 @@ export function buildPRBody(doc, id) {
  * @param {string} branch - Lane branch name
  * @param {string} id - WU ID
  */
-export function printGhCliMissingMessage(branch, id) {
+export function printGhCliMissingMessage(branch: any, id: any) {
   console.error();
   console.error('╔═══════════════════════════════════════════════════════════════════╗');
   console.error('║  GH CLI NOT AVAILABLE');
@@ -190,7 +190,7 @@ export function printGhCliMissingMessage(branch, id) {
  * @param {string} prUrl - URL of created PR
  * @param {string} id - WU ID
  */
-export function printPRCreatedMessage(prUrl, id) {
+export function printPRCreatedMessage(prUrl: any, id: any) {
   console.log('\n╔═══════════════════════════════════════════════════════════════════╗');
   console.log('║  PR CREATED - NEXT STEPS');
   console.log('╠═══════════════════════════════════════════════════════════════════╣');

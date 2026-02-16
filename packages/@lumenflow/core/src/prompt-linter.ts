@@ -118,7 +118,7 @@ async function loadPreviousMetrics() {
  * @param {Object} metrics - Metrics by file path
  * @returns {Promise<void>}
  */
-async function savemetrics(metrics) {
+async function savemetrics(metrics: any) {
   try {
     const dir = dirname(METRICS_CACHE_PATH);
     const dirExists = await access(dir)
@@ -143,6 +143,15 @@ interface LogOutputOptions {
   verbose?: boolean;
 }
 
+type LogLevel = 'info' | 'warn' | 'error';
+
+interface LogData extends Record<string, unknown> {
+  file?: string;
+  tokenCount?: number;
+  delta?: number;
+  message?: string;
+}
+
 /**
  * Log via proper telemetry (simulated getLogger for CLI context)
  * In production, this would use apps/web/src/lib/logger.ts
@@ -152,7 +161,7 @@ interface LogOutputOptions {
  * @param {LogOutputOptions} [output] - Output mode
  * @returns {Promise<void>}
  */
-async function log(level, event, data, output: LogOutputOptions = {}) {
+async function log(level: LogLevel, event: string, data: LogData, output: LogOutputOptions = {}) {
   const timestamp = new Date().toISOString();
   const entry = {
     timestamp,
@@ -182,12 +191,12 @@ async function log(level, event, data, output: LogOutputOptions = {}) {
   const shouldPrintToConsole = output.verbose ? true : output.quiet ? level !== 'info' : true;
 
   // Also output human-readable to stderr
-  const levelEmoji =
-    {
-      info: '📊',
-      warn: '⚠️ ',
-      error: '❌',
-    }[level] || '  ';
+  const levelEmojiMap: Record<LogLevel, string> = {
+    info: '📊',
+    warn: '⚠️ ',
+    error: '❌',
+  };
+  const levelEmoji = levelEmojiMap[level];
 
   if (shouldPrintToConsole) {
     const message = `${levelEmoji} [${event}] ${data.file || ''} ${data.tokenCount ? `${data.tokenCount} tokens` : ''}`;
@@ -210,7 +219,7 @@ async function log(level, event, data, output: LogOutputOptions = {}) {
  * @param {{quiet?: boolean, verbose?: boolean}} output - Output mode
  * @returns {Promise<{passed: boolean, tokenCount: number, delta: number, hash: string}>}
  */
-async function lintPromptFile(filePath, previousMetrics, mode, config, output) {
+async function lintPromptFile(filePath: any, previousMetrics: any, mode: any, config: any, output: any) {
   // Analyze prompt
   const { tokenCount, hash, text } = analyzePrompt(filePath);
 
@@ -306,9 +315,9 @@ export interface LintPromptsOptions {
  * @returns {Promise<{passed: boolean, results: Array, config: Object}>}
  */
 export async function lintPrompts(
-  filePaths = [],
+  filePaths: string[] = [],
   mode = 'local',
-  configPath = undefined,
+  configPath: string | undefined = undefined,
   options: LintPromptsOptions = {},
 ) {
   // Load configuration
@@ -326,7 +335,7 @@ export async function lintPrompts(
   const previousMetrics = await loadPreviousMetrics();
 
   // Lint each file
-  const results = [];
+  const results: any[] = [];
   let allPassed = true;
 
   for (const filePath of filePaths) {

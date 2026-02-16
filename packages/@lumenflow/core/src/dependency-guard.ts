@@ -49,7 +49,7 @@ export const DEPENDENCY_MUTATING_COMMANDS = [
  * isDependencyMutatingCommand('pnpm run test'); // false
  * isDependencyMutatingCommand('npm install'); // false (not pnpm)
  */
-export function isDependencyMutatingCommand(command) {
+export function isDependencyMutatingCommand(command: any) {
   // Handle null/undefined/empty
   if (!command) {
     return false;
@@ -104,7 +104,7 @@ export function isDependencyMutatingCommand(command) {
  * const message = buildDependencyBlockMessage('pnpm add react');
  * // Returns multi-line message with guidance
  */
-export function buildDependencyBlockMessage(command) {
+export function buildDependencyBlockMessage(command: any) {
   // Extract the pnpm subcommand for targeted guidance
   const parts = command.trim().split(/\s+/);
   let subcommand = '';
@@ -155,3 +155,4 @@ See: https://lumenflow.dev/reference/lumenflow-complete/
  * Log prefix for dependency guard output
  */
 export const DEPS_LOG_PREFIX = '[deps-guard]';
+

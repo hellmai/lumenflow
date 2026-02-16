@@ -420,9 +420,10 @@ export function applyLaneEdits(updated: InitiativeDoc, opts: InitiativeEditOpts)
       }
     }
   }
-  if (opts.removeLane && opts.removeLane.length > 0) {
+  const removeLanes = opts.removeLane;
+  if (removeLanes && removeLanes.length > 0) {
     updated.lanes = updated.lanes || [];
-    updated.lanes = updated.lanes.filter((lane) => !opts.removeLane.includes(lane));
+    updated.lanes = updated.lanes.filter((lane) => !removeLanes.includes(lane));
   }
 }
 
@@ -443,10 +444,11 @@ export function applyArrayEdits(updated: InitiativeDoc, opts: InitiativeEditOpts
       }
     }
   }
-  if (opts.removeSuccessMetric && opts.removeSuccessMetric.length > 0) {
+  const removeSuccessMetrics = opts.removeSuccessMetric;
+  if (removeSuccessMetrics && removeSuccessMetrics.length > 0) {
     updated.success_metrics = updated.success_metrics || [];
     updated.success_metrics = updated.success_metrics.filter(
-      (metric) => !opts.removeSuccessMetric.includes(metric),
+      (metric) => !removeSuccessMetrics.includes(metric),
     );
   }
 }
@@ -479,7 +481,7 @@ function applyPhaseStatusEdit(
   phaseStatus: string,
 ): void {
   const numericId = Number(phaseId);
-  const phase = updated.phases.find((p) => p.id === numericId);
+  const phase = (updated.phases || []).find((p) => p.id === numericId);
   if (phase) {
     phase.status = phaseStatus;
   }
@@ -494,7 +496,7 @@ function applyPhaseTitleEdit(
   phaseTitle: string,
 ): void {
   const numericId = Number(phaseId);
-  const phase = updated.phases.find((p) => p.id === numericId);
+  const phase = (updated.phases || []).find((p) => p.id === numericId);
   if (phase) {
     phase.title = phaseTitle;
   }

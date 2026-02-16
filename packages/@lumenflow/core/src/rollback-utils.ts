@@ -49,7 +49,7 @@ export class RollbackResult {
    * Record a successful file restoration.
    * @param {string} name - File identifier (e.g., 'backlog.md')
    */
-  addSuccess(name) {
+  addSuccess(name: any) {
     this.restored.push(name);
   }
 
@@ -59,7 +59,7 @@ export class RollbackResult {
    * @param {string} path - Full file path
    * @param {string} error - Error message
    */
-  addError(name, path, error) {
+  addError(name: any, path: any, error: any) {
     this.errors.push({ name, path, error });
   }
 
@@ -92,7 +92,7 @@ export class RollbackResult {
  *   console.error('Rollback had errors:', result.errors);
  * }
  */
-export function rollbackFiles(filesToRestore) {
+export function rollbackFiles(filesToRestore: any) {
   const result = new RollbackResult();
 
   for (const file of filesToRestore) {
@@ -114,7 +114,7 @@ export function rollbackFiles(filesToRestore) {
  * @param {Array<{name: string, path: string}>} filesToDelete - Files to delete
  * @returns {RollbackResult} Result with deleted files and any errors
  */
-export function deleteFiles(filesToDelete) {
+export function deleteFiles(filesToDelete: any) {
   const result = new RollbackResult();
 
   for (const file of filesToDelete) {
@@ -253,3 +253,4 @@ export function computeRollbackScope(failedAt: string | null): RollbackScope {
     worktreeCleanup: false,
   };
 }
+

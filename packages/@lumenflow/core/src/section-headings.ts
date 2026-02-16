@@ -39,15 +39,25 @@ export const DEFAULT_SECTION_HEADINGS = {
  * @param {'backlog'|'status'} docType - Document type
  * @returns {object} Section headings (configured or default)
  */
-export function getSectionHeadingsWithDefaults(frontmatter, docType = 'backlog') {
-  const defaults = DEFAULT_SECTION_HEADINGS[docType];
+export function getSectionHeadingsWithDefaults(
+  frontmatter: any,
+  docType: keyof typeof DEFAULT_SECTION_HEADINGS = 'backlog',
+) {
+  const defaults = DEFAULT_SECTION_HEADINGS[docType] as {
+    ready?: string;
+    in_progress?: string;
+    blocked?: string;
+    done?: string;
+    completed?: string;
+  };
   const configured = frontmatter ? getSectionHeadings(frontmatter) : {};
 
   return {
-    ready: configured.ready || defaults.ready,
-    in_progress: configured.in_progress || defaults.in_progress,
-    blocked: configured.blocked || defaults.blocked,
-    done: configured.done || defaults.done,
-    completed: configured.completed || defaults.completed,
+    ready: configured.ready || defaults.ready || DEFAULT_SECTION_HEADINGS.backlog.ready,
+    in_progress: configured.in_progress || defaults.in_progress || DEFAULT_SECTION_HEADINGS.backlog.in_progress,
+    blocked: configured.blocked || defaults.blocked || DEFAULT_SECTION_HEADINGS.backlog.blocked,
+    done: configured.done || defaults.done || DEFAULT_SECTION_HEADINGS.backlog.done,
+    completed:
+      configured.completed || defaults.completed || DEFAULT_SECTION_HEADINGS.status.completed,
   };
 }

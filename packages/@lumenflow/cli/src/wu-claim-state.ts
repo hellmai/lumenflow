@@ -338,7 +338,11 @@ export async function updateWUYaml(
 
   // WU-2080: Agent-first auto-approval
   // Agents auto-approve on claim. Human escalation only for detected triggers.
-  const autoApproval = generateAutoApproval(doc, doc.assigned_to);
+  const assignedTo = doc.assigned_to;
+  if (!assignedTo) {
+    die('Could not resolve assigned_to for auto-approval metadata');
+  }
+  const autoApproval = generateAutoApproval(doc, assignedTo);
   doc.approved_by = autoApproval.approved_by;
   doc.approved_at = autoApproval.approved_at;
   doc.escalation_triggers = autoApproval.escalation_triggers;

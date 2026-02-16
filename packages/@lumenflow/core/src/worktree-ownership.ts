@@ -22,7 +22,7 @@
  * @param {string} worktreePath - Path to worktree
  * @returns {string|null} Extracted WU ID (uppercase) or null if not found
  */
-export function extractWUFromWorktreePath(worktreePath) {
+export function extractWUFromWorktreePath(worktreePath: any) {
   if (!worktreePath || typeof worktreePath !== 'string') {
     return null;
   }
@@ -52,7 +52,13 @@ export function extractWUFromWorktreePath(worktreePath) {
  * @param {string} params.wuId - WU ID attempting cleanup (e.g., "WU-100")
  * @returns {{ valid: boolean, error?: string }} Validation result
  */
-export function validateWorktreeOwnership({ worktreePath, wuId }) {
+export function validateWorktreeOwnership({
+  worktreePath,
+  wuId,
+}: {
+  worktreePath: string | null | undefined;
+  wuId: string;
+}) {
   // No worktree path = nothing to validate
   if (!worktreePath) {
     return { valid: true };

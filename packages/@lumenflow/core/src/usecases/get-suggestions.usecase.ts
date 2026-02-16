@@ -89,7 +89,7 @@ export class GetSuggestionsUseCase {
     const pathSuggestions = this.generateMandatoryAgentSuggestions(
       mandatoryAgents,
       progressSuggestions,
-      wuProgress.length > 0 ? wuProgress[0].wuId : 'current',
+      wuProgress[0]?.wuId ?? 'current',
     );
 
     // Combine and deduplicate suggestions
@@ -163,7 +163,9 @@ export class GetSuggestionsUseCase {
 
     return suggestions.sort((a, b) => {
       // First sort by priority
-      const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+      const aPriority = priorityOrder[a.priority] ?? Number.MAX_SAFE_INTEGER;
+      const bPriority = priorityOrder[b.priority] ?? Number.MAX_SAFE_INTEGER;
+      const priorityDiff = aPriority - bPriority;
       if (priorityDiff !== 0) {
         return priorityDiff;
       }

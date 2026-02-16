@@ -187,7 +187,7 @@ export async function validateWorktreeState(
     errors.push(`WU YAML validation failed: ${normalizeResult.errors.join('; ')}`);
     return { valid: false, errors, zombieDetected };
   }
-  normalizedDoc = normalizeResult.normalized;
+  normalizedDoc = normalizeResult.normalized ?? doc;
 
   // Validate done-specific completeness
   const completenessResult = validateDoneWU(normalizedDoc);

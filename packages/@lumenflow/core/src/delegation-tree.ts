@@ -259,13 +259,13 @@ async function getWUsForInitiative(initiativeId: string, wuDir: string): Promise
 /**
  * Converts a delegation tree to JSON.
  */
-export function treeToJSON(tree: DelegationTreeNode) {
+export function treeToJSON(tree: DelegationTreeNode): DelegationTreeNode {
   return {
     wuId: tree.wuId,
     delegationId: tree.delegationId,
     status: tree.status,
     lane: tree.lane,
     delegatedAt: tree.delegatedAt,
-    children: tree.children.map((child) => treeToJSON(child)),
+    children: tree.children.map((child): DelegationTreeNode => treeToJSON(child)),
   };
 }

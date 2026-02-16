@@ -396,7 +396,8 @@ export async function executeWorktreeCompletion(
     }
 
     // Validate done-specific completeness (uses normalized data)
-    const completenessResult = validateDoneWU(normalizeResult.normalized);
+    const normalizedWU = normalizeResult.normalized ?? docForUpdate;
+    const completenessResult = validateDoneWU(normalizedWU);
     if (!completenessResult.valid) {
       throw createValidationError(
         `Cannot mark WU as done - spec incomplete:\n  ${completenessResult.errors.join('\n  ')}\n\nNext step: Update ${workingWUPath} to meet completion requirements and rerun wu:done`,
@@ -409,7 +410,7 @@ export async function executeWorktreeCompletion(
     console.log(`${LOG_PREFIX.DONE} Checking code_paths commit status (WU-1153)...`);
     // WU-1541: Use worktreeGit (explicit baseDir) instead of getGitForCwd()
     const codePathsResult = await validateCodePathsCommittedBeforeDone(
-      normalizeResult.normalized,
+      normalizedWU,
       worktreeGit,
       { abortOnFailure: false }, // Don't abort here, throw validation error instead
     );
@@ -830,7 +831,9 @@ export async function checkBranchDrift(branch: string): Promise<number> {
       '--count',
       `${BRANCHES.MAIN}...${branch}`,
     ]);
-    const [mainAhead] = counts.split(/\s+/).map(Number);
+    const [mainAheadRaw] = counts.split(/\s+/).map(Number);
+    const mainAhead =
+      typeof mainAheadRaw === 'number' && Number.isFinite(mainAheadRaw) ? mainAheadRaw : 0;
 
     if (mainAhead > THRESHOLDS.BRANCH_DRIFT_MAX) {
       throw createError(

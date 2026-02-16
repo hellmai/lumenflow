@@ -30,7 +30,7 @@ export function todayISO() {
  * formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss');
  * formatDate('2025-11-12', 'MMMM d, yyyy'); // "November 12, 2025"
  */
-export function formatDate(date, formatString) {
+export function formatDate(date: any, formatString: any) {
   return format(new Date(date), formatString);
 }
 
@@ -65,7 +65,7 @@ const DATE_FORMAT_ISO = 'yyyy-MM-dd';
  * normalizeToDateString('2025-12-04'); // '2025-12-04'
  * normalizeToDateString(undefined); // undefined
  */
-export function normalizeToDateString(value) {
+export function normalizeToDateString(value: any) {
   // Preserve undefined/null
   if (value == null) {
     return undefined;
@@ -120,7 +120,7 @@ export function normalizeToDateString(value) {
  * normalizeISODateTime(1732896000000); // '2024-11-29T16:00:00.000Z'
  * normalizeISODateTime(undefined); // undefined
  */
-export function normalizeISODateTime(value) {
+export function normalizeISODateTime(value: any) {
   // Preserve undefined/null (optional fields)
   if (value == null) {
     return undefined;
@@ -153,3 +153,4 @@ export function normalizeISODateTime(value) {
   // Convert to ISO 8601 datetime format
   return date.toISOString();
 }
+

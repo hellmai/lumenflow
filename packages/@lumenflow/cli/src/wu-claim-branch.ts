@@ -34,7 +34,7 @@ const PREFIX = LOG_PREFIX.CLAIM;
 /**
  * Execute branch-only mode claim workflow
  */
-export async function claimBranchOnlyMode(ctx) {
+export async function claimBranchOnlyMode(ctx: any) {
   const {
     args,
     id,
@@ -177,3 +177,4 @@ export async function claimBranchOnlyMode(ctx) {
   // Fail-open: surfaceUnreadSignals never throws
   await surfaceUnreadSignalsForDisplay(process.cwd());
 }
+

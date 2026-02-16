@@ -245,7 +245,7 @@ function validateLanePatterns(codePaths: string[], lane: string): LaneValidation
   const parentLane = extractParent(lane);
 
   // Get patterns for this lane parent
-  const patterns = LANE_PATH_PATTERNS[parentLane];
+  const patterns = LANE_PATH_PATTERNS[parentLane as keyof typeof LANE_PATH_PATTERNS];
 
   // Skip validation if no patterns defined for this lane
   if (!patterns) {
@@ -338,7 +338,8 @@ function scanFileForTODOs(filePath: string): {
       // Pattern 1: @-prefixed tags at start of JSDoc comment line
       const atTagMatch = trimmed.match(/^\*\s+@(todo|fixme|hack|xxx)\b/i);
       if (atTagMatch) {
-        return { found: true, pattern: atTagMatch[1].toUpperCase() };
+        const atTag = atTagMatch[1];
+        return atTag ? { found: true, pattern: atTag.toUpperCase() } : { found: false, pattern: null };
       }
 
       // Pattern 2: Keyword at start of comment content
@@ -346,17 +347,25 @@ function scanFileForTODOs(filePath: string): {
         /^(?:\/\/|\/\*+|\*|<!--|#)\s*(TODO|FIXME|HACK|XXX)(?::|[\s]|$)/i,
       );
       if (commentStartMatch) {
+        const commentKeyword = commentStartMatch[1];
+        if (!commentKeyword) {
+          return { found: false, pattern: null };
+        }
         const afterKeyword = trimmed.slice(
-          trimmed.indexOf(commentStartMatch[1]) + commentStartMatch[1].length,
+          trimmed.indexOf(commentKeyword) + commentKeyword.length,
         );
         if (!afterKeyword.startsWith('/')) {
-          return { found: true, pattern: commentStartMatch[1].toUpperCase() };
+          return { found: true, pattern: commentKeyword.toUpperCase() };
         }
       }
 
       // Pattern 3: Keyword in inline comment after code
       const inlineCommentMatch = line.match(/\/\/\s*(TODO|FIXME|HACK|XXX)(?::|[\s]|$)/i);
       if (inlineCommentMatch && !line.match(/\/\/\s*(TODO|FIXME|HACK|XXX)\//i)) {
+        const inlineKeyword = inlineCommentMatch[1];
+        if (!inlineKeyword) {
+          return { found: false, pattern: null };
+        }
         const doubleSlashIndex = line.indexOf('//');
         const beforeSlash = line.slice(0, doubleSlashIndex);
         const singleQuotes = (beforeSlash.match(/(?<!\\)'/g) || []).length;
@@ -369,7 +378,7 @@ function scanFileForTODOs(filePath: string): {
         const commentPart = line.slice(doubleSlashIndex);
         const keywordIndex = commentPart.search(/\b(TODO|FIXME|HACK|XXX)\b/i);
         if (keywordIndex >= 0 && keywordIndex <= 10) {
-          return { found: true, pattern: inlineCommentMatch[1].toUpperCase() };
+          return { found: true, pattern: inlineKeyword.toUpperCase() };
         }
       }
 
