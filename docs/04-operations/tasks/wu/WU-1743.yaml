@@ -8,6 +8,7 @@ created: 2026-02-16
 code_paths:
   - .github/workflows/ci.yml
   - package.json
+  - packages/@lumenflow/core/src/__tests__/wu-done-worktree-services.test.ts
   - tools/pre-release-checks.ts
   - tools/__tests__/pre-release-checks.test.ts
   - tools/baselines/strict-progress-baseline.json
@@ -16,6 +17,7 @@ tests:
     - Run pnpm strict:progress and pnpm pre-release:check
   unit:
     - tools/__tests__/pre-release-checks.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-done-worktree-services.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1743.done
