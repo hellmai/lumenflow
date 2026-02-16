@@ -5,7 +5,6 @@ _Last updated: 2026-02-16_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1752 — Upgrade major-version dependencies (eslint 10, glob 13, p-retry 7, ps-list 9)](wu/WU-1752.yaml)
 
 ## Completed
 
@@ -672,3 +671,4 @@ _Last updated: 2026-02-16_
 - [WU-1750 — Add vendor-agnostic dirty-main mutation guard across completion commands](wu/WU-1750.yaml) — 2026-02-16
 - [WU-1749 — Upgrade all outdated dependencies (batch)](wu/WU-1749.yaml) — 2026-02-16
 - [WU-1751 — Fix state:doctor false mismatch for superseded WUs](wu/WU-1751.yaml) — 2026-02-16
+- [WU-1752 — Upgrade major-version dependencies (eslint 10, glob 13, p-retry 7, ps-list 9)](wu/WU-1752.yaml) — 2026-02-16

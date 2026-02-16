@@ -2,7 +2,7 @@ id: WU-1752
 title: Upgrade major-version dependencies (eslint 10, glob 13, p-retry 7, ps-list 9)
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -47,3 +47,6 @@ session_id: 282ffcec-924c-4876-93b7-434f7f2c8f75
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T18:46:17.246Z
+locked: true
+completed_at: 2026-02-16T19:01:13.244Z
+completed: 2026-02-16

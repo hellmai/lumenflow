@@ -44,7 +44,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
-- [WU-1752 — Upgrade major-version dependencies (eslint 10, glob 13, p-retry 7, ps-list 9)](wu/WU-1752.yaml) — Operations: Tooling
 
 ## ⛔ Blocked
 
@@ -715,6 +714,7 @@ sections:
 - [WU-1750 — Add vendor-agnostic dirty-main mutation guard across completion commands](wu/WU-1750.yaml)
 - [WU-1749 — Upgrade all outdated dependencies (batch)](wu/WU-1749.yaml)
 - [WU-1751 — Fix state:doctor false mismatch for superseded WUs](wu/WU-1751.yaml)
+- [WU-1752 — Upgrade major-version dependencies (eslint 10, glob 13, p-retry 7, ps-list 9)](wu/WU-1752.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
