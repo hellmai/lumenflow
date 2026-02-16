@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1730 — Kernel sandbox integration (bwrap port) + subprocess tool-runner worker](wu/WU-1730.yaml) — Framework: Core Validation
 - [WU-1729 — Kernel ToolHost execution + EvidenceStore with CAS and receipts](wu/WU-1729.yaml) — Framework: Core Lifecycle
 - [WU-1728 — Kernel ToolCapability schemas + ToolRegistry + scope intersection](wu/WU-1728.yaml) — Framework: Core Validation
 - [WU-1727 — Kernel XState state machine + integration test](wu/WU-1727.yaml) — Framework: Core State Recovery
