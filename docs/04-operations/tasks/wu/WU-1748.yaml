@@ -1,0 +1,47 @@
+id: WU-1748
+title: Implement process-owned deferred lane lifecycle and decouple init
+lane: 'Framework: CLI Enforcement'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-16
+code_paths:
+  - packages/@lumenflow/cli/src/init.ts
+  - packages/@lumenflow/cli/src/init-templates.ts
+  - packages/@lumenflow/cli/src/init-lane-validation.ts
+  - packages/@lumenflow/cli/src/lane-*.ts
+  - packages/@lumenflow/core/src/lane-checker.ts
+  - packages/@lumenflow/core/src/lumenflow-config-schema.ts
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/*.md
+tests:
+  manual:
+    - Run init in fresh repo then complete lane lifecycle setup/lock; verify WU creation guidance is deterministic
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/init-lane-validation.test.ts
+    - packages/@lumenflow/cli/src/__tests__/init-lane-inference.test.ts
+    - packages/@lumenflow/cli/src/__tests__/init-config-lanes.test.ts
+    - packages/@lumenflow/cli/src/__tests__/lane-lifecycle-process.test.ts
+    - packages/@lumenflow/core/src/__tests__/lane-checker.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1748.done
+dependencies: []
+spec_refs:
+  - lumenflow://plans/RFC-deferred-lane-lifecycle-process.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: Haven friction exposed a sequencing bug where lanes were effectively finalized too early, before product context existed. WU-1745, WU-1746, and WU-1747 addressed tactical issues, but root ownership is still process-level. Problem: lane setup is treated as command-local behavior instead of an explicit lifecycle, which invites early misconfiguration and cleanup churn. Solution: implement RFC-deferred-lane-lifecycle-process.md by making lanes process-owned with explicit lifecycle states (unconfigured->draft->locked), moving validation from init-time to lane lifecycle finalization, and keeping wu:create/initiative:create free of lane synthesis logic.'
+acceptance:
+  - lumenflow init no longer finalizes delivery lanes or performs lane lifecycle validation
+  - lane lifecycle has explicit status and commands to reach locked state
+  - lane validation runs at lane lifecycle boundary rather than init boundary
+  - wu:create and initiative:create do not perform lane synthesis/design
+  - existing repositories migrate to deterministic lane lifecycle status without data loss
