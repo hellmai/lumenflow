@@ -2,7 +2,7 @@ id: WU-1742
 title: Fix pre-existing core test failures blocking gates
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - packages/@lumenflow/core/src/adapters/__tests__/filesystem-metrics.adapter.test.ts
 tests:
   manual:
-    - Run pnpm --filter @lumenflow/core test and confirm status-literal guard + filesystem metrics tests pass.
+    - Run pnpm --filter @lumenflow/core test and confirm status-literal guard + filesystem metrics
+      tests pass.
   unit:
     - packages/@lumenflow/core/src/__tests__/status-literal-guard.test.ts
     - packages/@lumenflow/core/src/adapters/__tests__/filesystem-metrics.adapter.test.ts
@@ -30,8 +31,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: WU-1741 gate run still fails on pre-existing core tests observed before completion: status literal guard in core and filesystem metrics adapter expectations. Problem: these failures block wu:prep/wu:done despite WU-1741 lint debt remediation being complete. Solution: remediate status literal usage in dependency-graph/backlog-sync-validator and stabilize filesystem metrics adapter test expectations so pnpm gates test stage passes consistently.'
+description: 'Context: WU-1741 gate run still fails on pre-existing core tests observed before
+  completion: status literal guard in core and filesystem metrics adapter expectations. Problem:
+  these failures block wu:prep/wu:done despite WU-1741 lint debt remediation being complete.
+  Solution: remediate status literal usage in dependency-graph/backlog-sync-validator and stabilize
+  filesystem metrics adapter test expectations so pnpm gates test stage passes consistently.'
 acceptance:
   - status-literal-guard test passes in @lumenflow/core without regressions.
   - filesystem-metrics.adapter tests pass consistently in gate runs.
   - pnpm gates passes test stage without requiring skip-gates for these failures.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-tooling-wu-1742
+claimed_at: 2026-02-16T11:51:18.706Z
+baseline_main_sha: 4f2bac89d64275cfe4b55983ea3413c09a800f19
+session_id: 31613cc8-22d1-4685-b004-838b24dc6b4a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T11:51:18.712Z
