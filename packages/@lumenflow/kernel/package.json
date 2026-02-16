@@ -24,7 +24,8 @@
     ".": "./dist/index.js",
     "./schemas": "./dist/kernel.schemas.js",
     "./canonical-json": "./dist/canonical-json.js",
-    "./state-machine": "./dist/state-machine/index.js"
+    "./state-machine": "./dist/state-machine/index.js",
+    "./tool-host": "./dist/tool-host/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -43,6 +44,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "micromatch": "^4.0.8",
     "xstate": "^5.28.0",
     "yaml": "^2.8.2",
     "zod": "^4.3.6"

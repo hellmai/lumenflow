@@ -282,6 +282,9 @@ importers:
 
   packages/@lumenflow/kernel:
     dependencies:
+      micromatch:
+        specifier: ^4.0.8
+        version: 4.0.8
       xstate:
         specifier: ^5.28.0
         version: 5.28.0
