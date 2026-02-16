@@ -22,9 +22,7 @@ async function runStrictProgressDefault(): Promise<void> {
   });
 }
 
-export async function validatePreRelease(
-  options: ValidatePreReleaseOptions = {},
-): Promise<void> {
+export async function validatePreRelease(options: ValidatePreReleaseOptions = {}): Promise<void> {
   const runStrictProgress = options.runStrictProgress ?? runStrictProgressDefault;
 
   try {
