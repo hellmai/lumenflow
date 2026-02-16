@@ -2,7 +2,7 @@ id: WU-1715
 title: 'Strict debt slice: type wu-done-preflight'
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -29,7 +29,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Eliminate strict typing errors in wu-done-preflight helpers while preserving existing preflight behavior.
+description: Eliminate strict typing errors in wu-done-preflight helpers while preserving existing
+  preflight behavior.
 acceptance:
-  - No strict errors remain in packages/@lumenflow/core/src/wu-done-preflight.ts under --strictNullChecks --noImplicitAny
+  - No strict errors remain in packages/@lumenflow/core/src/wu-done-preflight.ts under
+    --strictNullChecks --noImplicitAny
   - wu-done-preflight tests pass
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-validation-wu-1715
+claimed_at: 2026-02-16T09:07:47.675Z
+baseline_main_sha: 27ebc52fb3601c59bcf8d6c204382513d04ebf01
+session_id: 3ff0e9ef-792d-49ab-9428-819a4743defc
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T09:07:47.683Z
