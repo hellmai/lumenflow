@@ -2,7 +2,7 @@ id: WU-1753
 title: Make lane:status read-only and prevent config rewrites
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -44,3 +44,6 @@ session_id: 9f5e716f-679d-42af-bd7d-4f42c15e5d67
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T20:20:22.511Z
+locked: true
+completed_at: 2026-02-16T20:23:32.895Z
+completed: 2026-02-16
