@@ -2,7 +2,7 @@ id: WU-1741
 title: Burn down pre-existing no-explicit-any lint failures in core and cli
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -44,3 +44,6 @@ session_id: be21ca40-6c84-4516-995c-5d480ac8da7d
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T11:08:03.485Z
+locked: true
+completed_at: 2026-02-16T11:43:25.144Z
+completed: 2026-02-16
