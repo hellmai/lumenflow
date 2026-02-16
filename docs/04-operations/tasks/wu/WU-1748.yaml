@@ -2,7 +2,7 @@ id: WU-1748
 title: Implement process-owned deferred lane lifecycle and decouple init
 lane: 'Framework: CLI Enforcement'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -71,3 +71,11 @@ acceptance:
   - Internal LumenFlow docs are updated to describe lane lifecycle ownership and init boundary
     changes
   - Starlight docs are updated where workflow/setup guidance mentions lane setup timing
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1748
+claimed_at: 2026-02-16T15:38:11.638Z
+baseline_main_sha: 1e1e0266399df0b05445bc1a1d291b52f63a3e1c
+session_id: 9b8929cb-0742-4203-9bb2-362090331639
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T15:38:11.643Z
