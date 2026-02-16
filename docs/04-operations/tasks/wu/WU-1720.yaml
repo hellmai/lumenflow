@@ -2,7 +2,7 @@ id: WU-1720
 title: 'Strict debt slice: type backlog-sync-validator'
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -43,3 +43,6 @@ session_id: 4a918662-c692-4651-b3ea-4c32a493aae1
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T09:30:26.180Z
+locked: true
+completed_at: 2026-02-16T09:32:51.379Z
+completed: 2026-02-16
