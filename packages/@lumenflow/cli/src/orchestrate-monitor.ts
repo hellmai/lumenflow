@@ -40,6 +40,7 @@ import {
   DEFAULT_THRESHOLD_MINUTES,
   calculateBackoff,
 } from '@lumenflow/core';
+import type { DelegationEvent } from '@lumenflow/core/delegation-registry-schema';
 import chalk from 'chalk';
 import ms, { type StringValue } from 'ms';
 
@@ -96,7 +97,7 @@ export interface MonitorResult {
   };
   /** Delegations detected as stuck */
   stuckDelegations: Array<{
-    delegation: { id: string; targetWuId: string; lane: string; parentWuId: string };
+    delegation: DelegationEvent;
     ageMinutes: number;
     lastCheckpoint: string | null;
   }>;

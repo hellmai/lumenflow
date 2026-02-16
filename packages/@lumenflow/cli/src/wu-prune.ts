@@ -155,7 +155,7 @@ async function validateWorktree(wt) {
   // Check lane consistency
   const laneName = branchValidation.lane;
   const wuLane = wu.lane;
-  if (wuLane && laneName && laneName !== wuLane.toLowerCase()) {
+  if (typeof wuLane === 'string' && laneName && laneName !== wuLane.toLowerCase()) {
     warnings.push(
       `Lane mismatch: Branch lane '${laneName}' doesn't match WU lane '${wuLane}'\n    Worktree: ${wt.path}\n    WU: ${wuid}`,
     );

@@ -18,7 +18,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { createSignal, type CreateSignalResult } from '@lumenflow/memory/signal';
+import { createSignal } from '@lumenflow/memory/signal';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
 // WU-1456: Import shared validator for CLI/MCP parity
@@ -43,6 +43,8 @@ interface MemSignalArgs {
   lane?: string;
   quiet?: boolean;
 }
+
+type CreateSignalResult = Awaited<ReturnType<typeof createSignal>>;
 
 /**
  * CLI argument options specific to mem:signal

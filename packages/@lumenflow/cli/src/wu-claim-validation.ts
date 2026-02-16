@@ -50,8 +50,8 @@ const PREFIX = LOG_PREFIX.CLAIM;
 
 type ClaimWUDoc = Record<string, unknown> & {
   id?: string;
-  status?: unknown;
-  type?: unknown;
+  status?: string;
+  type?: string;
   tests?: TestsLike;
   claimed_mode?: string;
   code_paths?: string[];

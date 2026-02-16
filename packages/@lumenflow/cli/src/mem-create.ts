@@ -17,7 +17,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { createMemoryNode, type CreateMemoryNodeResult } from '@lumenflow/memory/create';
+import { createMemoryNode } from '@lumenflow/memory/create';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
 import { MEMORY_NODE_TYPES } from '@lumenflow/memory/schema';
@@ -47,6 +47,8 @@ interface MemCreateArgs {
   baseDir?: string;
   quiet?: boolean;
 }
+
+type CreateMemoryNodeResult = Awaited<ReturnType<typeof createMemoryNode>>;
 
 /**
  * CLI argument options specific to mem:create

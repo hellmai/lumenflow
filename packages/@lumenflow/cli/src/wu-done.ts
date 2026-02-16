@@ -180,12 +180,24 @@ interface WUDocLike extends Record<string, unknown> {
   title?: string;
   initiative?: string;
   lane?: string;
-  status?: unknown;
+  status?: string;
   locked?: boolean;
   baseline_main_sha?: string;
   code_paths?: string[];
   notes?: string | string[];
   assigned_to?: string | null;
+}
+
+function normalizeWUDocLike(doc: unknown): WUDocLike {
+  if (!doc || typeof doc !== 'object') {
+    return {};
+  }
+
+  const normalized: WUDocLike = { ...(doc as Record<string, unknown>) };
+  if (typeof normalized.status !== 'string') {
+    delete normalized.status;
+  }
+  return normalized;
 }
 
 interface SpawnEntryLike {
@@ -2758,14 +2770,16 @@ async function main() {
     STATUS_PATH,
     BACKLOG_PATH,
     STAMPS_DIR,
-    docMain,
+    docMain: docMainRaw,
     isBranchOnly,
     // WU-1492: Detect branch-pr mode for separate completion path
     isBranchPR,
     derivedWorktree,
-    docForValidation: initialDocForValidation,
+    docForValidation: initialDocForValidationRaw,
     isDocsOnly,
   } = pathInfo;
+  const docMain = normalizeWUDocLike(docMainRaw);
+  const initialDocForValidation = normalizeWUDocLike(initialDocForValidationRaw);
 
   // Capture main checkout path once. process.cwd() may drift later during recovery flows.
   const mainCheckoutPath = process.cwd();
