@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1738 — MCP surface rewrite — calls KernelRuntime directly, not CLI](wu/WU-1738.yaml) — Framework: MCP
 - [WU-1737 — CLI surface — remaining commands (gates, orchestration, inspect, replay)](wu/WU-1737.yaml) — Framework: CLI Orchestration
 - [WU-1736 — CLI surface — task lifecycle commands (tracer bullet: create, claim, status, complete)](wu/WU-1736.yaml) — Framework: CLI WU Commands
 - [WU-1735 — KernelRuntime facade + initialization](wu/WU-1735.yaml) — Framework: Core Lifecycle
