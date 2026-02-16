@@ -2,7 +2,7 @@ id: WU-1753
 title: Make lane:status read-only and prevent config rewrites
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -36,3 +36,11 @@ acceptance:
   - Running lane:status must not modify .lumenflow.config.yaml.
   - lane:status still reports lifecycle status and next-step guidance.
   - Unit test proves lane:status lifecycle resolution is non-mutating for legacy config files.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1753
+claimed_at: 2026-02-16T20:20:22.503Z
+baseline_main_sha: 8c5601d6b4987c5e09f11f4fd4ffb8a7ca95bb70
+session_id: 9f5e716f-679d-42af-bd7d-4f42c15e5d67
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T20:20:22.511Z

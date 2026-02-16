@@ -5,6 +5,7 @@ _Last updated: 2026-02-16_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
+- [WU-1753 — Make lane:status read-only and prevent config rewrites](wu/WU-1753.yaml)
 
 ## Completed
 
