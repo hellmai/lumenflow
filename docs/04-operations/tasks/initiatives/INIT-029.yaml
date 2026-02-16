@@ -37,7 +37,9 @@ success_metrics:
   - 'Scope intersection enforced at ToolHost level: workspace ∩ lane ∩ task ∩ tool — agent denied on
     out-of-scope writes'
   - CLI and MCP surfaces both call KernelRuntime directly — no MCP→CLI→core circular chain
-  - ESLint boundary rules block fs/child_process imports outside kernel/tool-host and kernel/sandbox
   - Software delivery pack loads with SHA-256 integrity verification and registers tools+policies
     via DomainPack manifest
+  - 'ESLint Model B boundaries enforced: fs/child_process blocked outside kernel/tool-host,
+    kernel/sandbox, kernel/event-store, and packs/**/tool-impl/**; direct tool-impl imports allowed
+    only from tool-runner worker'
 labels: []
