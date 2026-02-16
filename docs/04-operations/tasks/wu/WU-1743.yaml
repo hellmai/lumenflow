@@ -2,7 +2,7 @@ id: WU-1743
 title: Add fast strict-progress regression guardrail to CI
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -49,3 +49,6 @@ session_id: e9bc35a1-4e39-4841-bde2-9883ea94f7a6
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T12:24:18.569Z
+locked: true
+completed_at: 2026-02-16T12:44:08.837Z
+completed: 2026-02-16
