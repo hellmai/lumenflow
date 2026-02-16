@@ -1,0 +1,26 @@
+id: software-delivery
+version: 0.1.0
+task_types:
+  - work-unit
+tools: []
+policies:
+  - id: software-delivery.gate.format
+    trigger: on_completion
+    decision: allow
+  - id: software-delivery.gate.lint
+    trigger: on_completion
+    decision: allow
+  - id: software-delivery.gate.typecheck
+    trigger: on_completion
+    decision: allow
+  - id: software-delivery.gate.test
+    trigger: on_completion
+    decision: allow
+  - id: software-delivery.gate.coverage
+    trigger: on_completion
+    decision: allow
+evidence_types:
+  - gate-run
+state_aliases:
+  active: in_progress
+lane_templates: []
