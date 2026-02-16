@@ -1,0 +1,49 @@
+id: WU-1735
+title: KernelRuntime facade + initialization
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-16
+code_paths:
+  - packages/@lumenflow/kernel/src/
+tests:
+  manual:
+    - pnpm typecheck passes for kernel package
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1735.done
+dependencies: []
+initiative: INIT-029
+phase: 4
+blocked_by:
+  - WU-1729
+  - WU-1732
+labels:
+  - kernel
+  - phase-4
+  - runtime
+spec_refs:
+  - .claude/plans/golden-prancing-cookie.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: INIT-029 Phase 4 — Surfaces + Daemon. Depends on WU-1729 (ToolHost) and WU-1732 (PolicyEngine). Problem: Surfaces (CLI, MCP) need a single entry point to the kernel that coordinates ToolHost + EventStore + PolicyEngine. Not everything is a tool — task lifecycle operations are use-cases that orchestrate multiple kernel components. Solution: KernelRuntime interface and implementation with use-case methods (createTask, claimTask, completeTask, inspectTask) and tool execution delegation (executeTool -> ToolHost). Workspace initialization (load config, load packs, build registry). This is the facade that surfaces will call. Plan: .claude/plans/golden-prancing-cookie.md'
+acceptance:
+  - KernelRuntime interface with createTask(), claimTask(), completeTask(), inspectTask() use-cases
+  - KernelRuntime.executeTool() delegates to ToolHost
+  - KernelRuntime.getToolHost() and getPolicyEngine() accessors
+  - 'Workspace initialization: loads workspace.yaml, resolves packs, builds ToolRegistry'
+  - createTask writes immutable TaskSpec YAML and emits created event
+  - claimTask validates state transition, creates Run, emits claimed + run_started events
+  - completeTask runs on_completion policies, emits run_succeeded + completed events
+  - inspectTask returns full TaskInspection with state, run history, receipts, policy decisions
