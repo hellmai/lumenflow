@@ -5,6 +5,7 @@ _Last updated: 2026-02-16_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove healthcare/PHI code from core package](wu/WU-1701.yaml)
+- [WU-1716 — Strict debt slice: type wu-helpers](wu/WU-1716.yaml)
 
 ## Blocked
 
