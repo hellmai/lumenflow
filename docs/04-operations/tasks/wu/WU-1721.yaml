@@ -2,14 +2,15 @@ id: WU-1721
 title: 'Strict debt slice: type wu-validation'
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-16
 code_paths:
   - packages/@lumenflow/core/src/wu-validation.ts
 tests:
   manual:
-    - pnpm --filter @lumenflow/core exec tsc --noEmit --strictNullChecks --noImplicitAny --pretty false | rg 'src/wu-validation.ts' -n
+    - pnpm --filter @lumenflow/core exec tsc --noEmit --strictNullChecks --noImplicitAny --pretty
+      false | rg 'src/wu-validation.ts' -n
   unit:
     - packages/@lumenflow/core/src/__tests__
   e2e: []
@@ -31,4 +32,13 @@ requires_cto_approval: false
 requires_design_approval: false
 description: Remove strictNullChecks/noImplicitAny violations in wu-validation with behavior-preserving typing.
 acceptance:
-  - wu-validation.ts has no strict errors under --strictNullChecks --noImplicitAny; lint/prettier clean; existing relevant tests pass.
+  - wu-validation.ts has no strict errors under --strictNullChecks --noImplicitAny; lint/prettier
+    clean; existing relevant tests pass.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-1721
+claimed_at: 2026-02-16T09:34:08.494Z
+baseline_main_sha: 27fdb99c953c970ccc5376f50d1baf1ffa1214fb
+session_id: f4dbde78-d4b0-49f8-994b-e8f82c31a946
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T09:34:08.500Z
