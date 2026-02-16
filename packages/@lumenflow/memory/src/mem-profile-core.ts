@@ -191,7 +191,7 @@ export async function generateProfile(
   const memoryDir = path.join(baseDir, LUMENFLOW_MEMORY_PATHS.MEMORY_DIR);
 
   // Load all memory nodes
-  let allNodes: MemoryNode[] = [];
+  let allNodes: MemoryNode[];
   try {
     const memory = await loadMemory(memoryDir);
     allNodes = memory.nodes;

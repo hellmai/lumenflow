@@ -65,7 +65,7 @@ export async function runFormatCheckGate({ agentLog, useAgentMode, cwd }: GateLo
   const logLine = makeGateLogger({ agentLog, useAgentMode });
 
   let git;
-  let isMainBranch = false;
+  let isMainBranch: boolean;
 
   try {
     git = createGitForPath(effectiveCwd);

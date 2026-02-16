@@ -2,3 +2,12 @@ packages:
   - 'packages/@lumenflow/*'
   - 'packages/lumenflow'
   - 'apps/*'
+
+patchedDependencies:
+  eslint-plugin-security@3.0.1: patches/eslint-plugin-security@3.0.1.patch
+
+# eslint-plugin-sonarjs@3.0.7 declares peer "eslint": "^8 || ^9" but works fine with v10.
+# Remove this override when sonarjs releases a version with ^10 in peerDependencies.
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-sonarjs>eslint: '10'

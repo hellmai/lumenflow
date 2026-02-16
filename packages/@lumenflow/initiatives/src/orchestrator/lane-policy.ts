@@ -118,7 +118,7 @@ export function getLaneAvailability(
     }
 
     // Determine availability based on policy
-    let available = false;
+    let available: boolean;
 
     if (policy === 'none') {
       // No WIP checking - always available

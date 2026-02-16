@@ -460,7 +460,6 @@ export async function addOrReplaceInProgressStatus(
   for (let i = startIdx + 1; i < endIdx; i++) {
     if (lines[i] && lines[i].includes('No items currently in progress')) {
       lines.splice(i, 1);
-      endIdx--;
       break;
     }
   }

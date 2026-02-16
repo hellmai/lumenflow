@@ -9,17 +9,39 @@ code_paths:
   - package.json
   - pnpm-workspace.yaml
   - pnpm-lock.yaml
-  - packages/@lumenflow/initiatives/src/orchestrator/lane-policy.ts
+  - .prettierignore
+  - patches/eslint-plugin-security@3.0.1.patch
+  - packages/@lumenflow/core/src/agent-patterns-registry.ts
+  - packages/@lumenflow/core/src/atomic-merge.ts
+  - packages/@lumenflow/core/src/delegation-registry-store.ts
+  - packages/@lumenflow/core/src/delegation-tree.ts
+  - packages/@lumenflow/core/src/invariants-runner.ts
+  - packages/@lumenflow/core/src/micro-worktree.ts
+  - packages/@lumenflow/core/src/rebase-artifact-cleanup.ts
+  - packages/@lumenflow/core/src/wu-consistency-checker.ts
+  - packages/@lumenflow/core/src/wu-done-worktree-services.ts
+  - packages/@lumenflow/core/src/wu-done-worktree.ts
+  - packages/@lumenflow/core/src/wu-state-store.ts
+  - packages/@lumenflow/core/src/wu-validation.ts
+  - packages/@lumenflow/cli/src/__tests__/mem-cleanup-execution.test.ts
+  - packages/@lumenflow/cli/src/gates-runners.ts
+  - packages/@lumenflow/cli/src/guard-worktree-commit.ts
+  - packages/@lumenflow/cli/src/release.ts
+  - packages/@lumenflow/cli/src/wu-block.ts
+  - packages/@lumenflow/cli/src/wu-claim-state.ts
+  - packages/@lumenflow/cli/src/wu-claim.ts
+  - packages/@lumenflow/cli/src/wu-done.ts
   - packages/@lumenflow/memory/src/mem-profile-core.ts
   - packages/@lumenflow/memory/src/mem-triage-core.ts
   - packages/@lumenflow/memory/src/memory-store.ts
+  - packages/@lumenflow/initiatives/src/orchestrator/lane-policy.ts
 tests:
   manual:
     - Run pnpm lint across all packages
     - Run pnpm test and verify no new failures
   unit:
-    - packages/@lumenflow/initiatives/src/__tests__/lane-policy.test.ts
-    - packages/@lumenflow/memory/src/__tests__/mem-profile-core.test.ts
+    - packages/@lumenflow/core/src/__tests__/atomic-merge.test.ts
+    - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1754.done

@@ -1,0 +1,26 @@
+diff --git a/rules/detect-no-csrf-before-method-override.js b/rules/detect-no-csrf-before-method-override.js
+index cda1a55de18da7cdc75ee06ce458975ff7913e09..cf882f0f47778ef0dcba1fcd7933583a152c983c 100644
+--- a/rules/detect-no-csrf-before-method-override.js
++++ b/rules/detect-no-csrf-before-method-override.js
+@@ -24,7 +24,7 @@ module.exports = {
+
+     return {
+       CallExpression: function (node) {
+-        const token = context.getSourceCode().getTokens(node)[0];
++        const token = (context.sourceCode || context.getSourceCode()).getTokens(node)[0];
+         const nodeValue = token.value;
+
+         if (nodeValue === 'express') {
+diff --git a/rules/detect-unsafe-regex.js b/rules/detect-unsafe-regex.js
+index d6c9a30bd8273f053e3e459eb09342868dd3e342..56bf362eb0d0266bc86bb3d1e161b33c5d8be8c2 100644
+--- a/rules/detect-unsafe-regex.js
++++ b/rules/detect-unsafe-regex.js
+@@ -28,7 +28,7 @@ module.exports = {
+   create(context) {
+     return {
+       Literal: function (node) {
+-        const token = context.getSourceCode().getTokens(node)[0];
++        const token = (context.sourceCode || context.getSourceCode()).getTokens(node)[0];
+         const nodeType = token.type;
+         const nodeValue = token.value;
+

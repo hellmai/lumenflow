@@ -149,7 +149,6 @@ export async function validateWorktreeState(
   const { wuId, worktreePath, doc, gitAdapterForMain } = input;
   const errors: string[] = [];
   let zombieDetected = false;
-  let normalizedDoc = doc;
 
   // Check for zombie state (status=done in worktree)
   if (detectZombieState(doc, worktreePath)) {
@@ -187,7 +186,7 @@ export async function validateWorktreeState(
     errors.push(`WU YAML validation failed: ${normalizeResult.errors.join('; ')}`);
     return { valid: false, errors, zombieDetected };
   }
-  normalizedDoc = normalizeResult.normalized ?? doc;
+  const normalizedDoc = normalizeResult.normalized ?? doc;
 
   // Validate done-specific completeness
   const completenessResult = validateDoneWU(normalizedDoc);

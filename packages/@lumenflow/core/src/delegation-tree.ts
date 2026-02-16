@@ -229,7 +229,7 @@ export async function getDelegationsByInitiative(
 
 async function getWUsForInitiative(initiativeId: string, wuDir: string): Promise<Set<string>> {
   const wuIds = new Set<string>();
-  let files: string[] = [];
+  let files: string[];
 
   try {
     files = await fs.readdir(wuDir);

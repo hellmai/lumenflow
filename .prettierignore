@@ -28,6 +28,9 @@ node_modules/
 # JSONL log files (no parser available)
 *.jsonl
 
+# Patch files (no parser available)
+*.patch
+
 # Shell scripts
 *.sh
 .husky/pre-commit

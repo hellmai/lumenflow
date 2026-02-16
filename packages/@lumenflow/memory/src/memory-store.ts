@@ -201,7 +201,7 @@ function parseAndValidateLine(line: string, lineNumber: number): MemoryNode {
     parsed = JSON.parse(line);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    throw new Error(`Malformed JSON on line ${lineNumber}: ${errMsg}`);
+    throw new Error(`Malformed JSON on line ${lineNumber}: ${errMsg}`, { cause: err });
   }
 
   const validation = validateMemoryNode(parsed);

@@ -293,6 +293,7 @@ export async function mergeWithRetry(
           `FF-only merge failed after ${MAX_MERGE_RETRIES} attempts. ` +
             `Main branch may have significant divergence.\n` +
             `Error: ${errMsg}`,
+          { cause: mergeErr },
         );
       }
     }
@@ -380,6 +381,7 @@ export async function pushWithRetry(
               `  - Wait a few seconds and retry the operation\n` +
               `  - Check if another agent is rapidly pushing changes\n` +
               `Error: ${errMsg}`,
+            { cause: pushErr },
           );
         }
       }

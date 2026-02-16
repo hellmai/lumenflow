@@ -113,7 +113,7 @@ export function loadInvariants(filePath: string): InvariantDefinition[] {
   try {
     doc = parseYAML(content) as { invariants?: InvariantDefinition[] } | null;
   } catch (e: unknown) {
-    throw new Error(`Invalid YAML in ${filePath}: ${getErrorMessage(e)}`);
+    throw new Error(`Invalid YAML in ${filePath}: ${getErrorMessage(e)}`, { cause: e });
   }
 
   if (!doc || !Array.isArray(doc.invariants)) {

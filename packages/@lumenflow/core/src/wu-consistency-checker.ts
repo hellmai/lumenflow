@@ -79,7 +79,7 @@ export async function checkWUConsistency(
   const worktreePathFromYaml = wuDoc?.worktree_path || '';
 
   // Check stamp existence (guard against untracked local stamp artifacts)
-  let hasStampFile = false;
+  let hasStampFile: boolean;
   try {
     await access(stampPath, constants.R_OK);
     hasStampFile = true;
@@ -92,7 +92,7 @@ export async function checkWUConsistency(
   const hasStamp = hasStampFile && (trackedStampIds === null || trackedStampIds.has(id));
 
   // Parse backlog sections
-  let backlogContent = '';
+  let backlogContent: string;
   try {
     backlogContent = await readFile(backlogPath, { encoding: 'utf-8' });
   } catch {
@@ -104,7 +104,7 @@ export async function checkWUConsistency(
   );
 
   // Parse status.md sections
-  let statusContent = '';
+  let statusContent: string;
   try {
     statusContent = await readFile(statusPath, { encoding: 'utf-8' });
   } catch {

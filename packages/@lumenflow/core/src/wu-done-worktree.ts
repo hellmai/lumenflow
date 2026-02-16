@@ -351,8 +351,8 @@ export async function executeWorktreeCompletion(
   // WU-2310: Track snapshot for file rollback on git commit failure
   /** @type {Map<string, string|null>|null} */
   let transactionSnapshot = null;
-  let stagedMetadataAllowlist: string[] = [];
-  let initiativeMetadataPath: string | null = null;
+  let stagedMetadataAllowlist: string[];
+  let initiativeMetadataPath: string | null;
 
   try {
     // WU-1541: Use explicit worktree paths and git adapter instead of process.chdir
@@ -936,6 +936,7 @@ function parseWuEventsJsonl(content: string, sourceLabel: string): ParsedWuEvent
     } catch (error: unknown) {
       throw new Error(
         `wu-events.jsonl ${sourceLabel} has malformed JSON on line ${index + 1}: ${getErrorMessage(error)}`,
+        { cause: error },
       );
     }
 
@@ -1016,7 +1017,9 @@ async function assertNoConflictArtifactsInIndex(
     }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(REBASE_CONFLICT_MESSAGES.STAGED_ARTIFACTS_OR_CHECK_FAILURE(message));
+    throw new Error(REBASE_CONFLICT_MESSAGES.STAGED_ARTIFACTS_OR_CHECK_FAILURE(message), {
+      cause: error,
+    });
   }
 }
 

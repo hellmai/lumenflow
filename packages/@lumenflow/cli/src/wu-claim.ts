@@ -386,7 +386,7 @@ async function main() {
   // WU-1521: Track canonical claim push state for rollback in finally block
   let canonicalClaimPushed = false;
   let claimTitle = '';
-  let postClaimSandboxWorktree: string | null = null;
+  let postClaimSandboxWorktree: string | null;
   try {
     // Code paths overlap detection (WU-901)
     handleCodePathOverlap(WU_PATH, STATUS_PATH, id, args);
