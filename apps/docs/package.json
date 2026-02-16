@@ -11,8 +11,8 @@
     "typecheck": "astro sync && tsc --noEmit"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.37.3",
-    "astro": "^5.16.13",
+    "@astrojs/starlight": "^0.37.6",
+    "astro": "^5.17.2",
     "astro-d2": "^0.8.1",
     "sharp": "^0.34.5",
     "starlight-theme-nova": "^0.11.5"

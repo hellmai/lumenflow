@@ -48,13 +48,13 @@
   "dependencies": {
     "@lumenflow/core": "workspace:*",
     "@lumenflow/memory": "workspace:*",
-    "simple-git": "^3.30.0",
-    "zod": "^4.3.5"
+    "simple-git": "^3.31.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.18",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.17"
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=22"
