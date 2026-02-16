@@ -10,6 +10,7 @@
  * WU-1643: Extracted template constants into init-templates.ts
  * WU-1644: Extracted detection helpers into init-detection.ts,
  *           scaffolding helpers into init-scaffolding.ts
+ * WU-1745: Added lane validation against inference hierarchy at init time
  */
 
 import * as fs from 'node:fs';
@@ -36,6 +37,8 @@ import { integrateClaudeCode, type IntegrateEnforcementConfig } from './commands
 // WU-1433: Import public manifest to derive scripts (no hardcoded subset)
 import { getPublicManifest } from './public-manifest.js';
 import { runCLI } from './cli-entry-point.js';
+// WU-1745: Import lane validation against inference hierarchy
+import { validateLanesForProject } from './init-lane-validation.js';
 // WU-1643: Import template constants from dedicated data module
 import {
   DEFAULT_LANE_DEFINITIONS,
@@ -708,6 +711,14 @@ export async function scaffoldProject(
   // Reads the just-scaffolded config, dispatches to registered adapters per client.
   // Vendor-agnostic: init.ts has zero knowledge of client-specific file paths.
   await runClientIntegrations(targetDir, result);
+
+  // WU-1745: Validate lane config against inference hierarchy
+  // Run after all files are scaffolded so both config and lane-inference exist
+  const laneValidation = validateLanesForProject(targetDir);
+  if (laneValidation.warnings.length > 0) {
+    result.warnings = result.warnings ?? [];
+    result.warnings.push(...laneValidation.warnings);
+  }
 
   // WU-1364: Create initial commit if git repo has no commits
   // This must be done after all files are created
