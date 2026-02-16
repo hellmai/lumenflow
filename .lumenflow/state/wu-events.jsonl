@@ -1398,3 +1398,4 @@
 {"type":"release","wuId":"WU-1702","timestamp":"2026-02-16T15:37:45.530Z","reason":"Return stale emergency WU to ready queue to free lane"}
 {"type":"claim","wuId":"WU-1748","timestamp":"2026-02-16T15:38:11.683Z","lane":"Framework: CLI Enforcement","title":"Implement process-owned deferred lane lifecycle and decouple init"}
 {"type":"complete","wuId":"WU-1748","timestamp":"2026-02-16T16:25:57.985Z"}
+{"type":"claim","wuId":"WU-1749","lane":"Operations: Tooling","title":"Upgrade all outdated dependencies (batch)","timestamp":"2026-02-16T16:31:01.939Z"}
