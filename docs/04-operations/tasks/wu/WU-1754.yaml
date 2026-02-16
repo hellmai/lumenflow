@@ -2,7 +2,7 @@ id: WU-1754
 title: Upgrade ESLint 9 to 10 with plugin compatibility fixes
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -73,3 +73,6 @@ session_id: 28c5022b-a2de-4fee-8b8a-ee99993456b4
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T20:26:43.465Z
+locked: true
+completed_at: 2026-02-16T21:18:58.112Z
+completed: 2026-02-16
