@@ -37,12 +37,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: INIT-029 Phase 2 — ToolHost + Evidence. Depends on WU-1725 (schemas, specifically ToolScope). Problem: The kernel needs a tool registration and lookup system with type-safe scope intersection. Solution: Implement ToolCapability Zod schema (name, domain, version, input/output schemas, permission, required_scopes, execution_mode). ToolRegistry class (register, lookup, list, validate). Scope intersection logic using micromatch (already installed ^4.0.8) for glob pattern matching. ToolOutput and ExecutionContext types. Reference: tool.schemas.ts, tool.constants.ts, tool-runner.ts. Plan: .claude/plans/golden-prancing-cookie.md'
+description: 'Context: INIT-029 Phase 2 — ToolHost + Evidence. Depends on WU-1725 (schemas,
+  ToolScope, ToolHandler). Problem: The kernel needs a tool registration and lookup system with
+  type-safe scope intersection. Solution: Implement ToolCapability schema using descriptor+handler
+  split — capabilities declare WHAT (schemas, scopes, metadata) while ToolHandler declares HOW
+  (in-process fn vs subprocess entry string). ToolRegistry class (register, lookup, list, validate).
+  Scope intersection logic using micromatch (^4.0.8) — all four levels use ToolScope[]:
+  workspace.security.allowed_scopes ∩ lane.allowed_scopes ∩ task.declared_scopes ∩
+  tool.required_scopes. ToolOutput and ExecutionContext types. Reference: tool.schemas.ts,
+  tool.constants.ts. Plan: .claude/plans/golden-prancing-cookie.md'
 acceptance:
-  - ToolCapability Zod schema with name, domain, version, input_schema, output_schema, permission, required_scopes, execution_mode
+  - 'ToolCapability schema with descriptor+handler split (handler: ToolHandler, not execute fn)'
   - ToolRegistry class with register(), lookup(), list(), validate() methods
-  - 'Scope intersection logic: workspace ∩ lane ∩ task ∩ tool using micromatch glob matching'
+  - 'Scope intersection: workspace.security.allowed_scopes ∩ lane.allowed_scopes ∩
+    task.declared_scopes ∩ tool.required_scopes (all ToolScope[])'
+  - Scope intersection handles path type (micromatch glob) and network type (posture match)
+    independently
   - ToolOutput and ExecutionContext types defined
   - Register tool then lookup succeeds; lookup unregistered tool fails gracefully
-  - 'Scope intersection tests: narrow scope correctly intersects broader scopes'
+  - Narrow scope correctly intersects broader scopes in tests
   - Read scopes and write scopes intersect independently
