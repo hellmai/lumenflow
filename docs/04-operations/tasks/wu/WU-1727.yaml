@@ -2,7 +2,7 @@ id: WU-1727
 title: Kernel XState state machine + integration test
 lane: 'Framework: Core State Recovery'
 type: feature
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-16
 code_paths:
@@ -38,7 +38,14 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: INIT-029 Phase 1 — Kernel Foundation. Depends on WU-1725 (schemas) and WU-1726 (EventStore). Problem: The kernel needs a configurable state machine for task lifecycle transitions. Current state-machine.ts is 95 lines of hardcoded transitions. Solution: XState v5 machine definition for ready->active->blocked->waiting->done (already installed at ^5.28.0). Pack-registerable state aliases (e.g. software-delivery maps active to in_progress). assertTransition() wrapper for validation. Integration test: full task lifecycle (create workspace -> create task -> claim -> run_start -> run_succeed -> complete -> verify projected state from events). Reference: state-machine.ts, xstate docs. Plan: .claude/plans/golden-prancing-cookie.md'
+description: 'Context: INIT-029 Phase 1 — Kernel Foundation. Depends on WU-1725 (schemas) and
+  WU-1726 (EventStore). Problem: The kernel needs a configurable state machine for task lifecycle
+  transitions. Current state-machine.ts is 95 lines of hardcoded transitions. Solution: XState v5
+  machine definition for ready->active->blocked->waiting->done (already installed at ^5.28.0).
+  Pack-registerable state aliases (e.g. software-delivery maps active to in_progress).
+  assertTransition() wrapper for validation. Integration test: full task lifecycle (create workspace
+  -> create task -> claim -> run_start -> run_succeed -> complete -> verify projected state from
+  events). Reference: state-machine.ts, xstate docs. Plan: .claude/plans/golden-prancing-cookie.md'
 acceptance:
   - XState v5 machine definition for ready->active->blocked->waiting->done transitions
   - active->blocked, active->waiting, active->done, active->ready (release) transitions work
@@ -46,5 +53,14 @@ acceptance:
   - done is terminal — all transitions from done are rejected
   - 'Pack-registerable state aliases (e.g. {active: in_progress}) resolve correctly'
   - assertTransition() wrapper throws on illegal transitions with descriptive errors
-  - 'Integration test: full lifecycle create->claim->run_start->run_succeed->complete->verify projected state'
+  - 'Integration test: full lifecycle create->claim->run_start->run_succeed->complete->verify
+    projected state'
   - State machine is serializable (XState snapshot/restore)
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-state-recovery-wu-1727
+claimed_at: 2026-02-16T22:10:58.061Z
+baseline_main_sha: 99e915ecfe2e37235b292430cd7a6fcc98cef79b
+session_id: 8d767585-113e-4103-a7a7-49fea21e692e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T22:10:58.067Z
