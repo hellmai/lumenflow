@@ -1,0 +1,51 @@
+id: WU-1732
+title: Kernel PolicyEngine + DomainPack manifest/loader + integrity pinning
+lane: 'Framework: Core Validation'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-16
+code_paths:
+  - packages/@lumenflow/kernel/src/policy/
+  - packages/@lumenflow/kernel/src/pack/
+tests:
+  manual:
+    - pnpm typecheck passes for kernel package
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/policy-engine.test.ts
+    - packages/@lumenflow/kernel/src/__tests__/pack-loader.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1732.done
+dependencies: []
+initiative: INIT-029
+phase: 3
+blocked_by:
+  - WU-1729
+labels:
+  - kernel
+  - phase-3
+  - policy
+  - packs
+spec_refs:
+  - .claude/plans/golden-prancing-cookie.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: INIT-029 Phase 3 — Policies + Packs. Depends on WU-1729 (ToolHost). Problem: The kernel needs a pluggable policy system (deny-wins cascade) and a pack loading mechanism with integrity verification. This is where the differentiator locks in — software delivery becomes just the first pack. Solution: PolicyEngine class with cascade evaluation (workspace -> lane -> pack -> task), deny-wins semantics, four trigger points (on_tool_request, on_claim, on_completion, on_evidence_added). DomainPack manifest schema (Zod) defining tools, policies, evidence_types, state_aliases, lane_templates. Pack loader that resolves from workspace config and verifies SHA-256 integrity hash. Approvals as typed events with run_id + scope + expiry. Plan: .claude/plans/golden-prancing-cookie.md'
+acceptance:
+  - 'PolicyEngine class with cascade evaluation: workspace -> lane -> pack -> task-specific'
+  - 'Deny-wins semantics: deny at any level overrides allow from other levels'
+  - Lower levels tighten only — loosening requires explicit opt-in
+  - 'Four trigger points: on_tool_request, on_claim, on_completion, on_evidence_added'
+  - 'DomainPack manifest Zod schema: id, version, task_types, tools, policies, evidence_types, state_aliases'
+  - Pack loader resolves pack from workspace config and verifies SHA-256 integrity hash
+  - Tampered pack (wrong hash) is rejected at load time
+  - 'ApprovalEvent schema: typed events with run_id, scope, expires_at'
