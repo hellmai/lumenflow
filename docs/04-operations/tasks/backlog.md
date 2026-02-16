@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1729 — Kernel ToolHost execution + EvidenceStore with CAS and receipts](wu/WU-1729.yaml) — Framework: Core Lifecycle
 - [WU-1728 — Kernel ToolCapability schemas + ToolRegistry + scope intersection](wu/WU-1728.yaml) — Framework: Core Validation
 - [WU-1727 — Kernel XState state machine + integration test](wu/WU-1727.yaml) — Framework: Core State Recovery
 - [WU-1726 — Kernel EventStore: JSONL append, indexes, projections](wu/WU-1726.yaml) — Framework: Core Lifecycle
