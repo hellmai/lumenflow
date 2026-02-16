@@ -2,7 +2,7 @@ id: WU-1733
 title: Software delivery pack — WU extensions + gate policies
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-16
 code_paths:
@@ -63,3 +63,6 @@ session_id: af78ea99-9623-471e-ad6e-795729a1b8e8
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-16T23:22:07.199Z
+locked: true
+completed_at: 2026-02-16T23:35:07.049Z
+completed: 2026-02-16
