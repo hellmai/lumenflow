@@ -385,9 +385,9 @@ describe('lumenflow init', () => {
   });
 
   // WU-1300: Scaffolding fixes and template portability
-  describe('WU-1300: scaffolding fixes', () => {
-    describe('lane-inference.yaml generation', () => {
-      it('should scaffold .lumenflow.lane-inference.yaml with --full', async () => {
+  describe('WU-1748: deferred lane lifecycle scaffolding', () => {
+    describe('lane artifacts are deferred from init', () => {
+      it('should NOT scaffold .lumenflow.lane-inference.yaml with --full', async () => {
         const options: ScaffoldOptions = {
           force: false,
           full: true,
@@ -396,16 +396,10 @@ describe('lumenflow init', () => {
         await scaffoldProject(tempDir, options);
 
         const laneInferencePath = path.join(tempDir, '.lumenflow.lane-inference.yaml');
-        expect(fs.existsSync(laneInferencePath)).toBe(true);
-
-        const content = fs.readFileSync(laneInferencePath, 'utf-8');
-        // WU-1307: Should have hierarchical lane definitions (not flat lanes: array)
-        expect(content).toContain('Framework:');
-        expect(content).toContain('Content:');
-        expect(content).toContain('Operations:');
+        expect(fs.existsSync(laneInferencePath)).toBe(false);
       });
 
-      it('should scaffold lane-inference with framework-specific lanes when --framework is provided', async () => {
+      it('should keep lane lifecycle unconfigured when --framework is provided', async () => {
         const options: ScaffoldOptions = {
           force: false,
           full: true,
@@ -414,8 +408,9 @@ describe('lumenflow init', () => {
 
         await scaffoldProject(tempDir, options);
 
-        const laneInferencePath = path.join(tempDir, '.lumenflow.lane-inference.yaml');
-        expect(fs.existsSync(laneInferencePath)).toBe(true);
+        const configPath = path.join(tempDir, '.lumenflow.config.yaml');
+        const content = fs.readFileSync(configPath, 'utf-8');
+        expect(content).toContain('status: unconfigured');
       });
     });
 
@@ -691,7 +686,7 @@ describe('lumenflow init', () => {
     });
 
     describe('lane-inference.yaml managed file header', () => {
-      it('should include managed file header in .lumenflow.lane-inference.yaml', async () => {
+      it('should NOT scaffold lane inference file during init', async () => {
         const options: ScaffoldOptions = {
           force: false,
           full: true,
@@ -700,12 +695,7 @@ describe('lumenflow init', () => {
         await scaffoldProject(tempDir, options);
 
         const laneInferencePath = path.join(tempDir, '.lumenflow.lane-inference.yaml');
-        expect(fs.existsSync(laneInferencePath)).toBe(true);
-
-        const content = fs.readFileSync(laneInferencePath, 'utf-8');
-        // Should have managed file header
-        expect(content).toMatch(/LUMENFLOW\s+MANAGED\s+FILE/i);
-        expect(content).toMatch(/do\s+not\s+(manually\s+)?edit/i);
+        expect(fs.existsSync(laneInferencePath)).toBe(false);
       });
     });
   });

@@ -10,7 +10,7 @@
  * WU-1643: Extracted template constants into init-templates.ts
  * WU-1644: Extracted detection helpers into init-detection.ts,
  *           scaffolding helpers into init-scaffolding.ts
- * WU-1745: Added lane validation against inference hierarchy at init time
+ * WU-1748: Deferred lane lifecycle - init no longer finalizes lane artifacts
  */
 
 import * as fs from 'node:fs';
@@ -37,11 +37,12 @@ import { integrateClaudeCode, type IntegrateEnforcementConfig } from './commands
 // WU-1433: Import public manifest to derive scripts (no hardcoded subset)
 import { getPublicManifest } from './public-manifest.js';
 import { runCLI } from './cli-entry-point.js';
-// WU-1745: Import lane validation against inference hierarchy
-import { validateLanesForProject } from './init-lane-validation.js';
+import {
+  buildInitLaneLifecycleMessage,
+  LANE_LIFECYCLE_STATUS,
+} from './lane-lifecycle-process.js';
 // WU-1643: Import template constants from dedicated data module
 import {
-  DEFAULT_LANE_DEFINITIONS,
   AGENTS_MD_TEMPLATE,
   LUMENFLOW_MD_TEMPLATE,
   CONSTRAINTS_MD_TEMPLATE,
@@ -61,7 +62,6 @@ import {
   FIRST_WU_MISTAKES_TEMPLATE,
   TROUBLESHOOTING_WU_DONE_TEMPLATE,
   AGENT_SAFETY_CARD_TEMPLATE,
-  LANE_INFERENCE_TEMPLATE,
   STARTING_PROMPT_TEMPLATE,
   WU_CREATE_CHECKLIST_TEMPLATE,
   FIRST_15_MINS_TEMPLATE,
@@ -337,9 +337,11 @@ function generateLumenflowConfigYaml(
     };
   }
 
-  // WU-1307: Add default lane definitions
+  // WU-1748: Initialize explicit lifecycle status without final lane artifacts
   (config as Record<string, unknown>).lanes = {
-    definitions: DEFAULT_LANE_DEFINITIONS,
+    lifecycle: {
+      status: LANE_LIFECYCLE_STATUS.UNCONFIGURED,
+    },
   };
 
   // WU-1364: Add git config overrides (e.g., requireRemote: false for local-only)
@@ -712,14 +714,6 @@ export async function scaffoldProject(
   // Vendor-agnostic: init.ts has zero knowledge of client-specific file paths.
   await runClientIntegrations(targetDir, result);
 
-  // WU-1745: Validate lane config against inference hierarchy
-  // Run after all files are scaffolded so both config and lane-inference exist
-  const laneValidation = validateLanesForProject(targetDir);
-  if (laneValidation.warnings.length > 0) {
-    result.warnings = result.warnings ?? [];
-    result.warnings.push(...laneValidation.warnings);
-  }
-
   // WU-1364: Create initial commit if git repo has no commits
   // This must be done after all files are created
   const createdInitialCommit = createInitialCommitIfNeeded(targetDir);
@@ -1004,53 +998,8 @@ async function scaffoldFullDocs(
     targetDir,
   );
 
-  // WU-1300: Scaffold lane inference configuration
-  await scaffoldLaneInference(targetDir, options, result, tokens);
-
   // WU-1083: Scaffold agent onboarding docs with --full
   await scaffoldAgentOnboardingDocs(targetDir, options, result, tokens);
-}
-
-/**
- * WU-1307: Scaffold lane inference configuration
- * Uses hierarchical Parent->Sublane format required by lane-inference.ts
- */
-async function scaffoldLaneInference(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-  tokens: Record<string, string>,
-): Promise<void> {
-  // WU-1307: Add framework-specific lanes in hierarchical format if framework is provided
-  let frameworkLanes = '';
-  if (options.framework) {
-    const { name, slug } = normalizeFrameworkName(options.framework);
-    // Add framework lanes in hierarchical format (indentation matters in YAML)
-    frameworkLanes = `
-# Framework-specific lanes (added with --framework ${name})
-  ${name}:
-    description: '${name} framework-specific code'
-    code_paths:
-      - 'src/${slug}/**'
-      - 'packages/${slug}/**'
-    keywords:
-      - '${slug}'
-      - '${name.toLowerCase()}'
-`;
-  }
-
-  const laneInferenceContent = processTemplate(LANE_INFERENCE_TEMPLATE, {
-    ...tokens,
-    FRAMEWORK_LANES: frameworkLanes,
-  });
-
-  await createFile(
-    path.join(targetDir, '.lumenflow.lane-inference.yaml'),
-    laneInferenceContent,
-    options.force ? 'force' : 'skip',
-    result,
-    targetDir,
-  );
 }
 
 /**
@@ -1503,6 +1452,8 @@ export async function main(): Promise<void> {
   console.log('\n[lumenflow init] Done! Next steps:');
   console.log('  1. Review AGENTS.md and LUMENFLOW.md for workflow documentation');
   console.log(`  2. Edit ${CONFIG_FILE_NAME} to match your project structure`);
+  console.log('');
+  console.log(`  ${buildInitLaneLifecycleMessage(LANE_LIFECYCLE_STATUS.UNCONFIGURED)}`);
   if (result.integrationFiles && result.integrationFiles.length > 0) {
     console.log(
       '  \u2713 Enforcement hooks installed -- regenerate with: pnpm lumenflow:integrate',

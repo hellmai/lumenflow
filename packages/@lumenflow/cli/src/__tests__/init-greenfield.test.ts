@@ -7,7 +7,7 @@
  * - starting-prompt.md has 'When Starting From Product Vision' section
  * - Init auto-creates initial commit when git repo has no commits
  * - Init auto-sets git.requireRemote=false when no remote configured
- * - Default lane-inference template includes Core and Feature as parent lanes
+ * - Lane lifecycle starts unconfigured at init (no finalized lane artifacts)
  * - LUMENFLOW.md mentions initiatives and when to use them
  */
 
@@ -18,13 +18,13 @@ import * as os from 'node:os';
 import { execFileSync } from 'node:child_process';
 
 import { scaffoldProject, type ScaffoldOptions } from '../init.js';
+import { ensureDraftLaneArtifacts } from '../lane-lifecycle-process.js';
 import * as yaml from 'yaml';
 
 // Constants to avoid duplicate strings
 const ARC42_DOCS_STRUCTURE = 'arc42' as const;
 const STARTING_PROMPT_FILE = 'starting-prompt.md';
 const LUMENFLOW_CONFIG_FILE = '.lumenflow.config.yaml';
-const LANE_INFERENCE_FILE = '.lumenflow.lane-inference.yaml';
 const TEST_CLAUDE_CLIENT_ID = 'claude-code';
 
 describe('greenfield onboarding (WU-1364)', () => {
@@ -290,38 +290,23 @@ describe('greenfield onboarding (WU-1364)', () => {
     });
   });
 
-  describe('AC: Default lane-inference template includes Core and Feature parent lanes', () => {
-    it('should include Core as a parent lane', async () => {
+  describe('AC: Lane lifecycle starts unconfigured at init', () => {
+    it('should initialize lanes.lifecycle.status as unconfigured', async () => {
       await scaffoldProject(tempDir, getArc42Options());
 
-      const laneInferencePath = path.join(tempDir, LANE_INFERENCE_FILE);
-      expect(fs.existsSync(laneInferencePath)).toBe(true);
-
-      const content = fs.readFileSync(laneInferencePath, 'utf-8');
-      // Should have Core as a top-level parent lane (not just Framework: Core)
-      expect(content).toMatch(/^Core:/m);
+      const configPath = path.join(tempDir, LUMENFLOW_CONFIG_FILE);
+      const content = fs.readFileSync(configPath, 'utf-8');
+      const config = yaml.parse(content) as Record<string, unknown>;
+      const lanes = config.lanes as Record<string, unknown>;
+      const lifecycle = lanes.lifecycle as Record<string, unknown>;
+      expect(lifecycle.status).toBe('unconfigured');
     });
 
-    it('should include Feature as a parent lane', async () => {
+    it('should not scaffold .lumenflow.lane-inference.yaml during init', async () => {
       await scaffoldProject(tempDir, getArc42Options());
 
-      const laneInferencePath = path.join(tempDir, LANE_INFERENCE_FILE);
-      const content = fs.readFileSync(laneInferencePath, 'utf-8');
-
-      // Should have Feature as a top-level parent lane
-      expect(content).toMatch(/^Feature:/m);
-    });
-
-    it('should support intuitive lane names like "Core: Platform"', async () => {
-      await scaffoldProject(tempDir, getArc42Options());
-
-      const laneInferencePath = path.join(tempDir, LANE_INFERENCE_FILE);
-      const content = fs.readFileSync(laneInferencePath, 'utf-8');
-
-      // Should have sublanes under Core and Feature
-      // e.g., Core: followed by sublanes like Platform, Library, etc.
-      expect(content).toMatch(/Core:\n\s+\w+:/m);
-      expect(content).toMatch(/Feature:\n\s+\w+:/m);
+      const laneInferencePath = path.join(tempDir, '.lumenflow.lane-inference.yaml');
+      expect(fs.existsSync(laneInferencePath)).toBe(false);
     });
   });
 
@@ -528,9 +513,10 @@ describe('greenfield onboarding (WU-1364)', () => {
     });
   });
 
-  describe('AC: WU-1576 — Default lane definitions have zero overlaps', () => {
-    it('should generate lane definitions with no overlapping code_paths', async () => {
+  describe('AC: WU-1748 — lane:setup defaults have zero overlaps', () => {
+    it('should generate draft lane definitions with no overlapping code_paths', async () => {
       await scaffoldProject(tempDir, getArc42Options());
+      ensureDraftLaneArtifacts(tempDir);
 
       const configPath = path.join(tempDir, LUMENFLOW_CONFIG_FILE);
       const content = fs.readFileSync(configPath, 'utf-8');
@@ -553,6 +539,7 @@ describe('greenfield onboarding (WU-1364)', () => {
 
     it('should not have glob patterns where one lane is a subset of another', async () => {
       await scaffoldProject(tempDir, getArc42Options());
+      ensureDraftLaneArtifacts(tempDir);
 
       const configPath = path.join(tempDir, LUMENFLOW_CONFIG_FILE);
       const content = fs.readFileSync(configPath, 'utf-8');

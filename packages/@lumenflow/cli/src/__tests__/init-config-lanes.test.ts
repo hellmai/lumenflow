@@ -1,12 +1,9 @@
 /**
  * @file init-config-lanes.test.ts
- * Test: .lumenflow.config.yaml includes default lane definitions for parent lanes
+ * WU-1748: init no longer finalizes lane definitions.
  *
- * WU-1307: Fix lumenflow-init scaffolding
- *
- * The generated config must include lane definitions that match the parent
- * lanes used in the documentation examples (Framework, Experience, Content, Operations).
- * These lanes should have sensible defaults for code_paths and wip_limit.
+ * Lane design is now a dedicated lifecycle process owned by lane commands:
+ *   unconfigured -> draft -> locked
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -19,7 +16,7 @@ import { scaffoldProject } from '../init.js';
 /** Config file name - extracted to avoid duplicate string lint errors */
 const CONFIG_FILE_NAME = '.lumenflow.config.yaml';
 
-describe('init config default lanes (WU-1307)', () => {
+describe('init config lane lifecycle bootstrap (WU-1748)', () => {
   let tempDir: string;
 
   beforeEach(() => {
@@ -41,7 +38,7 @@ describe('init config default lanes (WU-1307)', () => {
     return YAML.parse(configContent) as Record<string, unknown>;
   }
 
-  it('should generate .lumenflow.config.yaml with lanes.definitions', async () => {
+  it('should generate .lumenflow.config.yaml with lanes.lifecycle.status', async () => {
     // Arrange
     const configPath = path.join(tempDir, CONFIG_FILE_NAME);
 
@@ -53,138 +50,22 @@ describe('init config default lanes (WU-1307)', () => {
 
     const config = readConfig();
 
-    // Should have lanes.definitions
+    // Should have lanes.lifecycle.status (deferred lifecycle)
     expect(config.lanes).toBeDefined();
-    expect((config.lanes as Record<string, unknown>).definitions).toBeDefined();
-    expect(Array.isArray((config.lanes as Record<string, unknown>).definitions)).toBe(true);
+    const lanes = config.lanes as Record<string, unknown>;
+    const lifecycle = lanes.lifecycle as Record<string, unknown> | undefined;
+    expect(lifecycle).toBeDefined();
+    expect(lifecycle?.status).toBe('unconfigured');
   });
 
-  it('should include Framework parent lane with sublanes', async () => {
+  it('should NOT include finalized lanes.definitions during init', async () => {
     // Act
     await scaffoldProject(tempDir, { force: true, full: true });
 
     // Assert
     const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-    }>;
-    const frameworkLanes = lanes.filter((l) => l.name.startsWith('Framework:'));
-
-    expect(frameworkLanes.length).toBeGreaterThan(0);
-
-    // Should have at least Framework: Core and Framework: CLI
-    const laneNames = frameworkLanes.map((l) => l.name);
-    expect(laneNames).toContain('Framework: Core');
-    expect(laneNames).toContain('Framework: CLI');
-  });
-
-  it('should include Experience parent lane for frontend work', async () => {
-    // Act
-    await scaffoldProject(tempDir, { force: true, full: true });
-
-    // Assert
-    const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-    }>;
-    const experienceLanes = lanes.filter((l) => l.name.startsWith('Experience:'));
-
-    // Should have at least one Experience lane
-    expect(experienceLanes.length).toBeGreaterThan(0);
-  });
-
-  it('should include Content: Documentation lane', async () => {
-    // Act
-    await scaffoldProject(tempDir, { force: true, full: true });
-
-    // Assert
-    const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-      code_paths?: string[];
-    }>;
-    const contentLane = lanes.find((l) => l.name === 'Content: Documentation');
-
-    expect(contentLane).toBeDefined();
-    expect(contentLane?.code_paths).toBeDefined();
-    expect(contentLane?.code_paths).toContain('docs/**');
-  });
-
-  it('should include Operations parent lanes', async () => {
-    // Act
-    await scaffoldProject(tempDir, { force: true, full: true });
-
-    // Assert
-    const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-    }>;
-    const operationsLanes = lanes.filter((l) => l.name.startsWith('Operations:'));
-
-    expect(operationsLanes.length).toBeGreaterThan(0);
-
-    // Should have Infrastructure and CI/CD
-    const laneNames = operationsLanes.map((l) => l.name);
-    expect(laneNames).toContain('Operations: Infrastructure');
-    expect(laneNames).toContain('Operations: CI/CD');
-  });
-
-  it('should have wip_limit: 1 for code lanes by default', async () => {
-    // Act
-    await scaffoldProject(tempDir, { force: true, full: true });
-
-    // Assert
-    const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-      wip_limit?: number;
-    }>;
-    const frameworkCore = lanes.find((l) => l.name === 'Framework: Core');
-
-    expect(frameworkCore).toBeDefined();
-    expect(frameworkCore?.wip_limit).toBe(1);
-  });
-
-  it('should have code_paths for each lane', async () => {
-    // Act
-    await scaffoldProject(tempDir, { force: true, full: true });
-
-    // Assert
-    const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-      code_paths?: string[];
-    }>;
-
-    // Every lane should have code_paths
-    for (const lane of lanes) {
-      expect(lane.code_paths).toBeDefined();
-      expect(Array.isArray(lane.code_paths)).toBe(true);
-      expect(lane.code_paths?.length).toBeGreaterThan(0);
-    }
-  });
-
-  it('should use "Parent: Sublane" format for lane names', async () => {
-    // Act
-    await scaffoldProject(tempDir, { force: true, full: true });
-
-    // Assert
-    const config = readConfig();
-
-    const lanes = ((config.lanes as Record<string, unknown>)?.definitions || []) as Array<{
-      name: string;
-    }>;
-
-    // All lanes should follow "Parent: Sublane" format (colon + space)
-    for (const lane of lanes) {
-      expect(lane.name).toMatch(/^[A-Z][a-z]+: [A-Z]/);
-    }
+    const lanes = config.lanes as Record<string, unknown>;
+    expect(lanes.definitions).toBeUndefined();
   });
 });
 

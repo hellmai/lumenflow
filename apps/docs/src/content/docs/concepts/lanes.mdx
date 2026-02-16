@@ -19,6 +19,26 @@ With lanes:
 - Each lane has focused attention
 - WIP limits prevent overload
 
+## Lane Lifecycle
+
+Lane design is an explicit lifecycle process:
+
+`unconfigured -> draft -> locked`
+
+`lumenflow init` bootstraps tooling and sets lane lifecycle to `unconfigured`. Before creating delivery WUs, run:
+
+```bash
+pnpm lane:setup
+pnpm lane:validate
+pnpm lane:lock
+```
+
+Check current state any time:
+
+```bash
+pnpm lane:status
+```
+
 ## Defining Lanes
 
 Lanes use a `Parent: Sublane` naming convention to organize work hierarchically:
@@ -166,6 +186,8 @@ Framework:
 ```
 
 If a WU's `code_paths` match a pattern, the sublane is suggested automatically.
+
+Note: `.lumenflow.lane-inference.yaml` is created during lane lifecycle setup (not during `lumenflow init`).
 
 ## Multiple Lanes
 

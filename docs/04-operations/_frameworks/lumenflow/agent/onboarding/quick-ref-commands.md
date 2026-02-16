@@ -124,6 +124,10 @@ pnpm exec lumenflow --client all      # All clients
 | `pnpm spec:linter`                | Validate WU specs (all) ¹        |
 | `pnpm lane:health`                | Check lane config health         |
 | `pnpm lane:suggest --paths "..."` | Suggest lane for code paths      |
+| `pnpm lane:status`                | Show lane lifecycle status       |
+| `pnpm lane:setup`                 | Create/update draft lane config  |
+| `pnpm lane:validate`              | Validate lane draft artifacts    |
+| `pnpm lane:lock`                  | Lock lane lifecycle for WU create |
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
@@ -501,14 +505,27 @@ Agents should:
 
 ---
 
-## Lane Inference Requirement (Sub-Lanes)
+## Lane Lifecycle Requirement
 
-If you use a sub-lane like `Experience: UI`, you **must** have a lane taxonomy:
+Before the first delivery WU, complete lane lifecycle once per project:
 
-- Ensure `.lumenflow.lane-inference.yaml` exists, or
-- Generate it with `pnpm lane:suggest --output .lumenflow.lane-inference.yaml`
+```bash
+pnpm lane:setup
+pnpm lane:validate
+pnpm lane:lock
+```
 
-Without this file, sub-lane validation will fail.
+Lifecycle states:
+
+- `unconfigured` -> next step `pnpm lane:setup`
+- `draft` -> next step `pnpm lane:lock`
+- `locked` -> delivery WUs can be created
+
+Check current lifecycle state any time:
+
+```bash
+pnpm lane:status
+```
 
 ---
 

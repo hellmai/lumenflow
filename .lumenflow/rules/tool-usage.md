@@ -28,6 +28,7 @@ These commands are blocked in Bash tool calls because dedicated tools exist:
 | `sed`           | **Edit tool**                   | Proper diff tracking, undo support               |
 | `awk`           | **Edit tool** or code           | More maintainable transformations                |
 | `echo > file`   | **Write tool**                  | Proper permissions, file tracking                |
+| `cp` / `mv` / `rm` (on `main` with active worktrees) | **Run in claimed worktree** | Prevents bypassing Write/Edit worktree discipline |
 
 ---
 
@@ -144,8 +145,9 @@ The `block-bash-file-commands.sh` PreToolUse hook:
 
 1. Parses the Bash command from tool input
 2. Detects blocked commands (grep, cat, find, etc.)
-3. Blocks with a clear error message
-4. Suggests the appropriate dedicated tool
+3. Blocks filesystem mutations on `main` when active worktrees exist (except active branch-pr claims)
+4. Blocks with a clear error message
+5. Suggests the appropriate dedicated tool
 
 ### Exit Codes
 

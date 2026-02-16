@@ -56,6 +56,10 @@ If you are starting a new project or feature from a product vision (e.g., "Build
 3. **Create WUs under the Initiative**: Each WU belongs to a phase
 
    ```bash
+   pnpm lane:setup
+   pnpm lane:validate
+   pnpm lane:lock
+
    pnpm wu:create --lane "Core: Platform" --title "Add task model" \
      --description "..." --acceptance "..." --code-paths "..." \
      && pnpm initiative:add-wu --initiative INIT-001 --wu WU-XXX --phase 1
@@ -168,10 +172,15 @@ all signals are user-configured.
 
 ## Before Creating WUs
 
-If you plan to use sub-lanes like `Experience: UI`, make sure lane inference is configured:
+Before the first delivery WU in a project, complete lane lifecycle:
 
-- `.lumenflow.lane-inference.yaml` must exist for sub-lane validation, or
-- Generate it with `pnpm lane:suggest --output .lumenflow.lane-inference.yaml`
+```bash
+pnpm lane:setup
+pnpm lane:validate
+pnpm lane:lock
+```
+
+Use `pnpm lane:status` to verify lifecycle state and recommended next step.
 
 **No remote yet?** `wu:create` expects `origin/main`. If your repo is local-only, add a remote
 before running `wu:create`. `wu:claim` supports `--no-push` for local-only work.

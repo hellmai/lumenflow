@@ -56,6 +56,11 @@ import {
   type CloudDetectConfig,
   type EffectiveCloudActivationResult,
 } from '@lumenflow/core/cloud-detect';
+import {
+  buildWuCreateLaneLifecycleMessage,
+  ensureLaneLifecycleForProject,
+  LANE_LIFECYCLE_STATUS,
+} from './lane-lifecycle-process.js';
 
 // WU-1651: Import from extracted modules
 import {
@@ -327,6 +332,13 @@ async function main() {
   }
 
   console.log(`${LOG_PREFIX} Creating WU ${wuId} in ${args.lane} lane...`);
+
+  // WU-1748: Lane lifecycle boundary enforcement
+  // wu:create does not synthesize/design lanes; it requires locked lifecycle.
+  const laneLifecycle = ensureLaneLifecycleForProject(process.cwd(), { persist: true });
+  if (laneLifecycle.status !== LANE_LIFECYCLE_STATUS.LOCKED) {
+    die(buildWuCreateLaneLifecycleMessage(laneLifecycle.status));
+  }
 
   // Validate lane format (sub-lane or parent-only)
   try {
