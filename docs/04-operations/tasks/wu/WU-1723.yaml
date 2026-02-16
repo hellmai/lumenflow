@@ -2,7 +2,7 @@ id: WU-1723
 title: 'Typecheck debt: fix pre-existing CLI doc typing errors'
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -28,6 +28,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Resolve pre-existing @lumenflow/cli typecheck errors in wu-claim-validation, wu-done, and wu-prune introduced on main.
+description: Resolve pre-existing @lumenflow/cli typecheck errors in wu-claim-validation, wu-done,
+  and wu-prune introduced on main.
 acceptance:
-  - pnpm --filter @lumenflow/cli typecheck passes; relevant lint/prettier checks pass; no behavioral changes.
+  - pnpm --filter @lumenflow/cli typecheck passes; relevant lint/prettier checks pass; no behavioral
+    changes.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1723
+claimed_at: 2026-02-16T09:54:27.402Z
+baseline_main_sha: 20bd53a81a8db54aa26932f19b1f5a81cdccd7eb
+session_id: 19719cef-062f-4bde-85be-a89547efb987
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-16T09:54:27.410Z
