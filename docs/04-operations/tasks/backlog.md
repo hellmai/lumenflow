@@ -32,11 +32,11 @@ sections:
 - [WU-1739 — Runtime daemon — scheduler, sessions, Unix socket transport](wu/WU-1739.yaml) — Framework: Core Lifecycle
 - [WU-1740 — Control Plane SDK — ControlPlaneSyncPort + workspace config + mock adapter](wu/WU-1740.yaml) — Framework: Core Validation
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
+- [WU-1755 — Fix new-project friction: flawless lumenflow init to first WU](wu/WU-1755.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
-- [WU-1733 — Software delivery pack — WU extensions + gate policies](wu/WU-1733.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
@@ -718,6 +718,7 @@ sections:
 - [WU-1730 — Kernel sandbox integration (bwrap port) + subprocess tool-runner worker](wu/WU-1730.yaml)
 - [WU-1731 — Kernel built-in tools (fs:read, fs:write, proc:exec) + ESLint boundary rules](wu/WU-1731.yaml)
 - [WU-1732 — Kernel PolicyEngine + DomainPack manifest/loader + integrity pinning](wu/WU-1732.yaml)
+- [WU-1733 — Software delivery pack — WU extensions + gate policies](wu/WU-1733.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
