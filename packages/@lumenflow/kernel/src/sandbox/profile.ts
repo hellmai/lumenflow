@@ -104,9 +104,7 @@ export function createDefaultDenyOverlays(
 }
 
 export function resolveScopeEnforcementNote(scopes: ToolScope[]): string | undefined {
-  const hasReadPathScope = scopes.some(
-    (scope) => scope.type === 'path' && scope.access === 'read',
-  );
+  const hasReadPathScope = scopes.some((scope) => scope.type === 'path' && scope.access === 'read');
   return hasReadPathScope ? READ_CONFINEMENT_NOTE : undefined;
 }
 

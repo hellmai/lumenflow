@@ -45,7 +45,11 @@ export interface SandboxSubprocessDispatcherOptions {
   nodeBinary?: string;
 }
 
-function buildFailureOutput(code: string, message: string, details?: Record<string, unknown>): ToolOutput {
+function buildFailureOutput(
+  code: string,
+  message: string,
+  details?: Record<string, unknown>,
+): ToolOutput {
   return {
     success: false,
     error: {
@@ -145,7 +149,10 @@ export class SandboxSubprocessDispatcher implements SubprocessDispatcher {
 
   async dispatch(request: SubprocessDispatchRequest): Promise<ToolOutput> {
     if (request.capability.handler.kind !== 'subprocess') {
-      return buildFailureOutput('INVALID_HANDLER_KIND', 'Subprocess dispatcher requires subprocess handlers.');
+      return buildFailureOutput(
+        'INVALID_HANDLER_KIND',
+        'Subprocess dispatcher requires subprocess handlers.',
+      );
     }
 
     if (!this.commandExists('bwrap')) {
@@ -189,10 +196,14 @@ export class SandboxSubprocessDispatcher implements SubprocessDispatcher {
 
     if (transportResult.code !== 0) {
       return withScopeNote(
-        buildFailureOutput('SUBPROCESS_EXIT_NONZERO', 'Subprocess worker exited with non-zero code.', {
-          exit_code: transportResult.code,
-          stderr: transportResult.stderr,
-        }),
+        buildFailureOutput(
+          'SUBPROCESS_EXIT_NONZERO',
+          'Subprocess worker exited with non-zero code.',
+          {
+            exit_code: transportResult.code,
+            stderr: transportResult.stderr,
+          },
+        ),
         request.scopeEnforced,
       );
     }

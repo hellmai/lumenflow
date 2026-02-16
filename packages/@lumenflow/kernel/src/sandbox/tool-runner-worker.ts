@@ -43,7 +43,11 @@ export interface ToolRunnerWorkerStreams {
 
 type ToolAdapter = (input: unknown, context: ToolRunnerWorkerContext) => Promise<unknown> | unknown;
 
-function buildFailureOutput(code: string, message: string, details?: Record<string, unknown>): ToolOutput {
+function buildFailureOutput(
+  code: string,
+  message: string,
+  details?: Record<string, unknown>,
+): ToolOutput {
   return {
     success: false,
     error: {
@@ -185,7 +189,10 @@ export async function executeToolRunnerInvocation(
 
   const parsedOutput = ToolOutputSchema.safeParse(rawOutput);
   if (!parsedOutput.success) {
-    return withScopeNote(buildFailureOutput('INVALID_OUTPUT', parsedOutput.error.message), invocation.scope_enforced);
+    return withScopeNote(
+      buildFailureOutput('INVALID_OUTPUT', parsedOutput.error.message),
+      invocation.scope_enforced,
+    );
   }
 
   return withScopeNote(parsedOutput.data, invocation.scope_enforced);
