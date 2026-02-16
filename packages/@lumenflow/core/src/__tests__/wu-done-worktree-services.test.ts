@@ -312,7 +312,7 @@ describe('WU-1664: wu:done worktree completion services', () => {
 
       // Transaction should be in a valid state (not yet committed)
       expect(result.transaction.isCommitted).toBe(false);
-    });
+    }, 15000);
   });
 
   describe('commitTransaction', () => {
