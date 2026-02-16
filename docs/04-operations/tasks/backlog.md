@@ -116,7 +116,6 @@ sections:
 - [WU-1071 — Fix CLI entry guard for pnpm symlink resolution](wu/WU-1071.yaml)
 - [WU-1072 — Fix wu:done staging whitelist for auto-generated docs + document wu:cleanup PR-only behavior](wu/WU-1072.yaml)
 - [WU-1074 — Add release command for npm publishing](wu/WU-1074.yaml)
-- [WU-1075 — Rename legacy config to .lumenflow](wu/WU-1075.yaml)
 - [WU-1076 — Block direct main branch commits for agents](wu/WU-1076.yaml)
 - [WU-1079 — Migrate stamps to .lumenflow](wu/WU-1079.yaml)
 - [WU-1078 — Fix wu:repair to use micro-worktree isolation](wu/WU-1078.yaml)

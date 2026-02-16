@@ -128,8 +128,6 @@
 {"type":"complete","wuId":"WU-1072","timestamp":"2026-01-23T00:00:00.000Z"}
 {"type":"claim","wuId":"WU-1074","timestamp":"2026-01-23T00:00:00.000Z","lane":"Framework: CLI","title":"Add release command for npm publishing"}
 {"type":"complete","wuId":"WU-1074","timestamp":"2026-01-23T00:00:00.000Z"}
-{"type":"claim","wuId":"WU-1075","timestamp":"2026-01-23T00:00:00.000Z","lane":"Framework: Core","title":"Rename legacy config to .lumenflow"}
-{"type":"complete","wuId":"WU-1075","timestamp":"2026-01-23T00:00:00.000Z"}
 {"type":"claim","wuId":"WU-1076","timestamp":"2026-01-23T00:00:00.000Z","lane":"Framework: CLI","title":"Block direct main branch commits for agents"}
 {"type":"complete","wuId":"WU-1076","timestamp":"2026-01-23T00:00:00.000Z"}
 {"type":"claim","wuId":"WU-1077","timestamp":"2026-01-23T14:30:05.484Z","lane":"Framework: CLI","title":"Fix release script to work entirely in micro-worktree"}
