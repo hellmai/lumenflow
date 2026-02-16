@@ -30,7 +30,7 @@ import { readWU, writeWU } from './wu-yaml.js';
 import { WU_PATHS } from './wu-paths.js';
 import { moveWUToDoneBacklog } from './wu-backlog-updater.js';
 import { updateStatusRemoveInProgress, addToStatusCompleted } from './wu-status-updater.js';
-import { BRANCHES, LOG_PREFIX, EMOJI } from './wu-constants.js';
+import { BRANCHES, LOG_PREFIX, EMOJI, WU_STATUS } from './wu-constants.js';
 import { getErrorMessage } from './error-handler.js';
 
 // ──────────────────────────────────────────────
@@ -218,7 +218,7 @@ export async function executeAlreadyMergedCompletion(
     if (doc && typeof doc === 'object') {
       const updatedDoc = {
         ...doc,
-        status: 'done',
+        status: WU_STATUS.DONE,
         completed_at: new Date().toISOString().split('T')[0],
       };
       writeWU(wuPath, updatedDoc);
