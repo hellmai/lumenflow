@@ -63,7 +63,10 @@ function collectCommandMountPrefixes(profile: SandboxProfile): string[] {
   return [...new Set(prefixes.map(normalizePrefix))];
 }
 
-function collectCommandReadonlyMounts(profile: SandboxProfile, command: string[]): SandboxBindMount[] {
+function collectCommandReadonlyMounts(
+  profile: SandboxProfile,
+  command: string[],
+): SandboxBindMount[] {
   const mountPrefixes = collectCommandMountPrefixes(profile);
   const mounts: SandboxBindMount[] = [];
 
