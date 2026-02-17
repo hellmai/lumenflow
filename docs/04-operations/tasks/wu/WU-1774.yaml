@@ -10,7 +10,9 @@ code_paths:
   - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
   - packages/@lumenflow/kernel/src/__tests__/pack-loader.test.ts
 tests:
-  manual: []
+  manual:
+    - Run runtime integration scenario asserting load -> register -> execute -> receipt for
+      manifest-declared tool
   unit:
     - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
     - packages/@lumenflow/kernel/src/__tests__/pack-loader.test.ts
@@ -19,10 +21,10 @@ artifacts:
   - .lumenflow/stamps/WU-1774.done
 dependencies:
   - WU-1770
-blocked_by:
-  - WU-1770
 initiative: INIT-029
 phase: 7
+blocked_by:
+  - WU-1770
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
@@ -33,9 +35,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description:
-  Own the pack integration end-to-end proof for INIT-029 success metrics. This WU verifies
-  runtime flow from pack load through tool registration, execution, and immutable receipt capture.
+description: Own the pack integration end-to-end proof for INIT-029 success metrics. This WU
+  verifies runtime flow from pack load through tool registration, execution, and immutable receipt
+  capture.
 acceptance:
   - Integration scenario covers load -> register -> execute -> receipt for a manifest-declared tool
   - Assertions prove registered tools are executable through runtime resolver wiring
