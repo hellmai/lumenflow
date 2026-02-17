@@ -12,7 +12,7 @@ target_date: 2026-07-31
 phases:
   - id: 1
     title: 'Foundation: remaining DRY/constants extraction'
-    status: pending
+    status: done
   - id: 2
     title: Command migration in existing MCP/CLI packages
     status: pending
