@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { SOFTWARE_DELIVERY_PACK_ID } from '../../../packs/software-delivery/constants.js';
 import { canonical_json } from '../canonical-json.js';
+import { EvidenceStore } from '../evidence/index.js';
 import type { ExecutionContext, TaskSpec } from '../kernel.schemas.js';
 import { EventStore } from '../event-store/index.js';
 import { type SubprocessTransport } from '../sandbox/index.js';
@@ -712,5 +713,28 @@ describe('kernel runtime facade', () => {
         (decision) => decision.policy_id === 'runtime.completion.allow',
       ),
     ).toBe(true);
+  });
+
+  it('prunes evidence receipt index when completing a task', async () => {
+    const pruneSpy = vi.spyOn(EvidenceStore.prototype, 'pruneTask');
+    try {
+      const runtime = await createRuntime();
+      const taskSpec = createTaskSpec('WU-1782-prune-on-complete');
+      await runtime.createTask(taskSpec);
+
+      await runtime.claimTask({
+        task_id: taskSpec.id,
+        by: 'tom@hellm.ai',
+        session_id: 'session-1782-prune',
+      });
+
+      await runtime.completeTask({
+        task_id: taskSpec.id,
+      });
+
+      expect(pruneSpy).toHaveBeenCalledWith(taskSpec.id);
+    } finally {
+      pruneSpy.mockRestore();
+    }
   });
 });

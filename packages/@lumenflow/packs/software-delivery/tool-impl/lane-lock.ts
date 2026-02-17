@@ -87,6 +87,30 @@ async function acquireTakeoverMarker(
   }
 }
 
+type LaneLockWarn = (message: string) => void;
+
+export async function cleanupTakeoverMarker(
+  markerPath: string,
+  options: {
+    unlinkFile?: (targetPath: string) => Promise<void>;
+    warn?: LaneLockWarn;
+  } = {},
+): Promise<void> {
+  const unlinkFile = options.unlinkFile ?? unlink;
+  const warn: LaneLockWarn = options.warn ?? ((message) => console.warn(message));
+
+  try {
+    await unlinkFile(markerPath);
+  } catch (error) {
+    const nodeError = error as NodeJS.ErrnoException;
+    if (nodeError.code === 'ENOENT') {
+      return;
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    warn(`[lane-lock] failed to cleanup takeover marker at ${markerPath}: ${message}`);
+  }
+}
+
 export async function readLaneLockMetadata(lockPath: string): Promise<LaneLockMetadata | null> {
   try {
     const raw = await readFile(lockPath, UTF8_ENCODING);
@@ -186,9 +210,7 @@ export async function acquireLaneLockTool(
           lock_path: lockPath,
         };
       } finally {
-        await unlink(takeoverMarkerPath).catch(() => {
-          // Best-effort marker cleanup.
-        });
+        await cleanupTakeoverMarker(takeoverMarkerPath);
       }
     }
 

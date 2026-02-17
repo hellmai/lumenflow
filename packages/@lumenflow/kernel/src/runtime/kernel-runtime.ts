@@ -767,6 +767,7 @@ export class DefaultKernelRuntime implements KernelRuntime {
     };
 
     await this.eventStore.appendAll([runSucceededEvent, taskCompletedEvent]);
+    await this.evidenceStore.pruneTask(task.id);
 
     return {
       task_id: task.id,
