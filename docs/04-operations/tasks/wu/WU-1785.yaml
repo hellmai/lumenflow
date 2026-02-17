@@ -13,7 +13,9 @@ code_paths:
   - packages/@lumenflow/cli/src/task-claim.ts
   - packages/@lumenflow/cli/src/__tests__/task-claim.test.ts
 tests:
-  manual: []
+  manual:
+    - Invoke migrated task:create via MCP runtime path and verify no runCliCommand shell-out occurs
+      while parity gates still pass.
   unit:
     - packages/@lumenflow/mcp/src/__tests__/runtime-task-tools.test.ts
     - packages/@lumenflow/cli/src/__tests__/task-claim.test.ts
@@ -35,7 +37,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Add task:create runtime routing in existing MCP/CLI packages using the tracer-bullet migration pattern: new runtime tool/command path with parity-safe registration and no CLI shell-out.'
+description: 'Add task:create runtime routing in existing MCP/CLI packages using the tracer-bullet
+  migration pattern: new runtime tool/command path with parity-safe registration and no CLI
+  shell-out.'
 acceptance:
   - task:create executes through KernelRuntime in MCP path without runCliCommand shell-out.
   - CLI task:create route invokes runtime path directly in old package surface.
