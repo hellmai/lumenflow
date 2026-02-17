@@ -10,7 +10,9 @@ code_paths:
   - packages/@lumenflow/kernel/src/runtime/kernel-runtime.ts
   - packages/@lumenflow/packs/software-delivery/tool-impl/lane-lock.ts
 tests:
-  manual: []
+  manual:
+    - Execute 100 task lifecycle traces and verify receipt->task index can be pruned without
+      unbounded growth; confirm lane-lock takeover cleanup logs I/O failures.
   unit:
     - packages/@lumenflow/kernel/src/__tests__/evidence-store.test.ts
     - packages/@lumenflow/packs/software-delivery/__tests__/lane-lock.test.ts
