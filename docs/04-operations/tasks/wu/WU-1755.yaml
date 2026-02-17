@@ -2,7 +2,7 @@ id: WU-1755
 title: 'Fix new-project friction: flawless lumenflow init to first WU'
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-16
 code_paths:
@@ -29,7 +29,10 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: 20+ test runs of 'set up lumenflow for my new project' all hit the same friction points. Problem: 10 root causes in init, wu:create, lane:setup, initiative:create, micro-worktree, and wu:status cause a broken golden path. Solution: Fix all 10 friction points (F1-F10) in a single WU across @lumenflow/cli and @lumenflow/core."
+description: "Context: 20+ test runs of 'set up lumenflow for my new project' all hit the same
+  friction points. Problem: 10 root causes in init, wu:create, lane:setup, initiative:create,
+  micro-worktree, and wu:status cause a broken golden path. Solution: Fix all 10 friction points
+  (F1-F10) in a single WU across @lumenflow/cli and @lumenflow/core."
 acceptance:
   - lumenflow init generates correct paths matching detected docs structure
   - .gitignore template includes .turbo/ and .lumenflow runtime files
@@ -37,3 +40,11 @@ acceptance:
   - initiative:create accepts --description --phase --success-metric
   - lane:setup --lock works in single command
   - wu:status shows worktree status when worktree exists
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1755
+claimed_at: 2026-02-17T09:42:20.544Z
+baseline_main_sha: 1b394d63d2bd5e5215bbfb1ced3fcf59fcd841d5
+session_id: 3dbf1721-e88f-4882-9421-36ad92c49c7b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-17T09:42:20.548Z
