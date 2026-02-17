@@ -2,7 +2,7 @@ id: WU-1784
 title: Extract remaining runtime string literal constants
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-17
 code_paths:
@@ -50,3 +50,6 @@ session_id: a164f1dd-ac8e-4972-afb1-c7a22da3961e
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-17T18:09:09.587Z
+locked: true
+completed_at: 2026-02-17T18:13:56.474Z
+completed: 2026-02-17
