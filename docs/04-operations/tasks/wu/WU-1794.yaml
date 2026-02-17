@@ -2,7 +2,7 @@ id: WU-1794
 title: 'Phase 4 governance: publish runCliCommand deprecation timeline and closure criteria'
 lane: 'Content: Specs Governance'
 type: documentation
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-17
 code_paths:
@@ -54,3 +54,6 @@ session_id: 48f228e9-5f5b-413f-98c1-ed9afb6453a5
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-17T23:11:36.723Z
+locked: true
+completed_at: 2026-02-17T23:14:46.023Z
+completed: 2026-02-17
