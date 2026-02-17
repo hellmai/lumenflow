@@ -9,6 +9,7 @@ import { delegationRecordTool } from '../tools/delegation-tools.js';
 import { laneLockToolCapabilities } from '../tools/lane-lock-tool.js';
 import {
   acquireLaneLockTool,
+  cleanupTakeoverMarker,
   readLaneLockMetadata,
   releaseLaneLockTool,
 } from '../tool-impl/lane-lock.js';
@@ -164,5 +165,20 @@ describe('software delivery lane lock and delegation tools', () => {
     expect(result.success).toBe(true);
     const written = await readFile(runtimePath, 'utf8');
     expect(written.includes('"parentWuId":"WU-1801"')).toBe(true);
+  });
+
+  it('logs takeover marker cleanup I/O failures instead of swallowing them', async () => {
+    const warnings: string[] = [];
+    await cleanupTakeoverMarker('/tmp/lane-lock.takeover', {
+      unlinkFile: async () => {
+        const error = Object.assign(new Error('permission denied'), { code: 'EACCES' });
+        throw error;
+      },
+      warn: (message) => warnings.push(message),
+    });
+
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('failed to cleanup takeover marker');
+    expect(warnings[0]).toContain('permission denied');
   });
 });

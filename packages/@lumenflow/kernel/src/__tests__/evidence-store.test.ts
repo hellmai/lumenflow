@@ -171,4 +171,64 @@ describe('evidence store', () => {
     expect(task1000.map((trace) => trace.receipt_id)).toEqual(['receipt-a', 'receipt-a']);
     expect(task2000.map((trace) => trace.receipt_id)).toEqual(['receipt-b', 'receipt-b']);
   });
+
+  it('prunes receipt indexes for completed tasks via explicit pruneTask API', async () => {
+    const store = new EvidenceStore({ evidenceRoot });
+
+    await store.appendTrace(makeStartedEntry('receipt-a', 'WU-1000'));
+    await store.appendTrace({
+      schema_version: 1,
+      kind: 'tool_call_finished',
+      receipt_id: 'receipt-a',
+      timestamp: '2026-02-16T23:00:02.000Z',
+      result: 'success',
+      duration_ms: 5,
+      policy_decisions: [{ policy_id: 'kernel.policy.allow-all', decision: 'allow' }],
+    });
+
+    await store.appendTrace(makeStartedEntry('receipt-b', 'WU-2000'));
+    await store.appendTrace({
+      schema_version: 1,
+      kind: 'tool_call_finished',
+      receipt_id: 'receipt-b',
+      timestamp: '2026-02-16T23:00:03.000Z',
+      result: 'success',
+      duration_ms: 7,
+      policy_decisions: [{ policy_id: 'kernel.policy.allow-all', decision: 'allow' }],
+    });
+
+    expect(await store.getReceiptIndexSize()).toBe(2);
+    const prunedCount = await store.pruneTask('WU-1000');
+
+    expect(prunedCount).toBe(1);
+    expect(await store.getReceiptIndexSize()).toBe(1);
+    expect(await store.readTracesByTaskId('WU-1000')).toEqual([]);
+    expect((await store.readTracesByTaskId('WU-2000')).map((trace) => trace.receipt_id)).toEqual([
+      'receipt-b',
+      'receipt-b',
+    ]);
+    expect(await store.readTraces()).toHaveLength(4);
+  });
+
+  it('keeps receipt index bounded when completed tasks are pruned', async () => {
+    const store = new EvidenceStore({ evidenceRoot });
+
+    for (let index = 0; index < 100; index += 1) {
+      const taskId = `WU-bounded-${index}`;
+      const receiptId = `receipt-bounded-${index}`;
+      await store.appendTrace(makeStartedEntry(receiptId, taskId));
+      await store.appendTrace({
+        schema_version: 1,
+        kind: 'tool_call_finished',
+        receipt_id: receiptId,
+        timestamp: '2026-02-16T23:00:05.000Z',
+        result: 'success',
+        duration_ms: 1,
+        policy_decisions: [{ policy_id: 'kernel.policy.allow-all', decision: 'allow' }],
+      });
+      await store.pruneTask(taskId);
+    }
+
+    expect(await store.getReceiptIndexSize()).toBe(0);
+  });
 });

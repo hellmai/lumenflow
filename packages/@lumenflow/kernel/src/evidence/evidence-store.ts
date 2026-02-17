@@ -80,6 +80,29 @@ export class EvidenceStore {
     return [...(this.tracesByTaskId.get(taskId) ?? [])];
   }
 
+  async pruneTask(taskId: string): Promise<number> {
+    await this.hydrateIndexesIfNeeded();
+
+    const receiptIdsToDelete: string[] = [];
+    for (const [receiptId, indexedTaskId] of this.taskIdByReceiptId.entries()) {
+      if (indexedTaskId === taskId) {
+        receiptIdsToDelete.push(receiptId);
+      }
+    }
+
+    for (const receiptId of receiptIdsToDelete) {
+      this.taskIdByReceiptId.delete(receiptId);
+    }
+    this.tracesByTaskId.delete(taskId);
+
+    return receiptIdsToDelete.length;
+  }
+
+  async getReceiptIndexSize(): Promise<number> {
+    await this.hydrateIndexesIfNeeded();
+    return this.taskIdByReceiptId.size;
+  }
+
   private async hydrateIndexesIfNeeded(): Promise<void> {
     if (this.tracesHydrated) {
       return;
