@@ -2,7 +2,7 @@ id: WU-1765
 title: 'Fix resolveAgentPatterns: local config patterns ignored when registry returns results'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-17
 code_paths:
@@ -44,3 +44,6 @@ acceptance:
   - Local config agent_branch_patterns merge with registry patterns
   - claude/* and codex/* branches detected as agent branches
   - Test covering local+registry pattern merge
+locked: true
+completed_at: 2026-02-17T10:25:15.245Z
+completed: 2026-02-17
