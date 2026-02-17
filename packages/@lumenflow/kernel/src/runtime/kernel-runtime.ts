@@ -67,11 +67,13 @@ const DEFAULT_PACK_TOOL_INPUT_SCHEMA = z.record(z.string(), z.unknown());
 const DEFAULT_PACK_TOOL_OUTPUT_SCHEMA = z.record(z.string(), z.unknown());
 const RUNTIME_LOAD_STAGE_ERROR_PREFIX = 'Runtime load stage failed for pack';
 const RUNTIME_REGISTRATION_STAGE_ERROR_PREFIX = 'Runtime registration stage failed for tool';
-const WORKSPACE_HASH_REGEX = /^[a-f0-9]{64}$/;
 const WORKSPACE_UPDATED_INIT_SUMMARY = 'Workspace config hash initialized during runtime startup.';
 const SPEC_TAMPERED_ERROR_CODE = 'SPEC_TAMPERED';
 const SPEC_TAMPERED_WORKSPACE_MESSAGE =
   'Workspace configuration hash mismatch detected; execution blocked.';
+const SPEC_TAMPERED_WORKSPACE_MISSING_MESSAGE =
+  'Workspace configuration file is missing; execution blocked.';
+const WORKSPACE_FILE_MISSING_HASH_CONTEXT = 'workspace_file_missing';
 
 type RunLifecycleEvent = Extract<KernelEvent, { kind: RunLifecycleEventKind }>;
 
@@ -523,13 +525,6 @@ function resolveExecutionMetadata(context: ExecutionContext): Record<string, unk
   return context.metadata;
 }
 
-function parseWorkspaceConfigHash(candidate: unknown): string | null {
-  if (typeof candidate !== 'string') {
-    return null;
-  }
-  return WORKSPACE_HASH_REGEX.test(candidate) ? candidate : null;
-}
-
 export class DefaultKernelRuntime implements KernelRuntime {
   private readonly workspaceSpec: WorkspaceSpec;
   private readonly workspaceFilePath: string;
@@ -570,9 +565,22 @@ export class DefaultKernelRuntime implements KernelRuntime {
   async executeTool(name: string, input: unknown, ctx: ExecutionContext): Promise<ToolOutput> {
     const context = ExecutionContextSchema.parse(ctx);
     const metadata = resolveExecutionMetadata(context);
-    const expectedHash =
-      parseWorkspaceConfigHash(metadata.workspace_config_hash) ?? this.workspaceConfigHash;
-    const actualHash = await this.computeWorkspaceConfigHash();
+    const expectedHash = this.workspaceConfigHash;
+
+    let actualHash: string;
+    let missingWorkspaceFile = false;
+    try {
+      actualHash = await this.computeWorkspaceConfigHash();
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code !== 'ENOENT') {
+        throw error;
+      }
+      missingWorkspaceFile = true;
+      actualHash = canonical_json({
+        [WORKSPACE_FILE_MISSING_HASH_CONTEXT]: this.workspaceFilePath,
+      });
+    }
 
     if (actualHash !== expectedHash) {
       const tamperedEvent: SpecTamperedEvent = {
@@ -590,9 +598,13 @@ export class DefaultKernelRuntime implements KernelRuntime {
         success: false,
         error: {
           code: SPEC_TAMPERED_ERROR_CODE,
-          message: SPEC_TAMPERED_WORKSPACE_MESSAGE,
+          message: missingWorkspaceFile
+            ? SPEC_TAMPERED_WORKSPACE_MISSING_MESSAGE
+            : SPEC_TAMPERED_WORKSPACE_MESSAGE,
           details: {
             workspace_id: this.workspaceSpec.id,
+            workspace_file_path: this.workspaceFilePath,
+            workspace_file_missing: missingWorkspaceFile,
             expected_hash: expectedHash,
             actual_hash: actualHash,
           },

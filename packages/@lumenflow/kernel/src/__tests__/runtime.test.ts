@@ -34,6 +34,7 @@ const TOOL_CALL_FINISHED_KIND = 'tool_call_finished';
 const WORKSPACE_UPDATED_KIND = 'workspace_updated';
 const SPEC_TAMPERED_KIND = 'spec_tampered';
 const SPEC_TAMPERED_ERROR_CODE = 'SPEC_TAMPERED';
+const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/;
 const RUNTIME_LOAD_STAGE_ERROR = `Runtime load stage failed for pack "${SOFTWARE_DELIVERY_PACK_ID}"`;
 const RUNTIME_REGISTRATION_STAGE_ERROR = `Runtime registration stage failed for tool "${PACK_ECHO_TOOL_NAME}" in pack "${SOFTWARE_DELIVERY_PACK_ID}"`;
 const RESOLVER_EXPLODED_MESSAGE = 'resolver exploded';
@@ -511,6 +512,83 @@ describe('kernel runtime facade', () => {
     expect(tamperedEvent?.id).toBe('workspace-kernel-runtime');
     expect(tamperedEvent?.expected_hash).toBe(workspaceConfigHash);
     expect(tamperedEvent?.actual_hash).toBe(tamperedHash);
+  });
+
+  it('ignores caller-supplied workspace hash and enforces startup baseline', async () => {
+    const runtime = await createRuntime();
+    const taskSpec = createTaskSpec('WU-1780-baseline-enforced');
+    await runtime.createTask(taskSpec);
+
+    const claim = await runtime.claimTask({
+      task_id: taskSpec.id,
+      by: 'tom@hellm.ai',
+      session_id: 'session-1780-baseline-enforced',
+    });
+
+    const fakeMetadataHash = workspaceConfigHash === 'f'.repeat(64) ? 'e'.repeat(64) : 'f'.repeat(64);
+    const output = await runtime.executeTool(
+      PACK_ECHO_TOOL_NAME,
+      { message: 'baseline-enforced' },
+      createExecutionContext(taskSpec.id, claim.run.run_id, fakeMetadataHash),
+    );
+
+    expect(output.success).toBe(true);
+
+    const inspection = await runtime.inspectTask(taskSpec.id);
+    const started = inspection.receipts.find(
+      (trace) => trace.kind === TOOL_CALL_STARTED_KIND && trace.tool_name === PACK_ECHO_TOOL_NAME,
+    );
+    if (started?.kind === TOOL_CALL_STARTED_KIND) {
+      expect(started.workspace_config_hash).toBe(workspaceConfigHash);
+    }
+    expect(inspection.events.some((event) => event.kind === SPEC_TAMPERED_KIND)).toBe(false);
+  });
+
+  it('returns structured spec_tampered when workspace config file is missing after init', async () => {
+    const runtime = await createRuntime();
+    const taskSpec = createTaskSpec('WU-1780-missing-workspace-file');
+    await runtime.createTask(taskSpec);
+
+    const claim = await runtime.claimTask({
+      task_id: taskSpec.id,
+      by: 'tom@hellm.ai',
+      session_id: 'session-1780-missing-workspace',
+    });
+
+    const workspacePath = join(tempRoot, WORKSPACE_FILE_NAME);
+    await rm(workspacePath);
+
+    const output = await runtime.executeTool(
+      PACK_ECHO_TOOL_NAME,
+      { message: 'missing-workspace-file' },
+      createExecutionContext(taskSpec.id, claim.run.run_id, workspaceConfigHash),
+    );
+
+    expect(output.success).toBe(false);
+    expect(output.error?.code).toBe(SPEC_TAMPERED_ERROR_CODE);
+    expect(output.error?.details).toMatchObject({
+      workspace_id: 'workspace-kernel-runtime',
+      workspace_file_path: workspacePath,
+      workspace_file_missing: true,
+      expected_hash: workspaceConfigHash,
+    });
+
+    const actualHash = String((output.error?.details as Record<string, unknown>).actual_hash);
+    expect(actualHash).toMatch(SHA256_HEX_REGEX);
+    expect(actualHash).not.toBe(workspaceConfigHash);
+
+    const eventsRaw = await readFile(join(tempRoot, 'events.jsonl'), UTF8_ENCODING);
+    const events = eventsRaw
+      .split('\n')
+      .filter((line) => line.trim().length > 0)
+      .map((line) => JSON.parse(line) as Record<string, unknown>);
+    const tamperedEvent = events.find((event) => event.kind === SPEC_TAMPERED_KIND);
+
+    expect(tamperedEvent).toBeDefined();
+    expect(tamperedEvent?.spec).toBe('workspace');
+    expect(tamperedEvent?.id).toBe('workspace-kernel-runtime');
+    expect(tamperedEvent?.expected_hash).toBe(workspaceConfigHash);
+    expect(tamperedEvent?.actual_hash).toBe(actualHash);
   });
 
   it('createTask writes immutable TaskSpec YAML and emits task_created', async () => {
