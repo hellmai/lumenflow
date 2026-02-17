@@ -326,6 +326,9 @@ importers:
       '@lumenflow/core':
         specifier: workspace:*
         version: link:../core
+      '@lumenflow/kernel':
+        specifier: workspace:*
+        version: link:../kernel
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.26.0(zod@4.3.6)

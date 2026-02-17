@@ -20,8 +20,9 @@ import {
   ListResourceTemplatesRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { allTools } from './tools.js';
+import { registeredTools, runtimeTaskTools } from './tools.js';
 import { staticResources, resourceTemplates, type ResourceDefinition } from './resources.js';
+import { RuntimeTaskToolNames } from './tools/runtime-task-constants.js';
 
 /**
  * Log levels supported by the MCP server
@@ -84,6 +85,15 @@ export function createMcpServer(config: McpServerConfig = {}): McpServer {
     logLevel: config.logLevel || (process.env.LUMENFLOW_MCP_LOG_LEVEL as LogLevel) || 'info',
   };
 
+  const hasRuntimeTaskClaimTool = runtimeTaskTools.some(
+    (tool) => tool.name === RuntimeTaskToolNames.TASK_CLAIM,
+  );
+  if (!hasRuntimeTaskClaimTool) {
+    throw new Error(
+      `Required runtime MCP tool "${RuntimeTaskToolNames.TASK_CLAIM}" is not registered.`,
+    );
+  }
+
   // Create the MCP SDK server
   const server = new Server(
     {
@@ -101,7 +111,7 @@ export function createMcpServer(config: McpServerConfig = {}): McpServer {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: allTools.map((tool) => ({
+      tools: registeredTools.map((tool) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: zodToJsonSchema(tool.inputSchema),
@@ -111,7 +121,7 @@ export function createMcpServer(config: McpServerConfig = {}): McpServer {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
-    const tool = allTools.find((t) => t.name === name);
+    const tool = registeredTools.find((t) => t.name === name);
 
     if (!tool) {
       return {
@@ -219,7 +229,7 @@ export function createMcpServer(config: McpServerConfig = {}): McpServer {
     config: resolvedConfig,
 
     listTools() {
-      return allTools.map((t) => ({ name: t.name, description: t.description }));
+      return registeredTools.map((t) => ({ name: t.name, description: t.description }));
     },
 
     listResources() {
