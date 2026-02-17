@@ -14,6 +14,7 @@ tests:
       transitions append atomically under one lock.
   unit:
     - packages/@lumenflow/kernel/src/__tests__/event-store.test.ts
+    - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1759.done
@@ -23,10 +24,17 @@ phase: 6
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-17T12:22:13.677Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1759
+session_id: b1245ecd-6158-445a-baf5-02e820e341ca
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-17T12:22:13.682Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +47,3 @@ acceptance:
   - Stale lock detected and recovered when owning process is dead
   - New appendAll method writes multiple events under single lock
   - claimTask and completeTask use appendAll for atomic writes
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1759
-claimed_at: 2026-02-17T12:22:13.677Z
-baseline_main_sha: 0f70adc8c1042bfafe0f24fe1217d0bfee2ed28c
-session_id: b1245ecd-6158-445a-baf5-02e820e341ca
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-17T12:22:13.682Z
