@@ -1,6 +1,6 @@
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { EvidenceStore } from '../evidence/evidence-store.js';
 import type { ExecutionContext, ToolScope } from '../kernel.schemas.js';
@@ -69,6 +69,7 @@ describe('kernel built-in tools', () => {
   let tempDir: string;
   let evidenceRoot: string;
   let filePath: string;
+  let outsideFilePath: string;
   let writeTargetPath: string;
   let declaredScopes: ToolScope[];
 
@@ -76,8 +77,14 @@ describe('kernel built-in tools', () => {
     tempDir = await mkdtemp(join(tmpdir(), 'lumenflow-kernel-builtin-tools-'));
     evidenceRoot = join(tempDir, 'evidence');
     filePath = join(tempDir, 'read-target.txt');
+    outsideFilePath = join(
+      tempDir,
+      '..',
+      `outside-read-target-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`,
+    );
     writeTargetPath = join(tempDir, 'write-target.txt');
     await writeFile(filePath, 'builtin-read-content', 'utf8');
+    await writeFile(outsideFilePath, 'outside-read-content', 'utf8');
     declaredScopes = [
       { type: 'path', pattern: `${tempDir}/**`, access: 'read' },
       { type: 'path', pattern: `${tempDir}/**`, access: 'write' },
@@ -87,6 +94,7 @@ describe('kernel built-in tools', () => {
 
   afterEach(async () => {
     await rm(tempDir, { recursive: true, force: true });
+    await rm(outsideFilePath, { force: true });
   });
 
   it('creates fs:read, fs:write, and proc:exec capabilities with expected execution modes', () => {
@@ -201,5 +209,29 @@ describe('kernel built-in tools', () => {
 
     const sourceFile = await readFile(filePath, 'utf8');
     expect(sourceFile).toBe('builtin-read-content');
+  });
+
+  it('denies fs:read traversal when resolved path escapes enforced read scopes', async () => {
+    const registry = new ToolRegistry();
+    registerBuiltinToolCapabilities(registry, {
+      declaredScopes,
+      includeInternalTools: true,
+    });
+
+    const host = new ToolHost({
+      registry,
+      evidenceStore: new EvidenceStore({
+        evidenceRoot,
+      }),
+      subprocessDispatcher: new StubDispatcher(),
+      policyHook: createBuiltinPolicyHook(),
+    });
+    const context = buildExecutionContext(declaredScopes);
+
+    const traversalPath = join(tempDir, '..', basename(outsideFilePath));
+    const result = await host.execute('fs:read', { path: traversalPath }, context);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('SCOPE_VIOLATION');
   });
 });

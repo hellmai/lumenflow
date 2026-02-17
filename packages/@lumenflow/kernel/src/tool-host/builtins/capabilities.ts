@@ -1,4 +1,6 @@
 import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import micromatch from 'micromatch';
 import { z } from 'zod';
 import type { ToolCapability, ToolOutput, ToolScope } from '../../kernel.schemas.js';
 import type { PolicyHook, PolicyHookInput } from '../tool-host.js';
@@ -103,19 +105,28 @@ function buildFailureOutput(code: string, message: string): ToolOutput {
   };
 }
 
-async function runFsRead(input: unknown): Promise<ToolOutput> {
+async function runFsRead(input: unknown, scopes: ToolScope[]): Promise<ToolOutput> {
   const parsedInput = FsReadInputSchema.safeParse(input);
   if (!parsedInput.success) {
     return buildFailureOutput('INVALID_INPUT', parsedInput.error.message);
   }
 
+  const resolvedPath = resolve(parsedInput.data.path);
+  const canReadPath = scopesAllowReadPath(scopes, resolvedPath);
+  if (!canReadPath) {
+    return buildFailureOutput(
+      'SCOPE_VIOLATION',
+      `Path ${resolvedPath} is outside the enforced read scopes for fs:read.`,
+    );
+  }
+
   const encoding = parsedInput.data.encoding || 'utf8';
   try {
-    const content = await readFile(parsedInput.data.path, { encoding });
+    const content = await readFile(resolvedPath, { encoding });
     return {
       success: true,
       data: {
-        path: parsedInput.data.path,
+        path: resolvedPath,
         content,
         bytes: Buffer.byteLength(content),
       },
@@ -123,6 +134,22 @@ async function runFsRead(input: unknown): Promise<ToolOutput> {
   } catch (error) {
     return buildFailureOutput('FS_READ_FAILED', (error as Error).message);
   }
+}
+
+function scopesAllowReadPath(scopes: ToolScope[], filePath: string): boolean {
+  const readScopes = scopes.filter(
+    (scope): scope is Extract<ToolScope, { type: 'path' }> =>
+      scope.type === 'path' && scope.access === 'read',
+  );
+
+  if (readScopes.length === 0) {
+    return false;
+  }
+
+  const normalizedPath = filePath.replace(/\\/g, '/');
+  return readScopes.some((scope) =>
+    micromatch.isMatch(normalizedPath, resolve(scope.pattern).replace(/\\/g, '/')),
+  );
 }
 
 function createFsReadCapability(scopes: ToolScope[]): ToolCapability {
@@ -136,7 +163,7 @@ function createFsReadCapability(scopes: ToolScope[]): ToolCapability {
     required_scopes: scopes,
     handler: {
       kind: 'in-process',
-      fn: runFsRead,
+      fn: (input) => runFsRead(input, scopes),
     },
     description: 'Read file content from an allowed scope',
     pack: BUILTIN_PACK_ID,

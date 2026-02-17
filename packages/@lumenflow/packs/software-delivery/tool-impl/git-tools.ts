@@ -65,17 +65,9 @@ function runGit(cwd: string, args: string[]): CommandResult {
   };
 }
 
-function runShell(cwd: string, command: string, args: string[]): CommandResult {
-  const result = spawnSync(command, args, {
-    cwd,
-    encoding: 'utf8',
-  });
-  return {
-    ok: result.status === 0,
-    stdout: (result.stdout || '').toString(),
-    stderr: (result.stderr || '').toString(),
-    status: result.status ?? 1,
-  };
+function isGitBinaryCommand(command: unknown): boolean {
+  const normalized = String(command);
+  return normalized === 'git' || normalized === GIT_BINARY;
 }
 
 async function trySimpleGitStatus(cwd: string): Promise<string | null> {
@@ -132,8 +124,18 @@ export async function gitStatusTool(
       }
 
       const command = commandEntry[0];
+      if (!isGitBinaryCommand(command)) {
+        return {
+          success: false,
+          error: {
+            code: 'invalid_command',
+            message: 'git:status commands only allow the git binary.',
+          },
+        };
+      }
+
       const args = commandEntry.slice(1).map((arg) => String(arg));
-      const result = runShell(cwd, String(command), args);
+      const result = runGit(cwd, args);
       if (!result.ok) {
         return {
           success: false,

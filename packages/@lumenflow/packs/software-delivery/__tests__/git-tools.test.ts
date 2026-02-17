@@ -122,4 +122,21 @@ describe('software delivery git tool pack', () => {
       }),
     ).resolves.toBeTypeOf('function');
   });
+
+  it('rejects command arrays that try to execute non-git binaries', async () => {
+    const repoRoot = await setupGitRepository();
+    const markerPath = path.join(repoRoot, 'injected.txt');
+
+    const receipt = await runTool(
+      'git:status',
+      {
+        commands: [['/bin/sh', '-c', `echo injected > ${markerPath}`]],
+      },
+      repoRoot,
+    );
+
+    expect(receipt.output.success).toBe(false);
+    expect(receipt.output.error?.code).toBe('invalid_command');
+    await expect(readFile(markerPath, 'utf8')).rejects.toThrow();
+  });
 });
