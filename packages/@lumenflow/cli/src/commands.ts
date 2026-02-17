@@ -42,6 +42,7 @@ export interface CommandCategory {
 /**
  * Commands that are pnpm scripts, not CLI binaries
  * These are included in the discovery output but not in the public manifest
+ * Runtime task migration commands remain manifest-driven to preserve parity checks.
  */
 const SCRIPT_COMMANDS: CommandCategory[] = [
   {
@@ -59,15 +60,6 @@ const SCRIPT_COMMANDS: CommandCategory[] = [
       {
         name: 'strict:progress',
         description: 'Report strict TypeScript backlog and guard regressions',
-      },
-    ],
-  },
-  {
-    name: COMMAND_CATEGORIES.ORCHESTRATION,
-    commands: [
-      {
-        name: 'task:create',
-        description: 'Create a task directly through KernelRuntime (--task-spec <json>)',
       },
     ],
   },
