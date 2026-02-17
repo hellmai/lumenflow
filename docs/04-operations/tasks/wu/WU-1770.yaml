@@ -22,13 +22,21 @@ artifacts:
 dependencies: []
 initiative: INIT-029
 phase: 7
+plan: lumenflow://plans/init-029-execution-plan-v4
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-17T13:13:22.093Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1770
+session_id: 4c851e15-027a-4531-b95a-7ec7f2590ecc
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-17T13:13:22.100Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +49,3 @@ acceptance:
   - Runtime initialization registers manifest-declared tools without requiring test-only resolver
     injection
   - Unit tests cover resolver/loader wiring boundaries; e2e ownership remains with WU-1774
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1770
-claimed_at: 2026-02-17T13:13:22.093Z
-baseline_main_sha: db85da60cfd7db661aaa483850f56d57a14f1470
-session_id: 4c851e15-027a-4531-b95a-7ec7f2590ecc
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-17T13:13:22.100Z
