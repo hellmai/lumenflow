@@ -8,7 +8,9 @@ created: 2026-02-17
 code_paths:
   - packages/@lumenflow/surfaces/mcp/server.ts
 tests:
-  manual: []
+  manual:
+    - Run MCP task tool schema tests and verify invalid task:claim/task:complete payloads are
+      rejected before runtime dispatch.
   unit:
     - packages/@lumenflow/surfaces/mcp/__tests__/server.test.ts
   e2e: []
