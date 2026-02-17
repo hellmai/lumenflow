@@ -89,6 +89,10 @@ async function acquireTakeoverMarker(
 
 type LaneLockWarn = (message: string) => void;
 
+function writeWarning(message: string): void {
+  process.stderr.write(`${message}\n`);
+}
+
 export async function cleanupTakeoverMarker(
   markerPath: string,
   options: {
@@ -97,7 +101,7 @@ export async function cleanupTakeoverMarker(
   } = {},
 ): Promise<void> {
   const unlinkFile = options.unlinkFile ?? unlink;
-  const warn: LaneLockWarn = options.warn ?? ((message) => console.warn(message));
+  const warn: LaneLockWarn = options.warn ?? writeWarning;
 
   try {
     await unlinkFile(markerPath);
