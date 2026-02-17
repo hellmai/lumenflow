@@ -6,6 +6,7 @@ import {
   SOFTWARE_DELIVERY_PACK_VERSION,
   SOFTWARE_DELIVERY_POLICY_ID_PREFIX,
 } from './constants.js';
+import type { PathScope } from './tools/types.js';
 
 interface Parser<T> {
   parse(input: unknown): T;
@@ -14,6 +15,8 @@ interface Parser<T> {
 export interface SoftwareDeliveryManifestTool {
   name: string;
   entry: string;
+  permission: 'read' | 'write' | 'admin';
+  required_scopes: PathScope[];
   internal_only?: boolean;
 }
 
@@ -82,6 +85,35 @@ const AllowedPolicyTriggers = new Set([
   'on_evidence_added',
 ]);
 const AllowedPolicyDecisions = new Set(['allow', 'deny']);
+const AllowedToolPermissions = new Set(['read', 'write', 'admin']);
+
+function parsePathScope(input: unknown, label: string): PathScope {
+  const scope = asRecord(input, label);
+  const type = parseNonEmptyString(scope.type, `${label}.type`);
+  const pattern = parseNonEmptyString(scope.pattern, `${label}.pattern`);
+  const access = parseNonEmptyString(scope.access, `${label}.access`);
+
+  if (type !== 'path') {
+    throw new Error(`${label}.type must be "path".`);
+  }
+  if (access !== 'read' && access !== 'write') {
+    throw new Error(`${label}.access must be "read" or "write".`);
+  }
+
+  return {
+    type: 'path',
+    pattern,
+    access,
+  };
+}
+
+function parseRequiredScopes(value: unknown, label: string): PathScope[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error(`${label} must be a non-empty array.`);
+  }
+
+  return value.map((entry, index) => parsePathScope(entry, `${label}[${index}]`));
+}
 
 function parsePolicy(input: unknown, index: number): SoftwareDeliveryManifestPolicy {
   const policy = asRecord(input, `policies[${index}]`);
@@ -106,9 +138,19 @@ function parsePolicy(input: unknown, index: number): SoftwareDeliveryManifestPol
 
 function parseTool(input: unknown, index: number): SoftwareDeliveryManifestTool {
   const tool = asRecord(input, `tools[${index}]`);
+  const permission =
+    tool.permission === undefined
+      ? 'read'
+      : parseNonEmptyString(tool.permission, `tools[${index}].permission`);
+  if (!AllowedToolPermissions.has(permission)) {
+    throw new Error(`tools[${index}].permission is invalid.`);
+  }
+
   return {
     name: parseNonEmptyString(tool.name, `tools[${index}].name`),
     entry: parseNonEmptyString(tool.entry, `tools[${index}].entry`),
+    permission: permission as SoftwareDeliveryManifestTool['permission'],
+    required_scopes: parseRequiredScopes(tool.required_scopes, `tools[${index}].required_scopes`),
     internal_only:
       tool.internal_only === undefined
         ? undefined

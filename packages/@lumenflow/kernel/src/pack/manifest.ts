@@ -3,6 +3,7 @@
 
 import { z } from 'zod';
 import { POLICY_TRIGGERS } from '../policy/policy-engine.js';
+import { ToolScopeSchema } from '../kernel.schemas.js';
 
 const SEMVER_REGEX = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?$/;
 const SEMVER_MESSAGE = 'Expected semantic version';
@@ -10,6 +11,8 @@ const SEMVER_MESSAGE = 'Expected semantic version';
 export const DomainPackToolSchema = z.object({
   name: z.string().min(1),
   entry: z.string().min(1),
+  permission: z.enum(['read', 'write', 'admin']).default('read'),
+  required_scopes: z.array(ToolScopeSchema).min(1),
   internal_only: z.boolean().optional(),
 });
 
