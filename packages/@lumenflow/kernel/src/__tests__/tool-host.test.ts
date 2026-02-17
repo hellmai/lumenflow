@@ -255,7 +255,11 @@ describe('tool host', () => {
     expect(finished).toBeDefined();
     if (finished?.kind === 'tool_call_finished') {
       expect(finished.result).toBe('denied');
-      expect(finished.policy_decisions.some((decision) => decision.policy_id === 'kernel.scope.reserved-path')).toBe(true);
+      expect(
+        finished.policy_decisions.some(
+          (decision) => decision.policy_id === 'kernel.scope.reserved-path',
+        ),
+      ).toBe(true);
     }
   });
 });
