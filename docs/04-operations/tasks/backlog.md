@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1795 — Phase 4 guardrail: enforce non-increasing MCP runCliCommand shell-out budget](wu/WU-1795.yaml) — Framework: Core Lifecycle
 - [WU-1794 — Phase 4 governance: publish runCliCommand deprecation timeline and closure criteria](wu/WU-1794.yaml) — Content: Specs Governance
 - [WU-1793 — Phase 4 metric closure: align parity baseline with runtime-registered tools](wu/WU-1793.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
