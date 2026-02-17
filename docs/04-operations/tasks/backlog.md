@@ -24,7 +24,6 @@ sections:
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
-- [WU-1780 — Enforce workspace tamper baseline and missing-config handling](wu/WU-1780.yaml) — Framework: Core Lifecycle
 - [WU-1781 — Sandbox readonly mount depth and prefix validation](wu/WU-1781.yaml) — Framework: Core Lifecycle
 - [WU-1782 — Bound evidence receipt indexing and improve lane-lock cleanup observability](wu/WU-1782.yaml) — Framework: Core Lifecycle
 - [WU-1783 — Housekeeping: license consistency, dangling plan URIs, and metric wording](wu/WU-1783.yaml) — Content: Specs Governance
@@ -38,6 +37,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1780 — Enforce workspace tamper baseline and missing-config handling](wu/WU-1780.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
