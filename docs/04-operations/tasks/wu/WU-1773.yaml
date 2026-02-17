@@ -2,7 +2,7 @@ id: WU-1773
 title: Add workspace hash verification and spec_tampered emission
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-17
 code_paths:
@@ -39,3 +39,11 @@ acceptance:
   - Tool execution verifies workspace_config_hash against current workspace state
   - Hash mismatch emits spec_tampered (spec=workspace) and fails tool execution
   - Tests cover workspace tamper scenario with hard fail and spec_tampered emission
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1773
+claimed_at: 2026-02-17T13:35:10.038Z
+baseline_main_sha: 83d6b26f56e82241366ac5f2d05a92650102f9c2
+session_id: f9793679-54ec-4cff-ad1a-8f4e45fcfd0c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-17T13:35:10.045Z
