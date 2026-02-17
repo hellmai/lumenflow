@@ -2,7 +2,7 @@ id: WU-1763
 title: 'Kernel performance: eliminate EventStore per-append reload'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-17
 code_paths:
@@ -44,3 +44,6 @@ session_id: f70fc58b-2d9a-4d4e-83bf-c3477f7711fe
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-17T13:03:36.028Z
+locked: true
+completed_at: 2026-02-17T13:07:29.894Z
+completed: 2026-02-17
