@@ -525,7 +525,8 @@ describe('kernel runtime facade', () => {
       session_id: 'session-1780-baseline-enforced',
     });
 
-    const fakeMetadataHash = workspaceConfigHash === 'f'.repeat(64) ? 'e'.repeat(64) : 'f'.repeat(64);
+    const fakeMetadataHash =
+      workspaceConfigHash === 'f'.repeat(64) ? 'e'.repeat(64) : 'f'.repeat(64);
     const output = await runtime.executeTool(
       PACK_ECHO_TOOL_NAME,
       { message: 'baseline-enforced' },
