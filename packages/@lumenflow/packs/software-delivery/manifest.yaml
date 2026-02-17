@@ -5,6 +5,11 @@ task_types:
 tools:
   - name: git:status
     entry: tool-impl/git-tools.ts#gitStatusTool
+    permission: read
+    required_scopes:
+      - type: path
+        pattern: "**"
+        access: read
 policies:
   - id: software-delivery.gate.format
     trigger: on_completion

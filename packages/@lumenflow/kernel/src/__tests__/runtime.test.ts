@@ -17,6 +17,7 @@ import {
   UTF8_ENCODING,
   WORKSPACE_FILE_NAME,
 } from '../shared-constants.js';
+import { ToolRegistry } from '../tool-host/tool-registry.js';
 
 const WORKSPACE_SCOPE = {
   type: 'path' as const,
@@ -26,6 +27,7 @@ const WORKSPACE_SCOPE = {
 const PACK_ECHO_TOOL_NAME = 'pack:echo';
 const TOOL_NOT_FOUND_ERROR_CODE = 'TOOL_NOT_FOUND';
 const SUBPROCESS_NOT_AVAILABLE_ERROR_CODE = 'SUBPROCESS_NOT_AVAILABLE';
+const SCOPE_DENIED_ERROR_CODE = 'SCOPE_DENIED';
 const TOOL_CALL_STARTED_KIND = 'tool_call_started';
 const TOOL_CALL_FINISHED_KIND = 'tool_call_finished';
 const WORKSPACE_UPDATED_KIND = 'workspace_updated';
@@ -119,6 +121,10 @@ async function writeWorkspaceFixture(root: string): Promise<void> {
       'tools:',
       `  - name: ${PACK_ECHO_TOOL_NAME}`,
       '    entry: tools/echo.ts',
+      '    required_scopes:',
+      '      - type: path',
+      '        pattern: "**"',
+      '        access: read',
       'policies:',
       '  - id: runtime.completion.allow',
       '    trigger: on_completion',
@@ -221,20 +227,90 @@ describe('kernel runtime facade', () => {
   });
 
   it('registers manifest-declared tools with default resolver when override is omitted', async () => {
-    const runtime = await createRuntimeWithDefaultResolver();
+    const registerSpy = vi.spyOn(ToolRegistry.prototype, 'register');
+    try {
+      const runtime = await createRuntimeWithDefaultResolver();
+      const registeredPackCapability = registerSpy.mock.calls
+        .map((call) => call[0])
+        .find((capability) => capability.name === PACK_ECHO_TOOL_NAME);
 
-    const output = await runtime.executeTool(
-      PACK_ECHO_TOOL_NAME,
-      { message: 'hello' },
-      createExecutionContext(
-        'WU-1770-default-resolver',
-        'run-default-resolver-1',
-        workspaceConfigHash,
-      ),
-    );
+      expect(registeredPackCapability).toBeDefined();
+      expect(registeredPackCapability?.permission).toBe('read');
+      expect(registeredPackCapability?.required_scopes).toEqual([WORKSPACE_SCOPE]);
 
-    expect(output.success).toBe(false);
-    expect(output.error?.code).toBe(SUBPROCESS_NOT_AVAILABLE_ERROR_CODE);
+      const output = await runtime.executeTool(
+        PACK_ECHO_TOOL_NAME,
+        { message: 'hello' },
+        createExecutionContext(
+          'WU-1770-default-resolver',
+          'run-default-resolver-1',
+          workspaceConfigHash,
+        ),
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error?.code).toBe(SUBPROCESS_NOT_AVAILABLE_ERROR_CODE);
+    } finally {
+      registerSpy.mockRestore();
+    }
+  });
+
+  it('honors manifest-declared permission and required scopes in default resolver output', async () => {
+    await writeManifest([
+      'id: software-delivery',
+      'version: 1.0.0',
+      'task_types:',
+      '  - work-unit',
+      'tools:',
+      `  - name: ${PACK_ECHO_TOOL_NAME}`,
+      '    entry: tools/echo.ts',
+      '    permission: admin',
+      '    required_scopes:',
+      '      - type: path',
+      '        pattern: "runtime/**"',
+      '        access: write',
+      'policies:',
+      '  - id: runtime.completion.allow',
+      '    trigger: on_completion',
+      '    decision: allow',
+      'state_aliases:',
+      '  active: in_progress',
+      'evidence_types: []',
+      'lane_templates: []',
+    ]);
+
+    const registerSpy = vi.spyOn(ToolRegistry.prototype, 'register');
+    try {
+      const runtime = await createRuntimeWithDefaultResolver();
+      const registeredPackCapability = registerSpy.mock.calls
+        .map((call) => call[0])
+        .find((capability) => capability.name === PACK_ECHO_TOOL_NAME);
+
+      expect(registeredPackCapability).toBeDefined();
+      expect(registeredPackCapability?.permission).toBe('admin');
+      expect(registeredPackCapability?.required_scopes).toEqual([
+        {
+          type: 'path',
+          pattern: 'runtime/**',
+          access: 'write',
+        },
+      ]);
+
+      const output = await runtime.executeTool(
+        PACK_ECHO_TOOL_NAME,
+        { message: 'hello' },
+        createExecutionContext(
+          'WU-1778-manifest-permission-scope',
+          'run-1778-manifest-permission-scope-1',
+          workspaceConfigHash,
+        ),
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error?.code).toBe(SCOPE_DENIED_ERROR_CODE);
+    } finally {
+      registerSpy.mockRestore();
+    }
   });
 
   it('emits workspace_updated with the computed workspace hash at runtime initialization', async () => {
@@ -260,6 +336,10 @@ describe('kernel runtime facade', () => {
       'tools:',
       `  - name: ${PACK_ECHO_TOOL_NAME}`,
       '    entry: ../escape.ts',
+      '    required_scopes:',
+      '      - type: path',
+      '        pattern: "**"',
+      '        access: read',
       'policies:',
       '  - id: runtime.completion.allow',
       '    trigger: on_completion',

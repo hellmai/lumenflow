@@ -344,8 +344,8 @@ async function defaultRuntimeToolCapabilityResolver(
     version: input.loadedPack.manifest.version,
     input_schema: DEFAULT_PACK_TOOL_INPUT_SCHEMA,
     output_schema: DEFAULT_PACK_TOOL_OUTPUT_SCHEMA,
-    permission: 'admin',
-    required_scopes: input.workspaceSpec.security.allowed_scopes,
+    permission: input.tool.permission,
+    required_scopes: input.tool.required_scopes,
     handler: {
       kind: 'subprocess',
       entry: resolvedEntry,
