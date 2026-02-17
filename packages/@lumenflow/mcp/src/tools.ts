@@ -61,6 +61,9 @@ export {
   wuUnlockLaneTool,
 } from './tools/wu-tools.js';
 
+// Re-export runtime tracer-bullet tools
+export { taskClaimTool } from './tools/runtime-task-tools.js';
+
 // Re-export domain tools -- initiative
 export {
   initiativeListTool,
@@ -197,6 +200,7 @@ import {
   wuInferLaneTool,
   wuUnlockLaneTool,
 } from './tools/wu-tools.js';
+import { taskClaimTool } from './tools/runtime-task-tools.js';
 import {
   initiativeListTool,
   initiativeStatusTool,
@@ -465,3 +469,16 @@ export const allTools: ToolDefinition[] = [
   lumenflowReleaseTool,
   lumenflowSyncTemplatesTool,
 ];
+
+/**
+ * Runtime-backed additive MCP tools.
+ *
+ * These are intentionally isolated from legacy CLI-shell tools so we can
+ * migrate command-by-command without breaking parity gates.
+ */
+export const runtimeTaskTools: ToolDefinition[] = [taskClaimTool];
+
+/**
+ * Production MCP registry consumed by server startup.
+ */
+export const registeredTools: ToolDefinition[] = [...allTools, ...runtimeTaskTools];

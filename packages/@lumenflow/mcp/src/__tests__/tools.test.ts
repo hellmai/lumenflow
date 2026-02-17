@@ -8,6 +8,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   contextGetTool,
+  registeredTools,
+  taskClaimTool,
   wuListTool,
   wuStatusTool,
   wuCreateTool,
@@ -15,6 +17,10 @@ import {
   wuDoneTool,
   gatesRunTool,
 } from '../tools.js';
+import {
+  RuntimeTaskToolDescriptions,
+  RuntimeTaskToolNames,
+} from '../tools/runtime-task-constants.js';
 import * as cliRunner from '../cli-runner.js';
 import * as core from '@lumenflow/core';
 
@@ -208,6 +214,19 @@ describe('MCP tools', () => {
 
       expect(result.success).toBe(false);
       expect(result.error?.message).toContain('lane');
+    });
+  });
+
+  describe('runtime tracer-bullet registry wiring', () => {
+    it(`should export ${RuntimeTaskToolNames.TASK_CLAIM} runtime tool definition`, () => {
+      expect(taskClaimTool.name).toBe(RuntimeTaskToolNames.TASK_CLAIM);
+      expect(taskClaimTool.description).toBe(RuntimeTaskToolDescriptions.TASK_CLAIM);
+    });
+
+    it(`should include ${RuntimeTaskToolNames.TASK_CLAIM} in the production MCP registry aggregate`, () => {
+      expect(registeredTools.some((tool) => tool.name === RuntimeTaskToolNames.TASK_CLAIM)).toBe(
+        true,
+      );
     });
   });
 
