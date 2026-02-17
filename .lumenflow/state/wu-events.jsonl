@@ -1482,4 +1482,5 @@
 {"type":"claim","wuId":"WU-1771","timestamp":"2026-02-17T13:54:21.804Z","lane":"Framework: MCP","title":"Tracer bullet MCP task_claim through KernelRuntime"}
 {"type":"claim","wuId":"WU-1776","timestamp":"2026-02-17T15:29:42.340Z","lane":"Operations: Tooling","title":"OSS release prep: community governance files + SDK license"}
 {"type":"complete","wuId":"WU-1771","timestamp":"2026-02-17T15:39:06.860Z"}
-{"type":"claim","wuId":"WU-1772","lane":"Framework: CLI Orchestration","title":"Tracer bullet CLI task:claim through KernelRuntime","timestamp":"2026-02-17T15:40:32.346Z"}
+{"type":"claim","wuId":"WU-1772","timestamp":"2026-02-17T15:40:32.346Z","lane":"Framework: CLI Orchestration","title":"Tracer bullet CLI task:claim through KernelRuntime"}
+{"type":"complete","wuId":"WU-1772","timestamp":"2026-02-17T15:59:49.448Z"}

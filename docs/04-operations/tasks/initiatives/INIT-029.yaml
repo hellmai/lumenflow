@@ -34,7 +34,7 @@ phases:
     status: in_progress
   - id: 7
     title: Production Surface Adoption + Pack Wiring
-    status: in_progress
+    status: done
 wus:
   - WU-1725
   - WU-1726
