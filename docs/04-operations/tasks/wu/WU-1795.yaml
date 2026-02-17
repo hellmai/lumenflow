@@ -2,7 +2,7 @@ id: WU-1795
 title: 'Phase 4 guardrail: enforce non-increasing MCP runCliCommand shell-out budget'
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-17
 code_paths:
@@ -48,4 +48,9 @@ acceptance:
     migration planning.
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-17T23:01:56.870Z
+approved_at: 2026-02-17T23:03:58.358Z
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1795
+claimed_at: 2026-02-17T23:03:58.350Z
+baseline_main_sha: 44d162b2b224e55fd81bd3110d3c9ebf84b832b2
+session_id: 0151ebdd-d2ba-423e-a354-67a90986b060
