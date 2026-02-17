@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1763 — Kernel performance: eliminate per-append reload, move orphan reconciliation, add evidence indexing](wu/WU-1763.yaml) — Framework: Core Lifecycle
 - [WU-1762 — Harden policy engine: document loosening semantics, fix integrity dev bypass](wu/WU-1762.yaml) — Framework: Core Lifecycle
 - [WU-1761 — Harden sandbox: restrict bwrap root mount, fix lane lock TOCTOU, fix MCP schemas](wu/WU-1761.yaml) — Framework: Core Lifecycle
 - [WU-1760 — Fix runtime security: Unix socket permissions, JSON validation, daemon params](wu/WU-1760.yaml) — Framework: Core Lifecycle
