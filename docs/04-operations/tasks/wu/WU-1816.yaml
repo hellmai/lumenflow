@@ -2,7 +2,7 @@ id: WU-1816
 title: Add reactive subscribe mechanism to EventStore
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -30,10 +30,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: The EventStore currently only supports pull-based replay(filter) which re-reads the entire JSONL file. Add EventStore.subscribe(filter, callback) returning a Disposable that uses fs.watch() + seek-to-last-offset to parse only new lines. This is the reactive primitive that SSE streaming, AG-UI, and control plane forwarding all depend on.
+description: The EventStore currently only supports pull-based replay(filter) which re-reads the
+  entire JSONL file. Add EventStore.subscribe(filter, callback) returning a Disposable that uses
+  fs.watch() + seek-to-last-offset to parse only new lines. This is the reactive primitive that SSE
+  streaming, AG-UI, and control plane forwarding all depend on.
 acceptance:
   - EventStore.subscribe(filter, cb) returns Disposable
   - Callback fires within 500ms of new event being appended
   - Only new lines parsed (seek-to-offset, not full re-read)
   - Filter works for taskId, kind, and timestamp
   - Dispose stops delivery and cleans up watcher
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1816
+claimed_at: 2026-02-18T15:30:00.465Z
+baseline_main_sha: 8f431a828dcc8ec29b823b01db5632401915074c
+session_id: b74ac5ee-4501-43a5-911a-3f62fe497dcc
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T15:30:00.471Z
