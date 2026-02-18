@@ -90,6 +90,7 @@ function buildCommandRegistry(): CommandCategory[] {
     COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
     COMMAND_CATEGORIES.METRICS_FLOW,
     COMMAND_CATEGORIES.STATE_MANAGEMENT,
+    COMMAND_CATEGORIES.PACKS,
   ];
 
   // Build categories from manifest
