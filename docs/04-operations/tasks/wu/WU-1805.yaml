@@ -2,7 +2,7 @@ id: WU-1805
 title: Migrate WU read/query tools to runtime pack execution
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -53,3 +53,6 @@ session_id: 8c7c0e93-96ac-460d-a6d5-a3f2e5a11437
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T17:29:22.979Z
+locked: true
+completed_at: 2026-02-18T17:50:06.997Z
+completed: 2026-02-18
