@@ -2,7 +2,7 @@ id: WU-1869
 title: Vercel Blob-backed PackRegistryStore + PackBlobStore adapters
 lane: 'Content: Site Comms'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -60,3 +60,6 @@ session_id: feb6b4e3-57bb-43e2-bda5-c5c36c051d7a
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T23:20:26.162Z
+locked: true
+completed_at: 2026-02-18T23:36:37.525Z
+completed: 2026-02-18
