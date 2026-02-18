@@ -7,6 +7,7 @@ _Last updated: 2026-02-18_
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
 - [WU-1834 — Build policy decision overlay showing governance enforcement visually](wu/WU-1834.yaml)
 - [WU-1839 — Create pack:search CLI command for registry discovery](wu/WU-1839.yaml)
+- [WU-1835 — Build human-in-the-loop approval UI for policy approval_required decisions](wu/WU-1835.yaml)
 
 ## Completed
 
