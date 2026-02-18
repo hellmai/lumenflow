@@ -5,6 +5,7 @@
  * WU-1642: Extracted from tools.ts during domain decomposition.
  * WU-1425: Agent tools: agent_session, agent_session_end, agent_log_issue, agent_issues_query
  * WU-1457: All agent commands use shared schemas
+ * WU-1812: Migrated agent tools from runCliCommand to executeViaPack runtime path
  */
 
 import {
@@ -20,10 +21,9 @@ import {
   SharedErrorMessages,
   success,
   error,
-  runCliCommand,
-  type CliRunnerOptions,
+  executeViaPack,
 } from '../tools-shared.js';
-import { CliCommands } from '../mcp-constants.js';
+import { CliCommands, MetadataKeys } from '../mcp-constants.js';
 
 /**
  * Error codes for agent tools
@@ -47,6 +47,81 @@ const AgentErrorMessages = {
   DESCRIPTION_REQUIRED: 'description is required',
 } as const;
 
+const AgentResultMessages = {
+  AGENT_SESSION_PASSED: 'Session started',
+  AGENT_SESSION_FAILED: 'agent:session failed',
+  AGENT_SESSION_END_PASSED: 'Session ended',
+  AGENT_SESSION_END_FAILED: 'agent:session-end failed',
+  AGENT_LOG_ISSUE_PASSED: 'Issue logged',
+  AGENT_LOG_ISSUE_FAILED: 'agent:log-issue failed',
+  AGENT_ISSUES_QUERY_PASSED: 'Query complete',
+  AGENT_ISSUES_QUERY_FAILED: 'agent:issues-query failed',
+} as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function unwrapExecuteViaPackData(data: unknown): unknown {
+  if (!isRecord(data) || !('success' in data)) {
+    return data;
+  }
+
+  const successValue = data.success;
+  if (typeof successValue !== 'boolean' || !successValue) {
+    return data;
+  }
+
+  return data.data ?? {};
+}
+
+function resolveMessage(value: unknown, fallbackMessage: string): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (isRecord(value) && typeof value.message === 'string') {
+    return value.message;
+  }
+
+  return fallbackMessage;
+}
+
+function parseJsonPayload(value: unknown): unknown {
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return { message: value };
+    }
+  }
+
+  if (isRecord(value) && typeof value.message === 'string') {
+    try {
+      return JSON.parse(value.message);
+    } catch {
+      return value;
+    }
+  }
+
+  return value;
+}
+
+function buildExecutionOptions(
+  projectRoot: string | undefined,
+  fallback: { command: string; args: string[]; errorCode: string },
+): Parameters<typeof executeViaPack>[2] {
+  return {
+    projectRoot,
+    contextInput: {
+      metadata: {
+        [MetadataKeys.PROJECT_ROOT]: projectRoot,
+      },
+    },
+    fallback,
+  };
+}
+
 /**
  * agent_session - Start an agent session for tracking WU execution
  */
@@ -63,20 +138,28 @@ export const agentSessionTool: ToolDefinition = {
       return error(AgentErrorMessages.TIER_REQUIRED, ErrorCodes.MISSING_PARAMETER);
     }
 
-    const args = ['--wu', input.wu as string, '--tier', String(input.tier)];
+    const args = [CliArgs.WU, input.wu as string, '--tier', String(input.tier)];
     if (input.agent_type) args.push('--agent-type', input.agent_type as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.AGENT_SESSION, args, cliOptions);
+    const result = await executeViaPack(CliCommands.AGENT_SESSION, input, {
+      ...buildExecutionOptions(options?.projectRoot, {
+        command: CliCommands.AGENT_SESSION,
+        args,
+        errorCode: AgentErrorCodes.AGENT_SESSION_ERROR,
+      }),
+    });
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Session started' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'agent:session failed',
-        AgentErrorCodes.AGENT_SESSION_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            AgentResultMessages.AGENT_SESSION_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? AgentResultMessages.AGENT_SESSION_FAILED,
+          AgentErrorCodes.AGENT_SESSION_ERROR,
+        );
   },
 };
 
@@ -89,22 +172,24 @@ export const agentSessionEndTool: ToolDefinition = {
   inputSchema: agentSessionEndSchema,
 
   async execute(_input, options) {
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.AGENT_SESSION_END, [], cliOptions);
+    const result = await executeViaPack(
+      CliCommands.AGENT_SESSION_END,
+      {},
+      {
+        ...buildExecutionOptions(options?.projectRoot, {
+          command: CliCommands.AGENT_SESSION_END,
+          args: [],
+          errorCode: AgentErrorCodes.AGENT_SESSION_END_ERROR,
+        }),
+      },
+    );
 
-    if (result.success) {
-      try {
-        const data = JSON.parse(result.stdout);
-        return success(data);
-      } catch {
-        return success({ message: result.stdout || 'Session ended' });
-      }
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'agent:session-end failed',
-        AgentErrorCodes.AGENT_SESSION_END_ERROR,
-      );
-    }
+    return result.success
+      ? success(parseJsonPayload(unwrapExecuteViaPackData(result.data)))
+      : error(
+          result.error?.message ?? AgentResultMessages.AGENT_SESSION_END_FAILED,
+          AgentErrorCodes.AGENT_SESSION_END_ERROR,
+        );
   },
 };
 
@@ -153,17 +238,25 @@ export const agentLogIssueTool: ToolDefinition = {
       }
     }
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.AGENT_LOG_ISSUE, args, cliOptions);
+    const result = await executeViaPack(CliCommands.AGENT_LOG_ISSUE, input, {
+      ...buildExecutionOptions(options?.projectRoot, {
+        command: CliCommands.AGENT_LOG_ISSUE,
+        args,
+        errorCode: AgentErrorCodes.AGENT_LOG_ISSUE_ERROR,
+      }),
+    });
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Issue logged' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'agent:log-issue failed',
-        AgentErrorCodes.AGENT_LOG_ISSUE_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            AgentResultMessages.AGENT_LOG_ISSUE_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? AgentResultMessages.AGENT_LOG_ISSUE_FAILED,
+          AgentErrorCodes.AGENT_LOG_ISSUE_ERROR,
+        );
   },
 };
 
@@ -181,16 +274,24 @@ export const agentIssuesQueryTool: ToolDefinition = {
     if (input.category) args.push('--category', input.category as string);
     if (input.severity) args.push('--severity', input.severity as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.AGENT_ISSUES_QUERY, args, cliOptions);
+    const result = await executeViaPack(CliCommands.AGENT_ISSUES_QUERY, input, {
+      ...buildExecutionOptions(options?.projectRoot, {
+        command: CliCommands.AGENT_ISSUES_QUERY,
+        args,
+        errorCode: AgentErrorCodes.AGENT_ISSUES_QUERY_ERROR,
+      }),
+    });
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Query complete' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'agent:issues-query failed',
-        AgentErrorCodes.AGENT_ISSUES_QUERY_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            AgentResultMessages.AGENT_ISSUES_QUERY_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? AgentResultMessages.AGENT_ISSUES_QUERY_FAILED,
+          AgentErrorCodes.AGENT_ISSUES_QUERY_ERROR,
+        );
   },
 };

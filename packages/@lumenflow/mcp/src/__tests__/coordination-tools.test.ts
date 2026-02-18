@@ -43,6 +43,7 @@ vi.mock('../tools-shared.js', async () => {
 
 describe('Agent MCP tools (WU-1425)', () => {
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
+  const mockExecuteViaPack = vi.mocked(toolsShared.executeViaPack);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -53,22 +54,26 @@ describe('Agent MCP tools (WU-1425)', () => {
   });
 
   describe('agent_session', () => {
-    it('should start agent session via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
+    it('should start agent session via executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Session started',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Session started' },
       });
 
       const result = await agentSessionTool.execute({ wu: 'WU-1425', tier: 2 });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:session',
-        expect.arrayContaining(['--wu', 'WU-1425', '--tier', '2']),
-        expect.any(Object),
+        expect.objectContaining({ wu: 'WU-1425', tier: 2 }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'agent:session',
+            args: expect.arrayContaining(['--wu', 'WU-1425', '--tier', '2']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should require wu parameter', async () => {
@@ -86,11 +91,9 @@ describe('Agent MCP tools (WU-1425)', () => {
     });
 
     it('should support agent_type option', async () => {
-      mockRunCliCommand.mockResolvedValue({
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Session started',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Session started' },
       });
 
       const result = await agentSessionTool.execute({
@@ -100,59 +103,73 @@ describe('Agent MCP tools (WU-1425)', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:session',
-        expect.arrayContaining(['--wu', 'WU-1425', '--tier', '2', '--agent-type', 'gemini-cli']),
-        expect.any(Object),
+        expect.objectContaining({ wu: 'WU-1425', tier: 2, agent_type: 'gemini-cli' }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'agent:session',
+            args: expect.arrayContaining([
+              '--wu',
+              'WU-1425',
+              '--tier',
+              '2',
+              '--agent-type',
+              'gemini-cli',
+            ]),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('agent_session_end', () => {
-    it('should end agent session via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
+    it('should end agent session via executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: JSON.stringify({
+        data: {
           wu_id: 'WU-1425',
           lane: 'Framework: CLI',
           incidents_logged: 0,
           incidents_major: 0,
-        }),
-        stderr: '',
-        exitCode: 0,
+        },
       });
 
       const result = await agentSessionEndTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:session-end',
-        expect.any(Array),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'agent:session-end',
+            args: [],
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should handle no active session gracefully', async () => {
-      mockRunCliCommand.mockResolvedValue({
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'No active session to end.',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'No active session to end.' },
       });
 
       const result = await agentSessionEndTool.execute({});
 
       expect(result.success).toBe(true);
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('agent_log_issue', () => {
-    it('should log issue via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
+    it('should log issue via executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Issue logged',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Issue logged' },
       });
 
       const result = await agentLogIssueTool.execute({
@@ -163,20 +180,31 @@ describe('Agent MCP tools (WU-1425)', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:log-issue',
-        expect.arrayContaining([
-          '--category',
-          'workflow',
-          '--severity',
-          'minor',
-          '--title',
-          'Test issue',
-          '--description',
-          'Test description',
-        ]),
-        expect.any(Object),
+        expect.objectContaining({
+          category: 'workflow',
+          severity: 'minor',
+          title: 'Test issue',
+          description: 'Test description',
+        }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'agent:log-issue',
+            args: expect.arrayContaining([
+              '--category',
+              'workflow',
+              '--severity',
+              'minor',
+              '--title',
+              'Test issue',
+              '--description',
+              'Test description',
+            ]),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should require category parameter', async () => {
@@ -224,11 +252,9 @@ describe('Agent MCP tools (WU-1425)', () => {
     });
 
     it('should support optional parameters', async () => {
-      mockRunCliCommand.mockResolvedValue({
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Issue logged',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Issue logged' },
       });
 
       const result = await agentLogIssueTool.execute({
@@ -243,106 +269,134 @@ describe('Agent MCP tools (WU-1425)', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:log-issue',
-        expect.arrayContaining([
-          '--category',
-          'tooling',
-          '--severity',
-          'major',
-          '--title',
-          'Test issue',
-          '--description',
-          'Test description',
-          '--resolution',
-          'Fixed it',
-          '--tag',
-          'worktree',
-          '--tag',
-          'gates',
-          '--step',
-          'wu:done',
-          '--file',
-          'src/main.ts',
-          '--file',
-          'src/utils.ts',
-        ]),
-        expect.any(Object),
+        expect.objectContaining({
+          category: 'tooling',
+          severity: 'major',
+          title: 'Test issue',
+          description: 'Test description',
+          resolution: 'Fixed it',
+          tags: ['worktree', 'gates'],
+          step: 'wu:done',
+          files: ['src/main.ts', 'src/utils.ts'],
+        }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'agent:log-issue',
+            args: expect.arrayContaining([
+              '--category',
+              'tooling',
+              '--severity',
+              'major',
+              '--title',
+              'Test issue',
+              '--description',
+              'Test description',
+              '--resolution',
+              'Fixed it',
+              '--tag',
+              'worktree',
+              '--tag',
+              'gates',
+              '--step',
+              'wu:done',
+              '--file',
+              'src/main.ts',
+              '--file',
+              'src/utils.ts',
+            ]),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('agent_issues_query', () => {
-    it('should query issues via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
+    it('should query issues via executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Summary displayed',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Summary displayed' },
       });
 
       const result = await agentIssuesQueryTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:issues-query',
-        expect.arrayContaining(['summary']),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'agent:issues-query',
+            args: expect.arrayContaining(['summary']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should support since parameter', async () => {
-      mockRunCliCommand.mockResolvedValue({
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Summary displayed',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Summary displayed' },
       });
 
       const result = await agentIssuesQueryTool.execute({ since: 30 });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:issues-query',
-        expect.arrayContaining(['summary', '--since', '30']),
-        expect.any(Object),
+        expect.objectContaining({ since: 30 }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            args: expect.arrayContaining(['summary', '--since', '30']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should support category filter', async () => {
-      mockRunCliCommand.mockResolvedValue({
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Summary displayed',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Summary displayed' },
       });
 
       const result = await agentIssuesQueryTool.execute({ category: 'tooling' });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:issues-query',
-        expect.arrayContaining(['summary', '--category', 'tooling']),
-        expect.any(Object),
+        expect.objectContaining({ category: 'tooling' }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            args: expect.arrayContaining(['summary', '--category', 'tooling']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should support severity filter', async () => {
-      mockRunCliCommand.mockResolvedValue({
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: 'Summary displayed',
-        stderr: '',
-        exitCode: 0,
+        data: { message: 'Summary displayed' },
       });
 
       const result = await agentIssuesQueryTool.execute({ severity: 'blocker' });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'agent:issues-query',
-        expect.arrayContaining(['summary', '--severity', 'blocker']),
-        expect.any(Object),
+        expect.objectContaining({ severity: 'blocker' }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            args: expect.arrayContaining(['summary', '--severity', 'blocker']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 });

@@ -100,6 +100,24 @@ const MEMORY_TOOL_NAMES = {
   TRIAGE: 'mem:triage',
   RECOVER: 'mem:recover',
 } as const;
+const SETUP_COORDINATION_PLAN_TOOL_NAMES = {
+  AGENT_SESSION: 'agent:session',
+  AGENT_SESSION_END: 'agent:session-end',
+  AGENT_LOG_ISSUE: 'agent:log-issue',
+  AGENT_ISSUES_QUERY: 'agent:issues-query',
+  LUMENFLOW: 'lumenflow',
+  LUMENFLOW_DOCTOR: 'lumenflow:doctor',
+  LUMENFLOW_INTEGRATE: 'lumenflow:integrate',
+  LUMENFLOW_UPGRADE: 'lumenflow:upgrade',
+  LUMENFLOW_RELEASE: 'lumenflow:release',
+  DOCS_SYNC: 'docs:sync',
+  SYNC_TEMPLATES: 'sync:templates',
+  PLAN_CREATE: 'plan:create',
+  PLAN_EDIT: 'plan:edit',
+  PLAN_LINK: 'plan:link',
+  PLAN_PROMOTE: 'plan:promote',
+  WU_RECOVER: 'wu:recover',
+} as const;
 
 function createResolverInput(toolName: string): RuntimeToolCapabilityResolverInput {
   return {
@@ -342,6 +360,33 @@ describe('packToolCapabilityResolver', () => {
       MEMORY_TOOL_NAMES.SUMMARIZE,
       MEMORY_TOOL_NAMES.TRIAGE,
       MEMORY_TOOL_NAMES.RECOVER,
+    ];
+
+    for (const toolName of toolNames) {
+      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+    }
+  });
+
+  it('resolves setup/coordination/plan lifecycle tools to in-process handlers', async () => {
+    const toolNames = [
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.AGENT_SESSION,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.AGENT_SESSION_END,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.AGENT_LOG_ISSUE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.AGENT_ISSUES_QUERY,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_DOCTOR,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_INTEGRATE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_UPGRADE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_RELEASE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.DOCS_SYNC,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.SYNC_TEMPLATES,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_CREATE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_EDIT,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_LINK,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_PROMOTE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.WU_RECOVER,
     ];
 
     for (const toolName of toolNames) {
@@ -1407,6 +1452,209 @@ describe('WU-1811: memory lifecycle uses runtime path end-to-end', () => {
       const result = await executeViaPack(lifecycleCall.toolName, lifecycleCall.input, {
         projectRoot: '/tmp/lumenflow-runtime-resolver-tests',
         context: buildExecutionContext({ taskId: 'WU-1811' }),
+        runtimeFactory: runtimeFactory as Parameters<typeof executeViaPack>[2]['runtimeFactory'],
+        cliRunner: cliRunner as Parameters<typeof executeViaPack>[2]['cliRunner'],
+        fallback: lifecycleCall.fallback,
+      });
+
+      expect(result.success).toBe(true);
+    }
+
+    expect(runtimeFactory).toHaveBeenCalledTimes(lifecycleCalls.length);
+    expect(runtimeExecuteTool).toHaveBeenCalledTimes(lifecycleCalls.length);
+    expect(cliRunner).not.toHaveBeenCalled();
+  });
+});
+
+describe('WU-1812: setup/coordination/plan lifecycle uses runtime path end-to-end', () => {
+  beforeEach(() => {
+    resetExecuteViaPackRuntimeCache();
+  });
+
+  it('runs remaining agent/setup/plan/docs/sync tools via runtime without CLI fallback', async () => {
+    const runtimeExecuteTool = vi.fn().mockResolvedValue({
+      success: true,
+      data: { message: 'runtime-success' },
+    });
+    const runtimeFactory = vi.fn().mockResolvedValue({
+      executeTool: runtimeExecuteTool,
+    });
+    const cliRunner = vi.fn();
+
+    const lifecycleCalls = [
+      {
+        toolName: 'agent:session',
+        input: { wu: 'WU-1812', tier: 2 },
+        fallback: {
+          command: 'agent:session',
+          args: ['--wu', 'WU-1812', '--tier', '2'],
+          errorCode: 'AGENT_SESSION_ERROR',
+        },
+      },
+      {
+        toolName: 'agent:session-end',
+        input: {},
+        fallback: {
+          command: 'agent:session-end',
+          args: [],
+          errorCode: 'AGENT_SESSION_END_ERROR',
+        },
+      },
+      {
+        toolName: 'agent:log-issue',
+        input: {
+          category: 'workflow',
+          severity: 'minor',
+          title: 'Issue',
+          description: 'desc',
+        },
+        fallback: {
+          command: 'agent:log-issue',
+          args: [
+            '--category',
+            'workflow',
+            '--severity',
+            'minor',
+            '--title',
+            'Issue',
+            '--description',
+            'desc',
+          ],
+          errorCode: 'AGENT_LOG_ISSUE_ERROR',
+        },
+      },
+      {
+        toolName: 'agent:issues-query',
+        input: { since: 30 },
+        fallback: {
+          command: 'agent:issues-query',
+          args: ['summary', '--since', '30'],
+          errorCode: 'AGENT_ISSUES_QUERY_ERROR',
+        },
+      },
+      {
+        toolName: 'lumenflow',
+        input: { client: 'codex', merge: true },
+        fallback: {
+          command: 'lumenflow',
+          args: ['--client', 'codex', '--merge'],
+          errorCode: 'LUMENFLOW_INIT_ERROR',
+        },
+      },
+      {
+        toolName: 'lumenflow',
+        input: {},
+        fallback: {
+          command: 'lumenflow',
+          args: ['commands'],
+          errorCode: 'LUMENFLOW_COMMANDS_ERROR',
+        },
+      },
+      {
+        toolName: 'lumenflow:doctor',
+        input: {},
+        fallback: {
+          command: 'lumenflow:doctor',
+          args: [],
+          errorCode: 'LUMENFLOW_DOCTOR_ERROR',
+        },
+      },
+      {
+        toolName: 'lumenflow:integrate',
+        input: { client: 'claude-code' },
+        fallback: {
+          command: 'lumenflow:integrate',
+          args: ['--client', 'claude-code'],
+          errorCode: 'LUMENFLOW_INTEGRATE_ERROR',
+        },
+      },
+      {
+        toolName: 'lumenflow:upgrade',
+        input: {},
+        fallback: {
+          command: 'lumenflow:upgrade',
+          args: [],
+          errorCode: 'LUMENFLOW_UPGRADE_ERROR',
+        },
+      },
+      {
+        toolName: 'lumenflow:release',
+        input: { dry_run: true },
+        fallback: {
+          command: 'lumenflow:release',
+          args: ['--dry-run'],
+          errorCode: 'LUMENFLOW_RELEASE_ERROR',
+        },
+      },
+      {
+        toolName: 'docs:sync',
+        input: { vendor: 'claude', force: true },
+        fallback: {
+          command: 'docs:sync',
+          args: ['--vendor', 'claude', '--force'],
+          errorCode: 'DOCS_SYNC_ERROR',
+        },
+      },
+      {
+        toolName: 'sync:templates',
+        input: { dry_run: true, verbose: true, check_drift: true },
+        fallback: {
+          command: 'sync:templates',
+          args: ['--dry-run', '--verbose', '--check-drift'],
+          errorCode: 'SYNC_TEMPLATES_ALIAS_ERROR',
+        },
+      },
+      {
+        toolName: 'plan:create',
+        input: { id: 'WU-1812', title: 'plan' },
+        fallback: {
+          command: 'plan:create',
+          args: ['--id', 'WU-1812', '--title', 'plan'],
+          errorCode: 'PLAN_CREATE_ERROR',
+        },
+      },
+      {
+        toolName: 'plan:edit',
+        input: { id: 'WU-1812', section: 'goal', append: 'line' },
+        fallback: {
+          command: 'plan:edit',
+          args: ['--id', 'WU-1812', '--section', 'goal', '--append', 'line'],
+          errorCode: 'PLAN_EDIT_ERROR',
+        },
+      },
+      {
+        toolName: 'plan:link',
+        input: { id: 'WU-1812', plan: 'lumenflow://plans/WU-1812.md' },
+        fallback: {
+          command: 'plan:link',
+          args: ['--id', 'WU-1812', '--plan', 'lumenflow://plans/WU-1812.md'],
+          errorCode: 'PLAN_LINK_ERROR',
+        },
+      },
+      {
+        toolName: 'plan:promote',
+        input: { id: 'WU-1812', force: true },
+        fallback: {
+          command: 'plan:promote',
+          args: ['--id', 'WU-1812', '--force'],
+          errorCode: 'PLAN_PROMOTE_ERROR',
+        },
+      },
+      {
+        toolName: 'wu:recover',
+        input: { id: 'WU-1812', action: 'resume' },
+        fallback: {
+          command: 'wu:recover',
+          args: ['--id', 'WU-1812', '--action', 'resume'],
+          errorCode: 'WU_RECOVER_ERROR',
+        },
+      },
+    ] as const;
+
+    for (const lifecycleCall of lifecycleCalls) {
+      const result = await executeViaPack(lifecycleCall.toolName, lifecycleCall.input, {
+        projectRoot: '/tmp/lumenflow-runtime-resolver-tests',
+        context: buildExecutionContext({ taskId: 'WU-1812' }),
         runtimeFactory: runtimeFactory as Parameters<typeof executeViaPack>[2]['runtimeFactory'],
         cliRunner: cliRunner as Parameters<typeof executeViaPack>[2]['cliRunner'],
         fallback: lifecycleCall.fallback,

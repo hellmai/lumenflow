@@ -449,22 +449,26 @@ describe('WU MCP tools (WU-1422)', () => {
   });
 
   describe('wu_recover', () => {
-    it('should recover WU via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
+    it('should recover WU via executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue({
         success: true,
-        stdout: JSON.stringify({ status: 'recovered', action: 'resume' }),
-        stderr: '',
-        exitCode: 0,
+        data: { status: 'recovered', action: 'resume' },
       });
 
       const result = await wuRecoverTool.execute({ id: 'WU-1422', action: 'resume' });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'wu:recover',
-        expect.arrayContaining(['--id', 'WU-1422', '--action', 'resume']),
-        expect.any(Object),
+        expect.objectContaining({ id: 'WU-1422', action: 'resume' }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'wu:recover',
+            args: expect.arrayContaining(['--id', 'WU-1422', '--action', 'resume']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
     it('should require id parameter', async () => {
@@ -1133,16 +1137,22 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
   });
 
   it('should run docs:sync with vendor and force flags', async () => {
-    mockRunCliCommand.mockResolvedValue({ success: true, stdout: 'ok', stderr: '', exitCode: 0 });
+    mockExecuteViaPack.mockResolvedValue({ success: true, data: { message: 'ok' } });
 
     const result = await docsSyncTool.execute({ vendor: 'all', force: true });
 
     expect(result.success).toBe(true);
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'docs:sync',
-      expect.arrayContaining(['--vendor', 'all', '--force']),
-      expect.any(Object),
+      expect.objectContaining({ vendor: 'all', force: true }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'docs:sync',
+          args: expect.arrayContaining(['--vendor', 'all', '--force']),
+        }),
+      }),
     );
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 
   it('should run gates and gates:docs aliases', async () => {
@@ -1233,15 +1243,32 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
     mockExecuteViaPack.mockResolvedValue({ success: true, data: { message: 'ok' } });
 
     await lumenflowTool.execute({ client: 'codex', merge: true, full: true, framework: 'arc42' });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'lumenflow',
-      expect.arrayContaining(['--client', 'codex', '--merge', '--full', '--framework', 'arc42']),
-      expect.any(Object),
+      expect.objectContaining({
+        client: 'codex',
+        merge: true,
+        full: true,
+        framework: 'arc42',
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'lumenflow',
+          args: expect.arrayContaining([
+            '--client',
+            'codex',
+            '--merge',
+            '--full',
+            '--framework',
+            'arc42',
+          ]),
+        }),
+      }),
     );
 
     await lumenflowGatesTool.execute({ docs_only: true });
     expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
-      1,
+      2,
       'gates',
       expect.objectContaining({ docs_only: true }),
       expect.objectContaining({
@@ -1254,7 +1281,7 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
 
     await lumenflowValidateTool.execute({});
     expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
-      2,
+      3,
       'lumenflow:validate',
       {},
       expect.objectContaining({
@@ -1266,7 +1293,7 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
 
     await lumenflowMetricsTool.execute({ subcommand: 'flow', days: 14, format: 'json' });
     expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
-      3,
+      4,
       'lumenflow:metrics',
       expect.objectContaining({
         subcommand: 'flow',
@@ -1282,7 +1309,7 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
 
     await metricsTool.execute({ subcommand: 'dora', dry_run: true });
     expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
-      4,
+      5,
       'metrics',
       expect.objectContaining({
         subcommand: 'dora',
@@ -1362,7 +1389,7 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
   });
 
   it('should run sync:templates with mapped flags', async () => {
-    mockRunCliCommand.mockResolvedValue({ success: true, stdout: 'ok', stderr: '', exitCode: 0 });
+    mockExecuteViaPack.mockResolvedValue({ success: true, data: { message: 'ok' } });
 
     const result = await syncTemplatesTool.execute({
       dry_run: true,
@@ -1371,11 +1398,21 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'sync:templates',
-      expect.arrayContaining(['--dry-run', '--verbose', '--check-drift']),
-      expect.any(Object),
+      expect.objectContaining({
+        dry_run: true,
+        verbose: true,
+        check_drift: true,
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'sync:templates',
+          args: expect.arrayContaining(['--dry-run', '--verbose', '--check-drift']),
+        }),
+      }),
     );
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 });
 
@@ -1579,7 +1616,6 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
 
   it('should validate and map init_plan + plan command args', async () => {
     mockExecuteViaPack.mockResolvedValue({ success: true, data: { message: 'ok' } });
-    mockRunCliCommand.mockResolvedValue({ success: true, stdout: 'ok', stderr: '', exitCode: 0 });
 
     const missingInit = await initPlanTool.execute({ initiative: 'INIT-MCP-FULL' });
     expect(missingInit.success).toBe(false);
@@ -1602,32 +1638,65 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
     expect(mockRunCliCommand).not.toHaveBeenCalled();
 
     await planCreateTool.execute({ id: 'WU-1483', title: 'MCP wave-2 plan' });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'plan:create',
-      expect.arrayContaining(['--id', 'WU-1483', '--title', 'MCP wave-2 plan']),
-      expect.any(Object),
+      expect.objectContaining({ id: 'WU-1483', title: 'MCP wave-2 plan' }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'plan:create',
+          args: expect.arrayContaining(['--id', 'WU-1483', '--title', 'MCP wave-2 plan']),
+        }),
+      }),
     );
 
     await planEditTool.execute({ id: 'WU-1483', section: 'Goal', append: 'line' });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'plan:edit',
-      expect.arrayContaining(['--id', 'WU-1483', '--section', 'Goal', '--append', 'line']),
-      expect.any(Object),
+      expect.objectContaining({ id: 'WU-1483', section: 'Goal', append: 'line' }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'plan:edit',
+          args: expect.arrayContaining([
+            '--id',
+            'WU-1483',
+            '--section',
+            'Goal',
+            '--append',
+            'line',
+          ]),
+        }),
+      }),
     );
 
     await planLinkTool.execute({ id: 'WU-1483', plan: 'lumenflow://plans/WU-1483-plan.md' });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'plan:link',
-      expect.arrayContaining(['--id', 'WU-1483', '--plan', 'lumenflow://plans/WU-1483-plan.md']),
-      expect.any(Object),
+      expect.objectContaining({ id: 'WU-1483', plan: 'lumenflow://plans/WU-1483-plan.md' }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'plan:link',
+          args: expect.arrayContaining([
+            '--id',
+            'WU-1483',
+            '--plan',
+            'lumenflow://plans/WU-1483-plan.md',
+          ]),
+        }),
+      }),
     );
 
     await planPromoteTool.execute({ id: 'WU-1483', force: true });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'plan:promote',
-      expect.arrayContaining(['--id', 'WU-1483', '--force']),
-      expect.any(Object),
+      expect.objectContaining({ id: 'WU-1483', force: true }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'plan:promote',
+          args: expect.arrayContaining(['--id', 'WU-1483', '--force']),
+        }),
+      }),
     );
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 
   it('should map signal_cleanup and wu_proto args with required validation', async () => {
@@ -1715,6 +1784,7 @@ describe('Manifest parity truth gate (WU-1481)', () => {
     'lane_setup',
     'lane_status',
     'lane_validate',
+    'pack_scaffold',
   ];
 
   const EXPECTED_ALLOWED_EXTRAS = [

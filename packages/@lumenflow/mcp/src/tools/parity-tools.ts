@@ -21,8 +21,6 @@ import {
   error,
   buildGatesArgs,
   executeViaPack,
-  runCliCommand,
-  type CliRunnerOptions,
 } from '../tools-shared.js';
 import { CliCommands, MetadataKeys } from '../mcp-constants.js';
 import { checkWorktreeEnforcement } from '../worktree-enforcement.js';
@@ -361,16 +359,32 @@ export const docsSyncTool: ToolDefinition = {
     if (input.vendor) args.push('--vendor', input.vendor as string);
     if (input.force) args.push(CliArgs.FORCE);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.DOCS_SYNC, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Docs sync complete' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'docs:sync failed',
-      ErrorCodes.DOCS_SYNC_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.DOCS_SYNC,
+      {
+        vendor: input.vendor,
+        force: input.force,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.DOCS_SYNC,
+          args,
+          errorCode: ErrorCodes.DOCS_SYNC_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -525,16 +539,35 @@ export const lumenflowTool: ToolDefinition = {
     if (input.minimal) args.push('--minimal');
     if (input.framework) args.push('--framework', input.framework as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'LumenFlow initialized' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'lumenflow failed',
-      ErrorCodes.LUMENFLOW_ALIAS_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.LUMENFLOW,
+      {
+        client: input.client,
+        merge: input.merge,
+        full: input.full,
+        minimal: input.minimal,
+        framework: input.framework,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.LUMENFLOW,
+          args,
+          errorCode: ErrorCodes.LUMENFLOW_ALIAS_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -736,16 +769,33 @@ export const syncTemplatesTool: ToolDefinition = {
     if (input.verbose) args.push(CliArgs.VERBOSE);
     if (input.check_drift) args.push('--check-drift');
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.SYNC_TEMPLATES, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Template sync complete' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'sync:templates failed',
-      ErrorCodes.SYNC_TEMPLATES_ALIAS_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.SYNC_TEMPLATES,
+      {
+        dry_run: input.dry_run,
+        verbose: input.verbose,
+        check_drift: input.check_drift,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.SYNC_TEMPLATES,
+          args,
+          errorCode: ErrorCodes.SYNC_TEMPLATES_ALIAS_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -1268,16 +1318,32 @@ export const planCreateTool: ToolDefinition = {
     }
 
     const args = [CliArgs.ID, input.id as string, '--title', input.title as string];
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.PLAN_CREATE, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Plan created' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'plan:create failed',
-      ErrorCodes.PLAN_CREATE_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.PLAN_CREATE,
+      {
+        id: input.id,
+        title: input.title,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.PLAN_CREATE,
+          args,
+          errorCode: ErrorCodes.PLAN_CREATE_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -1304,16 +1370,34 @@ export const planEditTool: ToolDefinition = {
     if (input.content) args.push('--content', input.content as string);
     if (input.append) args.push('--append', input.append as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.PLAN_EDIT, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Plan edited' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'plan:edit failed',
-      ErrorCodes.PLAN_EDIT_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.PLAN_EDIT,
+      {
+        id: input.id,
+        section: input.section,
+        content: input.content,
+        append: input.append,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.PLAN_EDIT,
+          args,
+          errorCode: ErrorCodes.PLAN_EDIT_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -1334,16 +1418,32 @@ export const planLinkTool: ToolDefinition = {
     }
 
     const args = [CliArgs.ID, input.id as string, '--plan', input.plan as string];
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.PLAN_LINK, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Plan linked' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'plan:link failed',
-      ErrorCodes.PLAN_LINK_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.PLAN_LINK,
+      {
+        id: input.id,
+        plan: input.plan,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.PLAN_LINK,
+          args,
+          errorCode: ErrorCodes.PLAN_LINK_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -1363,16 +1463,32 @@ export const planPromoteTool: ToolDefinition = {
     const args = [CliArgs.ID, input.id as string];
     if (input.force) args.push(CliArgs.FORCE);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.PLAN_PROMOTE, args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Plan promoted' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'plan:promote failed',
-      ErrorCodes.PLAN_PROMOTE_ERROR,
+    const execution = await executeViaPack(
+      CliCommands.PLAN_PROMOTE,
+      {
+        id: input.id,
+        force: input.force,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.PLAN_PROMOTE,
+          args,
+          errorCode: ErrorCodes.PLAN_PROMOTE_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 

@@ -5,6 +5,7 @@
  * WU-1642: Extracted from tools.ts during domain decomposition.
  * WU-1426: Setup tools
  * WU-1457: All setup commands use shared schemas
+ * WU-1812: Migrated setup tools from runCliCommand to executeViaPack runtime path
  */
 
 import {
@@ -24,10 +25,72 @@ import {
   CliArgs,
   success,
   error,
-  runCliCommand,
-  type CliRunnerOptions,
+  executeViaPack,
 } from '../tools-shared.js';
-import { CliCommands } from '../mcp-constants.js';
+import { CliCommands, MetadataKeys } from '../mcp-constants.js';
+
+const SetupResultMessages = {
+  LUMENFLOW_INIT_PASSED: 'LumenFlow initialized',
+  LUMENFLOW_INIT_FAILED: 'lumenflow failed',
+  LUMENFLOW_DOCTOR_PASSED: 'LumenFlow safety: ACTIVE',
+  LUMENFLOW_DOCTOR_FAILED: 'Doctor found issues',
+  LUMENFLOW_INTEGRATE_PASSED: 'Hooks generated',
+  LUMENFLOW_INTEGRATE_FAILED: 'lumenflow:integrate failed',
+  LUMENFLOW_UPGRADE_PASSED: 'LumenFlow upgraded',
+  LUMENFLOW_UPGRADE_FAILED: 'lumenflow:upgrade failed',
+  LUMENFLOW_COMMANDS_PASSED: 'Commands listed',
+  LUMENFLOW_COMMANDS_FAILED: 'lumenflow commands failed',
+  LUMENFLOW_DOCS_SYNC_PASSED: 'Docs synced',
+  LUMENFLOW_DOCS_SYNC_FAILED: 'docs:sync failed',
+  LUMENFLOW_RELEASE_PASSED: 'Release complete',
+  LUMENFLOW_RELEASE_FAILED: 'release failed',
+  LUMENFLOW_SYNC_TEMPLATES_PASSED: 'Templates synced',
+  LUMENFLOW_SYNC_TEMPLATES_FAILED: 'sync:templates failed',
+} as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function unwrapExecuteViaPackData(data: unknown): unknown {
+  if (!isRecord(data) || !('success' in data)) {
+    return data;
+  }
+
+  const successValue = data.success;
+  if (typeof successValue !== 'boolean' || !successValue) {
+    return data;
+  }
+
+  return data.data ?? {};
+}
+
+function resolveMessage(value: unknown, fallbackMessage: string): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (isRecord(value) && typeof value.message === 'string') {
+    return value.message;
+  }
+
+  return fallbackMessage;
+}
+
+function buildExecutionOptions(
+  projectRoot: string | undefined,
+  fallback: { command: string; args: string[]; errorCode: string },
+): Parameters<typeof executeViaPack>[2] {
+  return {
+    projectRoot,
+    contextInput: {
+      metadata: {
+        [MetadataKeys.PROJECT_ROOT]: projectRoot,
+      },
+    },
+    fallback,
+  };
+}
 
 /**
  * lumenflow_init - Initialize LumenFlow in a project
@@ -42,17 +105,25 @@ export const lumenflowInitTool: ToolDefinition = {
     if (input.client) args.push('--client', input.client as string);
     if (input.merge) args.push('--merge');
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW, args, cliOptions);
+    const result = await executeViaPack(CliCommands.LUMENFLOW, input, {
+      ...buildExecutionOptions(options?.projectRoot, {
+        command: CliCommands.LUMENFLOW,
+        args,
+        errorCode: ErrorCodes.LUMENFLOW_INIT_ERROR,
+      }),
+    });
 
-    if (result.success) {
-      return success({ message: result.stdout || 'LumenFlow initialized' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'lumenflow failed',
-        ErrorCodes.LUMENFLOW_INIT_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_INIT_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_INIT_FAILED,
+          ErrorCodes.LUMENFLOW_INIT_ERROR,
+        );
   },
 };
 
@@ -65,17 +136,29 @@ export const lumenflowDoctorTool: ToolDefinition = {
   inputSchema: lumenflowDoctorSchema,
 
   async execute(_input, options) {
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW_DOCTOR, [], cliOptions);
+    const result = await executeViaPack(
+      CliCommands.LUMENFLOW_DOCTOR,
+      {},
+      {
+        ...buildExecutionOptions(options?.projectRoot, {
+          command: CliCommands.LUMENFLOW_DOCTOR,
+          args: [],
+          errorCode: ErrorCodes.LUMENFLOW_DOCTOR_ERROR,
+        }),
+      },
+    );
 
-    if (result.success) {
-      return success({ message: result.stdout || 'LumenFlow safety: ACTIVE' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'Doctor found issues',
-        ErrorCodes.LUMENFLOW_DOCTOR_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_DOCTOR_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_DOCTOR_FAILED,
+          ErrorCodes.LUMENFLOW_DOCTOR_ERROR,
+        );
   },
 };
 
@@ -94,17 +177,25 @@ export const lumenflowIntegrateTool: ToolDefinition = {
 
     const args = ['--client', input.client as string];
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW_INTEGRATE, args, cliOptions);
+    const result = await executeViaPack(CliCommands.LUMENFLOW_INTEGRATE, input, {
+      ...buildExecutionOptions(options?.projectRoot, {
+        command: CliCommands.LUMENFLOW_INTEGRATE,
+        args,
+        errorCode: ErrorCodes.LUMENFLOW_INTEGRATE_ERROR,
+      }),
+    });
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Hooks generated' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'lumenflow:integrate failed',
-        ErrorCodes.LUMENFLOW_INTEGRATE_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_INTEGRATE_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_INTEGRATE_FAILED,
+          ErrorCodes.LUMENFLOW_INTEGRATE_ERROR,
+        );
   },
 };
 
@@ -117,17 +208,29 @@ export const lumenflowUpgradeTool: ToolDefinition = {
   inputSchema: lumenflowUpgradeSchema,
 
   async execute(_input, options) {
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW_UPGRADE, [], cliOptions);
+    const result = await executeViaPack(
+      CliCommands.LUMENFLOW_UPGRADE,
+      {},
+      {
+        ...buildExecutionOptions(options?.projectRoot, {
+          command: CliCommands.LUMENFLOW_UPGRADE,
+          args: [],
+          errorCode: ErrorCodes.LUMENFLOW_UPGRADE_ERROR,
+        }),
+      },
+    );
 
-    if (result.success) {
-      return success({ message: result.stdout || 'LumenFlow upgraded' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'lumenflow:upgrade failed',
-        ErrorCodes.LUMENFLOW_UPGRADE_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_UPGRADE_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_UPGRADE_FAILED,
+          ErrorCodes.LUMENFLOW_UPGRADE_ERROR,
+        );
   },
 };
 
@@ -140,17 +243,29 @@ export const lumenflowCommandsTool: ToolDefinition = {
   inputSchema: lumenflowCommandsSchema,
 
   async execute(_input, options) {
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW, ['commands'], cliOptions);
+    const result = await executeViaPack(
+      CliCommands.LUMENFLOW,
+      {},
+      {
+        ...buildExecutionOptions(options?.projectRoot, {
+          command: CliCommands.LUMENFLOW,
+          args: ['commands'],
+          errorCode: ErrorCodes.LUMENFLOW_COMMANDS_ERROR,
+        }),
+      },
+    );
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Commands listed' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'lumenflow commands failed',
-        ErrorCodes.LUMENFLOW_COMMANDS_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_COMMANDS_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_COMMANDS_FAILED,
+          ErrorCodes.LUMENFLOW_COMMANDS_ERROR,
+        );
   },
 };
 
@@ -163,17 +278,29 @@ export const lumenflowDocsSyncTool: ToolDefinition = {
   inputSchema: docsSyncSchema,
 
   async execute(_input, options) {
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.DOCS_SYNC, [], cliOptions);
+    const result = await executeViaPack(
+      CliCommands.DOCS_SYNC,
+      {},
+      {
+        ...buildExecutionOptions(options?.projectRoot, {
+          command: CliCommands.DOCS_SYNC,
+          args: [],
+          errorCode: ErrorCodes.LUMENFLOW_DOCS_SYNC_ERROR,
+        }),
+      },
+    );
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Docs synced' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'docs:sync failed',
-        ErrorCodes.LUMENFLOW_DOCS_SYNC_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_DOCS_SYNC_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_DOCS_SYNC_FAILED,
+          ErrorCodes.LUMENFLOW_DOCS_SYNC_ERROR,
+        );
   },
 };
 
@@ -189,17 +316,25 @@ export const lumenflowReleaseTool: ToolDefinition = {
     const args: string[] = [];
     if (input.dry_run) args.push(CliArgs.DRY_RUN);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.LUMENFLOW_RELEASE, args, cliOptions);
+    const result = await executeViaPack(CliCommands.LUMENFLOW_RELEASE, input, {
+      ...buildExecutionOptions(options?.projectRoot, {
+        command: CliCommands.LUMENFLOW_RELEASE,
+        args,
+        errorCode: ErrorCodes.LUMENFLOW_RELEASE_ERROR,
+      }),
+    });
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Release complete' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'release failed',
-        ErrorCodes.LUMENFLOW_RELEASE_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_RELEASE_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_RELEASE_FAILED,
+          ErrorCodes.LUMENFLOW_RELEASE_ERROR,
+        );
   },
 };
 
@@ -212,16 +347,28 @@ export const lumenflowSyncTemplatesTool: ToolDefinition = {
   inputSchema: syncTemplatesSchema,
 
   async execute(_input, options) {
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.SYNC_TEMPLATES, [], cliOptions);
+    const result = await executeViaPack(
+      CliCommands.SYNC_TEMPLATES,
+      {},
+      {
+        ...buildExecutionOptions(options?.projectRoot, {
+          command: CliCommands.SYNC_TEMPLATES,
+          args: [],
+          errorCode: ErrorCodes.LUMENFLOW_SYNC_TEMPLATES_ERROR,
+        }),
+      },
+    );
 
-    if (result.success) {
-      return success({ message: result.stdout || 'Templates synced' });
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'sync:templates failed',
-        ErrorCodes.LUMENFLOW_SYNC_TEMPLATES_ERROR,
-      );
-    }
+    return result.success
+      ? success({
+          message: resolveMessage(
+            unwrapExecuteViaPackData(result.data),
+            SetupResultMessages.LUMENFLOW_SYNC_TEMPLATES_PASSED,
+          ),
+        })
+      : error(
+          result.error?.message ?? SetupResultMessages.LUMENFLOW_SYNC_TEMPLATES_FAILED,
+          ErrorCodes.LUMENFLOW_SYNC_TEMPLATES_ERROR,
+        );
   },
 };
