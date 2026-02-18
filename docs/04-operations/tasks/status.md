@@ -7,6 +7,7 @@ _Last updated: 2026-02-18_
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
 - [WU-1810 — Migrate initiative and orchestrate-initiative tools to runtime pack execution](wu/WU-1810.yaml)
 - [WU-1820 — Build live task dashboard page with real-time event streaming](wu/WU-1820.yaml)
+- [WU-1823 — Create pack:scaffold CLI command for new pack authoring](wu/WU-1823.yaml)
 
 ## Completed
 
