@@ -1571,3 +1571,4 @@
 {"type":"claim","wuId":"WU-1804","timestamp":"2026-02-18T14:42:32.260Z","lane":"Framework: Core Lifecycle","title":"Migrate orchestration query tools to runtime pack execution"}
 {"type":"complete","wuId":"WU-1804","timestamp":"2026-02-18T15:17:43.968Z"}
 {"type":"claim","wuId":"WU-1802","lane":"Framework: Core Lifecycle","title":"Migrate validation and lane tools to runtime pack execution","timestamp":"2026-02-18T15:18:34.567Z"}
+{"type":"claim","wuId":"WU-1816","lane":"Framework: Core Lifecycle","title":"Add reactive subscribe mechanism to EventStore","timestamp":"2026-02-18T15:30:00.521Z"}
