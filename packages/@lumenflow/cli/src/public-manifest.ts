@@ -264,6 +264,13 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     category: COMMAND_CATEGORIES.GATES_QUALITY,
   },
   {
+    name: 'lane:edit',
+    binName: 'lane-edit',
+    binPath: './dist/lane-edit.js',
+    description: 'Edit a lane definition (rename, wip-limit, paths, description)',
+    category: COMMAND_CATEGORIES.GATES_QUALITY,
+  },
+  {
     name: 'lane:health',
     binName: 'lane-health',
     binPath: './dist/lane-health.js',
