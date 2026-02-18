@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import type { Disposable, KernelEvent, ReplayFilter } from '@lumenflow/kernel';
+import { KERNEL_EVENT_KINDS, type Disposable, type KernelEvent, type ReplayFilter } from '@lumenflow/kernel';
 
 const HTTP_METHOD = {
   GET: 'GET',
@@ -35,6 +35,10 @@ const SEARCH_PARAM = {
   SINCE_TIMESTAMP: 'sinceTimestamp',
   UNTIL_TIMESTAMP: 'untilTimestamp',
 } as const;
+
+const REPLAY_KIND_VALUES = new Set<KernelEvent['kind']>(
+  Object.values(KERNEL_EVENT_KINDS) as KernelEvent['kind'][],
+);
 
 export interface EventSubscriber {
   subscribe(
@@ -72,7 +76,9 @@ function toKindFilter(searchParams: URLSearchParams): ReplayFilter['kind'] {
   const values = searchParams
     .getAll(SEARCH_PARAM.KIND)
     .map((value) => value.trim())
-    .filter((value) => value.length > 0);
+    .filter((value): value is KernelEvent['kind'] => {
+      return value.length > 0 && REPLAY_KIND_VALUES.has(value as KernelEvent['kind']);
+    });
 
   if (values.length === 0) {
     return undefined;
