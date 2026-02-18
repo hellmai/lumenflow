@@ -1,0 +1,38 @@
+id: WU-1859
+title: 'INIT-030 Review Fix A: executeViaPack policy bypass security fix'
+lane: 'Framework: MCP'
+type: bug
+status: ready
+priority: P1
+created: 2026-02-18
+code_paths:
+  - packages/@lumenflow/mcp/src/tools-shared.ts
+  - packages/@lumenflow/mcp/src/runtime-cache.ts
+tests:
+  manual:
+    - Mock deny policy, call executeViaPack, verify NO CLI fallback
+  unit:
+    - packages/@lumenflow/mcp/src/__tests__/tools-shared.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1859.done
+dependencies: []
+initiative: INIT-030
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Code review of INIT-030 found that executeViaPack falls back to CLI on policy/scope denials, bypassing the kernel policy enforcement layer. Also fixes workspace hash cascade and wildcard maintenance scope.
+acceptance:
+  - Policy/scope denials from kernel returned directly, never retried via CLI
+  - SPEC_TAMPERED errors returned directly, never retried via CLI
+  - Runtime init failures still trigger CLI fallback (backward compat)
+  - TOOL_NOT_FOUND still triggers CLI fallback (migration compat)
+  - Maintenance scope narrowed from wildcard write
+  - New tests cover all 4 fallback/no-fallback scenarios
