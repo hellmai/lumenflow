@@ -20,19 +20,10 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1850 — Fix surfaces relative imports and extract daemon handler registry](wu/WU-1850.yaml) — Framework: Core Lifecycle
-- [WU-1849 — Add missing test coverage for INIT-030 phase 2-3 gaps](wu/WU-1849.yaml) — Framework: Core Lifecycle
-- [WU-1848 — Extract duplicated string literal constants into shared-constants module](wu/WU-1848.yaml) — Framework: Core Lifecycle
-- [WU-1847 — Decompose tool-host execute method and extract denial trace helper](wu/WU-1847.yaml) — Framework: Core Lifecycle
-- [WU-1846 — Generate manifest tool declarations from compact config instead of 550-line boilerplate](wu/WU-1846.yaml) — Framework: Core Lifecycle
-- [WU-1845 — Extract shared git-runner module in software-delivery pack](wu/WU-1845.yaml) — Framework: Core Lifecycle
-- [WU-1844 — Consolidate MCP runtime caches and create tool definition factory](wu/WU-1844.yaml) — Framework: MCP
-- [WU-1843 — Harden pack-loader import boundary: deny bare specifiers and fix prefix match](wu/WU-1843.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
-- [WU-1800 — Migrate git tools (git_status/diff/log/branch) to runtime pack execution](wu/WU-1800.yaml) — Framework: Core Lifecycle
 - [WU-1801 — Migrate state/signal tools to runtime pack execution](wu/WU-1801.yaml) — Framework: Core Lifecycle
 - [WU-1802 — Migrate validation and lane tools to runtime pack execution](wu/WU-1802.yaml) — Framework: Core Lifecycle
 - [WU-1804 — Migrate orchestration query tools to runtime pack execution](wu/WU-1804.yaml) — Framework: Core Lifecycle
@@ -74,11 +65,20 @@ sections:
 - [WU-1840 — Build pack marketplace page with browse, search, and install flow](wu/WU-1840.yaml) — Content: Site Comms
 - [WU-1841 — Wire HTTP surface to push kernel events to control plane](wu/WU-1841.yaml) — Framework: Core Lifecycle
 - [WU-1842 — Create community landing page with get-started path and marketplace links](wu/WU-1842.yaml) — Content: Site Comms
+- [WU-1843 — Harden pack-loader import boundary: deny bare specifiers and fix prefix match](wu/WU-1843.yaml) — Framework: Core Lifecycle
+- [WU-1844 — Consolidate MCP runtime caches and create tool definition factory](wu/WU-1844.yaml) — Framework: MCP
+- [WU-1845 — Extract shared git-runner module in software-delivery pack](wu/WU-1845.yaml) — Framework: Core Lifecycle
+- [WU-1846 — Generate manifest tool declarations from compact config instead of 550-line boilerplate](wu/WU-1846.yaml) — Framework: Core Lifecycle
+- [WU-1847 — Decompose tool-host execute method and extract denial trace helper](wu/WU-1847.yaml) — Framework: Core Lifecycle
+- [WU-1848 — Extract duplicated string literal constants into shared-constants module](wu/WU-1848.yaml) — Framework: Core Lifecycle
+- [WU-1849 — Add missing test coverage for INIT-030 phase 2-3 gaps](wu/WU-1849.yaml) — Framework: Core Lifecycle
+- [WU-1850 — Fix surfaces relative imports and extract daemon handler registry](wu/WU-1850.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
 - [WU-1803 — Migrate flow, metrics, and context tools to runtime pack execution](wu/WU-1803.yaml) — Framework: Core Lifecycle
+- [WU-1800 — Migrate git tools (git_status/diff/log/branch) to runtime pack execution](wu/WU-1800.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
