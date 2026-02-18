@@ -2,7 +2,7 @@ id: WU-1874
 title: infra-ops pack manifest with tools, policies, and task schema
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-18
 code_paths:
@@ -54,3 +54,6 @@ session_id: 566d1364-bedf-4178-8dcb-7935bb9ab791
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T23:39:39.969Z
+locked: true
+completed_at: 2026-02-18T23:43:36.814Z
+completed: 2026-02-18
