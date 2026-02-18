@@ -8,6 +8,7 @@ _Last updated: 2026-02-18_
 - [WU-1813 — Remove fallback paths and eliminate runCliCommand from MCP tool layer](wu/WU-1813.yaml)
 - [WU-1821 — Build workspace overview page with task list and lane WIP visualization](wu/WU-1821.yaml)
 - [WU-1824 — Create pack:validate CLI command for pack integrity checking](wu/WU-1824.yaml)
+- [WU-1837 — Extend PackLoader with registry-based pack resolution](wu/WU-1837.yaml)
 
 ## Completed
 
