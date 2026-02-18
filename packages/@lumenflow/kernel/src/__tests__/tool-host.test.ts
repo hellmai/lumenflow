@@ -360,6 +360,7 @@ describe('tool host', () => {
       const host = new ToolHost({
         registry,
         evidenceStore,
+        policyHook: allowAllPolicyHook,
       });
 
       // Fail on the very first appendTrace call (the STARTED trace)
@@ -389,6 +390,7 @@ describe('tool host', () => {
       const host = new ToolHost({
         registry,
         evidenceStore,
+        policyHook: allowAllPolicyHook,
       });
 
       // Let started trace succeed, fail on denied trace (second call)
@@ -439,6 +441,7 @@ describe('tool host', () => {
       const host = new ToolHost({
         registry,
         evidenceStore,
+        policyHook: allowAllPolicyHook,
       });
 
       // Let started trace succeed, fail on denied trace (second call)
@@ -526,6 +529,7 @@ describe('tool host', () => {
       const host = new ToolHost({
         registry,
         evidenceStore,
+        policyHook: allowAllPolicyHook,
       });
 
       // Let started trace succeed, fail on denied trace (second call)
