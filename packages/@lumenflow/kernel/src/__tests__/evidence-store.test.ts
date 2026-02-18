@@ -433,5 +433,42 @@ describe('evidence store', () => {
       const traces2 = await store.readTraces();
       expect(traces2).toHaveLength(count1 + 4);
     });
+
+    it('reads newly created segment files from other store instances', async () => {
+      const reader = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 1,
+      });
+      const writer = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 1,
+      });
+
+      // Hydrate reader before writer appends/compacts.
+      expect(await reader.readTraces()).toHaveLength(0);
+
+      // A single append crosses threshold and rotates active file into a segment.
+      await writer.appendTrace(makeStartedEntry('receipt-cross-process', 'WU-cross-process'));
+
+      // Reader must ingest unseen segment files produced by another instance.
+      const traces = await reader.readTraces();
+      expect(traces).toHaveLength(1);
+      expect(traces[0]?.receipt_id).toBe('receipt-cross-process');
+    });
+  });
+
+  it('preserves non-lock operation errors instead of masking them as lock acquisition failures', async () => {
+    const store = new EvidenceStore({ evidenceRoot });
+    const tracesFilePath = join(evidenceRoot, 'traces', 'tool-traces.jsonl');
+    const { chmod } = await import('node:fs/promises');
+
+    await store.appendTrace(makeStartedEntry('receipt-setup-propagation'));
+    await chmod(tracesFilePath, 0o444);
+
+    await expect(store.appendTrace(makeStartedEntry('receipt-operation-error'))).rejects.toThrow(
+      /EACCES|permission|read-only/i,
+    );
+
+    await chmod(tracesFilePath, 0o644);
   });
 });

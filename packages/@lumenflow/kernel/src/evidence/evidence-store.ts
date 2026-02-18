@@ -210,14 +210,16 @@ export class EvidenceStore {
     // Check if compaction created new segments since last hydration
     const currentSegments = await this.listSegmentFiles();
     if (currentSegments.length > this.hydratedSegmentCount) {
-      // New segments were created by compaction. The old active file content
-      // (which was already in our indexes from the prior cursor position)
-      // has been rotated into a segment file. We need to read any segments
-      // we haven't seen yet. However, since the rotated segment contains
-      // exactly the content we already indexed via prior hydration/appends,
-      // we only need to update our segment count and reset the cursor
-      // for the new (now-empty or smaller) active file.
+      // Read unseen segments in order. This is required for multi-instance
+      // writers where another process may rotate active traces into segments
+      // that this instance has never indexed.
+      const unseenSegments = currentSegments.slice(this.hydratedSegmentCount);
+      for (const segmentFile of unseenSegments) {
+        const segmentPath = join(this.tracesDir, segmentFile);
+        await this.hydrateFromFile(segmentPath);
+      }
       this.hydratedSegmentCount = currentSegments.length;
+
       // The active file was rotated, so the cursor resets.
       // Read whatever is now in the new active file from the start.
       this.activeFileCursor = 0;
@@ -486,14 +488,28 @@ export class EvidenceStore {
       } catch (error) {
         const nodeError = error as NodeJS.ErrnoException;
         if (handle) {
-          await handle.close();
-          await rm(this.tracesLockFilePath, { force: true });
+          try {
+            await handle.close();
+          } catch {
+            // Best-effort cleanup; preserve the original operation error.
+          }
+          try {
+            await rm(this.tracesLockFilePath, { force: true });
+          } catch {
+            // Best-effort cleanup; preserve the original operation error.
+          }
         }
-        if (nodeError.code === 'EEXIST' && attempt < this.lockMaxRetries) {
-          await sleep(this.lockRetryDelayMs);
-          continue;
+
+        if (nodeError.code === 'EEXIST') {
+          if (attempt < this.lockMaxRetries) {
+            await sleep(this.lockRetryDelayMs);
+            continue;
+          }
+          break;
         }
-        break;
+
+        // Non-lock failures from the operation itself must surface directly.
+        throw error;
       }
     }
 
