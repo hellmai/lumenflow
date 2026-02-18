@@ -6,7 +6,7 @@ status: in_progress
 priority: P2
 created: 2026-02-18
 code_paths:
-  - packages/@lumenflow/kernel/src/policy/scope-intersection.ts
+  - packages/@lumenflow/kernel/src/tool-host/scope-intersection.ts
 tests:
   manual:
     - Verify fuzz suite runs in CI within reasonable time (<30s)
