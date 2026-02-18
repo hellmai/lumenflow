@@ -969,16 +969,22 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
     );
   });
 
-  it('should run lane tools with mapped flags', async () => {
-    mockRunCliCommand.mockResolvedValue({ success: true, stdout: 'ok', stderr: '', exitCode: 0 });
+  it('should run lane tools with mapped flags via executeViaPack', async () => {
+    mockExecuteViaPack.mockResolvedValue({ success: true, data: { message: 'ok' } });
 
     await laneHealthTool.execute({ json: true, verbose: true, no_coverage: true });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'lane:health',
-      expect.arrayContaining(['--json', '--verbose', '--no-coverage']),
-      expect.any(Object),
+      expect.objectContaining({ json: true, verbose: true, no_coverage: true }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'lane:health',
+          args: expect.arrayContaining(['--json', '--verbose', '--no-coverage']),
+        }),
+      }),
     );
 
+    mockExecuteViaPack.mockClear();
     await laneSuggestTool.execute({
       dry_run: true,
       interactive: true,
@@ -987,18 +993,30 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
       no_llm: true,
       include_git: true,
     });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'lane:suggest',
-      expect.arrayContaining([
-        '--dry-run',
-        '--interactive',
-        '--output',
-        'lanes.yaml',
-        '--json',
-        '--no-llm',
-        '--include-git',
-      ]),
-      expect.any(Object),
+      expect.objectContaining({
+        dry_run: true,
+        interactive: true,
+        output: 'lanes.yaml',
+        json: true,
+        no_llm: true,
+        include_git: true,
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'lane:suggest',
+          args: expect.arrayContaining([
+            '--dry-run',
+            '--interactive',
+            '--output',
+            'lanes.yaml',
+            '--json',
+            '--no-llm',
+            '--include-git',
+          ]),
+        }),
+      }),
     );
   });
 
@@ -1021,11 +1039,19 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
     );
 
     await lumenflowValidateTool.execute({});
-    expect(mockRunCliCommand).toHaveBeenCalledWith('validate', [], expect.any(Object));
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
+      'lumenflow:validate',
+      {},
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'validate',
+        }),
+      }),
+    );
 
     await lumenflowMetricsTool.execute({ subcommand: 'flow', days: 14, format: 'json' });
     expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
-      1,
+      2,
       'lumenflow:metrics',
       expect.objectContaining({
         subcommand: 'flow',
@@ -1041,7 +1067,7 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
 
     await metricsTool.execute({ subcommand: 'dora', dry_run: true });
     expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
-      2,
+      3,
       'metrics',
       expect.objectContaining({
         subcommand: 'dora',
