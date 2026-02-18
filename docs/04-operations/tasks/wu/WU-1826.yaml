@@ -2,7 +2,7 @@ id: WU-1826
 title: Extend PackLoader with git-based pack resolution
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -30,10 +30,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Extend PackLoader.load() to handle source: git. Clone or pull git URL to ~/.lumenflow/pack-cache/pack-id@version/, checkout tag matching version, run existing manifest and integrity verification. Add url field to PackPin schema.'
+description: 'Extend PackLoader.load() to handle source: git. Clone or pull git URL to
+  ~/.lumenflow/pack-cache/pack-id@version/, checkout tag matching version, run existing manifest and
+  integrity verification. Add url field to PackPin schema.'
 acceptance:
   - 'PackLoader resolves packs with source: git'
   - Git packs cached in ~/.lumenflow/pack-cache/
   - Version tag checked out correctly
   - Integrity verification runs on git-fetched pack
   - PackPin schema accepts url field for git source
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1826
+claimed_at: 2026-02-18T19:09:25.915Z
+baseline_main_sha: e58ff8e7a60e85316b8d59e375ff98f4e47efa5c
+session_id: 425f84d9-5410-43ac-b492-7254feecba51
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T19:09:25.923Z
