@@ -40,8 +40,8 @@ spec_refs:
   - /home/USER/.claude/plans/zesty-jumping-pixel.md
 risks:
   - Schema/value drift can regress runtime validation if constant-backed literals diverge.
-  - Parallel edits to pack-loader/tool-host (WU-1843
-  - WU-1847) can cause merge churn; sequence integration carefully.
+  - Parallel edits to pack-loader and tool-host from related remediation WUs can cause merge churn;
+    sequence integration carefully.
   - Over-centralization can reduce local readability if governance families are not narrowly scoped.
 notes: Kernel-only scope for WU-1848. MCP surface literal governance (parity-tools
   command/flag/metadata ratchet) is handled in a separate WU to reduce blast radius and merge
