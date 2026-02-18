@@ -2,7 +2,7 @@ id: WU-1835
 title: Build human-in-the-loop approval UI for policy approval_required decisions
 lane: 'Content: Site Comms'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-18
 code_paths:
@@ -50,3 +50,6 @@ session_id: 84149525-d6f4-43aa-b428-ee08b4cbfa90
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T21:55:22.799Z
+locked: true
+completed_at: 2026-02-18T22:05:38.433Z
+completed: 2026-02-18

@@ -5,7 +5,6 @@ _Last updated: 2026-02-18_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1835 — Build human-in-the-loop approval UI for policy approval_required decisions](wu/WU-1835.yaml)
 - [WU-1836 — Build pack registry API with Vercel Edge Functions](wu/WU-1836.yaml)
 
 ## Completed
@@ -792,3 +791,4 @@ _Last updated: 2026-02-18_
 - [WU-1858 — Fix ag-ui-adapter typecheck error from tool_call_finished type conflict](wu/WU-1858.yaml) — 2026-02-18
 - [WU-1834 — Build policy decision overlay showing governance enforcement visually](wu/WU-1834.yaml) — 2026-02-18
 - [WU-1839 — Create pack:search CLI command for registry discovery](wu/WU-1839.yaml) — 2026-02-18
+- [WU-1835 — Build human-in-the-loop approval UI for policy approval_required decisions](wu/WU-1835.yaml) — 2026-02-18
