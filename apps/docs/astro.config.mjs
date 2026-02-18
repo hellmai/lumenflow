@@ -53,6 +53,7 @@ export default defineConfig({
             { label: 'AI Agent Integration', slug: 'guides/ai-agents' },
             { label: 'Agent Branch Patterns', slug: 'guides/agent-patterns' },
             { label: 'Custom Skills', slug: 'guides/custom-skills' },
+            { label: 'Create a Pack', slug: 'guides/create-a-pack' },
             { label: 'Cookbook', slug: 'guides/cookbook' },
             { label: 'Initiatives', slug: 'guides/initiatives' },
             { label: 'Flow Metrics', slug: 'guides/metrics' },
