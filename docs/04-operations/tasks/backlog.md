@@ -32,11 +32,13 @@ sections:
 - [WU-1859 — INIT-030 Review Fix A: executeViaPack policy bypass security fix](wu/WU-1859.yaml) — Framework: MCP
 - [WU-1860 — INIT-030 Review Fix B: kernel durability bugs (lock leak, clock skew, partial writes)](wu/WU-1860.yaml) — Framework: Core Lifecycle
 - [WU-1861 — INIT-030 Review Fix C: governance and type safety tightening](wu/WU-1861.yaml) — Framework: MCP
+- [WU-1862 — Evidence store durability: JSONL compaction and incremental replay](wu/WU-1862.yaml) — Framework: Core Lifecycle
+- [WU-1863 — Policy construction safety: allowAllPolicyHook default and task ID uniqueness](wu/WU-1863.yaml) — Framework: Core Lifecycle
+- [WU-1864 — Scope intersection property-based fuzz testing for patternContains glob heuristic](wu/WU-1864.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
-- [WU-1835 — Build human-in-the-loop approval UI for policy approval_required decisions](wu/WU-1835.yaml) — Content: Site Comms
 - [WU-1836 — Build pack registry API with Vercel Edge Functions](wu/WU-1836.yaml) — Content: Site Comms
 
 ## ⛔ Blocked
@@ -827,6 +829,7 @@ sections:
 - [WU-1858 — Fix ag-ui-adapter typecheck error from tool_call_finished type conflict](wu/WU-1858.yaml)
 - [WU-1834 — Build policy decision overlay showing governance enforcement visually](wu/WU-1834.yaml)
 - [WU-1839 — Create pack:search CLI command for registry discovery](wu/WU-1839.yaml)
+- [WU-1835 — Build human-in-the-loop approval UI for policy approval_required decisions](wu/WU-1835.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
