@@ -7,6 +7,7 @@ _Last updated: 2026-02-18_
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
 - [WU-1864 — Scope intersection property-based fuzz testing for patternContains glob heuristic](wu/WU-1864.yaml)
 - [WU-1869 — Vercel Blob-backed PackRegistryStore + PackBlobStore adapters](wu/WU-1869.yaml)
+- [WU-1873 — Workspace selector with recent-workspaces history](wu/WU-1873.yaml)
 
 ## Completed
 

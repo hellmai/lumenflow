@@ -1688,3 +1688,4 @@
 {"type":"complete","wuId":"WU-1865","timestamp":"2026-02-18T23:32:01.004Z"}
 {"type":"complete","wuId":"WU-1871","timestamp":"2026-02-18T23:32:11.750Z"}
 {"type":"complete","wuId":"WU-1870","timestamp":"2026-02-18T23:32:56.450Z"}
+{"type":"claim","wuId":"WU-1873","lane":"Content: Site Comms","title":"Workspace selector with recent-workspaces history","timestamp":"2026-02-18T23:35:40.637Z"}
