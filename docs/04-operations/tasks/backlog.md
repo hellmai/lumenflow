@@ -24,7 +24,6 @@ sections:
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
-- [WU-1801 — Migrate state/signal tools to runtime pack execution](wu/WU-1801.yaml) — Framework: Core Lifecycle
 - [WU-1802 — Migrate validation and lane tools to runtime pack execution](wu/WU-1802.yaml) — Framework: Core Lifecycle
 - [WU-1804 — Migrate orchestration query tools to runtime pack execution](wu/WU-1804.yaml) — Framework: Core Lifecycle
 - [WU-1805 — Migrate WU read/query tools to runtime pack execution](wu/WU-1805.yaml) — Framework: Core Lifecycle
@@ -77,6 +76,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1801 — Migrate state/signal tools to runtime pack execution](wu/WU-1801.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
