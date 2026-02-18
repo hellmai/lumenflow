@@ -210,6 +210,39 @@ describe('evidence store', () => {
     expect(await store.readTraces()).toHaveLength(4);
   });
 
+  it('cleans up lock file when operation fails after lock acquired', async () => {
+    const store = new EvidenceStore({ evidenceRoot });
+    const lockPath = join(evidenceRoot, 'traces', 'tool-traces.lock');
+
+    // First, successfully append a trace to ensure the traces dir exists
+    await store.appendTrace(makeStartedEntry('receipt-setup'));
+
+    // Now create a store that will fail during the locked operation
+    // We do this by making the traces file read-only so appendFile fails
+    const tracesFilePath = join(evidenceRoot, 'traces', 'tool-traces.jsonl');
+    const { chmod } = await import('node:fs/promises');
+    await chmod(tracesFilePath, 0o444); // read-only
+
+    try {
+      await store.appendTrace(makeStartedEntry('receipt-fail'));
+    } catch {
+      // Expected to fail
+    }
+
+    // Restore permissions for cleanup
+    await chmod(tracesFilePath, 0o644);
+
+    // The lock file should NOT exist after a failed operation
+    let lockExists = false;
+    try {
+      await stat(lockPath);
+      lockExists = true;
+    } catch {
+      lockExists = false;
+    }
+    expect(lockExists).toBe(false);
+  });
+
   it('keeps receipt index bounded when completed tasks are pruned', async () => {
     const store = new EvidenceStore({ evidenceRoot });
 

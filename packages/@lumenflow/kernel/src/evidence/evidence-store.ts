@@ -253,6 +253,7 @@ export class EvidenceStore {
         const nodeError = error as NodeJS.ErrnoException;
         if (handle) {
           await handle.close();
+          await rm(this.tracesLockFilePath, { force: true });
         }
         if (nodeError.code === 'EEXIST' && attempt < this.lockMaxRetries) {
           await sleep(this.lockRetryDelayMs);

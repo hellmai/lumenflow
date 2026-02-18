@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: Apache-2.0
 
-import { access, mkdir, open, readFile } from 'node:fs/promises';
+import { access, mkdir, open, readFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import YAML from 'yaml';
 import { z } from 'zod';
@@ -467,9 +467,12 @@ async function writeTaskSpecImmutable(taskSpecRoot: string, task: TaskSpec): Pro
   const fileHandle = await open(taskSpecPath, 'wx');
   try {
     await fileHandle.writeFile(YAML.stringify(task), UTF8_ENCODING);
-  } finally {
+  } catch (writeError) {
     await fileHandle.close();
+    await rm(taskSpecPath, { force: true });
+    throw writeError;
   }
+  await fileHandle.close();
 
   return taskSpecPath;
 }
@@ -699,7 +702,15 @@ export class DefaultKernelRuntime implements KernelRuntime {
       spec_hash: canonical_json(parsedTask),
     };
 
-    await this.eventStore.append(createdEvent);
+    try {
+      await this.eventStore.append(createdEvent);
+    } catch (eventError) {
+      // Clean up the spec file if event emission fails (crash recovery).
+      // Without this, a spec file exists on disk with no corresponding event,
+      // and the task cannot be retried because 'wx' open will fail with EEXIST.
+      await rm(taskSpecPath, { force: true });
+      throw eventError;
+    }
 
     return {
       task: parsedTask,

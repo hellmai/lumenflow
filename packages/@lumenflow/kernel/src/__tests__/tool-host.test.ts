@@ -307,6 +307,43 @@ describe('tool host', () => {
     expect(reconcileSpy).toHaveBeenCalledTimes(2);
   });
 
+  it('returns tool execution result even if trace recording fails', async () => {
+    const registry = new ToolRegistry();
+    registry.register(makeInProcessCapability());
+
+    const evidenceStore = new EvidenceStore({ evidenceRoot });
+    const host = new ToolHost({
+      registry,
+      evidenceStore,
+    });
+
+    // Spy on appendTrace to fail only on the FINISHED trace (second call)
+    let appendCallCount = 0;
+    const originalAppendTrace = evidenceStore.appendTrace.bind(evidenceStore);
+    vi.spyOn(evidenceStore, 'appendTrace').mockImplementation(async (entry) => {
+      appendCallCount++;
+      // Let started trace succeed (calls 1), fail on finished trace (call 2+)
+      if (appendCallCount >= 2) {
+        throw new Error('Simulated disk failure during trace recording');
+      }
+      return originalAppendTrace(entry);
+    });
+
+    const result = await host.execute(
+      'fs:write',
+      {
+        path: 'packages/@lumenflow/kernel/src/tool-host/index.ts',
+        content: 'ok',
+      },
+      makeExecutionContext(),
+    );
+
+    // The tool execution succeeded, so we should get the result back
+    // even though trace recording failed
+    expect(result.success).toBe(true);
+    expect(result.data).toMatchObject({ written: true });
+  });
+
   describe('injectable clock', () => {
     const FIXED_DATE = new Date('2026-01-15T12:00:00.000Z');
 
@@ -429,6 +466,97 @@ describe('tool host', () => {
       for (const trace of traces) {
         expect(trace.timestamp >= before).toBe(true);
         expect(trace.timestamp <= after).toBe(true);
+      }
+    });
+
+    it('computes duration_ms from single now() capture to avoid clock skew', async () => {
+      // The clock advances 100ms per call. If now() is called twice for
+      // timestamp and duration_ms independently, the duration would reflect
+      // the skew between two different calls. With the fix, duration_ms
+      // should be exactly (finishedAt - startedAt) from a single pair.
+      let callCount = 0;
+      const advancingClock = () => {
+        callCount++;
+        return new Date(FIXED_DATE.getTime() + (callCount - 1) * 100);
+      };
+
+      const registry = new ToolRegistry();
+      registry.register(makeInProcessCapability());
+
+      const evidenceStore = new EvidenceStore({ evidenceRoot });
+      const host = new ToolHost({
+        registry,
+        evidenceStore,
+        now: advancingClock,
+      });
+
+      await host.execute(
+        'fs:write',
+        {
+          path: 'packages/@lumenflow/kernel/src/tool-host/index.ts',
+          content: 'ok',
+        },
+        makeExecutionContext(),
+      );
+
+      const traces = await evidenceStore.readTraces();
+      const finished = traces.find((trace) => trace.kind === 'tool_call_finished');
+      expect(finished).toBeDefined();
+      if (finished?.kind === 'tool_call_finished') {
+        // The finished trace's timestamp and duration_ms should be consistent:
+        // timestamp should come from one now() call and duration_ms from
+        // (that same call's getTime() - startedAt). They should NOT involve
+        // separate now() calls for timestamp vs duration_ms.
+        const finishedTimestamp = Date.parse(finished.timestamp);
+        const started = traces.find((trace) => trace.kind === 'tool_call_started');
+        expect(started).toBeDefined();
+        const startedTimestamp = Date.parse(started!.timestamp);
+        // duration_ms should equal finishedTimestamp - startedTimestamp
+        expect(finished.duration_ms).toBe(finishedTimestamp - startedTimestamp);
+      }
+    });
+
+    it('computes denied trace duration_ms from single now() capture', async () => {
+      let callCount = 0;
+      const advancingClock = () => {
+        callCount++;
+        return new Date(FIXED_DATE.getTime() + (callCount - 1) * 100);
+      };
+
+      const registry = new ToolRegistry();
+      registry.register(makeInProcessCapability());
+
+      const evidenceStore = new EvidenceStore({ evidenceRoot });
+      const host = new ToolHost({
+        registry,
+        evidenceStore,
+        now: advancingClock,
+      });
+
+      const result = await host.execute(
+        'fs:write',
+        {
+          path: 'packages/@lumenflow/kernel/src/tool-host/index.ts',
+          content: 'blocked',
+        },
+        makeExecutionContext(
+          {},
+          {
+            lane_allowed_scopes: [{ type: 'path', pattern: 'docs/**', access: 'write' }],
+          },
+        ),
+      );
+
+      expect(result.success).toBe(false);
+      const traces = await evidenceStore.readTraces();
+      const finished = traces.find((trace) => trace.kind === 'tool_call_finished');
+      expect(finished).toBeDefined();
+      if (finished?.kind === 'tool_call_finished') {
+        const finishedTimestamp = Date.parse(finished.timestamp);
+        const started = traces.find((trace) => trace.kind === 'tool_call_started');
+        expect(started).toBeDefined();
+        const startedTimestamp = Date.parse(started!.timestamp);
+        expect(finished.duration_ms).toBe(finishedTimestamp - startedTimestamp);
       }
     });
 
