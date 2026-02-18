@@ -19,6 +19,7 @@ import {
   success,
   error,
   buildGatesArgs,
+  executeViaPack,
   runCliCommand,
   type CliRunnerOptions,
 } from '../tools-shared.js';
@@ -189,6 +190,27 @@ const wuProtoSchema = z.object({
   labels: z.array(z.string()).optional(),
   assigned_to: z.string().optional(),
 });
+
+interface RuntimeToolOutputLike {
+  success: boolean;
+  data?: unknown;
+}
+
+function unwrapExecuteViaPackData(data: unknown): unknown {
+  if (!data || typeof data !== 'object') {
+    return data;
+  }
+
+  if (!('success' in data)) {
+    return data;
+  }
+
+  const output = data as RuntimeToolOutputLike;
+  if (!output.success) {
+    return data;
+  }
+  return output.data ?? {};
+}
 
 // ============================================================================
 // Wave-1 Public Parity Operations (WU-1482)
@@ -568,16 +590,35 @@ export const fileReadTool: ToolDefinition = {
     if (input.end_line !== undefined) args.push('--end-line', String(input.end_line));
     if (input.max_size !== undefined) args.push('--max-size', String(input.max_size));
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('file:read', args, cliOptions);
-
-    if (result.success) {
-      return success({ content: result.stdout });
-    }
-    return error(
-      result.stderr || result.error?.message || 'file:read failed',
-      ErrorCodes.FILE_READ_ERROR,
+    const execution = await executeViaPack(
+      'file:read',
+      {
+        path: input.path,
+        encoding: input.encoding,
+        start_line: input.start_line,
+        end_line: input.end_line,
+        max_size: input.max_size,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            project_root: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: 'file:read',
+          args,
+          errorCode: ErrorCodes.FILE_READ_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -601,16 +642,34 @@ export const fileWriteTool: ToolDefinition = {
     if (input.encoding) args.push(CliArgs.ENCODING, input.encoding as string);
     if (input.no_create_dirs) args.push('--no-create-dirs');
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('file:write', args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'File written' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'file:write failed',
-      ErrorCodes.FILE_WRITE_ERROR,
+    const execution = await executeViaPack(
+      'file:write',
+      {
+        path: input.path,
+        content: input.content,
+        encoding: input.encoding,
+        no_create_dirs: input.no_create_dirs,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            project_root: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: 'file:write',
+          args,
+          errorCode: ErrorCodes.FILE_WRITE_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -644,16 +703,35 @@ export const fileEditTool: ToolDefinition = {
     if (input.encoding) args.push(CliArgs.ENCODING, input.encoding as string);
     if (input.replace_all) args.push('--replace-all');
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('file:edit', args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'File edited' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'file:edit failed',
-      ErrorCodes.FILE_EDIT_ERROR,
+    const execution = await executeViaPack(
+      'file:edit',
+      {
+        path: input.path,
+        old_string: input.old_string,
+        new_string: input.new_string,
+        encoding: input.encoding,
+        replace_all: input.replace_all,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            project_root: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: 'file:edit',
+          args,
+          errorCode: ErrorCodes.FILE_EDIT_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 
@@ -674,16 +752,33 @@ export const fileDeleteTool: ToolDefinition = {
     if (input.recursive) args.push('--recursive');
     if (input.force) args.push('--force');
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('file:delete', args, cliOptions);
-
-    if (result.success) {
-      return success({ message: result.stdout || 'Delete complete' });
-    }
-    return error(
-      result.stderr || result.error?.message || 'file:delete failed',
-      ErrorCodes.FILE_DELETE_ERROR,
+    const execution = await executeViaPack(
+      'file:delete',
+      {
+        path: input.path,
+        recursive: input.recursive,
+        force: input.force,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            project_root: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: 'file:delete',
+          args,
+          errorCode: ErrorCodes.FILE_DELETE_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
   },
 };
 

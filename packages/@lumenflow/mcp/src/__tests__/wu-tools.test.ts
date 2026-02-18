@@ -8,6 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import * as toolsShared from '../tools-shared.js';
 import {
   wuBlockTool,
   wuUnblockTool,
@@ -67,6 +68,14 @@ import { PUBLIC_MANIFEST } from '../../../cli/src/public-manifest.js';
 vi.mock('../cli-runner.js', () => ({
   runCliCommand: vi.fn(),
 }));
+
+vi.mock('../tools-shared.js', async () => {
+  const actual = await vi.importActual<typeof import('../tools-shared.js')>('../tools-shared.js');
+  return {
+    ...actual,
+    executeViaPack: vi.fn(actual.executeViaPack),
+  };
+});
 
 describe('wu_claim cloud mode passthrough (WU-1491)', () => {
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
@@ -1087,6 +1096,7 @@ describe('Wave-1 parity MCP tools (WU-1482)', () => {
 
 describe('Wave-2 parity MCP tools (WU-1483)', () => {
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
+  const mockExecuteViaPack = vi.mocked(toolsShared.executeViaPack);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -1096,17 +1106,18 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should validate file_read required path and map args', async () => {
+  it('should validate file_read required path and execute via runtime helper', async () => {
     const missing = await fileReadTool.execute({});
     expect(missing.success).toBe(false);
     expect(missing.error?.message).toContain('path');
 
-    mockRunCliCommand.mockResolvedValue({
+    mockExecuteViaPack.mockResolvedValue({
       success: true,
-      stdout: 'content',
-      stderr: '',
-      exitCode: 0,
+      data: {
+        content: 'content',
+      },
     });
+
     const result = await fileReadTool.execute({
       path: 'README.md',
       encoding: 'utf-8',
@@ -1114,38 +1125,34 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
       end_line: 20,
       max_size: 4096,
     });
+
     expect(result.success).toBe(true);
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
+    expect(mockExecuteViaPack).toHaveBeenCalledWith(
       'file:read',
-      expect.arrayContaining([
-        '--path',
-        'README.md',
-        '--encoding',
-        'utf-8',
-        '--start-line',
-        '10',
-        '--end-line',
-        '20',
-        '--max-size',
-        '4096',
-      ]),
-      expect.any(Object),
+      expect.objectContaining({
+        path: 'README.md',
+        encoding: 'utf-8',
+        start_line: 10,
+        end_line: 20,
+        max_size: 4096,
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'file:read',
+        }),
+      }),
     );
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 
-  it('should map file write/edit/delete command args', async () => {
-    mockRunCliCommand.mockResolvedValue({ success: true, stdout: 'ok', stderr: '', exitCode: 0 });
+  it('should route file write/edit/delete through runtime helper', async () => {
+    mockExecuteViaPack.mockResolvedValue({ success: true, data: { message: 'ok' } });
 
     await fileWriteTool.execute({
       path: 'tmp/file.txt',
       content: 'hello',
       no_create_dirs: true,
     });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'file:write',
-      expect.arrayContaining(['--path', 'tmp/file.txt', '--content', 'hello', '--no-create-dirs']),
-      expect.any(Object),
-    );
 
     await fileEditTool.execute({
       path: 'tmp/file.txt',
@@ -1153,26 +1160,55 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
       new_string: 'world',
       replace_all: true,
     });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'file:edit',
-      expect.arrayContaining([
-        '--path',
-        'tmp/file.txt',
-        '--old-string',
-        'hello',
-        '--new-string',
-        'world',
-        '--replace-all',
-      ]),
-      expect.any(Object),
-    );
 
     await fileDeleteTool.execute({ path: 'tmp/file.txt', recursive: true, force: true });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'file:delete',
-      expect.arrayContaining(['--path', 'tmp/file.txt', '--recursive', '--force']),
-      expect.any(Object),
+
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      1,
+      'file:write',
+      expect.objectContaining({
+        path: 'tmp/file.txt',
+        content: 'hello',
+        no_create_dirs: true,
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'file:write',
+        }),
+      }),
     );
+
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      2,
+      'file:edit',
+      expect.objectContaining({
+        path: 'tmp/file.txt',
+        old_string: 'hello',
+        new_string: 'world',
+        replace_all: true,
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'file:edit',
+        }),
+      }),
+    );
+
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      3,
+      'file:delete',
+      expect.objectContaining({
+        path: 'tmp/file.txt',
+        recursive: true,
+        force: true,
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'file:delete',
+        }),
+      }),
+    );
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 
   it('should map git command args', async () => {
