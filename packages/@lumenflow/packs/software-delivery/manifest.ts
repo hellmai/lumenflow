@@ -1,10 +1,16 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import YAML from 'yaml';
 import {
+  SOFTWARE_DELIVERY_MANIFEST_FILE_NAME,
   SOFTWARE_DELIVERY_PACK_ID,
   SOFTWARE_DELIVERY_PACK_VERSION,
   SOFTWARE_DELIVERY_POLICY_ID_PREFIX,
+  UTF8_ENCODING,
 } from './constants.js';
 import type { PathScope } from './tools/types.js';
 
@@ -216,39 +222,37 @@ export const SoftwareDeliveryManifestSchema: Parser<SoftwareDeliveryPackManifest
   },
 };
 
-export const SOFTWARE_DELIVERY_MANIFEST: SoftwareDeliveryPackManifest = {
-  id: SOFTWARE_DELIVERY_PACK_ID,
-  version: SOFTWARE_DELIVERY_PACK_VERSION,
-  task_types: ['work-unit'],
-  tools: [],
-  policies: [
-    {
-      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.format`,
-      trigger: 'on_completion',
-      decision: 'allow',
-    },
-    {
-      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.lint`,
-      trigger: 'on_completion',
-      decision: 'allow',
-    },
-    {
-      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.typecheck`,
-      trigger: 'on_completion',
-      decision: 'allow',
-    },
-    {
-      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.test`,
-      trigger: 'on_completion',
-      decision: 'allow',
-    },
-    {
-      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.coverage`,
-      trigger: 'on_completion',
-      decision: 'allow',
-    },
-  ],
-  evidence_types: ['gate-run'],
-  state_aliases: { active: 'in_progress' },
-  lane_templates: [],
-};
+const SOFTWARE_DELIVERY_MANIFEST_PATH = join(
+  dirname(fileURLToPath(import.meta.url)),
+  SOFTWARE_DELIVERY_MANIFEST_FILE_NAME,
+);
+
+function assertManifestIdentity(manifest: SoftwareDeliveryPackManifest): void {
+  if (manifest.id !== SOFTWARE_DELIVERY_PACK_ID) {
+    throw new Error(
+      `manifest id mismatch: expected "${SOFTWARE_DELIVERY_PACK_ID}", got "${manifest.id}"`,
+    );
+  }
+  if (manifest.version !== SOFTWARE_DELIVERY_PACK_VERSION) {
+    throw new Error(
+      `manifest version mismatch: expected "${SOFTWARE_DELIVERY_PACK_VERSION}", got "${manifest.version}"`,
+    );
+  }
+  for (const policy of manifest.policies) {
+    if (!policy.id.startsWith(SOFTWARE_DELIVERY_POLICY_ID_PREFIX)) {
+      throw new Error(
+        `policy id "${policy.id}" must start with "${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}"`,
+      );
+    }
+  }
+}
+
+function loadSoftwareDeliveryManifestFromYaml(): SoftwareDeliveryPackManifest {
+  const manifestSource = readFileSync(SOFTWARE_DELIVERY_MANIFEST_PATH, UTF8_ENCODING);
+  const parsed = SoftwareDeliveryManifestSchema.parse(YAML.parse(manifestSource));
+  assertManifestIdentity(parsed);
+  return parsed;
+}
+
+export const SOFTWARE_DELIVERY_MANIFEST: SoftwareDeliveryPackManifest =
+  loadSoftwareDeliveryManifestFromYaml();
