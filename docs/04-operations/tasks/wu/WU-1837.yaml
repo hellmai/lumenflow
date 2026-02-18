@@ -2,7 +2,7 @@ id: WU-1837
 title: Extend PackLoader with registry-based pack resolution
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -30,9 +30,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Extend PackLoader.load() to handle source: registry. Fetch pack metadata from registry API, download tarball to ~/.lumenflow/pack-cache/, extract, verify integrity, load. PackPin gets optional registry_url field (default: registry.lumenflow.dev).'
+description: 'Extend PackLoader.load() to handle source: registry. Fetch pack metadata from registry
+  API, download tarball to ~/.lumenflow/pack-cache/, extract, verify integrity, load. PackPin gets
+  optional registry_url field (default: registry.lumenflow.dev).'
 acceptance:
   - 'PackLoader resolves packs with source: registry'
   - Tarball downloaded and cached locally
   - Integrity verification runs on registry-fetched pack
   - Default registry_url configurable
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1837
+claimed_at: 2026-02-18T19:50:48.618Z
+baseline_main_sha: 6f4a5fa0806b7e760b6b2b666a2e782a3fc39933
+session_id: 3805a7b7-77c1-40d7-9a2c-158109e9f82e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T19:50:48.623Z
