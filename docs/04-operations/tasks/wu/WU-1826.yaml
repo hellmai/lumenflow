@@ -1,0 +1,39 @@
+id: WU-1826
+title: Extend PackLoader with git-based pack resolution
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-18
+code_paths:
+  - packages/@lumenflow/kernel/src/pack/
+tests:
+  manual:
+    - Configure PackPin with git source, verify PackLoader resolves it
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/pack-loader.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1826.done
+dependencies: []
+initiative: INIT-031
+phase: 2
+spec_refs:
+  - .claude/plans/zazzy-growing-cook.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Extend PackLoader.load() to handle source: git. Clone or pull git URL to ~/.lumenflow/pack-cache/pack-id@version/, checkout tag matching version, run existing manifest and integrity verification. Add url field to PackPin schema.'
+acceptance:
+  - 'PackLoader resolves packs with source: git'
+  - Git packs cached in ~/.lumenflow/pack-cache/
+  - Version tag checked out correctly
+  - Integrity verification runs on git-fetched pack
+  - PackPin schema accepts url field for git source
