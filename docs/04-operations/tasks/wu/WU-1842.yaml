@@ -2,7 +2,7 @@ id: WU-1842
 title: Create community landing page with get-started path and marketplace links
 lane: 'Content: Site Comms'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-18
 code_paths:
@@ -29,8 +29,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Update apps/docs/ with Get Started quick path for developers coming from similar tools. Pack marketplace link. Live demo embed (iframe to web app showing a recorded session). Comparison table showing LumenFlow governance vs alternatives.
+description: Update apps/docs/ with Get Started quick path for developers coming from similar tools.
+  Pack marketplace link. Live demo embed (iframe to web app showing a recorded session). Comparison
+  table showing LumenFlow governance vs alternatives.
 acceptance:
   - Get Started quick path for new adopters
   - Pack marketplace link prominent
   - Comparison table present
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-1842
+claimed_at: 2026-02-18T22:20:38.000Z
+baseline_main_sha: 806ce016240788335206ada4c1897cffd9c5b4c5
+session_id: 9eca9c67-15b9-4c4b-a4eb-a8e3fc8abd34
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T22:20:38.004Z
