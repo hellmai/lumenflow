@@ -8,14 +8,16 @@ created: 2026-02-18
 code_paths:
   - apps/web/src/server/pack-registry-store-vercel-blob.ts
   - apps/web/src/server/pack-registry-config.ts
+  - apps/web/src/server/pack-registry-route-adapters.ts
   - apps/web/app/api/registry/packs/[id]/versions/[version]/tarball/route.ts
 tests:
   manual:
     - Verify tarball route returns 200 with correct content-type for existing pack
     - Verify tarball route returns 404 for non-existent pack
   unit:
-    - apps/web/src/server/__tests__/pack-registry-store-vercel-blob.test.ts
-    - apps/web/src/server/__tests__/pack-registry-config.test.ts
+    - apps/web/__tests__/pack-registry-store-vercel-blob.test.ts
+    - apps/web/__tests__/pack-registry-config.test.ts
+    - apps/web/__tests__/pack-registry-tarball-route.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1869.done
