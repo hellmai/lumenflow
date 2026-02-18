@@ -10,7 +10,11 @@ code_paths:
 tests:
   manual:
     - Trigger a policy denial, verify overlay shows correct policy and scope info
-  unit: []
+    - Navigate to /dashboard/[taskId]
+    - trigger policy denial
+    - verify overlay shows policy and scope info
+  unit:
+    - apps/web/__tests__/policy-decision-overlay.test.tsx
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1834.done
@@ -24,10 +28,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-18T21:49:11.018Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-1834
+session_id: ce5a7451-4d7c-4b4a-9b8a-d878c432df2b
 exposure: ui
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T21:49:11.022Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +50,3 @@ acceptance:
   - Denied tool executions show policy_id and reason
   - Scope intersection visualized (requested vs allowed vs enforced)
   - Visual diff of attempted vs permitted actions
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-1834
-claimed_at: 2026-02-18T21:49:11.018Z
-baseline_main_sha: 575bdf8ce22563461b263eb000c65c18688714df
-session_id: ce5a7451-4d7c-4b4a-9b8a-d878c432df2b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-18T21:49:11.022Z
