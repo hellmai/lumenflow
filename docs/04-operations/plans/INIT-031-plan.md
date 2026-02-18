@@ -20,7 +20,7 @@ Web dashboard renders live task events within 2s of EventStore append. AG-UI Run
 
 ## Risks
 
-<!-- What could go wrong? How will you mitigate? -->
+EventStore performance under tailing: current replay() re-reads entire file. Mitigation: subscribe uses fs.watch() plus seek-to-last-offset, parsing only new lines. Next.js in monorepo: adding Next.js to Turborepo workspace can cause build ordering issues. Mitigation: standard turbo dependency graph with surfaces package as dependency. AG-UI protocol stability: AG-UI is relatively new. Mitigation: adapter is a separate module that can be updated independently. Pack registry security: published packs run as subprocess tools. Mitigation: existing sandbox (bwrap) and import boundary enforcement already handle this.
 
 ## Open Questions
 
