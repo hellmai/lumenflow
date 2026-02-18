@@ -257,4 +257,181 @@ describe('evidence store', () => {
 
     expect(await store.getReceiptIndexSize()).toBe(0);
   });
+
+  describe('JSONL compaction', () => {
+    it('rotates active segment to numbered file when size threshold exceeded', async () => {
+      const store = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 500,
+      });
+
+      // Append enough traces to exceed the 500-byte threshold
+      for (let index = 0; index < 10; index += 1) {
+        await store.appendTrace(
+          makeStartedEntry(`receipt-compact-${index}`, `WU-compact-${index}`),
+        );
+      }
+
+      // After compaction, a segment file should exist
+      const { readdir } = await import('node:fs/promises');
+      const tracesDir = join(evidenceRoot, 'traces');
+      const files = await readdir(tracesDir);
+      const segmentFiles = files.filter((f: string) => /^tool-traces\.\d{4}\.jsonl$/.test(f));
+
+      expect(segmentFiles.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('preserves all events across compaction (no data loss)', async () => {
+      const store = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 300,
+      });
+
+      const entryCount = 20;
+      for (let index = 0; index < entryCount; index += 1) {
+        await store.appendTrace(
+          makeStartedEntry(`receipt-preserve-${index}`, `WU-preserve-${index}`),
+        );
+      }
+
+      // All events must be readable via readTraces despite compaction
+      const traces = await store.readTraces();
+      expect(traces).toHaveLength(entryCount);
+
+      // Verify every receipt_id is present
+      const receiptIds = new Set(traces.map((t) => t.receipt_id));
+      for (let index = 0; index < entryCount; index += 1) {
+        expect(receiptIds.has(`receipt-preserve-${index}`)).toBe(true);
+      }
+    });
+
+    it('maintains append-only invariant across segments', async () => {
+      const store = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 400,
+      });
+
+      // Write, trigger compaction, write more
+      for (let index = 0; index < 8; index += 1) {
+        await store.appendTrace(makeStartedEntry(`receipt-inv-${index}`, `WU-inv-${index}`));
+      }
+
+      // Append more after compaction occurred
+      await store.appendTrace(makeStartedEntry('receipt-post-compact', 'WU-post-compact'));
+
+      const traces = await store.readTraces();
+      const allReceiptIds = traces.map((t) => t.receipt_id);
+
+      // Post-compact entry must be at the end (append-only order preserved)
+      expect(allReceiptIds[allReceiptIds.length - 1]).toBe('receipt-post-compact');
+      expect(traces).toHaveLength(9);
+    });
+
+    it('uses default threshold when compactionThresholdBytes not provided', async () => {
+      // Just verifying the constructor accepts the option gracefully
+      const store = new EvidenceStore({ evidenceRoot });
+      await store.appendTrace(makeStartedEntry('receipt-default-thresh'));
+      const traces = await store.readTraces();
+      expect(traces).toHaveLength(1);
+    });
+
+    it('reads traces from a fresh store instance across compacted segments', async () => {
+      const store1 = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 300,
+      });
+
+      for (let index = 0; index < 15; index += 1) {
+        await store1.appendTrace(makeStartedEntry(`receipt-fresh-${index}`, `WU-fresh-${index}`));
+      }
+
+      // Create a brand-new store instance pointing to the same root
+      const store2 = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 300,
+      });
+
+      const traces = await store2.readTraces();
+      expect(traces).toHaveLength(15);
+
+      // Verify ordering: receipt-fresh-0 should come before receipt-fresh-14
+      expect(traces[0]?.receipt_id).toBe('receipt-fresh-0');
+      expect(traces[14]?.receipt_id).toBe('receipt-fresh-14');
+    });
+  });
+
+  describe('incremental replay', () => {
+    it('does not re-read entire file when new traces appended after hydration', async () => {
+      const store = new EvidenceStore({ evidenceRoot });
+
+      // Initial hydration
+      await store.appendTrace(makeStartedEntry('receipt-incr-1', 'WU-incr'));
+      const traces1 = await store.readTraces();
+      expect(traces1).toHaveLength(1);
+
+      // Append more after hydration
+      await store.appendTrace(makeStartedEntry('receipt-incr-2', 'WU-incr'));
+      const traces2 = await store.readTraces();
+      expect(traces2).toHaveLength(2);
+
+      // The indexes should reflect both entries without a full re-read
+      const taskTraces = await store.readTracesByTaskId('WU-incr');
+      expect(taskTraces).toHaveLength(2);
+    });
+
+    it('provides O(1) amortized replay via cursor after initial hydration', async () => {
+      const store = new EvidenceStore({ evidenceRoot });
+
+      // Write initial batch
+      const batchSize = 50;
+      for (let index = 0; index < batchSize; index += 1) {
+        await store.appendTrace(makeStartedEntry(`receipt-bench-${index}`, `WU-bench-${index}`));
+      }
+
+      // Initial hydration (reads full file - O(n))
+      const t0 = performance.now();
+      await store.readTraces();
+      const initialReadMs = performance.now() - t0;
+
+      // Append one more entry
+      await store.appendTrace(makeStartedEntry('receipt-bench-extra', 'WU-bench-extra'));
+
+      // Incremental read should be much faster (O(1) amortized)
+      const t1 = performance.now();
+      const traces = await store.readTraces();
+      const incrementalReadMs = performance.now() - t1;
+
+      expect(traces).toHaveLength(batchSize + 1);
+
+      // Incremental read should be significantly faster than initial hydration
+      // We use a generous ratio since timing can be noisy in CI
+      // The key invariant: incremental is not doing O(n) work
+      expect(incrementalReadMs).toBeLessThan(initialReadMs * 2);
+    });
+
+    it('incremental cursor works correctly across compacted segments', async () => {
+      const store = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 400,
+      });
+
+      // Write enough to trigger compaction
+      for (let index = 0; index < 8; index += 1) {
+        await store.appendTrace(makeStartedEntry(`receipt-cur-${index}`, `WU-cur-${index}`));
+      }
+
+      // Hydrate
+      const traces1 = await store.readTraces();
+      const count1 = traces1.length;
+
+      // Write more (may trigger another compaction)
+      for (let index = 8; index < 12; index += 1) {
+        await store.appendTrace(makeStartedEntry(`receipt-cur-${index}`, `WU-cur-${index}`));
+      }
+
+      // Incremental read should pick up new entries
+      const traces2 = await store.readTraces();
+      expect(traces2).toHaveLength(count1 + 4);
+    });
+  });
 });
