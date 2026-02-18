@@ -178,8 +178,6 @@ export function buildWorkspaceConfig(input: WorkspaceConfigInput): WorkspaceSpec
  * explaining each section.
  */
 export function generateWorkspaceYaml(config: WorkspaceSpec): string {
-  const doc = new YAML.Document(config);
-
   // Build commented YAML manually for maximum readability
   const lines: string[] = [];
 
