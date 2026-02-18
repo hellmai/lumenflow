@@ -2,7 +2,7 @@ id: WU-1835
 title: Build human-in-the-loop approval UI for policy approval_required decisions
 lane: 'Content: Site Comms'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-18
 code_paths:
@@ -31,9 +31,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'When policy returns approval_required decision type, web UI shows pending approval card with tool details. User clicks Approve or Deny. Result flows back through AG-UI state sync to the agent. Uses AG-UI tool call pattern: TOOL_CALL_START then wait for frontend TOOL_CALL_RESULT.'
+description: 'When policy returns approval_required decision type, web UI shows pending approval
+  card with tool details. User clicks Approve or Deny. Result flows back through AG-UI state sync to
+  the agent. Uses AG-UI tool call pattern: TOOL_CALL_START then wait for frontend TOOL_CALL_RESULT.'
 acceptance:
   - Pending approval card displayed for approval_required decisions
   - Approve and Deny buttons functional
   - Decision flows back to agent via AG-UI state sync
   - Agent resumes after approval
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-1835
+claimed_at: 2026-02-18T21:55:22.795Z
+baseline_main_sha: f20297e2664318ba6c5e4b03b21f81129d00ee9c
+session_id: 84149525-d6f4-43aa-b428-ee08b4cbfa90
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T21:55:22.799Z
