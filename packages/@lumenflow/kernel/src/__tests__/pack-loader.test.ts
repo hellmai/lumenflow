@@ -1,17 +1,14 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: Apache-2.0
 
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import YAML from 'yaml';
 import { SOFTWARE_DELIVERY_PACK_ID } from '../../../packs/software-delivery/constants.js';
-import { delegationToolCapabilities } from '../../../packs/software-delivery/tools/delegation-tools.js';
-import { gitToolCapabilities } from '../../../packs/software-delivery/tools/git-tools.js';
-import { laneLockToolCapabilities } from '../../../packs/software-delivery/tools/lane-lock-tool.js';
-import { worktreeToolCapabilities } from '../../../packs/software-delivery/tools/worktree-tools.js';
+import { SOFTWARE_DELIVERY_MANIFEST } from '../../../packs/software-delivery/manifest.js';
 import { WorkspaceSpecSchema } from '../kernel.schemas.js';
 import { PACK_MANIFEST_FILE_NAME, UTF8_ENCODING } from '../shared-constants.js';
 import {
@@ -23,9 +20,70 @@ import {
 } from '../pack/index.js';
 
 const PACK_LOADER_TEST_DIR = dirname(fileURLToPath(import.meta.url));
+const EXPECTED_MCP_SHELL_OUT_TOOL_MINIMUM = 90;
+const REQUIRED_MANIFEST_TOOL_DOMAINS = [
+  'wu',
+  'mem',
+  'initiative',
+  'lane',
+  'flow',
+  'gate',
+  'file',
+  'git',
+  'agent',
+  'orchestrate',
+  'state',
+  'plan',
+  'setup',
+] as const;
 
 interface WorkspacePackInput {
   integrity: string;
+  version?: string;
+}
+
+function normalizeToolDomain(toolName: string): string {
+  if (toolName === 'gates' || toolName.startsWith('gates:')) {
+    return 'gate';
+  }
+  if (
+    toolName.startsWith('backlog:') ||
+    toolName.startsWith('delegation:') ||
+    toolName.startsWith('docs:') ||
+    toolName.startsWith('init:') ||
+    toolName.startsWith('lumenflow') ||
+    toolName.startsWith('metrics') ||
+    toolName.startsWith('signal:') ||
+    toolName.startsWith('sync:') ||
+    toolName.startsWith('validate')
+  ) {
+    return 'setup';
+  }
+  const separator = toolName.indexOf(':');
+  if (separator > 0) {
+    return toolName.slice(0, separator);
+  }
+  return toolName;
+}
+
+async function collectMcpShellOutCommands(): Promise<string[]> {
+  const toolsRoot = resolve(PACK_LOADER_TEST_DIR, '..', '..', '..', 'mcp', 'src', 'tools');
+  const toolFiles = (await readdir(toolsRoot)).filter((entry) => entry.endsWith('.ts'));
+  const commandPattern = /runCliCommand\(\s*['"]([^'"]+)['"]/g;
+  const commands = new Set<string>();
+
+  for (const toolFile of toolFiles) {
+    const source = await readFile(join(toolsRoot, toolFile), UTF8_ENCODING);
+    let match = commandPattern.exec(source);
+    while (match) {
+      if (match[1]) {
+        commands.add(match[1]);
+      }
+      match = commandPattern.exec(source);
+    }
+  }
+
+  return [...commands].sort();
 }
 
 function createWorkspaceSpec(input: WorkspacePackInput) {
@@ -35,7 +93,7 @@ function createWorkspaceSpec(input: WorkspacePackInput) {
     packs: [
       {
         id: SOFTWARE_DELIVERY_PACK_ID,
-        version: '1.0.0',
+        version: input.version ?? '1.0.0',
         integrity: input.integrity,
         source: 'local',
       },
@@ -182,15 +240,24 @@ describe('pack loader + integrity pinning', () => {
     expect(manifest.state_aliases.active).toBe('in_progress');
   });
 
-  it('keeps manifest-declared tool permission/scopes aligned with software-delivery descriptors', async () => {
-    const descriptorByName = new Map(
-      [
-        ...gitToolCapabilities,
-        ...worktreeToolCapabilities,
-        ...laneLockToolCapabilities,
-        ...delegationToolCapabilities,
-      ].map((tool) => [tool.name, tool]),
+  it('keeps software-delivery manifest.yaml and programmatic manifest in sync', async () => {
+    const manifestPath = resolve(
+      PACK_LOADER_TEST_DIR,
+      '..',
+      '..',
+      '..',
+      'packs',
+      'software-delivery',
+      'manifest.yaml',
     );
+    const manifestRaw = await readFile(manifestPath, UTF8_ENCODING);
+    const manifest = DomainPackManifestSchema.parse(YAML.parse(manifestRaw));
+    expect(SOFTWARE_DELIVERY_MANIFEST).toEqual(manifest);
+  });
+
+  it('declares all remaining MCP shell-out commands in the software-delivery manifest', async () => {
+    const mcpShellOutCommands = await collectMcpShellOutCommands();
+    expect(mcpShellOutCommands.length).toBeGreaterThanOrEqual(EXPECTED_MCP_SHELL_OUT_TOOL_MINIMUM);
 
     const manifestPath = resolve(
       PACK_LOADER_TEST_DIR,
@@ -203,12 +270,15 @@ describe('pack loader + integrity pinning', () => {
     );
     const manifestRaw = await readFile(manifestPath, UTF8_ENCODING);
     const manifest = DomainPackManifestSchema.parse(YAML.parse(manifestRaw));
+    const toolNames = new Set(manifest.tools.map((tool) => tool.name));
 
-    for (const manifestTool of manifest.tools) {
-      const descriptor = descriptorByName.get(manifestTool.name);
-      expect(descriptor).toBeDefined();
-      expect(manifestTool.permission).toBe(descriptor?.permission);
-      expect(manifestTool.required_scopes).toEqual(descriptor?.required_scopes);
+    for (const commandName of mcpShellOutCommands) {
+      expect(toolNames.has(commandName)).toBe(true);
+    }
+
+    const toolDomains = new Set(manifest.tools.map((tool) => normalizeToolDomain(tool.name)));
+    for (const domain of REQUIRED_MANIFEST_TOOL_DOMAINS) {
+      expect(toolDomains.has(domain)).toBe(true);
     }
   });
 
@@ -236,6 +306,27 @@ describe('pack loader + integrity pinning', () => {
     } finally {
       await rm(tempRoot, { recursive: true, force: true });
     }
+  });
+
+  it('loads software-delivery pack when workspace pin uses computed sha256 integrity', async () => {
+    const packsRoot = resolve(PACK_LOADER_TEST_DIR, '..', '..', '..', 'packs');
+    const packRoot = join(packsRoot, SOFTWARE_DELIVERY_PACK_ID);
+    const computedHash = await computeDeterministicPackHash({ packRoot });
+
+    const loader = new PackLoader({
+      packsRoot,
+    });
+
+    const loaded = await loader.load({
+      workspaceSpec: createWorkspaceSpec({
+        version: '0.1.0',
+        integrity: `sha256:${computedHash}`,
+      }),
+      packId: SOFTWARE_DELIVERY_PACK_ID,
+    });
+
+    expect(loaded.integrity).toBe(computedHash);
+    expect(loaded.pin.integrity).toBe(`sha256:${computedHash}`);
   });
 
   it('rejects integrity:dev in production environment by default', async () => {
