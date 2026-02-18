@@ -232,6 +232,15 @@ export default tseslint.config(
     },
   },
 
+  // Next.js generated environment declarations contain triple-slash references by design.
+  // Keep lint strict for authored code while exempting generated next-env files.
+  {
+    files: ['**/next-env.d.ts'],
+    rules: {
+      '@typescript-eslint/triple-slash-reference': 'off',
+    },
+  },
+
   // Workflow framework needs dynamic file operations (spawn registry, state, worktree management)
   {
     files: [
