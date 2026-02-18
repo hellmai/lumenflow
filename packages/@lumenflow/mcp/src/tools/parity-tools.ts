@@ -7,6 +7,7 @@
  * WU-1483: Wave-2 public parity tools (file, git, plan, signal, wu:proto)
  */
 
+import path from 'node:path';
 import { z } from 'zod';
 import { gatesSchema, lumenflowInitSchema, initiativePlanSchema } from '@lumenflow/core';
 import {
@@ -196,6 +197,22 @@ interface RuntimeToolOutputLike {
   data?: unknown;
 }
 
+const GIT_RUNTIME_TOOL_NAME = 'git:status';
+const GIT_BINARY = 'git';
+const RUNTIME_PROJECT_ROOT_KEY = 'project_root';
+const GIT_COMMAND_RESULT_STDOUT_KEY = 'stdout';
+const GIT_COMMAND_RESULTS_KEY = 'command_results';
+const GIT_OUTPUT_KEY = 'output';
+
+interface GitCommandResultLike {
+  stdout?: unknown;
+}
+
+interface GitRuntimeDataLike {
+  output?: unknown;
+  command_results?: unknown;
+}
+
 function unwrapExecuteViaPackData(data: unknown): unknown {
   if (!data || typeof data !== 'object') {
     return data;
@@ -210,6 +227,35 @@ function unwrapExecuteViaPackData(data: unknown): unknown {
     return data;
   }
   return output.data ?? {};
+}
+
+function resolveRuntimeProjectRoot(baseDir: unknown, projectRoot?: string): string {
+  if (typeof baseDir !== 'string' || baseDir.trim().length === 0) {
+    return projectRoot ?? process.cwd();
+  }
+
+  return path.resolve(projectRoot ?? process.cwd(), baseDir);
+}
+
+function extractGitOutput(data: unknown): string {
+  if (!data || typeof data !== 'object') {
+    return '';
+  }
+
+  const runtimeData = data as GitRuntimeDataLike;
+  if (typeof runtimeData[GIT_OUTPUT_KEY] === 'string') {
+    return runtimeData[GIT_OUTPUT_KEY];
+  }
+
+  const commandResults = runtimeData[GIT_COMMAND_RESULTS_KEY];
+  if (!Array.isArray(commandResults) || commandResults.length === 0) {
+    return '';
+  }
+
+  const lastCommandResult = commandResults[commandResults.length - 1] as GitCommandResultLike;
+  return typeof lastCommandResult[GIT_COMMAND_RESULT_STDOUT_KEY] === 'string'
+    ? (lastCommandResult[GIT_COMMAND_RESULT_STDOUT_KEY] as string)
+    : '';
 }
 
 // ============================================================================
@@ -791,22 +837,45 @@ export const gitStatusTool: ToolDefinition = {
   inputSchema: gitStatusSchema,
 
   async execute(input, options) {
+    const runtimeProjectRoot = resolveRuntimeProjectRoot(input.base_dir, options?.projectRoot);
+
     const args: string[] = [];
     if (input.base_dir) args.push(CliArgs.BASE_DIR, input.base_dir as string);
     if (input.porcelain) args.push('--porcelain');
     if (input.short) args.push('--short');
     if (input.path) args.push(input.path as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('git:status', args, cliOptions);
+    const gitCommandArgs = ['status'];
+    if (input.porcelain) gitCommandArgs.push('--porcelain');
+    if (input.short) gitCommandArgs.push('--short');
+    if (input.path) gitCommandArgs.push(input.path as string);
 
-    if (result.success) {
-      return success({ output: result.stdout });
-    }
-    return error(
-      result.stderr || result.error?.message || 'git:status failed',
-      ErrorCodes.GIT_STATUS_ERROR,
+    const execution = await executeViaPack(
+      GIT_RUNTIME_TOOL_NAME,
+      {
+        commands: [[GIT_BINARY, ...gitCommandArgs]],
+      },
+      {
+        projectRoot: runtimeProjectRoot,
+        contextInput: {
+          metadata: {
+            [RUNTIME_PROJECT_ROOT_KEY]: runtimeProjectRoot,
+          },
+        },
+        fallback: {
+          command: 'git:status',
+          args,
+          errorCode: ErrorCodes.GIT_STATUS_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    const runtimeData = unwrapExecuteViaPackData(execution.data);
+    return success({ output: extractGitOutput(runtimeData) });
   },
 };
 
@@ -819,6 +888,8 @@ export const gitDiffTool: ToolDefinition = {
   inputSchema: gitDiffSchema,
 
   async execute(input, options) {
+    const runtimeProjectRoot = resolveRuntimeProjectRoot(input.base_dir, options?.projectRoot);
+
     const args: string[] = [];
     if (input.base_dir) args.push(CliArgs.BASE_DIR, input.base_dir as string);
     if (input.staged) args.push('--staged');
@@ -827,16 +898,39 @@ export const gitDiffTool: ToolDefinition = {
     if (input.ref) args.push(input.ref as string);
     if (input.path) args.push('--', input.path as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('git:diff', args, cliOptions);
+    const gitCommandArgs = ['diff'];
+    if (input.staged) gitCommandArgs.push('--staged');
+    if (input.name_only) gitCommandArgs.push('--name-only');
+    if (input.stat) gitCommandArgs.push('--stat');
+    if (input.ref) gitCommandArgs.push(input.ref as string);
+    if (input.path) gitCommandArgs.push('--', input.path as string);
 
-    if (result.success) {
-      return success({ output: result.stdout });
-    }
-    return error(
-      result.stderr || result.error?.message || 'git:diff failed',
-      ErrorCodes.GIT_DIFF_ERROR,
+    const execution = await executeViaPack(
+      GIT_RUNTIME_TOOL_NAME,
+      {
+        commands: [[GIT_BINARY, ...gitCommandArgs]],
+      },
+      {
+        projectRoot: runtimeProjectRoot,
+        contextInput: {
+          metadata: {
+            [RUNTIME_PROJECT_ROOT_KEY]: runtimeProjectRoot,
+          },
+        },
+        fallback: {
+          command: 'git:diff',
+          args,
+          errorCode: ErrorCodes.GIT_DIFF_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    const runtimeData = unwrapExecuteViaPackData(execution.data);
+    return success({ output: extractGitOutput(runtimeData) });
   },
 };
 
@@ -849,6 +943,8 @@ export const gitLogTool: ToolDefinition = {
   inputSchema: gitLogSchema,
 
   async execute(input, options) {
+    const runtimeProjectRoot = resolveRuntimeProjectRoot(input.base_dir, options?.projectRoot);
+
     const args: string[] = [];
     if (input.base_dir) args.push(CliArgs.BASE_DIR, input.base_dir as string);
     if (input.oneline) args.push('--oneline');
@@ -858,16 +954,40 @@ export const gitLogTool: ToolDefinition = {
     if (input.author) args.push('--author', input.author as string);
     if (input.ref) args.push(input.ref as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('git:log', args, cliOptions);
+    const gitCommandArgs = ['log'];
+    if (input.oneline) gitCommandArgs.push('--oneline');
+    if (input.max_count !== undefined) gitCommandArgs.push('-n', String(input.max_count));
+    if (input.format) gitCommandArgs.push('--format', input.format as string);
+    if (input.since) gitCommandArgs.push('--since', input.since as string);
+    if (input.author) gitCommandArgs.push('--author', input.author as string);
+    if (input.ref) gitCommandArgs.push(input.ref as string);
 
-    if (result.success) {
-      return success({ output: result.stdout });
-    }
-    return error(
-      result.stderr || result.error?.message || 'git:log failed',
-      ErrorCodes.GIT_LOG_ERROR,
+    const execution = await executeViaPack(
+      GIT_RUNTIME_TOOL_NAME,
+      {
+        commands: [[GIT_BINARY, ...gitCommandArgs]],
+      },
+      {
+        projectRoot: runtimeProjectRoot,
+        contextInput: {
+          metadata: {
+            [RUNTIME_PROJECT_ROOT_KEY]: runtimeProjectRoot,
+          },
+        },
+        fallback: {
+          command: 'git:log',
+          args,
+          errorCode: ErrorCodes.GIT_LOG_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    const runtimeData = unwrapExecuteViaPackData(execution.data);
+    return success({ output: extractGitOutput(runtimeData) });
   },
 };
 
@@ -880,6 +1000,8 @@ export const gitBranchTool: ToolDefinition = {
   inputSchema: gitBranchSchema,
 
   async execute(input, options) {
+    const runtimeProjectRoot = resolveRuntimeProjectRoot(input.base_dir, options?.projectRoot);
+
     const args: string[] = [];
     if (input.base_dir) args.push(CliArgs.BASE_DIR, input.base_dir as string);
     if (input.list) args.push('--list');
@@ -888,16 +1010,39 @@ export const gitBranchTool: ToolDefinition = {
     if (input.show_current) args.push('--show-current');
     if (input.contains) args.push('--contains', input.contains as string);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand('git:branch', args, cliOptions);
+    const gitCommandArgs = ['branch'];
+    if (input.list) gitCommandArgs.push('--list');
+    if (input.all) gitCommandArgs.push('--all');
+    if (input.remotes) gitCommandArgs.push('--remotes');
+    if (input.show_current) gitCommandArgs.push('--show-current');
+    if (input.contains) gitCommandArgs.push('--contains', input.contains as string);
 
-    if (result.success) {
-      return success({ output: result.stdout });
-    }
-    return error(
-      result.stderr || result.error?.message || 'git:branch failed',
-      ErrorCodes.GIT_BRANCH_ERROR,
+    const execution = await executeViaPack(
+      GIT_RUNTIME_TOOL_NAME,
+      {
+        commands: [[GIT_BINARY, ...gitCommandArgs]],
+      },
+      {
+        projectRoot: runtimeProjectRoot,
+        contextInput: {
+          metadata: {
+            [RUNTIME_PROJECT_ROOT_KEY]: runtimeProjectRoot,
+          },
+        },
+        fallback: {
+          command: 'git:branch',
+          args,
+          errorCode: ErrorCodes.GIT_BRANCH_ERROR,
+        },
+      },
     );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    const runtimeData = unwrapExecuteViaPackData(execution.data);
+    return success({ output: extractGitOutput(runtimeData) });
   },
 };
 

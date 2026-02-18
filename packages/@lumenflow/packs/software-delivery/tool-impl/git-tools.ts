@@ -54,6 +54,14 @@ interface CommandResult {
   status: number;
 }
 
+interface CommandExecutionResult {
+  command: string;
+  args: string[];
+  stdout: string;
+  stderr: string;
+  status: number;
+}
+
 const GIT_BINARY = '/usr/bin/git';
 
 function runGit(cwd: string, args: string[]): CommandResult {
@@ -116,6 +124,8 @@ export async function gitStatusTool(
 
   const commands = Array.isArray(input.commands) ? input.commands : null;
   if (commands) {
+    const commandResults: CommandExecutionResult[] = [];
+
     for (const commandEntry of commands) {
       if (!Array.isArray(commandEntry) || commandEntry.length === 0) {
         return {
@@ -149,10 +159,23 @@ export async function gitStatusTool(
           },
         };
       }
+
+      commandResults.push({
+        command: String(command),
+        args,
+        stdout: result.stdout,
+        stderr: result.stderr,
+        status: result.status,
+      });
     }
+
     return {
       success: true,
-      data: { commands_executed: commands.length },
+      data: {
+        commands_executed: commands.length,
+        command_results: commandResults,
+        output: commandResults[commandResults.length - 1]?.stdout.trim() ?? '',
+      },
     };
   }
 
