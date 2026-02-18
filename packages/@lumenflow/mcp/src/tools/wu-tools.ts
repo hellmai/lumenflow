@@ -643,22 +643,23 @@ export const wuRecoverTool: ToolDefinition = {
     if (input.force) args.push(CliArgs.FORCE);
     if (input.json) args.push(CliArgs.JSON);
 
-    const cliOptions: CliRunnerOptions = { projectRoot: options?.projectRoot };
-    const result = await runCliCommand(CliCommands.WU_RECOVER, args, cliOptions);
+    const result = await executeViaPack(CliCommands.WU_RECOVER, input, {
+      projectRoot: options?.projectRoot,
+      contextInput: {
+        metadata: {
+          [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+        },
+      },
+      fallback: {
+        command: CliCommands.WU_RECOVER,
+        args,
+        errorCode: ErrorCodes.WU_RECOVER_ERROR,
+      },
+    });
 
-    if (result.success) {
-      try {
-        const data = JSON.parse(result.stdout);
-        return success(data);
-      } catch {
-        return success({ message: result.stdout || 'WU recovered successfully' });
-      }
-    } else {
-      return error(
-        result.stderr || result.error?.message || 'wu:recover failed',
-        ErrorCodes.WU_RECOVER_ERROR,
-      );
-    }
+    return result.success
+      ? success(result.data ?? { message: 'WU recovered successfully' })
+      : error(result.error?.message ?? 'wu:recover failed', ErrorCodes.WU_RECOVER_ERROR);
   },
 };
 

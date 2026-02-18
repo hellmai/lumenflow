@@ -45,6 +45,21 @@ const IN_PROCESS_TOOL_NAMES = {
   WU_BRIEF: CliCommands.WU_BRIEF,
   WU_DELEGATE: CliCommands.WU_DELEGATE,
   WU_UNLOCK_LANE: CliCommands.WU_UNLOCK_LANE,
+  AGENT_SESSION: CliCommands.AGENT_SESSION,
+  AGENT_SESSION_END: CliCommands.AGENT_SESSION_END,
+  AGENT_LOG_ISSUE: CliCommands.AGENT_LOG_ISSUE,
+  AGENT_ISSUES_QUERY: CliCommands.AGENT_ISSUES_QUERY,
+  LUMENFLOW: CliCommands.LUMENFLOW,
+  LUMENFLOW_DOCTOR: CliCommands.LUMENFLOW_DOCTOR,
+  LUMENFLOW_INTEGRATE: CliCommands.LUMENFLOW_INTEGRATE,
+  LUMENFLOW_UPGRADE: CliCommands.LUMENFLOW_UPGRADE,
+  LUMENFLOW_RELEASE: CliCommands.LUMENFLOW_RELEASE,
+  DOCS_SYNC: CliCommands.DOCS_SYNC,
+  SYNC_TEMPLATES: CliCommands.SYNC_TEMPLATES,
+  PLAN_CREATE: CliCommands.PLAN_CREATE,
+  PLAN_EDIT: CliCommands.PLAN_EDIT,
+  PLAN_LINK: CliCommands.PLAN_LINK,
+  PLAN_PROMOTE: CliCommands.PLAN_PROMOTE,
   GATES: CliCommands.GATES,
   INITIATIVE_LIST: CliCommands.INITIATIVE_LIST,
   INITIATIVE_STATUS: CliCommands.INITIATIVE_STATUS,
@@ -74,6 +89,7 @@ const IN_PROCESS_TOOL_NAMES = {
   WU_UNBLOCK: CliCommands.WU_UNBLOCK,
   WU_EDIT: CliCommands.WU_EDIT,
   WU_RELEASE: CliCommands.WU_RELEASE,
+  WU_RECOVER: CliCommands.WU_RECOVER,
   WU_DEPS: CliCommands.WU_DEPS,
   WU_PREFLIGHT: CliCommands.WU_PREFLIGHT,
   WU_VALIDATE: CliCommands.WU_VALIDATE,
@@ -106,6 +122,21 @@ const IN_PROCESS_TOOL_DESCRIPTIONS = {
   WU_BRIEF: 'Generate WU brief prompt via runtime-first handler with CLI fallback',
   WU_DELEGATE: 'Generate WU delegation prompt via runtime-first handler with CLI fallback',
   WU_UNLOCK_LANE: 'Unlock lane via runtime-first handler with CLI fallback',
+  AGENT_SESSION: 'Start agent session via runtime-first handler with CLI fallback',
+  AGENT_SESSION_END: 'End agent session via runtime-first handler with CLI fallback',
+  AGENT_LOG_ISSUE: 'Log agent issue via runtime-first handler with CLI fallback',
+  AGENT_ISSUES_QUERY: 'Query agent issues via runtime-first handler with CLI fallback',
+  LUMENFLOW: 'Initialize LumenFlow via runtime-first handler with CLI fallback',
+  LUMENFLOW_DOCTOR: 'Run lumenflow doctor via runtime-first handler with CLI fallback',
+  LUMENFLOW_INTEGRATE: 'Run lumenflow integrate via runtime-first handler with CLI fallback',
+  LUMENFLOW_UPGRADE: 'Run lumenflow upgrade via runtime-first handler with CLI fallback',
+  LUMENFLOW_RELEASE: 'Run lumenflow release via runtime-first handler with CLI fallback',
+  DOCS_SYNC: 'Sync docs via runtime-first handler with CLI fallback',
+  SYNC_TEMPLATES: 'Sync templates via runtime-first handler with CLI fallback',
+  PLAN_CREATE: 'Create plan via runtime-first handler with CLI fallback',
+  PLAN_EDIT: 'Edit plan via runtime-first handler with CLI fallback',
+  PLAN_LINK: 'Link plan via runtime-first handler with CLI fallback',
+  PLAN_PROMOTE: 'Promote plan via runtime-first handler with CLI fallback',
   GATES: 'Run gates via runtime-first handler with CLI fallback',
   INITIATIVE_LIST: 'List initiatives via runtime-first handler with CLI fallback',
   INITIATIVE_STATUS: 'Show initiative status via runtime-first handler with CLI fallback',
@@ -137,6 +168,7 @@ const IN_PROCESS_TOOL_DESCRIPTIONS = {
   WU_UNBLOCK: 'Unblock WU via in-process core state transition handler',
   WU_EDIT: 'Edit WU spec fields via in-process core filesystem handler',
   WU_RELEASE: 'Release WU via in-process core state transition handler',
+  WU_RECOVER: 'Recover WU via runtime-first handler with CLI fallback',
   WU_DEPS: 'Visualize WU dependency graph via in-process core handler',
   WU_PREFLIGHT: 'Fast validation of code_paths/test paths via in-process core handler',
   WU_VALIDATE: 'Validate WU YAML via in-process schema check',
@@ -2181,6 +2213,21 @@ const VALIDATION_TOOL_ERROR_CODES = {
   WU_BRIEF_ERROR: 'WU_BRIEF_ERROR',
   WU_DELEGATE_ERROR: 'WU_DELEGATE_ERROR',
   WU_UNLOCK_LANE_ERROR: 'WU_UNLOCK_LANE_ERROR',
+  AGENT_SESSION_ERROR: 'AGENT_SESSION_ERROR',
+  AGENT_SESSION_END_ERROR: 'AGENT_SESSION_END_ERROR',
+  AGENT_LOG_ISSUE_ERROR: 'AGENT_LOG_ISSUE_ERROR',
+  AGENT_ISSUES_QUERY_ERROR: 'AGENT_ISSUES_QUERY_ERROR',
+  LUMENFLOW_INIT_ERROR: 'LUMENFLOW_INIT_ERROR',
+  LUMENFLOW_DOCTOR_ERROR: 'LUMENFLOW_DOCTOR_ERROR',
+  LUMENFLOW_INTEGRATE_ERROR: 'LUMENFLOW_INTEGRATE_ERROR',
+  LUMENFLOW_UPGRADE_ERROR: 'LUMENFLOW_UPGRADE_ERROR',
+  LUMENFLOW_RELEASE_ERROR: 'LUMENFLOW_RELEASE_ERROR',
+  DOCS_SYNC_ERROR: 'DOCS_SYNC_ERROR',
+  SYNC_TEMPLATES_ALIAS_ERROR: 'SYNC_TEMPLATES_ALIAS_ERROR',
+  PLAN_CREATE_ERROR: 'PLAN_CREATE_ERROR',
+  PLAN_EDIT_ERROR: 'PLAN_EDIT_ERROR',
+  PLAN_LINK_ERROR: 'PLAN_LINK_ERROR',
+  PLAN_PROMOTE_ERROR: 'PLAN_PROMOTE_ERROR',
   GATES_ERROR: 'GATES_ERROR',
   INITIATIVE_LIST_ERROR: 'INITIATIVE_LIST_ERROR',
   INITIATIVE_STATUS_ERROR: 'INITIATIVE_STATUS_ERROR',
@@ -2210,6 +2257,7 @@ const VALIDATION_TOOL_ERROR_CODES = {
   WU_UNBLOCK_ERROR: 'WU_UNBLOCK_ERROR',
   WU_EDIT_ERROR: 'WU_EDIT_ERROR',
   WU_RELEASE_ERROR: 'WU_RELEASE_ERROR',
+  WU_RECOVER_ERROR: 'WU_RECOVER_ERROR',
   WU_DEPS_ERROR: 'WU_DEPS_ERROR',
   WU_PREFLIGHT_ERROR: 'WU_PREFLIGHT_ERROR',
   WU_VALIDATE_ERROR: 'WU_VALIDATE_ERROR',
@@ -2781,6 +2829,96 @@ const wuUnlockLaneInProcess: InProcessToolFn = async () =>
     WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
   );
 
+const agentSessionInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.AGENT_SESSION_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const agentSessionEndInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.AGENT_SESSION_END_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const agentLogIssueInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.AGENT_LOG_ISSUE_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const agentIssuesQueryInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.AGENT_ISSUES_QUERY_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const lumenflowInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.LUMENFLOW_INIT_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const lumenflowDoctorInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.LUMENFLOW_DOCTOR_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const lumenflowIntegrateInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.LUMENFLOW_INTEGRATE_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const lumenflowUpgradeInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.LUMENFLOW_UPGRADE_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const lumenflowReleaseInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.LUMENFLOW_RELEASE_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const docsSyncInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.DOCS_SYNC_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const syncTemplatesInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.SYNC_TEMPLATES_ALIAS_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const planCreateInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.PLAN_CREATE_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const planEditInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.PLAN_EDIT_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const planLinkInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.PLAN_LINK_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
+const planPromoteInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.PLAN_PROMOTE_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
 const gatesInProcess: InProcessToolFn = async () =>
   createFailureOutput(
     VALIDATION_TOOL_ERROR_CODES.GATES_ERROR,
@@ -3157,6 +3295,12 @@ const wuReleaseInProcess: InProcessToolFn = async (rawInput, context) => {
   }
 };
 
+const wuRecoverInProcess: InProcessToolFn = async () =>
+  createFailureOutput(
+    VALIDATION_TOOL_ERROR_CODES.WU_RECOVER_ERROR,
+    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
+  );
+
 const wuEditInProcess: InProcessToolFn = async (rawInput, context) => {
   const parsedInput = WU_EDIT_INPUT_SCHEMA.safeParse(rawInput ?? {});
   if (!parsedInput.success) {
@@ -3485,6 +3629,126 @@ const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolH
     },
   ],
   [
+    IN_PROCESS_TOOL_NAMES.AGENT_SESSION,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.AGENT_SESSION,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: agentSessionInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.AGENT_SESSION_END,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.AGENT_SESSION_END,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: agentSessionEndInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.AGENT_LOG_ISSUE,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.AGENT_LOG_ISSUE,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: agentLogIssueInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.AGENT_ISSUES_QUERY,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.AGENT_ISSUES_QUERY,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: agentIssuesQueryInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.LUMENFLOW,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: lumenflowInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.LUMENFLOW_DOCTOR,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_DOCTOR,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: lumenflowDoctorInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.LUMENFLOW_INTEGRATE,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_INTEGRATE,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: lumenflowIntegrateInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.LUMENFLOW_UPGRADE,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_UPGRADE,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: lumenflowUpgradeInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.LUMENFLOW_RELEASE,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_RELEASE,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: lumenflowReleaseInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.DOCS_SYNC,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.DOCS_SYNC,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: docsSyncInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.SYNC_TEMPLATES,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.SYNC_TEMPLATES,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: syncTemplatesInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.PLAN_CREATE,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_CREATE,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: planCreateInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.PLAN_EDIT,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_EDIT,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: planEditInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.PLAN_LINK,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_LINK,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: planLinkInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.PLAN_PROMOTE,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_PROMOTE,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: planPromoteInProcess,
+    },
+  ],
+  [
     IN_PROCESS_TOOL_NAMES.GATES,
     {
       description: IN_PROCESS_TOOL_DESCRIPTIONS.GATES,
@@ -3714,6 +3978,14 @@ const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolH
       description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_RELEASE,
       inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
       fn: wuReleaseInProcess,
+    },
+  ],
+  [
+    IN_PROCESS_TOOL_NAMES.WU_RECOVER,
+    {
+      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_RECOVER,
+      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
+      fn: wuRecoverInProcess,
     },
   ],
   [

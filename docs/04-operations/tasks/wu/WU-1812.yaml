@@ -9,11 +9,15 @@ code_paths:
   - packages/@lumenflow/mcp/src/tools/agent-tools.ts
   - packages/@lumenflow/mcp/src/tools/setup-tools.ts
   - packages/@lumenflow/mcp/src/tools/parity-tools.ts
+  - packages/@lumenflow/mcp/src/tools/wu-tools.ts
   - packages/@lumenflow/mcp/src/runtime-tool-resolver.ts
 tests:
   manual:
     - All remaining tools produce identical output via runtime path
   unit:
+    - packages/@lumenflow/mcp/src/__tests__/coordination-tools.test.ts
+    - packages/@lumenflow/mcp/src/__tests__/setup-tools.test.ts
+    - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
     - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
   e2e: []
 artifacts:

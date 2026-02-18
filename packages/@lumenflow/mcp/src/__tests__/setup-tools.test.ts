@@ -2,8 +2,7 @@
  * @file setup-tools.test.ts
  * @description Tests for setup/LumenFlow MCP tool implementations
  *
- * WU-1426: MCP tools for lumenflow, lumenflow:doctor, lumenflow:integrate,
- * lumenflow:upgrade, docs:sync, sync:templates, release, lumenflow commands
+ * WU-1812: setup tools migrated from runCliCommand to executeViaPack.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -18,14 +17,23 @@ import {
   lumenflowSyncTemplatesTool,
 } from '../tools.js';
 import * as cliRunner from '../cli-runner.js';
+import * as toolsShared from '../tools-shared.js';
 
-// Mock cli-runner for all operations
 vi.mock('../cli-runner.js', () => ({
   runCliCommand: vi.fn(),
 }));
 
-describe('Setup/LumenFlow MCP tools (WU-1426)', () => {
+vi.mock('../tools-shared.js', async () => {
+  const actual = await vi.importActual<typeof import('../tools-shared.js')>('../tools-shared.js');
+  return {
+    ...actual,
+    executeViaPack: vi.fn(actual.executeViaPack),
+  };
+});
+
+describe('Setup/LumenFlow MCP tools (WU-1812)', () => {
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
+  const mockExecuteViaPack = vi.mocked(toolsShared.executeViaPack);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -35,333 +43,194 @@ describe('Setup/LumenFlow MCP tools (WU-1426)', () => {
     vi.restoreAllMocks();
   });
 
-  describe('lumenflow_init', () => {
-    it('should initialize LumenFlow via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'LumenFlow initialized',
-        stderr: '',
-        exitCode: 0,
-      });
+  const runtimeSuccess = { success: true, data: { message: 'ok' } };
 
-      const result = await lumenflowInitTool.execute({});
+  describe('lumenflow_init', () => {
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
+
+      const result = await lumenflowInitTool.execute({ client: 'claude', merge: true });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'lumenflow',
-        expect.any(Array),
-        expect.any(Object),
+        expect.objectContaining({ client: 'claude', merge: true }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'lumenflow',
+            args: expect.arrayContaining(['--client', 'claude', '--merge']),
+          }),
+        }),
       );
-    });
-
-    it('should pass client flag when provided', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'LumenFlow initialized for Claude',
-        stderr: '',
-        exitCode: 0,
-      });
-
-      await lumenflowInitTool.execute({ client: 'claude' });
-
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
-        'lumenflow',
-        expect.arrayContaining(['--client', 'claude']),
-        expect.any(Object),
-      );
-    });
-
-    it('should pass merge flag when requested', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'LumenFlow merged',
-        stderr: '',
-        exitCode: 0,
-      });
-
-      await lumenflowInitTool.execute({ merge: true });
-
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
-        'lumenflow',
-        expect.arrayContaining(['--merge']),
-        expect.any(Object),
-      );
-    });
-
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Init failed',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowInitTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_doctor', () => {
-    it('should run doctor diagnostics via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'LumenFlow safety: ACTIVE',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
       const result = await lumenflowDoctorTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'lumenflow:doctor',
-        expect.any(Array),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'lumenflow:doctor',
+            args: [],
+          }),
+        }),
       );
-    });
-
-    it('should return error on diagnostic failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Doctor found issues',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowDoctorTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('Doctor');
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_integrate', () => {
-    it('should generate enforcement hooks via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'Hooks generated',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
       const result = await lumenflowIntegrateTool.execute({ client: 'claude-code' });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'lumenflow:integrate',
-        expect.arrayContaining(['--client', 'claude-code']),
-        expect.any(Object),
+        expect.objectContaining({ client: 'claude-code' }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'lumenflow:integrate',
+            args: expect.arrayContaining(['--client', 'claude-code']),
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
 
-    it('should require client parameter', async () => {
+    it('requires client parameter', async () => {
       const result = await lumenflowIntegrateTool.execute({});
 
       expect(result.success).toBe(false);
       expect(result.error?.message).toContain('client');
-    });
-
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Integration failed',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowIntegrateTool.execute({ client: 'claude-code' });
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
+      expect(mockExecuteViaPack).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_upgrade', () => {
-    it('should upgrade LumenFlow packages via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'LumenFlow upgraded',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
       const result = await lumenflowUpgradeTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'lumenflow:upgrade',
-        expect.any(Array),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'lumenflow:upgrade',
+            args: [],
+          }),
+        }),
       );
-    });
-
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Upgrade failed',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowUpgradeTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_commands', () => {
-    it('should list available CLI commands via shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'wu:claim, wu:done, gates',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
       const result = await lumenflowCommandsTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'lumenflow',
-        expect.arrayContaining(['commands']),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'lumenflow',
+            args: ['commands'],
+          }),
+        }),
       );
-    });
-
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Commands list failed',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowCommandsTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_docs_sync', () => {
-    it('should sync agent docs via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'Docs synced',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
       const result = await lumenflowDocsSyncTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'docs:sync',
-        expect.any(Array),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'docs:sync',
+            args: [],
+          }),
+        }),
       );
-    });
-
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Docs sync failed',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowDocsSyncTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_release', () => {
-    it('should run release workflow via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'Release complete',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
-      const result = await lumenflowReleaseTool.execute({});
+      const result = await lumenflowReleaseTool.execute({ dry_run: true });
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'lumenflow:release',
-        expect.any(Array),
-        expect.any(Object),
+        expect.objectContaining({ dry_run: true }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'lumenflow:release',
+            args: expect.arrayContaining(['--dry-run']),
+          }),
+        }),
       );
-    });
-
-    it('should pass dry_run flag when requested', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'Dry run complete',
-        stderr: '',
-        exitCode: 0,
-      });
-
-      await lumenflowReleaseTool.execute({ dry_run: true });
-
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
-        'lumenflow:release',
-        expect.arrayContaining(['--dry-run']),
-        expect.any(Object),
-      );
-    });
-
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Release failed',
-        exitCode: 1,
-      });
-
-      const result = await lumenflowReleaseTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('lumenflow_sync_templates', () => {
-    it('should sync templates via CLI shell-out', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: true,
-        stdout: 'Templates synced',
-        stderr: '',
-        exitCode: 0,
-      });
+    it('routes through executeViaPack', async () => {
+      mockExecuteViaPack.mockResolvedValue(runtimeSuccess);
 
       const result = await lumenflowSyncTemplatesTool.execute({});
 
       expect(result.success).toBe(true);
-      expect(mockRunCliCommand).toHaveBeenCalledWith(
+      expect(mockExecuteViaPack).toHaveBeenCalledWith(
         'sync:templates',
-        expect.any(Array),
-        expect.any(Object),
+        {},
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: 'sync:templates',
+            args: [],
+          }),
+        }),
       );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
+    });
+  });
+
+  it('returns execution error payload from executeViaPack failures', async () => {
+    mockExecuteViaPack.mockResolvedValue({
+      success: false,
+      error: { message: 'runtime-failed' },
     });
 
-    it('should return error on failure', async () => {
-      mockRunCliCommand.mockResolvedValue({
-        success: false,
-        stdout: '',
-        stderr: 'Template sync failed',
-        exitCode: 1,
-      });
+    const result = await lumenflowDoctorTool.execute({});
 
-      const result = await lumenflowSyncTemplatesTool.execute({});
-
-      expect(result.success).toBe(false);
-      expect(result.error?.message).toContain('failed');
-    });
+    expect(result.success).toBe(false);
+    expect(result.error?.message).toContain('runtime-failed');
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 });
