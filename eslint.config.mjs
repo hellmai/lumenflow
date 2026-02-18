@@ -200,7 +200,14 @@ export default tseslint.config(
 
   // Test file overrides - relaxed rules for test patterns
   {
-    files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+    files: [
+      '**/__tests__/**/*.ts',
+      '**/__tests__/**/*.tsx',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+    ],
     rules: {
       // Test files legitimately use any types for mocking
       '@typescript-eslint/no-explicit-any': 'off',
