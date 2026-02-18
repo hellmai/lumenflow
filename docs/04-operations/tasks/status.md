@@ -5,7 +5,6 @@ _Last updated: 2026-02-18_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1798 — Add execution-context builder and executeViaPack migration helper](wu/WU-1798.yaml)
 
 ## Completed
 
@@ -734,3 +733,4 @@ _Last updated: 2026-02-18_
 - [WU-1794 — Phase 4 governance: publish runCliCommand deprecation timeline and closure criteria](wu/WU-1794.yaml) — 2026-02-17
 - [WU-1796 — Phase 3 pack workflow: route gate policy evaluation through Kernel PolicyEngine](wu/WU-1796.yaml) — 2026-02-18
 - [WU-1797 — Phase 3 pack workflow: expose WU YAML lifecycle as runtime-managed pack tools](wu/WU-1797.yaml) — 2026-02-18
+- [WU-1798 — Add execution-context builder and executeViaPack migration helper](wu/WU-1798.yaml) — 2026-02-18
