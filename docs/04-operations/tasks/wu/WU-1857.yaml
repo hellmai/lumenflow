@@ -30,7 +30,8 @@ initiative: INIT-031
 phase: 1
 risks: []
 notes: Unblocks WU-1820, WU-1821, WU-1822 (Phase 1 dashboard pages). Must be done before any React
-  component work.
+  component work. allow-todo justification - the TODO match in eslint.config.mjs line 52 is a pre-existing
+  comment explaining why sonarjs/todo-tag rule is disabled, not incomplete work.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
