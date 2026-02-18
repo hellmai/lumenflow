@@ -342,7 +342,11 @@ describe('Orchestration MCP tools (WU-1425)', () => {
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
   const mockGetRuntimeForWorkspace = vi.mocked(runtimeCache.getRuntimeForWorkspace);
 
-  function mockRuntimeExecution(result: { success: boolean; data?: unknown; error?: { message: string } }) {
+  function mockRuntimeExecution(result: {
+    success: boolean;
+    data?: unknown;
+    error?: { message: string };
+  }) {
     const executeTool = vi.fn().mockResolvedValue(result);
     mockGetRuntimeForWorkspace.mockResolvedValue({
       executeTool,
@@ -529,7 +533,11 @@ describe('Delegation MCP tools (WU-1425)', () => {
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
   const mockGetRuntimeForWorkspace = vi.mocked(runtimeCache.getRuntimeForWorkspace);
 
-  function mockRuntimeExecution(result: { success: boolean; data?: unknown; error?: { message: string } }) {
+  function mockRuntimeExecution(result: {
+    success: boolean;
+    data?: unknown;
+    error?: { message: string };
+  }) {
     const executeTool = vi.fn().mockResolvedValue(result);
     mockGetRuntimeForWorkspace.mockResolvedValue({
       executeTool,
