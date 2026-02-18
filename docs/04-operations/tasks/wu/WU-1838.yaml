@@ -2,7 +2,7 @@ id: WU-1838
 title: Create pack:publish CLI command for registry upload
 lane: 'Framework: CLI Orchestration'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -46,3 +46,6 @@ session_id: 22759ca0-3bee-478b-a35f-f3a69351496f
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T21:32:06.807Z
+locked: true
+completed_at: 2026-02-18T21:46:06.456Z
+completed: 2026-02-18
