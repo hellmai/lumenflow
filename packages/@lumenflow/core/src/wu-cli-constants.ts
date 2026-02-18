@@ -420,6 +420,7 @@ export const MICRO_WORKTREE_OPERATIONS = {
   ORPHAN_REPAIR: 'orphan-repair', // WU-1437: Pre-claim orphan WU repair
   INITIATIVE_EDIT: 'initiative-edit', // WU-1451: Initiative edit operation
   INITIATIVE_BULK_ASSIGN: 'initiative-bulk-assign', // WU-2553: Bulk WU assignment
+  LANE_EDIT: 'lane-edit', // WU-1854: Safe in-place lane definition editing
 };
 
 /**

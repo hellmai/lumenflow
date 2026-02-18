@@ -42,6 +42,7 @@
     "wu:infer-lane": "node packages/@lumenflow/cli/dist/wu-infer-lane.js",
     "wu:delete": "node packages/@lumenflow/cli/dist/wu-delete.js",
     "wu:unlock-lane": "node packages/@lumenflow/cli/dist/wu-unlock-lane.js",
+    "lane:edit": "node packages/@lumenflow/cli/dist/lane-edit.js",
     "lane:health": "node packages/@lumenflow/cli/dist/lane-health.js",
     "lane:suggest": "node packages/@lumenflow/cli/dist/lane-suggest.js",
     "lane:status": "node packages/@lumenflow/cli/dist/lane-status.js",
