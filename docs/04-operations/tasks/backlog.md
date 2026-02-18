@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1799 — Migrate file tools (file_read/write/edit/delete) to runtime pack execution](wu/WU-1799.yaml) — Framework: Core Lifecycle
 - [WU-1798 — Add execution-context builder and executeViaPack migration helper](wu/WU-1798.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
