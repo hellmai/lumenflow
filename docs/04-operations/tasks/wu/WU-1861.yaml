@@ -23,6 +23,7 @@ artifacts:
   - .lumenflow/stamps/WU-1861.done
 dependencies: []
 initiative: INIT-030
+phase: 5
 blocked_by:
   - WU-1860
 risks: []
@@ -35,7 +36,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Code review of INIT-030 found: default pack tool schemas accept anything, PolicyEvaluationContext open index signature, persistInput API name misleading for output data, static GOVERNED_FILES list, and shell-out budget only scans tools/ directory.'
+description: 'Code review of INIT-030 found: default pack tool schemas accept anything,
+  PolicyEvaluationContext open index signature, persistInput API name misleading for output data,
+  static GOVERNED_FILES list, and shell-out budget only scans tools/ directory.'
 acceptance:
   - PolicyEvaluationContext no longer has open index signature
   - persistInput renamed to persistData across all usages
