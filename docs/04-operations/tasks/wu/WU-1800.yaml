@@ -2,7 +2,7 @@ id: WU-1800
 title: Migrate git tools (git_status/diff/log/branch) to runtime pack execution
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -48,3 +48,6 @@ session_id: 929401c8-9226-4c62-972d-f3002aecf509
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T09:43:18.409Z
+locked: true
+completed_at: 2026-02-18T09:53:12.457Z
+completed: 2026-02-18
