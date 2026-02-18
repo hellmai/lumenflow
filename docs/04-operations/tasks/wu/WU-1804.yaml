@@ -2,7 +2,7 @@ id: WU-1804
 title: Migrate orchestration query tools to runtime pack execution
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -48,3 +48,6 @@ session_id: ffc677ea-cc58-4962-bed1-2f6c406f5508
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T14:42:32.221Z
+locked: true
+completed_at: 2026-02-18T15:17:39.077Z
+completed: 2026-02-18
