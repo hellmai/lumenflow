@@ -20,14 +20,10 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1818 — Create AG-UI event adapter mapping kernel events to AG-UI protocol](wu/WU-1818.yaml) — Framework: MCP
-- [WU-1817 — Create HTTP surface with SSE event streaming and REST task API](wu/WU-1817.yaml) — Framework: MCP
-- [WU-1816 — Add reactive subscribe mechanism to EventStore](wu/WU-1816.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
-- [WU-1799 — Migrate file tools (file_read/write/edit/delete) to runtime pack execution](wu/WU-1799.yaml) — Framework: Core Lifecycle
 - [WU-1800 — Migrate git tools (git_status/diff/log/branch) to runtime pack execution](wu/WU-1800.yaml) — Framework: Core Lifecycle
 - [WU-1801 — Migrate state/signal tools to runtime pack execution](wu/WU-1801.yaml) — Framework: Core Lifecycle
 - [WU-1802 — Migrate validation and lane tools to runtime pack execution](wu/WU-1802.yaml) — Framework: Core Lifecycle
@@ -44,10 +40,14 @@ sections:
 - [WU-1813 — Remove fallback paths and eliminate runCliCommand from MCP tool layer](wu/WU-1813.yaml) — Framework: Core Lifecycle
 - [WU-1814 — Full parity validation and Phase 3 completion evidence](wu/WU-1814.yaml) — Framework: Core Lifecycle
 - [WU-1815 — Post-Phase-3 shell-out deprecation recertification and metric closure](wu/WU-1815.yaml) — Framework: Core Lifecycle
+- [WU-1816 — Add reactive subscribe mechanism to EventStore](wu/WU-1816.yaml) — Framework: Core Lifecycle
+- [WU-1817 — Create HTTP surface with SSE event streaming and REST task API](wu/WU-1817.yaml) — Framework: MCP
+- [WU-1818 — Create AG-UI event adapter mapping kernel events to AG-UI protocol](wu/WU-1818.yaml) — Framework: MCP
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1799 — Migrate file tools (file_read/write/edit/delete) to runtime pack execution](wu/WU-1799.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
