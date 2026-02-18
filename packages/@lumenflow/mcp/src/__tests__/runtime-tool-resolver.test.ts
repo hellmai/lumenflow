@@ -1,4 +1,6 @@
 import path from 'node:path';
+import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import {
   TOOL_HANDLER_KINDS,
   type ExecutionContext,
@@ -21,6 +23,18 @@ const READ_SCOPE = {
   pattern: '**',
   access: 'read' as const,
 };
+const WRITE_SCOPE = {
+  type: 'path' as const,
+  pattern: '**',
+  access: 'write' as const,
+};
+const RUNTIME_PROJECT_ROOT_KEY = 'project_root';
+const FILE_TOOL_NAMES = {
+  READ: 'file:read',
+  WRITE: 'file:write',
+  EDIT: 'file:edit',
+  DELETE: 'file:delete',
+} as const;
 
 function createResolverInput(toolName: string): RuntimeToolCapabilityResolverInput {
   return {
@@ -80,8 +94,17 @@ function createResolverInput(toolName: string): RuntimeToolCapabilityResolverInp
 }
 
 describe('packToolCapabilityResolver', () => {
+  let tempRoot = '';
+
   beforeEach(() => {
     resetExecuteViaPackRuntimeCache();
+  });
+
+  afterEach(async () => {
+    if (tempRoot) {
+      await rm(tempRoot, { recursive: true, force: true });
+      tempRoot = '';
+    }
   });
 
   it('returns in-process capability for registered tools', async () => {
@@ -108,6 +131,21 @@ describe('packToolCapabilityResolver', () => {
 
   it('lists registered in-process pack tools', () => {
     expect(listInProcessPackTools()).toContain('wu:status');
+  });
+
+  it('resolves file tools to in-process handlers', async () => {
+    const toolNames = [
+      FILE_TOOL_NAMES.READ,
+      FILE_TOOL_NAMES.WRITE,
+      FILE_TOOL_NAMES.EDIT,
+      FILE_TOOL_NAMES.DELETE,
+    ];
+
+    for (const toolName of toolNames) {
+      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+    }
   });
 
   it('falls back to default subprocess capability for unregistered tools', async () => {
@@ -216,5 +254,92 @@ describe('packToolCapabilityResolver', () => {
     expect(cliRunner).toHaveBeenCalledTimes(1);
     expect(result.success).toBe(true);
     expect((result.data as { message: string }).message).toContain('fallback path');
+  });
+
+  it('executes file write/read/edit/delete handlers in-process', async () => {
+    tempRoot = await mkdtemp(path.join(tmpdir(), 'lumenflow-runtime-file-tools-'));
+    const nestedPath = 'nested/file.txt';
+    const context: ExecutionContext = {
+      run_id: 'run-file-tools-1',
+      task_id: 'WU-1799',
+      session_id: 'session-file-tools-1',
+      allowed_scopes: [WRITE_SCOPE],
+      metadata: {
+        [RUNTIME_PROJECT_ROOT_KEY]: tempRoot,
+      },
+    };
+
+    const writeCapability = await packToolCapabilityResolver(
+      createResolverInput(FILE_TOOL_NAMES.WRITE),
+    );
+    const readCapability = await packToolCapabilityResolver(
+      createResolverInput(FILE_TOOL_NAMES.READ),
+    );
+    const editCapability = await packToolCapabilityResolver(
+      createResolverInput(FILE_TOOL_NAMES.EDIT),
+    );
+    const deleteCapability = await packToolCapabilityResolver(
+      createResolverInput(FILE_TOOL_NAMES.DELETE),
+    );
+
+    expect(writeCapability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+    expect(readCapability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+    expect(editCapability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+    expect(deleteCapability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+
+    if (
+      !writeCapability ||
+      !readCapability ||
+      !editCapability ||
+      !deleteCapability ||
+      writeCapability.handler.kind !== TOOL_HANDLER_KINDS.IN_PROCESS ||
+      readCapability.handler.kind !== TOOL_HANDLER_KINDS.IN_PROCESS ||
+      editCapability.handler.kind !== TOOL_HANDLER_KINDS.IN_PROCESS ||
+      deleteCapability.handler.kind !== TOOL_HANDLER_KINDS.IN_PROCESS
+    ) {
+      throw new Error('Expected all file tools to resolve to in-process handlers');
+    }
+
+    const writeResult = await writeCapability.handler.fn(
+      {
+        path: nestedPath,
+        content: 'hello world',
+      },
+      context,
+    );
+    expect(writeResult.success).toBe(true);
+
+    const readResult = await readCapability.handler.fn(
+      {
+        path: nestedPath,
+      },
+      context,
+    );
+    expect(readResult.success).toBe(true);
+    expect((readResult.data as { content: string }).content).toBe('hello world');
+
+    const editResult = await editCapability.handler.fn(
+      {
+        path: nestedPath,
+        old_string: 'hello',
+        new_string: 'goodbye',
+      },
+      context,
+    );
+    expect(editResult.success).toBe(true);
+
+    const editedContent = await readFile(path.join(tempRoot, nestedPath), 'utf-8');
+    expect(editedContent).toBe('goodbye world');
+
+    const deleteResult = await deleteCapability.handler.fn(
+      {
+        path: nestedPath,
+        force: true,
+      },
+      context,
+    );
+    expect(deleteResult.success).toBe(true);
+
+    await expect(stat(path.join(tempRoot, nestedPath))).rejects.toThrow();
   });
 });
