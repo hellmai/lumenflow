@@ -18,7 +18,7 @@ phases:
     status: done
   - id: 3
     title: Pack workflow expression via runtime
-    status: pending
+    status: in_progress
   - id: 4
     title: Metric closure and runCliCommand deprecation path
     status: done
@@ -73,23 +73,3 @@ wus:
   - WU-1793
   - WU-1795
   - WU-1794
-  - WU-1796
-  - WU-1797
-  - WU-1798
-  - WU-1799
-  - WU-1800
-  - WU-1801
-  - WU-1802
-  - WU-1803
-  - WU-1804
-  - WU-1805
-  - WU-1806
-  - WU-1807
-  - WU-1808
-  - WU-1809
-  - WU-1810
-  - WU-1811
-  - WU-1812
-  - WU-1813
-  - WU-1814
-  - WU-1815
