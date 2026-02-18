@@ -1,0 +1,49 @@
+id: WU-1855
+title: Close MCP literal governance blind spots and enforce full constant coverage
+lane: 'Framework: MCP'
+type: bug
+status: ready
+priority: P0
+created: 2026-02-18
+code_paths:
+  - packages/@lumenflow/mcp/src/mcp-constants.ts
+  - packages/@lumenflow/mcp/src/runtime-tool-resolver.ts
+  - packages/@lumenflow/mcp/src/tools/parity-tools.ts
+  - packages/@lumenflow/mcp/src/__tests__/literal-governance.test.ts
+  - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
+  - packages/@lumenflow/mcp/src/tools-shared.ts
+tests:
+  manual:
+    - Verify representative MCP tools (wu_status, state_doctor, git_status) still return unchanged success/error shapes and CLI dispatch behavior.
+  unit:
+    - packages/@lumenflow/mcp/src/__tests__/literal-governance.test.ts
+    - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
+    - packages/@lumenflow/mcp/src/__tests__/tools.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1855.done
+dependencies: []
+initiative: INIT-030
+phase: 3
+spec_refs:
+  - /home/tom/.claude/plans/adaptive-finding-adleman.md
+  - /home/tom/.claude/plans/zesty-jumping-pixel.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: WU-1851 established MCP constant governance, but residual raw governed literals still exist in runtime/parity internals and the ratchet test currently excludes some of those patterns. Problem: the current ratchet can pass while governed drift remains, weakening enterprise-grade contract enforcement. Solution: eliminate remaining governed literal duplicates, tighten the guardrail to detect declaration-level drift (not only call sites), and codify explicit allowlist-only exceptions with auditability.'
+acceptance:
+  - All remaining governed command-name and metadata-key literals in MCP runtime/parity implementation files are replaced with constants from mcp-constants.ts (or documented allowlisted exceptions).
+  - literal-governance.test.ts scans both execution call sites and declaration-level assignments/maps for governed command names, shared governed flags, and metadata keys.
+  - Guardrail exclusions are explicit allowlist entries with per-entry justification; blanket pattern skips (e.g., RUNTIME_PROJECT_ROOT*) are removed.
+  - The ratchet fails when a new raw governed literal is introduced in governed production files and passes when constants are used.
+  - No behavior/output regressions for runtime-tool-resolver and parity MCP tools after constant replacement.
+  - No public API changes to @lumenflow/mcp exports; refactor is internal.
+  - pnpm gates passes.
