@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: Apache-2.0
 
-import { appendFile, mkdir, open, readFile, rm } from 'node:fs/promises';
+import { appendFile, mkdir, open, readFile, readdir, rename, rm, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { canonicalStringify } from '../canonical-json.js';
@@ -15,11 +15,16 @@ import { KERNEL_POLICY_IDS, SHA256_ALGORITHM, UTF8_ENCODING } from '../shared-co
 
 const DEFAULT_LOCK_RETRY_DELAY_MS = 20;
 const DEFAULT_LOCK_MAX_RETRIES = 250;
+const DEFAULT_COMPACTION_THRESHOLD_BYTES = 10 * 1024 * 1024; // 10 MiB
+const ACTIVE_TRACE_FILE_NAME = 'tool-traces.jsonl';
+const SEGMENT_FILE_PATTERN = /^tool-traces\.(\d{4})\.jsonl$/;
 
 export interface EvidenceStoreOptions {
   evidenceRoot: string;
   lockRetryDelayMs?: number;
   lockMaxRetries?: number;
+  /** Byte size threshold for the active JSONL file before rotation. Default: 10 MiB. */
+  compactionThresholdBytes?: number;
 }
 
 export interface PersistInputResult {
@@ -44,29 +49,56 @@ export class EvidenceStore {
   private readonly inputsDir: string;
   private readonly lockRetryDelayMs: number;
   private readonly lockMaxRetries: number;
+  private readonly compactionThresholdBytes: number;
   private tracesHydrated = false;
   private orderedTraces: ToolTraceEntry[] = [];
   private tracesByTaskId = new Map<string, ToolTraceEntry[]>();
   private taskIdByReceiptId = new Map<string, string>();
 
+  /** Byte offset cursor into the active trace file for incremental reads. */
+  private activeFileCursor = 0;
+  /** Number of compacted segment files at last hydration. */
+  private hydratedSegmentCount = 0;
+
   constructor(options: EvidenceStoreOptions) {
     this.tracesDir = join(options.evidenceRoot, 'traces');
-    this.tracesFilePath = join(this.tracesDir, 'tool-traces.jsonl');
+    this.tracesFilePath = join(this.tracesDir, ACTIVE_TRACE_FILE_NAME);
     this.tracesLockFilePath = join(this.tracesDir, 'tool-traces.lock');
     this.inputsDir = join(options.evidenceRoot, 'inputs');
     this.lockRetryDelayMs = options.lockRetryDelayMs ?? DEFAULT_LOCK_RETRY_DELAY_MS;
     this.lockMaxRetries = options.lockMaxRetries ?? DEFAULT_LOCK_MAX_RETRIES;
+    this.compactionThresholdBytes =
+      options.compactionThresholdBytes ?? DEFAULT_COMPACTION_THRESHOLD_BYTES;
   }
 
   async appendTrace(entry: ToolTraceEntry): Promise<void> {
     const validated = ToolTraceEntrySchema.parse(entry);
+    let compacted = false;
     await this.withFileLock(async () => {
       await mkdir(this.tracesDir, { recursive: true });
-      await appendFile(this.tracesFilePath, `${JSON.stringify(validated)}\n`, UTF8_ENCODING);
+      const serialized = `${JSON.stringify(validated)}\n`;
+      await appendFile(this.tracesFilePath, serialized, UTF8_ENCODING);
+      compacted = await this.compactIfNeeded();
     });
 
     if (this.tracesHydrated) {
       this.applyTraceToIndexes(validated);
+      if (compacted) {
+        // The active file was rotated; cursor resets to 0 because the new
+        // active file is now empty (or will be created fresh on next append).
+        this.hydratedSegmentCount += 1;
+        this.activeFileCursor = 0;
+      } else {
+        // Advance cursor past the bytes we just wrote so incremental hydrate
+        // does not re-read them.
+        try {
+          const fileStat = await stat(this.tracesFilePath);
+          this.activeFileCursor = fileStat.size;
+        } catch {
+          // File may not exist if compaction just cleared it; cursor stays at 0
+          this.activeFileCursor = 0;
+        }
+      }
     }
   }
 
@@ -104,28 +136,180 @@ export class EvidenceStore {
   }
 
   private async hydrateIndexesIfNeeded(): Promise<void> {
-    if (this.tracesHydrated) {
-      return;
+    if (!this.tracesHydrated) {
+      return this.fullHydrate();
     }
 
-    let content: string;
+    // Incremental: check for new segments and new bytes in active file
+    await this.incrementalHydrate();
+  }
+
+  /**
+   * Full hydration: reads all segment files (sorted ascending) then the active file.
+   * Sets cursor to end of active file for subsequent incremental reads.
+   */
+  private async fullHydrate(): Promise<void> {
+    this.resetIndexes();
+
+    let dirExists = true;
     try {
-      content = await readFile(this.tracesFilePath, UTF8_ENCODING);
+      await stat(this.tracesDir);
     } catch (error) {
       const nodeError = error as NodeJS.ErrnoException;
       if (nodeError.code === 'ENOENT') {
-        this.resetIndexes();
-        this.tracesHydrated = true;
+        dirExists = false;
+      } else {
+        throw error;
+      }
+    }
+
+    if (!dirExists) {
+      this.tracesHydrated = true;
+      this.activeFileCursor = 0;
+      this.hydratedSegmentCount = 0;
+      return;
+    }
+
+    // Read compacted segments in order
+    const segments = await this.listSegmentFiles();
+    for (const segmentFile of segments) {
+      const segmentPath = join(this.tracesDir, segmentFile);
+      await this.hydrateFromFile(segmentPath);
+    }
+    this.hydratedSegmentCount = segments.length;
+
+    // Read active file
+    let activeContent: string;
+    try {
+      activeContent = await readFile(this.tracesFilePath, UTF8_ENCODING);
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code === 'ENOENT') {
+        activeContent = '';
+      } else {
+        throw error;
+      }
+    }
+
+    if (activeContent.length > 0) {
+      this.parseAndApplyLines(activeContent);
+    }
+    this.activeFileCursor = Buffer.byteLength(activeContent, UTF8_ENCODING);
+    this.tracesHydrated = true;
+  }
+
+  /**
+   * Incremental hydration: only reads new segments (from compaction since last
+   * hydration) and new bytes appended to the active file since the cursor.
+   * This provides O(1) amortized reads for the hot path.
+   */
+  private async incrementalHydrate(): Promise<void> {
+    // Check if compaction created new segments since last hydration
+    const currentSegments = await this.listSegmentFiles();
+    if (currentSegments.length > this.hydratedSegmentCount) {
+      // New segments were created by compaction. The old active file content
+      // (which was already in our indexes from the prior cursor position)
+      // has been rotated into a segment file. We need to read any segments
+      // we haven't seen yet. However, since the rotated segment contains
+      // exactly the content we already indexed via prior hydration/appends,
+      // we only need to update our segment count and reset the cursor
+      // for the new (now-empty or smaller) active file.
+      this.hydratedSegmentCount = currentSegments.length;
+      // The active file was rotated, so the cursor resets.
+      // Read whatever is now in the new active file from the start.
+      this.activeFileCursor = 0;
+    }
+
+    // Read only new bytes from the active file
+    let activeSize: number;
+    try {
+      const fileStat = await stat(this.tracesFilePath);
+      activeSize = fileStat.size;
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code === 'ENOENT') {
+        activeSize = 0;
+      } else {
+        throw error;
+      }
+    }
+
+    if (activeSize <= this.activeFileCursor) {
+      return; // No new data
+    }
+
+    // Read only the delta
+    const handle = await open(this.tracesFilePath, 'r');
+    try {
+      const deltaSize = activeSize - this.activeFileCursor;
+      const buffer = Buffer.alloc(deltaSize);
+      await handle.read(buffer, 0, deltaSize, this.activeFileCursor);
+      const deltaContent = buffer.toString(UTF8_ENCODING);
+      if (deltaContent.trim().length > 0) {
+        this.parseAndApplyLines(deltaContent);
+      }
+      this.activeFileCursor = activeSize;
+    } finally {
+      await handle.close();
+    }
+  }
+
+  /**
+   * Lists compacted segment files sorted in ascending order.
+   * Segment files follow the pattern: tool-traces.NNNN.jsonl
+   */
+  private async listSegmentFiles(): Promise<string[]> {
+    let files: string[];
+    try {
+      files = await readdir(this.tracesDir);
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code === 'ENOENT') {
+        return [];
+      }
+      throw error;
+    }
+
+    return files
+      .filter((f) => SEGMENT_FILE_PATTERN.test(f))
+      .sort((a, b) => {
+        const matchA = a.match(SEGMENT_FILE_PATTERN);
+        const matchB = b.match(SEGMENT_FILE_PATTERN);
+        const numA = matchA ? parseInt(matchA[1] ?? '0', 10) : 0;
+        const numB = matchB ? parseInt(matchB[1] ?? '0', 10) : 0;
+        return numA - numB;
+      });
+  }
+
+  /**
+   * Reads an entire file and applies all trace lines to the indexes.
+   */
+  private async hydrateFromFile(filePath: string): Promise<void> {
+    let content: string;
+    try {
+      content = await readFile(filePath, UTF8_ENCODING);
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code === 'ENOENT') {
         return;
       }
       throw error;
     }
 
-    this.resetIndexes();
+    if (content.trim().length > 0) {
+      this.parseAndApplyLines(content);
+    }
+  }
+
+  /**
+   * Parses newline-delimited JSON lines and applies each to the indexes.
+   */
+  private parseAndApplyLines(content: string): void {
     const lines = content
       .split('\n')
       .map((line) => line.trim())
       .filter(Boolean);
+
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index];
       if (!line) {
@@ -140,7 +324,49 @@ export class EvidenceStore {
       })();
       this.applyTraceToIndexes(ToolTraceEntrySchema.parse(parsed));
     }
-    this.tracesHydrated = true;
+  }
+
+  /**
+   * Rotates the active JSONL file to a numbered segment if it exceeds the
+   * compaction threshold. Called within the file lock after each append.
+   * @returns true if compaction (rotation) occurred.
+   */
+  private async compactIfNeeded(): Promise<boolean> {
+    let fileSize: number;
+    try {
+      const fileStat = await stat(this.tracesFilePath);
+      fileSize = fileStat.size;
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code === 'ENOENT') {
+        return false;
+      }
+      throw error;
+    }
+
+    if (fileSize < this.compactionThresholdBytes) {
+      return false;
+    }
+
+    // Determine the next segment number
+    const segments = await this.listSegmentFiles();
+    let nextNumber = 1;
+    if (segments.length > 0) {
+      const lastSegment = segments[segments.length - 1];
+      if (lastSegment) {
+        const match = lastSegment.match(SEGMENT_FILE_PATTERN);
+        if (match) {
+          nextNumber = parseInt(match[1] ?? '0', 10) + 1;
+        }
+      }
+    }
+
+    const segmentName = `tool-traces.${String(nextNumber).padStart(4, '0')}.jsonl`;
+    const segmentPath = join(this.tracesDir, segmentName);
+
+    // Atomic rename: active file becomes the new segment
+    await rename(this.tracesFilePath, segmentPath);
+    return true;
   }
 
   private resetIndexes(): void {
