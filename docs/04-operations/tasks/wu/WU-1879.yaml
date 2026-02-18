@@ -1,5 +1,6 @@
 id: WU-1879
-title: 'INIT-030 Review Fix G: evidence store multi-instance replay correctness and lock error propagation'
+title: 'INIT-030 Review Fix G: evidence store multi-instance replay correctness and lock error
+  propagation'
 lane: 'Framework: Core Lifecycle'
 type: bug
 status: ready
@@ -8,7 +9,11 @@ created: 2026-02-18
 code_paths:
   - packages/@lumenflow/kernel/src/evidence/evidence-store.ts
 tests:
-  manual: []
+  manual:
+    - Simulate cross-process compaction and verify readTraces() includes segment entries from the
+      other instance
+    - Force appendFile failure and verify error surfaces original I/O failure instead of generic
+      lock acquisition message
   unit:
     - packages/@lumenflow/kernel/src/__tests__/evidence-store.test.ts
   e2e: []
@@ -27,8 +32,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: EvidenceStore incremental replay assumes newly rotated segment files always contain entries already indexed by the current process. In multi-instance scenarios this can miss traces. Additionally, withFileLock collapses non-lock operation errors into generic lock acquisition failures, obscuring root causes.
+description: EvidenceStore incremental replay assumes newly rotated segment files always contain
+  entries already indexed by the current process. In multi-instance scenarios this can miss traces.
+  Additionally, withFileLock collapses non-lock operation errors into generic lock acquisition
+  failures, obscuring root causes.
 acceptance:
   - Incremental hydration reads unseen segment files so cross-process compaction never drops traces
-  - withFileLock preserves and rethrows non-EEXIST operation errors (does not mask as lock acquisition failure)
+  - withFileLock preserves and rethrows non-EEXIST operation errors (does not mask as lock
+    acquisition failure)
   - Regression tests cover multi-instance compaction replay and non-lock I/O error propagation

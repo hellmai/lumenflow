@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1879 — INIT-030 Review Fix G: evidence store multi-instance replay correctness and lock error propagation](wu/WU-1879.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
@@ -36,6 +35,7 @@ sections:
 - [WU-1876 — Evidence export endpoint with CSV and JSON format support](wu/WU-1876.yaml) — Content: Site Comms
 - [WU-1877 — 4 additional community packs published to registry](wu/WU-1877.yaml) — Framework: Core Lifecycle
 - [WU-1878 — Marketplace Install to workspace button](wu/WU-1878.yaml) — Content: Site Comms
+- [WU-1879 — INIT-030 Review Fix G: evidence store multi-instance replay correctness and lock error propagation](wu/WU-1879.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
