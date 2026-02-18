@@ -11,7 +11,9 @@ code_paths:
   - packages/@lumenflow/surfaces/cli/inspect.ts
   - packages/@lumenflow/runtime/src/daemon/runtime-daemon.ts
 tests:
-  manual: []
+  manual:
+    - Run MCP/CLI surface smoke checks and verify daemon handlers resolve through registry without
+      import regressions.
   unit:
     - packages/@lumenflow/surfaces/tests/gates.test.ts
     - packages/@lumenflow/runtime/tests/runtime-daemon.test.ts
