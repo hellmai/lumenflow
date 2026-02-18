@@ -2,7 +2,7 @@ id: WU-1860
 title: 'INIT-030 Review Fix B: kernel durability bugs (lock leak, clock skew, partial writes)'
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -43,3 +43,11 @@ acceptance:
   - writeTaskSpecImmutable cleans up partial file on write failure
   - Task creation handles crash between spec write and event emission
   - All kernel tests pass
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1860
+claimed_at: 2026-02-18T22:10:58.292Z
+baseline_main_sha: 3d8be4237e1e324485bd207e44bb2ca85bebd48a
+session_id: 992ec8f4-036f-445c-853c-97fcabb1e7c4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T22:10:58.300Z
