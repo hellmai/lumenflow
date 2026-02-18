@@ -4,16 +4,11 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createActor } from 'xstate';
 import { beforeEach, afterEach, describe, expect, it } from 'vitest';
 import { canonical_json } from '../canonical-json.js';
 import { EventStore } from '../event-store/index.js';
 import type { KernelEvent, TaskSpec } from '../kernel.schemas.js';
-import {
-  TASK_LIFECYCLE_EVENTS,
-  taskLifecycleMachine,
-  assertTransition,
-} from '../state-machine/index.js';
+import { assertTransition } from '../state-machine/index.js';
 
 describe('kernel integration', () => {
   let tempDir: string;
@@ -39,7 +34,7 @@ describe('kernel integration', () => {
       lane_id: 'framework-core-state-recovery',
       domain: 'runtime',
       title: 'Kernel lifecycle integration',
-      description: 'Validate XState lifecycle with event projection',
+      description: 'Validate task lifecycle with event projection',
       acceptance: ['Lifecycle projection reaches done'],
       declared_scopes: [],
       risk: 'medium',
@@ -56,8 +51,6 @@ describe('kernel integration', () => {
       lockFilePath,
       taskSpecLoader: async (requestedTaskId) => (requestedTaskId === taskId ? spec : null),
     });
-    const actor = createActor(taskLifecycleMachine);
-    actor.start();
 
     const workspaceCreatedEvent: KernelEvent = {
       schema_version: 1,
@@ -77,8 +70,8 @@ describe('kernel integration', () => {
     };
     await store.append(createdEvent);
 
-    assertTransition(actor.getSnapshot().value, 'active', taskId);
-    actor.send({ type: TASK_LIFECYCLE_EVENTS.CLAIM });
+    // Use assertTransition (manual map) instead of xstate actor
+    assertTransition('ready', 'active', taskId);
     await store.append({
       schema_version: 1,
       kind: 'task_claimed',
@@ -106,8 +99,7 @@ describe('kernel integration', () => {
       timestamp: '2026-02-16T23:00:04.000Z',
     });
 
-    assertTransition(actor.getSnapshot().value, 'done', taskId);
-    actor.send({ type: TASK_LIFECYCLE_EVENTS.COMPLETE });
+    assertTransition('active', 'done', taskId);
     await store.append({
       schema_version: 1,
       kind: 'task_completed',
@@ -121,7 +113,5 @@ describe('kernel integration', () => {
     expect(projected.run_count).toBe(1);
     expect(projected.current_run?.status).toBe('succeeded');
     expect(projected.completed_at).toBe('2026-02-16T23:00:05.000Z');
-
-    actor.stop();
   });
 });

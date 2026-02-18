@@ -247,6 +247,69 @@ describe('policy engine', () => {
     expect(result.decision).toBe('allow');
   });
 
+  it('includes rule ID in loosening warnings for default_decision conflicts', async () => {
+    // WU-1865: Policy warnings must include the specific rule name/ID
+    const engine = new PolicyEngine({
+      layers: [
+        { level: 'workspace', default_decision: 'deny', rules: [] },
+        { level: 'lane', rules: [] },
+        {
+          level: 'pack',
+          default_decision: 'allow',
+          rules: [],
+        },
+        { level: 'task', rules: [] },
+      ],
+    });
+
+    const result = await engine.evaluate({
+      trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+      run_id: 'run-1865-default-warning',
+    });
+
+    expect(result.decision).toBe('deny');
+    expect(result.warnings).toHaveLength(1);
+    // Warning should identify the layer that attempted loosening
+    expect(result.warnings[0]).toContain('pack');
+    expect(result.warnings[0]).toContain('loosening');
+  });
+
+  it('includes rule ID in loosening warnings for rule-based conflicts', async () => {
+    // WU-1865: When a rule attempts loosening without opt-in, the warning
+    // must include the specific rule ID that triggered it
+    const engine = new PolicyEngine({
+      layers: [
+        { level: 'workspace', default_decision: 'deny', rules: [] },
+        { level: 'lane', rules: [] },
+        { level: 'pack', rules: [] },
+        {
+          level: 'task',
+          rules: [
+            {
+              id: 'task.allow.filesystem',
+              trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+              decision: 'allow',
+              reason: 'Allow filesystem access',
+            },
+          ],
+        },
+      ],
+    });
+
+    const result = await engine.evaluate({
+      trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+      run_id: 'run-1865-rule-warning',
+      tool_name: 'fs:write',
+    });
+
+    expect(result.decision).toBe('deny');
+    expect(result.warnings).toHaveLength(1);
+    // Warning must include the rule ID that attempted loosening
+    expect(result.warnings[0]).toContain('task.allow.filesystem');
+    expect(result.warnings[0]).toContain('task');
+    expect(result.warnings[0]).toContain('loosening');
+  });
+
   it('validates ApprovalEvent schema with run_id, scope, and expires_at', () => {
     const parsed = ApprovalEventSchema.parse({
       schema_version: 1,

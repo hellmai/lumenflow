@@ -1,14 +1,13 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: Apache-2.0
 
-import { createActor } from 'xstate';
 import { describe, expect, it } from 'vitest';
 import {
   TASK_LIFECYCLE_EVENTS,
   TASK_LIFECYCLE_STATES,
+  ALLOWED_TRANSITIONS,
   assertTransition,
   resolveTaskState,
-  taskLifecycleMachine,
   type TaskStateAliases,
 } from '../state-machine/index.js';
 
@@ -53,27 +52,45 @@ describe('kernel task state machine', () => {
     );
   });
 
-  it('supports snapshot serialization and rehydration', () => {
-    const actor1 = createActor(taskLifecycleMachine);
-    actor1.start();
-    actor1.send({ type: TASK_LIFECYCLE_EVENTS.CLAIM });
-    actor1.send({ type: TASK_LIFECYCLE_EVENTS.BLOCK });
+  it('exports ALLOWED_TRANSITIONS as the canonical single source of truth', () => {
+    // WU-1865: The manual transition map is the single source of truth.
+    // xstate machine definition has been removed to eliminate duplication.
+    expect(ALLOWED_TRANSITIONS).toBeDefined();
+    expect(ALLOWED_TRANSITIONS.ready).toEqual(['active']);
+    expect(ALLOWED_TRANSITIONS.active).toContain('blocked');
+    expect(ALLOWED_TRANSITIONS.active).toContain('waiting');
+    expect(ALLOWED_TRANSITIONS.active).toContain('done');
+    expect(ALLOWED_TRANSITIONS.active).toContain('ready');
+    expect(ALLOWED_TRANSITIONS.blocked).toContain('active');
+    expect(ALLOWED_TRANSITIONS.blocked).toContain('done');
+    expect(ALLOWED_TRANSITIONS.waiting).toContain('active');
+    expect(ALLOWED_TRANSITIONS.waiting).toContain('done');
+    expect(ALLOWED_TRANSITIONS.done).toEqual([]);
+  });
 
-    const serialized = JSON.stringify(actor1.getSnapshot());
-    expect(serialized).toBeTruthy();
+  it('does not export taskLifecycleMachine (xstate dead code removed)', async () => {
+    // WU-1865: xstate machine was dead code - verify it no longer exists
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const exports = (await import('../state-machine/index.js')) as any;
+    expect(exports.taskLifecycleMachine).toBeUndefined();
+  });
 
-    const persistedSnapshot = actor1.getPersistedSnapshot();
-    actor1.stop();
+  it('exports lifecycle events as string constants usable without xstate', () => {
+    // WU-1865: Events are plain string constants, not xstate event types
+    expect(TASK_LIFECYCLE_EVENTS.CLAIM).toBe('task.claim');
+    expect(TASK_LIFECYCLE_EVENTS.BLOCK).toBe('task.block');
+    expect(TASK_LIFECYCLE_EVENTS.WAIT).toBe('task.wait');
+    expect(TASK_LIFECYCLE_EVENTS.COMPLETE).toBe('task.complete');
+    expect(TASK_LIFECYCLE_EVENTS.RELEASE).toBe('task.release');
+    expect(TASK_LIFECYCLE_EVENTS.UNBLOCK).toBe('task.unblock');
+    expect(TASK_LIFECYCLE_EVENTS.RESUME).toBe('task.resume');
+  });
 
-    const actor2 = createActor(taskLifecycleMachine, {
-      snapshot: persistedSnapshot,
-    });
-    actor2.start();
-
-    expect(actor2.getSnapshot().value).toBe(TASK_LIFECYCLE_STATES.BLOCKED);
-    actor2.send({ type: TASK_LIFECYCLE_EVENTS.UNBLOCK });
-    expect(actor2.getSnapshot().value).toBe(TASK_LIFECYCLE_STATES.ACTIVE);
-
-    actor2.stop();
+  it('exports all lifecycle states as plain string constants', () => {
+    expect(TASK_LIFECYCLE_STATES.READY).toBe('ready');
+    expect(TASK_LIFECYCLE_STATES.ACTIVE).toBe('active');
+    expect(TASK_LIFECYCLE_STATES.BLOCKED).toBe('blocked');
+    expect(TASK_LIFECYCLE_STATES.WAITING).toBe('waiting');
+    expect(TASK_LIFECYCLE_STATES.DONE).toBe('done');
   });
 });

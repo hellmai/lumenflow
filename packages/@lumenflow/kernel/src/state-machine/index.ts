@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: Apache-2.0
 
-import { setup } from 'xstate';
 import type { TaskState } from '../kernel.schemas.js';
 
 export const TASK_LIFECYCLE_STATES = {
@@ -25,42 +24,12 @@ export const TASK_LIFECYCLE_EVENTS = {
 export type TaskLifecycleState = TaskState['status'];
 export type TaskStateAliases = Partial<Record<TaskLifecycleState, string>>;
 
-interface ClaimEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.CLAIM;
-}
-
-interface BlockEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.BLOCK;
-}
-
-interface WaitEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.WAIT;
-}
-
-interface CompleteEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.COMPLETE;
-}
-
-interface ReleaseEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.RELEASE;
-}
-
-interface UnblockEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.UNBLOCK;
-}
-
-interface ResumeEvent {
-  type: typeof TASK_LIFECYCLE_EVENTS.RESUME;
-}
-
-export type TaskLifecycleEvent =
-  | ClaimEvent
-  | BlockEvent
-  | WaitEvent
-  | CompleteEvent
-  | ReleaseEvent
-  | UnblockEvent
-  | ResumeEvent;
+/**
+ * Naming convention (WU-1865):
+ *   - Methods: camelCase (standard TypeScript convention)
+ *   - Data/event fields: snake_case (kernel event schema convention)
+ *   - Constants: UPPER_SNAKE_CASE (standard constant convention)
+ */
 
 const CANONICAL_STATES: TaskLifecycleState[] = [
   TASK_LIFECYCLE_STATES.READY,
@@ -70,52 +39,20 @@ const CANONICAL_STATES: TaskLifecycleState[] = [
   TASK_LIFECYCLE_STATES.DONE,
 ];
 
-const ALLOWED_TRANSITIONS: Record<TaskLifecycleState, TaskLifecycleState[]> = {
+/**
+ * The canonical, single source of truth for task state transitions.
+ *
+ * WU-1865: The xstate machine definition was removed because it duplicated
+ * this map without being used at runtime. The runtime exclusively uses
+ * {@link assertTransition} which consults this map.
+ */
+export const ALLOWED_TRANSITIONS: Readonly<Record<TaskLifecycleState, TaskLifecycleState[]>> = {
   ready: ['active'],
   active: ['blocked', 'waiting', 'done', 'ready'],
   blocked: ['active', 'done'],
   waiting: ['active', 'done'],
   done: [],
 };
-
-export const taskLifecycleMachine = setup({
-  types: {
-    events: {} as TaskLifecycleEvent,
-  },
-}).createMachine({
-  id: 'kernelTaskLifecycle',
-  initial: TASK_LIFECYCLE_STATES.READY,
-  states: {
-    [TASK_LIFECYCLE_STATES.READY]: {
-      on: {
-        [TASK_LIFECYCLE_EVENTS.CLAIM]: TASK_LIFECYCLE_STATES.ACTIVE,
-      },
-    },
-    [TASK_LIFECYCLE_STATES.ACTIVE]: {
-      on: {
-        [TASK_LIFECYCLE_EVENTS.BLOCK]: TASK_LIFECYCLE_STATES.BLOCKED,
-        [TASK_LIFECYCLE_EVENTS.WAIT]: TASK_LIFECYCLE_STATES.WAITING,
-        [TASK_LIFECYCLE_EVENTS.COMPLETE]: TASK_LIFECYCLE_STATES.DONE,
-        [TASK_LIFECYCLE_EVENTS.RELEASE]: TASK_LIFECYCLE_STATES.READY,
-      },
-    },
-    [TASK_LIFECYCLE_STATES.BLOCKED]: {
-      on: {
-        [TASK_LIFECYCLE_EVENTS.UNBLOCK]: TASK_LIFECYCLE_STATES.ACTIVE,
-        [TASK_LIFECYCLE_EVENTS.COMPLETE]: TASK_LIFECYCLE_STATES.DONE,
-      },
-    },
-    [TASK_LIFECYCLE_STATES.WAITING]: {
-      on: {
-        [TASK_LIFECYCLE_EVENTS.RESUME]: TASK_LIFECYCLE_STATES.ACTIVE,
-        [TASK_LIFECYCLE_EVENTS.COMPLETE]: TASK_LIFECYCLE_STATES.DONE,
-      },
-    },
-    [TASK_LIFECYCLE_STATES.DONE]: {
-      type: 'final',
-    },
-  },
-});
 
 function buildAliasLookup(aliases: TaskStateAliases): Map<string, TaskLifecycleState> {
   const lookup = new Map<string, TaskLifecycleState>();
