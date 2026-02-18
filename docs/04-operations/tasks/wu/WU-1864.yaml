@@ -2,7 +2,7 @@ id: WU-1864
 title: Scope intersection property-based fuzz testing for patternContains glob heuristic
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-18
 code_paths:
@@ -53,3 +53,6 @@ session_id: feb6b4e3-57bb-43e2-bda5-c5c36c051d7a
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T23:17:51.394Z
+locked: true
+completed_at: 2026-02-18T23:36:13.924Z
+completed: 2026-02-18
