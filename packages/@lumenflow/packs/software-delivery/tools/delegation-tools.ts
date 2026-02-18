@@ -1,12 +1,7 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  SOFTWARE_DELIVERY_DOMAIN,
-  SOFTWARE_DELIVERY_PACK_ID,
-  SOFTWARE_DELIVERY_PACK_VERSION,
-  type ToolDescriptor,
-} from './types.js';
+import { createToolDescriptor, type ToolDescriptor } from './types.js';
 
 const STATE_SCOPE = {
   type: 'path' as const,
@@ -14,10 +9,8 @@ const STATE_SCOPE = {
   access: 'write' as const,
 };
 
-export const delegationRecordTool: ToolDescriptor = {
+export const delegationRecordTool: ToolDescriptor = createToolDescriptor({
   name: 'delegation:record',
-  domain: SOFTWARE_DELIVERY_DOMAIN,
-  version: SOFTWARE_DELIVERY_PACK_VERSION,
   permission: 'admin',
   required_scopes: [STATE_SCOPE],
   handler: {
@@ -25,7 +18,6 @@ export const delegationRecordTool: ToolDescriptor = {
     entry: 'tool-impl/delegation-tools.ts#recordDelegationTool',
   },
   description: 'Append delegation lineage events for spawned sub-work.',
-  pack: SOFTWARE_DELIVERY_PACK_ID,
-};
+});
 
 export const delegationToolCapabilities: readonly ToolDescriptor[] = [delegationRecordTool];
