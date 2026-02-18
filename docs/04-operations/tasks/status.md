@@ -5,7 +5,6 @@ _Last updated: 2026-02-18_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1804 — Migrate orchestration query tools to runtime pack execution](wu/WU-1804.yaml)
 
 ## Completed
 
@@ -752,3 +751,4 @@ _Last updated: 2026-02-18_
 - [WU-1850 — Fix surfaces relative imports and extract daemon handler registry](wu/WU-1850.yaml) — 2026-02-18
 - [WU-1845 — Extract shared git-runner module in software-delivery pack](wu/WU-1845.yaml) — 2026-02-18
 - [WU-1846 — Generate manifest tool declarations from compact config instead of 550-line boilerplate](wu/WU-1846.yaml) — 2026-02-18
+- [WU-1804 — Migrate orchestration query tools to runtime pack execution](wu/WU-1804.yaml) — 2026-02-18
