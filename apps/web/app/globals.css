@@ -33,8 +33,6 @@ main {
   padding: 4rem 1.5rem;
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
