@@ -2,7 +2,7 @@ id: WU-1857
 title: 'Shore up web frontend infra: React linting, vitest jsdom, turbo TSX, surfaces package'
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -30,8 +30,8 @@ initiative: INIT-031
 phase: 1
 risks: []
 notes: Unblocks WU-1820, WU-1821, WU-1822 (Phase 1 dashboard pages). Must be done before any React
-  component work. allow-todo justification - the TODO match in eslint.config.mjs line 52 is a pre-existing
-  comment explaining why sonarjs/todo-tag rule is disabled, not incomplete work.
+  component work. allow-todo justification - the TODO match in eslint.config.mjs line 52 is a
+  pre-existing comment explaining why sonarjs/todo-tag rule is disabled, not incomplete work.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -62,3 +62,6 @@ session_id: 96819305-d060-4986-ac82-f994bfd9b75b
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T18:12:42.353Z
+locked: true
+completed_at: 2026-02-18T18:42:35.694Z
+completed: 2026-02-18
