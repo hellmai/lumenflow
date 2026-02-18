@@ -20,34 +20,34 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1815 — Post-Phase-3 shell-out deprecation recertification and metric closure](wu/WU-1815.yaml) — Framework: Core Lifecycle
-- [WU-1814 — Full parity validation and Phase 3 completion evidence](wu/WU-1814.yaml) — Framework: Core Lifecycle
-- [WU-1813 — Remove fallback paths and eliminate runCliCommand from MCP tool layer](wu/WU-1813.yaml) — Framework: Core Lifecycle
-- [WU-1812 — Migrate agent, setup, plan, docs, and sync tools to runtime pack execution](wu/WU-1812.yaml) — Framework: Core Lifecycle
-- [WU-1811 — Migrate memory tools to runtime pack execution](wu/WU-1811.yaml) — Framework: Core Lifecycle
-- [WU-1810 — Migrate initiative and orchestrate-initiative tools to runtime pack execution](wu/WU-1810.yaml) — Framework: Core Lifecycle
-- [WU-1809 — Migrate WU delegation and gates tools to runtime pack execution](wu/WU-1809.yaml) — Framework: Core Lifecycle
-- [WU-1808 — Migrate WU completion and cleanup tools to runtime pack execution](wu/WU-1808.yaml) — Framework: Core Lifecycle
-- [WU-1807 — Migrate WU state transition tools to runtime pack execution](wu/WU-1807.yaml) — Framework: Core Lifecycle
-- [WU-1806 — Migrate WU creation and claiming tools to runtime pack execution](wu/WU-1806.yaml) — Framework: Core Lifecycle
-- [WU-1805 — Migrate WU read/query tools to runtime pack execution](wu/WU-1805.yaml) — Framework: Core Lifecycle
-- [WU-1804 — Migrate orchestration query tools to runtime pack execution](wu/WU-1804.yaml) — Framework: Core Lifecycle
-- [WU-1803 — Migrate flow, metrics, and context tools to runtime pack execution](wu/WU-1803.yaml) — Framework: Core Lifecycle
-- [WU-1802 — Migrate validation and lane tools to runtime pack execution](wu/WU-1802.yaml) — Framework: Core Lifecycle
-- [WU-1801 — Migrate state/signal tools to runtime pack execution](wu/WU-1801.yaml) — Framework: Core Lifecycle
-- [WU-1800 — Migrate git tools (git_status/diff/log/branch) to runtime pack execution](wu/WU-1800.yaml) — Framework: Core Lifecycle
-- [WU-1799 — Migrate file tools (file_read/write/edit/delete) to runtime pack execution](wu/WU-1799.yaml) — Framework: Core Lifecycle
-- [WU-1798 — Add execution-context builder and executeViaPack migration helper](wu/WU-1798.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
-- [WU-1796 — Phase 3 pack workflow: route gate policy evaluation through Kernel PolicyEngine](wu/WU-1796.yaml) — Framework: Core Lifecycle
 - [WU-1797 — Phase 3 pack workflow: expose WU YAML lifecycle as runtime-managed pack tools](wu/WU-1797.yaml) — Framework: Core Lifecycle
+- [WU-1798 — Add execution-context builder and executeViaPack migration helper](wu/WU-1798.yaml) — Framework: Core Lifecycle
+- [WU-1799 — Migrate file tools (file_read/write/edit/delete) to runtime pack execution](wu/WU-1799.yaml) — Framework: Core Lifecycle
+- [WU-1800 — Migrate git tools (git_status/diff/log/branch) to runtime pack execution](wu/WU-1800.yaml) — Framework: Core Lifecycle
+- [WU-1801 — Migrate state/signal tools to runtime pack execution](wu/WU-1801.yaml) — Framework: Core Lifecycle
+- [WU-1802 — Migrate validation and lane tools to runtime pack execution](wu/WU-1802.yaml) — Framework: Core Lifecycle
+- [WU-1803 — Migrate flow, metrics, and context tools to runtime pack execution](wu/WU-1803.yaml) — Framework: Core Lifecycle
+- [WU-1804 — Migrate orchestration query tools to runtime pack execution](wu/WU-1804.yaml) — Framework: Core Lifecycle
+- [WU-1805 — Migrate WU read/query tools to runtime pack execution](wu/WU-1805.yaml) — Framework: Core Lifecycle
+- [WU-1806 — Migrate WU creation and claiming tools to runtime pack execution](wu/WU-1806.yaml) — Framework: Core Lifecycle
+- [WU-1807 — Migrate WU state transition tools to runtime pack execution](wu/WU-1807.yaml) — Framework: Core Lifecycle
+- [WU-1808 — Migrate WU completion and cleanup tools to runtime pack execution](wu/WU-1808.yaml) — Framework: Core Lifecycle
+- [WU-1809 — Migrate WU delegation and gates tools to runtime pack execution](wu/WU-1809.yaml) — Framework: Core Lifecycle
+- [WU-1810 — Migrate initiative and orchestrate-initiative tools to runtime pack execution](wu/WU-1810.yaml) — Framework: Core Lifecycle
+- [WU-1811 — Migrate memory tools to runtime pack execution](wu/WU-1811.yaml) — Framework: Core Lifecycle
+- [WU-1812 — Migrate agent, setup, plan, docs, and sync tools to runtime pack execution](wu/WU-1812.yaml) — Framework: Core Lifecycle
+- [WU-1813 — Remove fallback paths and eliminate runCliCommand from MCP tool layer](wu/WU-1813.yaml) — Framework: Core Lifecycle
+- [WU-1814 — Full parity validation and Phase 3 completion evidence](wu/WU-1814.yaml) — Framework: Core Lifecycle
+- [WU-1815 — Post-Phase-3 shell-out deprecation recertification and metric closure](wu/WU-1815.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1796 — Phase 3 pack workflow: route gate policy evaluation through Kernel PolicyEngine](wu/WU-1796.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 

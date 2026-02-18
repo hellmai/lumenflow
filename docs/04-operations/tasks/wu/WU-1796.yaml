@@ -2,7 +2,7 @@ id: WU-1796
 title: 'Phase 3 pack workflow: route gate policy evaluation through Kernel PolicyEngine'
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -48,3 +48,11 @@ acceptance:
   - manifest.ts programmatic DomainPackManifest matches manifest.yaml tool declarations
   - PackLoader successfully loads and validates the expanded manifest
   - Pack integrity hash updated in workspace config
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1796
+claimed_at: 2026-02-18T08:43:05.295Z
+baseline_main_sha: c7238a064c6b594d9183fecece185bb02c7814d9
+session_id: c1072942-c0b4-4e07-afb0-94938ea00c9c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T08:43:05.303Z

@@ -1,10 +1,11 @@
 # Work Unit Status
 
-_Last updated: 2026-02-17_
+_Last updated: 2026-02-18_
 
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
+- [WU-1796 — Phase 3 pack workflow: route gate policy evaluation through Kernel PolicyEngine](wu/WU-1796.yaml)
 
 ## Completed
 
