@@ -5,7 +5,6 @@ _Last updated: 2026-02-18_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1875 — pack:install --source registry HTTP fetch path](wu/WU-1875.yaml)
 - [WU-1877 — 4 additional community packs published to registry](wu/WU-1877.yaml)
 
 ## Completed
@@ -814,3 +813,4 @@ _Last updated: 2026-02-18_
 - [WU-1874 — infra-ops pack manifest with tools, policies, and task schema](wu/WU-1874.yaml) — 2026-02-18
 - [WU-1872 — Evidence viewer page with tool trace timeline at /evidence](wu/WU-1872.yaml) — 2026-02-18
 - [WU-1873 — Workspace selector with recent-workspaces history](wu/WU-1873.yaml) — 2026-02-18
+- [WU-1875 — pack:install --source registry HTTP fetch path](wu/WU-1875.yaml) — 2026-02-18
