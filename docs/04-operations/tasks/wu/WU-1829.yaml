@@ -7,10 +7,12 @@ priority: P2
 created: 2026-02-18
 code_paths:
   - apps/web/src/
+navigation_path: /packs
 tests:
   manual:
-    - Load dashboard, verify pack catalog shows software-delivery pack details
-  unit: []
+    - Navigate to /packs and verify pack catalog shows software-delivery pack details
+  unit:
+    - apps/web/__tests__/pack-catalog.test.tsx
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1829.done
@@ -22,7 +24,10 @@ blocked_by:
 spec_refs:
   - .claude/plans/zazzy-growing-cook.md
 risks: []
-notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+notes: Added /packs page with PackCatalog component showing loaded packs with manifest metadata,
+  tool scope/permission badges, policy display, integrity hash, source type, and trace links to
+  task dashboard. 18 tests covering all 4 acceptance criteria. Pre-existing typecheck failure in
+  ag-ui-adapter.ts (unrelated to this WU).
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: ui
