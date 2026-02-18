@@ -1,0 +1,36 @@
+{
+  "name": "@lumenflow/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "pnpm --filter @lumenflow/kernel build && next build",
+    "start": "next start",
+    "lint": "eslint app src __tests__ next.config.ts tailwind.config.ts --max-warnings 0",
+    "typecheck": "pnpm --filter @lumenflow/kernel build && next build --no-lint",
+    "test": "vitest run",
+    "clean": "rm -rf .next"
+  },
+  "dependencies": {
+    "@lumenflow/kernel": "workspace:^",
+    "next": "^15.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
+  },
+  "turbo": {
+    "tasks": {
+      "build": {
+        "outputs": [".next/**"]
+      }
+    }
+  }
+}
