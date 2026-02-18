@@ -807,7 +807,10 @@ function calculateDaysSince(dateString?: string): number | null {
   return Math.floor((Date.now() - parsedDate.getTime()) / STATE_RUNTIME_CONSTANTS.ONE_DAY_MS);
 }
 
-async function loadWuLifecycleDocuments(core: CoreModule, wuDir: string): Promise<WuLifecycleDocument[]> {
+async function loadWuLifecycleDocuments(
+  core: CoreModule,
+  wuDir: string,
+): Promise<WuLifecycleDocument[]> {
   const directoryInfo = await getPathInfo(wuDir);
   if (!directoryInfo.exists || !directoryInfo.isDirectory) {
     return [];
@@ -951,9 +954,7 @@ function buildStateDoctorDeps(core: CoreModule, projectRoot: string) {
         const files = await readdir(stampsDir);
         return files
           .filter((file) => file.endsWith(STATE_RUNTIME_CONSTANTS.DONE_STAMP_EXTENSION))
-          .map((file) =>
-            file.slice(0, -1 * STATE_RUNTIME_CONSTANTS.DONE_STAMP_EXTENSION.length),
-          );
+          .map((file) => file.slice(0, -1 * STATE_RUNTIME_CONSTANTS.DONE_STAMP_EXTENSION.length));
       } catch {
         return [];
       }
