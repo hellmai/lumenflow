@@ -35,7 +35,8 @@ phase: 3
 blocked_by:
   - WU-1848
 spec_refs:
-  - /home/USER/.claude/plans/adaptive-finding-adleman.md,/home/USER/.claude/plans/zesty-jumping-pixel.md
+  - /home/USER/.claude/plans/adaptive-finding-adleman.md
+  - /home/USER/.claude/plans/zesty-jumping-pixel.md
 risks:
   - Over-broad centralization can harm readability; limit to governed families only.
   - Guardrail false positives can block CI; maintain an explicit allowlist and keep patterns narrow.
