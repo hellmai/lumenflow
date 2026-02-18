@@ -8,7 +8,6 @@ created: 2026-02-18
 code_paths:
   - packages/@lumenflow/mcp/src/runtime-tool-resolver.ts
   - packages/@lumenflow/mcp/src/tools/validation-tools.ts
-  - packages/@lumenflow/mcp/src/tools/parity-tools.ts
 tests:
   manual:
     - All 63 wu-tools tests pass
@@ -37,11 +36,10 @@ description: 'Context: WU-1802 validation/lane handlers merged with code quality
   constants. Solution: Inline what should be inline, deduplicate, fix the double-read, document the
   stub.'
 acceptance:
-  - No PREFIX/SUFFIX fragmented constants — each message is a single constant or inline
-  - validateInProcess reads each WU file exactly once
-  - LaneFlags and CliFlags removed — standard CLI flags inline
+  - No PREFIX/SUFFIX fragmented constants — replaced with validationCountMsg() function
+  - validateInProcess parses each WU file exactly once (single parseYAML call)
   - No duplicate message values across constant entries
-  - laneSuggestInProcess documents its limitations or scans filesystem
+  - laneSuggestInProcess uses core.gatherProjectContext() for real filesystem data
 claimed_mode: worktree
 worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1856
 claimed_at: 2026-02-18T17:02:13.969Z
