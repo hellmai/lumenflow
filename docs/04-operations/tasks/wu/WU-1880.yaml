@@ -2,7 +2,7 @@ id: WU-1880
 title: Fix manifest parity drift for pack_search in wu-tools truth gate
 lane: 'Framework: MCP'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -41,3 +41,6 @@ description: Global test gate currently fails pre-existing parity checks in
 acceptance:
   - wu-tools manifest parity truth gate passes with no missing pack_search drift
   - Any parity baseline/allowed extra lists are updated deliberately with test coverage
+locked: true
+completed_at: 2026-02-18T23:30:24.991Z
+completed: 2026-02-18

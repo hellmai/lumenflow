@@ -10,7 +10,6 @@ _Last updated: 2026-02-18_
 - [WU-1869 — Vercel Blob-backed PackRegistryStore + PackBlobStore adapters](wu/WU-1869.yaml)
 - [WU-1865 — Kernel polish: xstate dead code removal, warning clarity, naming consistency](wu/WU-1865.yaml)
 - [WU-1871 — lumenflow workspace:init interactive wizard generating workspace.yaml](wu/WU-1871.yaml)
-- [WU-1880 — Fix manifest parity drift for pack_search in wu-tools truth gate](wu/WU-1880.yaml)
 
 ## Completed
 
@@ -809,3 +808,4 @@ _Last updated: 2026-02-18_
 - [WU-1868 — INIT-030 Review Fix F: use readTracesByTaskId in inspectTask receipts](wu/WU-1868.yaml) — 2026-02-18
 - [WU-1866 — INIT-030 Review Fix D: flip executeViaPack fallback from denylist to allowlist](wu/WU-1866.yaml) — 2026-02-18
 - [WU-1879 — INIT-030 Review Fix G: evidence store multi-instance replay correctness and lock error propagation](wu/WU-1879.yaml) — 2026-02-18
+- [WU-1880 — Fix manifest parity drift for pack_search in wu-tools truth gate](wu/WU-1880.yaml) — 2026-02-18
