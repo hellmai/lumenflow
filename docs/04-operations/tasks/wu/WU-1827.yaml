@@ -2,7 +2,7 @@ id: WU-1827
 title: Create pack:install CLI command for adding packs to workspace
 lane: 'Framework: CLI Orchestration'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -47,3 +47,6 @@ session_id: 6df8aa7f-34e5-4edd-b002-7cb8b0f932bd
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-18T21:19:02.215Z
+locked: true
+completed_at: 2026-02-18T21:27:02.870Z
+completed: 2026-02-18
