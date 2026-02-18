@@ -2,7 +2,7 @@ id: WU-1823
 title: Create pack:scaffold CLI command for new pack authoring
 lane: 'Framework: CLI Orchestration'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-18
 code_paths:
@@ -30,9 +30,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: pnpm pack:scaffold --id my-domain --version 0.1.0 generates directory structure with manifest.yaml skeleton, tool implementation boilerplate, and README. Validates pack-id format and version format. Interactive mode prompts for task_types and initial tool names.
+description: pnpm pack:scaffold --id my-domain --version 0.1.0 generates directory structure with
+  manifest.yaml skeleton, tool implementation boilerplate, and README. Validates pack-id format and
+  version format. Interactive mode prompts for task_types and initial tool names.
 acceptance:
   - Generates valid manifest.yaml with skeleton content
   - Generates tool implementation boilerplate with correct function signature
   - Validates pack-id and version format
   - Generated pack passes pack:validate
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-orchestration-wu-1823
+claimed_at: 2026-02-18T19:08:52.686Z
+baseline_main_sha: 81f671168555b0065a5cb2efa616d050e2ff4a58
+session_id: 425f84d9-5410-43ac-b492-7254feecba51
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T19:08:52.691Z
