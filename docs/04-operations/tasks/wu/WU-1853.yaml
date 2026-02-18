@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/mcp/src/
   - packages/@lumenflow/cli/templates/vendors/claude/.claude/hooks/enforce-worktree.sh
 tests:
-  manual: []
+  manual:
+    - Invoke MCP file_write on a main checkout path and verify it returns a
+      WORKTREE_ENFORCEMENT_BLOCKED error
   unit:
     - packages/@lumenflow/mcp/src/__tests__/
   e2e: []
@@ -26,9 +28,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: The enforce-worktree.sh hook fires on Claude Code PreToolUse events for the Write and Edit tools, blocking direct writes to the main checkout. The LumenFlow MCP server exposes file_write and file_edit tools that write to the filesystem via a different code path. Problem: MCP tool calls do not trigger Claude Code PreToolUse hooks — the matcher is Write|Edit (native tools only). This means an agent can use the LumenFlow MCP file_write tool to write directly to main, bypassing all enforcement. Observed in Haven test project: the agent rewrote .lumenflow.config.yaml and .lumenflow.lane-inference.yaml on main via MCP file_write after the Claude Write tool was correctly blocked. This is an enforcement hole that undermines the worktree isolation guarantee. Solution: The MCP server file_write and file_edit handlers should check the LumenFlow enforcement config (agents.clients.claude-code.enforcement.block_outside_worktree) and refuse writes to the main checkout when enforcement is active and no worktree WU is claimed. Enforcement check should mirror the logic in enforce-worktree.sh: allow writes inside worktrees/, .lumenflow/, .claude/, and WU YAML paths; block everything else.'
+description: 'Context: The enforce-worktree.sh hook fires on Claude Code PreToolUse events for the
+  Write and Edit tools, blocking direct writes to the main checkout. The LumenFlow MCP server
+  exposes file_write and file_edit tools that write to the filesystem via a different code path.
+  Problem: MCP tool calls do not trigger Claude Code PreToolUse hooks — the matcher is Write|Edit
+  (native tools only). This means an agent can use the LumenFlow MCP file_write tool to write
+  directly to main, bypassing all enforcement. Observed in Haven test project: the agent rewrote
+  .lumenflow.config.yaml and .lumenflow.lane-inference.yaml on main via MCP file_write after the
+  Claude Write tool was correctly blocked. This is an enforcement hole that undermines the worktree
+  isolation guarantee. Solution: The MCP server file_write and file_edit handlers should check the
+  LumenFlow enforcement config (agents.clients.claude-code.enforcement.block_outside_worktree) and
+  refuse writes to the main checkout when enforcement is active and no worktree WU is claimed.
+  Enforcement check should mirror the logic in enforce-worktree.sh: allow writes inside worktrees/,
+  .lumenflow/, .claude/, and WU YAML paths; block everything else.'
 acceptance:
-  - MCP file_write called on a main checkout path is blocked when block_outside_worktree is true and no worktree WU is active
+  - MCP file_write called on a main checkout path is blocked when block_outside_worktree is true and
+    no worktree WU is active
   - MCP file_write called inside a worktree path succeeds regardless of enforcement setting
-  - MCP file_write called on allowlisted paths (.lumenflow/, .claude/, docs/tasks/wu/) succeeds on main
-  - Enforcement check reads from .lumenflow.config.yaml and gracefully allows if config cannot be read
+  - MCP file_write called on allowlisted paths (.lumenflow/, .claude/, docs/tasks/wu/) succeeds on
+    main
+  - Enforcement check reads from .lumenflow.config.yaml and gracefully allows if config cannot be
+    read
