@@ -1,16 +1,10 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import YAML from 'yaml';
 import {
-  SOFTWARE_DELIVERY_MANIFEST_FILE_NAME,
   SOFTWARE_DELIVERY_PACK_ID,
   SOFTWARE_DELIVERY_PACK_VERSION,
   SOFTWARE_DELIVERY_POLICY_ID_PREFIX,
-  UTF8_ENCODING,
 } from './constants.js';
 import type { PathScope } from './tools/types.js';
 
@@ -222,37 +216,773 @@ export const SoftwareDeliveryManifestSchema: Parser<SoftwareDeliveryPackManifest
   },
 };
 
-const SOFTWARE_DELIVERY_MANIFEST_PATH = join(
-  dirname(fileURLToPath(import.meta.url)),
-  SOFTWARE_DELIVERY_MANIFEST_FILE_NAME,
-);
-
-function assertManifestIdentity(manifest: SoftwareDeliveryPackManifest): void {
-  if (manifest.id !== SOFTWARE_DELIVERY_PACK_ID) {
-    throw new Error(
-      `manifest id mismatch: expected "${SOFTWARE_DELIVERY_PACK_ID}", got "${manifest.id}"`,
-    );
-  }
-  if (manifest.version !== SOFTWARE_DELIVERY_PACK_VERSION) {
-    throw new Error(
-      `manifest version mismatch: expected "${SOFTWARE_DELIVERY_PACK_VERSION}", got "${manifest.version}"`,
-    );
-  }
-  for (const policy of manifest.policies) {
-    if (!policy.id.startsWith(SOFTWARE_DELIVERY_POLICY_ID_PREFIX)) {
-      throw new Error(
-        `policy id "${policy.id}" must start with "${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}"`,
-      );
-    }
-  }
-}
-
-function loadSoftwareDeliveryManifestFromYaml(): SoftwareDeliveryPackManifest {
-  const manifestSource = readFileSync(SOFTWARE_DELIVERY_MANIFEST_PATH, UTF8_ENCODING);
-  const parsed = SoftwareDeliveryManifestSchema.parse(YAML.parse(manifestSource));
-  assertManifestIdentity(parsed);
-  return parsed;
-}
-
-export const SOFTWARE_DELIVERY_MANIFEST: SoftwareDeliveryPackManifest =
-  loadSoftwareDeliveryManifestFromYaml();
+export const SOFTWARE_DELIVERY_MANIFEST: SoftwareDeliveryPackManifest = {
+  id: SOFTWARE_DELIVERY_PACK_ID,
+  version: SOFTWARE_DELIVERY_PACK_VERSION,
+  task_types: ['work-unit'],
+  tools: [
+    // wu:*
+    {
+      name: 'wu:block',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:brief',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'wu:claim',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:cleanup',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:create',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:delegate',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:delete',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:deps',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'wu:done',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:edit',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:infer-lane',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'wu:preflight',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'wu:prep',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:proto',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:prune',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:recover',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:release',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:repair',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:sandbox',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:status',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'wu:unblock',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:unlock-lane',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'wu:validate',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    // mem:*
+    {
+      name: 'mem:checkpoint',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:cleanup',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:context',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'mem:create',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:delete',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:export',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'mem:inbox',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'mem:init',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:ready',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'mem:recover',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:signal',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:start',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'mem:summarize',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'mem:triage',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    // initiative:*
+    {
+      name: 'initiative:add-wu',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'initiative:bulk-assign',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'initiative:create',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'initiative:edit',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'initiative:list',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'initiative:plan',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'initiative:remove-wu',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'initiative:status',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    // lane:*
+    {
+      name: 'lane:health',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'lane:suggest',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    // flow:*
+    {
+      name: 'flow:bottlenecks',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'flow:report',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    // gate:*
+    {
+      name: 'gates',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    // file:*
+    {
+      name: 'file:delete',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'file:edit',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'file:read',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'file:write',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    // git:*
+    {
+      name: 'git:branch',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'git:diff',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'git:log',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'git:status',
+      entry: 'tool-impl/git-tools.ts#gitStatusTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    // agent:*
+    {
+      name: 'agent:issues-query',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'agent:log-issue',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'agent:session',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'agent:session-end',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    // orchestrate:*
+    {
+      name: 'orchestrate:init-status',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'orchestrate:initiative',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'orchestrate:monitor',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    // state:*
+    {
+      name: 'state:bootstrap',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'state:cleanup',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'state:doctor',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    // plan:*
+    {
+      name: 'plan:create',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'plan:edit',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'plan:link',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'plan:promote',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    // setup:*
+    {
+      name: 'backlog:prune',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'delegation:list',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'docs:sync',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'init:plan',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'lumenflow',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'lumenflow:doctor',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'lumenflow:integrate',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'lumenflow:release',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'lumenflow:upgrade',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'metrics',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'metrics:snapshot',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'signal:cleanup',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'sync:templates',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'write',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'write' },
+      ],
+    },
+    {
+      name: 'validate',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'validate:agent-skills',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'validate:agent-sync',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'validate:backlog-sync',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+    {
+      name: 'validate:skills-spec',
+      entry: 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool',
+      permission: 'read',
+      required_scopes: [
+        { type: 'path', pattern: '**', access: 'read' },
+      ],
+    },
+  ],
+  policies: [
+    {
+      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.format`,
+      trigger: 'on_completion',
+      decision: 'allow',
+    },
+    {
+      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.lint`,
+      trigger: 'on_completion',
+      decision: 'allow',
+    },
+    {
+      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.typecheck`,
+      trigger: 'on_completion',
+      decision: 'allow',
+    },
+    {
+      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.test`,
+      trigger: 'on_completion',
+      decision: 'allow',
+    },
+    {
+      id: `${SOFTWARE_DELIVERY_POLICY_ID_PREFIX}.coverage`,
+      trigger: 'on_completion',
+      decision: 'allow',
+    },
+  ],
+  evidence_types: ['gate-run'],
+  state_aliases: { active: 'in_progress' },
+  lane_templates: [],
+};
