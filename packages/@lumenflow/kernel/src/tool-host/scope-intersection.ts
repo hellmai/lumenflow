@@ -25,10 +25,83 @@ function toNetworkScopes(scopes: ToolScope[]): NetworkScope[] {
   return scopes.filter((scope): scope is NetworkScope => scope.type === 'network');
 }
 
-function patternContains(containerPattern: string, nestedPattern: string): boolean {
-  const testPath = nestedPattern
-    .replace(/\*\*/g, '__nested__/__path__')
-    .replace(/\*/g, '__segment__');
+// Heuristic: does containerPattern glob-contain nestedPattern?
+//
+// Converts the nested pattern into synthetic test paths by replacing
+// double-star with representative expansions and single-star with
+// __segment__, then checks if the container matches ALL of them.
+//
+// GUARANTEES:
+// - Correct for literal paths and simple wildcard hierarchies
+//   (e.g. packages/double-star contains packages/foo/bar/double-star)
+// - Correct for single-star segments (e.g. star.ts contains foo.ts)
+// - Negation patterns (!) in either operand are rejected (return false)
+// - Multiple depth expansions for double-star prevent false positives
+//   from fixed-depth container patterns
+//
+// APPROXIMATIONS / KNOWN LIMITATIONS (WU-1864):
+// - Brace expansion ({a,b}): partially handled by micromatch on the
+//   container side, but the nested side's braces become literal text in
+//   the synthetic path. This can produce false negatives but NOT false
+//   positives (safe direction for security).
+// - Character classes ([abc]): similar to brace expansion -- container
+//   side works, nested side becomes literal. Safe direction.
+//
+// @internal Exported for property-based fuzz testing (WU-1864).
+export function patternContains(containerPattern: string, nestedPattern: string): boolean {
+  // Negation patterns are not supported by this heuristic. Returning
+  // false is the safe direction (denies access rather than granting it).
+  if (containerPattern.startsWith('!') || nestedPattern.startsWith('!')) {
+    return false;
+  }
+
+  // When the nested pattern contains double-star (matches 0+ segments),
+  // a single synthetic expansion can falsely match fixed-depth containers.
+  // Test multiple depth expansions and require ALL valid ones to match
+  // the container.
+  const hasGlobstar = nestedPattern.includes('**');
+
+  if (hasGlobstar) {
+    // Generate test paths at different depths to verify containment
+    // across the full range of what double-star can match.
+    const rawExpansions = [
+      // 0 segments: double-star matches empty (strip the globstar segment)
+      nestedPattern
+        .replace(/\*\*\/?/g, '')
+        .replace(/\/+/g, '/')
+        .replace(/^\/|\/$/g, ''),
+      // 1 segment depth
+      nestedPattern.replace(/\*\*/g, '__depth1__'),
+      // 2 segment depth
+      nestedPattern.replace(/\*\*/g, '__depth2a__/__depth2b__'),
+      // 3 segment depth
+      nestedPattern.replace(/\*\*/g, '__depth3a__/__depth3b__/__depth3c__'),
+    ];
+
+    // Replace remaining single-stars in all expansions
+    const testPaths = rawExpansions
+      .map((p) => p.replace(/\*/g, '__segment__'))
+      .filter((p) => p.length > 0);
+
+    // Only include test paths that the nested pattern itself would match.
+    // Some depth expansions produce paths that the nested pattern does not
+    // actually match (e.g. 0-depth expansion of star/doublestar produces
+    // __segment__ which star/doublestar does not match). Including those
+    // would cause false negatives.
+    const validTestPaths = testPaths.filter((tp) => micromatch.isMatch(tp, nestedPattern));
+
+    // ALL valid synthetic paths must match the container for containment
+    // to hold. If any valid expansion fails, the heuristic conservatively
+    // returns false. This prevents false positives where a fixed-depth
+    // container incorrectly claims to contain a globstar pattern.
+    return (
+      validTestPaths.length > 0 &&
+      validTestPaths.every((tp) => micromatch.isMatch(tp, containerPattern))
+    );
+  }
+
+  // No globstar: simple replacement of single-star with a test segment.
+  const testPath = nestedPattern.replace(/\*/g, '__segment__');
   return micromatch.isMatch(testPath, containerPattern);
 }
 
