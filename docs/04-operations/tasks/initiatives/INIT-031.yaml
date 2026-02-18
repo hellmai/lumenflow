@@ -15,7 +15,7 @@ target_date: 2026-05-09
 phases:
   - id: 1
     title: 'Watch Your Agent Think: HTTP Surface + Web Dashboard'
-    status: in_progress
+    status: done
   - id: 2
     title: Pack Developer Experience
     status: in_progress
