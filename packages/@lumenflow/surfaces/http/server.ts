@@ -7,6 +7,13 @@ import { createEventStreamRouter, type EventSubscriber } from './event-stream.js
 import { createRunAgentRouter } from './run-agent.js';
 import { createTaskApiRouter } from './task-api.js';
 
+interface ControlPlaneSyncPortLike {
+  pushKernelEvents(input: {
+    workspace_id: string;
+    events: KernelEvent[];
+  }): Promise<{ accepted: number }>;
+}
+
 const URL_BASE = 'http://localhost';
 const ROUTE_SEGMENT = {
   TASKS: 'tasks',
@@ -37,6 +44,8 @@ interface RuntimeWithPrivateEventStore extends KernelRuntime {
 
 export interface HttpSurfaceOptions {
   eventSubscriber?: EventSubscriber;
+  controlPlaneSyncPort?: ControlPlaneSyncPortLike;
+  workspaceId?: string;
 }
 
 export interface HttpSurface {
@@ -74,27 +83,63 @@ function matchesRunAgentRoute(segments: string[]): boolean {
   return segments.every((segment, index) => segment === AG_UI_RUN_PATH_SEGMENTS[index]);
 }
 
+function wrapWithControlPlaneForwarding(
+  subscriber: EventSubscriber,
+  controlPlane: ControlPlaneSyncPortLike,
+  workspaceId: string,
+): EventSubscriber {
+  return {
+    subscribe(
+      filter: ReplayFilter,
+      callback: (event: KernelEvent) => void | Promise<void>,
+    ): Disposable {
+      const forwardingCallback = async (event: KernelEvent): Promise<void> => {
+        await callback(event);
+        try {
+          await controlPlane.pushKernelEvents({
+            workspace_id: workspaceId,
+            events: [event],
+          });
+        } catch {
+          // Control plane forwarding failures must not disrupt the SSE stream.
+        }
+      };
+      return subscriber.subscribe(filter, forwardingCallback);
+    },
+  };
+}
+
 function resolveEventSubscriber(
   runtime: KernelRuntime,
   options: HttpSurfaceOptions,
 ): EventSubscriber | undefined {
+  let subscriber: EventSubscriber | undefined;
+
   if (options.eventSubscriber) {
-    return options.eventSubscriber;
+    subscriber = options.eventSubscriber;
+  } else {
+    const runtimeWithSubscribeEvents = runtime as RuntimeWithSubscribeEvents;
+    if (typeof runtimeWithSubscribeEvents.subscribeEvents === 'function') {
+      subscriber = {
+        subscribe: runtimeWithSubscribeEvents.subscribeEvents.bind(runtimeWithSubscribeEvents),
+      };
+    } else {
+      const runtimeWithPrivateEventStore = runtime as RuntimeWithPrivateEventStore;
+      if (runtimeWithPrivateEventStore.eventStore) {
+        subscriber = runtimeWithPrivateEventStore.eventStore;
+      }
+    }
   }
 
-  const runtimeWithSubscribeEvents = runtime as RuntimeWithSubscribeEvents;
-  if (typeof runtimeWithSubscribeEvents.subscribeEvents === 'function') {
-    return {
-      subscribe: runtimeWithSubscribeEvents.subscribeEvents.bind(runtimeWithSubscribeEvents),
-    };
+  if (subscriber && options.controlPlaneSyncPort && options.workspaceId) {
+    return wrapWithControlPlaneForwarding(
+      subscriber,
+      options.controlPlaneSyncPort,
+      options.workspaceId,
+    );
   }
 
-  const runtimeWithPrivateEventStore = runtime as RuntimeWithPrivateEventStore;
-  if (runtimeWithPrivateEventStore.eventStore) {
-    return runtimeWithPrivateEventStore.eventStore;
-  }
-
-  return undefined;
+  return subscriber;
 }
 
 export function createHttpSurface(
