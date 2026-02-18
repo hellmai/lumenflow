@@ -2,7 +2,7 @@ id: WU-1841
 title: Wire HTTP surface to push kernel events to control plane
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-18
 code_paths:
@@ -30,8 +30,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Wire the HTTP surface to push kernel events to the control plane via ControlPlaneSyncPort.pushKernelEvents. Enables centralized observability for organizations. Web dashboard can optionally pull from control plane instead of local EventStore.
+description: Wire the HTTP surface to push kernel events to the control plane via
+  ControlPlaneSyncPort.pushKernelEvents. Enables centralized observability for organizations. Web
+  dashboard can optionally pull from control plane instead of local EventStore.
 acceptance:
   - HTTP surface pushes events to ControlPlaneSyncPort
   - pushKernelEvents called with correct event format
   - Dashboard can optionally read from control plane
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1841
+claimed_at: 2026-02-18T21:06:32.139Z
+baseline_main_sha: 31f9d840169202bf668986c606a9c77e1707999f
+session_id: 3807b695-7b2d-49da-9db9-565987b1b531
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T21:06:32.146Z

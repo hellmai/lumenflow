@@ -1629,3 +1629,4 @@
 {"type":"complete","wuId":"WU-1821","timestamp":"2026-02-18T20:04:10.112Z"}
 {"type":"claim","wuId":"WU-1822","lane":"Content: Site Comms","title":"Build workspace connection flow with runtime initialization","timestamp":"2026-02-18T21:03:18.869Z"}
 {"type":"claim","wuId":"WU-1825","lane":"Framework: CLI Orchestration","title":"Create pack:hash CLI command for integrity hash computation","timestamp":"2026-02-18T21:04:35.251Z"}
+{"type":"claim","wuId":"WU-1841","lane":"Framework: Core Lifecycle","title":"Wire HTTP surface to push kernel events to control plane","timestamp":"2026-02-18T21:06:32.181Z"}
