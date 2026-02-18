@@ -1211,16 +1211,10 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
     expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 
-  it('should map git command args', async () => {
-    mockRunCliCommand.mockResolvedValue({ success: true, stdout: 'ok', stderr: '', exitCode: 0 });
+  it('should route git commands through runtime helper', async () => {
+    mockExecuteViaPack.mockResolvedValue({ success: true, data: { output: 'ok' } });
 
     await gitStatusTool.execute({ base_dir: '.', path: 'src', porcelain: true, short: true });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'git:status',
-      expect.arrayContaining(['--base-dir', '.', '--porcelain', '--short', 'src']),
-      expect.any(Object),
-    );
-
     await gitDiffTool.execute({
       ref: 'HEAD~1',
       staged: true,
@@ -1228,32 +1222,74 @@ describe('Wave-2 parity MCP tools (WU-1483)', () => {
       stat: true,
       path: 'packages/@lumenflow/mcp/src/tools.ts',
     });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'git:diff',
-      expect.arrayContaining([
-        '--staged',
-        '--name-only',
-        '--stat',
-        'HEAD~1',
-        '--',
-        'packages/@lumenflow/mcp/src/tools.ts',
-      ]),
-      expect.any(Object),
-    );
-
     await gitLogTool.execute({ oneline: true, max_count: 5, since: '7 days ago', author: 'tom' });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'git:log',
-      expect.arrayContaining(['--oneline', '-n', '5', '--since', '7 days ago', '--author', 'tom']),
-      expect.any(Object),
+    await gitBranchTool.execute({ all: true, remotes: true, show_current: true, contains: 'HEAD' });
+
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      1,
+      'git:status',
+      expect.objectContaining({
+        commands: [['git', 'status', '--porcelain', '--short', 'src']],
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'git:status',
+        }),
+      }),
     );
 
-    await gitBranchTool.execute({ all: true, remotes: true, show_current: true, contains: 'HEAD' });
-    expect(mockRunCliCommand).toHaveBeenCalledWith(
-      'git:branch',
-      expect.arrayContaining(['--all', '--remotes', '--show-current', '--contains', 'HEAD']),
-      expect.any(Object),
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      2,
+      'git:status',
+      expect.objectContaining({
+        commands: [
+          [
+            'git',
+            'diff',
+            '--staged',
+            '--name-only',
+            '--stat',
+            'HEAD~1',
+            '--',
+            'packages/@lumenflow/mcp/src/tools.ts',
+          ],
+        ],
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'git:diff',
+        }),
+      }),
     );
+
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      3,
+      'git:status',
+      expect.objectContaining({
+        commands: [
+          ['git', 'log', '--oneline', '-n', '5', '--since', '7 days ago', '--author', 'tom'],
+        ],
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'git:log',
+        }),
+      }),
+    );
+
+    expect(mockExecuteViaPack).toHaveBeenNthCalledWith(
+      4,
+      'git:status',
+      expect.objectContaining({
+        commands: [['git', 'branch', '--all', '--remotes', '--show-current', '--contains', 'HEAD']],
+      }),
+      expect.objectContaining({
+        fallback: expect.objectContaining({
+          command: 'git:branch',
+        }),
+      }),
+    );
+    expect(mockRunCliCommand).not.toHaveBeenCalled();
   });
 
   it('should validate and map init_plan + plan command args', async () => {

@@ -142,4 +142,28 @@ describe('software delivery git tool pack', () => {
     expect(receipt.output.error?.code).toBe('invalid_command');
     await expect(readFile(markerPath, 'utf8')).rejects.toThrow();
   });
+
+  it('returns command output payloads for allowed git command arrays', async () => {
+    const repoRoot = await setupGitRepository();
+
+    const receipt = await runTool(
+      'git:status',
+      {
+        commands: [['git', 'status', '--short']],
+      },
+      repoRoot,
+    );
+
+    expect(receipt.output.success).toBe(true);
+    expect(receipt.output.data).toMatchObject({
+      commands_executed: 1,
+      command_results: [
+        expect.objectContaining({
+          command: 'git',
+          args: ['status', '--short'],
+          status: 0,
+        }),
+      ],
+    });
+  });
 });
