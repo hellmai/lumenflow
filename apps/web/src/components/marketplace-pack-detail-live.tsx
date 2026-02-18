@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { MarketplacePackDetail as PackDetailType } from '../lib/marketplace-types';
 import type { PackRegistryEntry } from '../lib/pack-registry-types';
+import { loadPersistedWorkspacePath } from '../lib/workspace-connection';
 import { MarketplacePackDetail } from './marketplace-pack-detail';
 
 /* ------------------------------------------------------------------
@@ -106,6 +107,16 @@ interface MarketplacePackDetailLiveProps {
 
 export function MarketplacePackDetailLive({ packId }: MarketplacePackDetailLiveProps) {
   const { state, pack, errorMessage, refetch } = usePackDetailData(packId);
+  const [workspaceRoot, setWorkspaceRoot] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const persisted = loadPersistedWorkspacePath(localStorage);
+      setWorkspaceRoot(persisted);
+    } catch {
+      // localStorage not available (SSR or security)
+    }
+  }, []);
 
   if (state === 'idle' || state === 'loading') {
     return (
@@ -154,5 +165,5 @@ export function MarketplacePackDetailLive({ packId }: MarketplacePackDetailLiveP
     return null;
   }
 
-  return <MarketplacePackDetail pack={pack} />;
+  return <MarketplacePackDetail pack={pack} workspaceRoot={workspaceRoot} />;
 }

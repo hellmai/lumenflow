@@ -35,9 +35,18 @@ const DECISION_BADGE_COLORS = new Map<string, string>([
 const DEFAULT_BADGE_COLOR = 'bg-slate-100 text-slate-600';
 
 const COPY_RESET_DELAY_MS = 2000;
+const FEEDBACK_RESET_DELAY_MS = 5000;
 
 const TOOLS_EMPTY_MESSAGE = 'No tools defined.';
 const POLICIES_EMPTY_MESSAGE = 'No policies defined.';
+
+export const INSTALL_TO_WORKSPACE_LABEL = 'Install to workspace';
+export const INSTALL_TO_WORKSPACE_INSTALLING_LABEL = 'Installing...';
+export const INSTALL_TO_WORKSPACE_SUCCESS_LABEL = 'Installed';
+export const INSTALL_TO_WORKSPACE_DISABLED_TOOLTIP = 'Connect a workspace to install packs';
+const INSTALL_API_PATH_PREFIX = '/api/registry/packs';
+
+type InstallFeedback = 'idle' | 'installing' | 'success' | 'error';
 
 /* ------------------------------------------------------------------
  * ToolItem
@@ -101,11 +110,15 @@ function PolicyItem({ policy }: PolicyItemProps) {
 interface InstallSectionProps {
   readonly packId: string;
   readonly version: string;
+  readonly workspaceRoot: string | null;
 }
 
-function InstallSection({ packId, version }: InstallSectionProps) {
+function InstallSection({ packId, version, workspaceRoot }: InstallSectionProps) {
   const [copied, setCopied] = useState(false);
+  const [installFeedback, setInstallFeedback] = useState<InstallFeedback>('idle');
+  const [installError, setInstallError] = useState<string | null>(null);
   const installCommand = generateInstallCommand(packId, version);
+  const isWorkspaceConnected = workspaceRoot !== null;
 
   const handleCopy = useCallback(() => {
     void navigator.clipboard.writeText(installCommand).then(() => {
@@ -114,23 +127,130 @@ function InstallSection({ packId, version }: InstallSectionProps) {
     });
   }, [installCommand]);
 
+  const handleInstallToWorkspace = useCallback(async () => {
+    if (!workspaceRoot) return;
+
+    setInstallFeedback('installing');
+    setInstallError(null);
+
+    try {
+      const response = await fetch(
+        `${INSTALL_API_PATH_PREFIX}/${encodeURIComponent(packId)}/install`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workspaceRoot, version }),
+        },
+      );
+
+      const body = (await response.json()) as { success: boolean; error?: string };
+
+      if (!response.ok || !body.success) {
+        setInstallFeedback('error');
+        setInstallError(body.error ?? 'Install failed');
+        setTimeout(() => setInstallFeedback('idle'), FEEDBACK_RESET_DELAY_MS);
+        return;
+      }
+
+      setInstallFeedback('success');
+      setTimeout(() => setInstallFeedback('idle'), FEEDBACK_RESET_DELAY_MS);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Install failed';
+      setInstallFeedback('error');
+      setInstallError(message);
+      setTimeout(() => setInstallFeedback('idle'), FEEDBACK_RESET_DELAY_MS);
+    }
+  }, [workspaceRoot, packId, version]);
+
+  function getInstallButtonLabel(): string {
+    switch (installFeedback) {
+      case 'installing':
+        return INSTALL_TO_WORKSPACE_INSTALLING_LABEL;
+      case 'success':
+        return INSTALL_TO_WORKSPACE_SUCCESS_LABEL;
+      default:
+        return INSTALL_TO_WORKSPACE_LABEL;
+    }
+  }
+
+  function getInstallButtonClass(): string {
+    const base = 'rounded-md px-4 py-2 text-sm font-medium transition-colors';
+    if (installFeedback === 'success') {
+      return `${base} bg-green-600 text-white`;
+    }
+    if (installFeedback === 'error') {
+      return `${base} bg-red-600 text-white hover:bg-red-700`;
+    }
+    if (!isWorkspaceConnected || installFeedback === 'installing') {
+      return `${base} bg-indigo-600 text-white opacity-50 cursor-not-allowed`;
+    }
+    return `${base} bg-indigo-600 text-white hover:bg-indigo-700`;
+  }
+
   return (
     <div data-testid="pack-detail-install" className="rounded-lg border border-slate-200 bg-white">
       <div className="border-b border-slate-100 px-4 py-3">
         <h3 className={SECTION_TITLE_CLASS}>Install</h3>
       </div>
-      <div className="flex items-center justify-between px-4 py-3">
-        <code className="rounded bg-slate-50 px-3 py-2 font-mono text-sm text-slate-800">
-          {installCommand}
-        </code>
-        <button
-          type="button"
-          data-testid="copy-install-button"
-          onClick={handleCopy}
-          className="ml-3 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-700"
-        >
-          {copied ? INSTALL_COPIED_LABEL : INSTALL_BUTTON_LABEL}
-        </button>
+      <div className="space-y-3 px-4 py-3">
+        {/* Install to workspace button (WU-1878 AC2, AC3, AC4) */}
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <button
+              type="button"
+              data-testid="install-to-workspace-button"
+              onClick={() => void handleInstallToWorkspace()}
+              disabled={!isWorkspaceConnected || installFeedback === 'installing'}
+              title={!isWorkspaceConnected ? INSTALL_TO_WORKSPACE_DISABLED_TOOLTIP : undefined}
+              className={getInstallButtonClass()}
+            >
+              {getInstallButtonLabel()}
+            </button>
+            {!isWorkspaceConnected && (
+              <span
+                data-testid="install-disabled-tooltip"
+                className="mt-1 block text-xs text-slate-400"
+              >
+                {INSTALL_TO_WORKSPACE_DISABLED_TOOLTIP}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Error feedback (WU-1878 AC4) */}
+        {installFeedback === 'error' && installError && (
+          <div
+            data-testid="install-error-feedback"
+            className="rounded border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
+          >
+            {installError}
+          </div>
+        )}
+
+        {/* Success feedback (WU-1878 AC4) */}
+        {installFeedback === 'success' && (
+          <div
+            data-testid="install-success-feedback"
+            className="rounded border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700"
+          >
+            Pack installed successfully to workspace.
+          </div>
+        )}
+
+        {/* CLI install command (existing) */}
+        <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+          <code className="rounded bg-slate-50 px-3 py-2 font-mono text-sm text-slate-800">
+            {installCommand}
+          </code>
+          <button
+            type="button"
+            data-testid="copy-install-button"
+            onClick={handleCopy}
+            className="ml-3 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+          >
+            {copied ? INSTALL_COPIED_LABEL : INSTALL_BUTTON_LABEL}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -142,9 +262,11 @@ function InstallSection({ packId, version }: InstallSectionProps) {
 
 export interface MarketplacePackDetailProps {
   readonly pack: PackDetailType;
+  /** Connected workspace root path, or null if no workspace is connected. */
+  readonly workspaceRoot?: string | null;
 }
 
-export function MarketplacePackDetail({ pack }: MarketplacePackDetailProps) {
+export function MarketplacePackDetail({ pack, workspaceRoot = null }: MarketplacePackDetailProps) {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
       {/* Back link */}
@@ -179,8 +301,8 @@ export function MarketplacePackDetail({ pack }: MarketplacePackDetailProps) {
         )}
       </div>
 
-      {/* Install Section (AC3) */}
-      <InstallSection packId={pack.id} version={pack.latestVersion} />
+      {/* Install Section (AC3 + WU-1878) */}
+      <InstallSection packId={pack.id} version={pack.latestVersion} workspaceRoot={workspaceRoot} />
 
       {/* Tools Section (AC2) */}
       <div data-testid="pack-detail-tools" className="rounded-lg border border-slate-200 bg-white">

@@ -37,6 +37,8 @@ const DESCRIPTION_FIELD_NAME = 'description';
 const ERROR_TARBALL_REQUIRED = 'tarball field is required in form data';
 const ERROR_INTERNAL = 'Internal server error';
 const ERROR_VERSION_NOT_FOUND = 'Version not found';
+const ERROR_WORKSPACE_ROOT_REQUIRED = 'workspaceRoot is required';
+const ERROR_PACK_NOT_FOUND = 'Pack not found';
 
 /* ------------------------------------------------------------------
  * Helpers
@@ -164,6 +166,106 @@ export function createPublishVersionRoute(
       }
 
       return jsonResponse(result, HTTP_STATUS.CREATED);
+    } catch {
+      return jsonResponse(
+        { success: false, error: ERROR_INTERNAL },
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      );
+    }
+  };
+}
+
+/* ------------------------------------------------------------------
+ * WU-1878: Install pack to workspace route
+ * ------------------------------------------------------------------ */
+
+/** Result shape returned by the installFn port. */
+export interface InstallPackResultView {
+  readonly success: boolean;
+  readonly error?: string;
+  readonly integrity?: string;
+}
+
+/** Injectable install function port for testability. */
+export type InstallFn = (options: {
+  workspaceRoot: string;
+  packId: string;
+  version: string;
+  registryUrl: string;
+  integrity: string;
+  fetchFn: typeof fetch;
+}) => Promise<InstallPackResultView>;
+
+interface InstallPackRouteDeps {
+  readonly registryStore: PackRegistryStore;
+  readonly installFn: InstallFn;
+}
+
+const DEFAULT_REGISTRY_URL = 'http://localhost:3000';
+
+export function createInstallPackRoute(
+  deps: InstallPackRouteDeps,
+): (request: Request, packId: string) => Promise<Response> {
+  return async (request: Request, packId: string): Promise<Response> => {
+    try {
+      // Parse request body
+      const body = (await request.json()) as {
+        workspaceRoot?: string;
+        version?: string;
+      };
+
+      if (!body.workspaceRoot || typeof body.workspaceRoot !== 'string') {
+        return jsonResponse(
+          { success: false, error: ERROR_WORKSPACE_ROOT_REQUIRED },
+          HTTP_STATUS.BAD_REQUEST,
+        );
+      }
+
+      // Look up pack in registry
+      const result = await handleGetPack({
+        registryStore: deps.registryStore,
+        packId,
+      });
+
+      if (!result.success) {
+        return jsonResponse(
+          { success: false, error: `${ERROR_PACK_NOT_FOUND}: ${packId}` },
+          HTTP_STATUS.NOT_FOUND,
+        );
+      }
+
+      // Resolve version (default to latestVersion)
+      const requestedVersion = body.version ?? result.pack.latestVersion;
+      const packVersion = result.pack.versions.find((v) => v.version === requestedVersion);
+
+      if (!packVersion) {
+        return jsonResponse(
+          {
+            success: false,
+            error: `${ERROR_VERSION_NOT_FOUND}: ${packId}@${requestedVersion}`,
+          },
+          HTTP_STATUS.NOT_FOUND,
+        );
+      }
+
+      // Call installFn
+      const installResult = await deps.installFn({
+        workspaceRoot: body.workspaceRoot,
+        packId,
+        version: requestedVersion,
+        registryUrl: DEFAULT_REGISTRY_URL,
+        integrity: packVersion.integrity,
+        fetchFn: globalThis.fetch,
+      });
+
+      if (!installResult.success) {
+        return jsonResponse(
+          { success: false, error: installResult.error },
+          HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      return jsonResponse({ success: true, integrity: installResult.integrity }, HTTP_STATUS.OK);
     } catch {
       return jsonResponse(
         { success: false, error: ERROR_INTERNAL },
