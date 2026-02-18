@@ -2,7 +2,7 @@ id: WU-1878
 title: Marketplace Install to workspace button
 lane: 'Content: Site Comms'
 type: feature
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-18
 code_paths:
@@ -26,7 +26,8 @@ blocked_by:
 spec_refs:
   - .claude/plans/partitioned-sprouting-nest.md
 risks: []
-notes: 'Sizing: Medium (M). ~10-15 files, ~35 tool calls. Strategy: Single Session. Wave 6b (after 6.1 + 5.5). Final WU — completes browse-to-install flow.'
+notes: 'Sizing: Medium (M). ~10-15 files, ~35 tool calls. Strategy: Single Session. Wave 6b (after
+  6.1 + 5.5). Final WU — completes browse-to-install flow.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: ui
@@ -35,9 +36,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Pack marketplace page (WU-1840) shows pack details but has no install action. Problem: Users must use CLI to install packs after finding them in the marketplace. Solution: Add POST /api/registry/packs/:id/install endpoint accepting { workspaceRoot, version } that calls installPack(). Add Install to workspace button on MarketplacePackDetail component. Requires workspace connected (WU-1873) and registry fetch path (WU-1875).'
+description: 'Context: Pack marketplace page (WU-1840) shows pack details but has no install action.
+  Problem: Users must use CLI to install packs after finding them in the marketplace. Solution: Add
+  POST /api/registry/packs/:id/install endpoint accepting { workspaceRoot, version } that calls
+  installPack(). Add Install to workspace button on MarketplacePackDetail component. Requires
+  workspace connected (WU-1873) and registry fetch path (WU-1875).'
 acceptance:
-  - POST /api/registry/packs/:id/install endpoint accepts workspaceRoot and version, calls installPack()
+  - POST /api/registry/packs/:id/install endpoint accepts workspaceRoot and version, calls
+    installPack()
   - Install to workspace button on MarketplacePackDetail triggers install API call
   - Button disabled when no workspace is connected with helpful tooltip
   - Success/error feedback shown after install attempt
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-site-comms-wu-1878
+claimed_at: 2026-02-18T23:52:04.500Z
+baseline_main_sha: ddd0ead4f8773de8486b4db08ee37404a76f9536
+session_id: c49f6de7-1d22-4acf-88b7-5a1d760b151b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T23:52:04.506Z
