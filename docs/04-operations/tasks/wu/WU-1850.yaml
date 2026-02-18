@@ -17,6 +17,8 @@ tests:
   unit:
     - packages/@lumenflow/surfaces/tests/gates.test.ts
     - packages/@lumenflow/runtime/tests/runtime-daemon.test.ts
+    - packages/@lumenflow/surfaces/cli/__tests__/gates.test.ts
+    - packages/@lumenflow/runtime/__tests__/daemon.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1850.done
@@ -26,10 +28,17 @@ phase: 3
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-18T14:11:57.170Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1850
+session_id: 9512cd71-0d1d-4071-99aa-cffa23426e41
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-18T14:11:57.173Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -43,11 +52,3 @@ acceptance:
   - No relative cross-package imports remain in surfaces or runtime packages
   - All existing tests pass unchanged
   - pnpm gates passes
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1850
-claimed_at: 2026-02-18T14:11:57.170Z
-baseline_main_sha: 0bc67d328de73e6845e4b11349cd854c7d26280b
-session_id: 9512cd71-0d1d-4071-99aa-cffa23426e41
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-18T14:11:57.173Z
