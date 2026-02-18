@@ -2066,23 +2066,20 @@ const VALIDATION_TOOL_MESSAGES = {
   NO_SKILLS_DIR: 'No skills directory found, skipping',
   NO_AGENTS_DIR: 'No agents directory found, skipping',
   AGENT_SKILLS_FAILED: 'Agent skills validation failed',
-  AGENT_SKILLS_VALID_PREFIX: 'All',
-  AGENT_SKILLS_VALID_SUFFIX: 'skill(s) valid',
   AGENT_SYNC_FAILED: 'Agent sync validation failed',
-  AGENT_SYNC_VALID_PREFIX: 'Agent sync valid:',
-  AGENT_SYNC_VALID_SUFFIX: 'agent(s) checked',
   EMPTY_FILE: 'empty file',
   EMPTY_AGENT_CONFIG: 'empty agent config',
   EMPTY_SKILLS_SPEC: 'empty skills spec',
   BACKLOG_SYNC_VALID: 'Backlog sync valid',
   BACKLOG_SYNC_FAILED: 'Backlog sync validation failed',
-  SKILLS_SPEC_VALID_PREFIX: 'Skills spec valid:',
-  SKILLS_SPEC_VALID_SUFFIX: 'spec(s) checked',
   SKILLS_SPEC_FAILED: 'Skills spec validation failed',
   LANE_HEALTH_PASSED: 'Lane health check complete',
-  LANE_SUGGEST_GENERATED_PREFIX: 'Generated',
-  LANE_SUGGEST_GENERATED_SUFFIX: 'lane suggestion(s)',
 } as const;
+
+/** WU-1856: Single function replaces PREFIX/SUFFIX constant fragmentation. */
+function validationCountMsg(label: string, count: number): string {
+  return `${label}: ${count} checked`;
+}
 
 const VALIDATION_TOOL_FILE_EXTENSIONS = ['.md', '.yaml', '.yml'] as const;
 const WU_FILE_EXTENSIONS = ['.yaml', '.yml'] as const;
@@ -2183,8 +2180,8 @@ const validateInProcess: InProcessToolFn = async (rawInput, context) => {
     const STATUS_DONE = 'done';
     for (const file of files) {
       const content = await readFile(path.join(wuDir, file), UTF8_ENCODING);
+      const parsed = core.parseYAML(content);
       if (parsedInput.data.done_only) {
-        const parsed = core.parseYAML(content);
         if (
           parsed &&
           typeof parsed === 'object' &&
@@ -2193,7 +2190,7 @@ const validateInProcess: InProcessToolFn = async (rawInput, context) => {
         )
           continue;
       }
-      const result = core.validateWU(core.parseYAML(content));
+      const result = core.validateWU(parsed);
       if (result.success) {
         totalValid++;
       } else {
@@ -2259,7 +2256,7 @@ const validateAgentSkillsInProcess: InProcessToolFn = async (rawInput, context) 
       );
     }
     return createSuccessOutput({
-      message: `${VALIDATION_TOOL_MESSAGES.AGENT_SKILLS_VALID_PREFIX} ${skillFiles.length} ${VALIDATION_TOOL_MESSAGES.AGENT_SKILLS_VALID_SUFFIX}`,
+      message: validationCountMsg('Agent skills valid', skillFiles.length),
       valid: true,
       count: skillFiles.length,
     });
@@ -2301,7 +2298,7 @@ const validateAgentSyncInProcess: InProcessToolFn = async (_rawInput, context) =
       );
     }
     return createSuccessOutput({
-      message: `${VALIDATION_TOOL_MESSAGES.AGENT_SYNC_VALID_PREFIX} ${agentFiles.length} ${VALIDATION_TOOL_MESSAGES.AGENT_SYNC_VALID_SUFFIX}`,
+      message: validationCountMsg('Agent sync valid', agentFiles.length),
       valid: true,
       count: agentFiles.length,
     });
@@ -2373,7 +2370,7 @@ const validateSkillsSpecInProcess: InProcessToolFn = async (_rawInput, context) 
       );
     }
     return createSuccessOutput({
-      message: `${VALIDATION_TOOL_MESSAGES.SKILLS_SPEC_VALID_PREFIX} ${skillFiles.length} ${VALIDATION_TOOL_MESSAGES.SKILLS_SPEC_VALID_SUFFIX}`,
+      message: validationCountMsg('Skills spec valid', skillFiles.length),
       valid: true,
       count: skillFiles.length,
     });
@@ -2485,20 +2482,14 @@ const laneSuggestInProcess: InProcessToolFn = async (rawInput, context) => {
     const laneConfigMap = resolveLanePolicyConfig(config);
     const existingLanes = Object.keys(laneConfigMap);
 
-    const suggestions = core.getDefaultSuggestions({
-      existingLanes,
-      directoryStructure: [],
-      packageNames: [],
-      readme: null,
-      packageJson: null,
-      hasDocsDir: false,
-      hasAppsDir: false,
-      hasPackagesDir: false,
-      isMonorepo: false,
-    });
+    // WU-1856: Use core's real filesystem scanner instead of empty stub.
+    // Override existingLanes with policy-resolved lanes (more authoritative).
+    const projectContext = core.gatherProjectContext(projectRoot);
+    projectContext.existingLanes = existingLanes;
+    const suggestions = core.getDefaultSuggestions(projectContext);
 
     return createSuccessOutput({
-      message: `${VALIDATION_TOOL_MESSAGES.LANE_SUGGEST_GENERATED_PREFIX} ${suggestions.length} ${VALIDATION_TOOL_MESSAGES.LANE_SUGGEST_GENERATED_SUFFIX}`,
+      message: validationCountMsg('Lane suggestions generated', suggestions.length),
       suggestions,
       existing_lanes: existingLanes,
     });

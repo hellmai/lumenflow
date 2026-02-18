@@ -6,6 +6,7 @@
  * WU-1426: Validation tools
  * WU-1457: All validation commands use shared schemas
  * WU-1802: Migrated from runCliCommand to executeViaPack (runtime-first)
+ * WU-1856: Fix duplicate message constants, tighten constant naming
  */
 
 import {
@@ -27,7 +28,6 @@ import { CliCommands } from '../mcp-constants.js';
 
 /**
  * Fallback messages when executeViaPack returns no structured data/error.
- * Every user-facing string is a constant — no magic strings.
  */
 const ValidationMessages = {
   VALIDATE_PASSED: 'Validation passed',
@@ -40,7 +40,6 @@ const ValidationMessages = {
   BACKLOG_SYNC_FAILED: 'validate:backlog-sync failed',
   SKILLS_SPEC_VALID: 'Skills spec valid',
   SKILLS_SPEC_FAILED: 'validate:skills-spec failed',
-  LUMENFLOW_VALIDATE_PASSED: 'Validation passed',
   LUMENFLOW_VALIDATE_FAILED: 'lumenflow-validate failed',
 } as const;
 
@@ -229,7 +228,7 @@ export const lumenflowValidateTool: ToolDefinition = {
     });
 
     return result.success
-      ? success(result.data ?? { message: ValidationMessages.LUMENFLOW_VALIDATE_PASSED })
+      ? success(result.data ?? { message: ValidationMessages.VALIDATE_PASSED })
       : error(
           result.error?.message ?? ValidationMessages.LUMENFLOW_VALIDATE_FAILED,
           ErrorCodes.LUMENFLOW_VALIDATE_ERROR,
