@@ -11,6 +11,8 @@ export default defineConfig({
     },
   },
   test: {
+    // Gate runner filters safety-critical tests via `--project web`.
+    name: 'web',
     globals: true,
     environment: 'node',
     include: [
