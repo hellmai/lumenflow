@@ -236,12 +236,17 @@ export class ToolHost {
     let output = await this.dispatch(capability, parsedInput.data, context, scopeEnforced);
     output = this.normalizeOutput(output, capability);
 
-    await this.recordTrace({
-      receiptId,
-      startedAt,
-      output,
-      policyDecisions: authResult.policyDecisions,
-    });
+    try {
+      await this.recordTrace({
+        receiptId,
+        startedAt,
+        output,
+        policyDecisions: authResult.policyDecisions,
+      });
+    } catch {
+      // Trace recording failure must not swallow the tool execution result.
+      // The tool output is more important to the caller than the audit trail.
+    }
 
     return output;
   }
@@ -447,13 +452,14 @@ export class ToolHost {
     scopeEnforcementNote: string;
     policyDecisions: PolicyDecision[];
   }): Promise<void> {
+    const finishedAt = this.now();
     await this.evidenceStore.appendTrace({
       schema_version: 1,
       kind: TOOL_TRACE_KINDS.TOOL_CALL_FINISHED,
       receipt_id: params.receiptId,
-      timestamp: this.now().toISOString(),
+      timestamp: finishedAt.toISOString(),
       result: params.result,
-      duration_ms: this.now().getTime() - params.startedAt,
+      duration_ms: finishedAt.getTime() - params.startedAt,
       scope_enforcement_note: params.scopeEnforcementNote,
       policy_decisions: params.policyDecisions,
       artifacts_written: [],
@@ -478,13 +484,14 @@ export class ToolHost {
         ? 'denied'
         : 'failure';
 
+    const finishedAt = this.now();
     await this.evidenceStore.appendTrace({
       schema_version: 1,
       kind: TOOL_TRACE_KINDS.TOOL_CALL_FINISHED,
       receipt_id: receiptId,
-      timestamp: this.now().toISOString(),
+      timestamp: finishedAt.toISOString(),
       result,
-      duration_ms: this.now().getTime() - startedAt,
+      duration_ms: finishedAt.getTime() - startedAt,
       output_hash: outputHash,
       output_ref: outputReference,
       scope_enforcement_note:
