@@ -42,6 +42,7 @@ export const COMMAND_CATEGORIES = {
   SETUP_DEVELOPMENT: 'Setup & Development',
   METRICS_FLOW: 'Metrics & Flow',
   STATE_MANAGEMENT: 'State Management',
+  PACKS: 'Packs',
 } as const;
 
 /**
@@ -802,6 +803,17 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     binPath: './dist/git-branch.js',
     description: 'Show git branch with audit trail',
     category: COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
+  },
+
+  // ============================================================================
+  // Packs - Pack authoring and management
+  // ============================================================================
+  {
+    name: 'pack:scaffold',
+    binName: 'pack-scaffold',
+    binPath: './dist/pack-scaffold.js',
+    description: 'Scaffold a new domain pack',
+    category: COMMAND_CATEGORIES.PACKS,
   },
 ];
 
