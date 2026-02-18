@@ -1,0 +1,42 @@
+id: WU-1796
+title: 'Phase 3 pack workflow: route gate policy evaluation through Kernel PolicyEngine'
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-18
+code_paths:
+  - packages/@lumenflow/kernel/src/policy/index.ts
+  - packages/@lumenflow/kernel/src/runtime/kernel-runtime.ts
+  - packages/@lumenflow/packs/software-delivery/gate-policies.ts
+  - packages/@lumenflow/cli/src/gates.ts
+tests:
+  manual:
+    - Run gate execution for a task scope and verify runtime policy allow/deny decision is reflected in emitted events/receipts.
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/policy-engine.test.ts
+    - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1796.done
+dependencies: []
+initiative: INIT-030
+phase: 3
+spec_refs:
+  - /home/tom/.claude/plans/zesty-jumping-pixel.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: INIT-030 Phase 2 migrated core task commands, but gate evaluation and orchestration still rely on shell-oriented pathways. Problem: gate policy decisions are not yet consistently executed through runtime policy evaluation for pack-composed workflows. Solution: introduce a runtime-backed gate policy evaluation path that uses Kernel PolicyEngine decisions as the authoritative source before gate execution.'
+acceptance:
+  - Software-delivery gate policies are evaluated through Kernel PolicyEngine via a runtime path before gate execution decisions are finalized.
+  - At least one production surface path uses runtime policy evaluation results without shelling out for policy decision logic.
+  - Policy evaluation outcomes are captured in runtime/evidence metadata sufficient for auditing allow or deny decisions.
