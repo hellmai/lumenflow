@@ -376,10 +376,7 @@ export async function executeViaPack(
     // via CLI would bypass that enforcement and create a security hole.
     const errorCode = runtimeResult.error?.code;
     if (errorCode && NON_FALLBACK_ERROR_CODES.has(errorCode)) {
-      return error(
-        runtimeResult.error?.message ?? `${toolName} denied by kernel`,
-        errorCode,
-      );
+      return error(runtimeResult.error?.message ?? `${toolName} denied by kernel`, errorCode);
     }
 
     runtimeFailureMessage = runtimeResult.error?.message;

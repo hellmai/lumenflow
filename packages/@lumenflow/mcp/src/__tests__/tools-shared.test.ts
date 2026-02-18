@@ -60,9 +60,9 @@ describe('executeViaPack fallback policy (WU-1859)', () => {
       success: false,
       error: { code: TOOL_ERROR_CODES.POLICY_DENIED, message: 'Policy denies this action' },
     };
-    const runtimeFactory = vi.fn().mockResolvedValue(
-      mockRuntime(vi.fn().mockResolvedValue(policyDenied)),
-    );
+    const runtimeFactory = vi
+      .fn()
+      .mockResolvedValue(mockRuntime(vi.fn().mockResolvedValue(policyDenied)));
 
     const result = await executeViaPack(toolName, toolInput, {
       ...baseOptions,
@@ -80,9 +80,9 @@ describe('executeViaPack fallback policy (WU-1859)', () => {
       success: false,
       error: { code: TOOL_ERROR_CODES.SCOPE_DENIED, message: 'Scope check failed' },
     };
-    const runtimeFactory = vi.fn().mockResolvedValue(
-      mockRuntime(vi.fn().mockResolvedValue(scopeDenied)),
-    );
+    const runtimeFactory = vi
+      .fn()
+      .mockResolvedValue(mockRuntime(vi.fn().mockResolvedValue(scopeDenied)));
 
     const result = await executeViaPack(toolName, toolInput, {
       ...baseOptions,
@@ -104,9 +104,9 @@ describe('executeViaPack fallback policy (WU-1859)', () => {
       success: false,
       error: { code: 'SPEC_TAMPERED', message: 'Workspace spec has been tampered with' },
     };
-    const runtimeFactory = vi.fn().mockResolvedValue(
-      mockRuntime(vi.fn().mockResolvedValue(specTampered)),
-    );
+    const runtimeFactory = vi
+      .fn()
+      .mockResolvedValue(mockRuntime(vi.fn().mockResolvedValue(specTampered)));
 
     const result = await executeViaPack(toolName, toolInput, {
       ...baseOptions,
@@ -159,9 +159,9 @@ describe('executeViaPack fallback policy (WU-1859)', () => {
       success: false,
       error: { code: TOOL_ERROR_CODES.TOOL_NOT_FOUND, message: 'Tool not registered' },
     };
-    const runtimeFactory = vi.fn().mockResolvedValue(
-      mockRuntime(vi.fn().mockResolvedValue(toolNotFound)),
-    );
+    const runtimeFactory = vi
+      .fn()
+      .mockResolvedValue(mockRuntime(vi.fn().mockResolvedValue(toolNotFound)));
     mockCliRunner.mockResolvedValue(cliSuccess('handled via cli'));
 
     const result = await executeViaPack(toolName, toolInput, {
@@ -182,9 +182,9 @@ describe('executeViaPack fallback policy (WU-1859)', () => {
       success: true,
       data: { wu: 'WU-1' },
     };
-    const runtimeFactory = vi.fn().mockResolvedValue(
-      mockRuntime(vi.fn().mockResolvedValue(runtimeSuccess)),
-    );
+    const runtimeFactory = vi
+      .fn()
+      .mockResolvedValue(mockRuntime(vi.fn().mockResolvedValue(runtimeSuccess)));
 
     const result = await executeViaPack(toolName, toolInput, {
       ...baseOptions,
@@ -204,9 +204,9 @@ describe('executeViaPack fallback policy (WU-1859)', () => {
       success: false,
       error: { code: 'UNKNOWN_ERROR', message: 'Something unexpected' },
     };
-    const runtimeFactory = vi.fn().mockResolvedValue(
-      mockRuntime(vi.fn().mockResolvedValue(genericFailure)),
-    );
+    const runtimeFactory = vi
+      .fn()
+      .mockResolvedValue(mockRuntime(vi.fn().mockResolvedValue(genericFailure)));
     mockCliRunner.mockResolvedValue(cliSuccess('cli handled it'));
 
     const result = await executeViaPack(toolName, toolInput, {
