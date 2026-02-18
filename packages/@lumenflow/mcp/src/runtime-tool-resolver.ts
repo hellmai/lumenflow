@@ -769,7 +769,9 @@ function formatInitiativeStatusMessage(input: {
   }
   lines.push('');
   lines.push(INIT_STATUS_PROGRESS_HEADER);
-  lines.push(`  Done: ${input.progress.done}/${input.progress.total} (${input.progress.percentage}%)`);
+  lines.push(
+    `  Done: ${input.progress.done}/${input.progress.total} (${input.progress.percentage}%)`,
+  );
   lines.push(`  Active: ${input.progress.active}`);
   lines.push(`  Pending: ${input.progress.pending}`);
   lines.push(`  Blocked: ${input.progress.blocked}`);
@@ -784,7 +786,9 @@ function formatInitiativeStatusMessage(input: {
   }
   lines.push('');
   lines.push(INIT_STATUS_LANE_HEADER);
-  const lanes = Object.keys(input.laneAvailability).sort((left, right) => left.localeCompare(right));
+  const lanes = Object.keys(input.laneAvailability).sort((left, right) =>
+    left.localeCompare(right),
+  );
   if (lanes.length === 0) {
     lines.push('  (no lanes found)');
   } else {
@@ -838,7 +842,10 @@ async function resolveInitiativeDoc(
   throw new Error(`Initiative '${initiativeRef}' not found`);
 }
 
-async function getCompletedWuIdsFromStamps(core: CoreModule, projectRoot: string): Promise<Set<string>> {
+async function getCompletedWuIdsFromStamps(
+  core: CoreModule,
+  projectRoot: string,
+): Promise<Set<string>> {
   const completed = new Set<string>();
   const stampsPath = path.join(projectRoot, core.LUMENFLOW_PATHS.STAMPS_DIR);
 
@@ -860,7 +867,9 @@ function parseSinceInputToDate(sinceInput: string): Date {
   const relativeMatch = ORCHESTRATE_MONITOR_TIME_PATTERN.exec(sinceInput.trim());
   if (relativeMatch) {
     const amount = Number.parseInt(relativeMatch[1] ?? '0', 10);
-    const unit = (relativeMatch[2] ?? '').toLowerCase() as keyof typeof ORCHESTRATE_MONITOR_TIME_MULTIPLIERS;
+    const unit = (
+      relativeMatch[2] ?? ''
+    ).toLowerCase() as keyof typeof ORCHESTRATE_MONITOR_TIME_MULTIPLIERS;
     const multiplier = ORCHESTRATE_MONITOR_TIME_MULTIPLIERS[unit];
     if (Number.isFinite(amount) && amount > 0 && multiplier) {
       return new Date(Date.now() - amount * multiplier);
@@ -932,7 +941,11 @@ const orchestrateInitStatusInProcess: InProcessToolFn = async (rawInput, context
   try {
     const core = await getCoreLazy();
     const projectRoot = resolveWorkspaceRoot(context);
-    const initiativeDoc = await resolveInitiativeDoc(core, projectRoot, parsedInput.data.initiative);
+    const initiativeDoc = await resolveInitiativeDoc(
+      core,
+      projectRoot,
+      parsedInput.data.initiative,
+    );
     const initiativeId = initiativeDoc.id ?? parsedInput.data.initiative;
     const initiativeSlug = initiativeDoc.slug ?? '';
     const allWUs = await core.listWUs({ projectRoot });
@@ -965,7 +978,10 @@ const orchestrateInitStatusInProcess: InProcessToolFn = async (rawInput, context
     const config = core.getConfig({ projectRoot });
     const laneConfigMap = resolveLanePolicyConfig(config);
     const laneAvailability = computeLaneAvailability(statusEntries, laneConfigMap);
-    const lifecycleStatus = deriveInitiativeLifecycleStatus(initiativeDoc.status, initiativeDoc.phases);
+    const lifecycleStatus = deriveInitiativeLifecycleStatus(
+      initiativeDoc.status,
+      initiativeDoc.phases,
+    );
     const rawStatus = normalizeLifecycleStatus(initiativeDoc.status);
     const message = formatInitiativeStatusMessage({
       initiativeId,
