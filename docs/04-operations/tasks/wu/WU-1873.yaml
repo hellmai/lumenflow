@@ -12,7 +12,7 @@ tests:
   manual:
     - Verify dropdown shows recent workspaces after connecting
   unit:
-    - apps/web/src/components/__tests__/workspace-selector.test.tsx
+    - apps/web/__tests__/workspace-selector.test.tsx
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1873.done
