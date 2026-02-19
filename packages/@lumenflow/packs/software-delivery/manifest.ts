@@ -56,6 +56,20 @@ const WU_RELEASE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuReleaseTool';
 const WU_RECOVER_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuRecoverTool';
 const WU_REPAIR_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuRepairTool';
 const GATES_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#gatesTool';
+const MEM_INIT_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memInitTool';
+const MEM_START_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memStartTool';
+const MEM_READY_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memReadyTool';
+const MEM_CHECKPOINT_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memCheckpointTool';
+const MEM_CLEANUP_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memCleanupTool';
+const MEM_CONTEXT_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memContextTool';
+const MEM_CREATE_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memCreateTool';
+const MEM_DELETE_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memDeleteTool';
+const MEM_EXPORT_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memExportTool';
+const MEM_INBOX_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memInboxTool';
+const MEM_SIGNAL_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memSignalTool';
+const MEM_SUMMARIZE_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memSummarizeTool';
+const MEM_TRIAGE_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memTriageTool';
+const MEM_RECOVER_TOOL_ENTRY = 'tool-impl/memory-tools.ts#memRecoverTool';
 
 const TOOL_PERMISSIONS = {
   'wu:block': 'write',
@@ -177,6 +191,20 @@ const TOOL_ENTRY_OVERRIDES: Partial<Record<ToolName, string>> = {
   'wu:recover': WU_RECOVER_TOOL_ENTRY,
   'wu:repair': WU_REPAIR_TOOL_ENTRY,
   gates: GATES_TOOL_ENTRY,
+  'mem:init': MEM_INIT_TOOL_ENTRY,
+  'mem:start': MEM_START_TOOL_ENTRY,
+  'mem:ready': MEM_READY_TOOL_ENTRY,
+  'mem:checkpoint': MEM_CHECKPOINT_TOOL_ENTRY,
+  'mem:cleanup': MEM_CLEANUP_TOOL_ENTRY,
+  'mem:context': MEM_CONTEXT_TOOL_ENTRY,
+  'mem:create': MEM_CREATE_TOOL_ENTRY,
+  'mem:delete': MEM_DELETE_TOOL_ENTRY,
+  'mem:export': MEM_EXPORT_TOOL_ENTRY,
+  'mem:inbox': MEM_INBOX_TOOL_ENTRY,
+  'mem:signal': MEM_SIGNAL_TOOL_ENTRY,
+  'mem:summarize': MEM_SUMMARIZE_TOOL_ENTRY,
+  'mem:triage': MEM_TRIAGE_TOOL_ENTRY,
+  'mem:recover': MEM_RECOVER_TOOL_ENTRY,
 };
 
 export interface SoftwareDeliveryMigrationScorecard {

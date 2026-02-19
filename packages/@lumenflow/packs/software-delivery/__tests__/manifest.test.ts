@@ -6,7 +6,7 @@ import {
 } from '../manifest.js';
 
 const PENDING_RUNTIME_TOOL_ENTRY = 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool';
-const PENDING_RUNTIME_BASELINE = 66;
+const PENDING_RUNTIME_BASELINE = 52;
 
 describe('software-delivery migration scorecard (WU-1885)', () => {
   it('reports declared, pending-runtime, and real-handler totals', () => {
@@ -71,6 +71,30 @@ describe('software-delivery migration scorecard (WU-1885)', () => {
       ['wu:cleanup', 'tool-impl/wu-lifecycle-tools.ts#wuCleanupTool'],
       ['wu:unlock-lane', 'tool-impl/wu-lifecycle-tools.ts#wuUnlockLaneTool'],
       ['gates', 'tool-impl/wu-lifecycle-tools.ts#gatesTool'],
+    ]);
+
+    for (const [toolName, expectedEntry] of expectedEntries.entries()) {
+      const manifestTool = SOFTWARE_DELIVERY_MANIFEST.tools.find((tool) => tool.name === toolName);
+      expect(manifestTool?.entry).toBe(expectedEntry);
+    }
+  });
+
+  it('routes WU-1896 memory tools to runtime handlers', () => {
+    const expectedEntries = new Map<string, string>([
+      ['mem:init', 'tool-impl/memory-tools.ts#memInitTool'],
+      ['mem:start', 'tool-impl/memory-tools.ts#memStartTool'],
+      ['mem:ready', 'tool-impl/memory-tools.ts#memReadyTool'],
+      ['mem:checkpoint', 'tool-impl/memory-tools.ts#memCheckpointTool'],
+      ['mem:cleanup', 'tool-impl/memory-tools.ts#memCleanupTool'],
+      ['mem:context', 'tool-impl/memory-tools.ts#memContextTool'],
+      ['mem:create', 'tool-impl/memory-tools.ts#memCreateTool'],
+      ['mem:delete', 'tool-impl/memory-tools.ts#memDeleteTool'],
+      ['mem:export', 'tool-impl/memory-tools.ts#memExportTool'],
+      ['mem:inbox', 'tool-impl/memory-tools.ts#memInboxTool'],
+      ['mem:signal', 'tool-impl/memory-tools.ts#memSignalTool'],
+      ['mem:summarize', 'tool-impl/memory-tools.ts#memSummarizeTool'],
+      ['mem:triage', 'tool-impl/memory-tools.ts#memTriageTool'],
+      ['mem:recover', 'tool-impl/memory-tools.ts#memRecoverTool'],
     ]);
 
     for (const [toolName, expectedEntry] of expectedEntries.entries()) {
