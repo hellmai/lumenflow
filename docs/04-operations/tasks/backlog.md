@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1908 — Fix pre-existing test failures in cli-integration and initiative-tools](wu/WU-1908.yaml) — Framework: MCP
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
@@ -36,11 +35,11 @@ sections:
 - [WU-1897 — Migrate initiative/plan/setup/orchestration command surfaces to software-delivery handlers](wu/WU-1897.yaml) — Framework: Core Lifecycle
 - [WU-1903 — Migrate agent integration tools to software-delivery pack handlers](wu/WU-1903.yaml) — Framework: Core Lifecycle
 - [WU-1904 — Migrate extended memory tools to software-delivery pack handlers](wu/WU-1904.yaml) — Framework: Core Lifecycle
+- [WU-1908 — Fix pre-existing test failures in cli-integration and initiative-tools](wu/WU-1908.yaml) — Framework: MCP
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
-- [WU-1905 — Migrate flow and metrics tools to software-delivery pack handlers](wu/WU-1905.yaml) — Framework: Core Lifecycle
 - [WU-1893 — Migrate WU state-transition maintenance commands to software-delivery handlers](wu/WU-1893.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
@@ -871,6 +870,7 @@ sections:
 - [WU-1906 — orchestrate:initiative --dry-run false-complete when all WUs blocked](wu/WU-1906.yaml)
 - [WU-1907 — Document agent safety architecture, YAML editing policy, and per-client protection gaps](wu/WU-1907.yaml)
 - [WU-1887 — Migrate core WU lifecycle commands to software-delivery pack handlers](wu/WU-1887.yaml)
+- [WU-1905 — Migrate flow and metrics tools to software-delivery pack handlers](wu/WU-1905.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
