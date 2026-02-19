@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1907 — Document agent safety architecture, YAML editing policy, and per-client protection gaps](wu/WU-1907.yaml) — Content: Framework Docs
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
@@ -38,12 +37,13 @@ sections:
 - [WU-1903 — Migrate agent integration tools to software-delivery pack handlers](wu/WU-1903.yaml) — Framework: Core Lifecycle
 - [WU-1904 — Migrate extended memory tools to software-delivery pack handlers](wu/WU-1904.yaml) — Framework: Core Lifecycle
 - [WU-1905 — Migrate flow and metrics tools to software-delivery pack handlers](wu/WU-1905.yaml) — Framework: Core Lifecycle
-- [WU-1906 — orchestrate:initiative --dry-run false-complete when all WUs blocked](wu/WU-1906.yaml) — Framework: CLI Orchestration
+- [WU-1907 — Document agent safety architecture, YAML editing policy, and per-client protection gaps](wu/WU-1907.yaml) — Content: Framework Docs
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
 - [WU-1887 — Migrate core WU lifecycle commands to software-delivery pack handlers](wu/WU-1887.yaml) — Framework: Core Lifecycle
+- [WU-1906 — orchestrate:initiative --dry-run false-complete when all WUs blocked](wu/WU-1906.yaml) — Framework: CLI Orchestration
 
 ## ⛔ Blocked
 
