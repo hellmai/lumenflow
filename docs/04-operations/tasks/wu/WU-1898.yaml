@@ -2,7 +2,7 @@ id: WU-1898
 title: Fix CLI template condition bypass in wu:brief/wu:spawn prompt assembly
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-19
 code_paths:
@@ -56,3 +56,6 @@ session_id: 003574c5-7243-4202-b18c-8c442618b172
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-19T11:52:53.870Z
+locked: true
+completed_at: 2026-02-19T12:12:41.560Z
+completed: 2026-02-19
