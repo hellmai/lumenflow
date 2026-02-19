@@ -2,7 +2,7 @@ id: WU-1897
 title: Migrate initiative/plan/setup/orchestration command surfaces to software-delivery handlers
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-19
 code_paths:
@@ -50,4 +50,9 @@ acceptance:
     migration mode
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-19T16:56:26.793Z
+approved_at: 2026-02-19T17:15:12.065Z
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1897
+claimed_at: 2026-02-19T17:15:12.058Z
+baseline_main_sha: 0e3954993543d0c1507cd9d9433ee8efd71d5512
+session_id: 1d23196b-1438-4c07-88e2-946cfe16872a
