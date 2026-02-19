@@ -28,11 +28,11 @@ sections:
 - [WU-1890 — Migrate file/git/state/validation/lane surfaces and clear remaining software-delivery stubs](wu/WU-1890.yaml) — Framework: Core Lifecycle
 - [WU-1891 — Disable migration compat guard by default and remove software-delivery fallback shims](wu/WU-1891.yaml) — Framework: Core Lifecycle
 - [WU-1892 — Prove pack #1 tracer-bullet end-to-end in a bootstrapped workspace](wu/WU-1892.yaml) — Framework: Core Lifecycle
-- [WU-1897 — Migrate initiative/plan/setup/orchestration command surfaces to software-delivery handlers](wu/WU-1897.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1897 — Migrate initiative/plan/setup/orchestration command surfaces to software-delivery handlers](wu/WU-1897.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
