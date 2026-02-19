@@ -7,12 +7,15 @@ priority: P3
 created: 2026-02-19
 code_paths:
   - packages/@lumenflow/kernel/src/evidence/evidence-store.ts
+  - packages/@lumenflow/kernel/src/evidence/fs-helpers.ts
+  - packages/@lumenflow/kernel/src/evidence/index.ts
   - packages/@lumenflow/kernel/src/tool-host/tool-host.ts
 tests:
   manual:
     - Verify onTraceError callback fires when trace recording fails
   unit:
     - packages/@lumenflow/kernel/src/__tests__/evidence-store.test.ts
+    - packages/@lumenflow/kernel/src/__tests__/fs-helpers.test.ts
     - packages/@lumenflow/kernel/src/__tests__/tool-host.test.ts
   e2e: []
 artifacts:
