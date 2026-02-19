@@ -263,7 +263,9 @@ function parseAndIndexMemory(content: string, includeArchived: boolean): Indexed
     // Skip if we already emitted this ID (only the last-write-wins version matters)
     if (seen.has(node.id)) continue;
 
-    const latestVersion = result.byId.get(node.id)!;
+    const latestVersion = result.byId.get(node.id);
+    /* istanbul ignore next -- byId is always populated in Phase 1 */
+    if (!latestVersion) continue;
     seen.add(node.id);
 
     // WU-1238: Filter archived nodes unless includeArchived is true
