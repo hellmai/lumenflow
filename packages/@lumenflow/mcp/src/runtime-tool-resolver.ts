@@ -2704,175 +2704,37 @@ const wuInferLaneInProcess: InProcessToolFn = async (rawInput, context) => {
   }
 };
 
+// WU-1897: These in-process implementations are retained temporarily for
+// reference parity but are intentionally removed from resolver registration.
+const retiredWu1897InProcessHandlers = [
+  lumenflowInProcess,
+  lumenflowDoctorInProcess,
+  lumenflowIntegrateInProcess,
+  lumenflowUpgradeInProcess,
+  lumenflowReleaseInProcess,
+  docsSyncInProcess,
+  syncTemplatesInProcess,
+  planCreateInProcess,
+  planEditInProcess,
+  planLinkInProcess,
+  planPromoteInProcess,
+  initiativeListInProcess,
+  initiativeStatusInProcess,
+  initiativeCreateInProcess,
+  initiativeEditInProcess,
+  initiativeAddWuInProcess,
+  initiativeRemoveWuInProcess,
+  initiativeBulkAssignInProcess,
+  initiativePlanInProcess,
+  initPlanInProcess,
+  orchestrateInitiativeInProcess,
+  orchestrateInitStatusInProcess,
+  orchestrateMonitorInProcess,
+  delegationListInProcess,
+] as const;
+void retiredWu1897InProcessHandlers;
+
 const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolHandler>([
-  [
-    IN_PROCESS_TOOL_NAMES.LUMENFLOW,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: lumenflowInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.LUMENFLOW_DOCTOR,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_DOCTOR,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: lumenflowDoctorInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.LUMENFLOW_INTEGRATE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_INTEGRATE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: lumenflowIntegrateInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.LUMENFLOW_UPGRADE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_UPGRADE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: lumenflowUpgradeInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.LUMENFLOW_RELEASE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.LUMENFLOW_RELEASE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: lumenflowReleaseInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.DOCS_SYNC,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.DOCS_SYNC,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: docsSyncInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.SYNC_TEMPLATES,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.SYNC_TEMPLATES,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: syncTemplatesInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.PLAN_CREATE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_CREATE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: planCreateInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.PLAN_EDIT,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_EDIT,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: planEditInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.PLAN_LINK,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_LINK,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: planLinkInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.PLAN_PROMOTE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.PLAN_PROMOTE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: planPromoteInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_LIST,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_LIST,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeListInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_STATUS,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_STATUS,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeStatusInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_CREATE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_CREATE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeCreateInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_EDIT,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_EDIT,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeEditInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_ADD_WU,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_ADD_WU,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeAddWuInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_REMOVE_WU,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_REMOVE_WU,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeRemoveWuInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_BULK_ASSIGN,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_BULK_ASSIGN,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativeBulkAssignInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INITIATIVE_PLAN,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INITIATIVE_PLAN,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initiativePlanInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.INIT_PLAN,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.INIT_PLAN,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: initPlanInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.ORCHESTRATE_INITIATIVE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.ORCHESTRATE_INITIATIVE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: orchestrateInitiativeInProcess,
-    },
-  ],
   [
     IN_PROCESS_TOOL_NAMES.WU_INFER_LANE,
     {
@@ -2960,33 +2822,6 @@ const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolH
       inputSchema: SIGNAL_CLEANUP_INPUT_SCHEMA,
       outputSchema: DEFAULT_IN_PROCESS_OUTPUT_SCHEMA,
       fn: signalCleanupInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.ORCHESTRATE_INIT_STATUS,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.ORCHESTRATE_INIT_STATUS,
-      inputSchema: ORCHESTRATE_INIT_STATUS_INPUT_SCHEMA,
-      outputSchema: DEFAULT_IN_PROCESS_OUTPUT_SCHEMA,
-      fn: orchestrateInitStatusInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.ORCHESTRATE_MONITOR,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.ORCHESTRATE_MONITOR,
-      inputSchema: ORCHESTRATE_MONITOR_INPUT_SCHEMA,
-      outputSchema: DEFAULT_IN_PROCESS_OUTPUT_SCHEMA,
-      fn: orchestrateMonitorInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.DELEGATION_LIST,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.DELEGATION_LIST,
-      inputSchema: DELEGATION_LIST_INPUT_SCHEMA,
-      outputSchema: DEFAULT_IN_PROCESS_OUTPUT_SCHEMA,
-      fn: delegationListInProcess,
     },
   ],
   // WU-1905: flow:bottlenecks, flow:report, metrics:snapshot, metrics, and lumenflow:metrics

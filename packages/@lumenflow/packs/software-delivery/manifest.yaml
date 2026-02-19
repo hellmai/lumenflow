@@ -266,56 +266,56 @@ tools:
         access: write
   # initiative:*
   - name: initiative:add-wu
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeAddWuTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: initiative:bulk-assign
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeBulkAssignTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: initiative:create
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeCreateTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: initiative:edit
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeEditTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: initiative:list
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeListTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: initiative:plan
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativePlanTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: initiative:remove-wu
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeRemoveWuTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: initiative:status
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initiativeStatusTool
     permission: read
     required_scopes:
       - type: path
@@ -448,21 +448,21 @@ tools:
         access: write
   # orchestrate:*
   - name: orchestrate:init-status
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#orchestrateInitStatusTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: orchestrate:initiative
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#orchestrateInitiativeTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: orchestrate:monitor
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#orchestrateMonitorTool
     permission: read
     required_scopes:
       - type: path
@@ -492,28 +492,28 @@ tools:
         access: read
   # plan:*
   - name: plan:create
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#planCreateTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: plan:edit
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#planEditTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: plan:link
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#planLinkTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: plan:promote
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#planPromoteTool
     permission: write
     required_scopes:
       - type: path
@@ -528,56 +528,56 @@ tools:
         pattern: '**'
         access: write
   - name: delegation:list
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#delegationListTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: docs:sync
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#docsSyncTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: init:plan
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#initPlanTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: lumenflow
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#lumenflowTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: lumenflow:doctor
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#lumenflowDoctorTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: lumenflow:integrate
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#lumenflowIntegrateTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: lumenflow:release
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#lumenflowReleaseTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: lumenflow:upgrade
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#lumenflowUpgradeTool
     permission: write
     required_scopes:
       - type: path
@@ -605,7 +605,7 @@ tools:
         pattern: '**'
         access: write
   - name: sync:templates
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/initiative-orchestration-tools.ts#syncTemplatesTool
     permission: write
     required_scopes:
       - type: path

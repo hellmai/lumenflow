@@ -74,6 +74,42 @@ const AGENT_SESSION_TOOL_ENTRY = 'tool-impl/agent-tools.ts#agentSessionTool';
 const AGENT_SESSION_END_TOOL_ENTRY = 'tool-impl/agent-tools.ts#agentSessionEndTool';
 const AGENT_LOG_ISSUE_TOOL_ENTRY = 'tool-impl/agent-tools.ts#agentLogIssueTool';
 const AGENT_ISSUES_QUERY_TOOL_ENTRY = 'tool-impl/agent-tools.ts#agentIssuesQueryTool';
+const INITIATIVE_ADD_WU_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#initiativeAddWuTool';
+const INITIATIVE_BULK_ASSIGN_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#initiativeBulkAssignTool';
+const INITIATIVE_CREATE_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#initiativeCreateTool';
+const INITIATIVE_EDIT_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#initiativeEditTool';
+const INITIATIVE_LIST_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#initiativeListTool';
+const INITIATIVE_PLAN_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#initiativePlanTool';
+const INITIATIVE_REMOVE_WU_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#initiativeRemoveWuTool';
+const INITIATIVE_STATUS_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#initiativeStatusTool';
+const ORCHESTRATE_INIT_STATUS_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#orchestrateInitStatusTool';
+const ORCHESTRATE_INITIATIVE_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#orchestrateInitiativeTool';
+const ORCHESTRATE_MONITOR_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#orchestrateMonitorTool';
+const PLAN_CREATE_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#planCreateTool';
+const PLAN_EDIT_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#planEditTool';
+const PLAN_LINK_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#planLinkTool';
+const PLAN_PROMOTE_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#planPromoteTool';
+const DELEGATION_LIST_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#delegationListTool';
+const DOCS_SYNC_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#docsSyncTool';
+const INIT_PLAN_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#initPlanTool';
+const LUMENFLOW_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#lumenflowTool';
+const LUMENFLOW_DOCTOR_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#lumenflowDoctorTool';
+const LUMENFLOW_INTEGRATE_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#lumenflowIntegrateTool';
+const LUMENFLOW_RELEASE_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#lumenflowReleaseTool';
+const LUMENFLOW_UPGRADE_TOOL_ENTRY =
+  'tool-impl/initiative-orchestration-tools.ts#lumenflowUpgradeTool';
+const SYNC_TEMPLATES_TOOL_ENTRY = 'tool-impl/initiative-orchestration-tools.ts#syncTemplatesTool';
 
 const TOOL_PERMISSIONS = {
   'wu:block': 'write',
@@ -213,6 +249,30 @@ const TOOL_ENTRY_OVERRIDES: Partial<Record<ToolName, string>> = {
   'agent:session-end': AGENT_SESSION_END_TOOL_ENTRY,
   'agent:log-issue': AGENT_LOG_ISSUE_TOOL_ENTRY,
   'agent:issues-query': AGENT_ISSUES_QUERY_TOOL_ENTRY,
+  'initiative:add-wu': INITIATIVE_ADD_WU_TOOL_ENTRY,
+  'initiative:bulk-assign': INITIATIVE_BULK_ASSIGN_TOOL_ENTRY,
+  'initiative:create': INITIATIVE_CREATE_TOOL_ENTRY,
+  'initiative:edit': INITIATIVE_EDIT_TOOL_ENTRY,
+  'initiative:list': INITIATIVE_LIST_TOOL_ENTRY,
+  'initiative:plan': INITIATIVE_PLAN_TOOL_ENTRY,
+  'initiative:remove-wu': INITIATIVE_REMOVE_WU_TOOL_ENTRY,
+  'initiative:status': INITIATIVE_STATUS_TOOL_ENTRY,
+  'orchestrate:init-status': ORCHESTRATE_INIT_STATUS_TOOL_ENTRY,
+  'orchestrate:initiative': ORCHESTRATE_INITIATIVE_TOOL_ENTRY,
+  'orchestrate:monitor': ORCHESTRATE_MONITOR_TOOL_ENTRY,
+  'plan:create': PLAN_CREATE_TOOL_ENTRY,
+  'plan:edit': PLAN_EDIT_TOOL_ENTRY,
+  'plan:link': PLAN_LINK_TOOL_ENTRY,
+  'plan:promote': PLAN_PROMOTE_TOOL_ENTRY,
+  'delegation:list': DELEGATION_LIST_TOOL_ENTRY,
+  'docs:sync': DOCS_SYNC_TOOL_ENTRY,
+  'init:plan': INIT_PLAN_TOOL_ENTRY,
+  lumenflow: LUMENFLOW_TOOL_ENTRY,
+  'lumenflow:doctor': LUMENFLOW_DOCTOR_TOOL_ENTRY,
+  'lumenflow:integrate': LUMENFLOW_INTEGRATE_TOOL_ENTRY,
+  'lumenflow:release': LUMENFLOW_RELEASE_TOOL_ENTRY,
+  'lumenflow:upgrade': LUMENFLOW_UPGRADE_TOOL_ENTRY,
+  'sync:templates': SYNC_TEMPLATES_TOOL_ENTRY,
 };
 
 export interface SoftwareDeliveryMigrationScorecard {

@@ -268,17 +268,31 @@ describe('packToolCapabilityResolver', () => {
     }
   });
 
-  it('resolves orchestration query tools to in-process handlers', async () => {
-    const toolNames = [
-      ORCHESTRATION_QUERY_TOOL_NAMES.INIT_STATUS,
-      ORCHESTRATION_QUERY_TOOL_NAMES.MONITOR,
-      ORCHESTRATION_QUERY_TOOL_NAMES.DELEGATION_LIST,
-    ];
+  it('resolves WU-1897 orchestration query tools to subprocess handlers', async () => {
+    const toolEntries = [
+      {
+        name: ORCHESTRATION_QUERY_TOOL_NAMES.INIT_STATUS,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#orchestrateInitStatusTool',
+      },
+      {
+        name: ORCHESTRATION_QUERY_TOOL_NAMES.MONITOR,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#orchestrateMonitorTool',
+      },
+      {
+        name: ORCHESTRATION_QUERY_TOOL_NAMES.DELEGATION_LIST,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#delegationListTool',
+      },
+    ] as const;
 
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+    for (const toolEntry of toolEntries) {
+      const capability = await packToolCapabilityResolver(
+        createResolverInput(toolEntry.name, toolEntry.entry),
+      );
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
+      expect(isInProcessPackToolRegistered(toolEntry.name)).toBe(false);
+      if (capability?.handler.kind === TOOL_HANDLER_KINDS.SUBPROCESS) {
+        expect(capability.handler.entry).toContain(toolEntry.entry);
+      }
     }
   });
 
@@ -438,24 +452,59 @@ describe('packToolCapabilityResolver', () => {
     }
   });
 
-  it('resolves initiative/orchestration lifecycle tools to in-process handlers', async () => {
-    const toolNames = [
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.LIST,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.STATUS,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.CREATE,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.EDIT,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.ADD_WU,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.REMOVE_WU,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.BULK_ASSIGN,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.PLAN,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.INIT_PLAN,
-      INITIATIVE_ORCHESTRATION_TOOL_NAMES.ORCHESTRATE_INITIATIVE,
-    ];
+  it('resolves WU-1897 initiative/orchestration lifecycle tools to subprocess handlers', async () => {
+    const toolEntries = [
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.LIST,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeListTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.STATUS,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeStatusTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.CREATE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeCreateTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.EDIT,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeEditTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.ADD_WU,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeAddWuTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.REMOVE_WU,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeRemoveWuTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.BULK_ASSIGN,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativeBulkAssignTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.PLAN,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initiativePlanTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.INIT_PLAN,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#initPlanTool',
+      },
+      {
+        name: INITIATIVE_ORCHESTRATION_TOOL_NAMES.ORCHESTRATE_INITIATIVE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#orchestrateInitiativeTool',
+      },
+    ] as const;
 
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+    for (const toolEntry of toolEntries) {
+      const capability = await packToolCapabilityResolver(
+        createResolverInput(toolEntry.name, toolEntry.entry),
+      );
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
+      expect(isInProcessPackToolRegistered(toolEntry.name)).toBe(false);
+      if (capability?.handler.kind === TOOL_HANDLER_KINDS.SUBPROCESS) {
+        expect(capability.handler.entry).toContain(toolEntry.entry);
+      }
     }
   });
 
@@ -527,25 +576,63 @@ describe('packToolCapabilityResolver', () => {
     }
   });
 
-  it('resolves setup/coordination/plan lifecycle tools to in-process handlers', async () => {
-    const toolNames = [
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_DOCTOR,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_INTEGRATE,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_UPGRADE,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_RELEASE,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.DOCS_SYNC,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.SYNC_TEMPLATES,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_CREATE,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_EDIT,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_LINK,
-      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_PROMOTE,
-    ];
+  it('resolves WU-1897 setup/coordination/plan lifecycle tools to subprocess handlers', async () => {
+    const toolEntries = [
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#lumenflowTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_DOCTOR,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#lumenflowDoctorTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_INTEGRATE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#lumenflowIntegrateTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_UPGRADE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#lumenflowUpgradeTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_RELEASE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#lumenflowReleaseTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.DOCS_SYNC,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#docsSyncTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.SYNC_TEMPLATES,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#syncTemplatesTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_CREATE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#planCreateTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_EDIT,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#planEditTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_LINK,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#planLinkTool',
+      },
+      {
+        name: SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_PROMOTE,
+        entry: 'tool-impl/initiative-orchestration-tools.ts#planPromoteTool',
+      },
+    ] as const;
 
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+    for (const toolEntry of toolEntries) {
+      const capability = await packToolCapabilityResolver(
+        createResolverInput(toolEntry.name, toolEntry.entry),
+      );
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
+      expect(isInProcessPackToolRegistered(toolEntry.name)).toBe(false);
+      if (capability?.handler.kind === TOOL_HANDLER_KINDS.SUBPROCESS) {
+        expect(capability.handler.entry).toContain(toolEntry.entry);
+      }
     }
   });
 
@@ -806,34 +893,34 @@ describe('WU-1803/WU-1905: context tool registration (flow/metrics migrated to p
 });
 
 /**
- * WU-1804: Tests for orchestration/delegation query tool in-process registration
+ * WU-1897: orchestration/delegation query tools migrated to pack handlers.
  */
-describe('WU-1804: orchestration/delegation query tool registration', () => {
+describe('WU-1897: orchestration/delegation query tool migration', () => {
   const ORCHESTRATION_QUERY_TOOLS = [
     ORCHESTRATION_QUERY_TOOL_NAMES.INIT_STATUS,
     ORCHESTRATION_QUERY_TOOL_NAMES.MONITOR,
     ORCHESTRATION_QUERY_TOOL_NAMES.DELEGATION_LIST,
   ] as const;
 
-  it.each(ORCHESTRATION_QUERY_TOOLS)('registers %s as an in-process pack tool', (toolName) => {
-    expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+  it.each(ORCHESTRATION_QUERY_TOOLS)('%s is no longer registered as in-process', (toolName) => {
+    expect(isInProcessPackToolRegistered(toolName)).toBe(false);
   });
 
-  it('lists all orchestration/delegation query tools in the registry', () => {
+  it('does not list orchestration/delegation query tools in the in-process registry', () => {
     const registeredTools = listInProcessPackTools();
     for (const toolName of ORCHESTRATION_QUERY_TOOLS) {
-      expect(registeredTools).toContain(toolName);
+      expect(registeredTools).not.toContain(toolName);
     }
   });
 
   it.each(ORCHESTRATION_QUERY_TOOLS)(
-    'resolves %s to an in-process handler via packToolCapabilityResolver',
+    'resolves %s to a subprocess handler via packToolCapabilityResolver',
     async (toolName) => {
       const input = createResolverInput(toolName);
       const capability = await packToolCapabilityResolver(input);
 
       expect(capability).toBeDefined();
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
     },
   );
 });
@@ -1947,6 +2034,43 @@ describe('WU-1903: agent integration tools migrate off in-process handlers', () 
       WU_1903_AGENT_TOOLS.AGENT_SESSION_END,
       WU_1903_AGENT_TOOLS.AGENT_LOG_ISSUE,
       WU_1903_AGENT_TOOLS.AGENT_ISSUES_QUERY,
+    ];
+    const registeredTools = listInProcessPackTools();
+
+    for (const toolName of migratedTools) {
+      expect(isInProcessPackToolRegistered(toolName)).toBe(false);
+      expect(registeredTools).not.toContain(toolName);
+    }
+  });
+});
+
+describe('WU-1897: initiative/plan/setup/orchestration tools migrate off in-process handlers', () => {
+  it('does not register migrated initiative/plan/setup/orchestration tools as in-process', () => {
+    const migratedTools = [
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.LIST,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.STATUS,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.CREATE,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.EDIT,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.ADD_WU,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.REMOVE_WU,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.BULK_ASSIGN,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.PLAN,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.INIT_PLAN,
+      INITIATIVE_ORCHESTRATION_TOOL_NAMES.ORCHESTRATE_INITIATIVE,
+      ORCHESTRATION_QUERY_TOOL_NAMES.INIT_STATUS,
+      ORCHESTRATION_QUERY_TOOL_NAMES.MONITOR,
+      ORCHESTRATION_QUERY_TOOL_NAMES.DELEGATION_LIST,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_DOCTOR,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_INTEGRATE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_UPGRADE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.LUMENFLOW_RELEASE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.DOCS_SYNC,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.SYNC_TEMPLATES,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_CREATE,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_EDIT,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_LINK,
+      SETUP_COORDINATION_PLAN_TOOL_NAMES.PLAN_PROMOTE,
     ];
     const registeredTools = listInProcessPackTools();
 

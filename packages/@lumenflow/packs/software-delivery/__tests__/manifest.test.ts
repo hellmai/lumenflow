@@ -6,7 +6,7 @@ import {
 } from '../manifest.js';
 
 const PENDING_RUNTIME_TOOL_ENTRY = 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool';
-const PENDING_RUNTIME_BASELINE = 48;
+const PENDING_RUNTIME_BASELINE = 24;
 
 describe('software-delivery migration scorecard (WU-1885)', () => {
   it('reports declared, pending-runtime, and real-handler totals', () => {
@@ -109,6 +109,52 @@ describe('software-delivery migration scorecard (WU-1885)', () => {
       ['agent:session-end', 'tool-impl/agent-tools.ts#agentSessionEndTool'],
       ['agent:log-issue', 'tool-impl/agent-tools.ts#agentLogIssueTool'],
       ['agent:issues-query', 'tool-impl/agent-tools.ts#agentIssuesQueryTool'],
+    ]);
+
+    for (const [toolName, expectedEntry] of expectedEntries.entries()) {
+      const manifestTool = SOFTWARE_DELIVERY_MANIFEST.tools.find((tool) => tool.name === toolName);
+      expect(manifestTool?.entry).toBe(expectedEntry);
+    }
+  });
+
+  it('routes WU-1897 initiative/plan/setup/orchestration tools to runtime handlers', () => {
+    const expectedEntries = new Map<string, string>([
+      ['initiative:add-wu', 'tool-impl/initiative-orchestration-tools.ts#initiativeAddWuTool'],
+      [
+        'initiative:bulk-assign',
+        'tool-impl/initiative-orchestration-tools.ts#initiativeBulkAssignTool',
+      ],
+      ['initiative:create', 'tool-impl/initiative-orchestration-tools.ts#initiativeCreateTool'],
+      ['initiative:edit', 'tool-impl/initiative-orchestration-tools.ts#initiativeEditTool'],
+      ['initiative:list', 'tool-impl/initiative-orchestration-tools.ts#initiativeListTool'],
+      ['initiative:plan', 'tool-impl/initiative-orchestration-tools.ts#initiativePlanTool'],
+      [
+        'initiative:remove-wu',
+        'tool-impl/initiative-orchestration-tools.ts#initiativeRemoveWuTool',
+      ],
+      ['initiative:status', 'tool-impl/initiative-orchestration-tools.ts#initiativeStatusTool'],
+      [
+        'orchestrate:init-status',
+        'tool-impl/initiative-orchestration-tools.ts#orchestrateInitStatusTool',
+      ],
+      [
+        'orchestrate:initiative',
+        'tool-impl/initiative-orchestration-tools.ts#orchestrateInitiativeTool',
+      ],
+      ['orchestrate:monitor', 'tool-impl/initiative-orchestration-tools.ts#orchestrateMonitorTool'],
+      ['plan:create', 'tool-impl/initiative-orchestration-tools.ts#planCreateTool'],
+      ['plan:edit', 'tool-impl/initiative-orchestration-tools.ts#planEditTool'],
+      ['plan:link', 'tool-impl/initiative-orchestration-tools.ts#planLinkTool'],
+      ['plan:promote', 'tool-impl/initiative-orchestration-tools.ts#planPromoteTool'],
+      ['delegation:list', 'tool-impl/initiative-orchestration-tools.ts#delegationListTool'],
+      ['docs:sync', 'tool-impl/initiative-orchestration-tools.ts#docsSyncTool'],
+      ['init:plan', 'tool-impl/initiative-orchestration-tools.ts#initPlanTool'],
+      ['lumenflow', 'tool-impl/initiative-orchestration-tools.ts#lumenflowTool'],
+      ['lumenflow:doctor', 'tool-impl/initiative-orchestration-tools.ts#lumenflowDoctorTool'],
+      ['lumenflow:integrate', 'tool-impl/initiative-orchestration-tools.ts#lumenflowIntegrateTool'],
+      ['lumenflow:release', 'tool-impl/initiative-orchestration-tools.ts#lumenflowReleaseTool'],
+      ['lumenflow:upgrade', 'tool-impl/initiative-orchestration-tools.ts#lumenflowUpgradeTool'],
+      ['sync:templates', 'tool-impl/initiative-orchestration-tools.ts#syncTemplatesTool'],
     ]);
 
     for (const [toolName, expectedEntry] of expectedEntries.entries()) {
