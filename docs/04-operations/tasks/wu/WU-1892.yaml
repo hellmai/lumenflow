@@ -6,15 +6,15 @@ status: in_progress
 priority: P0
 created: 2026-02-19
 code_paths:
-  - packages/@lumenflow/kernel/src/runtime
-  - packages/@lumenflow/mcp/src/tools/runtime-task-tools.ts
+  - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
   - packages/@lumenflow/mcp/src/__tests__/runtime-task-tools.test.ts
-  - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
-  - packages/@lumenflow/packs/software-delivery
 tests:
   manual:
     - Run full tracer-bullet flow in bootstrapped workspace and capture event/evidence outputs
   unit:
+    - packages/@lumenflow/mcp/src/__tests__/runtime-task-tools.test.ts
+    - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
+    - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
     - packages/@lumenflow/mcp/src/__tests__/runtime-task-tools.test.ts
     - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
     - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
@@ -30,10 +30,17 @@ risks: []
 notes: 'Sizing: Simple (expected 5-10 files, <50 tool calls). Strategy: Single Session. Scope is
   tracer-bullet proof harness and acceptance evidence packaging.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-19T19:28:36.556Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1892
+session_id: 7fdbcd93-6584-4170-8425-beb49841d1ff
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-19T19:28:36.562Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -48,11 +55,3 @@ acceptance:
   - Policy decisions, enforced scopes, and evidence receipts are produced and auditable for
     tracer-bullet run
   - No software-delivery command in tracer-bullet flow uses CLI fallback path
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-19T19:28:36.562Z
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1892
-claimed_at: 2026-02-19T19:28:36.556Z
-baseline_main_sha: 3e53981968cf7318e1cdd2e289e8daba9d6c53a8
-session_id: 7fdbcd93-6584-4170-8425-beb49841d1ff
