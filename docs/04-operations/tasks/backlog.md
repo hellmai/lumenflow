@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1894 — Migrate WU delegation/context commands to software-delivery handlers](wu/WU-1894.yaml) — Framework: Core Lifecycle
 - [WU-1893 — Migrate WU state-transition maintenance commands to software-delivery handlers](wu/WU-1893.yaml) — Framework: Core Lifecycle
 - [WU-1892 — Prove pack #1 tracer-bullet end-to-end in a bootstrapped workspace](wu/WU-1892.yaml) — Framework: Core Lifecycle
 - [WU-1891 — Disable migration compat guard by default and remove software-delivery fallback shims](wu/WU-1891.yaml) — Framework: Core Lifecycle
