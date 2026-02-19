@@ -1,7 +1,7 @@
 id: WU-1907
 title: Document agent safety architecture, YAML editing policy, and per-client protection gaps
 lane: 'Content: Framework Docs'
-type: documentation
+type: refactor
 status: in_progress
 priority: P2
 created: 2026-02-19
@@ -27,10 +27,17 @@ risks: []
 notes: Documentation-first approach to agent safety. Enforcement WUs (hooks, GitHub branch
   protection) to follow once policy is documented and agreed.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-19T14:04:31.993Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-framework-docs-wu-1907
+session_id: 51303731-cfa9-4c54-9a49-a3a653611d28
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-19T14:04:32.003Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -54,11 +61,3 @@ acceptance:
     (starting-prompt.md)'
   - Starlight reference page added at apps/docs/src/content/docs/reference/agent-safety.mdx
   - quick-ref-commands.md updated to include config:set and config:get in commands table
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/content-framework-docs-wu-1907
-claimed_at: 2026-02-19T14:04:31.993Z
-baseline_main_sha: 258b966c07dc6e0bcbac12a07ef6724bce189bf4
-session_id: 51303731-cfa9-4c54-9a49-a3a653611d28
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-19T14:04:32.003Z
