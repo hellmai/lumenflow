@@ -2,7 +2,7 @@ id: WU-1892
 title: 'Prove pack #1 tracer-bullet end-to-end in a bootstrapped workspace'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-19
 code_paths:
@@ -50,4 +50,9 @@ acceptance:
   - No software-delivery command in tracer-bullet flow uses CLI fallback path
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-19T19:24:13.175Z
+approved_at: 2026-02-19T19:28:36.562Z
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1892
+claimed_at: 2026-02-19T19:28:36.556Z
+baseline_main_sha: 3e53981968cf7318e1cdd2e289e8daba9d6c53a8
+session_id: 7fdbcd93-6584-4170-8425-beb49841d1ff
