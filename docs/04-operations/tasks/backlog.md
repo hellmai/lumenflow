@@ -30,7 +30,6 @@ sections:
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
 - [WU-1882 — Fix segment padding overflow at 10,000+ segments in EvidenceStore](wu/WU-1882.yaml) — Framework: Core Lifecycle
 - [WU-1883 — Extract ENOENT/stat helpers and add trace-failure telemetry to ToolHost](wu/WU-1883.yaml) — Framework: Core Lifecycle
-- [WU-1881 — Fix multi-instance incremental hydrate duplicate entries in EvidenceStore](wu/WU-1881.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
@@ -846,6 +845,7 @@ sections:
 - [WU-1877 — 4 additional community packs published to registry](wu/WU-1877.yaml)
 - [WU-1876 — Evidence export endpoint with CSV and JSON format support](wu/WU-1876.yaml)
 - [WU-1878 — Marketplace Install to workspace button](wu/WU-1878.yaml)
+- [WU-1881 — Fix multi-instance incremental hydrate duplicate entries in EvidenceStore](wu/WU-1881.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

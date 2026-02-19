@@ -2,7 +2,7 @@ id: WU-1881
 title: Fix multi-instance incremental hydrate duplicate entries in EvidenceStore
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-19
 code_paths:
@@ -45,3 +45,6 @@ session_id: a050e0a4-6ffa-452a-a62b-396ddc6e0a85
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-19T09:22:51.200Z
+locked: true
+completed_at: 2026-02-19T09:30:27.890Z
+completed: 2026-02-19
