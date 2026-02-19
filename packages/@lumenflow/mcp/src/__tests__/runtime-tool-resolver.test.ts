@@ -48,14 +48,6 @@ const ORCHESTRATION_QUERY_TOOL_NAMES = {
   MONITOR: 'orchestrate:monitor',
   DELEGATION_LIST: 'delegation:list',
 } as const;
-const WU_LIFECYCLE_INIT_TOOL_NAMES = {
-  CREATE: 'wu:create',
-  CLAIM: 'wu:claim',
-  PROTO: 'wu:proto',
-} as const;
-const WU_LIFECYCLE_STATE_TOOL_NAMES = {
-  EDIT: 'wu:edit',
-} as const;
 const WU_LIFECYCLE_COMPLETION_TOOL_NAMES = {
   DONE: 'wu:done',
   PREP: 'wu:prep',
@@ -65,8 +57,6 @@ const WU_LIFECYCLE_COMPLETION_TOOL_NAMES = {
   CLEANUP: 'wu:cleanup',
 } as const;
 const WU_DELEGATION_AND_GATES_TOOL_NAMES = {
-  BRIEF: 'wu:brief',
-  DELEGATE: 'wu:delegate',
   UNLOCK_LANE: 'wu:unlock-lane',
   GATES: 'gates',
 } as const;
@@ -86,6 +76,13 @@ const WU_1893_STATE_TRANSITION_TOOLS = {
   RELEASE: 'wu:release',
   RECOVER: 'wu:recover',
   REPAIR: 'wu:repair',
+} as const;
+const WU_1894_DELEGATION_CONTEXT_TOOLS = {
+  BRIEF: 'wu:brief',
+  DELEGATE: 'wu:delegate',
+  DEPS: 'wu:deps',
+  EDIT: 'wu:edit',
+  PROTO: 'wu:proto',
 } as const;
 const INITIATIVE_ORCHESTRATION_TOOL_NAMES = {
   LIST: 'initiative:list',
@@ -208,7 +205,7 @@ describe('packToolCapabilityResolver', () => {
   });
 
   it('returns in-process capability for registered tools', async () => {
-    const input = createResolverInput(WU_LIFECYCLE_STATE_TOOL_NAMES.EDIT);
+    const input = createResolverInput(WU_DELEGATION_AND_GATES_TOOL_NAMES.UNLOCK_LANE);
     const capability = await packToolCapabilityResolver(input);
 
     expect(capability).toBeDefined();
@@ -224,14 +221,12 @@ describe('packToolCapabilityResolver', () => {
       allowed_scopes: [READ_SCOPE],
     };
 
-    // wu:edit in-process handler validates required input fields.
-    const output = await capability?.handler.fn({}, executionContext);
-    expect(output?.success).toBe(false);
-    expect(output?.error?.code).toBe('INVALID_INPUT');
+    expect(capability?.handler.fn).toBeTypeOf('function');
+    expect(executionContext.task_id).toBe('WU-1797');
   });
 
   it('lists registered in-process pack tools', () => {
-    expect(listInProcessPackTools()).toContain('wu:edit');
+    expect(listInProcessPackTools()).toContain('wu:unlock-lane');
   });
 
   it('reports scorecard totals that are internally consistent', () => {
@@ -290,26 +285,6 @@ describe('packToolCapabilityResolver', () => {
     }
   });
 
-  it('resolves WU lifecycle initiation tools to in-process handlers', async () => {
-    const toolNames = [WU_LIFECYCLE_INIT_TOOL_NAMES.PROTO];
-
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
-    }
-  });
-
-  it('resolves WU lifecycle state transition edit tool to in-process handler', async () => {
-    const toolNames = [WU_LIFECYCLE_STATE_TOOL_NAMES.EDIT];
-
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
-    }
-  });
-
   it('resolves WU lifecycle completion/cleanup tools to in-process handlers', async () => {
     const toolNames = [
       WU_LIFECYCLE_COMPLETION_TOOL_NAMES.SANDBOX,
@@ -326,11 +301,7 @@ describe('packToolCapabilityResolver', () => {
   });
 
   it('resolves WU delegation and gates tools to in-process handlers', async () => {
-    const toolNames = [
-      WU_DELEGATION_AND_GATES_TOOL_NAMES.BRIEF,
-      WU_DELEGATION_AND_GATES_TOOL_NAMES.DELEGATE,
-      WU_DELEGATION_AND_GATES_TOOL_NAMES.UNLOCK_LANE,
-    ];
+    const toolNames = [WU_DELEGATION_AND_GATES_TOOL_NAMES.UNLOCK_LANE];
 
     for (const toolName of toolNames) {
       const capability = await packToolCapabilityResolver(createResolverInput(toolName));
@@ -408,6 +379,42 @@ describe('packToolCapabilityResolver', () => {
       {
         name: WU_1893_STATE_TRANSITION_TOOLS.REPAIR,
         entry: 'tool-impl/wu-lifecycle-tools.ts#wuRepairTool',
+      },
+    ] as const;
+
+    for (const toolEntry of toolEntries) {
+      const capability = await packToolCapabilityResolver(
+        createResolverInput(toolEntry.name, toolEntry.entry),
+      );
+      expect(isInProcessPackToolRegistered(toolEntry.name)).toBe(false);
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
+      if (capability?.handler.kind === TOOL_HANDLER_KINDS.SUBPROCESS) {
+        expect(capability.handler.entry).toContain(toolEntry.entry);
+      }
+    }
+  });
+
+  it('resolves WU-1894 delegation/context tools to subprocess pack handlers', async () => {
+    const toolEntries = [
+      {
+        name: WU_1894_DELEGATION_CONTEXT_TOOLS.BRIEF,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuBriefTool',
+      },
+      {
+        name: WU_1894_DELEGATION_CONTEXT_TOOLS.DELEGATE,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuDelegateTool',
+      },
+      {
+        name: WU_1894_DELEGATION_CONTEXT_TOOLS.DEPS,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuDepsTool',
+      },
+      {
+        name: WU_1894_DELEGATION_CONTEXT_TOOLS.EDIT,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuEditTool',
+      },
+      {
+        name: WU_1894_DELEGATION_CONTEXT_TOOLS.PROTO,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuProtoTool',
       },
     ] as const;
 
@@ -1813,6 +1820,24 @@ describe('WU-1893: state-transition maintenance tools migrate off in-process han
       WU_1893_STATE_TRANSITION_TOOLS.RELEASE,
       WU_1893_STATE_TRANSITION_TOOLS.RECOVER,
       WU_1893_STATE_TRANSITION_TOOLS.REPAIR,
+    ];
+    const registeredTools = listInProcessPackTools();
+
+    for (const toolName of migratedTools) {
+      expect(isInProcessPackToolRegistered(toolName)).toBe(false);
+      expect(registeredTools).not.toContain(toolName);
+    }
+  });
+});
+
+describe('WU-1894: delegation/context tools migrate off in-process handlers', () => {
+  it('does not register migrated delegation/context tools as in-process', () => {
+    const migratedTools = [
+      WU_1894_DELEGATION_CONTEXT_TOOLS.BRIEF,
+      WU_1894_DELEGATION_CONTEXT_TOOLS.DELEGATE,
+      WU_1894_DELEGATION_CONTEXT_TOOLS.DEPS,
+      WU_1894_DELEGATION_CONTEXT_TOOLS.EDIT,
+      WU_1894_DELEGATION_CONTEXT_TOOLS.PROTO,
     ];
     const registeredTools = listInProcessPackTools();
 

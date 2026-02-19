@@ -40,6 +40,11 @@ const WU_DONE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDoneTool';
 const WU_PREP_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuPrepTool';
 const WU_PREFLIGHT_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuPreflightTool';
 const WU_VALIDATE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuValidateTool';
+const WU_BRIEF_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuBriefTool';
+const WU_DELEGATE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDelegateTool';
+const WU_DEPS_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDepsTool';
+const WU_EDIT_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuEditTool';
+const WU_PROTO_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuProtoTool';
 const WU_BLOCK_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuBlockTool';
 const WU_UNBLOCK_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuUnblockTool';
 const WU_RELEASE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuReleaseTool';
@@ -151,6 +156,11 @@ const TOOL_ENTRY_OVERRIDES: Partial<Record<ToolName, string>> = {
   'wu:prep': WU_PREP_TOOL_ENTRY,
   'wu:preflight': WU_PREFLIGHT_TOOL_ENTRY,
   'wu:validate': WU_VALIDATE_TOOL_ENTRY,
+  'wu:brief': WU_BRIEF_TOOL_ENTRY,
+  'wu:delegate': WU_DELEGATE_TOOL_ENTRY,
+  'wu:deps': WU_DEPS_TOOL_ENTRY,
+  'wu:edit': WU_EDIT_TOOL_ENTRY,
+  'wu:proto': WU_PROTO_TOOL_ENTRY,
   'wu:block': WU_BLOCK_TOOL_ENTRY,
   'wu:unblock': WU_UNBLOCK_TOOL_ENTRY,
   'wu:release': WU_RELEASE_TOOL_ENTRY,
