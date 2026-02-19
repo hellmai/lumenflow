@@ -2531,36 +2531,6 @@ const WU_QUERY_MESSAGES = {
   INFER_LANE_FAILED: 'wu:infer-lane failed',
 } as const;
 
-const wuSandboxInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_SANDBOX_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
-const wuPruneInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_PRUNE_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
-const wuDeleteInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_DELETE_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
-const wuCleanupInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_CLEANUP_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
-const wuUnlockLaneInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_UNLOCK_LANE_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
 const agentSessionInProcess: InProcessToolFn = async () =>
   createFailureOutput(
     VALIDATION_TOOL_ERROR_CODES.AGENT_SESSION_ERROR,
@@ -2843,46 +2813,6 @@ const wuInferLaneInProcess: InProcessToolFn = async (rawInput, context) => {
 };
 
 const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolHandler>([
-  [
-    IN_PROCESS_TOOL_NAMES.WU_SANDBOX,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_SANDBOX,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuSandboxInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_PRUNE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_PRUNE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuPruneInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_DELETE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_DELETE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuDeleteInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_CLEANUP,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_CLEANUP,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuCleanupInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_UNLOCK_LANE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_UNLOCK_LANE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuUnlockLaneInProcess,
-    },
-  ],
   [
     IN_PROCESS_TOOL_NAMES.AGENT_SESSION,
     {

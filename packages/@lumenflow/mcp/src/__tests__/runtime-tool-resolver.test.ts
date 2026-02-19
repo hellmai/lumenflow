@@ -48,18 +48,6 @@ const ORCHESTRATION_QUERY_TOOL_NAMES = {
   MONITOR: 'orchestrate:monitor',
   DELEGATION_LIST: 'delegation:list',
 } as const;
-const WU_LIFECYCLE_COMPLETION_TOOL_NAMES = {
-  DONE: 'wu:done',
-  PREP: 'wu:prep',
-  SANDBOX: 'wu:sandbox',
-  PRUNE: 'wu:prune',
-  DELETE: 'wu:delete',
-  CLEANUP: 'wu:cleanup',
-} as const;
-const WU_DELEGATION_AND_GATES_TOOL_NAMES = {
-  UNLOCK_LANE: 'wu:unlock-lane',
-  GATES: 'gates',
-} as const;
 const WU_1887_CORE_LIFECYCLE_TOOLS = {
   STATUS: 'wu:status',
   CREATE: 'wu:create',
@@ -69,6 +57,13 @@ const WU_1887_CORE_LIFECYCLE_TOOLS = {
   PREFLIGHT: 'wu:preflight',
   VALIDATE: 'wu:validate',
   GATES: 'gates',
+} as const;
+const WU_1895_CLEANUP_ADMIN_TOOLS = {
+  SANDBOX: 'wu:sandbox',
+  PRUNE: 'wu:prune',
+  DELETE: 'wu:delete',
+  CLEANUP: 'wu:cleanup',
+  UNLOCK_LANE: 'wu:unlock-lane',
 } as const;
 const WU_1893_STATE_TRANSITION_TOOLS = {
   BLOCK: 'wu:block',
@@ -205,7 +200,7 @@ describe('packToolCapabilityResolver', () => {
   });
 
   it('returns in-process capability for registered tools', async () => {
-    const input = createResolverInput(WU_DELEGATION_AND_GATES_TOOL_NAMES.UNLOCK_LANE);
+    const input = createResolverInput('context:get');
     const capability = await packToolCapabilityResolver(input);
 
     expect(capability).toBeDefined();
@@ -226,7 +221,7 @@ describe('packToolCapabilityResolver', () => {
   });
 
   it('lists registered in-process pack tools', () => {
-    expect(listInProcessPackTools()).toContain('wu:unlock-lane');
+    expect(listInProcessPackTools()).toContain('context:get');
   });
 
   it('reports scorecard totals that are internally consistent', () => {
@@ -277,31 +272,6 @@ describe('packToolCapabilityResolver', () => {
       ORCHESTRATION_QUERY_TOOL_NAMES.MONITOR,
       ORCHESTRATION_QUERY_TOOL_NAMES.DELEGATION_LIST,
     ];
-
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
-    }
-  });
-
-  it('resolves WU lifecycle completion/cleanup tools to in-process handlers', async () => {
-    const toolNames = [
-      WU_LIFECYCLE_COMPLETION_TOOL_NAMES.SANDBOX,
-      WU_LIFECYCLE_COMPLETION_TOOL_NAMES.PRUNE,
-      WU_LIFECYCLE_COMPLETION_TOOL_NAMES.DELETE,
-      WU_LIFECYCLE_COMPLETION_TOOL_NAMES.CLEANUP,
-    ];
-
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
-    }
-  });
-
-  it('resolves WU delegation and gates tools to in-process handlers', async () => {
-    const toolNames = [WU_DELEGATION_AND_GATES_TOOL_NAMES.UNLOCK_LANE];
 
     for (const toolName of toolNames) {
       const capability = await packToolCapabilityResolver(createResolverInput(toolName));
@@ -415,6 +385,42 @@ describe('packToolCapabilityResolver', () => {
       {
         name: WU_1894_DELEGATION_CONTEXT_TOOLS.PROTO,
         entry: 'tool-impl/wu-lifecycle-tools.ts#wuProtoTool',
+      },
+    ] as const;
+
+    for (const toolEntry of toolEntries) {
+      const capability = await packToolCapabilityResolver(
+        createResolverInput(toolEntry.name, toolEntry.entry),
+      );
+      expect(isInProcessPackToolRegistered(toolEntry.name)).toBe(false);
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
+      if (capability?.handler.kind === TOOL_HANDLER_KINDS.SUBPROCESS) {
+        expect(capability.handler.entry).toContain(toolEntry.entry);
+      }
+    }
+  });
+
+  it('resolves WU-1895 cleanup/admin tools to subprocess pack handlers', async () => {
+    const toolEntries = [
+      {
+        name: WU_1895_CLEANUP_ADMIN_TOOLS.SANDBOX,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuSandboxTool',
+      },
+      {
+        name: WU_1895_CLEANUP_ADMIN_TOOLS.PRUNE,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuPruneTool',
+      },
+      {
+        name: WU_1895_CLEANUP_ADMIN_TOOLS.DELETE,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuDeleteTool',
+      },
+      {
+        name: WU_1895_CLEANUP_ADMIN_TOOLS.CLEANUP,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuCleanupTool',
+      },
+      {
+        name: WU_1895_CLEANUP_ADMIN_TOOLS.UNLOCK_LANE,
+        entry: 'tool-impl/wu-lifecycle-tools.ts#wuUnlockLaneTool',
       },
     ] as const;
 
@@ -1838,6 +1844,24 @@ describe('WU-1894: delegation/context tools migrate off in-process handlers', ()
       WU_1894_DELEGATION_CONTEXT_TOOLS.DEPS,
       WU_1894_DELEGATION_CONTEXT_TOOLS.EDIT,
       WU_1894_DELEGATION_CONTEXT_TOOLS.PROTO,
+    ];
+    const registeredTools = listInProcessPackTools();
+
+    for (const toolName of migratedTools) {
+      expect(isInProcessPackToolRegistered(toolName)).toBe(false);
+      expect(registeredTools).not.toContain(toolName);
+    }
+  });
+});
+
+describe('WU-1895: cleanup/admin tools migrate off in-process handlers', () => {
+  it('does not register migrated cleanup/admin tools as in-process', () => {
+    const migratedTools = [
+      WU_1895_CLEANUP_ADMIN_TOOLS.SANDBOX,
+      WU_1895_CLEANUP_ADMIN_TOOLS.PRUNE,
+      WU_1895_CLEANUP_ADMIN_TOOLS.DELETE,
+      WU_1895_CLEANUP_ADMIN_TOOLS.CLEANUP,
+      WU_1895_CLEANUP_ADMIN_TOOLS.UNLOCK_LANE,
     ];
     const registeredTools = listInProcessPackTools();
 
