@@ -167,98 +167,98 @@ tools:
         access: read
   # mem:*
   - name: mem:checkpoint
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memCheckpointTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:cleanup
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memCleanupTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:context
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memContextTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: mem:create
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memCreateTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:delete
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memDeleteTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:export
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memExportTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: mem:inbox
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memInboxTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: mem:init
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memInitTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:ready
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memReadyTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: mem:recover
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memRecoverTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:signal
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memSignalTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:start
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memStartTool
     permission: write
     required_scopes:
       - type: path
         pattern: '**'
         access: write
   - name: mem:summarize
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memSummarizeTool
     permission: read
     required_scopes:
       - type: path
         pattern: '**'
         access: read
   - name: mem:triage
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/memory-tools.ts#memTriageTool
     permission: write
     required_scopes:
       - type: path

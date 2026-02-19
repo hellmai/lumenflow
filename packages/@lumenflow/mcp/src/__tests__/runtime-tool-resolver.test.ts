@@ -457,28 +457,39 @@ describe('packToolCapabilityResolver', () => {
     }
   });
 
-  it('resolves memory lifecycle tools to in-process handlers', async () => {
-    const toolNames = [
-      MEMORY_TOOL_NAMES.INIT,
-      MEMORY_TOOL_NAMES.START,
-      MEMORY_TOOL_NAMES.READY,
-      MEMORY_TOOL_NAMES.CHECKPOINT,
-      MEMORY_TOOL_NAMES.CLEANUP,
-      MEMORY_TOOL_NAMES.CONTEXT,
-      MEMORY_TOOL_NAMES.CREATE,
-      MEMORY_TOOL_NAMES.DELETE,
-      MEMORY_TOOL_NAMES.EXPORT,
-      MEMORY_TOOL_NAMES.INBOX,
-      MEMORY_TOOL_NAMES.SIGNAL,
-      MEMORY_TOOL_NAMES.SUMMARIZE,
-      MEMORY_TOOL_NAMES.TRIAGE,
-      MEMORY_TOOL_NAMES.RECOVER,
-    ];
+  it('resolves WU-1896 memory tools to subprocess handlers', async () => {
+    const toolEntries = [
+      { name: MEMORY_TOOL_NAMES.INIT, entry: 'tool-impl/memory-tools.ts#memInitTool' },
+      { name: MEMORY_TOOL_NAMES.START, entry: 'tool-impl/memory-tools.ts#memStartTool' },
+      { name: MEMORY_TOOL_NAMES.READY, entry: 'tool-impl/memory-tools.ts#memReadyTool' },
+      {
+        name: MEMORY_TOOL_NAMES.CHECKPOINT,
+        entry: 'tool-impl/memory-tools.ts#memCheckpointTool',
+      },
+      { name: MEMORY_TOOL_NAMES.CLEANUP, entry: 'tool-impl/memory-tools.ts#memCleanupTool' },
+      { name: MEMORY_TOOL_NAMES.CONTEXT, entry: 'tool-impl/memory-tools.ts#memContextTool' },
+      { name: MEMORY_TOOL_NAMES.CREATE, entry: 'tool-impl/memory-tools.ts#memCreateTool' },
+      { name: MEMORY_TOOL_NAMES.DELETE, entry: 'tool-impl/memory-tools.ts#memDeleteTool' },
+      { name: MEMORY_TOOL_NAMES.EXPORT, entry: 'tool-impl/memory-tools.ts#memExportTool' },
+      { name: MEMORY_TOOL_NAMES.INBOX, entry: 'tool-impl/memory-tools.ts#memInboxTool' },
+      { name: MEMORY_TOOL_NAMES.SIGNAL, entry: 'tool-impl/memory-tools.ts#memSignalTool' },
+      {
+        name: MEMORY_TOOL_NAMES.SUMMARIZE,
+        entry: 'tool-impl/memory-tools.ts#memSummarizeTool',
+      },
+      { name: MEMORY_TOOL_NAMES.TRIAGE, entry: 'tool-impl/memory-tools.ts#memTriageTool' },
+      { name: MEMORY_TOOL_NAMES.RECOVER, entry: 'tool-impl/memory-tools.ts#memRecoverTool' },
+    ] as const;
 
-    for (const toolName of toolNames) {
-      const capability = await packToolCapabilityResolver(createResolverInput(toolName));
-      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.IN_PROCESS);
-      expect(isInProcessPackToolRegistered(toolName)).toBe(true);
+    for (const toolEntry of toolEntries) {
+      const capability = await packToolCapabilityResolver(
+        createResolverInput(toolEntry.name, toolEntry.entry),
+      );
+      expect(capability?.handler.kind).toBe(TOOL_HANDLER_KINDS.SUBPROCESS);
+      expect(isInProcessPackToolRegistered(toolEntry.name)).toBe(false);
+      if (capability?.handler.kind === TOOL_HANDLER_KINDS.SUBPROCESS) {
+        expect(capability.handler.entry).toContain(toolEntry.entry);
+      }
     }
   });
 
@@ -1862,6 +1873,33 @@ describe('WU-1895: cleanup/admin tools migrate off in-process handlers', () => {
       WU_1895_CLEANUP_ADMIN_TOOLS.DELETE,
       WU_1895_CLEANUP_ADMIN_TOOLS.CLEANUP,
       WU_1895_CLEANUP_ADMIN_TOOLS.UNLOCK_LANE,
+    ];
+    const registeredTools = listInProcessPackTools();
+
+    for (const toolName of migratedTools) {
+      expect(isInProcessPackToolRegistered(toolName)).toBe(false);
+      expect(registeredTools).not.toContain(toolName);
+    }
+  });
+});
+
+describe('WU-1896: memory tools migrate off in-process handlers', () => {
+  it('does not register migrated memory tools as in-process', () => {
+    const migratedTools = [
+      MEMORY_TOOL_NAMES.INIT,
+      MEMORY_TOOL_NAMES.START,
+      MEMORY_TOOL_NAMES.READY,
+      MEMORY_TOOL_NAMES.CHECKPOINT,
+      MEMORY_TOOL_NAMES.CLEANUP,
+      MEMORY_TOOL_NAMES.CONTEXT,
+      MEMORY_TOOL_NAMES.CREATE,
+      MEMORY_TOOL_NAMES.DELETE,
+      MEMORY_TOOL_NAMES.EXPORT,
+      MEMORY_TOOL_NAMES.INBOX,
+      MEMORY_TOOL_NAMES.SIGNAL,
+      MEMORY_TOOL_NAMES.SUMMARIZE,
+      MEMORY_TOOL_NAMES.TRIAGE,
+      MEMORY_TOOL_NAMES.RECOVER,
     ];
     const registeredTools = listInProcessPackTools();
 
