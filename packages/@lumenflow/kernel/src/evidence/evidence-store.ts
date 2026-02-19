@@ -17,7 +17,7 @@ const DEFAULT_LOCK_RETRY_DELAY_MS = 20;
 const DEFAULT_LOCK_MAX_RETRIES = 250;
 const DEFAULT_COMPACTION_THRESHOLD_BYTES = 10 * 1024 * 1024; // 10 MiB
 const ACTIVE_TRACE_FILE_NAME = 'tool-traces.jsonl';
-const SEGMENT_FILE_PATTERN = /^tool-traces\.(\d{4})\.jsonl$/;
+const SEGMENT_FILE_PATTERN = /^tool-traces\.(\d+)\.jsonl$/;
 
 export interface EvidenceStoreOptions {
   evidenceRoot: string;
@@ -368,7 +368,7 @@ export class EvidenceStore {
       }
     }
 
-    const segmentName = `tool-traces.${String(nextNumber).padStart(4, '0')}.jsonl`;
+    const segmentName = `tool-traces.${String(nextNumber).padStart(8, '0')}.jsonl`;
     const segmentPath = join(this.tracesDir, segmentName);
 
     // Atomic rename: active file becomes the new segment

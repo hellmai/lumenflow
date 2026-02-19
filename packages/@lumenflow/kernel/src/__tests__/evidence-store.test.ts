@@ -276,7 +276,7 @@ describe('evidence store', () => {
       const { readdir } = await import('node:fs/promises');
       const tracesDir = join(evidenceRoot, 'traces');
       const files = await readdir(tracesDir);
-      const segmentFiles = files.filter((f: string) => /^tool-traces\.\d{4}\.jsonl$/.test(f));
+      const segmentFiles = files.filter((f: string) => /^tool-traces\.\d+\.jsonl$/.test(f));
 
       expect(segmentFiles.length).toBeGreaterThanOrEqual(1);
     });
@@ -494,6 +494,52 @@ describe('evidence store', () => {
       expect(uniqueReceiptIds.has('receipt-dup-1')).toBe(true);
       expect(uniqueReceiptIds.has('receipt-dup-2')).toBe(true);
       expect(uniqueReceiptIds.has('receipt-dup-3')).toBe(true);
+    });
+  });
+
+  describe('segment padding overflow at 10,000+ segments', () => {
+    it('reads segment 10000+ files that exceed 4-digit padding', async () => {
+      const store = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 1, // force compaction on every append
+      });
+
+      // Manually create a segment file with a 5-digit number (simulating 10000+ rotations).
+      // This is the minimal reproduction: write a valid segment file with segment number 10000,
+      // then verify a fresh store instance can read it.
+      const tracesDir = join(evidenceRoot, 'traces');
+      await mkdir(tracesDir, { recursive: true });
+
+      const entry = makeStartedEntry('receipt-seg10000', 'WU-seg10000');
+      const segmentContent = `${JSON.stringify(entry)}\n`;
+
+      // Write a segment file with a 5-digit number (10000) using the expected padStart(8) format
+      await writeFile(join(tracesDir, 'tool-traces.00010000.jsonl'), segmentContent, 'utf8');
+
+      // A fresh store instance must discover and read segment 10000
+      const freshStore = new EvidenceStore({ evidenceRoot });
+      const traces = await freshStore.readTraces();
+
+      expect(traces).toHaveLength(1);
+      expect(traces[0]?.receipt_id).toBe('receipt-seg10000');
+    });
+
+    it('compactIfNeeded produces 8-digit padded segment filenames', async () => {
+      const store = new EvidenceStore({
+        evidenceRoot,
+        compactionThresholdBytes: 1, // trigger compaction on first append
+      });
+
+      await store.appendTrace(makeStartedEntry('receipt-pad8', 'WU-pad8'));
+
+      // After compaction, verify the segment filename uses 8-digit padding
+      const { readdir: readdirLocal } = await import('node:fs/promises');
+      const tracesDir = join(evidenceRoot, 'traces');
+      const files = await readdirLocal(tracesDir);
+      const segmentFiles = files.filter((f: string) => f.startsWith('tool-traces.') && f.endsWith('.jsonl') && f !== 'tool-traces.jsonl');
+
+      expect(segmentFiles).toHaveLength(1);
+      expect(segmentFiles[0]).toBe('tool-traces.00000001.jsonl');
     });
   });
 
