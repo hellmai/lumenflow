@@ -8,7 +8,9 @@ created: 2026-02-19
 code_paths:
   - packages/@lumenflow/core/src/lane-lock.ts
   - packages/@lumenflow/core/src/__tests__/lane-lock.test.ts
-  - docs/04-operations/_frameworks/lumenflow/**
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md
+  - apps/docs/src/content/docs/concepts/lanes.mdx
+  - apps/docs/src/content/docs/guides/troubleshooting.mdx
 tests:
   manual:
     - Spawn two wu:claim processes rapidly for same lane and verify second one fails
