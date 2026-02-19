@@ -20,9 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1905 — Migrate flow and metrics tools to software-delivery pack handlers](wu/WU-1905.yaml) — Framework: Core Lifecycle
-- [WU-1904 — Migrate extended memory tools to software-delivery pack handlers](wu/WU-1904.yaml) — Framework: Core Lifecycle
-- [WU-1903 — Migrate agent integration tools to software-delivery pack handlers](wu/WU-1903.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
@@ -38,6 +35,9 @@ sections:
 - [WU-1895 — Migrate WU cleanup/admin commands to software-delivery handlers](wu/WU-1895.yaml) — Framework: Core Lifecycle
 - [WU-1896 — Migrate memory command surfaces to software-delivery handlers](wu/WU-1896.yaml) — Framework: Core Lifecycle
 - [WU-1897 — Migrate initiative/plan/setup/orchestration command surfaces to software-delivery handlers](wu/WU-1897.yaml) — Framework: Core Lifecycle
+- [WU-1903 — Migrate agent integration tools to software-delivery pack handlers](wu/WU-1903.yaml) — Framework: Core Lifecycle
+- [WU-1904 — Migrate extended memory tools to software-delivery pack handlers](wu/WU-1904.yaml) — Framework: Core Lifecycle
+- [WU-1905 — Migrate flow and metrics tools to software-delivery pack handlers](wu/WU-1905.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
