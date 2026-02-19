@@ -144,7 +144,8 @@
     "./wu-validation": "./dist/wu-validation.js",
     "./wu-validation-constants": "./dist/wu-validation-constants.js",
     "./wu-validator": "./dist/wu-validator.js",
-    "./wu-yaml-fixer": "./dist/wu-yaml-fixer.js"
+    "./wu-yaml-fixer": "./dist/wu-yaml-fixer.js",
+    "./normalize-config-keys": "./dist/normalize-config-keys.js"
   },
   "main": "./dist/index.js",
   "bin": {

@@ -1,0 +1,142 @@
+---
+title: config:set & config:get
+description: CLI commands for safe .lumenflow.config.yaml modification
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+CLI commands for safely reading and modifying `.lumenflow.config.yaml` with Zod schema validation.
+
+<Aside type="caution">
+  `config:set` uses the micro-worktree pattern for atomic commits. It writes to `origin/main` via an
+  isolated temporary branch, not to the local checkout.
+</Aside>
+
+## config:set
+
+Safely updates a value in `.lumenflow.config.yaml`.
+
+```bash
+pnpm config:set --key <dotpath> --value <value>
+```
+
+### Arguments
+
+| Flag      | Required | Description                                              |
+| --------- | -------- | -------------------------------------------------------- |
+| `--key`   | Yes      | Config key in dot notation (e.g., `methodology.testing`) |
+| `--value` | Yes      | Value to set (comma-separated for array append)          |
+| `--help`  | No       | Show usage information                                   |
+
+### Examples
+
+<Tabs>
+  <TabItem label="Scalar">
+    ```bash
+    # Set methodology testing mode
+    pnpm config:set --key methodology.testing --value test-after
+
+    # Set numeric value
+    pnpm config:set --key gates.minCoverage --value 85
+
+    # Set boolean value
+    pnpm config:set --key gates.enableCoverage --value false
+    ```
+
+  </TabItem>
+  <TabItem label="Array">
+    ```bash
+    # Append items to an array field
+    pnpm config:set --key agents.methodology.principles --value Library-First,KISS
+    ```
+    Comma-separated values are appended to existing array fields.
+  </TabItem>
+  <TabItem label="Nested">
+    ```bash
+    # Set deeply nested value
+    pnpm config:set --key experimental.context_validation --value true
+
+    # Set cloud auto-detection
+    pnpm config:set --key cloud.auto_detect --value true
+    ```
+
+  </TabItem>
+</Tabs>
+
+### Value Coercion
+
+`config:set` automatically coerces string values based on context:
+
+| Input Value | Existing Type | Coerced To         |
+| ----------- | ------------- | ------------------ |
+| `"true"`    | any           | `true` (boolean)   |
+| `"false"`   | any           | `false` (boolean)  |
+| `"42"`      | number        | `42` (number)      |
+| `"A,B,C"`   | array         | append A, B, C     |
+| `"hello"`   | string        | `"hello"` (string) |
+
+### Error Handling
+
+If the value fails Zod schema validation, the command exits with a descriptive error and no changes are written:
+
+```
+[config:set] Validation failed for methodology.testing=invalid-value:
+  methodology.testing: Invalid enum value. Expected 'tdd' | 'test-after' | 'none', received 'invalid-value'
+```
+
+## config:get
+
+Reads and displays a value from `.lumenflow.config.yaml`.
+
+```bash
+pnpm config:get --key <dotpath>
+```
+
+### Arguments
+
+| Flag     | Required | Description                                              |
+| -------- | -------- | -------------------------------------------------------- |
+| `--key`  | Yes      | Config key in dot notation (e.g., `methodology.testing`) |
+| `--help` | No       | Show usage information                                   |
+
+### Examples
+
+```bash
+# Read a scalar value
+pnpm config:get --key methodology.testing
+# Output: tdd
+
+# Read a numeric value
+pnpm config:get --key gates.minCoverage
+# Output: 90
+
+# Read an object (outputs as YAML)
+pnpm config:get --key methodology
+# Output:
+#   testing: tdd
+#   architecture: hexagonal
+
+# Read a missing key
+pnpm config:get --key nonexistent.key
+# Output: [config:get] Key "nonexistent.key" is not set (undefined)
+```
+
+## Common Dotpaths
+
+| Dotpath                           | Type     | Values                         |
+| --------------------------------- | -------- | ------------------------------ |
+| `methodology.testing`             | enum     | `tdd`, `test-after`, `none`    |
+| `methodology.architecture`        | enum     | `hexagonal`, `layered`, `none` |
+| `gates.minCoverage`               | number   | 0-100                          |
+| `gates.enableCoverage`            | boolean  | `true`, `false`                |
+| `gates.maxEslintWarnings`         | number   | Non-negative integer           |
+| `experimental.context_validation` | boolean  | `true`, `false`                |
+| `experimental.validation_mode`    | enum     | `off`, `warn`, `error`         |
+| `git.requireRemote`               | boolean  | `true`, `false`                |
+| `cleanup.trigger`                 | enum     | `on_done`, `on_init`, `manual` |
+| `agents.methodology.principles`   | string[] | Array of methodology names     |
+
+<Aside type="tip">
+  For the complete list of configuration keys and their types, see the [Configuration
+  Reference](/reference/config).
+</Aside>
