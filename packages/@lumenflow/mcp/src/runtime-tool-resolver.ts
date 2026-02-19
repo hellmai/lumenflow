@@ -24,7 +24,7 @@ const RUNTIME_PROJECT_ROOT_METADATA_KEY = MetadataKeys.PROJECT_ROOT;
 const UTF8_ENCODING = 'utf-8';
 const DEFAULT_FILE_READ_MAX_SIZE_BYTES = 10 * 1024 * 1024;
 
-const IN_PROCESS_TOOL_NAMES = {
+const _IN_PROCESS_TOOL_NAMES = {
   WU_STATUS: CliCommands.WU_STATUS,
   WU_CREATE: CliCommands.WU_CREATE,
   WU_CLAIM: CliCommands.WU_CLAIM,
@@ -102,7 +102,7 @@ const IN_PROCESS_TOOL_NAMES = {
   DELEGATION_LIST: CliCommands.DELEGATION_LIST,
 } as const;
 
-const IN_PROCESS_TOOL_DESCRIPTIONS = {
+const _IN_PROCESS_TOOL_DESCRIPTIONS = {
   WU_STATUS: 'Get WU status via in-process core context computation',
   WU_CREATE: 'Create WU via runtime-first handler with CLI fallback',
   WU_CLAIM: 'Claim WU via runtime-first handler with CLI fallback',
