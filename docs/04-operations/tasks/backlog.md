@@ -20,11 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1902 — Add config:set CLI command for safe .lumenflow.config.yaml modification](wu/WU-1902.yaml) — Framework: CLI Enforcement
-- [WU-1901 — Fix lane lock zombie detection clearing live persistent locks after wu:claim exits](wu/WU-1901.yaml) — Framework: Core Lifecycle
-- [WU-1900 — Wire work classifier into wu:brief generation for skills, test guidance, and constraints](wu/WU-1900.yaml) — Framework: CLI WU Commands
-- [WU-1899 — Add signal-based work classifier for code-path-aware UI/backend/docs detection](wu/WU-1899.yaml) — Framework: Core Lifecycle
-- [WU-1898 — Fix CLI template condition bypass in wu:brief/wu:spawn prompt assembly](wu/WU-1898.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
@@ -43,10 +38,15 @@ sections:
 - [WU-1895 — Migrate WU cleanup/admin commands to software-delivery handlers](wu/WU-1895.yaml) — Framework: Core Lifecycle
 - [WU-1896 — Migrate memory command surfaces to software-delivery handlers](wu/WU-1896.yaml) — Framework: Core Lifecycle
 - [WU-1897 — Migrate initiative/plan/setup/orchestration command surfaces to software-delivery handlers](wu/WU-1897.yaml) — Framework: Core Lifecycle
+- [WU-1899 — Add signal-based work classifier for code-path-aware UI/backend/docs detection](wu/WU-1899.yaml) — Framework: Core Lifecycle
+- [WU-1900 — Wire work classifier into wu:brief generation for skills, test guidance, and constraints](wu/WU-1900.yaml) — Framework: CLI WU Commands
+- [WU-1901 — Fix lane lock zombie detection clearing live persistent locks after wu:claim exits](wu/WU-1901.yaml) — Framework: Core Lifecycle
+- [WU-1902 — Add config:set CLI command for safe .lumenflow.config.yaml modification](wu/WU-1902.yaml) — Framework: CLI Enforcement
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1898 — Fix CLI template condition bypass in wu:brief/wu:spawn prompt assembly](wu/WU-1898.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
