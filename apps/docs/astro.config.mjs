@@ -16,7 +16,7 @@ export default defineConfig({
     starlight({
       plugins: [starlightThemeNova()],
       title: 'LumenFlow',
-      description: 'AI-native workflow for software teams',
+      description: 'The governance layer between AI agents and the world',
       social: [],
       sidebar: [
         {
@@ -33,6 +33,11 @@ export default defineConfig({
           label: 'Concepts',
           items: [
             { label: 'Visual Overview', slug: 'concepts/visual-overview' },
+            { label: 'Kernel Runtime', slug: 'concepts/kernel' },
+            { label: 'Packs', slug: 'concepts/packs' },
+            { label: 'Scope Intersection', slug: 'concepts/scope-intersection' },
+            { label: 'Policy Engine', slug: 'concepts/policy-engine' },
+            { label: 'Evidence Store', slug: 'concepts/evidence' },
             { label: 'Work Units (WUs)', slug: 'concepts/work-units' },
             { label: 'Lanes', slug: 'concepts/lanes' },
             { label: 'Gates', slug: 'concepts/gates' },
