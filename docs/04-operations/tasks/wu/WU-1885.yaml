@@ -25,7 +25,8 @@ phase: 6
 blocked_by:
   - WU-1884
 risks: []
-notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+notes: 'Sizing: Simple (expected 5-10 files, <50 tool calls). Strategy: Single Session. Scope is
+  migration scorecard + CI regression gate only.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -34,8 +35,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Software-delivery pack migration needs an objective progress signal that can be enforced automatically. This WU adds a machine-readable scorecard and CI guardrail that tracks total software-delivery tools, pendingRuntimeMigrationTool usage, and real handler coverage so stub regression cannot silently re-enter the branch.
+description: Software-delivery pack migration needs an objective progress signal that can be
+  enforced automatically. This WU adds a machine-readable scorecard and CI guardrail that tracks
+  total software-delivery tools, pendingRuntimeMigrationTool usage, and real handler coverage so
+  stub regression cannot silently re-enter the branch.
 acceptance:
-  - 'A scorecard check reports software-delivery totals: declared tools, pending-runtime entries, and real handler entries'
+  - 'A scorecard check reports software-delivery totals: declared tools, pending-runtime entries,
+    and real handler entries'
   - CI fails if pendingRuntimeMigrationTool usage increases from the established baseline
   - Scorecard output is machine-readable and can be consumed by release/readiness checks
