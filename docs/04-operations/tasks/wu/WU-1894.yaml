@@ -2,7 +2,7 @@ id: WU-1894
 title: Migrate WU delegation/context commands to software-delivery handlers
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-19
 code_paths:
@@ -44,3 +44,11 @@ acceptance:
     in bootstrapped runtime mode
   - Resolver fallback stubs are removed for these delegation/context commands
   - Runtime execution for migrated commands succeeds without CLI fallback in strict migration mode
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1894
+claimed_at: 2026-02-19T15:35:33.556Z
+baseline_main_sha: 593c9d35edcc27be08fc95505e83e1f26890d5bf
+session_id: 1c5effed-be08-422a-a12f-d6f47eb4f28c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-19T15:35:33.562Z
