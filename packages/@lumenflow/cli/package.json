@@ -138,7 +138,9 @@
     "pack-install": "./dist/pack-install.js",
     "pack-publish": "./dist/pack-publish.js",
     "pack-search": "./dist/pack-search.js",
-    "workspace-init": "./dist/workspace-init.js"
+    "workspace-init": "./dist/workspace-init.js",
+    "config-set": "./dist/config-set.js",
+    "config-get": "./dist/config-get.js"
   },
   "files": [
     "dist",
