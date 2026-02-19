@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1883 — Extract ENOENT/stat helpers and add trace-failure telemetry to ToolHost](wu/WU-1883.yaml) — Framework: Core Lifecycle
 - [WU-1882 — Fix segment padding overflow at 10,000+ segments in EvidenceStore](wu/WU-1882.yaml) — Framework: Core Lifecycle
 - [WU-1881 — Fix multi-instance incremental hydrate duplicate entries in EvidenceStore](wu/WU-1881.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
