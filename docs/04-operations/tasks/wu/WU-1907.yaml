@@ -2,7 +2,7 @@ id: WU-1907
 title: Document agent safety architecture, YAML editing policy, and per-client protection gaps
 lane: 'Content: Framework Docs'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-19
 code_paths:
@@ -64,3 +64,6 @@ acceptance:
     (starting-prompt.md)'
   - Starlight reference page added at apps/docs/src/content/docs/reference/agent-safety.mdx
   - quick-ref-commands.md updated to include config:set and config:get in commands table
+locked: true
+completed_at: 2026-02-19T14:20:29.962Z
+completed: 2026-02-19
