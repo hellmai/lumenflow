@@ -2,7 +2,7 @@ id: WU-1888
 title: Migrate WU maintenance and delegation command set to software-delivery handlers
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-19
 code_paths:
@@ -55,3 +55,6 @@ acceptance:
     handlers
   - Resolver fallback stubs are removed for migrated maintenance/delegation commands
   - Runtime execution of migrated maintenance/delegation commands succeeds without CLI fallback
+locked: true
+completed_at: 2026-02-19T16:53:37.728Z
+completed: 2026-02-19
