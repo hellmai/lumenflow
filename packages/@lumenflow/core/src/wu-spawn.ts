@@ -1826,8 +1826,7 @@ export function generateTaskInvocation(
   const bugDiscoverySection = generateBugDiscoverySection(id);
 
   // WU-1900: Generate constraints with conditional TDD CHECKPOINT
-  const shouldIncludeTddCheckpoint =
-    classification.domain !== 'ui' && policy.testing !== 'none';
+  const shouldIncludeTddCheckpoint = classification.domain !== 'ui' && policy.testing !== 'none';
   const constraints = generateConstraints(id, {
     includeTddCheckpoint: shouldIncludeTddCheckpoint,
   });

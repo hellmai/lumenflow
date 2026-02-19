@@ -249,7 +249,9 @@ export function generateSkillsSelectionSection(
   // WU-1900: Map classifier capabilities to client-specific skills
   const clientConfig = resolveClientConfig(config, clientName);
   const capabilitySkills = resolveCapabilitySkills(classification.capabilities, clientConfig);
-  const capabilityHints = capabilitySkills.map((skill) => `- \`${skill}\` — Suggested by work classifier (${classification.domain} domain)`);
+  const capabilityHints = capabilitySkills.map(
+    (skill) => `- \`${skill}\` — Suggested by work classifier (${classification.domain} domain)`,
+  );
 
   const softPolicySection = `${SECTION.softPolicy}\n\nBased on WU context, consider loading:\n\n${contextHints.join('\n')}${capabilityHints.length > 0 ? '\n' + capabilityHints.join('\n') : ''}\n\n`;
   const catalogGuidance = generateSkillsCatalogGuidance(config, clientName);

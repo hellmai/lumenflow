@@ -841,10 +841,7 @@ describe('WU-1291: Spawn template system activation', () => {
  * - Design context section is vendor-agnostic
  * - Integration: bug WU with CSS code_paths gets full treatment
  */
-import {
-  generateMandatoryStandards,
-  generateDesignContextSection,
-} from '../wu-spawn.js';
+import { generateMandatoryStandards, generateDesignContextSection } from '../wu-spawn.js';
 import { classifyWork, WORK_DOMAINS } from '../work-classifier.js';
 
 describe('WU-1900: Wire work classifier into wu:brief generation', () => {

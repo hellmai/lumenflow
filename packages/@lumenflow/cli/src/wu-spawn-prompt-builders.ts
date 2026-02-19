@@ -1163,11 +1163,12 @@ export function generateTaskInvocation(
   const bugDiscoverySection = templates.get('bug-discovery') || generateBugDiscoverySection(id);
   // WU-1253: Try template for constraints
   // WU-1900: Generate constraints with conditional TDD CHECKPOINT
-  const shouldIncludeTddCheckpoint =
-    classification.domain !== 'ui' && policy.testing !== 'none';
-  const constraints = templates.get('constraints') || generateConstraints(id, {
-    includeTddCheckpoint: shouldIncludeTddCheckpoint,
-  });
+  const shouldIncludeTddCheckpoint = classification.domain !== 'ui' && policy.testing !== 'none';
+  const constraints =
+    templates.get('constraints') ||
+    generateConstraints(id, {
+      includeTddCheckpoint: shouldIncludeTddCheckpoint,
+    });
   const implementationContext = generateImplementationContext(doc);
 
   // WU-1900: Generate design context section for UI-classified work
