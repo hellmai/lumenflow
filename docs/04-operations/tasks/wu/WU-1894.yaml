@@ -6,10 +6,13 @@ status: in_progress
 priority: P1
 created: 2026-02-19
 code_paths:
+  - packages/@lumenflow/packs/software-delivery/manifest.ts
   - packages/@lumenflow/packs/software-delivery/manifest.yaml
-  - packages/@lumenflow/packs/software-delivery/tool-impl
+  - packages/@lumenflow/packs/software-delivery/tool-impl/wu-lifecycle-tools.ts
   - packages/@lumenflow/mcp/src/runtime-tool-resolver.ts
-  - packages/@lumenflow/mcp/src/tools/wu-tools.ts
+  - packages/@lumenflow/packs/software-delivery/__tests__/manifest.test.ts
+  - packages/@lumenflow/packs/software-delivery/__tests__/wu-lifecycle-tools.test.ts
+  - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
 tests:
   manual:
     - Execute wu:brief/wu:delegate/wu:deps/wu:edit/wu:proto through runtime path and verify expected
@@ -29,10 +32,17 @@ risks: []
 notes: 'Sizing: Medium (expected 20-30 files, 50-90 tool calls). Strategy: Checkpoint-Resume. Split
   rationale: decomposes WU-1888 into command-family atomic units to reduce context risk.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-19T15:35:33.556Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1894
+session_id: 1c5effed-be08-422a-a12f-d6f47eb4f28c
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-19T15:35:33.562Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -44,11 +54,3 @@ acceptance:
     in bootstrapped runtime mode
   - Resolver fallback stubs are removed for these delegation/context commands
   - Runtime execution for migrated commands succeeds without CLI fallback in strict migration mode
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1894
-claimed_at: 2026-02-19T15:35:33.556Z
-baseline_main_sha: 593c9d35edcc27be08fc95505e83e1f26890d5bf
-session_id: 1c5effed-be08-422a-a12f-d6f47eb4f28c
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-19T15:35:33.562Z
