@@ -27,6 +27,9 @@ phase: 6
 blocked_by:
   - WU-1888
   - WU-1889
+  - WU-1903
+  - WU-1904
+  - WU-1905
 risks: []
 notes: 'Sizing: Medium (expected 15-25 files, 50-80 tool calls) after upstream decomposition.
   Strategy: Checkpoint-Resume. Scope is final residual surface migration and stub-zero enforcement.'
