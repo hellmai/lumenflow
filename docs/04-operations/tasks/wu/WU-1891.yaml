@@ -1,0 +1,41 @@
+id: WU-1891
+title: Disable migration compat guard by default and remove software-delivery fallback shims
+lane: 'Framework: Core Lifecycle'
+type: refactor
+status: ready
+priority: P0
+created: 2026-02-19
+code_paths:
+  - packages/@lumenflow/mcp/src/tools-shared.ts
+  - packages/@lumenflow/mcp/src/runtime-tool-resolver.ts
+  - packages/@lumenflow/mcp/src/__tests__/tools-shared.test.ts
+  - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
+tests:
+  manual:
+    - Run runtime path in strict mode and verify no fallback telemetry for migrated commands
+  unit:
+    - packages/@lumenflow/mcp/src/__tests__/tools-shared.test.ts
+    - packages/@lumenflow/mcp/src/__tests__/runtime-tool-resolver.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1891.done
+dependencies: []
+initiative: INIT-031
+phase: 6
+blocked_by:
+  - WU-1890
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Once software-delivery handlers are fully migrated, temporary compatibility behavior must be tightened back to fail-closed defaults. This WU turns migration fallback off by default, removes software-delivery fallback shims, and keeps only intentional escape hatches required for emergency rollback during the stabilization window.
+acceptance:
+  - Migration compatibility guard defaults to strict mode for software-delivery command execution
+  - Software-delivery fallback shim handlers are removed from runtime resolver
+  - Regression tests verify migrated software-delivery commands no longer rely on CLI fallback
