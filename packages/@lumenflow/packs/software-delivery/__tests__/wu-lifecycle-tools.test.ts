@@ -13,8 +13,13 @@ vi.mock('node:child_process', () => ({
 import {
   gatesTool,
   wuBlockTool,
+  wuBriefTool,
   wuClaimTool,
+  wuDelegateTool,
+  wuDepsTool,
   wuDoneTool,
+  wuEditTool,
+  wuProtoTool,
   wuRecoverTool,
   wuReleaseTool,
   wuRepairTool,
@@ -101,6 +106,211 @@ describe('wu lifecycle tool adapters (WU-1887)', () => {
     expect(output.success).toBe(false);
     expect(output.error?.code).toBe('MISSING_PARAMETER');
     expect(spawnSyncMock).not.toHaveBeenCalled();
+  });
+
+  it('maps wu:proto options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'prototype created',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuProtoTool({
+      lane: 'Framework: Core Lifecycle',
+      title: 'Prototype title',
+      description: 'Prototype description',
+      code_paths: ['packages/@lumenflow/mcp/src/runtime-tool-resolver.ts'],
+      labels: ['prototype', 'runtime'],
+      assigned_to: 'codex',
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-proto',
+        '--lane',
+        'Framework: Core Lifecycle',
+        '--title',
+        'Prototype title',
+        '--description',
+        'Prototype description',
+        '--code-paths',
+        'packages/@lumenflow/mcp/src/runtime-tool-resolver.ts',
+        '--labels',
+        'prototype,runtime',
+        '--assigned-to',
+        'codex',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('maps wu:brief prompt options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'brief generated',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuBriefTool({
+      id: 'WU-1894',
+      client: 'codex-cli',
+      thinking: true,
+      budget: 4,
+      no_context: true,
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-brief',
+        '--id',
+        'WU-1894',
+        '--client',
+        'codex-cli',
+        '--thinking',
+        '--budget',
+        '4',
+        '--no-context',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('requires parent_wu for wu:delegate', async () => {
+    const output = await wuDelegateTool({
+      id: 'WU-1894',
+    });
+
+    expect(output.success).toBe(false);
+    expect(output.error?.code).toBe('MISSING_PARAMETER');
+    expect(spawnSyncMock).not.toHaveBeenCalled();
+  });
+
+  it('maps wu:delegate prompt options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'delegate generated',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuDelegateTool({
+      id: 'WU-1894',
+      parent_wu: 'WU-1888',
+      client: 'codex-cli',
+      no_context: true,
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-delegate',
+        '--id',
+        'WU-1894',
+        '--client',
+        'codex-cli',
+        '--parent-wu',
+        'WU-1888',
+        '--no-context',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('maps wu:deps options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'deps ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuDepsTool({
+      id: 'WU-1894',
+      format: 'json',
+      depth: 2,
+      direction: 'both',
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-deps',
+        '--id',
+        'WU-1894',
+        '--format',
+        'json',
+        '--depth',
+        '2',
+        '--direction',
+        'both',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('maps wu:edit options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'edit ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuEditTool({
+      id: 'WU-1894',
+      description: 'Updated description',
+      acceptance: ['first', 'second'],
+      notes: 'note',
+      code_paths: ['packages/@lumenflow/mcp/src/tools/wu-tools.ts'],
+      lane: 'Framework: Core Lifecycle',
+      priority: 'high',
+      initiative: 'INIT-030',
+      phase: 6,
+      no_strict: true,
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-edit',
+        '--id',
+        'WU-1894',
+        '--description',
+        'Updated description',
+        '--acceptance',
+        'first',
+        '--acceptance',
+        'second',
+        '--notes',
+        'note',
+        '--code-paths',
+        'packages/@lumenflow/mcp/src/tools/wu-tools.ts',
+        '--lane',
+        'Framework: Core Lifecycle',
+        '--priority',
+        'high',
+        '--initiative',
+        'INIT-030',
+        '--phase',
+        '6',
+        '--no-strict',
+      ],
+      expect.any(Object),
+    );
   });
 
   it('maps wu:block options to CLI flags', async () => {

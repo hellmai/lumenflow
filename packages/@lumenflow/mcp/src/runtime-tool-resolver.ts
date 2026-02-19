@@ -215,24 +215,6 @@ const INIT_STATUS_LANE_HEADER = 'Lane Availability:';
 const LANE_SECTION_KEYS = ['definitions', 'engineering', 'business'] as const;
 const DEFAULT_SIGNAL_TYPE = 'unknown';
 const WU_ID_PATTERN = /^WU-\d+$/;
-const WU_YAML_FILE_EXTENSION = '.yaml';
-const WU_EDIT_NOTES_SEPARATOR = '\n\n';
-
-const WU_DOC_KEYS = {
-  ID: 'id',
-  TITLE: 'title',
-  LANE: 'lane',
-  STATUS: 'status',
-  NOTES: 'notes',
-  ACCEPTANCE: 'acceptance',
-  CODE_PATHS: 'code_paths',
-  DESCRIPTION: 'description',
-  PRIORITY: 'priority',
-  INITIATIVE: 'initiative',
-  PHASE: 'phase',
-  CLAIMED_MODE: 'claimed_mode',
-  CLAIMED_BRANCH: 'claimed_branch',
-} as const;
 
 const FILE_TOOL_ERROR_CODES = {
   INVALID_INPUT: 'INVALID_INPUT',
@@ -391,7 +373,6 @@ async function getCoreLazy() {
 }
 
 type CoreModule = Awaited<ReturnType<typeof getCoreLazy>>;
-type MutableWuDoc = Record<string, unknown>;
 
 interface MemorySignalsCleanupResult {
   success: boolean;
@@ -2152,19 +2133,6 @@ const LANE_SUGGEST_INPUT_SCHEMA = z.object({
   include_git: z.boolean().optional(),
 });
 
-const WU_EDIT_INPUT_SCHEMA = z.object({
-  id: z.string().min(1),
-  description: z.string().optional(),
-  acceptance: z.array(z.string()).optional(),
-  notes: z.string().optional(),
-  code_paths: z.array(z.string()).optional(),
-  lane: z.string().optional(),
-  priority: z.string().optional(),
-  initiative: z.string().optional(),
-  phase: z.union([z.number(), z.string()]).optional(),
-  no_strict: z.boolean().optional(),
-});
-
 /** Helper: filter files by validation-relevant extensions */
 function hasValidationExtension(filename: string): boolean {
   return VALIDATION_TOOL_FILE_EXTENSIONS.some((ext) => filename.endsWith(ext));
@@ -2556,19 +2524,12 @@ const WU_QUERY_MESSAGES = {
   ID_REQUIRED: 'id parameter is required',
   RUNTIME_CLI_FALLBACK: 'Runtime in-process path not available; falling back to CLI',
   STATUS_FAILED: 'wu:status failed',
-  DEPS_FAILED: 'wu:deps failed',
   PREFLIGHT_PASSED: 'Preflight checks passed',
   PREFLIGHT_FAILED: 'wu:preflight failed',
   VALIDATE_PASSED: 'WU is valid',
   VALIDATE_FAILED: 'wu:validate failed',
   INFER_LANE_FAILED: 'wu:infer-lane failed',
 } as const;
-
-const wuProtoInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_PROTO_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
 
 const wuSandboxInProcess: InProcessToolFn = async () =>
   createFailureOutput(
@@ -2591,18 +2552,6 @@ const wuDeleteInProcess: InProcessToolFn = async () =>
 const wuCleanupInProcess: InProcessToolFn = async () =>
   createFailureOutput(
     VALIDATION_TOOL_ERROR_CODES.WU_CLEANUP_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
-const wuBriefInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_BRIEF_ERROR,
-    WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
-  );
-
-const wuDelegateInProcess: InProcessToolFn = async () =>
-  createFailureOutput(
-    VALIDATION_TOOL_ERROR_CODES.WU_DELEGATE_ERROR,
     WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
   );
 
@@ -2846,149 +2795,6 @@ const memRecoverInProcess: InProcessToolFn = async () =>
     WU_QUERY_MESSAGES.RUNTIME_CLI_FALLBACK,
   );
 
-interface RuntimeWuPaths {
-  wuPath: string;
-  backlogPath: string;
-  statusPath: string;
-  stateDir: string;
-}
-
-function resolveRuntimeWuPaths(
-  core: CoreModule,
-  projectRoot: string,
-  wuId: string,
-): RuntimeWuPaths {
-  const resolvedPaths = core.getResolvedPaths({ projectRoot });
-  return {
-    wuPath: path.join(resolvedPaths.wuDir, `${wuId}${WU_YAML_FILE_EXTENSION}`),
-    backlogPath: resolvedPaths.backlogPath,
-    statusPath: resolvedPaths.statusPath,
-    stateDir: resolvedPaths.stateDir,
-  };
-}
-
-function appendStringArrayField(existingValue: unknown, incomingValues: unknown): string[] {
-  const existing =
-    Array.isArray(existingValue) && existingValue.every((value) => typeof value === 'string')
-      ? existingValue
-      : [];
-  const incoming =
-    Array.isArray(incomingValues) && incomingValues.every((value) => typeof value === 'string')
-      ? incomingValues
-      : [];
-  return [...existing, ...incoming];
-}
-
-function mergeNotesForEdit(existingValue: unknown, incomingNotes: string): string {
-  const existing =
-    typeof existingValue === 'string' && existingValue.trim().length > 0
-      ? existingValue.trimEnd()
-      : '';
-  if (existing.length === 0) {
-    return incomingNotes;
-  }
-  return `${existing}${WU_EDIT_NOTES_SEPARATOR}${incomingNotes}`;
-}
-
-function parsePhaseValue(value: string | number): number {
-  const numericValue = typeof value === 'number' ? value : Number.parseInt(value, 10);
-  if (!Number.isInteger(numericValue) || numericValue < 1) {
-    throw new Error(`Invalid phase value: ${value}`);
-  }
-  return numericValue;
-}
-
-const wuEditInProcess: InProcessToolFn = async (rawInput, context) => {
-  const parsedInput = WU_EDIT_INPUT_SCHEMA.safeParse(rawInput ?? {});
-  if (!parsedInput.success) {
-    return createFailureOutput(
-      VALIDATION_TOOL_ERROR_CODES.INVALID_INPUT,
-      parsedInput.error.message,
-    );
-  }
-
-  try {
-    const core = await getCoreLazy();
-    const projectRoot = resolveWorkspaceRoot(context);
-    const paths = resolveRuntimeWuPaths(core, projectRoot, parsedInput.data.id);
-    const wuDocument = core.readWU(paths.wuPath, parsedInput.data.id) as MutableWuDoc;
-
-    if (parsedInput.data.description) {
-      wuDocument[WU_DOC_KEYS.DESCRIPTION] = parsedInput.data.description;
-    }
-    if (parsedInput.data.acceptance && parsedInput.data.acceptance.length > 0) {
-      wuDocument[WU_DOC_KEYS.ACCEPTANCE] = appendStringArrayField(
-        wuDocument[WU_DOC_KEYS.ACCEPTANCE],
-        parsedInput.data.acceptance,
-      );
-    }
-    if (parsedInput.data.notes) {
-      wuDocument[WU_DOC_KEYS.NOTES] = mergeNotesForEdit(
-        wuDocument[WU_DOC_KEYS.NOTES],
-        parsedInput.data.notes,
-      );
-    }
-    if (parsedInput.data.code_paths && parsedInput.data.code_paths.length > 0) {
-      wuDocument[WU_DOC_KEYS.CODE_PATHS] = appendStringArrayField(
-        wuDocument[WU_DOC_KEYS.CODE_PATHS],
-        parsedInput.data.code_paths,
-      );
-    }
-    if (parsedInput.data.lane) {
-      wuDocument[WU_DOC_KEYS.LANE] = parsedInput.data.lane;
-    }
-    if (parsedInput.data.priority) {
-      wuDocument[WU_DOC_KEYS.PRIORITY] = parsedInput.data.priority;
-    }
-    if (parsedInput.data.initiative) {
-      wuDocument[WU_DOC_KEYS.INITIATIVE] = parsedInput.data.initiative;
-    }
-    if (parsedInput.data.phase !== undefined) {
-      wuDocument[WU_DOC_KEYS.PHASE] = parsePhaseValue(parsedInput.data.phase);
-    }
-
-    core.writeWU(paths.wuPath, wuDocument);
-
-    return createSuccessOutput({
-      message: VALIDATION_TOOL_MESSAGES.WU_EDIT_PASSED,
-      id: parsedInput.data.id,
-      status:
-        typeof wuDocument[WU_DOC_KEYS.STATUS] === 'string'
-          ? wuDocument[WU_DOC_KEYS.STATUS]
-          : STATUS_UNKNOWN,
-    });
-  } catch (err) {
-    return createFailureOutput(VALIDATION_TOOL_ERROR_CODES.WU_EDIT_ERROR, (err as Error).message);
-  }
-};
-
-const wuDepsInProcess: InProcessToolFn = async (rawInput, _context) => {
-  const input = (rawInput ?? {}) as Record<string, unknown>;
-  if (typeof input.id !== 'string' || !input.id) {
-    return createFailureOutput(
-      VALIDATION_TOOL_ERROR_CODES.MISSING_PARAMETER,
-      WU_QUERY_MESSAGES.ID_REQUIRED,
-    );
-  }
-
-  try {
-    const { buildDependencyGraphAsync, getUpstreamDependencies, getDownstreamDependents } =
-      await import('@lumenflow/core/dependency-graph');
-    const graph = await buildDependencyGraphAsync();
-    const upstream = getUpstreamDependencies(graph, input.id);
-    const downstream = getDownstreamDependents(graph, input.id);
-
-    return createSuccessOutput({
-      id: input.id,
-      upstream,
-      downstream,
-      total_nodes: graph.size,
-    });
-  } catch (err) {
-    return createFailureOutput(VALIDATION_TOOL_ERROR_CODES.WU_DEPS_ERROR, (err as Error).message);
-  }
-};
-
 const wuInferLaneInProcess: InProcessToolFn = async (rawInput, context) => {
   const input = (rawInput ?? {}) as Record<string, unknown>;
 
@@ -3038,14 +2844,6 @@ const wuInferLaneInProcess: InProcessToolFn = async (rawInput, context) => {
 
 const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolHandler>([
   [
-    IN_PROCESS_TOOL_NAMES.WU_PROTO,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_PROTO,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuProtoInProcess,
-    },
-  ],
-  [
     IN_PROCESS_TOOL_NAMES.WU_SANDBOX,
     {
       description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_SANDBOX,
@@ -3075,22 +2873,6 @@ const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolH
       description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_CLEANUP,
       inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
       fn: wuCleanupInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_BRIEF,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_BRIEF,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuBriefInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_DELEGATE,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_DELEGATE,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuDelegateInProcess,
     },
   ],
   [
@@ -3411,22 +3193,6 @@ const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolH
       description: IN_PROCESS_TOOL_DESCRIPTIONS.MEM_RECOVER,
       inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
       fn: memRecoverInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_EDIT,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_EDIT,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuEditInProcess,
-    },
-  ],
-  [
-    IN_PROCESS_TOOL_NAMES.WU_DEPS,
-    {
-      description: IN_PROCESS_TOOL_DESCRIPTIONS.WU_DEPS,
-      inputSchema: DEFAULT_IN_PROCESS_INPUT_SCHEMA,
-      fn: wuDepsInProcess,
     },
   ],
   [

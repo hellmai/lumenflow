@@ -12,7 +12,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:brief
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuBriefTool
     permission: read
     required_scopes:
       - type: path
@@ -40,7 +40,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:delegate
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuDelegateTool
     permission: write
     required_scopes:
       - type: path
@@ -54,7 +54,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:deps
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuDepsTool
     permission: read
     required_scopes:
       - type: path
@@ -68,7 +68,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:edit
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuEditTool
     permission: write
     required_scopes:
       - type: path
@@ -96,7 +96,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:proto
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuProtoTool
     permission: write
     required_scopes:
       - type: path

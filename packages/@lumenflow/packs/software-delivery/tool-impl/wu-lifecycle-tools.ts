@@ -14,6 +14,11 @@ const LIFECYCLE_TOOLS = {
   WU_CLAIM: 'wu:claim',
   WU_PREP: 'wu:prep',
   WU_DONE: 'wu:done',
+  WU_BRIEF: 'wu:brief',
+  WU_DELEGATE: 'wu:delegate',
+  WU_DEPS: 'wu:deps',
+  WU_EDIT: 'wu:edit',
+  WU_PROTO: 'wu:proto',
   WU_PREFLIGHT: 'wu:preflight',
   WU_VALIDATE: 'wu:validate',
   WU_BLOCK: 'wu:block',
@@ -32,6 +37,11 @@ const LIFECYCLE_TOOL_ERROR_CODES: Record<LifecycleToolName, string> = {
   'wu:claim': 'WU_CLAIM_ERROR',
   'wu:prep': 'WU_PREP_ERROR',
   'wu:done': 'WU_DONE_ERROR',
+  'wu:brief': 'WU_BRIEF_ERROR',
+  'wu:delegate': 'WU_DELEGATE_ERROR',
+  'wu:deps': 'WU_DEPS_ERROR',
+  'wu:edit': 'WU_EDIT_ERROR',
+  'wu:proto': 'WU_PROTO_ERROR',
   'wu:preflight': 'WU_PREFLIGHT_ERROR',
   'wu:validate': 'WU_VALIDATE_ERROR',
   'wu:block': 'WU_BLOCK_ERROR',
@@ -65,6 +75,26 @@ const LIFECYCLE_TOOL_COMMAND_SPECS: Record<LifecycleToolName, LifecycleToolComma
   'wu:done': {
     scriptPath: CLI_ENTRY_SCRIPT,
     scriptSubcommand: 'wu-done',
+  },
+  'wu:brief': {
+    scriptPath: CLI_ENTRY_SCRIPT,
+    scriptSubcommand: 'wu-brief',
+  },
+  'wu:delegate': {
+    scriptPath: CLI_ENTRY_SCRIPT,
+    scriptSubcommand: 'wu-delegate',
+  },
+  'wu:deps': {
+    scriptPath: CLI_ENTRY_SCRIPT,
+    scriptSubcommand: 'wu-deps',
+  },
+  'wu:edit': {
+    scriptPath: CLI_ENTRY_SCRIPT,
+    scriptSubcommand: 'wu-edit',
+  },
+  'wu:proto': {
+    scriptPath: CLI_ENTRY_SCRIPT,
+    scriptSubcommand: 'wu-proto',
   },
   'wu:preflight': {
     scriptPath: 'packages/@lumenflow/cli/dist/wu-preflight.js',
@@ -101,6 +131,7 @@ const LIFECYCLE_TOOL_COMMAND_SPECS: Record<LifecycleToolName, LifecycleToolComma
 
 const MISSING_PARAMETER_MESSAGES = {
   ID_REQUIRED: 'id is required',
+  PARENT_WU_REQUIRED: 'parent_wu is required',
   LANE_REQUIRED: 'lane is required',
   TITLE_REQUIRED: 'title is required',
   REASON_REQUIRED: 'reason is required',
@@ -141,6 +172,17 @@ function toStringArray(value: unknown): string[] {
   return value
     .map((entry) => toStringValue(entry))
     .filter((entry): entry is string => entry !== null);
+}
+
+function toIntegerString(value: unknown): string | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return String(Math.trunc(value));
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  return null;
 }
 
 function runLifecycleCommand(toolName: LifecycleToolName, args: string[]): CommandExecutionResult {
@@ -253,6 +295,27 @@ function pushRepeatedFlag(args: string[], flag: string, values: string[]): void 
   }
 }
 
+function appendWuPromptArgs(parsed: Record<string, unknown>, args: string[]): void {
+  const client = toStringValue(parsed.client);
+  if (client) {
+    args.push('--client', client);
+  }
+  if (parsed.thinking === true) {
+    args.push('--thinking');
+  }
+  const budget = toIntegerString(parsed.budget);
+  if (budget) {
+    args.push('--budget', budget);
+  }
+  const parentWu = toStringValue(parsed.parent_wu);
+  if (parentWu) {
+    args.push('--parent-wu', parentWu);
+  }
+  if (parsed.no_context === true) {
+    args.push('--no-context');
+  }
+}
+
 export async function wuCreateTool(input: unknown): Promise<ToolOutput> {
   const parsed = toRecord(input);
   const lane = toStringValue(parsed.lane);
@@ -354,6 +417,130 @@ export async function wuDoneTool(input: unknown): Promise<ToolOutput> {
   }
 
   return executeLifecycleTool(LIFECYCLE_TOOLS.WU_DONE, args);
+}
+
+export async function wuProtoTool(input: unknown): Promise<ToolOutput> {
+  const parsed = toRecord(input);
+  const lane = toStringValue(parsed.lane);
+  const title = toStringValue(parsed.title);
+  if (!lane) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.LANE_REQUIRED);
+  }
+  if (!title) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.TITLE_REQUIRED);
+  }
+
+  const args: string[] = ['--lane', lane, '--title', title];
+  const description = toStringValue(parsed.description);
+  if (description) {
+    args.push('--description', description);
+  }
+  pushRepeatedFlag(args, '--code-paths', toStringArray(parsed.code_paths));
+  const labels = toStringArray(parsed.labels);
+  if (labels.length > 0) {
+    args.push('--labels', labels.join(','));
+  }
+  const assignedTo = toStringValue(parsed.assigned_to);
+  if (assignedTo) {
+    args.push('--assigned-to', assignedTo);
+  }
+
+  return executeLifecycleTool(LIFECYCLE_TOOLS.WU_PROTO, args);
+}
+
+export async function wuBriefTool(input: unknown): Promise<ToolOutput> {
+  const parsed = toRecord(input);
+  const id = toStringValue(parsed.id);
+  if (!id) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.ID_REQUIRED);
+  }
+
+  const args: string[] = ['--id', id];
+  appendWuPromptArgs(parsed, args);
+
+  return executeLifecycleTool(LIFECYCLE_TOOLS.WU_BRIEF, args);
+}
+
+export async function wuDelegateTool(input: unknown): Promise<ToolOutput> {
+  const parsed = toRecord(input);
+  const id = toStringValue(parsed.id);
+  const parentWu = toStringValue(parsed.parent_wu);
+  if (!id) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.ID_REQUIRED);
+  }
+  if (!parentWu) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.PARENT_WU_REQUIRED);
+  }
+
+  const args: string[] = ['--id', id];
+  appendWuPromptArgs(parsed, args);
+
+  return executeLifecycleTool(LIFECYCLE_TOOLS.WU_DELEGATE, args);
+}
+
+export async function wuDepsTool(input: unknown): Promise<ToolOutput> {
+  const parsed = toRecord(input);
+  const id = toStringValue(parsed.id);
+  if (!id) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.ID_REQUIRED);
+  }
+
+  const args: string[] = ['--id', id];
+  const format = toStringValue(parsed.format);
+  if (format) {
+    args.push('--format', format);
+  }
+  const depth = toIntegerString(parsed.depth);
+  if (depth) {
+    args.push('--depth', depth);
+  }
+  const direction = toStringValue(parsed.direction);
+  if (direction) {
+    args.push('--direction', direction);
+  }
+
+  return executeLifecycleTool(LIFECYCLE_TOOLS.WU_DEPS, args);
+}
+
+export async function wuEditTool(input: unknown): Promise<ToolOutput> {
+  const parsed = toRecord(input);
+  const id = toStringValue(parsed.id);
+  if (!id) {
+    return createMissingParameterOutput(MISSING_PARAMETER_MESSAGES.ID_REQUIRED);
+  }
+
+  const args: string[] = ['--id', id];
+  const description = toStringValue(parsed.description);
+  if (description) {
+    args.push('--description', description);
+  }
+  pushRepeatedFlag(args, '--acceptance', toStringArray(parsed.acceptance));
+  const notes = toStringValue(parsed.notes);
+  if (notes) {
+    args.push('--notes', notes);
+  }
+  pushRepeatedFlag(args, '--code-paths', toStringArray(parsed.code_paths));
+  const lane = toStringValue(parsed.lane);
+  if (lane) {
+    args.push('--lane', lane);
+  }
+  const priority = toStringValue(parsed.priority);
+  if (priority) {
+    args.push('--priority', priority);
+  }
+  const initiative = toStringValue(parsed.initiative);
+  if (initiative) {
+    args.push('--initiative', initiative);
+  }
+  const phase = toIntegerString(parsed.phase);
+  if (phase) {
+    args.push('--phase', phase);
+  }
+  if (parsed.no_strict === true) {
+    args.push('--no-strict');
+  }
+
+  return executeLifecycleTool(LIFECYCLE_TOOLS.WU_EDIT, args);
 }
 
 export async function wuBlockTool(input: unknown): Promise<ToolOutput> {
