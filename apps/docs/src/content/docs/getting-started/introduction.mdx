@@ -1,13 +1,68 @@
 ---
 title: What is LumenFlow?
-description: AI-native workflow for software teams
+description: An open-source runtime kernel for AI agent governance
 ---
 
-LumenFlow is a vendor-agnostic, stack-agnostic delivery methodology for AI-augmented teams. It combines test-driven development with a lane-based flow system that keeps work visible, parallel, and humane.
+import { Aside } from '@astrojs/starlight/components';
+
+LumenFlow is an open-source runtime kernel that governs what AI agents can do, proves what they did, and enforces policies they cannot bypass. Like an operating system kernel mediates between programs and hardware, LumenFlow mediates between agents and everything they touch — filesystem, git, APIs, and cloud services.
+
+## The Problem
+
+AI agents are powerful but unconstrained. They can read any file, write anywhere, and call any tool — with no audit trail and no policy enforcement. When agents go wrong, there is no proof of what happened and no mechanism to prevent recurrence.
+
+LumenFlow solves this by inserting a governance layer between agents and the world.
+
+## How It Works
+
+Every agent action passes through three stages before it executes:
+
+```
+Agent calls a tool (e.g., file:write, git:commit)
+      ↓
+Scope intersection: does the agent have permission?
+  workspace ∩ lane ∩ task ∩ tool scopes must all agree
+      ↓
+Policy evaluation: does any policy deny this action?
+  deny-wins cascade — a deny at any level is final
+      ↓
+Execution + evidence: tool runs, receipt is recorded
+  content-addressed input, timestamped trace, immutable log
+```
+
+## Core Architecture
+
+LumenFlow has two layers:
+
+| Layer      | What it does                                                                       |
+| ---------- | ---------------------------------------------------------------------------------- |
+| **Kernel** | Scope intersection, policy engine, evidence store, tool dispatch. Domain-agnostic. |
+| **Packs**  | Pluggable extensions that teach the kernel how to work in a specific domain.       |
+
+The kernel provides four guarantees:
+
+1. **Scope intersection** — 4-level permission model (workspace, lane, task, tool) where all levels must agree
+2. **Deny-wins policies** — restrictive policies at any level cannot be loosened by a lower level
+3. **Evidence receipts** — every tool call produces an immutable, content-addressed audit record
+4. **OS-enforced isolation** — bwrap sandbox with write confinement and secret deny overlays
+
+Packs are self-contained plugins that declare tools, policies, and evidence types. The **Software Delivery Pack** (pack #1) adds:
+
+- Work Units (WUs) — testable task specifications with acceptance criteria
+- Lanes — parallel work streams with WIP limits and scope boundaries
+- Gates — automated quality checks enforced as pack policies
+- Worktree isolation — each WU gets its own git worktree
+- Memory — context recovery for long-running agent sessions
+
+<Aside type="tip">
+  LumenFlow ships with the Software Delivery Pack built in. If you are a software team, everything
+  works out of the box. The pack system lets you extend LumenFlow to any domain — infrastructure,
+  compliance, data pipelines, or anything else agents need to govern.
+</Aside>
 
 ## Works with Any AI
 
-LumenFlow is **friction-free for any AI coding assistant**. If your AI can read project files, it can use LumenFlow—just point it at `AGENTS.md` and `LUMENFLOW.md`.
+LumenFlow is **friction-free for any AI coding assistant**. If your AI can read project files, it can use LumenFlow — just point it at `AGENTS.md` and `LUMENFLOW.md`.
 
 | Any AI                                                | Enhanced Integrations                                    |
 | ----------------------------------------------------- | -------------------------------------------------------- |
@@ -15,37 +70,6 @@ LumenFlow is **friction-free for any AI coding assistant**. If your AI can read 
 | No vendor lock-in                                     | Auto-detection, skills, vendor-specific configs          |
 | Universal entry points: `AGENTS.md`, `LUMENFLOW.md`   | Optional overlays: `.claude/`, `.cursor/`, `.windsurf/`  |
 | CLI commands work everywhere                          | [MCP server](/guides/mcp-setup) for programmatic access  |
-
-## Why LumenFlow?
-
-1. **Clarity over chaos** – Every Work Unit (WU) has an explicit state, owner, and outcome. No ambiguity.
-
-2. **AI as a first-class collaborator** – Instructions, ports, and tests let AI agents contribute safely and autonomously.
-
-3. **Focus without bottlenecks** – Lane-based WIP keeps individual streams calm while teams move together.
-
-4. **Evidence, not claims** – Tests and artifacts prove the work is done, not just "closed".
-
-## Core Concepts
-
-| Concept              | What it Does                                                                      |
-| -------------------- | --------------------------------------------------------------------------------- |
-| **Work Units (WUs)** | Tiny, testable jobs with clear acceptance criteria                                |
-| **Lanes**            | Parallel tracks for different domains (e.g., `Framework: Core`, `Experience: UI`) |
-| **Gates**            | Automated quality checks (lint, test, typecheck)                                  |
-| **Memory**           | Context recovery for long-running sessions                                        |
-
-## How It Works
-
-```
-Backlog (ready)
-      ↓ claim a WU
-Lane board (one WU per lane)
-      ↓ implement with TDD
-Gates (lint, test, typecheck)
-      ↓ all green
-Done (stamp committed)
-```
 
 ## Quick Example
 
@@ -89,6 +113,8 @@ cd /path/to/repo && pnpm wu:done --id WU-123
 
 ## Next Steps
 
-- [Agent Quickstart](/getting-started/quickstart) – Share this link with your AI agent
-- [Manual Quickstart (Humans)](/guides/manual-quickstart) – Run setup yourself
-- [Work Units](/concepts/work-units) – Understanding WUs
+- [Agent Quickstart](/getting-started/quickstart) — Share this link with your AI agent
+- [Manual Quickstart (Humans)](/guides/manual-quickstart) — Run setup yourself
+- [Kernel Runtime](/concepts/kernel) — How the kernel dispatches and governs tool calls
+- [Packs](/concepts/packs) — The extension mechanism for domain-specific tooling
+- [Work Units](/concepts/work-units) — Understanding WUs in the Software Delivery Pack

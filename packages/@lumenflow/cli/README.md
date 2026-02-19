@@ -152,27 +152,31 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ### System & Setup
 
-| Command                    | Description                               |
-| -------------------------- | ----------------------------------------- |
-| `backlog-prune`            | Clean stale backlog entries               |
-| `init-plan`                | Link plan to initiative (alias)           |
-| `lumenflow`                | Initialize LumenFlow in a project         |
-| `lumenflow-commands`       | List all available CLI commands           |
-| `lumenflow-docs-sync`      | Sync agent docs (for upgrades) (alias)    |
-| `lumenflow-doctor`         | Diagnose LumenFlow configuration          |
-| `lumenflow-init`           | Initialize LumenFlow in a project (alias) |
-| `lumenflow-integrate`      | Generate enforcement hooks for client     |
-| `lumenflow-release`        | Run release workflow                      |
-| `lumenflow-sync-templates` | Sync templates to project                 |
-| `lumenflow-upgrade`        | Upgrade LumenFlow packages                |
-| `plan-create`              | Create a new plan                         |
-| `plan-edit`                | Edit plan content                         |
-| `plan-link`                | Link plan to WU or initiative             |
-| `plan-promote`             | Promote plan to WU                        |
-| `state-bootstrap`          | Bootstrap state store                     |
-| `state-cleanup`            | Clean up stale state data                 |
-| `state-doctor`             | Diagnose state store issues               |
-| `sync-templates`           | Sync templates to project (alias)         |
+| Command                    | Description                                             |
+| -------------------------- | ------------------------------------------------------- |
+| `backlog-prune`            | Clean stale backlog entries                             |
+| `config-get`               | Read and display a value from .lumenflow.config.yaml    |
+| `config-set`               | Safely update .lumenflow.config.yaml via micro-worktree |
+| `init-plan`                | Link plan to initiative (alias)                         |
+| `lumenflow`                | Initialize LumenFlow in a project                       |
+| `lumenflow-commands`       | List all available CLI commands                         |
+| `lumenflow-docs-sync`      | Sync agent docs (for upgrades) (alias)                  |
+| `lumenflow-doctor`         | Diagnose LumenFlow configuration                        |
+| `lumenflow-init`           | Initialize LumenFlow in a project (alias)               |
+| `lumenflow-integrate`      | Generate enforcement hooks for client                   |
+| `lumenflow-release`        | Run release workflow                                    |
+| `lumenflow-sync-templates` | Sync templates to project                               |
+| `lumenflow-upgrade`        | Upgrade LumenFlow packages                              |
+| `pack-scaffold`            | Scaffold a new domain pack                              |
+| `pack-search`              | Search for domain packs in a registry                   |
+| `plan-create`              | Create a new plan                                       |
+| `plan-edit`                | Edit plan content                                       |
+| `plan-link`                | Link plan to WU or initiative                           |
+| `plan-promote`             | Promote plan to WU                                      |
+| `state-bootstrap`          | Bootstrap state store                                   |
+| `state-cleanup`            | Clean up stale state data                               |
+| `state-doctor`             | Diagnose state store issues                             |
+| `sync-templates`           | Sync templates to project (alias)                       |
 
 ### File & Git Operations
 
