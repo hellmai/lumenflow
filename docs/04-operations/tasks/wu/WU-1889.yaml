@@ -37,9 +37,6 @@ notes: >-
   completion.
 requires_review: false
 assigned_to: tom@hellm.ai
-claimed_at: 2026-02-19T16:54:13.549Z
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1889
-session_id: 1d23196b-1438-4c07-88e2-946cfe16872a
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
