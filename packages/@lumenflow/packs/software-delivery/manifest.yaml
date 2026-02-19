@@ -26,7 +26,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:cleanup
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuCleanupTool
     permission: write
     required_scopes:
       - type: path
@@ -47,7 +47,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:delete
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuDeleteTool
     permission: write
     required_scopes:
       - type: path
@@ -103,7 +103,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:prune
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuPruneTool
     permission: write
     required_scopes:
       - type: path
@@ -131,7 +131,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:sandbox
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuSandboxTool
     permission: write
     required_scopes:
       - type: path
@@ -152,7 +152,7 @@ tools:
         pattern: '**'
         access: write
   - name: wu:unlock-lane
-    entry: tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool
+    entry: tool-impl/wu-lifecycle-tools.ts#wuUnlockLaneTool
     permission: write
     required_scopes:
       - type: path

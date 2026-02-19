@@ -14,17 +14,22 @@ import {
   gatesTool,
   wuBlockTool,
   wuBriefTool,
+  wuCleanupTool,
   wuClaimTool,
+  wuDeleteTool,
   wuDelegateTool,
   wuDepsTool,
   wuDoneTool,
   wuEditTool,
+  wuPruneTool,
   wuProtoTool,
   wuRecoverTool,
   wuReleaseTool,
   wuRepairTool,
+  wuSandboxTool,
   wuStatusTool,
   wuUnblockTool,
+  wuUnlockLaneTool,
 } from '../tool-impl/wu-lifecycle-tools.js';
 
 const CLI_ENTRY_SCRIPT_PATH = path.resolve(process.cwd(), 'tools/cli-entry.mjs');
@@ -308,6 +313,161 @@ describe('wu lifecycle tool adapters (WU-1887)', () => {
         '--phase',
         '6',
         '--no-strict',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('maps wu:sandbox options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'sandbox ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuSandboxTool({
+      id: 'WU-1895',
+      worktree: 'worktrees/framework-core-lifecycle-wu-1895',
+      command: ['node', '-v'],
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-sandbox',
+        '--id',
+        'WU-1895',
+        '--worktree',
+        'worktrees/framework-core-lifecycle-wu-1895',
+        '--',
+        'node',
+        '-v',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('requires command for wu:sandbox', async () => {
+    const output = await wuSandboxTool({
+      id: 'WU-1895',
+    });
+
+    expect(output.success).toBe(false);
+    expect(output.error?.code).toBe('MISSING_PARAMETER');
+    expect(spawnSyncMock).not.toHaveBeenCalled();
+  });
+
+  it('maps wu:prune options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'prune ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuPruneTool({
+      execute: true,
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [CLI_ENTRY_SCRIPT_PATH, 'wu-prune', '--execute'],
+      expect.any(Object),
+    );
+  });
+
+  it('maps wu:delete options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'delete ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuDeleteTool({
+      id: 'WU-1895',
+      dry_run: true,
+      batch: 'WU-1895,WU-1896',
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-delete',
+        '--id',
+        'WU-1895',
+        '--dry-run',
+        '--batch',
+        'WU-1895,WU-1896',
+      ],
+      expect.any(Object),
+    );
+  });
+
+  it('maps wu:cleanup options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'cleanup ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuCleanupTool({
+      id: 'WU-1895',
+      artifacts: true,
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [CLI_ENTRY_SCRIPT_PATH, 'wu-cleanup', '--id', 'WU-1895', '--artifacts'],
+      expect.any(Object),
+    );
+  });
+
+  it('requires lane for wu:unlock-lane when not listing locks', async () => {
+    const output = await wuUnlockLaneTool({
+      reason: 'manual remediation',
+    });
+
+    expect(output.success).toBe(false);
+    expect(output.error?.code).toBe('MISSING_PARAMETER');
+    expect(spawnSyncMock).not.toHaveBeenCalled();
+  });
+
+  it('maps wu:unlock-lane options to CLI flags', async () => {
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+      stdout: 'unlock ok',
+      stderr: '',
+      error: undefined,
+    });
+
+    const output = await wuUnlockLaneTool({
+      lane: 'Framework: Core Lifecycle',
+      reason: 'manual remediation',
+      force: true,
+      status: true,
+    });
+
+    expect(output.success).toBe(true);
+    expect(spawnSyncMock).toHaveBeenCalledWith(
+      process.execPath,
+      [
+        CLI_ENTRY_SCRIPT_PATH,
+        'wu-unlock-lane',
+        '--lane',
+        'Framework: Core Lifecycle',
+        '--reason',
+        'manual remediation',
+        '--force',
+        '--status',
       ],
       expect.any(Object),
     );

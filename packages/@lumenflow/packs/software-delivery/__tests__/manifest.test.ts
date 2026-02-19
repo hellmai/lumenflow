@@ -6,7 +6,7 @@ import {
 } from '../manifest.js';
 
 const PENDING_RUNTIME_TOOL_ENTRY = 'tool-impl/pending-runtime-tools.ts#pendingRuntimeMigrationTool';
-const PENDING_RUNTIME_BASELINE = 71;
+const PENDING_RUNTIME_BASELINE = 66;
 
 describe('software-delivery migration scorecard (WU-1885)', () => {
   it('reports declared, pending-runtime, and real-handler totals', () => {
@@ -46,7 +46,7 @@ describe('software-delivery migration scorecard (WU-1885)', () => {
     ).toBeLessThanOrEqual(PENDING_RUNTIME_BASELINE);
   });
 
-  it('routes WU-1887/WU-1893/WU-1894 lifecycle tools to runtime handlers', () => {
+  it('routes WU-1887/WU-1893/WU-1894/WU-1895 lifecycle tools to runtime handlers', () => {
     const expectedEntries = new Map<string, string>([
       ['wu:create', 'tool-impl/wu-lifecycle-tools.ts#wuCreateTool'],
       ['wu:claim', 'tool-impl/wu-lifecycle-tools.ts#wuClaimTool'],
@@ -65,6 +65,11 @@ describe('software-delivery migration scorecard (WU-1885)', () => {
       ['wu:deps', 'tool-impl/wu-lifecycle-tools.ts#wuDepsTool'],
       ['wu:edit', 'tool-impl/wu-lifecycle-tools.ts#wuEditTool'],
       ['wu:proto', 'tool-impl/wu-lifecycle-tools.ts#wuProtoTool'],
+      ['wu:sandbox', 'tool-impl/wu-lifecycle-tools.ts#wuSandboxTool'],
+      ['wu:prune', 'tool-impl/wu-lifecycle-tools.ts#wuPruneTool'],
+      ['wu:delete', 'tool-impl/wu-lifecycle-tools.ts#wuDeleteTool'],
+      ['wu:cleanup', 'tool-impl/wu-lifecycle-tools.ts#wuCleanupTool'],
+      ['wu:unlock-lane', 'tool-impl/wu-lifecycle-tools.ts#wuUnlockLaneTool'],
       ['gates', 'tool-impl/wu-lifecycle-tools.ts#gatesTool'],
     ]);
 

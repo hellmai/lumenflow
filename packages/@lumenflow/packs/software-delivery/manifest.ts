@@ -40,6 +40,11 @@ const WU_DONE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDoneTool';
 const WU_PREP_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuPrepTool';
 const WU_PREFLIGHT_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuPreflightTool';
 const WU_VALIDATE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuValidateTool';
+const WU_SANDBOX_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuSandboxTool';
+const WU_PRUNE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuPruneTool';
+const WU_DELETE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDeleteTool';
+const WU_CLEANUP_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuCleanupTool';
+const WU_UNLOCK_LANE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuUnlockLaneTool';
 const WU_BRIEF_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuBriefTool';
 const WU_DELEGATE_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDelegateTool';
 const WU_DEPS_TOOL_ENTRY = 'tool-impl/wu-lifecycle-tools.ts#wuDepsTool';
@@ -156,6 +161,11 @@ const TOOL_ENTRY_OVERRIDES: Partial<Record<ToolName, string>> = {
   'wu:prep': WU_PREP_TOOL_ENTRY,
   'wu:preflight': WU_PREFLIGHT_TOOL_ENTRY,
   'wu:validate': WU_VALIDATE_TOOL_ENTRY,
+  'wu:sandbox': WU_SANDBOX_TOOL_ENTRY,
+  'wu:prune': WU_PRUNE_TOOL_ENTRY,
+  'wu:delete': WU_DELETE_TOOL_ENTRY,
+  'wu:cleanup': WU_CLEANUP_TOOL_ENTRY,
+  'wu:unlock-lane': WU_UNLOCK_LANE_TOOL_ENTRY,
   'wu:brief': WU_BRIEF_TOOL_ENTRY,
   'wu:delegate': WU_DELEGATE_TOOL_ENTRY,
   'wu:deps': WU_DEPS_TOOL_ENTRY,
