@@ -105,7 +105,8 @@ describe('generateSkillsSelectionSection', () => {
       // Backend work should NOT get capability-mapped frontend-design in soft policy.
       // Note: 'frontend-design' still appears in the static Additional Skills table,
       // so we check the Soft Policy section specifically.
-      const softPolicySection = result.split('### Soft Policy')[1]?.split('### Additional Skills')[0] ?? '';
+      const softPolicySection =
+        result.split('### Soft Policy')[1]?.split('### Additional Skills')[0] ?? '';
       expect(softPolicySection).not.toContain('Suggested by work classifier');
       expect(softPolicySection).not.toContain('`frontend-design`');
       expect(softPolicySection).not.toContain('`library-first`');
@@ -173,7 +174,8 @@ describe('generateSkillsSelectionSection', () => {
       // Docs domain has documentation-structure capability, not ui-design-awareness.
       // 'frontend-design' still appears in the static Additional Skills table,
       // so we check the Soft Policy section specifically for classifier suggestions.
-      const softPolicySection = result.split('### Soft Policy')[1]?.split('### Additional Skills')[0] ?? '';
+      const softPolicySection =
+        result.split('### Soft Policy')[1]?.split('### Additional Skills')[0] ?? '';
       expect(softPolicySection).not.toContain('Suggested by work classifier');
       expect(softPolicySection).not.toContain('`frontend-design`');
     });

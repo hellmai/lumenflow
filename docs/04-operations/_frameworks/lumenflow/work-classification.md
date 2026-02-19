@@ -157,6 +157,7 @@ For `bug` type WUs classified as UI domain, `generatePolicyBasedTestGuidance` re
 ### 3. Conditional TDD CHECKPOINT
 
 The constraints block's TDD CHECKPOINT (constraint #1) is omitted when:
+
 - Work is classified as UI domain (smoke-test methodology)
 - Policy methodology is `none`
 
@@ -165,6 +166,7 @@ Remaining constraints are renumbered dynamically.
 ### 4. Design Context Section
 
 A new `## Design Context` section is added to the brief for UI-classified work. It includes:
+
 - Pattern check guidance (check for existing components before creating new ones)
 - Viewport verification guidance (test across breakpoints)
 - Accessibility requirements
