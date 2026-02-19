@@ -9,7 +9,10 @@ code_paths:
   - packages/@lumenflow/mcp/src/__tests__/cli-integration.test.ts
   - packages/@lumenflow/mcp/src/__tests__/initiative-tools.test.ts
 tests:
-  manual: []
+  manual:
+    - 'Run both failing tests and verify they pass: pnpm vitest run
+      packages/@lumenflow/mcp/src/__tests__/cli-integration.test.ts
+      packages/@lumenflow/mcp/src/__tests__/initiative-tools.test.ts'
   unit:
     - packages/@lumenflow/mcp/src/__tests__/cli-integration.test.ts
     - packages/@lumenflow/mcp/src/__tests__/initiative-tools.test.ts
@@ -27,7 +30,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Two tests on main are failing: cli-integration.test.ts pack_search parity test and initiative-tools.test.ts docs_sync handler test. These are pre-existing failures not introduced by any specific recent WU.'
+description: 'Two tests on main are failing: cli-integration.test.ts pack_search parity test and
+  initiative-tools.test.ts docs_sync handler test. These are pre-existing failures not introduced by
+  any specific recent WU.'
 acceptance:
   - cli-integration.test.ts parity test passes (pack_search accounted for)
   - initiative-tools.test.ts docs_sync test passes
