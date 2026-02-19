@@ -7,12 +7,14 @@ priority: P2
 created: 2026-02-19
 code_paths:
   - docs/04-operations/_frameworks/lumenflow/**
-  - .lumenflow/rules/**
   - .lumenflow/constraints.md
+  - .lumenflow/rules/yaml-editing-policy.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/**
   - .claude/CLAUDE.md
   - .cursorrules
   - apps/docs/src/content/docs/reference/agent-safety.mdx
+  - LUMENFLOW.md
+  - .prettierignore
 tests:
   manual:
     - Review all doc files render correctly in Starlight dev server
