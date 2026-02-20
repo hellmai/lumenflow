@@ -2,7 +2,7 @@ id: WU-1940
 title: Fix events.filter runtime error on Dashboard
 lane: 'Operations: Runtime'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -44,3 +44,6 @@ description: Dashboard page throws 'events.filter is not a function' at runtime.
 acceptance:
   - Dashboard page loads without runtime errors
   - events data is properly initialized as array before filtering
+locked: true
+completed_at: 2026-02-20T14:04:02.082Z
+completed: 2026-02-20
