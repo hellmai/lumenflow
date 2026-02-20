@@ -2,7 +2,7 @@ id: WU-1947
 title: '[WU-D] CLI install fix: integrity auto-resolve + real onboard install'
 lane: 'Framework: CLI Orchestration'
 type: feature
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-20
 code_paths:
@@ -36,8 +36,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Merge the pack:install integrity auto-resolve fix with onboard real-install behavior so onboarding no longer writes placeholder pins and registry installs work without manual integrity input.
+description: Merge the pack:install integrity auto-resolve fix with onboard real-install behavior so
+  onboarding no longer writes placeholder pins and registry installs work without manual integrity
+  input.
 acceptance:
   - pack:install --id X --source registry --version Y succeeds without manual --integrity
-  - onboard --yes installs and pins a concrete version+integrity instead of writing empty placeholder values
-  - Registry URL validation enforces HTTPS except localhost, and onboarding handles transient registry failure gracefully
+  - onboard --yes installs and pins a concrete version+integrity instead of writing empty
+    placeholder values
+  - Registry URL validation enforces HTTPS except localhost, and onboarding handles transient
+    registry failure gracefully
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-orchestration-wu-1947
+claimed_at: 2026-02-20T19:38:50.728Z
+baseline_main_sha: 2150149a6d16657a7b645f4c6c596a2efb2e78ae
+session_id: a0305952-44e2-45af-8b22-0c46873e937d
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T19:38:50.734Z

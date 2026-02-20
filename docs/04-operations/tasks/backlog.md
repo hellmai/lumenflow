@@ -20,12 +20,10 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1959 — Optimize landing page: reduce whitespace, review content](wu/WU-1959.yaml) — Operations: Tooling
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
-- [WU-1947 — \[WU-D\] CLI install fix: integrity auto-resolve + real onboard install](wu/WU-1947.yaml) — Framework: CLI Orchestration
 - [WU-1948 — \[WU-E\] Marketplace UX: canonical install command + one-click install](wu/WU-1948.yaml) — Operations: Runtime
 - [WU-1949 — \[WU-F\] Workspace packs route for loaded-pack visibility](wu/WU-1949.yaml) — Operations: Runtime
 - [WU-1950 — \[WU-G\] Registry manifest extraction + marketplace trust rendering](wu/WU-1950.yaml) — Operations: Runtime
@@ -36,10 +34,12 @@ sections:
 - [WU-1955 — \[WU-L\] AG-UI run route + preview runtime diagnostics](wu/WU-1955.yaml) — Operations: Runtime
 - [WU-1956 — \[WU-M\] Expand MCP tool surface for pack/workspace parity](wu/WU-1956.yaml) — Framework: MCP
 - [WU-1957 — \[WU-N\] Docs sweep for secure authoring + updated onboarding/install flow](wu/WU-1957.yaml) — Content: Site Comms
+- [WU-1959 — Optimize landing page: reduce whitespace, review content](wu/WU-1959.yaml) — Operations: Tooling
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1947 — \[WU-D\] CLI install fix: integrity auto-resolve + real onboard install](wu/WU-1947.yaml) — Framework: CLI Orchestration
 
 ## ⛔ Blocked
 
