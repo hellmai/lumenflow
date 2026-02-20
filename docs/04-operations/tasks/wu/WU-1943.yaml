@@ -2,7 +2,7 @@ id: WU-1943
 title: 'Fix MDX build error: unescaped angle brackets in cli.mdx'
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -29,3 +29,11 @@ description: MDX interprets <hex> as a JSX tag in cli.mdx line 740. Escape it wi
 acceptance:
   - cli.mdx builds without errors
   - Vercel deploy succeeds
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-tooling-wu-1943
+claimed_at: 2026-02-20T16:22:46.488Z
+baseline_main_sha: 0d96d2917ba230e79358885a74bcac1d390c7c08
+session_id: 68f93f8d-8311-4543-b8eb-96e7fb000b11
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T16:22:46.496Z
