@@ -1,0 +1,42 @@
+id: WU-1952
+title: '[WU-I] pack:author command + security lint hardening'
+lane: 'Framework: CLI Orchestration'
+type: feature
+status: ready
+priority: P0
+created: 2026-02-20
+code_paths:
+  - packages/@lumenflow/cli/src
+  - packages/@lumenflow/cli/src/pack-scaffold.ts
+  - packages/@lumenflow/cli/src/pack-install.ts
+  - packages/@lumenflow/cli/src/onboard.ts
+tests:
+  manual:
+    - Run pack:author and pack:validate on safe and unsafe template packs
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/pack-install-registry.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1952.done
+dependencies: []
+initiative: INIT-032
+phase: 3
+blocked_by:
+  - WU-1951
+spec_refs:
+  - /home/USER/.claude/plans/curious-skipping-robin.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Add pack:author CLI flow for template-based no-code pack creation and harden pack:validate with security lint rules for scope, permission, and network safety.
+acceptance:
+  - pack:author supports interactive and spec-file driven generation paths
+  - Generated packs pass pack:validate for safe template configurations
+  - pack:validate fails unsafe wildcard-write or invalid network scheme configurations with actionable errors

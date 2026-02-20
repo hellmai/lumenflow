@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1952 — [WU-I] pack:author command + security lint hardening](wu/WU-1952.yaml) — Framework: CLI Orchestration
 - [WU-1950 — [WU-G] Registry manifest extraction + marketplace trust rendering](wu/WU-1950.yaml) — Operations: Runtime
 - [WU-1949 — [WU-F] Workspace packs route for loaded-pack visibility](wu/WU-1949.yaml) — Operations: Runtime
 - [WU-1948 — [WU-E] Marketplace UX: canonical install command + one-click install](wu/WU-1948.yaml) — Operations: Runtime
