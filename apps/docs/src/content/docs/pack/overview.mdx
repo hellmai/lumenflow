@@ -1,6 +1,6 @@
 ---
 title: Software Delivery Pack
-description: The default pack providing WU lifecycle, lanes, gates, memory, and 100+ CLI commands
+description: The default pack providing WU lifecycle, lanes, gates, memory, and secure template-first pack authoring
 ---
 
 import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
@@ -45,11 +45,29 @@ The pack registers **100+ CLI commands** across these categories:
 | Memory & Sessions     | `mem:checkpoint`, `mem:inbox`, `mem:signal`      | 14    |
 | Initiatives           | `initiative:create`, `initiative:status`         | 8     |
 | Gates & Validation    | `gates`, `wu:validate`, `lumenflow-doctor`       | 6     |
-| Packs                 | `pack:scaffold`, `pack:validate`, `pack:publish` | 6     |
+| Packs                 | `pack:author`, `pack:install`, `pack:validate`   | 6     |
 | Metrics & Flow        | `flow:report`, `flow:bottlenecks`, `metrics`     | 5     |
 | Agent & Orchestration | `wu:brief`, `wu:delegate`, `orchestrate:monitor` | 7     |
 
 See the [CLI Reference](/reference/cli) for the complete command list.
+
+## Secure Template Authoring (No-Code)
+
+The recommended path for new packs is template-first authoring:
+
+```bash
+pnpm pack:author
+pnpm pack:validate
+```
+
+Template generation enforces least-privilege defaults and validation catches
+unsafe scope/network configurations before install or publish.
+
+Install command shape:
+
+```bash
+pnpm pack:install --id <packId> --source registry --version <version>
+```
 
 ## Pack Policies
 

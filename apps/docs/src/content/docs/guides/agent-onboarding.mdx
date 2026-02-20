@@ -27,6 +27,18 @@ Before starting any WU:
 - [ ] Run wu:prep before wu:done
 - [ ] ALWAYS run wu:done
 
+## Fast Bootstrap (Recommended)
+
+For a fresh setup, use one command:
+
+```bash
+pnpm onboard --yes --domain software-delivery
+```
+
+This flow creates `workspace.yaml`, installs the default pack, and pins its
+integrity automatically. Re-running `onboard` is non-destructive and updates
+the existing workspace flow instead of blindly overwriting.
+
 ## The Most Common Mistake
 
 <Card title="Not Running wu:done" icon="warning">
@@ -481,6 +493,30 @@ ISO_TIMESTAMP|BYPASSED|COMMAND_OR_HOOK|USER|BRANCH|REASON|CWD
 </Aside>
 
 ## Setup and Verification
+
+### Web Runtime Setup (Dashboard + AG-UI)
+
+To enable management actions and AG-UI run streaming in the web app, configure
+runtime access in `apps/web/.env.local`:
+
+```bash
+LUMENFLOW_WEB_ENABLE_KERNEL_RUNTIME=1
+LUMENFLOW_WEB_WORKSPACE_ROOT=/absolute/path/to/your/workspace
+```
+
+Then run the web app and verify the runtime is available:
+
+```bash
+pnpm --filter @lumenflow/web dev
+```
+
+Runtime routes to know:
+
+- `POST /api/ag-ui/v1/run` streams RunAgent SSE output
+- `GET /api/health` reports runtime/workspace availability
+
+If runtime is not configured, preview mode returns actionable diagnostics with
+the exact env vars above.
 
 ### Claude Code
 
