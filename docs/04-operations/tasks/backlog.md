@@ -41,7 +41,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
-- [WU-1931 — Docs polish: v3.0.0 references, lanes, upgrade guide](wu/WU-1931.yaml) — Content: Site Comms
 
 ## ⛔ Blocked
 
@@ -893,6 +892,7 @@ sections:
 - [WU-1915 — Restructure Starlight docs hierarchy to reflect kernel/pack architecture](wu/WU-1915.yaml)
 - [WU-1916 — Rewrite docs content for kernel/pack distinction and dual entry paths](wu/WU-1916.yaml)
 - [WU-1917 — Homepage conversion redesign + Astro 6 upgrade](wu/WU-1917.yaml)
+- [WU-1931 — Docs polish: v3.0.0 references, lanes, upgrade guide](wu/WU-1931.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
