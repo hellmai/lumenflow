@@ -2,7 +2,7 @@ id: WU-1922
 title: Kernel approval_required Policy Effect
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-20
 code_paths:
@@ -41,3 +41,11 @@ acceptance:
   - ToolHost transitions to waiting on approval_required
   - KernelRuntime.resolveApproval() resumes blocked tool
   - Approval events emitted to event store
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1922
+claimed_at: 2026-02-20T11:39:33.654Z
+baseline_main_sha: 697d50c0b161fe134e93eed0dba507369d1bb48d
+session_id: fb95d414-962e-4580-9ab4-5eb396653033
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T11:39:33.659Z
