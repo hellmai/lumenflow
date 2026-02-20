@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-1933 — AGPL SPDX license headers for all source files](wu/WU-1933.yaml) — Content: Site Comms
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
@@ -34,6 +33,7 @@ sections:
 - [WU-1922 — Kernel approval_required Policy Effect](wu/WU-1922.yaml) — Framework: Core Lifecycle
 - [WU-1928 — Community Landing Page](wu/WU-1928.yaml) — Content: Site Comms
 - [WU-1924 — Mount PolicyDecisionOverlay and Scope Visualization](wu/WU-1924.yaml) — Content: Site Comms
+- [WU-1933 — AGPL SPDX license headers for all source files](wu/WU-1933.yaml) — Content: Site Comms
 
 ## ⛔ Blocked
 
