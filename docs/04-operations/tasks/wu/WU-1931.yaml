@@ -2,7 +2,7 @@ id: WU-1931
 title: 'Docs polish: v3.0.0 references, lanes, upgrade guide'
 lane: 'Content: Site Comms'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -41,3 +41,6 @@ acceptance:
   - Upgrade guide reflects v3.0.0
   - Lanes page matches actual .lumenflow.config.yaml structure
   - Docs build with zero errors
+locked: true
+completed_at: 2026-02-20T11:07:06.908Z
+completed: 2026-02-20
