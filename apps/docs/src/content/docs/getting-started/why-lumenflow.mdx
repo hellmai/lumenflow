@@ -22,13 +22,11 @@ Today's AI agent workflows rely on one of three approaches. All three break down
   </Card>
   <Card title="Prompt-based trust" icon="document">
     Frameworks like LangChain and CrewAI define agent roles in prompts. But a prompt is a
-    suggestion, not a wall — agents can (and do) ignore them when they hallucinate or
-    over-optimize.
+    suggestion, not a wall — agents can (and do) ignore them when they hallucinate or over-optimize.
   </Card>
   <Card title="After-the-fact enforcement" icon="setting">
-    GitHub Actions and CI pipelines catch problems after they've already happened. By the time
-    a check fails, the agent has written files, made commits, and potentially pushed to
-    production.
+    GitHub Actions and CI pipelines catch problems after they've already happened. By the time a
+    check fails, the agent has written files, made commits, and potentially pushed to production.
   </Card>
 </CardGrid>
 
@@ -73,14 +71,14 @@ Agents run inside a **bwrap sandbox** with write confinement and deny overlays o
 
 ## How It Compares
 
-| Aspect | No Governance | Prompt-Only (CrewAI) | CI-Only (GitHub Actions) | **LumenFlow** |
-| --- | --- | --- | --- | --- |
-| **Governance** | None | Role descriptions | Post-hoc checks | 4-level scope, deny-wins |
-| **Evidence** | None | Conversation logs | CI logs | Immutable receipts |
-| **Isolation** | None | None | Container-level | OS-level bwrap sandboxes |
-| **Policy** | None | Prompt suggestions | Pipeline rules | Real-time deny-wins cascade |
-| **Extensibility** | N/A | Custom tools | Marketplace actions | Pack system with scoped policies |
-| **Licensing** | N/A | MIT / Apache | Proprietary | **AGPL v3** + **Apache 2.0** |
+| Aspect            | No Governance | Prompt-Only (CrewAI) | CI-Only (GitHub Actions) | **LumenFlow**                    |
+| ----------------- | ------------- | -------------------- | ------------------------ | -------------------------------- |
+| **Governance**    | None          | Role descriptions    | Post-hoc checks          | 4-level scope, deny-wins         |
+| **Evidence**      | None          | Conversation logs    | CI logs                  | Immutable receipts               |
+| **Isolation**     | None          | None                 | Container-level          | OS-level bwrap sandboxes         |
+| **Policy**        | None          | Prompt suggestions   | Pipeline rules           | Real-time deny-wins cascade      |
+| **Extensibility** | N/A           | Custom tools         | Marketplace actions      | Pack system with scoped policies |
+| **Licensing**     | N/A           | MIT / Apache         | Proprietary              | **AGPL v3** + **Apache 2.0**     |
 
 ## Domain Packs
 
@@ -104,8 +102,8 @@ The kernel is **domain-agnostic** on purpose. It doesn't know about software del
 </CardGrid>
 
 <Aside type="tip">
-  Most teams start with the Software Delivery Pack, which ships built-in. If you're a software
-  team, [get started here](/guides/manual-quickstart) — everything works out of the box.
+  Most teams start with the Software Delivery Pack, which ships built-in. If you're a software team,
+  [get started here](/guides/manual-quickstart) — everything works out of the box.
 </Aside>
 
 ## When You Need LumenFlow
