@@ -1,0 +1,34 @@
+id: WU-1942
+title: Replace hero logo with terminal demo GIF
+lane: 'Operations: Tooling'
+type: feature
+status: ready
+priority: P2
+created: 2026-02-20
+code_paths:
+  - apps/docs/src/content/docs/index.mdx
+tests:
+  manual:
+    - Visual check on lumenflow.dev
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1942.done
+dependencies: []
+spec_refs:
+  - https://vhs.charm.sh/vhs-44duqFa0o01MzVScos4ISU.gif
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: ui
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Replace the static logo in the hero with an animated terminal demo GIF showing LumenFlow CLI in action. Also tighten the hero tagline.
+acceptance:
+  - Hero image shows terminal demo GIF instead of static logo
+  - Tagline is shorter and punchier (1-2 lines)
+  - Deployed to lumenflow.dev
