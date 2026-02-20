@@ -29,7 +29,8 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'S-PATHTR: Path traversal via workspace connect API. S-EXEC: Untrusted CWD in install endpoint. S-CSRF: No CSRF protection on POST endpoints.'
+description: 'S-PATHTR: Path traversal via workspace connect API. S-EXEC: Untrusted CWD in install
+  endpoint. S-CSRF: No CSRF protection on POST endpoints.'
 acceptance:
   - Workspace connect path sanitized (resolve + verify within allowed root)
   - Install endpoint validates CWD
