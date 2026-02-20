@@ -2,7 +2,7 @@ id: WU-1956
 title: '[WU-M] Expand MCP tool surface for pack/workspace parity'
 lane: 'Framework: MCP'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-20
 code_paths:
@@ -34,8 +34,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Expand MCP discovery/tools to include pack:list, pack:install, and workspace:info parity operations aligned with CLI and HTTP surface capabilities.
+description: Expand MCP discovery/tools to include pack:list, pack:install, and workspace:info
+  parity operations aligned with CLI and HTTP surface capabilities.
 acceptance:
   - MCP listTools includes pack:list, pack:install, and workspace:info entries
-  - Tool handlers route through runtime safely with error handling consistent with existing MCP commands
+  - Tool handlers route through runtime safely with error handling consistent with existing MCP
+    commands
   - Parity tests cover the new MCP tool exposure and basic invocation contract
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-mcp-wu-1956
+claimed_at: 2026-02-20T22:03:22.187Z
+baseline_main_sha: d9f9b9e18a82d659206145f22915333c64fe8a7c
+session_id: 00e74531-45ea-459c-a128-69d816996879
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T22:03:22.192Z
