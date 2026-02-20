@@ -15,6 +15,10 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/pack-validate.test.ts
   - packages/@lumenflow/cli/src/__tests__/pack-publish.test.ts
   - packages/@lumenflow/mcp/src/tools.ts
+  - apps/docs/src/content/docs/reference/cli.mdx
+  - packages/@lumenflow/cli/README.md
+  - packages/@lumenflow/mcp/src/__tests__/cli-integration.test.ts
+  - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
 tests:
   manual:
     - Run pack:author and pack:validate on safe and unsafe template packs
