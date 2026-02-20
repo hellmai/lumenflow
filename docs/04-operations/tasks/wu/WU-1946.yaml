@@ -9,11 +9,13 @@ code_paths:
   - apps/web/src/components
   - apps/web/package.json
   - apps/web/components.json
+  - apps/web/__tests__/shadcn-foundation.test.ts
 tests:
   manual:
     - Smoke-check dashboard renders with installed component primitives
   unit:
     - apps/web/__tests__/workspace-overview.test.tsx
+    - apps/web/__tests__/shadcn-foundation.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1946.done
@@ -25,10 +27,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-20T18:30:04.423Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/operations-runtime-wu-1946
+session_id: c6a2f924-e6c6-4d5f-bd41-0c31c460e1d0
 exposure: ui
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T18:30:04.429Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -38,11 +47,3 @@ acceptance:
   - Selected shadcn components are generated under apps/web/src/components/ui
   - react-hook-form and @hookform/resolvers are present and wired for form usage
   - Web package typecheck/tests remain green after component install
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/operations-runtime-wu-1946
-claimed_at: 2026-02-20T18:30:04.423Z
-baseline_main_sha: 602bf803e2cd03eae5bcc18c94a6563314c20498
-session_id: c6a2f924-e6c6-4d5f-bd41-0c31c460e1d0
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-20T18:30:04.429Z
