@@ -101,11 +101,12 @@ export function validateSemver(version: string): ValidationResult {
     };
   }
 
-  // Split off build metadata (+...)
-  const [versionWithoutBuild] = version.split('+', 2);
-
-  // Split off pre-release (-...)
-  const [coreVersion] = versionWithoutBuild.split('-', 2);
+  // Split off build metadata (+...) and pre-release (-...)
+  const buildIdx = version.indexOf('+');
+  const versionWithoutBuild = buildIdx === -1 ? version : version.slice(0, buildIdx);
+  const preReleaseIdx = versionWithoutBuild.indexOf('-');
+  const coreVersion =
+    preReleaseIdx === -1 ? versionWithoutBuild : versionWithoutBuild.slice(0, preReleaseIdx);
 
   // Core must be exactly three numeric segments
   const parts = coreVersion.split('.');
