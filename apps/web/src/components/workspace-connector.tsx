@@ -12,7 +12,8 @@ const CREATING_WORKSPACE_BUTTON_LABEL = 'Creating...';
 const PROJECT_NAME_PLACEHOLDER = 'Project name';
 const CREATE_ROUTE_PATH = '/api/workspace/create';
 const ERROR_CREATE_WORKSPACE_PREFIX = 'Failed to create workspace';
-const EXISTING_WORKSPACE_MESSAGE = 'Workspace already exists. Connect to proceed without overwrite.';
+const EXISTING_WORKSPACE_MESSAGE =
+  'Workspace already exists. Connect to proceed without overwrite.';
 const WORKSPACE_CREATED_MESSAGE = 'Workspace created. Connecting...';
 const DISCONNECT_BUTTON_LABEL = 'Disconnect';
 const PACKS_LABEL = 'packs';
@@ -126,7 +127,9 @@ export function WorkspacePathPrompt({ onConnect, isConnecting }: WorkspacePathPr
       setCreateWorkspaceInfo(WORKSPACE_CREATED_MESSAGE);
       onConnect(body.workspaceRoot);
     } catch (error) {
-      setCreateWorkspaceError(error instanceof Error ? error.message : ERROR_CREATE_WORKSPACE_PREFIX);
+      setCreateWorkspaceError(
+        error instanceof Error ? error.message : ERROR_CREATE_WORKSPACE_PREFIX,
+      );
     } finally {
       setIsCreatingWorkspace(false);
     }
@@ -208,7 +211,9 @@ export function WorkspacePathPrompt({ onConnect, isConnecting }: WorkspacePathPr
               disabled={controlsDisabled}
               className="rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50"
             >
-              {isCreatingWorkspace ? CREATING_WORKSPACE_BUTTON_LABEL : CREATE_WORKSPACE_BUTTON_LABEL}
+              {isCreatingWorkspace
+                ? CREATING_WORKSPACE_BUTTON_LABEL
+                : CREATE_WORKSPACE_BUTTON_LABEL}
             </button>
             {createWorkspaceInfo && (
               <span data-testid="workspace-create-info" className="text-xs text-slate-600">
