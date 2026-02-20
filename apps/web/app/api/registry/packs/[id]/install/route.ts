@@ -7,6 +7,9 @@
  * the CLI pack:install command via child_process.
  *
  * WU-1878
+ * WU-1921: CWD validation (path traversal prevention) is enforced by
+ * createInstallPackRoute in pack-registry-route-adapters.ts. The
+ * workspaceRoot is validated before being used as cwd for execFile.
  */
 
 import { execFile } from 'node:child_process';
