@@ -236,8 +236,7 @@ describe('validateCsrfOrigin', () => {
   it('accepts requests with matching Referer header when Origin is absent', () => {
     const request = {
       headers: {
-        get: (name: string) =>
-          name === 'Referer' ? 'http://localhost:3000/some/page' : null,
+        get: (name: string) => (name === 'Referer' ? 'http://localhost:3000/some/page' : null),
       },
     };
     expect(validateCsrfOrigin(request, allowedOrigins).valid).toBe(true);

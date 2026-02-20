@@ -3,10 +3,7 @@ import path from 'node:path';
 import YAML from 'yaml';
 import { WorkspaceSpecSchema, WORKSPACE_FILE_NAME } from '@lumenflow/kernel';
 import { handleWorkspaceConnect } from '../../../../src/server/workspace-connect-handler';
-import {
-  validateCsrfOrigin,
-  validateBodySize,
-} from '../../../../src/server/input-validation';
+import { validateCsrfOrigin, validateBodySize } from '../../../../src/server/input-validation';
 
 const HTTP_STATUS = {
   OK: 200,
@@ -22,9 +19,7 @@ const JSON_CONTENT_TYPE = { 'Content-Type': 'application/json' };
  * Allowed origins for CSRF checking (WU-1921).
  * In production, this should be loaded from environment configuration.
  */
-const ALLOWED_ORIGINS = [
-  process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
-];
+const ALLOWED_ORIGINS = [process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'];
 
 /** Maximum request body size for workspace connect: 64 KB. */
 const MAX_BODY_SIZE = 64 * 1024;
@@ -53,7 +48,11 @@ export async function POST(request: Request): Promise<Response> {
     const bodySizeResult = validateBodySize(request, MAX_BODY_SIZE);
     if (!bodySizeResult.valid) {
       return new Response(
-        JSON.stringify({ success: false, code: bodySizeResult.code, error: bodySizeResult.message }),
+        JSON.stringify({
+          success: false,
+          code: bodySizeResult.code,
+          error: bodySizeResult.message,
+        }),
         { status: HTTP_STATUS.PAYLOAD_TOO_LARGE, headers: JSON_CONTENT_TYPE },
       );
     }

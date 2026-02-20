@@ -66,10 +66,7 @@ function jsonResponse(body: unknown, status: number): Response {
 
 /** WU-1921: Create a validation error response with machine-readable code. */
 function validationErrorResponse(code: string, message: string): Response {
-  return jsonResponse(
-    { success: false, code, error: message },
-    HTTP_STATUS.BAD_REQUEST,
-  );
+  return jsonResponse({ success: false, code, error: message }, HTTP_STATUS.BAD_REQUEST);
 }
 
 /* ------------------------------------------------------------------
