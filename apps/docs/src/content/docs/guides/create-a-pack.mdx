@@ -1,6 +1,6 @@
 ---
 title: 'Create Your First Pack in 10 Minutes'
-description: 'Write a LumenFlow domain pack from scratch: manifest, tools, scopes, policies, and integrity.'
+description: 'Create a secure pack with template-first no-code authoring, then go deep on manifest and runtime internals.'
 ---
 
 import { Aside, Steps, FileTree } from '@astrojs/starlight/components';
@@ -15,6 +15,37 @@ This guide walks through every piece of a pack using the `software-delivery`
 pack's `git:status` tool as a concrete example. By the end you will understand
 the manifest schema, tool implementation pattern, import boundary rules, scoping
 model, policies, and integrity verification.
+
+## Recommended Path: No-Code First
+
+`pack:author` is the fastest and safest way to create a pack now. It generates
+manifest + tool implementation from vetted templates, then runs validation.
+
+```bash
+pnpm pack:author
+```
+
+For automation, use a spec file:
+
+```bash
+pnpm pack:author --spec-file ./pack-author-spec.yaml
+```
+
+Current secure templates:
+
+- `file.read_text`
+- `file.write_text`
+- `http.get_json`
+
+Validation expectations:
+
+- Least-privilege scopes by default
+- Security lint blocks unsafe scope combinations (for example wildcard writes)
+- Network templates require safe URL schemes
+- Generated packs should pass `pnpm pack:validate` without manual edits
+
+This guide continues with the lower-level, manual structure so you can
+customize advanced pack behavior when needed.
 
 ## What Is in a Pack?
 
@@ -415,6 +446,21 @@ packs:
 | `integrity` | `string` | `dev` (skip verification) or `sha256:<64-hex>`. |
 | `source`    | `string` | Where the pack is loaded from.                  |
 
+Install using the canonical command shape:
+
+```bash
+pnpm pack:install --id my-pack --source local --version 0.1.0
+```
+
+Registry installs use the same shape:
+
+```bash
+pnpm pack:install --id my-pack --source registry --version 0.1.0
+```
+
+For registry installs, `--integrity` is optional. When omitted, the CLI resolves
+the integrity value from registry metadata for the requested version.
+
 ### Integrity verification
 
 During development, set `integrity: dev` to skip hash verification. The kernel
@@ -625,6 +671,8 @@ Before shipping your pack, verify:
 - [ ] Policies use correct trigger types
 - [ ] Pack is pinned in workspace spec with correct `id` and `version`
 - [ ] Integrity is set to `dev` (development) or valid `sha256:` hash (production)
+- [ ] `pnpm pack:validate` passes with no security lint violations
+- [ ] Pack installs via `pnpm pack:install --id <packId> --source <source> --version <version>`
 - [ ] Tool implementations return the `ToolOutput` contract (`success`, optional `data`/`error`/`metadata`)
 
 ## Next Steps
