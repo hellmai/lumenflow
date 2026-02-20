@@ -1,0 +1,31 @@
+id: WU-1934
+title: Fix pre-existing MCP parity test failures from WU-1927 onboard
+lane: 'Framework: MCP'
+type: bug
+status: ready
+priority: P2
+created: 2026-02-20
+code_paths:
+  - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
+tests:
+  manual:
+    - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
+  unit:
+    - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1934.done
+dependencies: []
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: WU-1927 added the onboard CLI command but did not update the MCP parity test expected missing list.
+acceptance:
+  - MCP parity test passes
