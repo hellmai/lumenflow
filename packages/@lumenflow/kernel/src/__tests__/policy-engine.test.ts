@@ -361,9 +361,7 @@ describe('policy engine', () => {
 
     expect(result.decision).toBe('approval_required');
     expect(
-      result.decisions.some(
-        (decision) => decision.policy_id === 'pack.approval.dangerous-tool',
-      ),
+      result.decisions.some((decision) => decision.policy_id === 'pack.approval.dangerous-tool'),
     ).toBe(true);
   });
 
