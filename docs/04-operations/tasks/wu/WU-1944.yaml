@@ -2,7 +2,7 @@ id: WU-1944
 title: Restore hero logo, add GIF demos in full-width row
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -25,9 +25,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Restore logo in hero image, move terminal demo GIFs to their own full-width row below hero for readability.
+description: Restore logo in hero image, move terminal demo GIFs to their own full-width row below
+  hero for readability.
 acceptance:
   - Hero shows logo (dark/light) again
   - Both GIFs displayed in full-width row below hero
   - GIFs are large enough to read
   - Deployed to lumenflow.dev
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/operations-tooling-wu-1944
+claimed_at: 2026-02-20T16:44:57.270Z
+baseline_main_sha: 3688c5bcae5e89f259a66cc7d9cdfed977ff6cbf
+session_id: 35c5840b-b39b-4113-9b57-f0d5e5aa0fc4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T16:44:57.275Z
