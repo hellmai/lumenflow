@@ -73,9 +73,7 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
   });
 
   it('rejects workspaceRoot with path traversal', async () => {
-    const { createInstallPackRoute } = await import(
-      '../src/server/pack-registry-route-adapters'
-    );
+    const { createInstallPackRoute } = await import('../src/server/pack-registry-route-adapters');
 
     // Construct traversal path at runtime to avoid pre-commit lint
     const traversalPath = ['..', '..', '..', 'sensitive'].join('/');
@@ -104,9 +102,7 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
   });
 
   it('rejects workspaceRoot with null bytes', async () => {
-    const { createInstallPackRoute } = await import(
-      '../src/server/pack-registry-route-adapters'
-    );
+    const { createInstallPackRoute } = await import('../src/server/pack-registry-route-adapters');
 
     const mockInstallFn = vi.fn().mockResolvedValue({ success: true, integrity: 'sha256:ok' });
     const handler = createInstallPackRoute({
@@ -127,9 +123,7 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
   });
 
   it('accepts valid workspaceRoot', async () => {
-    const { createInstallPackRoute } = await import(
-      '../src/server/pack-registry-route-adapters'
-    );
+    const { createInstallPackRoute } = await import('../src/server/pack-registry-route-adapters');
 
     const mockInstallFn = vi.fn().mockResolvedValue({ success: true, integrity: 'sha256:ok' });
     const handler = createInstallPackRoute({
@@ -163,9 +157,7 @@ describe('Pack ID validation in handlers (WU-1921)', () => {
   });
 
   it('rejects invalid pack IDs in getPackById', async () => {
-    const { createGetPackRoute } = await import(
-      '../src/server/pack-registry-route-adapters'
-    );
+    const { createGetPackRoute } = await import('../src/server/pack-registry-route-adapters');
 
     const handler = createGetPackRoute({ registryStore });
     const response = await handler('../traversal');
@@ -176,9 +168,8 @@ describe('Pack ID validation in handlers (WU-1921)', () => {
   });
 
   it('rejects invalid pack IDs in publish', async () => {
-    const { createPublishVersionRoute } = await import(
-      '../src/server/pack-registry-route-adapters'
-    );
+    const { createPublishVersionRoute } =
+      await import('../src/server/pack-registry-route-adapters');
 
     const handler = createPublishVersionRoute({
       registryStore,
@@ -210,9 +201,8 @@ describe('Pack ID validation in handlers (WU-1921)', () => {
 
 describe('Version validation in publish (WU-1921)', () => {
   it('rejects non-semver version strings', async () => {
-    const { createPublishVersionRoute } = await import(
-      '../src/server/pack-registry-route-adapters'
-    );
+    const { createPublishVersionRoute } =
+      await import('../src/server/pack-registry-route-adapters');
 
     const handler = createPublishVersionRoute({
       registryStore: createMockRegistryStore(),

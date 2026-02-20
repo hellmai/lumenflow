@@ -27,7 +27,8 @@ export const ValidationErrorCode = {
   INVALID_PATH: 'ERR_INVALID_PATH',
 } as const;
 
-export type ValidationErrorCodeType = (typeof ValidationErrorCode)[keyof typeof ValidationErrorCode];
+export type ValidationErrorCodeType =
+  (typeof ValidationErrorCode)[keyof typeof ValidationErrorCode];
 
 /* ------------------------------------------------------------------
  * Validation result type
