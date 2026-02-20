@@ -150,7 +150,10 @@ function PackSummaryCard({ pack, workspaceRoot }: PackSummaryCardProps) {
           </p>
         )}
         {!isWorkspaceConnected && (
-          <p data-testid={`install-pack-disabled-${pack.id}`} className="mt-2 text-xs text-slate-400">
+          <p
+            data-testid={`install-pack-disabled-${pack.id}`}
+            className="mt-2 text-xs text-slate-400"
+          >
             {INSTALL_CARD_DISABLED_TOOLTIP}
           </p>
         )}
