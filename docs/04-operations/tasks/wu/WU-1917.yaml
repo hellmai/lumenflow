@@ -2,7 +2,7 @@ id: WU-1917
 title: Homepage conversion redesign + Astro 6 upgrade
 lane: 'Content: Site Comms'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -26,10 +26,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Upgrade docs site to Astro 6 beta and redesign homepage for conversion. Current homepage jumps to technical architecture before explaining the problem LumenFlow solves. Restructure to follow problem → solution → credibility → features → get started flow.
+description: Upgrade docs site to Astro 6 beta and redesign homepage for conversion. Current
+  homepage jumps to technical architecture before explaining the problem LumenFlow solves.
+  Restructure to follow problem → solution → credibility → features → get started flow.
 acceptance:
   - Astro 6 beta builds successfully with all 71 pages
   - Homepage leads with problem/pain before technical details
   - Primary CTA is learn-first not CLI setup
   - Four Guarantees section appears after problem statement
   - Deployed to production
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-site-comms-wu-1917
+claimed_at: 2026-02-20T10:38:40.767Z
+baseline_main_sha: 4e538a0e8b91b1b680e513443f3a8d61ea6c1de5
+session_id: 2215e78a-d779-4408-b10c-2824b63ec87b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T10:38:40.773Z
