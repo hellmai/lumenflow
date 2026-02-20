@@ -105,9 +105,10 @@ function useMarketplaceData(): UseMarketplaceDataResult {
       }
 
       const data = (await response.json()) as {
-        packs: PackRegistryEntry[];
+        packs?: PackRegistryEntry[];
       };
-      const summaries = data.packs.map(toMarketplaceSummary);
+      const rawPacks = Array.isArray(data?.packs) ? data.packs : [];
+      const summaries = rawPacks.map(toMarketplaceSummary);
 
       setPacks(summaries);
       setState('success');

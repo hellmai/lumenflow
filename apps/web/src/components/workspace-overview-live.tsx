@@ -54,7 +54,12 @@ function useWorkspaceData(): UseWorkspaceDataResult {
         throw new Error(`${ERROR_MESSAGE_PREFIX}: ${response.statusText}`);
       }
 
-      const rawEvents: unknown[] = await response.json();
+      const json: unknown = await response.json();
+      const rawEvents: unknown[] = Array.isArray(json)
+        ? json
+        : Array.isArray((json as Record<string, unknown>)?.events)
+          ? (json as Record<string, unknown>).events as unknown[]
+          : [];
       const events = parseEventsResponse(rawEvents);
       const overview = buildWorkspaceOverview(events);
 

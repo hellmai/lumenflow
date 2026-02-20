@@ -55,7 +55,12 @@ function usePackCatalogData(): UsePackCatalogDataResult {
         throw new Error(`${ERROR_MESSAGE_PREFIX}: ${response.statusText}`);
       }
 
-      const rawPacks: unknown[] = await response.json();
+      const json: unknown = await response.json();
+      const rawPacks: unknown[] = Array.isArray(json)
+        ? json
+        : Array.isArray((json as Record<string, unknown>)?.packs)
+          ? (json as Record<string, unknown>).packs as unknown[]
+          : [];
       const parsedPacks = parsePacksResponse(rawPacks);
 
       setPacks(parsedPacks);
