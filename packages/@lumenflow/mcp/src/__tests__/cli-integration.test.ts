@@ -82,8 +82,11 @@ function extractJson<T>(stdout: string): T {
 describe('CLI integration (no mocks)', { timeout: CLI_INTEGRATION_TEST_TIMEOUT_MS }, () => {
   // WU-1908: pack commands are known, tracked parity gaps (see WU-1880).
   // WU-1919: Added pack:validate, pack:hash, pack:publish, pack:install to public manifest.
+  // WU-1952: Added pack:author to public manifest.
   // They exist in the CLI public manifest but have no MCP tools yet.
   const EXPECTED_MISSING_PARITY_TOOLS: string[] = [
+    'onboard',
+    'pack_author',
     'pack_hash',
     'pack_install',
     'pack_publish',
