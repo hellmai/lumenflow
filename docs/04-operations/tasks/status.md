@@ -5,7 +5,6 @@ _Last updated: 2026-02-20_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1952 — \[WU-I\] pack:author command + security lint hardening](wu/WU-1952.yaml)
 
 ## Completed
 
@@ -888,3 +887,4 @@ _Last updated: 2026-02-20_
 - [WU-1951 — \[WU-H\] Secure pack authoring template engine](wu/WU-1951.yaml) — 2026-02-20
 - [WU-1948 — \[WU-E\] Marketplace UX: canonical install command + one-click install](wu/WU-1948.yaml) — 2026-02-20
 - [WU-1949 — \[WU-F\] Workspace packs route for loaded-pack visibility](wu/WU-1949.yaml) — 2026-02-20
+- [WU-1952 — \[WU-I\] pack:author command + security lint hardening](wu/WU-1952.yaml) — 2026-02-20
