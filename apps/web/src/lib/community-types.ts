@@ -60,7 +60,7 @@ export const GETTING_STARTED_STEPS: readonly GettingStartedStep[] = [
   {
     title: 'Install a Pack',
     description: 'Add a pack to your workspace and start using its tools immediately.',
-    command: 'npx lumenflow pack:install software-delivery',
+    command: 'npx lumenflow pack:install --id software-delivery --source registry',
   },
   {
     title: 'Create Your Own',

@@ -39,6 +39,7 @@ const FEEDBACK_RESET_DELAY_MS = 5000;
 
 const TOOLS_EMPTY_MESSAGE = 'No tools defined.';
 const POLICIES_EMPTY_MESSAGE = 'No policies defined.';
+const EMPTY_PERMISSION_SCOPE_LABEL = 'none';
 
 export const INSTALL_TO_WORKSPACE_LABEL = 'Install to workspace';
 export const INSTALL_TO_WORKSPACE_INSTALLING_LABEL = 'Installing...';
@@ -111,14 +112,27 @@ interface InstallSectionProps {
   readonly packId: string;
   readonly version: string;
   readonly workspaceRoot: string | null;
+  readonly tools: readonly MarketplaceToolView[];
+  readonly policies: readonly MarketplacePolicyView[];
 }
 
-function InstallSection({ packId, version, workspaceRoot }: InstallSectionProps) {
+function buildInstallSummary(
+  tools: readonly MarketplaceToolView[],
+  policies: readonly MarketplacePolicyView[],
+): string {
+  const permissions = [...new Set(tools.map((tool) => tool.permission))].sort();
+  const permissionSummary =
+    permissions.length > 0 ? permissions.join(', ') : EMPTY_PERMISSION_SCOPE_LABEL;
+  return `${tools.length} tools, ${policies.length} policies, permission scopes: ${permissionSummary}`;
+}
+
+function InstallSection({ packId, version, workspaceRoot, tools, policies }: InstallSectionProps) {
   const [copied, setCopied] = useState(false);
   const [installFeedback, setInstallFeedback] = useState<InstallFeedback>('idle');
   const [installError, setInstallError] = useState<string | null>(null);
   const installCommand = generateInstallCommand(packId, version);
   const isWorkspaceConnected = workspaceRoot !== null;
+  const installSummary = buildInstallSummary(tools, policies);
 
   const handleCopy = useCallback(() => {
     void navigator.clipboard.writeText(installCommand).then(() => {
@@ -233,7 +247,7 @@ function InstallSection({ packId, version, workspaceRoot }: InstallSectionProps)
             data-testid="install-success-feedback"
             className="rounded border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700"
           >
-            Pack installed successfully to workspace.
+            Pack installed successfully to workspace. {installSummary}
           </div>
         )}
 
@@ -302,7 +316,13 @@ export function MarketplacePackDetail({ pack, workspaceRoot = null }: Marketplac
       </div>
 
       {/* Install Section (AC3 + WU-1878) */}
-      <InstallSection packId={pack.id} version={pack.latestVersion} workspaceRoot={workspaceRoot} />
+      <InstallSection
+        packId={pack.id}
+        version={pack.latestVersion}
+        workspaceRoot={workspaceRoot}
+        tools={pack.tools}
+        policies={pack.policies}
+      />
 
       {/* Tools Section (AC2) */}
       <div data-testid="pack-detail-tools" className="rounded-lg border border-slate-200 bg-white">
