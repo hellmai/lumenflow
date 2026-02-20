@@ -65,6 +65,19 @@ wus:
   - WU-1840
   - WU-1841
   - WU-1842
+  - WU-1918
+  - WU-1919
+  - WU-1920
+  - WU-1921
+  - WU-1922
+  - WU-1923
+  - WU-1924
+  - WU-1925
+  - WU-1926
+  - WU-1927
+  - WU-1928
+  - WU-1929
+  - WU-1930
 notes:
   - '2026-02-19: Reclosed after reassigning WU-1884..WU-1897 to INIT-030 Phase 6 software-delivery
     stream.'
