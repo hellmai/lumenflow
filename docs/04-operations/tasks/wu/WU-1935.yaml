@@ -2,7 +2,7 @@ id: WU-1935
 title: Fix validate-paths hook, add remaining SPDX headers + NOTICE
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -42,3 +42,6 @@ session_id: fdc65ffa-bca7-45c8-9939-3de4f745ccc1
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-20T12:13:02.350Z
+locked: true
+completed_at: 2026-02-20T12:17:08.447Z
+completed: 2026-02-20
