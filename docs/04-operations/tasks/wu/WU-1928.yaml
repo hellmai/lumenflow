@@ -2,7 +2,7 @@ id: WU-1928
 title: Community Landing Page
 lane: 'Content: Site Comms'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -44,3 +44,6 @@ session_id: fe4eb406-cd55-4eac-acd7-27dfbc9bfc68
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-20T11:54:08.403Z
+locked: true
+completed_at: 2026-02-20T12:02:01.977Z
+completed: 2026-02-20
