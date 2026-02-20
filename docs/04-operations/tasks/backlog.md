@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1939 — Fix Next.js dev script for Turbopack default in Next 16](wu/WU-1939.yaml) — Operations: Tooling
 - [WU-1938 — Remove terminal code block from landing page hero](wu/WU-1938.yaml) — Operations: Tooling
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
