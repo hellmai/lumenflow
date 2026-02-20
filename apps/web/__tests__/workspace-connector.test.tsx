@@ -143,9 +143,7 @@ describe('WorkspacePathPrompt (AC1)', () => {
     fireEvent.click(screen.getByTestId('workspace-create-button'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('workspace-create-info').textContent).toContain(
-        'already exists',
-      );
+      expect(screen.getByTestId('workspace-create-info').textContent).toContain('already exists');
     });
     expect(onConnect).not.toHaveBeenCalled();
 

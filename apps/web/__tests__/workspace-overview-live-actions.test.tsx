@@ -48,12 +48,15 @@ describe('WorkspaceOverviewLive management actions', () => {
     let eventsCallCount = 0;
 
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+      const url =
+        typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
 
       if (url.includes('/api/events/all')) {
         eventsCallCount += 1;
         return new Response(
-          JSON.stringify(eventsCallCount === 1 ? INITIAL_EVENTS_RESPONSE : REFRESHED_EVENTS_RESPONSE),
+          JSON.stringify(
+            eventsCallCount === 1 ? INITIAL_EVENTS_RESPONSE : REFRESHED_EVENTS_RESPONSE,
+          ),
           { status: 200, headers: { 'Content-Type': 'application/json' } },
         );
       }

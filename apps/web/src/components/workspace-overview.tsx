@@ -14,11 +14,14 @@ const CREATE_TASK_SUBMIT_LABEL = 'Create';
 const CREATE_TASK_SUBMITTING_LABEL = 'Creating...';
 const ONBOARDING_HEADING = 'Get started';
 const ONBOARDING_WORKSPACE_TITLE = '1. Create Workspace';
-const ONBOARDING_WORKSPACE_DESCRIPTION = 'Create or connect a workspace to initialize runtime data.';
+const ONBOARDING_WORKSPACE_DESCRIPTION =
+  'Create or connect a workspace to initialize runtime data.';
 const ONBOARDING_PACK_TITLE = '2. Install Domain Pack';
-const ONBOARDING_PACK_DESCRIPTION = 'Install a pack from Marketplace to enable domain tools and policies.';
+const ONBOARDING_PACK_DESCRIPTION =
+  'Install a pack from Marketplace to enable domain tools and policies.';
 const ONBOARDING_TASK_TITLE = '3. Create First Task';
-const ONBOARDING_TASK_DESCRIPTION = 'Create your first task to start agent execution and evidence capture.';
+const ONBOARDING_TASK_DESCRIPTION =
+  'Create your first task to start agent execution and evidence capture.';
 const MINIMUM_TITLE_LENGTH = 3;
 const DEFAULT_PRIORITY = 'P1';
 const DEFAULT_RISK = 'medium';
