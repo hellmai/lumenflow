@@ -43,21 +43,21 @@ lumenflow-mcp
 
 The MCP server exposes **110 tools** organized into 13 categories (103 in the core `allTools` registry plus 7 runtime task tools):
 
-| Category                      | Count | Description                                |
-| ----------------------------- | ----- | ------------------------------------------ |
-| Core WU Operations            | 8     | Basic WU lifecycle and context             |
-| Public Parity Operations (W1) | 15    | Ops/setup parity families from public CLI  |
+| Category                      | Count | Description                                 |
+| ----------------------------- | ----- | ------------------------------------------- |
+| Core WU Operations            | 8     | Basic WU lifecycle and context              |
+| Public Parity Operations (W1) | 15    | Ops/setup parity families from public CLI   |
 | Public Parity Operations (W2) | 17    | File/git/plan/signal/config parity families |
-| Additional WU Operations      | 17    | Extended WU management                     |
-| Initiative Operations         | 8     | Multi-phase project orchestration          |
-| Memory Operations             | 14    | Session tracking and agent coordination    |
-| Agent Operations              | 4     | Agent session management and issue logging |
-| Orchestration Operations      | 3     | Initiative execution and monitoring        |
-| Delegation Operations         | 1     | Sub-agent delegation tree management       |
-| Flow/Metrics Operations       | 3     | DORA metrics and flow analysis             |
-| Validation Operations         | 5     | WU and configuration validation            |
-| Setup Operations              | 8     | LumenFlow initialization and configuration |
-| Runtime Task Tools            | 7     | Kernel runtime task lifecycle              |
+| Additional WU Operations      | 17    | Extended WU management                      |
+| Initiative Operations         | 8     | Multi-phase project orchestration           |
+| Memory Operations             | 14    | Session tracking and agent coordination     |
+| Agent Operations              | 4     | Agent session management and issue logging  |
+| Orchestration Operations      | 3     | Initiative execution and monitoring         |
+| Delegation Operations         | 1     | Sub-agent delegation tree management        |
+| Flow/Metrics Operations       | 3     | DORA metrics and flow analysis              |
+| Validation Operations         | 5     | WU and configuration validation             |
+| Setup Operations              | 8     | LumenFlow initialization and configuration  |
+| Runtime Task Tools            | 7     | Kernel runtime task lifecycle               |
 
 Tool inventory source of truth: `packages/@lumenflow/mcp/src/tools.ts` (`allTools` + `runtimeTaskTools`).
 
@@ -920,20 +920,20 @@ Sync LumenFlow templates to the project.
 
 These 7 tools are available when the kernel runtime is active. They are part of the `runtimeTaskTools` registry and are additive to the core `allTools` set.
 
-| Tool                 | Description                                  |
-| -------------------- | -------------------------------------------- |
-| `task_claim`         | Claim a task for execution                   |
-| `task_create`        | Create a new task                            |
-| `task_complete`      | Mark a task as completed                     |
-| `task_block`         | Block a task                                 |
-| `task_unblock`       | Unblock a task                               |
-| `task_inspect`       | Inspect task state                           |
-| `task_tool_execute`  | Execute a tool within a task context         |
+| Tool                | Description                          |
+| ------------------- | ------------------------------------ |
+| `task_claim`        | Claim a task for execution           |
+| `task_create`       | Create a new task                    |
+| `task_complete`     | Mark a task as completed             |
+| `task_block`        | Block a task                         |
+| `task_unblock`      | Unblock a task                       |
+| `task_inspect`      | Inspect task state                   |
+| `task_tool_execute` | Execute a tool within a task context |
 
 <Aside type="note">
   Runtime task tools are intentionally isolated from the legacy CLI-shell tools in `allTools`. This
-  separation allows command-by-command migration to the kernel runtime without breaking parity gates.
-  The production MCP server registers both arrays via `registeredTools`.
+  separation allows command-by-command migration to the kernel runtime without breaking parity
+  gates. The production MCP server registers both arrays via `registeredTools`.
 </Aside>
 
 ---
