@@ -60,17 +60,18 @@ These aren't features you can turn off. They're structural properties of the ker
     action proceeds. All four levels must agree. If any level says no, it's no.
   </Card>
   <Card title="Every action has a receipt" icon="document">
-    Immutable, content-addressed evidence records capture what was requested, what was checked,
-    and what happened. Not logs — cryptographic proof that can be independently verified.
+    Immutable, content-addressed evidence records capture what was requested, what was checked, and
+    what happened. Not logs — cryptographic proof that can be independently verified.
   </Card>
   <Card title="Policies can't be loosened" icon="warning">
     The deny-wins cascade means a restrictive policy at any level stays restrictive. A lane can't
-    override a workspace rule. A task can't override a lane rule. Strictness only goes one direction.
+    override a workspace rule. A task can't override a lane rule. Strictness only goes one
+    direction.
   </Card>
   <Card title="Isolation is real" icon="setting">
     Agents run in bwrap sandboxes with write confinement and deny overlays on secrets. This is
-    OS-level isolation — enforced by the Linux kernel, not by the agent runtime. Agents can't
-    escape it even if they try.
+    OS-level isolation — enforced by the Linux kernel, not by the agent runtime. Agents can't escape
+    it even if they try.
   </Card>
 </CardGrid>
 
@@ -80,15 +81,15 @@ These aren't features you can turn off. They're structural properties of the ker
 
 If your AI assistant can read files and run commands, it can use LumenFlow. No vendor lock-in, no special SDK required. Just point your agent at `AGENTS.md` and go.
 
-| Any AI Tool | Enhanced Integrations |
-| --- | --- |
-| Works out of the box via markdown instructions | Claude Code, Cursor, Windsurf, Codex get deeper features |
-| CLI commands work everywhere — no lock-in | Auto-detection, skills, vendor-specific overlays |
-| Universal entry points: `AGENTS.md`, `LUMENFLOW.md` | Optional: `.claude/`, `.cursor/`, `.windsurf/` configs |
+| Any AI Tool                                         | Enhanced Integrations                                    |
+| --------------------------------------------------- | -------------------------------------------------------- |
+| Works out of the box via markdown instructions      | Claude Code, Cursor, Windsurf, Codex get deeper features |
+| CLI commands work everywhere — no lock-in           | Auto-detection, skills, vendor-specific overlays         |
+| Universal entry points: `AGENTS.md`, `LUMENFLOW.md` | Optional: `.claude/`, `.cursor/`, `.windsurf/` configs   |
 
 <Aside type="tip">
-  Already using an AI coding tool? LumenFlow doesn't replace it — it governs it. Your agents
-  keep their full capabilities. They just can't color outside the lines anymore.
+  Already using an AI coding tool? LumenFlow doesn't replace it — it governs it. Your agents keep
+  their full capabilities. They just can't color outside the lines anymore.
 </Aside>
 
 ---
@@ -160,20 +161,20 @@ The kernel is domain-agnostic on purpose. Domain knowledge comes from **packs** 
 
 ## How LumenFlow Compares
 
-| Aspect | Scrum / Kanban | GitHub Actions | LangChain / CrewAI | **LumenFlow** |
-| --- | --- | --- | --- | --- |
-| **Agent governance** | None | CI-only | Trust the prompt | 4-level scope, deny-wins policy engine |
-| **Evidence of work** | Ticket status | Logs | None | Immutable evidence receipts |
-| **Sandbox isolation** | None | Container-level | None | OS-level bwrap with secret deny overlays |
-| **Work partitioning** | Columns / sprints | Workflows | Agent roles | Lanes with WIP limits + worktree isolation |
-| **Quality gates** | PR review | CI checks | None | Automated: format, lint, typecheck, test |
-| **Multi-agent safety** | N/A | Concurrent jobs | Shared state | Lane locking, branch isolation, signals |
-| **Licensing** | N/A (methodology) | Proprietary | MIT / Apache | **AGPL v3** (kernel) + **Apache 2.0** (SDK) |
-| **Extensibility** | Plugins / apps | Marketplace | Custom tools | Pack system with scoped tools + policies |
+| Aspect                 | Scrum / Kanban    | GitHub Actions  | LangChain / CrewAI | **LumenFlow**                               |
+| ---------------------- | ----------------- | --------------- | ------------------ | ------------------------------------------- |
+| **Agent governance**   | None              | CI-only         | Trust the prompt   | 4-level scope, deny-wins policy engine      |
+| **Evidence of work**   | Ticket status     | Logs            | None               | Immutable evidence receipts                 |
+| **Sandbox isolation**  | None              | Container-level | None               | OS-level bwrap with secret deny overlays    |
+| **Work partitioning**  | Columns / sprints | Workflows       | Agent roles        | Lanes with WIP limits + worktree isolation  |
+| **Quality gates**      | PR review         | CI checks       | None               | Automated: format, lint, typecheck, test    |
+| **Multi-agent safety** | N/A               | Concurrent jobs | Shared state       | Lane locking, branch isolation, signals     |
+| **Licensing**          | N/A (methodology) | Proprietary     | MIT / Apache       | **AGPL v3** (kernel) + **Apache 2.0** (SDK) |
+| **Extensibility**      | Plugins / apps    | Marketplace     | Custom tools       | Pack system with scoped tools + policies    |
 
 <Aside type="tip">
-  LumenFlow complements your existing stack. Keep Jira for planning, GitHub Actions for CI,
-  and add LumenFlow as the governance layer that ties agent execution together.
+  LumenFlow complements your existing stack. Keep Jira for planning, GitHub Actions for CI, and add
+  LumenFlow as the governance layer that ties agent execution together.
 </Aside>
 
 ---
@@ -189,8 +190,8 @@ governance workflow we ship to you.
     sign the CLA, and pick up a Work Unit. First-time contributors welcome.
   </Card>
   <Card title="Discuss" icon="comment">
-    Questions, ideas, or feedback? Start a thread on
-    [GitHub Discussions](https://github.com/hellmai/lumenflow/discussions) or join us on
+    Questions, ideas, or feedback? Start a thread on [GitHub
+    Discussions](https://github.com/hellmai/lumenflow/discussions) or join us on
     [Discord](https://discord.gg/lumenflow).
   </Card>
 </CardGrid>
