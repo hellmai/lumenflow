@@ -25,7 +25,6 @@ sections:
 - [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml) — Framework: CLI Enforcement
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
 - [WU-1950 — \[WU-G\] Registry manifest extraction + marketplace trust rendering](wu/WU-1950.yaml) — Operations: Runtime
-- [WU-1952 — \[WU-I\] pack:author command + security lint hardening](wu/WU-1952.yaml) — Framework: CLI Orchestration
 - [WU-1953 — \[WU-J\] Pack authoring API route + web wizard](wu/WU-1953.yaml) — Operations: Runtime
 - [WU-1954 — \[WU-K\] Management UI: workspace wizard + task creation + onboarding state](wu/WU-1954.yaml) — Operations: Runtime
 - [WU-1955 — \[WU-L\] AG-UI run route + preview runtime diagnostics](wu/WU-1955.yaml) — Operations: Runtime
@@ -35,6 +34,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
+- [WU-1952 — \[WU-I\] pack:author command + security lint hardening](wu/WU-1952.yaml) — Framework: CLI Orchestration
 
 ## ⛔ Blocked
 
