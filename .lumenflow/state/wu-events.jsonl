@@ -1859,3 +1859,4 @@
 {"type":"complete","wuId":"WU-1948","timestamp":"2026-02-20T20:18:44.376Z"}
 {"type":"claim","wuId":"WU-1949","timestamp":"2026-02-20T20:19:32.471Z","lane":"Operations: Runtime","title":"[WU-F] Workspace packs route for loaded-pack visibility"}
 {"type":"complete","wuId":"WU-1949","timestamp":"2026-02-20T20:32:08.921Z"}
+{"type":"claim","wuId":"WU-1952","lane":"Framework: CLI Orchestration","title":"[WU-I] pack:author command + security lint hardening","timestamp":"2026-02-20T20:32:50.428Z"}
