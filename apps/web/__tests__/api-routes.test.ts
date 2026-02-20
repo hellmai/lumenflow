@@ -31,6 +31,8 @@ vi.mock('../src/server/http-surface-runtime', () => ({
 
 const HTTP_STATUS = {
   NO_CONTENT: 204,
+  FORBIDDEN: 403,
+  PAYLOAD_TOO_LARGE: 413,
 } as const;
 
 const TEST_RESPONSE = new Response(null, { status: HTTP_STATUS.NO_CONTENT });
@@ -63,7 +65,12 @@ describe('apps/web API route delegates', () => {
     const routeModule = await import('../app/api/tasks/[...slug]/route');
 
     const response = await routeModule.POST(
-      new Request('http://localhost/api/tasks/WU-1819/claim'),
+      new Request('http://localhost/api/tasks/WU-1819/claim', {
+        method: 'POST',
+        headers: {
+          Origin: 'http://localhost:3000',
+        },
+      }),
       {
         params: Promise.resolve({ slug: ['WU-1819', 'claim'] }),
       },
@@ -75,6 +82,49 @@ describe('apps/web API route delegates', () => {
         pathName: '/tasks/WU-1819/claim',
       }),
     );
+  });
+
+  it('rejects cross-origin POST /api/tasks/[...slug]', async () => {
+    const routeModule = await import('../app/api/tasks/[...slug]/route');
+
+    const response = await routeModule.POST(
+      new Request('http://localhost/api/tasks/WU-1819/claim', {
+        method: 'POST',
+        headers: {
+          Origin: 'https://evil.example',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'claim' }),
+      }),
+      {
+        params: Promise.resolve({ slug: ['WU-1819', 'claim'] }),
+      },
+    );
+
+    expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
+    expect(forwardToHttpSurface).not.toHaveBeenCalled();
+  });
+
+  it('rejects oversized POST /api/tasks/[...slug] body', async () => {
+    const routeModule = await import('../app/api/tasks/[...slug]/route');
+
+    const response = await routeModule.POST(
+      new Request('http://localhost/api/tasks/WU-1819/claim', {
+        method: 'POST',
+        headers: {
+          Origin: 'http://localhost:3000',
+          'Content-Type': 'application/json',
+          'Content-Length': String(2 * 1024 * 1024),
+        },
+        body: JSON.stringify({ action: 'claim' }),
+      }),
+      {
+        params: Promise.resolve({ slug: ['WU-1819', 'claim'] }),
+      },
+    );
+
+    expect(response.status).toBe(HTTP_STATUS.PAYLOAD_TOO_LARGE);
+    expect(forwardToHttpSurface).not.toHaveBeenCalled();
   });
 
   it('GET /api/events/all returns events from EventStore replay', async () => {

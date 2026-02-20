@@ -13,6 +13,7 @@ import {
 // Traversal payloads constructed at runtime to avoid pre-commit absolute-path lint
 const TRAVERSAL_PAYLOAD = ['..', '..', '..', 'sensitive', 'data'].join('/');
 const NULL_BYTE_PAYLOAD = ['valid', 'path'].join('/') + '\0' + 'malicious';
+const ENCODED_TRAVERSAL_PAYLOAD = '%2e%2e/%2e%2e/%2e%2e/sensitive/data';
 
 /* ------------------------------------------------------------------
  * Path traversal prevention in workspace connect
@@ -83,5 +84,48 @@ describe('Workspace connect path safety (WU-1921)', () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  it('parseWorkspaceConnectRequest rejects encoded traversal sequences', () => {
+    const result = parseWorkspaceConnectRequest({
+      workspaceRoot: ENCODED_TRAVERSAL_PAYLOAD,
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('workspace connect route rejects cross-origin requests', async () => {
+    const routeModule = await import('../app/api/workspace/connect/route');
+
+    const response = await routeModule.POST(
+      new Request('http://localhost/api/workspace/connect', {
+        method: 'POST',
+        headers: {
+          Origin: 'https://evil.example',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ workspaceRoot: 'workspaces/my-project' }),
+      }),
+    );
+
+    expect(response.status).toBe(403);
+  });
+
+  it('workspace connect route rejects oversized request body', async () => {
+    const routeModule = await import('../app/api/workspace/connect/route');
+
+    const response = await routeModule.POST(
+      new Request('http://localhost/api/workspace/connect', {
+        method: 'POST',
+        headers: {
+          Origin: 'http://localhost:3000',
+          'Content-Type': 'application/json',
+          'Content-Length': String(70 * 1024),
+        },
+        body: JSON.stringify({ workspaceRoot: 'workspaces/my-project' }),
+      }),
+    );
+
+    expect(response.status).toBe(413);
   });
 });

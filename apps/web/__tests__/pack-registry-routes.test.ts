@@ -34,6 +34,8 @@ const FIXTURE_PACK: PackRegistryEntry = {
   updatedAt: '2026-02-18T00:00:00Z',
 };
 
+const ALLOWED_ORIGIN = 'http://localhost:3000';
+
 // --- Mock factories ---
 
 function createMockRegistryStore(overrides: Partial<PackRegistryStore> = {}): PackRegistryStore {
@@ -159,7 +161,7 @@ describe('Pack Registry Route Adapters', () => {
 
       const request = new Request('http://localhost/api/registry/packs/test/versions', {
         method: 'POST',
-        headers: { Authorization: 'Bearer ghp_validtoken' },
+        headers: { Authorization: 'Bearer ghp_validtoken', Origin: ALLOWED_ORIGIN },
         body: formData,
       });
 
@@ -186,6 +188,7 @@ describe('Pack Registry Route Adapters', () => {
 
       const request = new Request('http://localhost/api/registry/packs/test/versions', {
         method: 'POST',
+        headers: { Origin: ALLOWED_ORIGIN },
         body: formData,
       });
 
@@ -209,7 +212,7 @@ describe('Pack Registry Route Adapters', () => {
 
       const request = new Request('http://localhost/api/registry/packs/test/versions', {
         method: 'POST',
-        headers: { Authorization: 'Bearer ghp_validtoken' },
+        headers: { Authorization: 'Bearer ghp_validtoken', Origin: ALLOWED_ORIGIN },
         body: formData,
       });
 

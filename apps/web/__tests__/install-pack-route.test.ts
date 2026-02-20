@@ -34,6 +34,11 @@ const FIXTURE_PACK: PackRegistryEntry = {
   updatedAt: '2026-02-18T00:00:00Z',
 };
 
+const JSON_HEADERS = {
+  'Content-Type': 'application/json',
+  Origin: 'http://localhost:3000',
+} as const;
+
 /* ------------------------------------------------------------------
  * Mock factories
  * ------------------------------------------------------------------ */
@@ -73,7 +78,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
         version: '1.0.0',
@@ -98,7 +103,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
         version: '1.0.0',
@@ -127,7 +132,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({ version: '1.0.0' }),
     });
 
@@ -153,7 +158,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/nonexistent/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
         version: '1.0.0',
@@ -177,7 +182,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
         version: '99.99.99',
@@ -202,7 +207,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
       }),
@@ -232,7 +237,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
         version: '1.0.0',
@@ -259,7 +264,7 @@ describe('createInstallPackRoute', () => {
 
     const request = new Request('http://localhost/api/registry/packs/software-delivery/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify({
         workspaceRoot: './test-workspace',
         version: '1.0.0',

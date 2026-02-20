@@ -9,11 +9,9 @@
  */
 
 import type { WorkspaceInfo } from '../lib/workspace-connection-types';
-import { ValidationErrorCode } from './input-validation';
+import { ValidationErrorCode, validatePathInput } from './input-validation';
 
 const ERROR_WORKSPACE_ROOT_REQUIRED = 'workspaceRoot is required and must be a non-empty string.';
-const ERROR_PATH_TRAVERSAL = `${ValidationErrorCode.PATH_TRAVERSAL}: workspaceRoot contains path traversal sequences`;
-const ERROR_NULL_BYTES = `${ValidationErrorCode.PATH_TRAVERSAL}: workspaceRoot contains null bytes`;
 const ERROR_INITIALIZATION_PREFIX = 'Failed to initialize workspace';
 
 /* ------------------------------------------------------------------
@@ -44,15 +42,12 @@ export function parseWorkspaceConnectRequest(body: unknown): ParseResult {
     return { success: false, error: ERROR_WORKSPACE_ROOT_REQUIRED };
   }
 
-  // WU-1921: Reject null bytes (poison null byte attack)
-  if (workspaceRoot.includes('\0')) {
-    return { success: false, error: ERROR_NULL_BYTES };
-  }
-
-  // WU-1921: Reject path traversal sequences
-  // Normalize and check for .. components that could escape
-  if (workspaceRoot.includes('..')) {
-    return { success: false, error: ERROR_PATH_TRAVERSAL };
+  const pathValidation = validatePathInput(workspaceRoot);
+  if (!pathValidation.valid) {
+    return {
+      success: false,
+      error: `${ValidationErrorCode.PATH_TRAVERSAL}: ${pathValidation.message}`,
+    };
   }
 
   return { success: true, workspaceRoot };
@@ -122,10 +117,12 @@ export async function handleWorkspaceConnect(
     return { success: false, error: parsed.error };
   }
 
-  // WU-1921: Additional path safety check at handler level
-  // Reject null bytes that might have been encoded differently
-  if (parsed.workspaceRoot.includes('\0')) {
-    return { success: false, error: ERROR_NULL_BYTES };
+  const pathValidation = validatePathInput(parsed.workspaceRoot);
+  if (!pathValidation.valid) {
+    return {
+      success: false,
+      error: `${ValidationErrorCode.PATH_TRAVERSAL}: ${pathValidation.message}`,
+    };
   }
 
   try {
