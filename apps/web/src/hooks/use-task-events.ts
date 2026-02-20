@@ -47,6 +47,9 @@ const BACKOFF_MAX_MS = 30_000;
 const BACKOFF_JITTER_FACTOR = 0.5;
 const MAX_RECONNECT_ATTEMPTS = 10;
 
+/** Default approval timeout: 30 minutes in milliseconds. */
+export const DEFAULT_APPROVAL_TIMEOUT_MS = 30 * 60 * 1000;
+
 // --- Pure helper functions (exported for testing) ---
 
 export function buildEventsUrl(taskId: string): string {
@@ -238,6 +241,11 @@ export function extractApprovalRequests(
 
     return approvals;
   }, []);
+}
+
+/** Returns the count of pending approval requests. */
+export function countPendingApprovals(requests: readonly ApprovalRequestView[]): number {
+  return requests.filter((r) => r.status === APPROVAL_STATUSES.PENDING).length;
 }
 
 interface ApprovalDecisionInput {

@@ -305,9 +305,12 @@ describe('TaskDashboard component', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: /approve/i }));
-    fireEvent.click(screen.getByRole('button', { name: /deny/i }));
-
     expect(approve).toHaveBeenCalledWith(FIXTURE_APPROVAL_REQUEST.receiptId);
+
+    // Deny now requires confirmation (WU-1930 AC1)
+    fireEvent.click(screen.getByRole('button', { name: /deny/i }));
+    // Confirmation dialog appears -- click "Confirm Deny"
+    fireEvent.click(screen.getByRole('button', { name: /confirm deny/i }));
     expect(deny).toHaveBeenCalledWith(FIXTURE_APPROVAL_REQUEST.receiptId);
   });
 });
