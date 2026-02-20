@@ -110,16 +110,16 @@ WU (Work Unit) configuration
 
 Quality gates configuration
 
-| Field                       | Type     | Default           | Description                          |
-| --------------------------- | -------- | ----------------- | ------------------------------------ |
-| `maxEslintWarnings`         | integer  | `100`             | Maximum allowed ESLint warnings      |
-| `enableCoverage`            | boolean  | `true`            | Enable coverage checking             |
-| `minCoverage`               | number   | `90`              | Minimum coverage percentage          |
-| `enableSafetyCriticalTests` | boolean  | `true`            | Enable safety-critical test gate     |
-| `enableInvariants`          | boolean  | `true`            | Enable invariant checks              |
-| `execution`                 | object   | `-`               | Execution configuration              |
-| `commands`                  | object   | `[object Object]` | Gate command overrides               |
-| `ignore_patterns`           | string[] | `-`               | Patterns to ignore during gate checks |
+| Field                       | Type     | Default           | Description                                       |
+| --------------------------- | -------- | ----------------- | ------------------------------------------------- |
+| `maxEslintWarnings`         | integer  | `100`             | Maximum allowed ESLint warnings                   |
+| `enableCoverage`            | boolean  | `true`            | Enable coverage checking                          |
+| `minCoverage`               | number   | `90`              | Minimum coverage percentage                       |
+| `enableSafetyCriticalTests` | boolean  | `true`            | Enable safety-critical test gate                  |
+| `enableInvariants`          | boolean  | `true`            | Enable invariant checks                           |
+| `execution`                 | object   | `-`               | Execution configuration                           |
+| `commands`                  | object   | `[object Object]` | Gate command overrides                            |
+| `ignore_patterns`           | string[] | `-`               | Patterns to ignore during gate checks             |
 | `lane_health`               | string   | `"warn"`          | Lane health mode: `"warn"`, `"error"`, or `"off"` |
 
 ### memory
@@ -157,31 +157,31 @@ Progress signals configuration for sub-agent coordination (WU-1203)
 
 Signal cleanup configuration for automatic cleanup of stale coordination signals
 
-| Field             | Type    | Default  | Description                              |
-| ----------------- | ------- | -------- | ---------------------------------------- |
-| `enabled`         | boolean | `true`   | Enable automatic signal cleanup          |
-| `maxAge`          | string  | `"7d"`   | Maximum age before signals are cleaned   |
-| `runOnCheckpoint` | boolean | `true`   | Run cleanup during checkpoint operations |
+| Field             | Type    | Default | Description                              |
+| ----------------- | ------- | ------- | ---------------------------------------- |
+| `enabled`         | boolean | `true`  | Enable automatic signal cleanup          |
+| `maxAge`          | string  | `"7d"`  | Maximum age before signals are cleaned   |
+| `runOnCheckpoint` | boolean | `true`  | Run cleanup during checkpoint operations |
 
 ### memory.enforcement
 
 Memory enforcement policy for ensuring memory hygiene
 
-| Field              | Type    | Default      | Description                                    |
-| ------------------ | ------- | ------------ | ---------------------------------------------- |
-| `mode`             | string  | `"warn"`     | Enforcement mode: `"off"`, `"warn"`, `"error"` |
-| `requireInit`      | boolean | `true`       | Require memory initialization before use       |
-| `requireCleanup`   | boolean | `true`       | Require cleanup on session end                 |
+| Field            | Type    | Default  | Description                                    |
+| ---------------- | ------- | -------- | ---------------------------------------------- |
+| `mode`           | string  | `"warn"` | Enforcement mode: `"off"`, `"warn"`, `"error"` |
+| `requireInit`    | boolean | `true`   | Require memory initialization before use       |
+| `requireCleanup` | boolean | `true`   | Require cleanup on session end                 |
 
 ### memory.decay
 
 Memory decay configuration for automatic expiration of memory nodes
 
-| Field         | Type    | Default | Description                                |
-| ------------- | ------- | ------- | ------------------------------------------ |
-| `enabled`     | boolean | `false` | Enable memory decay                        |
-| `halfLife`    | integer | `30`    | Half-life in days for decay calculation    |
-| `minRelevance`| number  | `0.1`   | Minimum relevance score before expiration  |
+| Field          | Type    | Default | Description                               |
+| -------------- | ------- | ------- | ----------------------------------------- |
+| `enabled`      | boolean | `false` | Enable memory decay                       |
+| `halfLife`     | integer | `30`    | Half-life in days for decay calculation   |
+| `minRelevance` | number  | `0.1`   | Minimum relevance score before expiration |
 
 ### ui
 
@@ -272,11 +272,11 @@ cloud:
 
 Sandbox policy controls for `wu:sandbox` and `wu:claim --sandbox`
 
-| Field                            | Type     | Default                                      | Description                          |
-| -------------------------------- | -------- | -------------------------------------------- | ------------------------------------ |
-| `allow_unsandboxed_fallback_env` | string   | `"LUMENFLOW_SANDBOX_ALLOW_UNSANDBOXED"`      | Env var for unsandboxed fallback     |
-| `extra_writable_roots`           | string[] | `[]`                                         | Extra writable paths beyond worktree |
-| `deny_writable_roots`            | string[] | `[".git"]`                                   | Guardrail deny list for writable roots |
+| Field                            | Type     | Default                                 | Description                            |
+| -------------------------------- | -------- | --------------------------------------- | -------------------------------------- |
+| `allow_unsandboxed_fallback_env` | string   | `"LUMENFLOW_SANDBOX_ALLOW_UNSANDBOXED"` | Env var for unsandboxed fallback       |
+| `extra_writable_roots`           | string[] | `[]`                                    | Extra writable paths beyond worktree   |
+| `deny_writable_roots`            | string[] | `[".git"]`                              | Guardrail deny list for writable roots |
 
 ```yaml
 sandbox:
