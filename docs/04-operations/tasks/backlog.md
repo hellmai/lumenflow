@@ -31,11 +31,11 @@ sections:
 - [WU-1955 — \[WU-L\] AG-UI run route + preview runtime diagnostics](wu/WU-1955.yaml) — Operations: Runtime
 - [WU-1956 — \[WU-M\] Expand MCP tool surface for pack/workspace parity](wu/WU-1956.yaml) — Framework: MCP
 - [WU-1957 — \[WU-N\] Docs sweep for secure authoring + updated onboarding/install flow](wu/WU-1957.yaml) — Content: Site Comms
+- [WU-1960 — Fix release build:dist invariant drift](wu/WU-1960.yaml) — Framework: CLI Orchestration
 
 ## 🔧 In progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
-- [WU-1952 — \[WU-I\] pack:author command + security lint hardening](wu/WU-1952.yaml) — Framework: CLI Orchestration
 
 ## ⛔ Blocked
 
@@ -922,6 +922,7 @@ sections:
 - [WU-1951 — \[WU-H\] Secure pack authoring template engine](wu/WU-1951.yaml)
 - [WU-1948 — \[WU-E\] Marketplace UX: canonical install command + one-click install](wu/WU-1948.yaml)
 - [WU-1949 — \[WU-F\] Workspace packs route for loaded-pack visibility](wu/WU-1949.yaml)
+- [WU-1952 — \[WU-I\] pack:author command + security lint hardening](wu/WU-1952.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
