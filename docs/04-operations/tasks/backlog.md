@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1947 — [WU-D] CLI install fix: integrity auto-resolve + real onboard install](wu/WU-1947.yaml) — Framework: CLI Orchestration
 - [WU-1946 — [WU-C] Install shadcn/ui base components](wu/WU-1946.yaml) — Operations: Runtime
 - [WU-1945 — [WU-B] Centralize write-endpoint security validation](wu/WU-1945.yaml) — Operations: Runtime
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
