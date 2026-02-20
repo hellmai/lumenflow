@@ -61,12 +61,16 @@ export interface MarketplacePackDetail {
  * ------------------------------------------------------------------ */
 
 const PACK_INSTALL_COMMAND_PREFIX = 'npx lumenflow pack:install';
+const PACK_INSTALL_ID_FLAG = '--id';
+const PACK_INSTALL_SOURCE_FLAG = '--source registry';
+const PACK_INSTALL_VERSION_FLAG = '--version';
 
 export function generateInstallCommand(packId: string, version?: string): string {
+  const base = `${PACK_INSTALL_COMMAND_PREFIX} ${PACK_INSTALL_ID_FLAG} ${packId} ${PACK_INSTALL_SOURCE_FLAG}`;
   if (version) {
-    return `${PACK_INSTALL_COMMAND_PREFIX} ${packId}@${version}`;
+    return `${base} ${PACK_INSTALL_VERSION_FLAG} ${version}`;
   }
-  return `${PACK_INSTALL_COMMAND_PREFIX} ${packId}`;
+  return base;
 }
 
 /* ------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import type { MarketplacePackSummary, MarketplaceCategory } from '../src/lib/marketplace-types';
 import {
   MARKETPLACE_PAGE_TITLE,
@@ -10,6 +10,7 @@ import {
   CREATE_PACK_CTA_LABEL,
   AUTHORING_GUIDE_URL,
 } from '../src/lib/marketplace-types';
+import { WORKSPACE_LOCAL_STORAGE_KEY } from '../src/lib/workspace-connection';
 
 /* ------------------------------------------------------------------
  * Fixtures
@@ -45,6 +46,11 @@ const FIXTURE_CATEGORIES: MarketplaceCategory[] = [
   { id: 'support', label: 'Support', count: 1 },
   { id: 'data', label: 'Data', count: 1 },
 ];
+
+afterEach(() => {
+  localStorage.removeItem(WORKSPACE_LOCAL_STORAGE_KEY);
+  vi.unstubAllGlobals();
+});
 
 /* ------------------------------------------------------------------
  * AC1: Browse page with search and categories
@@ -206,6 +212,58 @@ describe('MarketplaceBrowse component', () => {
 
       const cta = screen.getByTestId('create-pack-cta');
       expect(cta.getAttribute('href')).toBe(AUTHORING_GUIDE_URL);
+    });
+  });
+
+  describe('WU-1948: one-click install feedback on browse cards', () => {
+    it('renders one-click install button for pack cards', async () => {
+      const { MarketplaceBrowse } = await import('../src/components/marketplace-browse');
+      localStorage.setItem(WORKSPACE_LOCAL_STORAGE_KEY, '/tmp/workspace');
+
+      render(<MarketplaceBrowse packs={FIXTURE_PACKS} categories={FIXTURE_CATEGORIES} />);
+
+      expect(screen.getByTestId('install-pack-button-software-delivery')).toBeDefined();
+      expect(screen.getByTestId('install-pack-button-customer-support')).toBeDefined();
+    });
+
+    it('shows loading and success feedback when card install succeeds', async () => {
+      const { MarketplaceBrowse } = await import('../src/components/marketplace-browse');
+      localStorage.setItem(WORKSPACE_LOCAL_STORAGE_KEY, '/tmp/workspace');
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true, integrity: 'sha256:abc' }),
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      render(<MarketplaceBrowse packs={FIXTURE_PACKS} categories={FIXTURE_CATEGORIES} />);
+
+      fireEvent.click(screen.getByTestId('install-pack-button-software-delivery'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('install-pack-success-software-delivery').textContent).toContain(
+          'Installed',
+        );
+      });
+    });
+
+    it('shows error feedback when card install fails', async () => {
+      const { MarketplaceBrowse } = await import('../src/components/marketplace-browse');
+      localStorage.setItem(WORKSPACE_LOCAL_STORAGE_KEY, '/tmp/workspace');
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: false,
+        json: async () => ({ success: false, error: 'Install failed' }),
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      render(<MarketplaceBrowse packs={FIXTURE_PACKS} categories={FIXTURE_CATEGORIES} />);
+
+      fireEvent.click(screen.getByTestId('install-pack-button-software-delivery'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('install-pack-error-software-delivery').textContent).toContain(
+          'Install failed',
+        );
+      });
     });
   });
 });

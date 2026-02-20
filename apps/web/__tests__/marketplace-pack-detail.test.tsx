@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import type { MarketplacePackDetail } from '../src/lib/marketplace-types';
 import {
   generateInstallCommand,
@@ -64,13 +64,19 @@ const FIXTURE_EMPTY_PACK: MarketplacePackDetail = {
 describe('generateInstallCommand', () => {
   it('generates command with pack id only', () => {
     const command = generateInstallCommand('software-delivery');
-    expect(command).toBe('npx lumenflow pack:install software-delivery');
+    expect(command).toBe('npx lumenflow pack:install --id software-delivery --source registry');
   });
 
   it('generates command with pack id and version', () => {
     const command = generateInstallCommand('software-delivery', '0.1.0');
-    expect(command).toBe('npx lumenflow pack:install software-delivery@0.1.0');
+    expect(command).toBe(
+      'npx lumenflow pack:install --id software-delivery --source registry --version 0.1.0',
+    );
   });
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 /* ------------------------------------------------------------------
@@ -264,6 +270,61 @@ describe('MarketplacePackDetail component', () => {
         FIXTURE_PACK_DETAIL.latestVersion,
       );
       expect(writeTextMock).toHaveBeenCalledWith(expectedCommand);
+    });
+
+    it('disables workspace install when no workspace is connected', async () => {
+      const { MarketplacePackDetail: PackDetailComponent } =
+        await import('../src/components/marketplace-pack-detail');
+
+      render(<PackDetailComponent pack={FIXTURE_PACK_DETAIL} workspaceRoot={null} />);
+
+      const installButton = screen.getByTestId('install-to-workspace-button') as HTMLButtonElement;
+      expect(installButton.disabled).toBe(true);
+      expect(screen.getByTestId('install-disabled-tooltip')).toBeDefined();
+    });
+
+    it('shows install summary with tools/policies/permission scopes on success', async () => {
+      const { MarketplacePackDetail: PackDetailComponent } =
+        await import('../src/components/marketplace-pack-detail');
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true, integrity: 'sha256:abc' }),
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      render(<PackDetailComponent pack={FIXTURE_PACK_DETAIL} workspaceRoot="/tmp/workspace" />);
+
+      fireEvent.click(screen.getByTestId('install-to-workspace-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('install-success-feedback').textContent).toContain('3 tools');
+      });
+      expect(screen.getByTestId('install-success-feedback').textContent).toContain('3 policies');
+      expect(screen.getByTestId('install-success-feedback').textContent).toContain(
+        'permission scopes: read, write',
+      );
+    });
+
+    it('shows error feedback when one-click install fails', async () => {
+      const { MarketplacePackDetail: PackDetailComponent } =
+        await import('../src/components/marketplace-pack-detail');
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: false,
+        json: async () => ({ success: false, error: 'Registry unavailable' }),
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      render(<PackDetailComponent pack={FIXTURE_PACK_DETAIL} workspaceRoot="/tmp/workspace" />);
+
+      fireEvent.click(screen.getByTestId('install-to-workspace-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('install-error-feedback').textContent).toContain(
+          'Registry unavailable',
+        );
+      });
     });
   });
 
