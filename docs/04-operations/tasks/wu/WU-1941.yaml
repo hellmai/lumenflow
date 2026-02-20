@@ -8,6 +8,7 @@ created: 2026-02-20
 code_paths:
   - apps/web/src/components/pack-catalog-live.tsx
   - apps/web/src/lib/marketplace-types.ts
+  - apps/web/src/lib/community-types.ts
 tests:
   manual:
     - 'manual: verify Packs page loads and authoring guide link works'
@@ -21,10 +22,17 @@ initiative: INIT-031
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-20T15:41:24.125Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-runtime-wu-1941
+session_id: d757c83d-142e-4a7f-bd84-7a4379fcffb3
 exposure: ui
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T15:41:24.130Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +41,3 @@ description: Packs page fetches /api/packs (404) instead of /api/registry/packs.
 acceptance:
   - Packs page loads pack data from /api/registry/packs
   - Authoring guide link resolves to correct docs URL
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/operations-runtime-wu-1941
-claimed_at: 2026-02-20T15:41:24.125Z
-baseline_main_sha: 4aa69bae8a4242c656b3d51f9bcb3d23c603507d
-session_id: d757c83d-142e-4a7f-bd84-7a4379fcffb3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-20T15:41:24.130Z
