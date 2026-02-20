@@ -5,6 +5,7 @@ _Last updated: 2026-02-20_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
+- [WU-1957 — \[WU-N\] Docs sweep for secure authoring + updated onboarding/install flow](wu/WU-1957.yaml)
 
 ## Completed
 
