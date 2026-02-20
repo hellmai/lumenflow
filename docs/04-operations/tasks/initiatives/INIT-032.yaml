@@ -12,7 +12,7 @@ target_date: 2026-04-30
 phases:
   - id: 1
     title: 'Phase 0: Foundation'
-    status: in_progress
+    status: done
   - id: 2
     title: 'Phase 1: Adoption Core'
     status: pending
