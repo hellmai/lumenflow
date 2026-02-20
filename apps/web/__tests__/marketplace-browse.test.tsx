@@ -47,6 +47,39 @@ const FIXTURE_CATEGORIES: MarketplaceCategory[] = [
   { id: 'data', label: 'Data', count: 1 },
 ];
 
+const FIXTURE_REGISTRY_PACKS_WITH_MANIFEST = [
+  {
+    id: 'software-delivery',
+    description: 'Git tools, worktree isolation, quality gates.',
+    owner: 'testuser',
+    latestVersion: '2.0.0',
+    versions: [
+      {
+        version: '2.0.0',
+        integrity: 'sha256:abc123',
+        publishedAt: '2026-02-20T00:00:00Z',
+        publishedBy: 'testuser',
+        blobUrl: 'https://registry.example/packs/software-delivery/2.0.0.tgz',
+        manifest_summary: {
+          tools: [{ name: 'file:read', permission: 'read' }],
+          policies: [
+            { id: 'software-delivery.allow-read', trigger: 'on_tool_request', decision: 'allow' },
+          ],
+          categories: ['development'],
+          trust: {
+            integrityVerified: true,
+            manifestParsed: true,
+            publisherVerified: true,
+            permissionScopes: ['read'],
+          },
+        },
+      },
+    ],
+    createdAt: '2026-02-20T00:00:00Z',
+    updatedAt: '2026-02-20T00:00:00Z',
+  },
+];
+
 afterEach(() => {
   localStorage.removeItem(WORKSPACE_LOCAL_STORAGE_KEY);
   vi.unstubAllGlobals();
@@ -264,6 +297,32 @@ describe('MarketplaceBrowse component', () => {
           'Install failed',
         );
       });
+    });
+  });
+
+  describe('WU-1950: MarketplaceBrowseLive manifest summary rendering', () => {
+    it('renders manifest-derived categories and trust badges in browse cards', async () => {
+      const { MarketplaceBrowseLive } = await import('../src/components/marketplace-browse-live');
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({ packs: FIXTURE_REGISTRY_PACKS_WITH_MANIFEST }),
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      render(<MarketplaceBrowseLive />);
+
+      await waitFor(() => {
+        expect(screen.getByText('software-delivery')).toBeDefined();
+      });
+
+      expect(screen.getByText('development')).toBeDefined();
+      expect(screen.getByText('trust-integrity-verified')).toBeDefined();
+      expect(screen.getByText('trust-manifest-parsed')).toBeDefined();
+      expect(screen.getByText('trust-publisher-verified')).toBeDefined();
+      expect(screen.getByText('scope-read')).toBeDefined();
     });
   });
 });

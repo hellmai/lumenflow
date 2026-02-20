@@ -17,6 +17,40 @@ export interface PackVersion {
   readonly publishedAt: string;
   readonly publishedBy: string;
   readonly blobUrl: string;
+  /** Server-derived summary parsed from manifest.yaml in the published tarball. */
+  readonly manifest_summary?: PackManifestSummary;
+}
+
+/** Lightweight tool summary extracted from a pack manifest. */
+export interface PackManifestToolSummary {
+  readonly name: string;
+  readonly permission: 'read' | 'write' | 'admin';
+  readonly description?: string;
+}
+
+/** Lightweight policy summary extracted from a pack manifest. */
+export interface PackManifestPolicySummary {
+  readonly id: string;
+  readonly trigger: string;
+  readonly decision: 'allow' | 'deny';
+  readonly reason?: string;
+}
+
+/** Trust signals derived during publish for marketplace rendering. */
+export interface PackManifestTrustSummary {
+  readonly integrityVerified: boolean;
+  readonly manifestParsed: boolean;
+  readonly publisherVerified: boolean;
+  readonly permissionScopes: readonly ('read' | 'write' | 'admin')[];
+}
+
+/** Manifest metadata attached to each published pack version. */
+export interface PackManifestSummary {
+  readonly tools: readonly PackManifestToolSummary[];
+  readonly policies: readonly PackManifestPolicySummary[];
+  readonly categories: readonly string[];
+  readonly taskTypes: readonly string[];
+  readonly trust: PackManifestTrustSummary;
 }
 
 /* ------------------------------------------------------------------

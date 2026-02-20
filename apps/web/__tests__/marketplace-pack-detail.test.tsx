@@ -57,6 +57,37 @@ const FIXTURE_EMPTY_PACK: MarketplacePackDetail = {
   policies: [],
 };
 
+const FIXTURE_REGISTRY_PACK_WITH_MANIFEST = {
+  id: 'software-delivery',
+  description: 'Git tools, worktree isolation, quality gates.',
+  owner: 'testuser',
+  latestVersion: '2.0.0',
+  versions: [
+    {
+      version: '2.0.0',
+      integrity: 'sha256:abc123',
+      publishedAt: '2026-02-20T00:00:00Z',
+      publishedBy: 'testuser',
+      blobUrl: 'https://registry.example/packs/software-delivery/2.0.0.tgz',
+      manifest_summary: {
+        tools: [{ name: 'file:read', permission: 'read' }],
+        policies: [
+          { id: 'software-delivery.allow-read', trigger: 'on_tool_request', decision: 'allow' },
+        ],
+        categories: ['development'],
+        trust: {
+          integrityVerified: true,
+          manifestParsed: true,
+          publisherVerified: true,
+          permissionScopes: ['read'],
+        },
+      },
+    },
+  ],
+  createdAt: '2026-02-20T00:00:00Z',
+  updatedAt: '2026-02-20T00:00:00Z',
+};
+
 /* ------------------------------------------------------------------
  * Unit tests for generateInstallCommand
  * ------------------------------------------------------------------ */
@@ -339,6 +370,38 @@ describe('MarketplacePackDetail component', () => {
       expect(cta).toBeDefined();
       expect(cta.textContent).toContain(CREATE_PACK_CTA_LABEL);
       expect(cta.getAttribute('href')).toBe(AUTHORING_GUIDE_URL);
+    });
+  });
+
+  describe('WU-1950: MarketplacePackDetailLive manifest summary rendering', () => {
+    it('renders manifest-derived tools, policies, categories, and trust badges', async () => {
+      const { MarketplacePackDetailLive } = await import(
+        '../src/components/marketplace-pack-detail-live'
+      );
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({
+          success: true,
+          pack: FIXTURE_REGISTRY_PACK_WITH_MANIFEST,
+        }),
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      render(<MarketplacePackDetailLive packId="software-delivery" />);
+
+      await waitFor(() => {
+        expect(screen.getByText('file:read')).toBeDefined();
+      });
+
+      expect(screen.getByText('software-delivery.allow-read')).toBeDefined();
+      expect(screen.getByTestId('category-badge-development')).toBeDefined();
+      expect(screen.getByTestId('category-badge-trust-integrity-verified')).toBeDefined();
+      expect(screen.getByTestId('category-badge-trust-manifest-parsed')).toBeDefined();
+      expect(screen.getByTestId('category-badge-trust-publisher-verified')).toBeDefined();
+      expect(screen.getByTestId('category-badge-scope-read')).toBeDefined();
     });
   });
 });

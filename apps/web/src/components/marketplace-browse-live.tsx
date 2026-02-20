@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import type { MarketplacePackSummary, MarketplaceCategory } from '../lib/marketplace-types';
-import type { PackRegistryEntry } from '../lib/pack-registry-types';
+import type { PackRegistryEntry, PackManifestSummary } from '../lib/pack-registry-types';
 import { MarketplaceBrowse } from './marketplace-browse';
 
 /* ------------------------------------------------------------------
@@ -13,12 +13,43 @@ const REGISTRY_API_PATH = '/api/registry/packs';
 const LOADING_MESSAGE = 'Loading marketplace...';
 const ERROR_MESSAGE_PREFIX = 'Failed to load marketplace';
 const RETRY_LABEL = 'Retry';
+const TRUST_INTEGRITY_BADGE = 'trust-integrity-verified';
+const TRUST_MANIFEST_BADGE = 'trust-manifest-parsed';
+const TRUST_PUBLISHER_BADGE = 'trust-publisher-verified';
+const SCOPE_BADGE_PREFIX = 'scope-';
 
 /* ------------------------------------------------------------------
  * Data transformation
  * ------------------------------------------------------------------ */
 
 type FetchState = 'idle' | 'loading' | 'success' | 'error';
+
+function uniqueStrings(values: readonly string[]): string[] {
+  return [...new Set(values)];
+}
+
+function buildTrustBadges(summary: PackManifestSummary | undefined): string[] {
+  if (!summary) {
+    return [];
+  }
+
+  const badges: string[] = [];
+  if (summary.trust.integrityVerified) {
+    badges.push(TRUST_INTEGRITY_BADGE);
+  }
+  if (summary.trust.manifestParsed) {
+    badges.push(TRUST_MANIFEST_BADGE);
+  }
+  if (summary.trust.publisherVerified) {
+    badges.push(TRUST_PUBLISHER_BADGE);
+  }
+
+  for (const permission of summary.trust.permissionScopes) {
+    badges.push(`${SCOPE_BADGE_PREFIX}${permission}`);
+  }
+
+  return uniqueStrings(badges);
+}
 
 /**
  * Derive categories from pack descriptions.
@@ -44,8 +75,14 @@ function deriveCategories(packs: readonly MarketplacePackSummary[]): Marketplace
 }
 
 function toMarketplaceSummary(entry: PackRegistryEntry): MarketplacePackSummary {
-  // Derive categories from description keywords
-  const categories = deriveCategoriesFromDescription(entry.id, entry.description);
+  const latestVersion = entry.versions.find((version) => version.version === entry.latestVersion);
+  const manifestSummary = latestVersion?.manifest_summary;
+  const fallbackCategories = deriveCategoriesFromDescription(entry.id, entry.description);
+  const manifestCategories = manifestSummary?.categories ?? [];
+  const categories = uniqueStrings([
+    ...(manifestCategories.length > 0 ? manifestCategories : fallbackCategories),
+    ...buildTrustBadges(manifestSummary),
+  ]);
 
   return {
     id: entry.id,

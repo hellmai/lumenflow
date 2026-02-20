@@ -1,3 +1,4 @@
+import { gzipSync } from 'node:zlib';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import type {
   PackRegistryStore,
@@ -65,6 +66,53 @@ const FIXTURE_PUBLISHER: PublisherIdentity = {
   username: 'testuser',
   avatarUrl: 'https://github.com/testuser.png',
 };
+
+const TAR_BLOCK_SIZE = 512;
+const TAR_SIZE_FIELD_OFFSET = 124;
+const TAR_SIZE_FIELD_LENGTH = 12;
+const TAR_MAGIC_OFFSET = 257;
+const TAR_MAGIC_VALUE = 'ustar';
+const MANIFEST_PATH = 'manifest.yaml';
+
+function encodeTarSize(size: number): string {
+  return size.toString(8).padStart(TAR_SIZE_FIELD_LENGTH - 1, '0');
+}
+
+function createTarHeader(path: string, size: number): Buffer {
+  const header = Buffer.alloc(TAR_BLOCK_SIZE, 0);
+  header.write(path, 0, 100, 'utf8');
+  header.write('0000777', 100, 7, 'ascii');
+  header.write('0000000', 108, 7, 'ascii');
+  header.write('0000000', 116, 7, 'ascii');
+  header.write(encodeTarSize(size), TAR_SIZE_FIELD_OFFSET, TAR_SIZE_FIELD_LENGTH - 1, 'ascii');
+  header.write('00000000000', 136, 11, 'ascii');
+  header.write('0', 156, 1, 'ascii');
+  header.write(TAR_MAGIC_VALUE, TAR_MAGIC_OFFSET, TAR_MAGIC_VALUE.length, 'ascii');
+  header.fill(32, 148, 156);
+
+  let checksum = 0;
+  for (const byte of header.values()) {
+    checksum += byte;
+  }
+
+  const checksumValue = checksum.toString(8).padStart(6, '0');
+  header.write(checksumValue, 148, 6, 'ascii');
+  header.write('\0 ', 154, 2, 'ascii');
+
+  return header;
+}
+
+function createManifestTarball(manifestContent: string): Uint8Array {
+  const manifestBuffer = Buffer.from(manifestContent, 'utf8');
+  const header = createTarHeader(MANIFEST_PATH, manifestBuffer.length);
+  const padding = Buffer.alloc(
+    (TAR_BLOCK_SIZE - (manifestBuffer.length % TAR_BLOCK_SIZE)) % TAR_BLOCK_SIZE,
+    0,
+  );
+  const end = Buffer.alloc(TAR_BLOCK_SIZE * 2, 0);
+  const tarArchive = Buffer.concat([header, manifestBuffer, padding, end]);
+  return new Uint8Array(gzipSync(tarArchive));
+}
 
 // --- Mock factories ---
 
@@ -262,6 +310,61 @@ describe('Pack Registry Handlers', () => {
       if (!result.success) {
         expect(result.error).toContain('Upload failed');
       }
+    });
+
+    it('derives manifest_summary from tarball and stores it on version metadata', async () => {
+      const { handlePublishVersion } = await import('../src/server/pack-registry-handlers');
+
+      const upsertPackVersion = vi.fn().mockResolvedValue(FIXTURE_PACK);
+      const freshStore = createMockRegistryStore({
+        getPackById: vi.fn().mockResolvedValue(null),
+        upsertPackVersion,
+      });
+
+      const tarball = createManifestTarball(`id: software-delivery
+version: 2.0.0
+task_types:
+  - development
+tools:
+  - name: file:read
+    entry: tool-impl/file.ts#readTool
+    permission: read
+    required_scopes:
+      - type: path
+        pattern: src/**
+        access: read
+policies:
+  - id: software-delivery.allow-read
+    trigger: on_tool_request
+    decision: allow
+evidence_types: []
+state_aliases: {}
+lane_templates: []
+categories:
+  - development
+  - security
+`);
+
+      const result = await handlePublishVersion({
+        registryStore: freshStore,
+        blobStore,
+        packId: 'software-delivery',
+        version: '2.0.0',
+        description: 'Git tools, worktree isolation, quality gates',
+        tarball,
+        publisher: FIXTURE_PUBLISHER,
+      });
+
+      expect(result.success).toBe(true);
+
+      const call = upsertPackVersion.mock.calls[0];
+      expect(call).toBeDefined();
+      const publishedVersion = call?.[2] as PackVersion;
+      expect(publishedVersion.manifest_summary).toBeDefined();
+      expect(publishedVersion.manifest_summary?.tools).toHaveLength(1);
+      expect(publishedVersion.manifest_summary?.policies).toHaveLength(1);
+      expect(publishedVersion.manifest_summary?.categories).toContain('development');
+      expect(publishedVersion.manifest_summary?.categories).toContain('security');
     });
   });
 
