@@ -5,7 +5,9 @@ template: splash
 hero:
   tagline: 'Your AI agents are powerful. Make them governable.'
   image:
-    html: '<img src="https://vhs.charm.sh/vhs-44duqFa0o01MzVScos4ISU.gif" alt="LumenFlow CLI demo" style="border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.3);" />'
+    dark: ../../assets/logo-dark.png
+    light: ../../assets/logo-light.png
+    alt: LumenFlow - The governance layer between AI agents and the world
   actions:
     - text: Get Started
       link: /getting-started/introduction/
@@ -21,6 +23,19 @@ hero:
 ---
 
 import { Card, CardGrid, Aside, LinkCard } from '@astrojs/starlight/components';
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;">
+  <img
+    src="https://vhs.charm.sh/vhs-44duqFa0o01MzVScos4ISU.gif"
+    alt="LumenFlow setup demo"
+    style="width:100%;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.3);"
+  />
+  <img
+    src="https://vhs.charm.sh/vhs-1Qy1q7YAkMztsgaxT3nGDL.gif"
+    alt="LumenFlow CLI demo"
+    style="width:100%;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.3);"
+  />
+</div>
 
 ## The Problem Nobody Talks About
 
