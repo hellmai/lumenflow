@@ -2,7 +2,7 @@ id: WU-1940
 title: Fix events.filter runtime error on Dashboard
 lane: 'Operations: Runtime'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -28,7 +28,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Dashboard page throws 'events.filter is not a function' at runtime. Events data is not an array when expected.
+description: Dashboard page throws 'events.filter is not a function' at runtime. Events data is not
+  an array when expected.
 acceptance:
   - Dashboard page loads without runtime errors
   - events data is properly initialized as array before filtering
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/operations-runtime-wu-1940
+claimed_at: 2026-02-20T13:55:02.129Z
+baseline_main_sha: 8c8af07dc8f86567fe068543ee5d3f4b482ff64b
+session_id: 27d1141e-8167-4fae-8ea6-c1affdbb4e78
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T13:55:02.136Z
