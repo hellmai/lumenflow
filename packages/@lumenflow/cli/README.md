@@ -168,6 +168,7 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 | `lumenflow-release`        | Run release workflow                                    |
 | `lumenflow-sync-templates` | Sync templates to project                               |
 | `lumenflow-upgrade`        | Upgrade LumenFlow packages                              |
+| `pack-author`              | Author a secure domain pack from templates              |
 | `pack-hash`                | Compute integrity hash for a domain pack                |
 | `pack-install`             | Install a domain pack into workspace                    |
 | `pack-publish`             | Publish a domain pack to a registry                     |
