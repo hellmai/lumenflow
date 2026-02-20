@@ -2,7 +2,7 @@ id: WU-1953
 title: '[WU-J] Pack authoring API route + web wizard'
 lane: 'Operations: Runtime'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-20
 code_paths:
@@ -37,8 +37,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Provide secure API and web wizard flows for template-first no-code pack authoring, backed by shared authoring engine and root-restricted write validation.
+description: Provide secure API and web wizard flows for template-first no-code pack authoring,
+  backed by shared authoring engine and root-restricted write validation.
 acceptance:
   - POST /api/packs/author creates pack output under allowed workspace root and rejects traversal
   - Web create-pack wizard supports template selection, configuration, validation, and create flow
   - Wizard shows progress and explicit success summary for generated files/tool changes
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-runtime-wu-1953
+claimed_at: 2026-02-20T21:16:13.104Z
+baseline_main_sha: 0206d7eefa0a055f504ab70a7f1651ad6c52d307
+session_id: 4cc9590f-6f4a-4cc2-9cfb-b01c9e9ed8ff
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T21:16:13.109Z
