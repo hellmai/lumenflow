@@ -13,6 +13,8 @@ code_paths:
 tests:
   manual:
     - 'manual: load Dashboard page at localhost:3000 and verify no errors'
+    - Navigate to /workspace and verify WorkspaceOverviewLive renders events without 'filter is not
+      a function' error
   unit:
     - apps/web/__tests__/dashboard.test.tsx
   e2e: []
