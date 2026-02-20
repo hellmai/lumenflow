@@ -37,6 +37,10 @@ const FIXTURE_PACK: PackRegistryEntry = {
   updatedAt: '2026-02-18T00:00:00Z',
 };
 
+const ENCODED_TRAVERSAL_PAYLOAD = '%2e%2e/%2e%2e/%2e%2e/sensitive';
+const ALLOWED_ORIGIN = 'http://localhost:3000';
+const CROSS_ORIGIN = 'https://evil.example';
+
 function createMockRegistryStore(overrides: Partial<PackRegistryStore> = {}): PackRegistryStore {
   return {
     listPacks: vi.fn().mockResolvedValue([FIXTURE_PACK]),
@@ -86,7 +90,10 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
 
     const request = new Request('http://localhost/api/registry/packs/test/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: ALLOWED_ORIGIN,
+      },
       body: JSON.stringify({ workspaceRoot: traversalPath }),
     });
 
@@ -112,13 +119,42 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
 
     const request = new Request('http://localhost/api/registry/packs/test/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: ALLOWED_ORIGIN,
+      },
       body: JSON.stringify({ workspaceRoot: 'valid\0malicious' }),
     });
 
     const response = await handler(request, 'software-delivery');
 
     expect(response.status).toBe(400);
+    expect(mockInstallFn).not.toHaveBeenCalled();
+  });
+
+  it('rejects workspaceRoot with encoded traversal segments', async () => {
+    const { createInstallPackRoute } = await import('../src/server/pack-registry-route-adapters');
+
+    const mockInstallFn = vi.fn().mockResolvedValue({ success: true, integrity: 'sha256:ok' });
+    const handler = createInstallPackRoute({
+      registryStore,
+      installFn: mockInstallFn,
+    });
+
+    const request = new Request('http://localhost/api/registry/packs/test/install', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: ALLOWED_ORIGIN,
+      },
+      body: JSON.stringify({ workspaceRoot: ENCODED_TRAVERSAL_PAYLOAD }),
+    });
+
+    const response = await handler(request, 'software-delivery');
+
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.code).toBe('ERR_PATH_TRAVERSAL');
     expect(mockInstallFn).not.toHaveBeenCalled();
   });
 
@@ -133,7 +169,10 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
 
     const request = new Request('http://localhost/api/registry/packs/test/install', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: ALLOWED_ORIGIN,
+      },
       body: JSON.stringify({ workspaceRoot: 'workspaces/my-project' }),
     });
 
@@ -142,6 +181,30 @@ describe('Install endpoint CWD validation (WU-1921)', () => {
     // Should proceed to install (200 on success)
     expect(response.status).toBe(200);
     expect(mockInstallFn).toHaveBeenCalled();
+  });
+
+  it('rejects cross-origin install requests', async () => {
+    const { createInstallPackRoute } = await import('../src/server/pack-registry-route-adapters');
+
+    const mockInstallFn = vi.fn().mockResolvedValue({ success: true, integrity: 'sha256:ok' });
+    const handler = createInstallPackRoute({
+      registryStore,
+      installFn: mockInstallFn,
+    });
+
+    const request = new Request('http://localhost/api/registry/packs/test/install', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: CROSS_ORIGIN,
+      },
+      body: JSON.stringify({ workspaceRoot: 'workspaces/my-project' }),
+    });
+
+    const response = await handler(request, 'software-delivery');
+
+    expect(response.status).toBe(403);
+    expect(mockInstallFn).not.toHaveBeenCalled();
   });
 });
 
@@ -183,7 +246,7 @@ describe('Pack ID validation in handlers (WU-1921)', () => {
 
     const request = new Request('http://localhost/api/registry/packs/INVALID/versions', {
       method: 'POST',
-      headers: { Authorization: 'Bearer ghp_validtoken' },
+      headers: { Authorization: 'Bearer ghp_validtoken', Origin: ALLOWED_ORIGIN },
       body: formData,
     });
 
@@ -216,7 +279,7 @@ describe('Version validation in publish (WU-1921)', () => {
 
     const request = new Request('http://localhost/api/registry/packs/test/versions', {
       method: 'POST',
-      headers: { Authorization: 'Bearer ghp_validtoken' },
+      headers: { Authorization: 'Bearer ghp_validtoken', Origin: ALLOWED_ORIGIN },
       body: formData,
     });
 
@@ -225,5 +288,33 @@ describe('Version validation in publish (WU-1921)', () => {
     expect(response.status).toBe(400);
     const body = await response.json();
     expect(body.code).toBe('ERR_INVALID_SEMVER');
+  });
+
+  it('rejects cross-origin publish requests', async () => {
+    const { createPublishVersionRoute } =
+      await import('../src/server/pack-registry-route-adapters');
+
+    const handler = createPublishVersionRoute({
+      registryStore: createMockRegistryStore(),
+      blobStore: createMockBlobStore(),
+      authProvider: createMockAuthProvider(),
+    });
+
+    const formData = new FormData();
+    formData.append('description', 'Test');
+    formData.append('tarball', new Blob([new Uint8Array([1, 2, 3])]), 'pack.tgz');
+
+    const request = new Request('http://localhost/api/registry/packs/test/versions', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ghp_validtoken',
+        Origin: CROSS_ORIGIN,
+      },
+      body: formData,
+    });
+
+    const response = await handler(request, 'test-pack', '1.0.0');
+
+    expect(response.status).toBe(403);
   });
 });

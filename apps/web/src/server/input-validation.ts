@@ -175,17 +175,15 @@ export function validateWorkspaceId(workspaceId: string): ValidationResult {
  *          available by calling `sanitizePath()` separately.
  */
 export function validatePathWithinRoot(userPath: string, allowedRoot: string): ValidationResult {
-  // Reject null bytes (poison null byte attack)
-  if (userPath.includes('\0')) {
-    return {
-      valid: false,
-      code: ValidationErrorCode.PATH_TRAVERSAL,
-      message: 'Path contains null bytes',
-    };
+  const inputValidation = validatePathInput(userPath);
+  if (!inputValidation.valid) {
+    return inputValidation;
   }
 
+  const decodedUserPath = decodePathForTraversalChecks(userPath);
+
   const resolvedRoot = path.resolve(allowedRoot);
-  const resolvedPath = path.resolve(resolvedRoot, userPath);
+  const resolvedPath = path.resolve(resolvedRoot, decodedUserPath);
 
   // The resolved path must start with the resolved root + separator
   // (or be exactly the root itself)
@@ -211,7 +209,64 @@ export function sanitizePath(userPath: string, allowedRoot: string): string {
   }
 
   const resolvedRoot = path.resolve(allowedRoot);
-  return path.resolve(resolvedRoot, userPath);
+  return path.resolve(resolvedRoot, decodePathForTraversalChecks(userPath));
+}
+
+/**
+ * Maximum number of decode passes for path traversal checks.
+ * Handles single and double-encoded payloads without risking unbounded loops.
+ */
+const MAX_PATH_DECODE_PASSES = 3;
+
+/**
+ * Decode path input repeatedly until stable or decode fails.
+ * This catches traversal payloads like `%2e%2e` and `%252e%252e`.
+ */
+function decodePathForTraversalChecks(userPath: string): string {
+  let decoded = userPath;
+
+  for (let pass = 0; pass < MAX_PATH_DECODE_PASSES; pass += 1) {
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) {
+        break;
+      }
+      decoded = next;
+    } catch {
+      break;
+    }
+  }
+
+  return decoded;
+}
+
+/**
+ * Validate user-supplied path text for traversal markers before it is resolved.
+ * Use this for request payload fields that are consumed as paths.
+ */
+export function validatePathInput(userPath: string): ValidationResult {
+  const decodedPath = decodePathForTraversalChecks(userPath);
+
+  if (decodedPath.includes('\0')) {
+    return {
+      valid: false,
+      code: ValidationErrorCode.PATH_TRAVERSAL,
+      message: 'Path contains null bytes',
+    };
+  }
+
+  const normalizedPath = decodedPath.replace(/\\/g, '/');
+  const pathSegments = normalizedPath.split('/').filter((segment) => segment.length > 0);
+
+  if (pathSegments.includes('..')) {
+    return {
+      valid: false,
+      code: ValidationErrorCode.PATH_TRAVERSAL,
+      message: 'Path traversal detected: input contains parent directory segments',
+    };
+  }
+
+  return { valid: true };
 }
 
 /* ------------------------------------------------------------------

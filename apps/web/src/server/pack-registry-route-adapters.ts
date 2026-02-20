@@ -21,8 +21,16 @@ import {
   handleGetPack,
   handlePublishVersion,
   authenticatePublisher,
+  TARBALL_MAX_SIZE,
 } from './pack-registry-handlers';
-import { validatePackId, validateSemver, ValidationErrorCode } from './input-validation';
+import {
+  validatePackId,
+  validateSemver,
+  ValidationErrorCode,
+  validatePathInput,
+  validateCsrfOrigin,
+  validateBodySize,
+} from './input-validation';
 
 /* ------------------------------------------------------------------
  * Constants
@@ -37,6 +45,7 @@ const HTTP_STATUS = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  PAYLOAD_TOO_LARGE: 413,
   TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500,
 } as const;
@@ -46,6 +55,10 @@ const JSON_CONTENT_TYPE = { 'Content-Type': 'application/json' } as const;
 const SEARCH_QUERY_PARAM = 'q';
 const TARBALL_FIELD_NAME = 'tarball';
 const DESCRIPTION_FIELD_NAME = 'description';
+const DEFAULT_ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const ALLOWED_ORIGINS = [DEFAULT_ALLOWED_ORIGIN];
+const INSTALL_MAX_BODY_SIZE = 64 * 1024;
+const PUBLISH_MAX_BODY_SIZE = TARBALL_MAX_SIZE + 1024 * 1024;
 
 const ERROR_TARBALL_REQUIRED = 'tarball field is required in form data';
 const ERROR_INTERNAL = 'Internal server error';
@@ -151,6 +164,22 @@ export function createPublishVersionRoute(
 ): (request: Request, packId: string, version: string) => Promise<Response> {
   return async (request: Request, packId: string, version: string): Promise<Response> => {
     try {
+      const csrfResult = validateCsrfOrigin(request, ALLOWED_ORIGINS);
+      if (!csrfResult.valid) {
+        return jsonResponse(
+          { success: false, code: csrfResult.code, error: csrfResult.message },
+          HTTP_STATUS.FORBIDDEN,
+        );
+      }
+
+      const bodySizeResult = validateBodySize(request, PUBLISH_MAX_BODY_SIZE);
+      if (!bodySizeResult.valid) {
+        return jsonResponse(
+          { success: false, code: bodySizeResult.code, error: bodySizeResult.message },
+          HTTP_STATUS.PAYLOAD_TOO_LARGE,
+        );
+      }
+
       // WU-1921: Validate pack ID format
       const packIdValidation = validatePackId(packId);
       if (!packIdValidation.valid) {
@@ -246,6 +275,22 @@ export function createInstallPackRoute(
 ): (request: Request, packId: string) => Promise<Response> {
   return async (request: Request, packId: string): Promise<Response> => {
     try {
+      const csrfResult = validateCsrfOrigin(request, ALLOWED_ORIGINS);
+      if (!csrfResult.valid) {
+        return jsonResponse(
+          { success: false, code: csrfResult.code, error: csrfResult.message },
+          HTTP_STATUS.FORBIDDEN,
+        );
+      }
+
+      const bodySizeResult = validateBodySize(request, INSTALL_MAX_BODY_SIZE);
+      if (!bodySizeResult.valid) {
+        return jsonResponse(
+          { success: false, code: bodySizeResult.code, error: bodySizeResult.message },
+          HTTP_STATUS.PAYLOAD_TOO_LARGE,
+        );
+      }
+
       // Parse request body
       const body = (await request.json()) as {
         workspaceRoot?: string;
@@ -259,19 +304,10 @@ export function createInstallPackRoute(
         );
       }
 
-      // WU-1921: Validate CWD (workspaceRoot) for path safety
-      if (body.workspaceRoot.includes('\0')) {
-        return validationErrorResponse(
-          ValidationErrorCode.PATH_TRAVERSAL,
-          'workspaceRoot contains null bytes',
-        );
-      }
-
-      if (body.workspaceRoot.includes('..')) {
-        return validationErrorResponse(
-          ValidationErrorCode.PATH_TRAVERSAL,
-          'workspaceRoot contains path traversal sequences',
-        );
+      // WU-1945: Validate CWD input including encoded traversal payloads.
+      const pathValidation = validatePathInput(body.workspaceRoot);
+      if (!pathValidation.valid) {
+        return validationErrorResponse(pathValidation.code, pathValidation.message);
       }
 
       // WU-1921: Validate pack ID format
