@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1954 — [WU-K] Management UI: workspace wizard + task creation + onboarding state](wu/WU-1954.yaml) — Operations: Runtime
 - [WU-1953 — [WU-J] Pack authoring API route + web wizard](wu/WU-1953.yaml) — Operations: Runtime
 - [WU-1951 — [WU-H] Secure pack authoring template engine](wu/WU-1951.yaml) — Framework: Core Lifecycle
 - [WU-1952 — [WU-I] pack:author command + security lint hardening](wu/WU-1952.yaml) — Framework: CLI Orchestration
