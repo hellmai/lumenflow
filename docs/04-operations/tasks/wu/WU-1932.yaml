@@ -2,7 +2,7 @@ id: WU-1932
 title: Licensing alignment + docs marketing polish
 lane: 'Content: Site Comms'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-20
 code_paths:
@@ -26,9 +26,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Fix critical licensing mismatch: all package.json files say Apache-2.0 but documented model is AGPL-3.0 for core packages. Also docs marketing improvements.'
+description: 'Fix critical licensing mismatch: all package.json files say Apache-2.0 but documented
+  model is AGPL-3.0 for core packages. Also docs marketing improvements.'
 acceptance:
   - 'All AGPL packages have license: AGPL-3.0-only in package.json'
   - All AGPL packages have AGPL notice in LICENSE file
   - control-plane-sdk has Apache-2.0 license field and copyright 2026
   - Docs build with zero errors
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-site-comms-wu-1932
+claimed_at: 2026-02-20T11:14:10.427Z
+baseline_main_sha: 94c554c527885d0c38341f1acd59a385361e6bab
+session_id: f5427206-b161-4d60-93f1-a6595c11d9f0
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T11:14:10.432Z
