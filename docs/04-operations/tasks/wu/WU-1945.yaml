@@ -10,6 +10,11 @@ code_paths:
   - apps/web/src/server/workspace-connect-handler.ts
   - apps/web/src/server/pack-registry-route-adapters.ts
   - apps/web/app/api
+  - apps/web/__tests__/route-security.test.ts
+  - apps/web/__tests__/workspace-connect-path-safety.test.ts
+  - apps/web/__tests__/api-routes.test.ts
+  - apps/web/__tests__/install-pack-route.test.ts
+  - apps/web/__tests__/pack-registry-routes.test.ts
 tests:
   manual:
     - Verify write routes reject ../, encoded traversal, and oversized payloads
@@ -26,10 +31,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-20T18:20:07.829Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-runtime-wu-1945
+session_id: 7a049f9f-a39b-4aeb-918d-c9645abf9e3e
 exposure: api
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-20T18:20:07.832Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +52,3 @@ acceptance:
   - All write endpoints enforce path traversal and null-byte validation using shared validators
   - CSRF and body-size protections are applied consistently on install/create/authoring write routes
   - Security regression tests cover encoded traversal and cross-origin attempts
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/operations-runtime-wu-1945
-claimed_at: 2026-02-20T18:20:07.829Z
-baseline_main_sha: 8c994f27b4b0293a21ba40455384d14f9b036581
-session_id: 7a049f9f-a39b-4aeb-918d-c9645abf9e3e
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-20T18:20:07.832Z
