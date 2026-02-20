@@ -6,8 +6,18 @@ status: in_progress
 priority: P2
 created: 2026-02-20
 code_paths:
-  - apps/docs/src/content/docs/**
+  - apps/docs/src/content/docs/reference/changelog.mdx
+  - apps/docs/src/content/docs/reference/compatibility.mdx
+  - apps/docs/src/content/docs/reference/cli.mdx
+  - apps/docs/src/content/docs/reference/config.mdx
+  - apps/docs/src/content/docs/reference/mcp.mdx
+  - apps/docs/src/content/docs/reference/wu-schema.mdx
+  - apps/docs/src/content/docs/concepts/gates.mdx
+  - apps/docs/src/content/docs/concepts/lanes.mdx
+  - apps/docs/src/content/docs/getting-started/upgrade.mdx
+  - apps/docs/src/content/docs/guides/migration.mdx
   - apps/docs/astro.config.mjs
+  - workspace.yaml
 tests:
   manual:
     - pnpm dev builds without errors in apps/docs
