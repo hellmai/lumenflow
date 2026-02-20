@@ -1,0 +1,40 @@
+id: WU-1955
+title: '[WU-L] AG-UI run route + preview runtime diagnostics'
+lane: 'Operations: Runtime'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-20
+code_paths:
+  - apps/web/app/api
+  - apps/web/src/server/http-surface-runtime.ts
+tests:
+  manual:
+    - In preview mode verify actionable runtime error; in runtime mode verify run route streams events
+  unit:
+    - apps/web/__tests__/install-pack-route.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1955.done
+dependencies: []
+initiative: INIT-032
+phase: 4
+blocked_by:
+  - WU-1945
+spec_refs:
+  - /home/USER/.claude/plans/curious-skipping-robin.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: api
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Mount the AG-UI run route in web app and upgrade preview/runtime error diagnostics with actionable environment setup guidance and health endpoint visibility.
+acceptance:
+  - POST /api/ag-ui/v1/run is exposed in web app and forwards SSE correctly when runtime is enabled
+  - Preview-mode kernel-unavailable errors include exact env vars and setup guidance
+  - Health endpoint reports kernel/runtime availability state for fast diagnostics
