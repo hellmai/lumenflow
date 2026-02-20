@@ -1,3 +1,4 @@
+import { gzipSync } from 'node:zlib';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import type {
   PackRegistryStore,
@@ -35,6 +36,12 @@ const FIXTURE_PACK: PackRegistryEntry = {
 };
 
 const ALLOWED_ORIGIN = 'http://localhost:3000';
+const TAR_BLOCK_SIZE = 512;
+const TAR_SIZE_FIELD_OFFSET = 124;
+const TAR_SIZE_FIELD_LENGTH = 12;
+const TAR_MAGIC_OFFSET = 257;
+const TAR_MAGIC_VALUE = 'ustar';
+const MANIFEST_PATH = 'manifest.yaml';
 
 // --- Mock factories ---
 
@@ -62,6 +69,46 @@ function createMockAuthProvider(overrides: Partial<AuthProvider> = {}): AuthProv
     authenticate: vi.fn().mockResolvedValue({ username: 'testuser' }),
     ...overrides,
   };
+}
+
+function encodeTarSize(size: number): string {
+  return size.toString(8).padStart(TAR_SIZE_FIELD_LENGTH - 1, '0');
+}
+
+function createTarHeader(path: string, size: number): Buffer {
+  const header = Buffer.alloc(TAR_BLOCK_SIZE, 0);
+  header.write(path, 0, 100, 'utf8');
+  header.write('0000777', 100, 7, 'ascii');
+  header.write('0000000', 108, 7, 'ascii');
+  header.write('0000000', 116, 7, 'ascii');
+  header.write(encodeTarSize(size), TAR_SIZE_FIELD_OFFSET, TAR_SIZE_FIELD_LENGTH - 1, 'ascii');
+  header.write('00000000000', 136, 11, 'ascii');
+  header.write('0', 156, 1, 'ascii');
+  header.write(TAR_MAGIC_VALUE, TAR_MAGIC_OFFSET, TAR_MAGIC_VALUE.length, 'ascii');
+  header.fill(32, 148, 156);
+
+  let checksum = 0;
+  for (const byte of header.values()) {
+    checksum += byte;
+  }
+
+  const checksumValue = checksum.toString(8).padStart(6, '0');
+  header.write(checksumValue, 148, 6, 'ascii');
+  header.write('\0 ', 154, 2, 'ascii');
+
+  return header;
+}
+
+function createManifestTarball(manifestContent: string): Uint8Array {
+  const manifestBuffer = Buffer.from(manifestContent, 'utf8');
+  const header = createTarHeader(MANIFEST_PATH, manifestBuffer.length);
+  const padding = Buffer.alloc(
+    (TAR_BLOCK_SIZE - (manifestBuffer.length % TAR_BLOCK_SIZE)) % TAR_BLOCK_SIZE,
+    0,
+  );
+  const end = Buffer.alloc(TAR_BLOCK_SIZE * 2, 0);
+  const tarArchive = Buffer.concat([header, manifestBuffer, padding, end]);
+  return new Uint8Array(gzipSync(tarArchive));
 }
 
 describe('Pack Registry Route Adapters', () => {
@@ -219,6 +266,79 @@ describe('Pack Registry Route Adapters', () => {
       const response = await handler(request, 'software-delivery', '2.0.0');
 
       expect(response.status).toBe(400);
+    });
+
+    it('ignores client manifest_summary fields and persists server-derived summary', async () => {
+      const { createPublishVersionRoute } =
+        await import('../src/server/pack-registry-route-adapters');
+
+      const upsertPackVersion = vi.fn().mockResolvedValue(FIXTURE_PACK);
+      const freshStore = createMockRegistryStore({
+        getPackById: vi.fn().mockResolvedValue(null),
+        upsertPackVersion,
+      });
+
+      const handler = createPublishVersionRoute({
+        registryStore: freshStore,
+        blobStore,
+        authProvider,
+      });
+
+      const formData = new FormData();
+      formData.append('description', 'Test pack');
+      formData.append(
+        'manifest_summary',
+        JSON.stringify({
+          tools: [{ name: 'spoofed:admin', permission: 'admin' }],
+          policies: [{ id: 'spoofed.policy', trigger: 'on_tool_request', decision: 'allow' }],
+          categories: ['spoofed'],
+        }),
+      );
+      formData.append(
+        'tarball',
+        new Blob([
+          createManifestTarball(`id: software-delivery
+version: 2.0.0
+task_types:
+  - development
+tools:
+  - name: file:read
+    entry: tool-impl/file.ts#readTool
+    permission: read
+    required_scopes:
+      - type: path
+        pattern: src/**
+        access: read
+policies:
+  - id: software-delivery.allow-read
+    trigger: on_tool_request
+    decision: allow
+evidence_types: []
+state_aliases: {}
+lane_templates: []
+categories:
+  - development
+`),
+        ]),
+        'pack.tgz',
+      );
+
+      const request = new Request('http://localhost/api/registry/packs/test/versions', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ghp_validtoken', Origin: ALLOWED_ORIGIN },
+        body: formData,
+      });
+
+      const response = await handler(request, 'software-delivery', '2.0.0');
+
+      expect(response.status).toBe(201);
+      const call = upsertPackVersion.mock.calls[0];
+      const version = call?.[2] as PackVersion;
+      expect(version.manifest_summary).toBeDefined();
+      expect(version.manifest_summary?.tools[0]?.name).toBe('file:read');
+      expect(version.manifest_summary?.tools[0]?.name).not.toBe('spoofed:admin');
+      expect(version.manifest_summary?.categories).toContain('development');
+      expect(version.manifest_summary?.categories).not.toContain('spoofed');
     });
   });
 });

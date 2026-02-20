@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MarketplacePackDetail as PackDetailType } from '../lib/marketplace-types';
-import type { PackRegistryEntry } from '../lib/pack-registry-types';
+import type { PackRegistryEntry, PackVersion, PackManifestSummary } from '../lib/pack-registry-types';
 import { loadPersistedWorkspacePath } from '../lib/workspace-connection';
 import { MarketplacePackDetail } from './marketplace-pack-detail';
 
@@ -17,6 +17,10 @@ const NOT_FOUND_MESSAGE = 'Pack not found.';
 const RETRY_LABEL = 'Retry';
 const BACK_LABEL = 'Back to Marketplace';
 const MARKETPLACE_PATH = '/marketplace';
+const TRUST_INTEGRITY_BADGE = 'trust-integrity-verified';
+const TRUST_MANIFEST_BADGE = 'trust-manifest-parsed';
+const TRUST_PUBLISHER_BADGE = 'trust-publisher-verified';
+const SCOPE_BADGE_PREFIX = 'scope-';
 
 /* ------------------------------------------------------------------
  * Data transformation
@@ -24,18 +28,54 @@ const MARKETPLACE_PATH = '/marketplace';
 
 type FetchState = 'idle' | 'loading' | 'success' | 'error' | 'not-found';
 
+function findLatestVersion(entry: PackRegistryEntry): PackVersion | null {
+  const exactMatch = entry.versions.find((version) => version.version === entry.latestVersion);
+  return exactMatch ?? entry.versions[entry.versions.length - 1] ?? null;
+}
+
+function uniqueStrings(values: readonly string[]): string[] {
+  return [...new Set(values)];
+}
+
+function buildTrustBadges(summary: PackManifestSummary | undefined): string[] {
+  if (!summary) {
+    return [];
+  }
+
+  const badges: string[] = [];
+  if (summary.trust.integrityVerified) {
+    badges.push(TRUST_INTEGRITY_BADGE);
+  }
+  if (summary.trust.manifestParsed) {
+    badges.push(TRUST_MANIFEST_BADGE);
+  }
+  if (summary.trust.publisherVerified) {
+    badges.push(TRUST_PUBLISHER_BADGE);
+  }
+
+  for (const permission of summary.trust.permissionScopes) {
+    badges.push(`${SCOPE_BADGE_PREFIX}${permission}`);
+  }
+
+  return uniqueStrings(badges);
+}
+
 function toPackDetail(entry: PackRegistryEntry): PackDetailType {
-  // In production, tools and policies would come from the pack manifest.
-  // For now, we expose the pack metadata with empty tools/policies
-  // that can be populated once manifest parsing is added.
+  const latestVersion = findLatestVersion(entry);
+  const manifestSummary = latestVersion?.manifest_summary;
+  const categories = uniqueStrings([
+    ...(manifestSummary?.categories ?? []),
+    ...buildTrustBadges(manifestSummary),
+  ]);
+
   return {
     id: entry.id,
     description: entry.description,
     latestVersion: entry.latestVersion,
     updatedAt: entry.updatedAt,
-    categories: [],
-    tools: [],
-    policies: [],
+    categories,
+    tools: manifestSummary?.tools ?? [],
+    policies: manifestSummary?.policies ?? [],
   };
 }
 
@@ -107,14 +147,14 @@ interface MarketplacePackDetailLiveProps {
 
 export function MarketplacePackDetailLive({ packId }: MarketplacePackDetailLiveProps) {
   const { state, pack, errorMessage, refetch } = usePackDetailData(packId);
-  const [workspaceRoot, setWorkspaceRoot] = useState<string | null>(null);
-
-  useEffect(() => {
+  const workspaceRoot = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return null;
+    }
     try {
-      const persisted = loadPersistedWorkspacePath(localStorage);
-      setWorkspaceRoot(persisted);
+      return loadPersistedWorkspacePath(window.localStorage);
     } catch {
-      // localStorage not available (SSR or security)
+      return null;
     }
   }, []);
 
