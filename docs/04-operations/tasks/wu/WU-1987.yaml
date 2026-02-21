@@ -2,7 +2,7 @@ id: WU-1987
 title: Fix MDX angle bracket escaping in upgrade guide
 lane: 'Content: Site Comms'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-21
 code_paths:
@@ -25,6 +25,15 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: The upgrade.mdx page uses <org-id> and <project-id> angle-bracket placeholders that MDX parses as JSX tags, breaking the Starlight docs build.
+description: The upgrade.mdx page uses <org-id> and <project-id> angle-bracket placeholders that MDX
+  parses as JSX tags, breaking the Starlight docs build.
 acceptance:
   - pnpm turbo run build --filter=@lumenflow/docs succeeds
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-1987
+claimed_at: 2026-02-21T23:51:08.424Z
+baseline_main_sha: 9bff4cb4e7fdd35fbe354bee5bb960008a704bd6
+session_id: b00e39e7-4e3c-4a7c-9dd6-f15206bf57e9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T23:51:08.429Z
