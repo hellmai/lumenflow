@@ -73,6 +73,10 @@ export const CliCommands = {
   SIGNAL_CLEANUP: 'signal:cleanup',
   CONFIG_SET: 'config:set',
   CONFIG_GET: 'config:get',
+  CLOUD_CONNECT: 'cloud:connect',
+  ONBOARD: 'onboard',
+  LUMENFLOW_ONBOARD: 'lumenflow-onboard',
+  WORKSPACE_INIT: 'workspace:init',
 
   // -- File operations (parity-tools.ts) --
   FILE_READ: 'file:read',

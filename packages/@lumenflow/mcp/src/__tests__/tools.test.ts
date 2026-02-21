@@ -10,7 +10,10 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
+  cloudConnectTool,
   contextGetTool,
+  lumenflowOnboardTool,
+  onboardTool,
   registeredTools,
   taskBlockTool,
   taskClaimTool,
@@ -25,11 +28,13 @@ import {
   wuClaimTool,
   wuDoneTool,
   gatesRunTool,
+  workspaceInitTool,
 } from '../tools.js';
 import {
   RuntimeTaskToolDescriptions,
   RuntimeTaskToolNames,
 } from '../tools/runtime-task-constants.js';
+import { CliCommands } from '../mcp-constants.js';
 import * as cliRunner from '../cli-runner.js';
 import * as core from '@lumenflow/core';
 import * as toolsShared from '../tools-shared.js';
@@ -52,6 +57,46 @@ vi.mock('@lumenflow/core', async () => {
 });
 
 describe('MCP tools', () => {
+  const CLI_FLAGS = {
+    ENDPOINT: '--endpoint',
+    ORG_ID: '--org-id',
+    PROJECT_ID: '--project-id',
+    TOKEN_ENV: '--token-env',
+    POLICY_MODE: '--policy-mode',
+    SYNC_INTERVAL: '--sync-interval',
+    OUTPUT: '--output',
+    FORCE: '--force',
+    YES: '--yes',
+    DOMAIN: '--domain',
+    PROJECT_NAME: '--project-name',
+    SKIP_PACK_INSTALL: '--skip-pack-install',
+    SKIP_DASHBOARD: '--skip-dashboard',
+  } as const;
+  const CLOUD_CONNECT_INPUT = {
+    endpoint: 'https://control-plane.example.com',
+    org_id: 'org-example',
+    project_id: 'project-example',
+    token_env: 'LUMENFLOW_CONTROL_PLANE_TOKEN',
+    policy_mode: 'tighten-only',
+    sync_interval: 60,
+    output: '/tmp/workspace',
+    force: true,
+  } as const;
+  const ONBOARD_INPUT = {
+    yes: true,
+    domain: 'software-delivery',
+    project_name: 'demo-app',
+    output: '/tmp/workspace',
+    force: true,
+    skip_pack_install: true,
+    skip_dashboard: true,
+  } as const;
+  const WORKSPACE_INIT_INPUT = {
+    yes: true,
+    output: '/tmp/workspace',
+    force: true,
+  } as const;
+
   const mockRunCliCommand = vi.mocked(cliRunner.runCliCommand);
   const mockComputeWuContext = vi.mocked(core.computeWuContext);
 
@@ -134,6 +179,175 @@ describe('MCP tools', () => {
       expect(result.success).toBe(true);
       expect((result.data as Array<{ status: string }>).length).toBe(1);
       spy.mockRestore();
+    });
+  });
+
+  describe('bootstrap/cloud parity tools', () => {
+    it('should validate required fields for cloud_connect', async () => {
+      const missingEndpointResult = await cloudConnectTool.execute({
+        org_id: CLOUD_CONNECT_INPUT.org_id,
+        project_id: CLOUD_CONNECT_INPUT.project_id,
+      });
+      expect(missingEndpointResult.success).toBe(false);
+      expect(missingEndpointResult.error?.message).toContain('endpoint');
+
+      const missingOrgResult = await cloudConnectTool.execute({
+        endpoint: CLOUD_CONNECT_INPUT.endpoint,
+        project_id: CLOUD_CONNECT_INPUT.project_id,
+      });
+      expect(missingOrgResult.success).toBe(false);
+      expect(missingOrgResult.error?.message).toContain('org_id');
+
+      const missingProjectResult = await cloudConnectTool.execute({
+        endpoint: CLOUD_CONNECT_INPUT.endpoint,
+        org_id: CLOUD_CONNECT_INPUT.org_id,
+      });
+      expect(missingProjectResult.success).toBe(false);
+      expect(missingProjectResult.error?.message).toContain('project_id');
+    });
+
+    it('should route cloud_connect through executeViaPack with CLI-compatible flags', async () => {
+      const spy = vi.spyOn(toolsShared, 'executeViaPack').mockResolvedValue({
+        success: true,
+        data: { message: 'cloud connected' },
+      });
+
+      const result = await cloudConnectTool.execute({ ...CLOUD_CONNECT_INPUT });
+
+      expect(result.success).toBe(true);
+      expect(spy).toHaveBeenCalledWith(
+        CliCommands.CLOUD_CONNECT,
+        expect.objectContaining({
+          endpoint: CLOUD_CONNECT_INPUT.endpoint,
+          org_id: CLOUD_CONNECT_INPUT.org_id,
+          project_id: CLOUD_CONNECT_INPUT.project_id,
+        }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: CliCommands.CLOUD_CONNECT,
+            args: expect.arrayContaining([
+              CLI_FLAGS.ENDPOINT,
+              CLOUD_CONNECT_INPUT.endpoint,
+              CLI_FLAGS.ORG_ID,
+              CLOUD_CONNECT_INPUT.org_id,
+              CLI_FLAGS.PROJECT_ID,
+              CLOUD_CONNECT_INPUT.project_id,
+              CLI_FLAGS.TOKEN_ENV,
+              CLOUD_CONNECT_INPUT.token_env,
+              CLI_FLAGS.POLICY_MODE,
+              CLOUD_CONNECT_INPUT.policy_mode,
+              CLI_FLAGS.SYNC_INTERVAL,
+              String(CLOUD_CONNECT_INPUT.sync_interval),
+              CLI_FLAGS.OUTPUT,
+              CLOUD_CONNECT_INPUT.output,
+              CLI_FLAGS.FORCE,
+            ]),
+          }),
+        }),
+      );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
+
+    it('should route onboard through executeViaPack with CLI-compatible flags', async () => {
+      const onboardSpy = vi.spyOn(toolsShared, 'executeViaPack').mockResolvedValue({
+        success: true,
+        data: { message: 'onboard complete' },
+      });
+
+      const onboardResult = await onboardTool.execute({ ...ONBOARD_INPUT });
+
+      expect(onboardResult.success).toBe(true);
+      expect(onboardSpy).toHaveBeenCalledWith(
+        CliCommands.ONBOARD,
+        expect.objectContaining({
+          domain: ONBOARD_INPUT.domain,
+          project_name: ONBOARD_INPUT.project_name,
+        }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: CliCommands.ONBOARD,
+            args: expect.arrayContaining([
+              CLI_FLAGS.YES,
+              CLI_FLAGS.DOMAIN,
+              ONBOARD_INPUT.domain,
+              CLI_FLAGS.PROJECT_NAME,
+              ONBOARD_INPUT.project_name,
+              CLI_FLAGS.OUTPUT,
+              ONBOARD_INPUT.output,
+              CLI_FLAGS.FORCE,
+              CLI_FLAGS.SKIP_PACK_INSTALL,
+              CLI_FLAGS.SKIP_DASHBOARD,
+            ]),
+          }),
+        }),
+      );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
+      onboardSpy.mockRestore();
+    });
+
+    it('should route lumenflow_onboard through executeViaPack alias command', async () => {
+      const aliasSpy = vi.spyOn(toolsShared, 'executeViaPack').mockResolvedValue({
+        success: true,
+        data: { message: 'alias onboard complete' },
+      });
+
+      const result = await lumenflowOnboardTool.execute({ ...ONBOARD_INPUT });
+
+      expect(result.success).toBe(true);
+      expect(aliasSpy).toHaveBeenCalledWith(
+        CliCommands.LUMENFLOW_ONBOARD,
+        expect.objectContaining({
+          domain: ONBOARD_INPUT.domain,
+        }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: CliCommands.LUMENFLOW_ONBOARD,
+          }),
+        }),
+      );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
+      aliasSpy.mockRestore();
+    });
+
+    it('should route workspace_init through executeViaPack with CLI-compatible flags', async () => {
+      const spy = vi.spyOn(toolsShared, 'executeViaPack').mockResolvedValue({
+        success: true,
+        data: { message: 'workspace initialized' },
+      });
+
+      const result = await workspaceInitTool.execute({ ...WORKSPACE_INIT_INPUT });
+
+      expect(result.success).toBe(true);
+      expect(spy).toHaveBeenCalledWith(
+        CliCommands.WORKSPACE_INIT,
+        expect.objectContaining({
+          yes: WORKSPACE_INIT_INPUT.yes,
+          output: WORKSPACE_INIT_INPUT.output,
+          force: WORKSPACE_INIT_INPUT.force,
+        }),
+        expect.objectContaining({
+          fallback: expect.objectContaining({
+            command: CliCommands.WORKSPACE_INIT,
+            args: expect.arrayContaining([
+              CLI_FLAGS.YES,
+              CLI_FLAGS.OUTPUT,
+              WORKSPACE_INIT_INPUT.output,
+              CLI_FLAGS.FORCE,
+            ]),
+          }),
+        }),
+      );
+      expect(mockRunCliCommand).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
+
+    it('should include bootstrap/cloud parity tools in the production MCP registry', () => {
+      const registryToolNames = registeredTools.map((tool) => tool.name);
+      expect(registryToolNames).toContain('cloud_connect');
+      expect(registryToolNames).toContain('onboard');
+      expect(registryToolNames).toContain('lumenflow_onboard');
+      expect(registryToolNames).toContain('workspace_init');
     });
   });
 
