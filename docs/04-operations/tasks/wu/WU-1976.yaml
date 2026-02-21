@@ -2,7 +2,7 @@ id: WU-1976
 title: Dogfood workspace migration in os repo
 lane: 'Content: Specs Governance'
 type: refactor
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-21
 code_paths:
@@ -32,8 +32,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Apply migration output to this repository and align governance artifacts so local operation no longer depends on runtime reads of .lumenflow.config.yaml.
+description: Apply migration output to this repository and align governance artifacts so local
+  operation no longer depends on runtime reads of .lumenflow.config.yaml.
 acceptance:
   - Repository workspace.yaml reflects canonical v2 contract for software_delivery settings
   - Doctor/status commands run using workspace.yaml canonical model
   - No runtime path in this repo requires legacy config file for operation
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-specs-governance-wu-1976
+claimed_at: 2026-02-21T20:13:15.193Z
+baseline_main_sha: 475498b67a73aacda7a52a47c1afdf3ce9747e33
+session_id: 1a5f4cda-1225-46c3-bd7f-b0749d2c0823
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T20:13:15.200Z
