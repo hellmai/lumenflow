@@ -2,7 +2,7 @@ id: WU-1985
 title: Retire split onboarding path and legacy bootstrap entrypoints
 lane: 'Framework: CLI Enforcement'
 type: refactor
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-21
 code_paths:
@@ -47,3 +47,6 @@ acceptance:
   - Legacy split onboarding commands are removed or explicitly rerouted to bootstrap-all
   - CLI help and command surface no longer present split onboarding as a primary path
   - Regression tests verify legacy command invocations emit canonical bootstrap guidance
+locked: true
+completed_at: 2026-02-21T22:29:00.940Z
+completed: 2026-02-21

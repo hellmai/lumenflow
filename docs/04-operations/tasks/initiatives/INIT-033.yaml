@@ -14,7 +14,7 @@ phases:
     status: done
   - id: 2
     title: 'Phase 2: Bootstrap-All CLI'
-    status: in_progress
+    status: done
   - id: 3
     title: 'Phase 3: Cloud Connect'
     status: done
