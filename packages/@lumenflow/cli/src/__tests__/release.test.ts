@@ -61,7 +61,7 @@ describe('release command', () => {
       expect(exclude).toContain('src/**/*.spec.ts');
     });
 
-    it('cli build:dist cleans dist before compilation to prevent stale test artifacts', () => {
+    it('cli build:dist enforces clean tsup output and post-build integrity checks', () => {
       const cliPackageJsonPath = join(repoRoot, 'packages/@lumenflow/cli/package.json');
       const cliPackageJson = JSON.parse(readFileSync(cliPackageJsonPath, 'utf-8')) as {
         scripts?: Record<string, string>;
@@ -69,8 +69,13 @@ describe('release command', () => {
       const buildDistScript = cliPackageJson.scripts?.['build:dist'];
 
       expect(buildDistScript).toBeTruthy();
-      expect(buildDistScript).toContain('rm -rf dist');
-      expect(buildDistScript).toContain('tsc -p tsconfig.build.json');
+      expect(buildDistScript).toContain('tsup');
+      expect(buildDistScript).toContain('node scripts/fix-entry-points.mjs');
+      expect(buildDistScript).toContain('node scripts/check-shebangs.mjs');
+
+      const cliTsupConfigPath = join(repoRoot, 'packages/@lumenflow/cli/tsup.config.ts');
+      const cliTsupConfig = readFileSync(cliTsupConfigPath, 'utf-8');
+      expect(cliTsupConfig).toMatch(/\bclean:\s*true\b/);
     });
 
     it('cli tsconfig excludes src test artifacts from regular dist output', () => {

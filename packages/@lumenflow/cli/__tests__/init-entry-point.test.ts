@@ -45,11 +45,11 @@ describe('init.ts CLI entry point (WU-1297)', () => {
     const initPath = path.join(__dirname, '..', 'src', 'init.ts');
     const content = fs.readFileSync(initPath, 'utf-8');
 
-    // The entry point should use runCLI(main) which provides error handling,
-    // or have explicit .catch() / process.exit(1) error handling
+    // The entry point should use runCLI(main, ...) which provides error handling,
+    // or have explicit .catch() / process.exit(1) error handling.
     const hasErrorHandling =
       content.includes(ENTRY_POINT_PATTERN) &&
-      (content.includes('runCLI(main)') ||
+      (content.includes('runCLI(main') ||
         content.includes('.catch(') ||
         content.includes('process.exit(1)'));
 
