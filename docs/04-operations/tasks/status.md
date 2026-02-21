@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1976 — Dogfood workspace migration in os repo](wu/WU-1976.yaml)
 
 ## Completed
 

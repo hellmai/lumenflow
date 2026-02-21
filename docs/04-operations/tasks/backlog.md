@@ -26,7 +26,6 @@ sections:
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
 - [WU-1960 — Fix release build:dist invariant drift](wu/WU-1960.yaml) — Framework: CLI Orchestration
-- [WU-1976 — Dogfood workspace migration in os repo](wu/WU-1976.yaml) — Content: Specs Governance
 - [WU-1977 — Unify lumenflow npm wrapper with full CLI router](wu/WU-1977.yaml) — Framework: CLI Enforcement
 - [WU-1978 — Bootstrap-all default path for npx lumenflow](wu/WU-1978.yaml) — Framework: CLI Enforcement
 - [WU-1979 — Finalize control-plane contract in workspace schema + SDK](wu/WU-1979.yaml) — Framework: Core Validation
@@ -39,7 +38,7 @@ sections:
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-1976 — Dogfood workspace migration in os repo](wu/WU-1976.yaml) — Content: Specs Governance
 
 ## ⛔ Blocked
 
