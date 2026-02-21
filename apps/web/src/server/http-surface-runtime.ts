@@ -12,6 +12,7 @@ import {
 
 const ENVIRONMENT_KEY = {
   ENABLE_RUNTIME: 'LUMENFLOW_WEB_ENABLE_KERNEL_RUNTIME',
+  RUNTIME_WORKSPACE_ROOT: 'LUMENFLOW_WEB_RUNTIME_WORKSPACE_ROOT',
   WORKSPACE_ROOT: 'LUMENFLOW_WEB_WORKSPACE_ROOT',
 } as const;
 
@@ -21,7 +22,8 @@ const ENVIRONMENT_VALUE = {
 
 const ERROR_MESSAGE = {
   RUNTIME_UNAVAILABLE:
-    'Kernel runtime unavailable in web app preview mode. Set LUMENFLOW_WEB_ENABLE_KERNEL_RUNTIME=1 and LUMENFLOW_WEB_WORKSPACE_ROOT=/absolute/path in .env.local, then restart the web server.',
+    'Kernel runtime unavailable in web app preview mode. Set LUMENFLOW_WEB_ENABLE_KERNEL_RUNTIME=1 and LUMENFLOW_WEB_RUNTIME_WORKSPACE_ROOT=/absolute/workspace/path (or fallback LUMENFLOW_WEB_WORKSPACE_ROOT=/absolute/path) in .env.local, then restart the web server.',
+  RUNTIME_INIT_UNKNOWN: 'Unknown runtime initialization error.',
 } as const;
 
 const NOOP_DISPOSABLE: Disposable = {
@@ -47,10 +49,12 @@ export interface KernelRuntimeHealth {
   readonly available: boolean;
   readonly workspaceRoot: string;
   readonly message?: string;
+  readonly initializationError?: string;
 }
 
 let runtimePromise: Promise<KernelRuntimeWithEventSubscription> | null = null;
 let httpSurfacePromise: Promise<HttpSurface> | null = null;
+let runtimeInitializationError: string | null = null;
 
 function createRuntimeUnavailableError(): Error {
   return new Error(ERROR_MESSAGE.RUNTIME_UNAVAILABLE);
@@ -97,21 +101,35 @@ function isRuntimeInitializationEnabled(environment: NodeJS.ProcessEnv): boolean
   return environment[ENVIRONMENT_KEY.ENABLE_RUNTIME] === ENVIRONMENT_VALUE.TRUE;
 }
 
-function resolveWorkspaceRoot(environment: NodeJS.ProcessEnv): string {
-  return environment[ENVIRONMENT_KEY.WORKSPACE_ROOT] ?? process.cwd();
+function resolveRuntimeWorkspaceRoot(environment: NodeJS.ProcessEnv): string {
+  return (
+    environment[ENVIRONMENT_KEY.RUNTIME_WORKSPACE_ROOT] ??
+    environment[ENVIRONMENT_KEY.WORKSPACE_ROOT] ??
+    process.cwd()
+  );
+}
+
+function resolveRuntimeInitializationError(error: unknown): string {
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+  return ERROR_MESSAGE.RUNTIME_INIT_UNKNOWN;
 }
 
 async function createRuntimeForWeb(): Promise<KernelRuntimeWithEventSubscription> {
   if (!isRuntimeInitializationEnabled(process.env)) {
+    runtimeInitializationError = null;
     return createPreviewRuntime();
   }
 
   try {
     const runtime = await initializeKernelRuntime({
-      workspaceRoot: resolveWorkspaceRoot(process.env),
+      workspaceRoot: resolveRuntimeWorkspaceRoot(process.env),
     });
+    runtimeInitializationError = null;
     return runtime as KernelRuntimeWithEventSubscription;
-  } catch {
+  } catch (error) {
+    runtimeInitializationError = resolveRuntimeInitializationError(error);
     return createPreviewRuntime();
   }
 }
@@ -130,9 +148,13 @@ function isPreviewRuntime(runtime: KernelRuntimeWithEventSubscription): boolean 
 
 export async function getKernelRuntimeHealth(): Promise<KernelRuntimeHealth> {
   const enabled = isRuntimeInitializationEnabled(process.env);
-  const workspaceRoot = resolveWorkspaceRoot(process.env);
+  const workspaceRoot = resolveRuntimeWorkspaceRoot(process.env);
   const runtime = await getKernelRuntimeForWeb();
   const previewMode = isPreviewRuntime(runtime);
+  const includeInitializationError =
+    enabled && previewMode && runtimeInitializationError !== null
+      ? { initializationError: runtimeInitializationError }
+      : {};
 
   return {
     mode: previewMode ? 'preview' : 'runtime',
@@ -140,6 +162,7 @@ export async function getKernelRuntimeHealth(): Promise<KernelRuntimeHealth> {
     available: !previewMode,
     workspaceRoot,
     ...(previewMode ? { message: ERROR_MESSAGE.RUNTIME_UNAVAILABLE } : {}),
+    ...includeInitializationError,
   };
 }
 
