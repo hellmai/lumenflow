@@ -2,7 +2,7 @@ id: WU-1961
 title: Fix onboard cli-entry alias and pack version flag collisions
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-21
 code_paths:
@@ -50,3 +50,6 @@ acceptance:
   - pnpm pack:install --help and pnpm pack:scaffold --help return usage output instead of
     option-collision crash
   - Parser behavior remains backward-compatible for existing commands that rely on built-in --version
+locked: true
+completed_at: 2026-02-21T12:55:40.965Z
+completed: 2026-02-21
