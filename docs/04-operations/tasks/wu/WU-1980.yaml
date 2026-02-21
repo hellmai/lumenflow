@@ -11,6 +11,7 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/onboarding-smoke-test.test.ts
   - packages/@lumenflow/cli/src/init.ts
   - packages/@lumenflow/cli/package.json
+  - packages/@lumenflow/mcp/src/tools.ts
 tests:
   manual:
     - npx lumenflow cloud connect --help and connect flow validate endpoint/token env
