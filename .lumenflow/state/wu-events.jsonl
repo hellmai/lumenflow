@@ -1922,3 +1922,4 @@
 {"type":"complete","wuId":"WU-1982","timestamp":"2026-02-21T22:00:41.190Z"}
 {"type":"claim","wuId":"WU-1983","timestamp":"2026-02-21T22:01:48.357Z","lane":"Framework: MCP","title":"MCP parity for bootstrap and cloud operations"}
 {"type":"complete","wuId":"WU-1983","timestamp":"2026-02-21T22:15:42.709Z"}
+{"type":"claim","wuId":"WU-1985","lane":"Framework: CLI Enforcement","title":"Retire split onboarding path and legacy bootstrap entrypoints","timestamp":"2026-02-21T22:16:35.794Z"}

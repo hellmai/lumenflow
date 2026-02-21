@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1985 — Retire split onboarding path and legacy bootstrap entrypoints](wu/WU-1985.yaml)
 
 ## Completed
 
