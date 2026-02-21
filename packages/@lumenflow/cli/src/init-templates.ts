@@ -1836,6 +1836,28 @@ pnpm typecheck            # Check types
 \`\`\`
 `;
 
+/**
+ * WU-1969: Shared exclusion list used by both the full GITIGNORE_TEMPLATE
+ * (fresh init) and the merge path (existing .gitignore).
+ *
+ * Defined once so the two paths cannot drift.
+ * Each entry has a `pattern` (substring to search for in existing content)
+ * and a `line` (exact line to append when missing).
+ */
+export const REQUIRED_GITIGNORE_EXCLUSIONS: ReadonlyArray<{
+  pattern: string;
+  line: string;
+}> = [
+  { pattern: 'node_modules', line: 'node_modules/' },
+  { pattern: '.lumenflow/telemetry', line: '.lumenflow/telemetry/' },
+  { pattern: '.lumenflow/flow.log', line: '.lumenflow/flow.log' },
+  { pattern: '.lumenflow/commands.log', line: '.lumenflow/commands.log' },
+  { pattern: '.lumenflow/sessions/', line: '.lumenflow/sessions/' },
+  { pattern: '.lumenflow/memory/', line: '.lumenflow/memory/' },
+  { pattern: '.logs/', line: '.logs/' },
+  { pattern: 'worktrees', line: 'worktrees/' },
+];
+
 export const GITIGNORE_TEMPLATE = `# Dependencies
 node_modules/
 

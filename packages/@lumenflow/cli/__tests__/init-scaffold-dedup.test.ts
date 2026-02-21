@@ -123,9 +123,15 @@ describe('WU-1965: Init scaffold dedup and output fixes', () => {
 
     it('should not duplicate entries if lumenflow entries already present', async () => {
       const gitignorePath = path.join(tempDir, '.gitignore');
+      // WU-1969: Must include ALL required exclusions (not just the old 3)
+      // to be considered "complete" and skipped
+      const templates = await import('../src/init-templates.js');
+      const allLines = templates.REQUIRED_GITIGNORE_EXCLUSIONS.map(
+        (e: { line: string }) => e.line,
+      ).join('\n');
       fs.writeFileSync(
         gitignorePath,
-        '# My project\nnode_modules/\n.lumenflow/telemetry/\nworktrees/\n',
+        `# My project\n${allLines}\n`,
       );
 
       const { scaffoldProject } = await import('../src/init.js');
