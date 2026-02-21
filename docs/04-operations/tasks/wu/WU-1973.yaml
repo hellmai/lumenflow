@@ -9,7 +9,6 @@ code_paths:
   - packages/@lumenflow/cli/src/config-set.ts
   - packages/@lumenflow/cli/src/config-get.ts
   - packages/@lumenflow/cli/src/__tests__/config-set.test.ts
-  - packages/@lumenflow/cli/vitest.config.ts
 tests:
   manual:
     - pnpm config:get --key software_delivery.methodology.testing returns value from workspace.yaml
