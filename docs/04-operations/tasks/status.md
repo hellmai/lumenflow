@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1987 — Fix MDX angle bracket escaping in upgrade guide](wu/WU-1987.yaml)
 
 ## Completed
 
