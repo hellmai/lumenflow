@@ -2,7 +2,7 @@ id: WU-1963
 title: lumenflow init should scaffold package.json with CLI scripts
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-21
 code_paths:
@@ -26,8 +26,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: lumenflow init generates 35+ config files but does not create or update package.json. Problem: After running lumenflow init in a fresh project, users cannot run any LumenFlow commands (wu:create, wu:claim, gates, etc.) because there is no package.json with @lumenflow/cli dependency or lifecycle scripts. Solution: lumenflow init should either create a package.json with the CLI dependency and standard scripts, or detect an existing package.json and inject the required scripts and dependency.'
+description: 'Context: lumenflow init generates 35+ config files but does not create or update
+  package.json. Problem: After running lumenflow init in a fresh project, users cannot run any
+  LumenFlow commands (wu:create, wu:claim, gates, etc.) because there is no package.json with
+  @lumenflow/cli dependency or lifecycle scripts. Solution: lumenflow init should either create a
+  package.json with the CLI dependency and standard scripts, or detect an existing package.json and
+  inject the required scripts and dependency.'
 acceptance:
   - lumenflow init in a fresh directory creates package.json with @lumenflow/cli dependency
-  - lumenflow init in a directory with existing package.json adds scripts without overwriting existing content
+  - lumenflow init in a directory with existing package.json adds scripts without overwriting
+    existing content
   - After lumenflow init, pnpm wu:create and pnpm gates work without manual setup
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1963
+claimed_at: 2026-02-21T14:03:18.691Z
+baseline_main_sha: b916b0d8884b3b17456c9373a3af3071db1f297a
+session_id: 9437017e-172c-42d4-a211-64346d1984bc
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T14:03:18.697Z
