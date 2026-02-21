@@ -26,7 +26,6 @@ sections:
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
 - [WU-1960 — Fix release build:dist invariant drift](wu/WU-1960.yaml) — Framework: CLI Orchestration
-- [WU-1970 — INIT-033 scaffold + plan linkage governance](wu/WU-1970.yaml) — Content: Specs Governance
 - [WU-1971 — Workspace v2 schema with software_delivery + control_plane](wu/WU-1971.yaml) — Framework: Core Validation
 - [WU-1972 — Core config provider rewrite to workspace.yaml canonical](wu/WU-1972.yaml) — Framework: Core Lifecycle
 - [WU-1973 — Repoint config:set and config:get to workspace.yaml](wu/WU-1973.yaml) — Framework: CLI Enforcement
@@ -45,7 +44,7 @@ sections:
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-1970 — INIT-033 scaffold + plan linkage governance](wu/WU-1970.yaml) — Content: Specs Governance
 
 ## ⛔ Blocked
 
