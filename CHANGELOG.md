@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-02-21
+
+### Added
+
+- **Workspace-first bootstrap-all onboarding**: `npx lumenflow` is now the canonical onboarding
+  path for creating and configuring `workspace.yaml`.
+- **Cloud connect surfaced in canonical flow**: workspace control-plane configuration is now
+  documented and supported via `cloud:connect` / `lumenflow cloud connect`.
+- **Workspace-scoped config tooling**: `config:set` and `config:get` are now documented as
+  workspace-first operations against `workspace.yaml > software_delivery`.
+
+### Changed
+
+- **Canonical config source**: runtime semantics now center on `workspace.yaml` instead of split
+  onboarding/config paths.
+- **Docs and migration messaging** updated across quickstart, CLI reference, and upgrade guides to
+  reflect workspace-first behavior.
+
+### Removed
+
+- **Split onboarding as primary path**: `onboard`, `lumenflow-onboard`, and `workspace:init` are
+  no longer primary setup commands.
+
+### Breaking Changes
+
+- **Major release**: v4.0.0 hard-cuts to workspace-first configuration and onboarding semantics.
+- **Legacy onboarding entrypoints** now act as legacy guidance shims and should be replaced in user
+  scripts/docs with `npx lumenflow`.
+
+### Migration
+
+1. Upgrade packages:
+
+   ```bash
+   pnpm lumenflow:upgrade --latest
+   ```
+
+2. Migrate legacy config if present:
+
+   ```bash
+   pnpm lumenflow:upgrade config:migrate-workspace
+   ```
+
+3. Re-run canonical bootstrap in merge mode:
+
+   ```bash
+   pnpm exec lumenflow --client <client> --merge
+   ```
+
+4. Verify runtime health:
+
+   ```bash
+   pnpm exec lumenflow-doctor
+   ```
+
 ## [2.2.0] - 2026-01-30
 
 ### Added
@@ -164,7 +219,8 @@ See the [Migration Guide](https://lumenflow.dev/guides/migration) for detailed i
 
 ---
 
-[Unreleased]: https://github.com/hellmai/lumenflow-dev/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/hellmai/lumenflow-dev/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/hellmai/lumenflow-dev/compare/v2.2.0...v4.0.0
 [2.2.0]: https://github.com/hellmai/lumenflow-dev/compare/v2.1.2...v2.2.0
 [2.1.2]: https://github.com/hellmai/lumenflow-dev/compare/v2.0.0...v2.1.2
 [2.0.0]: https://github.com/hellmai/lumenflow-dev/compare/v1.6.0...v2.0.0
