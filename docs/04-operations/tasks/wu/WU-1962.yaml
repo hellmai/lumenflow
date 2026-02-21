@@ -46,6 +46,8 @@ code_paths:
   - tools/generate-cli-docs.ts
   - packages/@lumenflow/mcp/src/__tests__/cli-integration.test.ts
   - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
+  - packages/@lumenflow/cli/__tests__/init-entry-point.test.ts
+  - packages/@lumenflow/cli/src/__tests__/release.test.ts
 tests:
   manual:
     - 'Run: pnpm docs:validate'
@@ -54,6 +56,8 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/commands.test.ts
     - packages/@lumenflow/mcp/src/__tests__/cli-integration.test.ts
     - packages/@lumenflow/mcp/src/__tests__/wu-tools.test.ts
+    - packages/@lumenflow/cli/__tests__/init-entry-point.test.ts
+    - packages/@lumenflow/cli/src/__tests__/release.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1962.done
