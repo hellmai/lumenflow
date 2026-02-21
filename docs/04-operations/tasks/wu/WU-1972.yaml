@@ -9,6 +9,7 @@ code_paths:
   - packages/@lumenflow/core/src/lumenflow-config.ts
   - packages/@lumenflow/core/src/lumenflow-config-schema.ts
   - packages/@lumenflow/core/src/wu-paths.ts
+  - packages/@lumenflow/core/src/__tests__/path-centralization.test.ts
 tests:
   manual:
     - pnpm --filter @lumenflow/core test -- gates-config
@@ -27,10 +28,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-21T19:02:02.864Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1972
+session_id: 66bed46a-36c0-4d7d-adb4-a62d898cf6f9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T19:02:02.868Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +48,3 @@ acceptance:
   - Core config provider reads workflow and gates data from workspace.yaml
   - No runtime execution path requires .lumenflow.config.yaml for config resolution
   - Regression tests verify existing behavior with workspace.yaml inputs
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1972
-claimed_at: 2026-02-21T19:02:02.864Z
-baseline_main_sha: ae355a8f94e04bbe4e2194f3f9e35627e125439f
-session_id: 66bed46a-36c0-4d7d-adb4-a62d898cf6f9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-21T19:02:02.868Z
