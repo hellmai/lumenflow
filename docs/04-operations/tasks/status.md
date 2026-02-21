@@ -5,7 +5,6 @@ _Last updated: 2026-02-21_
 ## In Progress
 
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
-- [WU-1961 — Fix onboard cli-entry alias and pack version flag collisions](wu/WU-1961.yaml)
 
 ## Completed
 
@@ -895,3 +894,4 @@ _Last updated: 2026-02-21_
 - [WU-1955 — \[WU-L\] AG-UI run route + preview runtime diagnostics](wu/WU-1955.yaml) — 2026-02-20
 - [WU-1956 — \[WU-M\] Expand MCP tool surface for pack/workspace parity](wu/WU-1956.yaml) — 2026-02-20
 - [WU-1957 — \[WU-N\] Docs sweep for secure authoring + updated onboarding/install flow](wu/WU-1957.yaml) — 2026-02-20
+- [WU-1961 — Fix onboard cli-entry alias and pack version flag collisions](wu/WU-1961.yaml) — 2026-02-21
