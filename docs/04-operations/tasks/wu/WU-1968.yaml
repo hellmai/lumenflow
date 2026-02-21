@@ -6,7 +6,6 @@ status: in_progress
 priority: P3
 created: 2026-02-21
 code_paths:
-  - packages/@lumenflow/cli/src/doctor.ts
   - packages/@lumenflow/cli/src/init.ts
 tests:
   manual:
@@ -21,10 +20,17 @@ dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-21T16:50:47.287Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1968
+session_id: 418c1850-1390-4442-93f4-79d34fb3573c
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T16:50:47.292Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +46,3 @@ acceptance:
   - lumenflow doctor output appears exactly once (no duplicate)
   - Passing prerequisite checks show a checkmark not a warning prefix
   - Failing prerequisite checks still show warning prefix with actionable guidance
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1968
-claimed_at: 2026-02-21T16:50:47.287Z
-baseline_main_sha: d1d2afa26d9095eea42e69cb1a70d31d466837fb
-session_id: 418c1850-1390-4442-93f4-79d34fb3573c
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-21T16:50:47.292Z
