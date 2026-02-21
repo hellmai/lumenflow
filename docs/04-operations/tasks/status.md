@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1975 — Add config:migrate-workspace command](wu/WU-1975.yaml)
 
 ## Completed
 
