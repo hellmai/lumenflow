@@ -131,8 +131,7 @@ describe('WU-1968: Doctor output dedup and prerequisite formatting', () => {
       const prereqLines = output
         .split('\n')
         .filter(
-          (line) =>
-            line.includes('node:') || line.includes('pnpm:') || line.includes('git:'),
+          (line) => line.includes('node:') || line.includes('pnpm:') || line.includes('git:'),
         );
 
       expect(prereqLines.length).toBe(3);
