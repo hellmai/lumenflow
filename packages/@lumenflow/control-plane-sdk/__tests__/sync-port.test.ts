@@ -14,6 +14,7 @@ describe('control-plane sdk sync port', () => {
     const port: ControlPlaneSyncPort = createMockControlPlaneSyncPort({
       endpoint: 'https://mock.control-plane.local',
       org_id: 'org-test',
+      project_id: 'proj-test',
       policy_mode: 'authoritative',
     });
 
@@ -38,6 +39,8 @@ describe('control-plane sdk sync port', () => {
 
     const config = await port.pullConfig({ workspace_id: 'workspace-a' });
     expect(config.control_plane.endpoint).toBe('https://mock.control-plane.local');
+    expect(config.control_plane.project_id).toBe('proj-test');
+    expect(config.control_plane.auth.token_env).toBe('LUMENFLOW_CONTROL_PLANE_TOKEN');
 
     const telemetryResult = await port.pushTelemetry({
       workspace_id: 'workspace-a',
@@ -74,6 +77,7 @@ describe('control-plane sdk sync port', () => {
     const port = new MockControlPlaneSyncPort({
       endpoint: 'https://mock.control-plane.local',
       org_id: 'org-test',
+      project_id: 'proj-test',
       policy_mode: 'authoritative',
     });
 

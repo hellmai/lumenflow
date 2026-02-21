@@ -1,11 +1,23 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: Apache-2.0
 
-import type {
-  ControlPlanePolicyMode,
-  WorkspaceControlPlaneConfig,
-  WorkspaceControlPlaneSpec,
+import {
+  CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN,
+  CONTROL_PLANE_POLICY_MODE_VALUES,
+  type ControlPlanePolicyMode,
+  type WorkspaceControlPlaneAuthConfig,
+  type WorkspaceControlPlaneConfig,
+  type WorkspaceControlPlaneSpec,
 } from './sync-port.js';
+
+const CONTROL_PLANE_POLICY_MODE_SET = new Set<string>(CONTROL_PLANE_POLICY_MODE_VALUES);
+const CONTROL_PLANE_REQUIRED_FIELDS = [
+  'endpoint',
+  'org_id',
+  'project_id',
+  'sync_interval',
+  'policy_mode',
+] as const;
 
 function isObject(input: unknown): input is Record<string, unknown> {
   return typeof input === 'object' && input !== null;
@@ -40,11 +52,29 @@ function asUrlString(value: unknown, field: string): string {
 }
 
 function asPolicyMode(value: unknown): ControlPlanePolicyMode {
-  if (value === 'authoritative' || value === 'tighten-only' || value === 'dev-override') {
-    return value;
+  if (typeof value === 'string' && CONTROL_PLANE_POLICY_MODE_SET.has(value)) {
+    return value as ControlPlanePolicyMode;
   }
 
   throw new Error('Invalid control_plane.policy_mode');
+}
+
+function asEnvVarName(value: unknown, field: string): string {
+  const parsed = asNonEmptyString(value, field);
+  if (!CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN.test(parsed)) {
+    throw new Error(`Invalid ${field}: expected an uppercase env var name`);
+  }
+  return parsed;
+}
+
+function parseAuthConfig(input: unknown): WorkspaceControlPlaneAuthConfig {
+  if (!isObject(input)) {
+    throw new Error('Invalid control_plane.auth: expected an object');
+  }
+
+  return {
+    token_env: asEnvVarName(input.token_env, 'control_plane.auth.token_env'),
+  };
 }
 
 function parseControlPlaneConfig(input: unknown): WorkspaceControlPlaneConfig {
@@ -52,27 +82,21 @@ function parseControlPlaneConfig(input: unknown): WorkspaceControlPlaneConfig {
     throw new Error('Invalid control_plane config: expected an object');
   }
 
-  if (typeof input.enabled !== 'boolean') {
-    throw new Error('Invalid control_plane.enabled: expected boolean');
+  for (const field of CONTROL_PLANE_REQUIRED_FIELDS) {
+    if (!(field in input)) {
+      throw new Error(
+        `Invalid control_plane config: missing required field control_plane.${field}`,
+      );
+    }
   }
 
-  const localOverrideRaw = input.local_override;
-  const localOverride =
-    localOverrideRaw === undefined
-      ? false
-      : typeof localOverrideRaw === 'boolean'
-        ? localOverrideRaw
-        : (() => {
-            throw new Error('Invalid control_plane.local_override: expected boolean');
-          })();
-
   return {
-    enabled: input.enabled,
     endpoint: asUrlString(input.endpoint, 'control_plane.endpoint'),
     org_id: asNonEmptyString(input.org_id, 'control_plane.org_id'),
+    project_id: asNonEmptyString(input.project_id, 'control_plane.project_id'),
     sync_interval: asPositiveInt(input.sync_interval, 'control_plane.sync_interval'),
     policy_mode: asPolicyMode(input.policy_mode),
-    local_override: localOverride,
+    auth: parseAuthConfig(input.auth),
   };
 }
 
