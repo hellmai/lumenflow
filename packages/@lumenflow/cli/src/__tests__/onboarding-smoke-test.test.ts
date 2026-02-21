@@ -13,6 +13,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
+import YAML from 'yaml';
 
 // Import the smoke-test module
 import {
@@ -20,12 +21,33 @@ import {
   validateInitScripts,
   validateLaneInferenceFormat,
 } from '../onboarding-smoke-test.js';
+import { connectWorkspaceToCloud } from '../onboard.js';
 
 /** Constants for test files to avoid duplicate string literals */
 const PACKAGE_JSON_FILE = 'package.json';
 const LANE_INFERENCE_FILE = '.lumenflow.lane-inference.yaml';
 const LUMENFLOW_CONFIG_FILE = '.lumenflow.config.yaml';
+const WORKSPACE_FILE = 'workspace.yaml';
 const TEST_PROJECT_NAME = 'test-project';
+const TEST_CLOUD_ENDPOINT = 'https://control-plane.example';
+const TEST_ORG_ID = 'org-test';
+const TEST_PROJECT_ID = 'project-test';
+const TEST_TOKEN_ENV = 'LUMENFLOW_CONTROL_PLANE_TOKEN';
+const TEST_TOKEN_VALUE = 'token-value';
+const TEST_POLICY_MODE = 'tighten-only';
+const TEST_SYNC_INTERVAL = 30;
+const WORKSPACE_FIXTURE = `id: workspace-test
+name: Workspace Test
+packs: []
+lanes: []
+security:
+  allowed_scopes: []
+  network_default: off
+  deny_overlays: []
+software_delivery: {}
+memory_namespace: workspace-test
+event_namespace: workspace-test
+`;
 
 describe('onboarding smoke-test gate (WU-1315)', () => {
   let tempDir: string;
@@ -282,6 +304,84 @@ Framework:
       // The test should have validated wu:create works without a remote
       expect(result.wuCreateValidation).toBeDefined();
       expect(result.wuCreateValidation?.success).toBe(true);
+    });
+  });
+
+  describe('cloud connect flow (WU-1980)', () => {
+    it('writes validated control_plane config to workspace.yaml', async () => {
+      const workspacePath = path.join(tempDir, WORKSPACE_FILE);
+      fs.writeFileSync(workspacePath, WORKSPACE_FIXTURE);
+
+      const result = await connectWorkspaceToCloud({
+        targetDir: tempDir,
+        endpoint: TEST_CLOUD_ENDPOINT,
+        orgId: TEST_ORG_ID,
+        projectId: TEST_PROJECT_ID,
+        tokenEnv: TEST_TOKEN_ENV,
+        policyMode: TEST_POLICY_MODE,
+        syncInterval: TEST_SYNC_INTERVAL,
+        env: {
+          [TEST_TOKEN_ENV]: TEST_TOKEN_VALUE,
+        },
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.workspacePath).toBe(workspacePath);
+
+      const parsedWorkspace = YAML.parse(fs.readFileSync(workspacePath, 'utf-8')) as {
+        control_plane?: Record<string, unknown>;
+      };
+
+      expect(parsedWorkspace.control_plane).toMatchObject({
+        endpoint: TEST_CLOUD_ENDPOINT,
+        org_id: TEST_ORG_ID,
+        project_id: TEST_PROJECT_ID,
+        sync_interval: TEST_SYNC_INTERVAL,
+        policy_mode: TEST_POLICY_MODE,
+        auth: {
+          token_env: TEST_TOKEN_ENV,
+        },
+      });
+    });
+
+    it('returns actionable error for invalid endpoint', async () => {
+      fs.writeFileSync(path.join(tempDir, WORKSPACE_FILE), WORKSPACE_FIXTURE);
+
+      const result = await connectWorkspaceToCloud({
+        targetDir: tempDir,
+        endpoint: 'not-a-url',
+        orgId: TEST_ORG_ID,
+        projectId: TEST_PROJECT_ID,
+        tokenEnv: TEST_TOKEN_ENV,
+        policyMode: TEST_POLICY_MODE,
+        syncInterval: TEST_SYNC_INTERVAL,
+        env: {
+          [TEST_TOKEN_ENV]: TEST_TOKEN_VALUE,
+        },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('endpoint');
+      expect(result.error).toContain('valid URL');
+    });
+
+    it('returns actionable error when token env is missing', async () => {
+      fs.writeFileSync(path.join(tempDir, WORKSPACE_FILE), WORKSPACE_FIXTURE);
+
+      const result = await connectWorkspaceToCloud({
+        targetDir: tempDir,
+        endpoint: TEST_CLOUD_ENDPOINT,
+        orgId: TEST_ORG_ID,
+        projectId: TEST_PROJECT_ID,
+        tokenEnv: TEST_TOKEN_ENV,
+        policyMode: TEST_POLICY_MODE,
+        syncInterval: TEST_SYNC_INTERVAL,
+        env: {},
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain(TEST_TOKEN_ENV);
+      expect(result.error).toContain('Export');
     });
   });
 });

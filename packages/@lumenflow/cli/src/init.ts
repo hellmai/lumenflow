@@ -218,7 +218,8 @@ export function parseInitOptions(): {
     description:
       'Initialize LumenFlow in a project\n\n' +
       'Subcommands:\n' +
-      '  lumenflow commands    List all available CLI commands',
+      '  lumenflow commands         List all available CLI commands\n' +
+      '  lumenflow cloud connect    Configure cloud control-plane access',
     options: Object.values(INIT_OPTIONS),
   });
 
@@ -295,6 +296,17 @@ const BOOTSTRAP_VALID_DOMAINS = new Set<DomainChoice>([
 const BOOTSTRAP_SKIP_REASON_FLAG = '--skip-bootstrap';
 const BOOTSTRAP_SKIP_REASON_EXISTING_WORKSPACE = `${WORKSPACE_FILENAME} already exists`;
 const BOOTSTRAP_ERROR_PREFIX = '[lumenflow bootstrap]';
+const INIT_SUBCOMMANDS = {
+  COMMANDS: 'commands',
+  CLOUD: 'cloud',
+} as const;
+const CLOUD_SUBCOMMANDS = {
+  CONNECT: 'connect',
+} as const;
+const CLOUD_CONNECT_BIN = 'cloud-connect';
+const INIT_ERROR_PREFIX = '[lumenflow init]';
+const INIT_CLOUD_CONNECT_HELP =
+  'Usage: lumenflow cloud connect --endpoint <url> --org-id <id> --project-id <id> [--token-env <name>]';
 
 const CONFIG_FILE_NAME = '.lumenflow.config.yaml';
 const FRAMEWORK_HINT_FILE = '.lumenflow.framework.yaml';
@@ -1661,14 +1673,35 @@ export async function runInitBootstrap(
  */
 export async function main(): Promise<void> {
   // WU-1378: Check for subcommands before parsing init options
+  const invokedBinary = path.basename(process.argv[1] ?? '', '.js');
   const subcommand = process.argv[2];
 
-  if (subcommand === 'commands') {
+  if (invokedBinary === CLOUD_CONNECT_BIN) {
+    const { runCloudConnectCli } = await import('./onboard.js');
+    await runCloudConnectCli();
+    return;
+  }
+
+  if (subcommand === INIT_SUBCOMMANDS.COMMANDS) {
     // Route to commands subcommand
     const { main: commandsMain } = await import('./commands.js');
     // Remove 'commands' from argv so the subcommand parser sees clean args
     process.argv.splice(2, 1);
     await commandsMain();
+    return;
+  }
+
+  if (subcommand === INIT_SUBCOMMANDS.CLOUD) {
+    const cloudSubcommand = process.argv[3];
+    if (cloudSubcommand !== CLOUD_SUBCOMMANDS.CONNECT) {
+      throw new Error(
+        `${INIT_ERROR_PREFIX} Unknown cloud subcommand "${cloudSubcommand ?? ''}". ${INIT_CLOUD_CONNECT_HELP}`,
+      );
+    }
+
+    const { runCloudConnectCli } = await import('./onboard.js');
+    process.argv.splice(2, 2);
+    await runCloudConnectCli();
     return;
   }
 

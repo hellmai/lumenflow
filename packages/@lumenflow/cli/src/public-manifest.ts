@@ -694,6 +694,13 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     category: COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
   },
   {
+    name: 'cloud:connect',
+    binName: 'cloud-connect',
+    binPath: './dist/init.js',
+    description: 'Connect workspace.yaml to cloud control plane',
+    category: COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
+  },
+  {
     name: 'onboard',
     binName: 'onboard',
     binPath: './dist/onboard.js',
