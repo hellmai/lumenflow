@@ -5,6 +5,7 @@ import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as cliRunner from '../cli-runner.js';
 import { packToolCapabilityResolver } from '../runtime-tool-resolver.js';
+import { runtimeTaskTools } from '../tools.js';
 import {
   resetRuntimeTaskToolCache,
   taskBlockTool,
@@ -23,6 +24,13 @@ import {
   resetExecuteViaPackRuntimeCache,
 } from '../tools-shared.js';
 import { RuntimeTaskToolNames } from '../tools/runtime-task-constants.js';
+
+const BOOTSTRAP_CLOUD_PARITY_TOOL_NAMES = {
+  CLOUD_CONNECT: 'cloud_connect',
+  ONBOARD: 'onboard',
+  LUMENFLOW_ONBOARD: 'lumenflow_onboard',
+  WORKSPACE_INIT: 'workspace_init',
+} as const;
 
 vi.mock('@lumenflow/kernel', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@lumenflow/kernel')>();
@@ -743,5 +751,13 @@ describe('runtime task MCP tools', () => {
     expect(result.error?.code).toBe(ErrorCodes.TOOL_EXECUTE_ERROR);
     expect(result.error?.message).toContain('tool execute failed');
     expect(mockRunCliCommand).not.toHaveBeenCalled();
+  });
+
+  it('keeps bootstrap/cloud parity commands out of runtime task tool registry', () => {
+    const runtimeTaskToolNames = runtimeTaskTools.map((tool) => tool.name);
+    expect(runtimeTaskToolNames).not.toContain(BOOTSTRAP_CLOUD_PARITY_TOOL_NAMES.CLOUD_CONNECT);
+    expect(runtimeTaskToolNames).not.toContain(BOOTSTRAP_CLOUD_PARITY_TOOL_NAMES.ONBOARD);
+    expect(runtimeTaskToolNames).not.toContain(BOOTSTRAP_CLOUD_PARITY_TOOL_NAMES.LUMENFLOW_ONBOARD);
+    expect(runtimeTaskToolNames).not.toContain(BOOTSTRAP_CLOUD_PARITY_TOOL_NAMES.WORKSPACE_INIT);
   });
 });

@@ -167,6 +167,10 @@ export const ErrorCodes = {
   SIGNAL_CLEANUP_ERROR: 'SIGNAL_CLEANUP_ERROR',
   CONFIG_SET_ERROR: 'CONFIG_SET_ERROR',
   CONFIG_GET_ERROR: 'CONFIG_GET_ERROR',
+  CLOUD_CONNECT_ERROR: 'CLOUD_CONNECT_ERROR',
+  ONBOARD_ERROR: 'ONBOARD_ERROR',
+  LUMENFLOW_ONBOARD_ERROR: 'LUMENFLOW_ONBOARD_ERROR',
+  WORKSPACE_INIT_ERROR: 'WORKSPACE_INIT_ERROR',
   WU_PROTO_ERROR: 'WU_PROTO_ERROR',
   // WU-1426: Flow/Metrics error codes
   FLOW_BOTTLENECKS_ERROR: 'FLOW_BOTTLENECKS_ERROR',
@@ -207,6 +211,9 @@ export const ErrorMessages = {
   PLAN_REQUIRED: 'plan is required',
   KEY_REQUIRED: 'key is required',
   VALUE_REQUIRED: 'value is required',
+  ENDPOINT_REQUIRED: 'endpoint is required',
+  ORG_ID_REQUIRED: 'org_id is required',
+  PROJECT_ID_REQUIRED: 'project_id is required',
 } as const;
 
 /**

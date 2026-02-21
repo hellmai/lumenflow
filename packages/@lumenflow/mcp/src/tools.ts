@@ -185,6 +185,10 @@ export {
   signalCleanupTool,
   configSetTool,
   configGetTool,
+  cloudConnectTool,
+  onboardTool,
+  lumenflowOnboardTool,
+  workspaceInitTool,
   wuProtoTool,
 } from './tools/parity-tools.js';
 
@@ -318,6 +322,10 @@ import {
   signalCleanupTool,
   configSetTool,
   configGetTool,
+  cloudConnectTool,
+  onboardTool,
+  lumenflowOnboardTool,
+  workspaceInitTool,
   wuProtoTool,
 } from './tools/parity-tools.js';
 
@@ -449,6 +457,11 @@ export const allTools: ToolDefinition[] = [
   // WU-1902: Config tools
   configSetTool,
   configGetTool,
+  // WU-1983: Bootstrap/cloud parity tools
+  cloudConnectTool,
+  onboardTool,
+  lumenflowOnboardTool,
+  workspaceInitTool,
   wuProtoTool,
   // WU-1422: Additional WU tools
   wuBlockTool,

@@ -226,6 +226,33 @@ const configGetSchema = z.object({
   key: z.string().optional(),
 });
 
+const cloudConnectSchema = z.object({
+  endpoint: z.string().optional(),
+  org_id: z.string().optional(),
+  project_id: z.string().optional(),
+  token_env: z.string().optional(),
+  policy_mode: z.enum(['authoritative', 'tighten-only', 'dev-override']).optional(),
+  sync_interval: z.number().int().positive().optional(),
+  output: z.string().optional(),
+  force: z.boolean().optional(),
+});
+
+const onboardSchema = z.object({
+  yes: z.boolean().optional(),
+  domain: z.enum(['software-delivery', 'infra', 'custom']).optional(),
+  project_name: z.string().optional(),
+  output: z.string().optional(),
+  force: z.boolean().optional(),
+  skip_pack_install: z.boolean().optional(),
+  skip_dashboard: z.boolean().optional(),
+});
+
+const workspaceInitSchema = z.object({
+  yes: z.boolean().optional(),
+  output: z.string().optional(),
+  force: z.boolean().optional(),
+});
+
 const wuProtoSchema = z.object({
   lane: z.string().optional(),
   title: z.string().optional(),
@@ -234,6 +261,21 @@ const wuProtoSchema = z.object({
   labels: z.array(z.string()).optional(),
   assigned_to: z.string().optional(),
 });
+
+const BootstrapFlags = {
+  ENDPOINT: '--endpoint',
+  ORG_ID: '--org-id',
+  PROJECT_ID: '--project-id',
+  TOKEN_ENV: '--token-env',
+  POLICY_MODE: '--policy-mode',
+  SYNC_INTERVAL: '--sync-interval',
+  OUTPUT: '--output',
+  YES: '--yes',
+  DOMAIN: '--domain',
+  PROJECT_NAME: '--project-name',
+  SKIP_PACK_INSTALL: '--skip-pack-install',
+  SKIP_DASHBOARD: '--skip-dashboard',
+} as const;
 
 interface RuntimeToolOutputLike {
   success: boolean;
@@ -1637,6 +1679,209 @@ export const configGetTool: ToolDefinition = {
           command: CliCommands.CONFIG_GET,
           args,
           errorCode: ErrorCodes.CONFIG_GET_ERROR,
+        },
+      },
+    );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
+  },
+};
+
+/**
+ * cloud_connect - Connect workspace.yaml to cloud control plane
+ */
+export const cloudConnectTool: ToolDefinition = {
+  name: 'cloud_connect',
+  description: 'Connect workspace.yaml to cloud control plane',
+  inputSchema: cloudConnectSchema,
+
+  async execute(input, options) {
+    if (!input.endpoint) {
+      return error(ErrorMessages.ENDPOINT_REQUIRED, ErrorCodes.MISSING_PARAMETER);
+    }
+    if (!input.org_id) {
+      return error(ErrorMessages.ORG_ID_REQUIRED, ErrorCodes.MISSING_PARAMETER);
+    }
+    if (!input.project_id) {
+      return error(ErrorMessages.PROJECT_ID_REQUIRED, ErrorCodes.MISSING_PARAMETER);
+    }
+
+    const args: string[] = [
+      BootstrapFlags.ENDPOINT,
+      input.endpoint as string,
+      BootstrapFlags.ORG_ID,
+      input.org_id as string,
+      BootstrapFlags.PROJECT_ID,
+      input.project_id as string,
+    ];
+    if (input.token_env) args.push(BootstrapFlags.TOKEN_ENV, input.token_env as string);
+    if (input.policy_mode) args.push(BootstrapFlags.POLICY_MODE, input.policy_mode as string);
+    if (input.sync_interval !== undefined) {
+      args.push(BootstrapFlags.SYNC_INTERVAL, String(input.sync_interval));
+    }
+    if (input.output) args.push(BootstrapFlags.OUTPUT, input.output as string);
+    if (input.force) args.push(CliArgs.FORCE);
+
+    const execution = await executeViaPack(
+      CliCommands.CLOUD_CONNECT,
+      {
+        endpoint: input.endpoint,
+        org_id: input.org_id,
+        project_id: input.project_id,
+        token_env: input.token_env,
+        policy_mode: input.policy_mode,
+        sync_interval: input.sync_interval,
+        output: input.output,
+        force: input.force,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.CLOUD_CONNECT,
+          args,
+          errorCode: ErrorCodes.CLOUD_CONNECT_ERROR,
+        },
+      },
+    );
+
+    if (!execution.success) {
+      return execution;
+    }
+
+    return success(unwrapExecuteViaPackData(execution.data));
+  },
+};
+
+function buildOnboardArgs(input: z.infer<typeof onboardSchema>): string[] {
+  const args: string[] = [];
+  if (input.yes) args.push(BootstrapFlags.YES);
+  if (input.domain) args.push(BootstrapFlags.DOMAIN, input.domain as string);
+  if (input.project_name) args.push(BootstrapFlags.PROJECT_NAME, input.project_name as string);
+  if (input.output) args.push(BootstrapFlags.OUTPUT, input.output as string);
+  if (input.force) args.push(CliArgs.FORCE);
+  if (input.skip_pack_install) args.push(BootstrapFlags.SKIP_PACK_INSTALL);
+  if (input.skip_dashboard) args.push(BootstrapFlags.SKIP_DASHBOARD);
+  return args;
+}
+
+async function executeOnboardAlias(
+  command: typeof CliCommands.ONBOARD | typeof CliCommands.LUMENFLOW_ONBOARD,
+  errorCode: typeof ErrorCodes.ONBOARD_ERROR | typeof ErrorCodes.LUMENFLOW_ONBOARD_ERROR,
+  input: z.infer<typeof onboardSchema>,
+  options?: { projectRoot?: string },
+) {
+  return executeViaPack(
+    command,
+    {
+      yes: input.yes,
+      domain: input.domain,
+      project_name: input.project_name,
+      output: input.output,
+      force: input.force,
+      skip_pack_install: input.skip_pack_install,
+      skip_dashboard: input.skip_dashboard,
+    },
+    {
+      projectRoot: options?.projectRoot,
+      contextInput: {
+        metadata: {
+          [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+        },
+      },
+      fallback: {
+        command,
+        args: buildOnboardArgs(input),
+        errorCode,
+      },
+    },
+  );
+}
+
+/**
+ * onboard - Interactive setup wizard for LumenFlow workspace
+ */
+export const onboardTool: ToolDefinition = {
+  name: 'onboard',
+  description: 'Interactive setup wizard for LumenFlow workspace',
+  inputSchema: onboardSchema,
+
+  async execute(input, options) {
+    const execution = await executeOnboardAlias(
+      CliCommands.ONBOARD,
+      ErrorCodes.ONBOARD_ERROR,
+      input,
+      options,
+    );
+    if (!execution.success) {
+      return execution;
+    }
+    return success(unwrapExecuteViaPackData(execution.data));
+  },
+};
+
+/**
+ * lumenflow_onboard - Alias for onboard command
+ */
+export const lumenflowOnboardTool: ToolDefinition = {
+  name: 'lumenflow_onboard',
+  description: 'Interactive setup wizard for LumenFlow workspace (alias)',
+  inputSchema: onboardSchema,
+
+  async execute(input, options) {
+    const execution = await executeOnboardAlias(
+      CliCommands.LUMENFLOW_ONBOARD,
+      ErrorCodes.LUMENFLOW_ONBOARD_ERROR,
+      input,
+      options,
+    );
+    if (!execution.success) {
+      return execution;
+    }
+    return success(unwrapExecuteViaPackData(execution.data));
+  },
+};
+
+/**
+ * workspace_init - Initialize workspace.yaml via interactive prompts
+ */
+export const workspaceInitTool: ToolDefinition = {
+  name: 'workspace_init',
+  description: 'Initialize workspace.yaml from interactive prompts',
+  inputSchema: workspaceInitSchema,
+
+  async execute(input, options) {
+    const args: string[] = [];
+    if (input.yes) args.push(BootstrapFlags.YES);
+    if (input.output) args.push(BootstrapFlags.OUTPUT, input.output as string);
+    if (input.force) args.push(CliArgs.FORCE);
+
+    const execution = await executeViaPack(
+      CliCommands.WORKSPACE_INIT,
+      {
+        yes: input.yes,
+        output: input.output,
+        force: input.force,
+      },
+      {
+        projectRoot: options?.projectRoot,
+        contextInput: {
+          metadata: {
+            [MetadataKeys.PROJECT_ROOT]: options?.projectRoot,
+          },
+        },
+        fallback: {
+          command: CliCommands.WORKSPACE_INIT,
+          args,
+          errorCode: ErrorCodes.WORKSPACE_INIT_ERROR,
         },
       },
     );

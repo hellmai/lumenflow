@@ -62,11 +62,30 @@ export interface McpServer {
   stop: () => Promise<void>;
 }
 
+const REQUIRED_RUNTIME_TOOL_NAMES: readonly string[] = [
+  RuntimeTaskToolNames.TASK_CLAIM,
+  RuntimeTaskToolNames.TASK_CREATE,
+  RuntimeTaskToolNames.TASK_COMPLETE,
+  RuntimeTaskToolNames.TASK_BLOCK,
+  RuntimeTaskToolNames.TASK_UNBLOCK,
+  RuntimeTaskToolNames.TASK_INSPECT,
+  RuntimeTaskToolNames.TOOL_EXECUTE,
+];
+
+const REQUIRED_RUNTIME_MISSING_PREFIX = 'Required runtime MCP tool(s) missing from registry';
+
 /**
  * Convert a Zod schema to JSON Schema format for MCP
  */
 function zodToJsonSchema(schema: z.ZodType): Record<string, unknown> {
   return z.toJSONSchema(schema) as Record<string, unknown>;
+}
+
+function collectMissingTools(
+  availableToolNames: Set<string>,
+  requiredToolNames: readonly string[],
+) {
+  return requiredToolNames.filter((toolName) => !availableToolNames.has(toolName));
 }
 
 /**
@@ -88,48 +107,10 @@ export function createMcpServer(config: McpServerConfig = {}): McpServer {
     logLevel: config.logLevel || (process.env.LUMENFLOW_MCP_LOG_LEVEL as LogLevel) || 'info',
   };
 
-  const hasRuntimeTaskClaimTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TASK_CLAIM,
-  );
-  const hasRuntimeTaskCreateTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TASK_CREATE,
-  );
-  const hasRuntimeTaskCompleteTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TASK_COMPLETE,
-  );
-  const hasRuntimeTaskBlockTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TASK_BLOCK,
-  );
-  const hasRuntimeTaskUnblockTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TASK_UNBLOCK,
-  );
-  const hasRuntimeTaskInspectTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TASK_INSPECT,
-  );
-  const hasRuntimeToolExecuteTool = runtimeTaskTools.some(
-    (tool) => tool.name === RuntimeTaskToolNames.TOOL_EXECUTE,
-  );
-  if (
-    !hasRuntimeTaskClaimTool ||
-    !hasRuntimeTaskCreateTool ||
-    !hasRuntimeTaskCompleteTool ||
-    !hasRuntimeTaskBlockTool ||
-    !hasRuntimeTaskUnblockTool ||
-    !hasRuntimeTaskInspectTool ||
-    !hasRuntimeToolExecuteTool
-  ) {
-    const missingTools = [
-      !hasRuntimeTaskClaimTool ? RuntimeTaskToolNames.TASK_CLAIM : null,
-      !hasRuntimeTaskCreateTool ? RuntimeTaskToolNames.TASK_CREATE : null,
-      !hasRuntimeTaskCompleteTool ? RuntimeTaskToolNames.TASK_COMPLETE : null,
-      !hasRuntimeTaskBlockTool ? RuntimeTaskToolNames.TASK_BLOCK : null,
-      !hasRuntimeTaskUnblockTool ? RuntimeTaskToolNames.TASK_UNBLOCK : null,
-      !hasRuntimeTaskInspectTool ? RuntimeTaskToolNames.TASK_INSPECT : null,
-      !hasRuntimeToolExecuteTool ? RuntimeTaskToolNames.TOOL_EXECUTE : null,
-    ].filter((toolName): toolName is NonNullable<typeof toolName> => toolName !== null);
-    throw new Error(
-      `Required runtime MCP tool(s) missing from registry: ${missingTools.join(', ')}`,
-    );
+  const runtimeToolNames = new Set(runtimeTaskTools.map((tool) => tool.name));
+  const missingRuntimeTools = collectMissingTools(runtimeToolNames, REQUIRED_RUNTIME_TOOL_NAMES);
+  if (missingRuntimeTools.length > 0) {
+    throw new Error(`${REQUIRED_RUNTIME_MISSING_PREFIX}: ${missingRuntimeTools.join(', ')}`);
   }
 
   // Create the MCP SDK server

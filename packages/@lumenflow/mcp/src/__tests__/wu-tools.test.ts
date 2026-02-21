@@ -1795,18 +1795,15 @@ describe('Manifest parity truth gate (WU-1481)', () => {
   // WU-1952: Added pack:author to public manifest.
   // WU-1962: Added workspace:init and lumenflow-onboard alias to public manifest.
   // WU-1980: Added cloud:connect command to public manifest.
+  // WU-1983: Added MCP parity tools for cloud_connect, onboard aliases, and workspace_init.
   // The truth gate remains strict by requiring this list to be explicit.
   const EXPECTED_MISSING_COMMANDS: string[] = [
-    'cloud_connect',
-    'lumenflow_onboard',
-    'onboard',
     'pack_author',
     'pack_hash',
     'pack_install',
     'pack_publish',
     'pack_search',
     'pack_validate',
-    'workspace_init',
   ];
 
   const EXPECTED_ALLOWED_EXTRAS = [
