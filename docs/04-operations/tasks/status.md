@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1979 — Finalize control-plane contract in workspace schema + SDK](wu/WU-1979.yaml)
 
 ## Completed
 
