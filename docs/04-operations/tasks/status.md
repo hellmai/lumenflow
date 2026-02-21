@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1970 — INIT-033 scaffold + plan linkage governance](wu/WU-1970.yaml)
 
 ## Completed
 
