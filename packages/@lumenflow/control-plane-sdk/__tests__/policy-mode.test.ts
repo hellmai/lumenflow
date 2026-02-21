@@ -13,28 +13,34 @@ describe('control-plane sdk policy modes', () => {
     const parsed = parseWorkspaceControlPlaneConfig({
       id: 'workspace-1',
       control_plane: {
-        enabled: true,
         endpoint: 'https://cp.local',
         org_id: 'org-1',
+        project_id: 'proj-1',
         sync_interval: 30,
         policy_mode: 'tighten-only',
+        auth: {
+          token_env: 'CONTROL_PLANE_TOKEN',
+        },
       },
     });
 
-    expect(parsed.control_plane.enabled).toBe(true);
     expect(parsed.control_plane.endpoint).toBe('https://cp.local');
     expect(parsed.control_plane.org_id).toBe('org-1');
+    expect(parsed.control_plane.project_id).toBe('proj-1');
     expect(parsed.control_plane.sync_interval).toBe(30);
     expect(parsed.control_plane.policy_mode).toBe('tighten-only');
-    expect(parsed.control_plane.local_override).toBe(false);
+    expect(parsed.control_plane.auth.token_env).toBe('CONTROL_PLANE_TOKEN');
 
     expect(
       ControlPlaneConfigSchema.parse({
-        enabled: true,
         endpoint: 'https://cp.local',
         org_id: 'org-1',
+        project_id: 'proj-1',
         sync_interval: 30,
         policy_mode: 'authoritative',
+        auth: {
+          token_env: 'CONTROL_PLANE_TOKEN',
+        },
       }),
     ).toBeDefined();
   });

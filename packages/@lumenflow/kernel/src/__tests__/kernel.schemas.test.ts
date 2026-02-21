@@ -270,24 +270,28 @@ describe('kernel schemas', () => {
         },
         software_delivery: {},
         control_plane: {
-          enabled: true,
           endpoint: 'https://control-plane.example',
           org_id: 'org-1',
+          project_id: 'proj-1',
           sync_interval: 60,
           policy_mode: 'tighten-only',
-          local_override: false,
+          auth: {
+            token_env: 'LUMENFLOW_CONTROL_PLANE_TOKEN',
+          },
         },
         memory_namespace: 'memory-default',
         event_namespace: 'events-default',
       });
 
       expect(parsed.control_plane).toEqual({
-        enabled: true,
         endpoint: 'https://control-plane.example',
         org_id: 'org-1',
+        project_id: 'proj-1',
         sync_interval: 60,
         policy_mode: 'tighten-only',
-        local_override: false,
+        auth: {
+          token_env: 'LUMENFLOW_CONTROL_PLANE_TOKEN',
+        },
       });
     });
 
@@ -311,12 +315,40 @@ describe('kernel schemas', () => {
         },
         software_delivery: {},
         control_plane: {
-          enabled: true,
           endpoint: 'not-a-url',
           org_id: 'org-1',
+          project_id: 'proj-1',
           sync_interval: 0,
           policy_mode: 'legacy',
-          local_override: false,
+          auth: {
+            token_env: 'control_plane_token',
+          },
+        },
+        memory_namespace: 'memory-default',
+        event_namespace: 'events-default',
+      });
+
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects control_plane when auth contract is missing', () => {
+      const result = WorkspaceSpecSchema.safeParse({
+        id: 'workspace-default',
+        name: 'LumenFlow OS',
+        packs: [],
+        lanes: [],
+        security: {
+          allowed_scopes: [{ type: 'network', posture: 'off' }],
+          network_default: 'off',
+          deny_overlays: [],
+        },
+        software_delivery: {},
+        control_plane: {
+          endpoint: 'https://control-plane.example',
+          org_id: 'org-1',
+          project_id: 'proj-1',
+          sync_interval: 60,
+          policy_mode: 'authoritative',
         },
         memory_namespace: 'memory-default',
         event_namespace: 'events-default',

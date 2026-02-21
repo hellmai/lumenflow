@@ -5,7 +5,22 @@ import type { KernelEvent } from '@lumenflow/kernel';
 
 export type PolicyDecision = 'allow' | 'deny';
 
-export type ControlPlanePolicyMode = 'authoritative' | 'tighten-only' | 'dev-override';
+export const CONTROL_PLANE_POLICY_MODES = {
+  AUTHORITATIVE: 'authoritative',
+  TIGHTEN_ONLY: 'tighten-only',
+  DEV_OVERRIDE: 'dev-override',
+} as const;
+
+export const CONTROL_PLANE_POLICY_MODE_VALUES = [
+  CONTROL_PLANE_POLICY_MODES.AUTHORITATIVE,
+  CONTROL_PLANE_POLICY_MODES.TIGHTEN_ONLY,
+  CONTROL_PLANE_POLICY_MODES.DEV_OVERRIDE,
+] as const;
+
+export type ControlPlanePolicyMode = (typeof CONTROL_PLANE_POLICY_MODE_VALUES)[number];
+
+export const DEFAULT_CONTROL_PLANE_AUTH_TOKEN_ENV = 'LUMENFLOW_CONTROL_PLANE_TOKEN';
+export const CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 
 export type { KernelEvent };
 
@@ -27,13 +42,17 @@ export interface TelemetryRecord {
   tags?: Record<string, string | number | boolean>;
 }
 
+export interface WorkspaceControlPlaneAuthConfig {
+  token_env: string;
+}
+
 export interface WorkspaceControlPlaneConfig {
-  enabled: boolean;
   endpoint: string;
   org_id: string;
+  project_id: string;
   sync_interval: number;
   policy_mode: ControlPlanePolicyMode;
-  local_override: boolean;
+  auth: WorkspaceControlPlaneAuthConfig;
 }
 
 export interface WorkspaceControlPlaneSpec {

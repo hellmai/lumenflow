@@ -154,14 +154,24 @@ export const WorkspaceControlPlanePolicyModeSchema = z.enum([
   'dev-override',
 ]);
 
+const CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
+
+export const WorkspaceControlPlaneAuthConfigSchema = z
+  .object({
+    token_env: z
+      .string()
+      .regex(CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN, 'Expected uppercase environment variable name'),
+  })
+  .strict();
+
 export const WorkspaceControlPlaneConfigSchema = z
   .object({
-    enabled: z.boolean(),
     endpoint: z.string().url(),
     org_id: z.string().min(1),
+    project_id: z.string().min(1),
     sync_interval: z.number().int().positive(),
     policy_mode: WorkspaceControlPlanePolicyModeSchema,
-    local_override: z.boolean().default(false),
+    auth: WorkspaceControlPlaneAuthConfigSchema,
   })
   .strict();
 
@@ -185,6 +195,7 @@ export const WorkspaceSpecSchema = z.object({
 export type WorkspaceSpec = z.infer<typeof WorkspaceSpecSchema>;
 export type WorkspaceControlPlanePolicyMode = z.infer<typeof WorkspaceControlPlanePolicyModeSchema>;
 export type WorkspaceControlPlaneConfig = z.infer<typeof WorkspaceControlPlaneConfigSchema>;
+export type WorkspaceControlPlaneAuthConfig = z.infer<typeof WorkspaceControlPlaneAuthConfigSchema>;
 
 const KernelEventBaseSchema = z.object({
   schema_version: z.literal(1),

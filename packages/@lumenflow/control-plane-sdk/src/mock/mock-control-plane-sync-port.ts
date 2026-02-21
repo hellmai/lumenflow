@@ -19,12 +19,15 @@ import type {
   TelemetryRecord,
   WorkspaceControlPlaneSpec,
 } from '../sync-port.js';
+import { DEFAULT_CONTROL_PLANE_AUTH_TOKEN_ENV as DEFAULT_TOKEN_ENV } from '../sync-port.js';
 
 export interface MockControlPlaneSyncPortOptions {
   endpoint: string;
   org_id: string;
+  project_id: string;
   policy_mode: ControlPlanePolicyMode;
   local_override?: boolean;
+  auth_token_env?: string;
   remote_policies?: ControlPlanePolicySet;
   local_policies?: ControlPlanePolicySet;
 }
@@ -39,6 +42,9 @@ const DEFAULT_LOCAL_POLICIES: ControlPlanePolicySet = {
   rules: [],
 };
 
+const DEFAULT_SYNC_INTERVAL_SECONDS = 30;
+const DEFAULT_LOCAL_OVERRIDE = false;
+
 export class MockControlPlaneSyncPort implements ControlPlaneSyncPort {
   private readonly options: MockControlPlaneSyncPortOptions;
   private readonly telemetryByEndpoint = new Map<string, TelemetryRecord[]>();
@@ -48,7 +54,8 @@ export class MockControlPlaneSyncPort implements ControlPlaneSyncPort {
   public constructor(options: MockControlPlaneSyncPortOptions) {
     this.options = {
       ...options,
-      local_override: options.local_override ?? false,
+      local_override: options.local_override ?? DEFAULT_LOCAL_OVERRIDE,
+      auth_token_env: options.auth_token_env ?? DEFAULT_TOKEN_ENV,
       remote_policies: options.remote_policies ?? DEFAULT_REMOTE_POLICIES,
       local_policies: options.local_policies ?? DEFAULT_LOCAL_POLICIES,
     };
@@ -74,12 +81,14 @@ export class MockControlPlaneSyncPort implements ControlPlaneSyncPort {
     return {
       id: input.workspace_id,
       control_plane: {
-        enabled: true,
         endpoint: this.options.endpoint,
         org_id: this.options.org_id,
-        sync_interval: 30,
+        project_id: this.options.project_id,
+        sync_interval: DEFAULT_SYNC_INTERVAL_SECONDS,
         policy_mode: this.options.policy_mode,
-        local_override: this.options.local_override ?? false,
+        auth: {
+          token_env: this.options.auth_token_env ?? DEFAULT_TOKEN_ENV,
+        },
       },
     };
   }
