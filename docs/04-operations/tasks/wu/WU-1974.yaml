@@ -9,6 +9,7 @@ code_paths:
   - packages/@lumenflow/core/src/lumenflow-config.ts
   - packages/@lumenflow/cli/src/doctor.ts
   - packages/@lumenflow/cli/src/state-doctor.ts
+  - packages/@lumenflow/cli/src/__tests__/doctor.test.ts
 tests:
   manual:
     - pnpm lumenflow doctor reports workspace.yaml canonical guidance
@@ -25,10 +26,17 @@ blocked_by:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-21T19:32:24.064Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1974
+session_id: 922bf8ed-527f-4fc1-90fa-120ac5832a7a
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T19:32:24.071Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -38,11 +46,3 @@ acceptance:
   - Runtime paths do not read .lumenflow.config.yaml during normal execution
   - Legacy-only project invocation returns clear migration guidance
   - State/config checks are updated to canonical workspace.yaml behavior
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1974
-claimed_at: 2026-02-21T19:32:24.064Z
-baseline_main_sha: 18d96145299965583ec52146a55be18bfd0ab35b
-session_id: 922bf8ed-527f-4fc1-90fa-120ac5832a7a
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-21T19:32:24.071Z
