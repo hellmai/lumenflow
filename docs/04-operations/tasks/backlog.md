@@ -26,11 +26,10 @@ sections:
 - [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — Framework: Core Validation
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — Operations: Tooling
 - [WU-1960 — Fix release build:dist invariant drift](wu/WU-1960.yaml) — Framework: CLI Orchestration
-- [WU-1984 — Docs + release readiness for workspace-first v4.0.0](wu/WU-1984.yaml) — Content: Site Comms
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-1984 — Docs + release readiness for workspace-first v4.0.0](wu/WU-1984.yaml) — Content: Site Comms
 
 ## ⛔ Blocked
 

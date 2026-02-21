@@ -4,7 +4,7 @@ _Last updated: 2026-02-21_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1984 — Docs + release readiness for workspace-first v4.0.0](wu/WU-1984.yaml)
 
 ## Completed
 
