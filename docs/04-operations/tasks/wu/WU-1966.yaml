@@ -9,7 +9,9 @@ code_paths:
   - apps/web/src/server/http-surface-runtime.ts
   - apps/web/__tests__/http-surface-runtime-health.test.ts
 tests:
-  manual: []
+  manual:
+    - Run @lumenflow/web dev with runtime env vars and verify GET /api/health shows actionable
+      runtime diagnostics (env guidance + initialization error when unavailable).
   unit:
     - apps/web/__tests__/http-surface-runtime-health.test.ts
   e2e: []
@@ -26,9 +28,14 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'The web app currently uses LUMENFLOW_WEB_WORKSPACE_ROOT for two different concerns: workspace path safety boundary and kernel runtime workspace selection. When the boundary root is broad (for create/connect flows), runtime initialization can fall back to preview mode. Runtime initialization errors are also swallowed, which makes /api/health non-actionable. Separate runtime workspace env selection and expose initialization failure details in runtime health.'
+description: 'The web app currently uses LUMENFLOW_WEB_WORKSPACE_ROOT for two different concerns:
+  workspace path safety boundary and kernel runtime workspace selection. When the boundary root is
+  broad (for create/connect flows), runtime initialization can fall back to preview mode. Runtime
+  initialization errors are also swallowed, which makes /api/health non-actionable. Separate runtime
+  workspace env selection and expose initialization failure details in runtime health.'
 acceptance:
-  - Runtime workspace root resolves from LUMENFLOW_WEB_RUNTIME_WORKSPACE_ROOT first, then falls back to LUMENFLOW_WEB_WORKSPACE_ROOT and process.cwd()
+  - Runtime workspace root resolves from LUMENFLOW_WEB_RUNTIME_WORKSPACE_ROOT first, then falls back
+    to LUMENFLOW_WEB_WORKSPACE_ROOT and process.cwd()
   - When runtime is enabled but unavailable, /api/health includes initialization failure detail
   - Preview guidance references both runtime workspace and boundary workspace env vars
   - Unit tests cover env precedence and failure diagnostics
