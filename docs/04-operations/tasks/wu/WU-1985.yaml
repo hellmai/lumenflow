@@ -2,7 +2,7 @@ id: WU-1985
 title: Retire split onboarding path and legacy bootstrap entrypoints
 lane: 'Framework: CLI Enforcement'
 type: refactor
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-21
 code_paths:
@@ -34,8 +34,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Retire legacy split onboarding flow and ensure bootstrap-all is the single canonical onboarding path. Remove or reroute obsolete onboarding entrypoints and help text to unified bootstrap semantics.
+description: Retire legacy split onboarding flow and ensure bootstrap-all is the single canonical
+  onboarding path. Remove or reroute obsolete onboarding entrypoints and help text to unified
+  bootstrap semantics.
 acceptance:
   - Legacy split onboarding commands are removed or explicitly rerouted to bootstrap-all
   - CLI help and command surface no longer present split onboarding as a primary path
   - Regression tests verify legacy command invocations emit canonical bootstrap guidance
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1985
+claimed_at: 2026-02-21T22:16:35.740Z
+baseline_main_sha: 6087d9faf053685cbf3ced1cf51b189e4a5b9160
+session_id: 02adb518-626a-4b6f-9b46-c2173835f55c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T22:16:35.745Z
