@@ -8,23 +8,39 @@ created: 2026-02-21
 code_paths:
   - tools/generate-cli-docs.ts
   - apps/docs/src/content/docs/reference/cli.mdx
+  - package.json
+  - pnpm-lock.yaml
+  - packages/@lumenflow/cli/__tests__/docs-generate.test.ts
 tests:
   manual:
     - 'Run: pnpm docs:validate'
     - 'Run: vercel deploy --prod --yes (apps/docs)'
   unit:
     - packages/@lumenflow/cli/__tests__/docs-generate.test.ts
+    - packages/@lumenflow/cli/__tests__/docs-generate.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-1964.done
 dependencies: []
 risks: []
-notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+notes: >-
+  (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+
+
+  Switched MDX table escaping to escape-html library (with @types/escape-html) to avoid ad-hoc
+  replacements and harden docs generation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-21T14:35:30.673Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-1964
+session_id: 9621ea30-be59-4a97-83d7-c465e6e0efd3
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T14:35:30.681Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -37,11 +53,3 @@ acceptance:
   - apps/docs/src/content/docs/reference/cli.mdx renders without unclosed-tag MDX errors for
     pack:install integrity description
   - pnpm docs:validate passes and vercel deploy --prod succeeds
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-1964
-claimed_at: 2026-02-21T14:35:30.673Z
-baseline_main_sha: 82437bad0eb0be50612081d75b5769ea665de6a6
-session_id: 9621ea30-be59-4a97-83d7-c465e6e0efd3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-21T14:35:30.681Z
