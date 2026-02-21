@@ -13,3 +13,4 @@ success_metrics:
   - No runtime dependency on .lumenflow.config.yaml
   - Cloud-connected workspace operational
 labels: []
+related_plan: lumenflow://plans/INIT-033-workspace-first-hard-cut-boots.md
