@@ -21,6 +21,11 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createWUParser } from '@lumenflow/core';
+import {
+  WorkspaceControlPlaneConfigSchema,
+  type WorkspaceControlPlaneConfig,
+  type WorkspaceControlPlanePolicyMode,
+} from '@lumenflow/kernel';
 import YAML from 'yaml';
 import {
   buildWorkspaceConfig,
@@ -64,6 +69,31 @@ const DOMAIN_DEFAULT_LANES: Readonly<Record<DomainChoice, readonly string[]>> = 
 const DOMAIN_EMPTY_PACK_ID = 'none';
 const ONBOARD_DEFAULT_DOMAIN = DOMAIN_IDS.SOFTWARE_DELIVERY;
 const ONBOARD_FALLBACK_PROJECT_NAME = DEFAULT_PROJECT_NAME;
+const ONBOARD_SUBCOMMAND_CONNECT = 'connect';
+const CLOUD_CONNECT_LOG_PREFIX = '[cloud connect]';
+const CLOUD_CONNECT_DEFAULT_TOKEN_ENV = 'LUMENFLOW_CONTROL_PLANE_TOKEN';
+const CLOUD_CONNECT_DEFAULT_SYNC_INTERVAL_SECONDS = 30;
+const CLOUD_CONNECT_POLICY_MODES = {
+  AUTHORITATIVE: 'authoritative',
+  TIGHTEN_ONLY: 'tighten-only',
+  DEV_OVERRIDE: 'dev-override',
+} as const;
+const CLOUD_CONNECT_DEFAULT_POLICY_MODE = CLOUD_CONNECT_POLICY_MODES.TIGHTEN_ONLY;
+const CLOUD_CONNECT_ALLOWED_POLICY_MODES = new Set<WorkspaceControlPlanePolicyMode>([
+  CLOUD_CONNECT_POLICY_MODES.AUTHORITATIVE,
+  CLOUD_CONNECT_POLICY_MODES.TIGHTEN_ONLY,
+  CLOUD_CONNECT_POLICY_MODES.DEV_OVERRIDE,
+]);
+const CLOUD_CONNECT_ALLOWED_POLICY_MODE_NAMES = new Set<string>([
+  ...CLOUD_CONNECT_ALLOWED_POLICY_MODES,
+]);
+const CLOUD_CONNECT_SECURE_PROTOCOL = 'https:';
+const CLOUD_CONNECT_LOCAL_PROTOCOL = 'http:';
+const CLOUD_CONNECT_LOCAL_HOSTS = new Set<string>(['localhost', '127.0.0.1', '::1']);
+const CLOUD_CONNECT_ENV_NAME_PATTERN = /^[A-Z][A-Z0-9_]*$/;
+const CLOUD_CONNECT_HELP_HINT =
+  'Example: npx lumenflow cloud connect --endpoint https://cp.example --org-id org-1 --project-id project-1 --token-env LUMENFLOW_CONTROL_PLANE_TOKEN';
+const YAML_TRAILING_NEWLINE = '\n';
 
 /** Domain pack IDs mapped to human-readable descriptions */
 export const DOMAIN_CHOICES = [
@@ -85,6 +115,279 @@ export const DOMAIN_CHOICES = [
 ] as const;
 
 export type DomainChoice = (typeof DOMAIN_CHOICES)[number]['value'];
+
+export interface CloudConnectInput {
+  targetDir: string;
+  endpoint: string;
+  orgId: string;
+  projectId: string;
+  tokenEnv: string;
+  policyMode: WorkspaceControlPlanePolicyMode;
+  syncInterval: number;
+  force?: boolean;
+  env?: NodeJS.ProcessEnv;
+}
+
+export interface CloudConnectResult {
+  success: boolean;
+  workspacePath?: string;
+  controlPlaneConfig?: WorkspaceControlPlaneConfig;
+  error?: string;
+}
+
+const CLOUD_CONNECT_OPTIONS = {
+  endpoint: {
+    name: 'endpoint',
+    flags: '--endpoint <url>',
+    description: 'Cloud control-plane endpoint URL',
+  },
+  orgId: {
+    name: 'orgId',
+    flags: '--org-id <id>',
+    description: 'Cloud organization identifier',
+  },
+  projectId: {
+    name: 'projectId',
+    flags: '--project-id <id>',
+    description: 'Cloud project identifier',
+  },
+  tokenEnv: {
+    name: 'tokenEnv',
+    flags: '--token-env <name>',
+    description: `Environment variable containing cloud auth token (default: ${CLOUD_CONNECT_DEFAULT_TOKEN_ENV})`,
+  },
+  policyMode: {
+    name: 'policyMode',
+    flags: '--policy-mode <mode>',
+    description: 'Policy mode: authoritative, tighten-only, dev-override',
+  },
+  syncInterval: {
+    name: 'syncInterval',
+    flags: '--sync-interval <seconds>',
+    description: 'Control-plane sync interval in seconds (positive integer)',
+  },
+  output: {
+    name: 'output',
+    flags: '--output, -o <dir>',
+    description: 'Workspace root directory (default: current directory)',
+  },
+  force: {
+    name: 'force',
+    flags: '--force, -f',
+    description: 'Overwrite existing control_plane section in workspace.yaml',
+  },
+} as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function parsePositiveInt(value: unknown, fieldName: string): number {
+  const parsedValue = typeof value === 'number' ? value : Number(value);
+  if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} Invalid ${fieldName}: expected a positive integer`,
+    );
+  }
+  return parsedValue;
+}
+
+function parsePolicyMode(value: unknown): WorkspaceControlPlanePolicyMode {
+  if (typeof value !== 'string' || !CLOUD_CONNECT_ALLOWED_POLICY_MODE_NAMES.has(value)) {
+    const allowedValues = [...CLOUD_CONNECT_ALLOWED_POLICY_MODES].join(', ');
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} Invalid --policy-mode "${String(value)}". Valid values: ${allowedValues}`,
+    );
+  }
+
+  return value as WorkspaceControlPlanePolicyMode;
+}
+
+function validateEndpoint(endpoint: string): string {
+  let parsedEndpoint: URL;
+  try {
+    parsedEndpoint = new URL(endpoint);
+  } catch {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} Invalid endpoint "${endpoint}": expected a valid URL`,
+    );
+  }
+
+  const isSecureProtocol = parsedEndpoint.protocol === CLOUD_CONNECT_SECURE_PROTOCOL;
+  const isLocalHost = CLOUD_CONNECT_LOCAL_HOSTS.has(parsedEndpoint.hostname);
+  const isLocalHttp =
+    parsedEndpoint.protocol === CLOUD_CONNECT_LOCAL_PROTOCOL && isLocalHost === true;
+
+  if (!isSecureProtocol && !isLocalHttp) {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} Endpoint must use https (or http for localhost only): ${endpoint}`,
+    );
+  }
+
+  const normalizedEndpoint = parsedEndpoint.toString();
+  return normalizedEndpoint.endsWith('/')
+    ? normalizedEndpoint.slice(0, normalizedEndpoint.length - 1)
+    : normalizedEndpoint;
+}
+
+function validateTokenEnvName(tokenEnv: string): string {
+  if (!CLOUD_CONNECT_ENV_NAME_PATTERN.test(tokenEnv)) {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} Invalid --token-env "${tokenEnv}": expected an uppercase environment variable name`,
+    );
+  }
+  return tokenEnv;
+}
+
+function ensureTokenValue(tokenEnv: string, env: NodeJS.ProcessEnv): string {
+  const tokenValue = env[tokenEnv];
+  if (!tokenValue || tokenValue.trim().length === 0) {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} Missing token env "${tokenEnv}". Export it before connect. ${CLOUD_CONNECT_HELP_HINT}`,
+    );
+  }
+  return tokenValue;
+}
+
+function parseCloudConnectCliOptions(): CloudConnectInput {
+  const opts = createWUParser({
+    name: 'cloud-connect',
+    description: 'Connect workspace.yaml to LumenFlow cloud control plane',
+    options: [
+      CLOUD_CONNECT_OPTIONS.endpoint,
+      CLOUD_CONNECT_OPTIONS.orgId,
+      CLOUD_CONNECT_OPTIONS.projectId,
+      CLOUD_CONNECT_OPTIONS.tokenEnv,
+      CLOUD_CONNECT_OPTIONS.policyMode,
+      CLOUD_CONNECT_OPTIONS.syncInterval,
+      CLOUD_CONNECT_OPTIONS.output,
+      CLOUD_CONNECT_OPTIONS.force,
+    ],
+    required: [
+      CLOUD_CONNECT_OPTIONS.endpoint.name,
+      CLOUD_CONNECT_OPTIONS.orgId.name,
+      CLOUD_CONNECT_OPTIONS.projectId.name,
+    ],
+  });
+
+  const tokenEnvRaw = (opts.tokenEnv as string | undefined) ?? CLOUD_CONNECT_DEFAULT_TOKEN_ENV;
+  const policyModeRaw =
+    (opts.policyMode as string | undefined) ?? CLOUD_CONNECT_DEFAULT_POLICY_MODE;
+  const syncIntervalRaw =
+    (opts.syncInterval as string | number | undefined) ??
+    CLOUD_CONNECT_DEFAULT_SYNC_INTERVAL_SECONDS;
+
+  return {
+    targetDir: ((opts.output as string | undefined) ?? process.cwd()).trim(),
+    endpoint: validateEndpoint(String(opts.endpoint)),
+    orgId: String(opts.orgId).trim(),
+    projectId: String(opts.projectId).trim(),
+    tokenEnv: validateTokenEnvName(tokenEnvRaw.trim()),
+    policyMode: parsePolicyMode(policyModeRaw),
+    syncInterval: parsePositiveInt(syncIntervalRaw, '--sync-interval'),
+    force: Boolean(opts.force),
+  };
+}
+
+function validateWorkspaceRootPath(targetDir: string): string {
+  if (!targetDir || targetDir.trim().length === 0) {
+    throw new Error(`${CLOUD_CONNECT_LOG_PREFIX} Invalid --output: path must be non-empty`);
+  }
+
+  return path.resolve(targetDir);
+}
+
+function readWorkspaceDocument(workspacePath: string): Record<string, unknown> {
+  if (!fs.existsSync(workspacePath)) {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} ${WORKSPACE_FILENAME} not found at ${workspacePath}. Run "lumenflow init" first to bootstrap a workspace.`,
+    );
+  }
+
+  const rawContent = fs.readFileSync(workspacePath, 'utf-8');
+  const parsedYaml = YAML.parse(rawContent) as unknown;
+  if (!isRecord(parsedYaml)) {
+    throw new Error(
+      `${CLOUD_CONNECT_LOG_PREFIX} ${WORKSPACE_FILENAME} is malformed: expected YAML object at document root`,
+    );
+  }
+
+  return parsedYaml;
+}
+
+function buildControlPlaneConfig(input: CloudConnectInput): WorkspaceControlPlaneConfig {
+  const controlPlaneCandidate = {
+    endpoint: input.endpoint,
+    org_id: input.orgId,
+    project_id: input.projectId,
+    sync_interval: input.syncInterval,
+    policy_mode: input.policyMode,
+    auth: {
+      token_env: input.tokenEnv,
+    },
+  };
+
+  return WorkspaceControlPlaneConfigSchema.parse(controlPlaneCandidate);
+}
+
+export async function connectWorkspaceToCloud(
+  options: CloudConnectInput,
+): Promise<CloudConnectResult> {
+  try {
+    const workspaceRoot = validateWorkspaceRootPath(options.targetDir);
+    const workspacePath = path.join(workspaceRoot, WORKSPACE_FILENAME);
+    const workspaceDoc = readWorkspaceDocument(workspacePath);
+    const runtimeEnv = options.env ?? process.env;
+
+    ensureTokenValue(options.tokenEnv, runtimeEnv);
+
+    if (workspaceDoc.control_plane && !options.force) {
+      return {
+        success: false,
+        workspacePath,
+        error:
+          `${CLOUD_CONNECT_LOG_PREFIX} ${WORKSPACE_FILENAME} already has control_plane configuration. ` +
+          'Use --force to overwrite.',
+      };
+    }
+
+    const controlPlaneConfig = buildControlPlaneConfig(options);
+    workspaceDoc.control_plane = controlPlaneConfig;
+
+    const serializedWorkspace = YAML.stringify(workspaceDoc);
+    const normalizedYaml = serializedWorkspace.endsWith(YAML_TRAILING_NEWLINE)
+      ? serializedWorkspace
+      : `${serializedWorkspace}${YAML_TRAILING_NEWLINE}`;
+    fs.writeFileSync(workspacePath, normalizedYaml, 'utf-8');
+
+    return {
+      success: true,
+      workspacePath,
+      controlPlaneConfig,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+export async function runCloudConnectCli(): Promise<void> {
+  const connectOptions = parseCloudConnectCliOptions();
+  const result = await connectWorkspaceToCloud(connectOptions);
+
+  if (!result.success) {
+    console.error(result.error ?? `${CLOUD_CONNECT_LOG_PREFIX} Cloud connect failed`);
+    process.exit(1);
+  }
+
+  console.log(`${CLOUD_CONNECT_LOG_PREFIX} Updated ${WORKSPACE_FILENAME}`);
+  console.log(`${CLOUD_CONNECT_LOG_PREFIX} Endpoint: ${connectOptions.endpoint}`);
+  console.log(`${CLOUD_CONNECT_LOG_PREFIX} Org ID: ${connectOptions.orgId}`);
+  console.log(`${CLOUD_CONNECT_LOG_PREFIX} Project ID: ${connectOptions.projectId}`);
+  console.log(`${CLOUD_CONNECT_LOG_PREFIX} Token env: ${connectOptions.tokenEnv}`);
+}
 
 // --- Environment detection (AC1) ---
 
@@ -662,6 +965,13 @@ const ONBOARD_OPTIONS = {
  * CLI main entry point for lumenflow onboard
  */
 export async function main(): Promise<void> {
+  const subcommand = process.argv[2];
+  if (subcommand === ONBOARD_SUBCOMMAND_CONNECT) {
+    process.argv.splice(2, 1);
+    await runCloudConnectCli();
+    return;
+  }
+
   const opts = createWUParser({
     name: 'onboard',
     description: 'Interactive setup wizard for LumenFlow workspace',

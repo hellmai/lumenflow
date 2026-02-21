@@ -142,6 +142,7 @@
     "workspace-init": "./dist/workspace-init.js",
     "config-set": "./dist/config-set.js",
     "config-get": "./dist/config-get.js",
+    "cloud-connect": "./dist/init.js",
     "lumenflow-onboard": "./dist/onboard.js",
     "onboard": "./dist/onboard.js"
   },
