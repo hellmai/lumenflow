@@ -2,7 +2,7 @@ id: WU-1967
 title: Replace stale lane table in CLAUDE.md with pointer to config yaml
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-21
 code_paths:
@@ -24,8 +24,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: CLAUDE.md contains a hardcoded lane table (Framework: Core, Framework: CLI, etc.) that is stale -- these parent lanes were subdivided into granular sub-lanes but the table was never updated. This caused an agent to pick an invalid lane name. Problem: Duplicate source of truth for lanes. The yaml config is canonical but CLAUDE.md has a stale copy that misleads agents. Solution: Replace the lane table in CLAUDE.md with a brief note pointing to .lumenflow.config.yaml as the canonical source. Lanes are dynamic -- add them as needed.'
+description: 'Context: CLAUDE.md contains a hardcoded lane table (Framework: Core, Framework: CLI,
+  etc.) that is stale -- these parent lanes were subdivided into granular sub-lanes but the table
+  was never updated. This caused an agent to pick an invalid lane name. Problem: Duplicate source of
+  truth for lanes. The yaml config is canonical but CLAUDE.md has a stale copy that misleads agents.
+  Solution: Replace the lane table in CLAUDE.md with a brief note pointing to .lumenflow.config.yaml
+  as the canonical source. Lanes are dynamic -- add them as needed.'
 acceptance:
   - CLAUDE.md no longer contains a hardcoded lane table
   - CLAUDE.md references .lumenflow.config.yaml as the canonical lane source
   - No other docs reference the old parent-only lane names as if they are the full list
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-1967
+claimed_at: 2026-02-21T16:21:08.072Z
+baseline_main_sha: 6343af6413979ccd520f9b7a94da34e8bb039177
+session_id: 2d41d163-fa99-4583-bd88-935040110f6a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T16:21:08.078Z
