@@ -1,178 +1,131 @@
 ---
 title: Upgrading LumenFlow
-description: How to upgrade LumenFlow packages to the latest version
+description: Upgrade to workspace-first LumenFlow v4.0.0
 ---
 
-import { Steps, Tabs, TabItem, Aside, Badge } from '@astrojs/starlight/components';
+import { Steps, Aside, Badge } from '@astrojs/starlight/components';
 
-This guide covers how to upgrade your LumenFlow installation to the latest version.
+<Badge text="v4.0.0" variant="danger" />
 
-## Quick Upgrade (Recommended)
+Version 4.0.0 is a **major release**. It hard-cuts to workspace-first runtime semantics.
 
-The fastest way to upgrade all LumenFlow packages is with the built-in upgrade command.
+## What Changed in v4.0.0
+
+- `workspace.yaml` is now the canonical runtime config.
+- Split onboarding entrypoints are retired as primary paths:
+  - `onboard`
+  - `lumenflow-onboard`
+  - `workspace:init`
+- Canonical bootstrap path is now:
+
+```bash
+npx lumenflow
+```
+
+- `config:set` and `config:get` now operate on `workspace.yaml > software_delivery`.
+- Cloud control-plane setup is first-class via:
+
+```bash
+pnpm cloud:connect
+# or: npx lumenflow cloud connect
+```
+
+<Aside type="caution" title="Breaking behavior">
+  Existing docs/scripts that call `onboard` or `workspace:init` should be updated to `npx
+  lumenflow`.
+</Aside>
+
+## Upgrade Path (Recommended)
+
+<Steps>
+1. **Upgrade packages**
 
 ```bash
 pnpm lumenflow:upgrade --latest
 ```
 
-This command:
+2. **Migrate legacy config into workspace.yaml** (if you still have `.lumenflow.config.yaml`)
 
-- Updates all `@lumenflow/*` packages atomically
-- Uses micro-worktree isolation (no WU needed)
-- Updates both `package.json` and `pnpm-lock.yaml`
-- Works from your main checkout
+   ```bash
+   pnpm lumenflow:upgrade config:migrate-workspace
+   ```
 
-<Aside type="tip">
-  The upgrade command handles version coordination automatically. All packages (except
-  `@lumenflow/metrics`) are versioned together for compatibility.
-</Aside>
+3. **Re-run canonical bootstrap in merge mode**
 
-## Manual Upgrade
+   ```bash
+   pnpm exec lumenflow --client claude --merge
+   # replace "claude" with your client: cursor, windsurf, codex, cline, aider, none
+   ```
 
-If you prefer manual control or encounter issues with the upgrade command, you can update packages directly.
+4. **Verify runtime health**
 
-<Tabs syncKey="pkg">
-  <TabItem label="pnpm">
+   ```bash
+   pnpm exec lumenflow-doctor
+   ```
 
-```bash
-pnpm up @lumenflow/core @lumenflow/cli @lumenflow/kernel \
-  @lumenflow/runtime @lumenflow/packs @lumenflow/mcp \
-  @lumenflow/memory @lumenflow/agent @lumenflow/initiatives \
-  @lumenflow/metrics @lumenflow/shims \
-  @lumenflow/control-plane-sdk --latest
-```
-
-  </TabItem>
-  <TabItem label="npm">
-
-```bash
-npm update @lumenflow/core @lumenflow/cli @lumenflow/kernel \
-  @lumenflow/runtime @lumenflow/packs @lumenflow/mcp \
-  @lumenflow/memory @lumenflow/agent @lumenflow/initiatives \
-  @lumenflow/metrics @lumenflow/shims \
-  @lumenflow/control-plane-sdk
-```
-
-  </TabItem>
-</Tabs>
-
-## Post-Upgrade Steps
-
-After upgrading, sync your agent documentation to get the latest skills and guidance.
-
-<Steps>
-
-1. **Sync agent documentation**
+5. **Refresh agent docs/templates**
 
    ```bash
    pnpm exec lumenflow docs:sync --force
    ```
 
-   This updates:
-   - `.lumenflow/agents/` — Vendor-agnostic agent guidance
-   - `.claude/skills/` — Claude Code skills (if present)
-   - `LUMENFLOW.md` — Workflow entry point
-
-2. **Verify the upgrade**
-
-   ```bash
-   pnpm list @lumenflow/cli
-   ```
-
-3. **Check for config changes**
-
-   Review the [Changelog](/reference/changelog) for any breaking changes that may require config updates.
-
 </Steps>
 
-## Upgrading to v3.0.0
+## Post-Upgrade Checks
 
-<Badge text="Current" variant="success" />
-
-Version 3.0.0 introduces the kernel/pack architecture, 14 granular lanes, and 5 new packages. See the [Changelog](/reference/changelog) for full details.
-
-### Upgrade Steps
+- Validate workspace-first config reads:
 
 ```bash
-# 1. Upgrade packages
-pnpm lumenflow:upgrade --latest
-
-# 2. Sync documentation
-pnpm exec lumenflow docs:sync --force
-
-# 3. Create workspace.yaml (new in v3.0)
-# See the Workspace Spec reference for schema details
-
-# 4. Verify
-pnpm list @lumenflow/cli  # Should show 3.0.0
+pnpm config:get --key software_delivery.methodology.testing
 ```
 
-### Breaking Changes in v3.0.0
+- Validate workspace-first config writes:
 
-- **Removed `isAgentBranchSync()`** — Use async `isAgentBranch()` instead
-- **Removed single-word lane names** — All lanes must use "Parent: Sublane" format
-- **Removed config `version: '1.0'`** — Config must use `version: '2.0'`
+```bash
+pnpm config:set --key software_delivery.gates.minCoverage --value 90
+```
 
-## Upgrading from v1.x to v2.x
+- Optional cloud connect verification:
 
-If you're upgrading from v1.x, see the [Migration Guide](/guides/migration) for breaking changes and required configuration updates.
+```bash
+pnpm cloud:connect \
+  --endpoint https://control-plane.example.com \
+  --org-id <org-id> \
+  --project-id <project-id> \
+  --token-env LUMENFLOW_CONTROL_PLANE_TOKEN
+```
 
-Key changes in v2.0:
+## Migration Notes
 
-- Config version changed to `version: '2.0'`
-- Lane format now requires "Parent: Sublane" (e.g., `Framework: Core`)
-- State directory is `.lumenflow/`
-
-## Version Compatibility
-
-All `@lumenflow/*` packages should be at the same version for best compatibility.
-
-| Package                        | Current |
-| ------------------------------ | ------- |
-| `@lumenflow/core`              | 3.0.0   |
-| `@lumenflow/cli`               | 3.0.0   |
-| `@lumenflow/kernel`            | 3.0.0   |
-| `@lumenflow/runtime`           | 3.0.0   |
-| `@lumenflow/packs`             | 3.0.0   |
-| `@lumenflow/mcp`               | 3.0.0   |
-| `@lumenflow/memory`            | 3.0.0   |
-| `@lumenflow/agent`             | 3.0.0   |
-| `@lumenflow/initiatives`       | 3.0.0   |
-| `@lumenflow/metrics`           | 3.0.0   |
-| `@lumenflow/shims`             | 3.0.0   |
-| `@lumenflow/control-plane-sdk` | 3.0.0   |
-
-See the [Compatibility Matrix](/reference/compatibility) for full version details.
+- Legacy split onboarding commands are still present only as **legacy guidance shims**.
+- Runtime behavior no longer depends on `.lumenflow.config.yaml`.
+- Keep all LumenFlow packages on the same major version for compatibility.
 
 ## Troubleshooting
 
-### Upgrade command not found
+### `workspace.yaml` missing
 
-If `pnpm lumenflow:upgrade` is not recognized, ensure you have `@lumenflow/cli` installed:
+Run canonical bootstrap:
 
 ```bash
-pnpm add -D @lumenflow/cli
+npx lumenflow
 ```
 
-### Package version mismatch
+### Old docs/scripts still call `onboard`
 
-If you see version mismatch warnings, run the upgrade command again:
+Replace with:
 
 ```bash
-pnpm lumenflow:upgrade --latest
+npx lumenflow
 ```
 
-### docs:sync fails
-
-If `docs:sync --force` fails, ensure the CLI is built:
+### Need to migrate existing `.lumenflow.config.yaml`
 
 ```bash
-pnpm build --filter @lumenflow/cli
-pnpm exec lumenflow docs:sync --force
+pnpm lumenflow:upgrade config:migrate-workspace
 ```
 
 ## Next Steps
 
-- [Changelog](/reference/changelog) — See what's new in each version
-- [Compatibility Matrix](/reference/compatibility) — Version requirements
-- [Migration Guide](/guides/migration) — Upgrading from v1.x
+- [CLI Reference](/reference/cli) — full command surface
+- [Changelog](/reference/changelog) — release notes and breaking changes
