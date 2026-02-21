@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-1985 — Retire split onboarding path and legacy bootstrap entrypoints](wu/WU-1985.yaml) — Framework: CLI Enforcement
 - [WU-1984 — Docs + release readiness for workspace-first v4.0.0](wu/WU-1984.yaml) — Content: Site Comms
 - [WU-1983 — MCP parity for bootstrap and cloud operations](wu/WU-1983.yaml) — Framework: MCP
 - [WU-1982 — Expose cloud connection diagnostics in web UI](wu/WU-1982.yaml) — Operations: Runtime
