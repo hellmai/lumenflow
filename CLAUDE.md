@@ -1,6 +1,6 @@
 # LumenFlow OS Development Guide
 
-**Last updated:** 2026-01-19
+**Last updated:** 2026-02-21
 
 This repo contains LumenFlow source code. We dogfood LumenFlow to build LumenFlow.
 
@@ -64,20 +64,13 @@ cd /home/USER/source/hellmai/os && pnpm wu:done --id WU-XXXX
 
 ## Lanes
 
-Use "Parent: Sublane" format (e.g., `Framework: CLI`). See `.lumenflow.config.yaml` for full list.
+Use "Parent: Sublane" format (e.g., `Framework: CLI WU Commands`). Lanes are defined in `.lumenflow.config.yaml` under the `lanes:` key — that file is the canonical source. Add new lanes as needed via `pnpm lane:edit` or `pnpm config:set`.
 
-| Lane                       | Packages/Paths                       |
-| -------------------------- | ------------------------------------ |
-| Framework: Core            | `packages/@lumenflow/core/**`        |
-| Framework: CLI             | `packages/@lumenflow/cli/**`         |
-| Framework: Memory          | `packages/@lumenflow/memory/**`      |
-| Framework: Agent           | `packages/@lumenflow/agent/**`       |
-| Framework: Metrics         | `packages/@lumenflow/metrics/**`     |
-| Framework: Initiatives     | `packages/@lumenflow/initiatives/**` |
-| Framework: Shims           | `packages/@lumenflow/shims/**`       |
-| Operations: Infrastructure | `apps/**`, `actions/**`              |
-| Operations: CI/CD          | `.github/**`                         |
-| Content: Documentation     | `docs/**`                            |
+To find the right lane for your work:
+
+```bash
+pnpm wu:infer-lane --paths "packages/@lumenflow/cli/src/init.ts" --desc "Fix init scaffolding"
+```
 
 ---
 
