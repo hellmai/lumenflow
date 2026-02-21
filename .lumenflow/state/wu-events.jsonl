@@ -1902,3 +1902,4 @@
 {"type":"complete","wuId":"WU-1972","timestamp":"2026-02-21T19:14:44.798Z"}
 {"type":"claim","wuId":"WU-1973","timestamp":"2026-02-21T19:15:25.931Z","lane":"Framework: CLI Enforcement","title":"Repoint config:set and config:get to workspace.yaml"}
 {"type":"complete","wuId":"WU-1973","timestamp":"2026-02-21T19:31:19.803Z"}
+{"type":"claim","wuId":"WU-1974","lane":"Framework: Core Lifecycle","title":"Legacy runtime hard cut for .lumenflow.config.yaml","timestamp":"2026-02-21T19:32:24.115Z"}
