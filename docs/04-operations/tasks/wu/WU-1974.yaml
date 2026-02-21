@@ -2,7 +2,7 @@ id: WU-1974
 title: Legacy runtime hard cut for .lumenflow.config.yaml
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-21
 code_paths:
@@ -32,8 +32,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Remove runtime dependencies on .lumenflow.config.yaml and fail fast with actionable guidance when legacy-only setups are detected.
+description: Remove runtime dependencies on .lumenflow.config.yaml and fail fast with actionable
+  guidance when legacy-only setups are detected.
 acceptance:
   - Runtime paths do not read .lumenflow.config.yaml during normal execution
   - Legacy-only project invocation returns clear migration guidance
   - State/config checks are updated to canonical workspace.yaml behavior
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-1974
+claimed_at: 2026-02-21T19:32:24.064Z
+baseline_main_sha: 18d96145299965583ec52146a55be18bfd0ab35b
+session_id: 922bf8ed-527f-4fc1-90fa-120ac5832a7a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-21T19:32:24.071Z
