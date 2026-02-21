@@ -80,7 +80,6 @@ import {
 } from './init-templates.js';
 // WU-1644: Import detection helpers from dedicated module
 import {
-  checkPrerequisites,
   getDocsPath,
   detectDocsStructure,
   detectDefaultClient,
@@ -1557,17 +1556,9 @@ export async function main(): Promise<void> {
   console.log(`  Client: ${opts.client ?? 'auto'}`);
   console.log(`  Gate preset: ${opts.preset ?? 'none (manual config)'}`);
 
-  // WU-1177: Check prerequisites (non-blocking)
-  const prereqs = checkPrerequisites();
-  const failingPrereqs = Object.entries(prereqs)
-    .filter(([, check]) => !check.passed)
-    .map(([name, check]) => `${name}: ${check.version} (requires ${check.required})`);
-
-  if (failingPrereqs.length > 0) {
-    console.log('\nPrerequisite warnings (non-blocking):');
-    failingPrereqs.forEach((msg) => console.log(`  ! ${msg}`));
-    console.log('  Run "lumenflow doctor" for details.\n');
-  }
+  // WU-1968: Removed separate checkPrerequisites() call here.
+  // runDoctorForInit() (called after scaffolding) already checks prerequisites
+  // and displays results, avoiding duplicate output.
 
   const result = await scaffoldProject(targetDir, {
     force: opts.force,

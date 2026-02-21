@@ -118,9 +118,11 @@ function getCommandVersion(command: string, args: string[]): string {
  * Parse semver version string to compare
  */
 function parseVersion(versionStr: string): number[] {
-  // Extract version numbers using a non-backtracking pattern
+  // WU-1968: Removed ^ anchor so "git version 2.43.0" is parsed correctly.
+  // The previous ^v? pattern required the string to start with a digit or "v",
+  // but `git --version` returns "git version X.Y.Z" which starts with "git".
   // eslint-disable-next-line security/detect-unsafe-regex -- static semver pattern; no backtracking risk
-  const match = /^v?(\d+)\.(\d+)(?:\.(\d+))?/.exec(versionStr);
+  const match = /(\d+)\.(\d+)(?:\.(\d+))?/.exec(versionStr);
   if (!match) {
     return [0, 0, 0];
   }
