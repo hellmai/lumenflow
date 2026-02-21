@@ -71,6 +71,7 @@ import {
   WORKTREE_DISCIPLINE_SKILL_TEMPLATE,
   LUMENFLOW_GATES_SKILL_TEMPLATE,
   GITIGNORE_TEMPLATE,
+  REQUIRED_GITIGNORE_EXCLUSIONS,
   PRETTIERIGNORE_TEMPLATE,
   SAFE_GIT_TEMPLATE,
   PRE_COMMIT_TEMPLATE,
@@ -884,15 +885,8 @@ async function scaffoldGitignore(
     const existingContent = fs.readFileSync(gitignorePath, 'utf-8');
     const linesToAdd: string[] = [];
 
-    // Check each required exclusion
-    // WU-1519: Replaced .lumenflow/state with .lumenflow/telemetry
-    const requiredExclusions = [
-      { pattern: 'node_modules', line: 'node_modules/' },
-      { pattern: '.lumenflow/telemetry', line: '.lumenflow/telemetry/' },
-      { pattern: 'worktrees', line: 'worktrees/' },
-    ];
-
-    for (const { pattern, line } of requiredExclusions) {
+    // WU-1969: Use shared constant so merge path and full template cannot drift
+    for (const { pattern, line } of REQUIRED_GITIGNORE_EXCLUSIONS) {
       if (!existingContent.includes(pattern)) {
         linesToAdd.push(line);
       }
