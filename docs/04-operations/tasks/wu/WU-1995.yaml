@@ -8,7 +8,9 @@ created: 2026-02-22
 code_paths:
   - packages/@lumenflow/core/src/wu-done-validation.ts
   - packages/@lumenflow/core/src/wu-rules-resolvers.ts
-  - packages/@lumenflow/core/src/__tests__/**
+  - packages/@lumenflow/core/src/__tests__/wu-preflight-validators-reality.test.ts
+  - packages/@lumenflow/core/src/__tests__/wu-done-validation-code-paths.test.ts
+  - packages/@lumenflow/core/src/__tests__/wu-rules-resolvers.test.ts
 tests:
   manual:
     - pnpm wu:prep --id WU-1995 completes without ELOOP when code_paths include glob patterns
@@ -22,10 +24,17 @@ dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-22T01:56:29.025Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-1995
+session_id: 4a9b0fff-9bea-4fa7-ad63-f980efe1ff00
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T01:56:29.033Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -36,11 +45,3 @@ acceptance:
   - wu:done accepts glob code_paths when they resolve to at least one path
   - preflight glob checks do not recurse into symlink-loop node_modules trees
   - core tests cover glob validation and symlink-loop-safe behavior
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-1995
-claimed_at: 2026-02-22T01:56:29.025Z
-baseline_main_sha: c24040e56f3e46bb75e3ed3b7f8d6b940fa620d7
-session_id: 4a9b0fff-9bea-4fa7-ad63-f980efe1ff00
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-22T01:56:29.033Z
