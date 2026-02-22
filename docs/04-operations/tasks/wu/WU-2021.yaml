@@ -2,7 +2,7 @@ id: WU-2021
 title: Filter deleted files from incremental format check input
 lane: 'Framework: Core Validation'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -33,3 +33,11 @@ description: Incremental format gate includes deleted paths (e.g., .lumenflow.co
 acceptance:
   - format:check incremental input excludes deleted/non-existent paths
   - wu:done for deletion WUs no longer fails on missing-file prettier arguments
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-2021
+claimed_at: 2026-02-22T22:44:34.167Z
+baseline_main_sha: 139c5e78c2f973d61749a24e4dd8d17cb6478847
+session_id: 4d61ee41-92ae-4468-b412-98e45ae7a3c7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T22:44:34.174Z

@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml)
 
 ## Completed
 
