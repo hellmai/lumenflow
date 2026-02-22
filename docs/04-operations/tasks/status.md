@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1999 — Ignore symlinked dist artifact roots in incremental format gate](wu/WU-1999.yaml)
 
 ## Completed
 
