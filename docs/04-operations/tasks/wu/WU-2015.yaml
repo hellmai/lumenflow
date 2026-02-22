@@ -2,7 +2,7 @@ id: WU-2015
 title: Decompose wu-consistency-checker.ts (1255 lines)
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -28,9 +28,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Split wu-consistency-checker.ts (1255 lines) into: wu-consistency-detector.ts (error detection logic), wu-inconsistency-repairer.ts (repair orchestration), wu-consistency-file-repairs.ts (file-level stamp/YAML/markdown repairs). The current file handles detection, categorization, orchestration, and file manipulation all in one.'
+description: 'Split wu-consistency-checker.ts (1255 lines) into: wu-consistency-detector.ts (error
+  detection logic), wu-inconsistency-repairer.ts (repair orchestration),
+  wu-consistency-file-repairs.ts (file-level stamp/YAML/markdown repairs). The current file handles
+  detection, categorization, orchestration, and file manipulation all in one.'
 acceptance:
   - wu-consistency-checker.ts reduced to under 400 lines
   - Each extracted module has single responsibility
   - All existing consistency-checker tests pass
   - wu:recover end-to-end workflow unchanged
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2015
+claimed_at: 2026-02-22T14:56:26.488Z
+baseline_main_sha: 0d9390e740ad5b82f61bfbb7c0365056872b0c75
+session_id: 8a8e6f7f-545d-4f3c-b8da-489d51d80cf6
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T14:56:26.502Z
