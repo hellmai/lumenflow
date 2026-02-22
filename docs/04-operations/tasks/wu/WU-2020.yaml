@@ -2,7 +2,7 @@ id: WU-2020
 title: Inject WUStateStore via interfaces and replace getConfig() calls
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -57,3 +57,6 @@ session_id: fbb0c10d-5c0b-4cdd-a53d-595d5e9f866c
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T16:01:15.538Z
+locked: true
+completed_at: 2026-02-22T17:19:58.833Z
+completed: 2026-02-22
