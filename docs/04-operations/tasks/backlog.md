@@ -20,8 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2046 — Fix pre-existing wu-spawn.test.ts failures](wu/WU-2046.yaml) — Framework: CLI WU Commands
-- [WU-2045 — Fix upgrade docs Steps markup build failure](wu/WU-2045.yaml) — Content: Framework Docs
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — Framework: CLI Orchestration
@@ -30,10 +28,11 @@ sections:
 - [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml) — Framework: Core Validation
 - [WU-2043 — Add unit tests for INIT-034 decomposed sub-modules and strategy patterns](wu/WU-2043.yaml) — Framework: Core Validation
 - [WU-2044 — Constants consolidation round 2: DRY violations from INIT-034 audit](wu/WU-2044.yaml) — Framework: Core Validation
+- [WU-2045 — Fix upgrade docs Steps markup build failure](wu/WU-2045.yaml) — Content: Framework Docs
+- [WU-2046 — Fix pre-existing wu-spawn.test.ts failures](wu/WU-2046.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
-- [WU-2016 — Split lumenflow-config-schema.ts into per-section schemas (1564 lines)](wu/WU-2016.yaml) — Framework: Core Validation
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
@@ -997,6 +996,7 @@ sections:
 - [WU-2014 — Decompose wu-done-worktree.ts (1777 lines)](wu/WU-2014.yaml)
 - [WU-2037 — Decompose gates-config.ts (856 lines, 9 responsibilities)](wu/WU-2037.yaml)
 - [WU-2042 — Finalize kernel-first parity in tests and docs](wu/WU-2042.yaml)
+- [WU-2016 — Split lumenflow-config-schema.ts into per-section schemas (1564 lines)](wu/WU-2016.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
