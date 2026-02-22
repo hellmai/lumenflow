@@ -18,6 +18,7 @@ import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { z } from 'zod';
 import { WORKSPACE_CONFIG_FILE_NAME, WORKSPACE_V2_KEYS } from './config-contract.js';
+import { asRecord, isBoolean, isNumber, isString } from './object-guards.js';
 // WU-1262: Import resolvePolicy for methodology-driven coverage defaults
 // Note: resolvePolicy uses type-only import from lumenflow-config-schema, avoiding circular dependency
 import {
@@ -26,6 +27,17 @@ import {
   MethodologyConfigSchema,
   type CoverageMode,
 } from './resolve-policy.js';
+
+const DEFAULT_POLICY = getDefaultPolicy();
+
+export const GATES_RUNTIME_DEFAULTS = {
+  COMMAND_TIMEOUT_MS: 120000,
+  MAX_ESLINT_WARNINGS: 100,
+  DEFAULT_MIN_COVERAGE: DEFAULT_POLICY.coverage_threshold,
+  DEFAULT_ENABLE_COVERAGE: true,
+  DEFAULT_PACKAGE_MANAGER: 'pnpm',
+  DEFAULT_TEST_RUNNER: 'vitest',
+} as const;
 
 const SOFTWARE_DELIVERY_KEY = WORKSPACE_V2_KEYS.SOFTWARE_DELIVERY;
 const SOFTWARE_DELIVERY_FIELDS = {
@@ -57,10 +69,8 @@ const GATES_COMMAND_FIELDS = {
   FORMAT: 'format',
 } as const;
 
-/**
- * Default timeout for gate commands (2 minutes)
- */
-const DEFAULT_GATE_TIMEOUT = 120000;
+const SUPPORTED_PACKAGE_MANAGERS = ['pnpm', 'npm', 'yarn', 'bun'] as const;
+const SUPPORTED_TEST_RUNNERS = ['vitest', 'jest', 'mocha'] as const;
 
 /**
  * Schema for a gate command object with options
@@ -70,7 +80,7 @@ const GateCommandObjectSchema = z.object({
   command: z.string(),
   /** Whether to continue if this gate fails (default: false) */
   continueOnError: z.boolean().optional(),
-  /** Timeout in milliseconds (default: 120000) */
+  /** Timeout in milliseconds (default: GATES_RUNTIME_DEFAULTS.COMMAND_TIMEOUT_MS) */
   timeout: z.number().int().positive().optional(),
 });
 
@@ -200,18 +210,18 @@ export function parseGateCommand(config: GateCommandConfig | undefined): ParsedG
     return null;
   }
 
-  if (typeof config === 'string') {
+  if (isString(config)) {
     return {
       command: config,
       continueOnError: false,
-      timeout: DEFAULT_GATE_TIMEOUT,
+      timeout: GATES_RUNTIME_DEFAULTS.COMMAND_TIMEOUT_MS,
     };
   }
 
   return {
     command: config.command,
     continueOnError: config.continueOnError ?? false,
-    timeout: config.timeout ?? DEFAULT_GATE_TIMEOUT,
+    timeout: config.timeout ?? GATES_RUNTIME_DEFAULTS.COMMAND_TIMEOUT_MS,
   };
 }
 
@@ -227,12 +237,6 @@ export function expandPreset(preset: string | undefined): Partial<GatesExecution
   }
 
   return GATE_PRESETS[preset] ?? {};
-}
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : null;
 }
 
 function loadSoftwareDeliveryConfig(projectRoot: string): Record<string, unknown> | null {
@@ -451,11 +455,11 @@ function readNumberField(
   secondaryKey: string,
 ): number | undefined {
   const primary = source?.[primaryKey];
-  if (typeof primary === 'number') {
+  if (isNumber(primary)) {
     return primary;
   }
   const secondary = source?.[secondaryKey];
-  return typeof secondary === 'number' ? secondary : undefined;
+  return isNumber(secondary) ? secondary : undefined;
 }
 
 function readBooleanField(
@@ -464,11 +468,11 @@ function readBooleanField(
   secondaryKey: string,
 ): boolean | undefined {
   const primary = source?.[primaryKey];
-  if (typeof primary === 'boolean') {
+  if (isBoolean(primary)) {
     return primary;
   }
   const secondary = source?.[secondaryKey];
-  return typeof secondary === 'boolean' ? secondary : undefined;
+  return isBoolean(secondary) ? secondary : undefined;
 }
 
 function readGateMinCoverage(gatesRaw: Record<string, unknown> | undefined): number | undefined {
@@ -540,9 +544,9 @@ export function resolveCoverageConfig(projectRoot: string): CoverageConfig {
       methodology,
       gates: {
         // Default gates values from schema
-        maxEslintWarnings: 100,
-        enableCoverage: enableCoverage ?? true,
-        minCoverage: minCoverage ?? 90,
+        maxEslintWarnings: GATES_RUNTIME_DEFAULTS.MAX_ESLINT_WARNINGS,
+        enableCoverage: enableCoverage ?? GATES_RUNTIME_DEFAULTS.DEFAULT_ENABLE_COVERAGE,
+        minCoverage: minCoverage ?? GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE,
         enableSafetyCriticalTests: true,
         enableInvariants: true,
       },
@@ -624,9 +628,9 @@ export function resolveTestPolicy(projectRoot: string): TestPolicy {
       methodology,
       gates: {
         // Default gates values from schema
-        maxEslintWarnings: 100,
-        enableCoverage: enableCoverage ?? true,
-        minCoverage: minCoverage ?? 90,
+        maxEslintWarnings: GATES_RUNTIME_DEFAULTS.MAX_ESLINT_WARNINGS,
+        enableCoverage: enableCoverage ?? GATES_RUNTIME_DEFAULTS.DEFAULT_ENABLE_COVERAGE,
+        minCoverage: minCoverage ?? GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE,
         enableSafetyCriticalTests: true,
         enableInvariants: true,
       },
@@ -648,13 +652,13 @@ export function resolveTestPolicy(projectRoot: string): TestPolicy {
  * WU-1356: Supported package managers type
  * Re-exported from lumenflow-config-schema to avoid circular import
  */
-type PackageManager = 'pnpm' | 'npm' | 'yarn' | 'bun';
+type PackageManager = (typeof SUPPORTED_PACKAGE_MANAGERS)[number];
 
 /**
  * WU-1356: Supported test runners type
  * Re-exported from lumenflow-config-schema to avoid circular import
  */
-type TestRunner = 'vitest' | 'jest' | 'mocha';
+type TestRunner = (typeof SUPPORTED_TEST_RUNNERS)[number];
 
 /**
  * WU-1356: Gates commands configuration type
@@ -741,16 +745,16 @@ const IGNORE_PATTERNS_BY_RUNNER: Record<TestRunner, string[]> = {
 export function resolvePackageManager(projectRoot: string): PackageManager {
   const softwareDelivery = loadSoftwareDeliveryConfig(projectRoot);
   if (!softwareDelivery) {
-    return 'pnpm';
+    return GATES_RUNTIME_DEFAULTS.DEFAULT_PACKAGE_MANAGER;
   }
 
   const pm =
     softwareDelivery[SOFTWARE_DELIVERY_FIELDS.PACKAGE_MANAGER] ??
     softwareDelivery[SOFTWARE_DELIVERY_FIELDS.PACKAGE_MANAGER_CAMEL];
-  if (typeof pm === 'string' && ['pnpm', 'npm', 'yarn', 'bun'].includes(pm)) {
+  if (isString(pm) && SUPPORTED_PACKAGE_MANAGERS.includes(pm as PackageManager)) {
     return pm as PackageManager;
   }
-  return 'pnpm';
+  return GATES_RUNTIME_DEFAULTS.DEFAULT_PACKAGE_MANAGER;
 }
 
 /**
@@ -765,16 +769,16 @@ export function resolvePackageManager(projectRoot: string): PackageManager {
 export function resolveTestRunner(projectRoot: string): TestRunner {
   const softwareDelivery = loadSoftwareDeliveryConfig(projectRoot);
   if (!softwareDelivery) {
-    return 'vitest';
+    return GATES_RUNTIME_DEFAULTS.DEFAULT_TEST_RUNNER;
   }
 
   const runner =
     softwareDelivery[SOFTWARE_DELIVERY_FIELDS.TEST_RUNNER] ??
     softwareDelivery[SOFTWARE_DELIVERY_FIELDS.TEST_RUNNER_CAMEL];
-  if (typeof runner === 'string' && ['vitest', 'jest', 'mocha'].includes(runner)) {
+  if (isString(runner) && SUPPORTED_TEST_RUNNERS.includes(runner as TestRunner)) {
     return runner as TestRunner;
   }
-  return 'vitest';
+  return GATES_RUNTIME_DEFAULTS.DEFAULT_TEST_RUNNER;
 }
 
 /**
@@ -796,7 +800,7 @@ export function resolveBuildCommand(projectRoot: string): string {
   const configuredBuildCommand =
     softwareDelivery[SOFTWARE_DELIVERY_FIELDS.BUILD_COMMAND] ??
     softwareDelivery[SOFTWARE_DELIVERY_FIELDS.BUILD_COMMAND_CAMEL];
-  if (typeof configuredBuildCommand === 'string' && configuredBuildCommand.length > 0) {
+  if (isString(configuredBuildCommand) && configuredBuildCommand.length > 0) {
     return configuredBuildCommand;
   }
 
@@ -852,5 +856,8 @@ export function resolveGatesCommands(projectRoot: string): GatesCommands {
  * @returns Array of ignore patterns
  */
 export function getIgnorePatterns(testRunner: TestRunner): string[] {
-  return IGNORE_PATTERNS_BY_RUNNER[testRunner] ?? ['.turbo'];
+  return (
+    IGNORE_PATTERNS_BY_RUNNER[testRunner] ??
+    IGNORE_PATTERNS_BY_RUNNER[GATES_RUNTIME_DEFAULTS.DEFAULT_TEST_RUNNER]
+  );
 }

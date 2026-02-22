@@ -17,6 +17,18 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
 
+const VALUE_TYPES = {
+  OBJECT: 'object',
+  STRING: 'string',
+} as const;
+const FILE_ENCODING = {
+  UTF8: 'utf8',
+} as const;
+const ACTION_DEFAULTS = {
+  COMMAND_TIMEOUT_MS: 120000,
+  WORKING_DIRECTORY: '.',
+  CONFIG_PRESET_LABEL: 'config',
+} as const;
 const WORKSPACE_CONFIG_FILE_NAME = 'workspace.yaml';
 const WORKSPACE_V2_KEYS = {
   SOFTWARE_DELIVERY: 'software_delivery',
@@ -27,11 +39,30 @@ const SOFTWARE_DELIVERY_KEYS = {
 const GATES_KEYS = {
   EXECUTION: 'execution',
 } as const;
+const PROJECT_MARKERS = {
+  NODE: 'package.json',
+  PYPROJECT: 'pyproject.toml',
+  SETUP_PY: 'setup.py',
+  GO_MOD: 'go.mod',
+  CARGO_TOML: 'Cargo.toml',
+  DOTNET_PROJECT_SUFFIX: '.csproj',
+  DOTNET_SOLUTION_SUFFIX: '.sln',
+} as const;
+const PRESET_NAMES = {
+  NODE: 'node',
+  PYTHON: 'python',
+  GO: 'go',
+  RUST: 'rust',
+  DOTNET: 'dotnet',
+} as const;
 
-/**
- * Default timeout for gate commands (2 minutes)
- */
-const DEFAULT_TIMEOUT = 120000;
+function hasFileWithSuffix(dir: string, suffix: string): boolean {
+  try {
+    return fs.readdirSync(dir).some((entry) => entry.endsWith(suffix));
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Gate command configuration
@@ -40,6 +71,10 @@ interface GateCommand {
   command: string;
   continueOnError?: boolean;
   timeout?: number;
+}
+
+function isStringCommand(value: string | GateCommand | undefined): value is string {
+  return typeof value === VALUE_TYPES.STRING;
 }
 
 /**
@@ -61,7 +96,7 @@ interface GatesExecutionConfig {
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === 'object' && !Array.isArray(value)
+  return value && typeof value === VALUE_TYPES.OBJECT && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : null;
 }
@@ -114,18 +149,18 @@ function parseGateCommand(
     return null;
   }
 
-  if (typeof config === 'string') {
+  if (isStringCommand(config)) {
     return {
       command: config,
       continueOnError: false,
-      timeout: DEFAULT_TIMEOUT,
+      timeout: ACTION_DEFAULTS.COMMAND_TIMEOUT_MS,
     };
   }
 
   return {
     command: config.command,
     continueOnError: config.continueOnError ?? false,
-    timeout: config.timeout ?? DEFAULT_TIMEOUT,
+    timeout: config.timeout ?? ACTION_DEFAULTS.COMMAND_TIMEOUT_MS,
   };
 }
 
@@ -143,26 +178,26 @@ function expandPreset(preset: string | undefined): Partial<GatesExecutionConfig>
  * Auto-detect project type based on files present
  */
 function autoDetectPreset(workingDir: string): string | null {
-  if (fs.existsSync(path.join(workingDir, 'package.json'))) {
-    return 'node';
+  if (fs.existsSync(path.join(workingDir, PROJECT_MARKERS.NODE))) {
+    return PRESET_NAMES.NODE;
   }
   if (
-    fs.existsSync(path.join(workingDir, 'pyproject.toml')) ||
-    fs.existsSync(path.join(workingDir, 'setup.py'))
+    fs.existsSync(path.join(workingDir, PROJECT_MARKERS.PYPROJECT)) ||
+    fs.existsSync(path.join(workingDir, PROJECT_MARKERS.SETUP_PY))
   ) {
-    return 'python';
+    return PRESET_NAMES.PYTHON;
   }
-  if (fs.existsSync(path.join(workingDir, 'go.mod'))) {
-    return 'go';
+  if (fs.existsSync(path.join(workingDir, PROJECT_MARKERS.GO_MOD))) {
+    return PRESET_NAMES.GO;
   }
-  if (fs.existsSync(path.join(workingDir, 'Cargo.toml'))) {
-    return 'rust';
+  if (fs.existsSync(path.join(workingDir, PROJECT_MARKERS.CARGO_TOML))) {
+    return PRESET_NAMES.RUST;
   }
   if (
-    fs.existsSync(path.join(workingDir, '*.csproj')) ||
-    fs.existsSync(path.join(workingDir, '*.sln'))
+    hasFileWithSuffix(workingDir, PROJECT_MARKERS.DOTNET_PROJECT_SUFFIX) ||
+    hasFileWithSuffix(workingDir, PROJECT_MARKERS.DOTNET_SOLUTION_SUFFIX)
   ) {
-    return 'dotnet';
+    return PRESET_NAMES.DOTNET;
   }
   return null;
 }
@@ -179,7 +214,7 @@ function loadGatesConfig(workingDir: string): GatesExecutionConfig | null {
   }
 
   try {
-    const content = fs.readFileSync(configPath, 'utf8');
+    const content = fs.readFileSync(configPath, FILE_ENCODING.UTF8);
     const data = asRecord(yaml.parse(content));
     const softwareDelivery = data ? asRecord(data[WORKSPACE_V2_KEYS.SOFTWARE_DELIVERY]) : null;
     const gates = softwareDelivery
@@ -260,7 +295,7 @@ async function run(): Promise<void> {
   try {
     // Get inputs
     const token = core.getInput('token', { required: true });
-    const workingDir = core.getInput('working-directory') || '.';
+    const workingDir = core.getInput('working-directory') || ACTION_DEFAULTS.WORKING_DIRECTORY;
     const skipFormat = core.getBooleanInput('skip-format');
     const skipLint = core.getBooleanInput('skip-lint');
     const skipTypecheck = core.getBooleanInput('skip-typecheck');
@@ -297,7 +332,7 @@ async function run(): Promise<void> {
       }
     } else {
       core.info('Using config-driven gates');
-      core.setOutput('preset-detected', config.preset || 'config');
+      core.setOutput('preset-detected', config.preset || ACTION_DEFAULTS.CONFIG_PRESET_LABEL);
     }
 
     // Run setup if configured
@@ -394,4 +429,4 @@ async function run(): Promise<void> {
 }
 
 // Run the action
-run();
+void run();
