@@ -218,8 +218,8 @@ Supported mismatch fixes:
 
 ## Configuration
 
-| Command                                           | Description                                             |
-| ------------------------------------------------- | ------------------------------------------------------- |
+| Command                                           | Description                                     |
+| ------------------------------------------------- | ----------------------------------------------- |
 | `pnpm config:get --key <dotpath>`                 | Read a value from `workspace.yaml`              |
 | `pnpm config:set --key <dotpath> --value <value>` | Set a value in `workspace.yaml` (Zod-validated) |
 
