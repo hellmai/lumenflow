@@ -17,10 +17,12 @@ acceptance:
   - pnpm gates passes
 code_paths:
   - docs/04-operations/_frameworks/
-test_paths:
+tests:
   manual:
     - Verify wu:claim creates worktree
     - Verify wu:done merges and stamps
+  unit: []
+  e2e: []
 assigned_to: tom@hellm.ai
 created: 2026-01-18
 notes: |
