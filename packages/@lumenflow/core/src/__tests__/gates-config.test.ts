@@ -24,8 +24,10 @@ import {
   loadGatesConfig,
   getDefaultGatesConfig,
   GATE_PRESETS,
+  GATES_RUNTIME_DEFAULTS,
   loadLaneHealthConfig,
 } from '../gates-config.js';
+import { WORKSPACE_CONFIG_FILE_NAME } from '../config-contract.js';
 import {
   resolveWuDonePreCommitGateDecision,
   WU_DONE_PRE_COMMIT_GATE_DECISION_REASONS,
@@ -39,7 +41,7 @@ const TEST_COMMANDS = {
   DOTNET_TEST: 'dotnet test',
 } as const;
 
-const WORKSPACE_CONFIG_FILE = 'workspace.yaml';
+const WORKSPACE_CONFIG_FILE = WORKSPACE_CONFIG_FILE_NAME;
 
 function workspaceConfigFromSoftwareDelivery(softwareDeliveryYaml: string): string {
   const trimmed = softwareDeliveryYaml.trim();
@@ -184,13 +186,19 @@ describe('gates-config', () => {
   });
 
   describe('parseGateCommand', () => {
+    it('exports named runtime defaults for timeout and coverage', () => {
+      expect(GATES_RUNTIME_DEFAULTS.COMMAND_TIMEOUT_MS).toBeGreaterThan(0);
+      expect(GATES_RUNTIME_DEFAULTS.MAX_ESLINT_WARNINGS).toBeGreaterThanOrEqual(0);
+      expect(GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE).toBeGreaterThanOrEqual(0);
+    });
+
     it('should parse string command to executable form', () => {
       const result = parseGateCommand(TEST_COMMANDS.LINT);
 
       expect(result).toEqual({
         command: TEST_COMMANDS.LINT,
         continueOnError: false,
-        timeout: 120000, // default 2 minutes
+        timeout: GATES_RUNTIME_DEFAULTS.COMMAND_TIMEOUT_MS,
       });
     });
 
@@ -213,7 +221,7 @@ describe('gates-config', () => {
         command: 'go test ./...',
       });
 
-      expect(result.timeout).toBe(120000);
+      expect(result.timeout).toBe(GATES_RUNTIME_DEFAULTS.COMMAND_TIMEOUT_MS);
     });
 
     it('should return null for undefined command', () => {
@@ -603,7 +611,7 @@ gates:
 
       const result = resolveCoverageConfig(policyTestDir);
 
-      expect(result.threshold).toBe(90);
+      expect(result.threshold).toBe(GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE);
       expect(result.mode).toBe('block');
     });
 
@@ -616,7 +624,7 @@ methodology:
 
       const result = resolveCoverageConfig(policyTestDir);
 
-      expect(result.threshold).toBe(90);
+      expect(result.threshold).toBe(GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE);
       expect(result.mode).toBe('block');
     });
 
@@ -672,7 +680,7 @@ methodology:
 
       const result = resolveCoverageConfig(policyTestDir);
 
-      expect(result.threshold).toBe(90); // Still TDD default threshold
+      expect(result.threshold).toBe(GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE); // Still TDD default threshold
       expect(result.mode).toBe('warn');
     });
 
@@ -704,7 +712,7 @@ gates:
 
       const result = resolveCoverageConfig(policyTestDir);
 
-      expect(result.threshold).toBe(90); // TDD threshold still applies
+      expect(result.threshold).toBe(GATES_RUNTIME_DEFAULTS.DEFAULT_MIN_COVERAGE); // TDD threshold still applies
       expect(result.mode).toBe('off'); // Explicit gates override wins
     });
 

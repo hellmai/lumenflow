@@ -23,6 +23,7 @@ import {
 } from './lumenflow-config-schema.js';
 import { WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
 import { normalizeConfigKeys } from './normalize-config-keys.js';
+import { asRecord } from './object-guards.js';
 
 /** Canonical workspace config file name (workspace-first architecture) */
 export { WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
@@ -72,11 +73,7 @@ let cachedProjectRoot: string | null = null;
  * @returns Parsed object record, or null when parsed content is not an object
  */
 function parseYamlRecord(content: string): Record<string, unknown> | null {
-  const parsed = yaml.parse(content);
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    return null;
-  }
-  return parsed as Record<string, unknown>;
+  return asRecord(yaml.parse(content));
 }
 
 /**
