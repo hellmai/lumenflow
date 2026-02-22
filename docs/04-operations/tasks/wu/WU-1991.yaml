@@ -2,7 +2,7 @@ id: WU-1991
 title: Burn down @lumenflow/web lint warnings and restore gates
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -31,8 +31,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Eliminate current @lumenflow/web lint warnings (React advisory, security, and hook/key warnings) so lint --max-warnings 0 passes cleanly and full gates are unblocked.
+description: Eliminate current @lumenflow/web lint warnings (React advisory, security, and hook/key
+  warnings) so lint --max-warnings 0 passes cleanly and full gates are unblocked.
 acceptance:
   - pnpm --filter @lumenflow/web lint passes with zero warnings
   - Security/hook/key warnings resolved in runtime and component code
   - Any rule scoping for generated UI primitives is documented and minimized
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-tooling-wu-1991
+claimed_at: 2026-02-22T00:24:34.333Z
+baseline_main_sha: 04231a97fa37efb1e684bd059f52c9d7a3e151ce
+session_id: 62cdc590-db7c-44a8-a5ad-0ed182be2cc1
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T00:24:34.343Z

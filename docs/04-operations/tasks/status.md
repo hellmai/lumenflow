@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1991 — Burn down @lumenflow/web lint warnings and restore gates](wu/WU-1991.yaml)
 
 ## Completed
 
