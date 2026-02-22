@@ -17,7 +17,9 @@ describe('runtime CLI adapter', () => {
         ({
           main: async () => {
             capturedArgv.push([...process.argv]);
+            // eslint-disable-next-line no-console -- verifies adapter captures console stdout.
             console.log('stdout line');
+            // eslint-disable-next-line no-console -- verifies adapter captures console stderr.
             console.error('stderr line');
           },
         }) satisfies RuntimeCliModule,
