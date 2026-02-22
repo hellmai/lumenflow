@@ -1,0 +1,42 @@
+id: WU-2008
+title: Remove remaining direct process.exit usage from core modules
+lane: 'Framework: Core Lifecycle'
+type: refactor
+status: ready
+priority: P2
+created: 2026-02-22
+code_paths:
+  - packages/@lumenflow/core/src/prompt-monitor.ts
+  - packages/@lumenflow/core/src/prompt-linter.ts
+  - packages/@lumenflow/core/src/cli/is-agent-branch.ts
+  - packages/@lumenflow/core/src/stream-error-handler.ts
+  - packages/@lumenflow/core/src/error-handler.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/core/src/__tests__/prompt-monitor.test.ts
+    - packages/@lumenflow/core/src/__tests__/prompt-linter.test.ts
+    - packages/@lumenflow/core/src/__tests__/stream-error-handler.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2008.done
+dependencies: []
+initiative: INIT-020
+phase: 16
+spec_refs:
+  - docs/04-operations/tasks/initiatives/INIT-020.yaml
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: INIT-020 success metric states core library modules no longer call process.exit directly, but prompt-monitor, prompt-linter, is-agent-branch, and stream-error-handler still invoke process.exit paths. Problem: core package remains responsible for process termination semantics that should live at CLI edges. Solution: replace direct process.exit with typed exit errors/return codes and inject exit handlers only at CLI wrappers.'
+acceptance:
+  - prompt-monitor.ts, prompt-linter.ts, is-agent-branch.ts, and stream-error-handler.ts do not call process.exit directly in core runtime paths.
+  - Core APIs return/throw typed exit intent that CLI entrypoints map to process exit.
+  - Regression tests verify equivalent exit codes and failure messaging at CLI boundary.
