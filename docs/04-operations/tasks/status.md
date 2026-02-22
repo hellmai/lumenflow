@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2006 — Hard-delete legacy .lumenflow.config.yaml and remediate runtime readers to workspace.yaml v2](wu/WU-2006.yaml)
 
 ## Completed
 

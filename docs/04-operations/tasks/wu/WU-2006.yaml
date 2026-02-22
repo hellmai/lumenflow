@@ -2,7 +2,7 @@ id: WU-2006
 title: Hard-delete legacy .lumenflow.config.yaml and remediate runtime readers to workspace.yaml v2
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -53,3 +53,11 @@ acceptance:
     checks, bootstrap/init surfaces, action/tool wrappers) resolve from workspace.yaml v2 schema.
   - Regression tests cover delete-first behavior and fail-fast guidance when workspace.yaml is
     absent/invalid.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2006
+claimed_at: 2026-02-22T08:51:30.892Z
+baseline_main_sha: 04520747987c19ffeccb976c6605c263e827ac81
+session_id: 6b8d8557-5664-4416-b84b-f6a992c88336
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T08:51:30.897Z
