@@ -64,11 +64,7 @@ export function runGit(
   };
 }
 
-function runCommand(
-  command: string,
-  args: string[],
-  options: { cwd?: string },
-): GitCommandResult {
+function runCommand(command: string, args: string[], options: { cwd?: string }): GitCommandResult {
   try {
     const stdout = execFileSync(command, args, {
       cwd: options.cwd,
