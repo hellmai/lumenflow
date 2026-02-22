@@ -6,6 +6,7 @@ _Last updated: 2026-02-22_
 
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml)
 - [WU-2043 — Add unit tests for INIT-034 decomposed sub-modules and strategy patterns](wu/WU-2043.yaml)
+- [WU-2045 — Fix upgrade docs Steps markup build failure](wu/WU-2045.yaml)
 
 ## Completed
 

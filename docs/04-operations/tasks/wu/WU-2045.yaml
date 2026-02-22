@@ -2,7 +2,7 @@ id: WU-2045
 title: Fix upgrade docs Steps markup build failure
 lane: 'Content: Framework Docs'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-22
 code_paths:
@@ -26,8 +26,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: apps/docs build fails with AstroUserError because the Starlight <Steps> component in getting-started/upgrade.mdx contains multiple child elements (<ol>, code block div, <ol>) instead of a single ordered list. Problem: docs build is red on main, blocking reliable docs verification and release confidence. Solution: rewrite the upgrade guide Steps block to valid Starlight structure (single <ol> child with code blocks nested within list items), then verify docs build succeeds.'
+description: 'Context: apps/docs build fails with AstroUserError because the Starlight <Steps>
+  component in getting-started/upgrade.mdx contains multiple child elements (<ol>, code block div,
+  <ol>) instead of a single ordered list. Problem: docs build is red on main, blocking reliable docs
+  verification and release confidence. Solution: rewrite the upgrade guide Steps block to valid
+  Starlight structure (single <ol> child with code blocks nested within list items), then verify
+  docs build succeeds.'
 acceptance:
-  - apps/docs/src/content/docs/getting-started/upgrade.mdx uses valid Starlight <Steps> structure (single ordered list child).
-  - pnpm --filter @lumenflow/docs build succeeds without the current AstroUserError in getting-started/upgrade.
+  - apps/docs/src/content/docs/getting-started/upgrade.mdx uses valid Starlight <Steps> structure
+    (single ordered list child).
+  - pnpm --filter @lumenflow/docs build succeeds without the current AstroUserError in
+    getting-started/upgrade.
   - No regressions in the upgrade guide sequence/content after markup normalization.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-2045
+claimed_at: 2026-02-22T16:29:09.535Z
+baseline_main_sha: 40b88e7cb3a873dea9bc7760bc55469c6288479e
+session_id: 81aa5917-ee93-4ea8-9ae0-4a5fc8ffef51
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T16:29:09.542Z
