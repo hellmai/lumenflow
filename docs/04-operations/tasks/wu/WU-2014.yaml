@@ -2,7 +2,7 @@ id: WU-2014
 title: Decompose wu-done-worktree.ts (1777 lines)
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -30,9 +30,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Split wu-done-worktree.ts (1777 lines) into focused modules: wu-done-merge.ts (atomic merge operations), wu-done-cleanup.ts (worktree/branch cleanup after merge), wu-done-validators.ts (pre-merge validation checks). This is the hottest code path — every WU completion flows through it.'
+description: 'Split wu-done-worktree.ts (1777 lines) into focused modules: wu-done-merge.ts (atomic
+  merge operations), wu-done-cleanup.ts (worktree/branch cleanup after merge), wu-done-validators.ts
+  (pre-merge validation checks). This is the hottest code path — every WU completion flows through
+  it.'
 acceptance:
   - wu-done-worktree.ts reduced to under 500 lines
   - Each extracted module has single responsibility
   - All existing wu-done tests pass without modification
   - wu:done end-to-end workflow unchanged
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2014
+claimed_at: 2026-02-22T15:11:31.787Z
+baseline_main_sha: dce17f4ee258961579838e42ceac66e505c28e73
+session_id: a6e5e991-d861-4a88-b4c4-8132adc82e13
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T15:11:31.794Z
