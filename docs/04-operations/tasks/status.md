@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1994 — Eliminate React act warnings in web test suite](wu/WU-1994.yaml)
 
 ## Completed
 
