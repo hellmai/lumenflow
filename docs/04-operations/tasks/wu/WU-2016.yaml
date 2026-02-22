@@ -2,7 +2,7 @@ id: WU-2016
 title: Split lumenflow-config-schema.ts into per-section schemas (1564 lines)
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -51,3 +51,6 @@ acceptance:
   - Each section schema is independently importable
   - Full LumenFlowConfig type is backward-compatible (intersection of sections)
   - All existing tests pass without modification
+locked: true
+completed_at: 2026-02-22T16:12:32.887Z
+completed: 2026-02-22
