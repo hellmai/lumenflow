@@ -115,6 +115,36 @@ function getWUBlockers(doc: WUDoc): string[] {
   return asStringArray(doc.dependencies);
 }
 
+function hasPhaseWUStatus(phaseWUs: Array<{ id: string; doc: WUDoc }>, status: string): boolean {
+  return phaseWUs.some((wu) => normalizeLifecycleStatus(wu.doc.status) === status);
+}
+
+function areAllPhaseWUsDone(phaseWUs: Array<{ id: string; doc: WUDoc }>): boolean {
+  return (
+    phaseWUs.length > 0 &&
+    phaseWUs.every((wu) => normalizeLifecycleStatus(wu.doc.status) === WU_STATUS.DONE)
+  );
+}
+
+export function deriveInitiativePhaseStatus(
+  status: unknown,
+  phaseWUs: Array<{ id: string; doc: WUDoc }>,
+): string {
+  if (areAllPhaseWUsDone(phaseWUs)) {
+    return WU_STATUS.DONE;
+  }
+  if (hasPhaseWUStatus(phaseWUs, WU_STATUS.IN_PROGRESS)) {
+    return WU_STATUS.IN_PROGRESS;
+  }
+  if (hasPhaseWUStatus(phaseWUs, WU_STATUS.BLOCKED)) {
+    return WU_STATUS.BLOCKED;
+  }
+  if (hasPhaseWUStatus(phaseWUs, WU_STATUS.READY)) {
+    return WU_STATUS.READY;
+  }
+  return normalizeLifecycleStatus(status) || WU_STATUS.IN_PROGRESS;
+}
+
 function priorityRank(priority: unknown): number {
   const p = String(priority || '').toUpperCase();
   const map: Record<'P0' | 'P1' | 'P2' | 'P3', number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
@@ -205,7 +235,7 @@ function renderDetailed(initiative: InitiativeEntry, useColor: boolean): void {
     console.log('\nPhases:');
     for (const phase of phases) {
       const phaseWUs = phaseGroups.get(phase.id) || [];
-      const phaseStatus = formatStatus(normalizeLifecycleStatus(phase.status), useColor);
+      const phaseStatus = formatStatus(deriveInitiativePhaseStatus(phase.status, phaseWUs), useColor);
       const phaseTitle = asString(phase.title) || `Phase ${phase.id}`;
       console.log(
         `  ${phase.id}. ${phaseTitle.padEnd(30)} [${phaseStatus}] ${phaseWUs.length} WUs`,
@@ -276,10 +306,11 @@ function renderJSON(initiative: InitiativeEntry): void {
     },
     phases: phases.map((phase) => {
       const phaseWUs = phaseGroups.get(phase.id) || [];
+      const phaseStatus = deriveInitiativePhaseStatus(phase.status, phaseWUs);
       return {
         id: phase.id,
         title: asString(phase.title),
-        status: normalizeLifecycleStatus(phase.status),
+        status: phaseStatus,
         wuCount: phaseWUs.length,
         wus: phaseWUs.map((w) => ({
           id: w.id,

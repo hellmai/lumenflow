@@ -3,7 +3,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { WU_STATUS } from '@lumenflow/core/wu-constants';
-import { deriveInitiativeLifecycleStatus } from '../initiative-status.js';
+import { deriveInitiativeLifecycleStatus, deriveInitiativePhaseStatus } from '../initiative-status.js';
 
 describe('deriveInitiativeLifecycleStatus', () => {
   it('downgrades done to in_progress when UnsafeAny phase is incomplete', () => {
@@ -35,6 +35,17 @@ describe('deriveInitiativeLifecycleStatus', () => {
       [{ id: 1, status: WU_STATUS.DONE }],
       { done: 3, total: 3 },
     );
+
+    expect(status).toBe(WU_STATUS.DONE);
+  });
+});
+
+describe('deriveInitiativePhaseStatus', () => {
+  it('upgrades phase status to done when every phase WU is done', () => {
+    const status = deriveInitiativePhaseStatus('pending', [
+      { id: 'WU-1', doc: { status: WU_STATUS.DONE } },
+      { id: 'WU-2', doc: { status: WU_STATUS.DONE } },
+    ]);
 
     expect(status).toBe(WU_STATUS.DONE);
   });
