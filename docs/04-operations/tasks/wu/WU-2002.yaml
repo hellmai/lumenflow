@@ -8,7 +8,9 @@ created: 2026-02-22
 code_paths:
   - packages/@lumenflow/cli/__tests__/lane-health.test.ts
 tests:
-  manual: []
+  manual:
+    - Run pnpm --filter @lumenflow/cli test and confirm lane-health detectCoverageGaps assertions
+      remain stable
   unit:
     - packages/@lumenflow/cli/__tests__/lane-health.test.ts
   e2e: []
@@ -25,7 +27,10 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Full wu:done gate runs intermittently fail in packages/@lumenflow/cli/__tests__/lane-health.test.ts (detectCoverageGaps expectation) when executed inside the full turbo test matrix, while isolated runs pass. Stabilize mocking/import state so the suite is deterministic in full runs.
+description: Full wu:done gate runs intermittently fail in
+  packages/@lumenflow/cli/__tests__/lane-health.test.ts (detectCoverageGaps expectation) when
+  executed inside the full turbo test matrix, while isolated runs pass. Stabilize mocking/import
+  state so the suite is deterministic in full runs.
 acceptance:
   - lane-health detectCoverageGaps tests pass deterministically in full turbo test matrix
   - pnpm --filter @lumenflow/cli test no longer flakes on lane-health expectations
