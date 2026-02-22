@@ -13,7 +13,7 @@
  * - spawn-guidance-generators.ts: Test methodology and architecture guidance
  * - spawn-policy-resolver.ts: Mandatory standards, enforcement summary, telemetry
  * - spawn-constraints-generator.ts: Constraints block generation
- * - spawn-sections.ts: WU doc formatting helpers and structural prompt sections
+ * - spawn-prompt-helpers.ts: WU doc formatting helpers (acceptance, invariants, agents)
  * - spawn-agent-guidance.ts: Agent operational guidance sections
  * - spawn-task-builder.ts: Task invocation and Codex prompt assembly
  * - spawn-lane-occupation.ts: Lane occupation checking and warnings
@@ -73,8 +73,8 @@ export {
   emitMethodologyTelemetry,
 } from './spawn-policy-resolver.js';
 
-// From spawn-sections (WU doc formatting and structural sections)
-export { generateWorktreeBlockRecoverySection } from './spawn-sections.js';
+// From spawn-guidance-generators (worktree recovery guidance)
+export { generateWorktreeBlockRecoverySection } from './spawn-guidance-generators.js';
 
 // From spawn-agent-guidance (agent operational guidance)
 export {
