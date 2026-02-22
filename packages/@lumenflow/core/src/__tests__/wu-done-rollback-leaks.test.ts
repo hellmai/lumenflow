@@ -69,7 +69,8 @@ describe('legacy rollback helper removal (AC2, AC3)', () => {
   });
 
   it('does not include UnsafeAny placeholder text in behind-main abort messaging', async () => {
-    const source = await readFile(new URL('../wu-done-worktree.ts', import.meta.url), 'utf-8');
+    // WU-2014: ensureMainNotBehindOrigin extracted to wu-done-main-sync.ts
+    const source = await readFile(new URL('../wu-done-main-sync.ts', import.meta.url), 'utf-8');
     expect(source).toContain('wu:done aborted BEFORE file writes to prevent metadata leaks');
     expect(source).not.toContain('wu:done aborted BEFORE UnsafeAny writes');
   });
@@ -80,7 +81,8 @@ describe('legacy rollback helper removal (AC2, AC3)', () => {
 // ---------------------------------------------------------------------------
 describe('worktree merge orchestration (AC5)', () => {
   it('routes merge+push through withAtomicMerge and no longer wires preMainMergeSha rollback path', async () => {
-    const source = await readFile(new URL('../wu-done-worktree.ts', import.meta.url), 'utf-8');
+    // WU-2014: merge phase extracted to wu-done-merge-phase.ts
+    const source = await readFile(new URL('../wu-done-merge-phase.ts', import.meta.url), 'utf-8');
 
     expect(source).toContain('withAtomicMerge(');
     expect(source).not.toContain('preMainMergeSha =');
