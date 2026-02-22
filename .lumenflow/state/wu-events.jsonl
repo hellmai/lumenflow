@@ -2015,3 +2015,4 @@
 {"type":"complete","wuId":"WU-2014","timestamp":"2026-02-22T15:41:52.036Z"}
 {"type":"claim","wuId":"WU-2042","timestamp":"2026-02-22T15:55:29.514Z","lane":"Framework: Core Lifecycle","title":"Finalize kernel-first parity in tests and docs"}
 {"type":"complete","wuId":"WU-2037","timestamp":"2026-02-22T15:57:52.324Z"}
+{"type":"claim","wuId":"WU-2020","lane":"Framework: Core Lifecycle","title":"Inject WUStateStore via interfaces and replace getConfig() calls","timestamp":"2026-02-22T16:01:15.561Z"}

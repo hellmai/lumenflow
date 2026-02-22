@@ -25,7 +25,6 @@ sections:
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — Framework: CLI Orchestration
 - [WU-2008 — Remove remaining direct process.exit usage from core modules](wu/WU-2008.yaml) — Framework: Core Lifecycle
 - [WU-2009 — Add claim-validation gate for absolute acceptance criteria drift](wu/WU-2009.yaml) — Framework: Core Validation
-- [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — Framework: Core Lifecycle
 - [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml) — Framework: Core Validation
 - [WU-2043 — Add unit tests for INIT-034 decomposed sub-modules and strategy patterns](wu/WU-2043.yaml) — Framework: Core Validation
 - [WU-2044 — Constants consolidation round 2: DRY violations from INIT-034 audit](wu/WU-2044.yaml) — Framework: Core Validation
@@ -34,6 +33,7 @@ sections:
 
 - [WU-2016 — Split lumenflow-config-schema.ts into per-section schemas (1564 lines)](wu/WU-2016.yaml) — Framework: Core Validation
 - [WU-2042 — Finalize kernel-first parity in tests and docs](wu/WU-2042.yaml) — Framework: Core Lifecycle
+- [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 

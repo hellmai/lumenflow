@@ -2,7 +2,7 @@ id: WU-2020
 title: Inject WUStateStore via interfaces and replace getConfig() calls
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -49,3 +49,11 @@ acceptance:
   - All existing tests pass
   - gates-config.ts TestPolicy interface split into focused interfaces (CoveragePolicy,
     TestRunnerPolicy)
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2020
+claimed_at: 2026-02-22T16:01:15.534Z
+baseline_main_sha: 0c3f64632f80a2cc5cec927dc391f6414dca3c62
+session_id: fbb0c10d-5c0b-4cdd-a53d-595d5e9f866c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T16:01:15.538Z
