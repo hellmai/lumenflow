@@ -2,7 +2,7 @@ id: WU-2004
 title: Reconcile completed initiatives still marked in_progress
 lane: 'Content: Specs Governance'
 type: documentation
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -49,3 +49,6 @@ session_id: 47082c71-cf31-4e36-b76e-6b66b8caf7a3
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T03:57:00.565Z
+locked: true
+completed_at: 2026-02-22T03:59:41.154Z
+completed: 2026-02-22
