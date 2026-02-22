@@ -145,6 +145,14 @@ describe('wu-done', () => {
     });
   });
 
+  describe('WU-2001: root Vitest workspace export alias coverage', () => {
+    it('resolves memory signal subpath exports in root Vitest runs', async () => {
+      const signalModule = await import('@lumenflow/memory/signal');
+      expect(typeof signalModule.loadSignals).toBe('function');
+      expect(typeof signalModule.markSignalsAsRead).toBe('function');
+    });
+  });
+
   // WU-1494: Verify --pr-draft is accepted by wu:done arg parser
   describe('--pr-draft parser/help parity (WU-1494)', () => {
     let originalArgv: string[];
