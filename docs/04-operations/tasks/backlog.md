@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2040 — Fix pre-existing agent-verification wuDir expectation regression](wu/WU-2040.yaml) — Framework: Core Validation
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — Framework: CLI Orchestration
@@ -33,12 +32,12 @@ sections:
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — Framework: Core Lifecycle
 - [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml) — Framework: Core Validation
 - [WU-2037 — Decompose gates-config.ts (856 lines, 9 responsibilities)](wu/WU-2037.yaml) — Framework: Core Validation
+- [WU-2040 — Fix pre-existing agent-verification wuDir expectation regression](wu/WU-2040.yaml) — Framework: Core Validation
 
 ## 🔧 In progress
 
 - [WU-2010 — Extract magic numbers into named constants (core kernel)](wu/WU-2010.yaml) — Framework: Core Validation
 - [WU-2012 — Decompose wu-spawn.ts god object (2342 lines)](wu/WU-2012.yaml) — Framework: Core Lifecycle
-- [WU-2039 — Eliminate magic literals in workspace-first config surfaces](wu/WU-2039.yaml) — Framework: Core Lifecycle
 - [WU-2015 — Decompose wu-consistency-checker.ts (1255 lines)](wu/WU-2015.yaml) — Framework: Core Lifecycle
 - [WU-2017 — Replace invariant type dispatch with strategy pattern](wu/WU-2017.yaml) — Framework: Core Validation
 
@@ -991,6 +990,7 @@ sections:
 - [WU-2036 — Complete 100% kernel-first hard cut and docs parity](wu/WU-2036.yaml)
 - [WU-2011 — Extract magic numbers in CLI package (@lumenflow/cli)](wu/WU-2011.yaml)
 - [WU-2013 — Decompose wu-state-store.ts into focused services (1274 lines)](wu/WU-2013.yaml)
+- [WU-2039 — Eliminate magic literals in workspace-first config surfaces](wu/WU-2039.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
