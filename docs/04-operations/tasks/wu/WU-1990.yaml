@@ -8,7 +8,6 @@ created: 2026-02-22
 code_paths:
   - apps/web/__tests__/workspace-selector.test.tsx
   - apps/web/src/components/workspace-selector.tsx
-  - apps/web/next-env.d.ts
   - .prettierignore
 tests:
   manual:
