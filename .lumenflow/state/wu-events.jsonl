@@ -2047,3 +2047,4 @@
 {"type":"claim","wuId":"WU-2046","timestamp":"2026-02-22T22:24:59.075Z","lane":"Framework: CLI WU Commands","title":"Fix pre-existing wu-spawn.test.ts failures"}
 {"type":"complete","wuId":"WU-2046","timestamp":"2026-02-22T22:42:46.682Z"}
 {"type":"claim","wuId":"WU-2021","timestamp":"2026-02-22T22:44:34.220Z","lane":"Framework: Core Validation","title":"Filter deleted files from incremental format check input"}
+{"type":"complete","wuId":"WU-2021","timestamp":"2026-02-22T22:51:33.360Z"}
