@@ -2,7 +2,7 @@ id: WU-1702
 title: 'Emergency: remove domain-specific code from CLI and MCP packages'
 lane: 'Framework: CLI Enforcement'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -42,3 +42,6 @@ description: Remove all domain-specific-specific code from the @lumenflow/cli an
   packages. The repo was open-sourced with domain-specific code that does not belong.
 acceptance:
   - No domain-specific references in CLI or MCP packages
+locked: true
+completed_at: 2026-02-22T01:53:53.868Z
+completed: 2026-02-22

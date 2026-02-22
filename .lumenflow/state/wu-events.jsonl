@@ -1948,4 +1948,5 @@
 {"type":"complete","wuId":"WU-1960","timestamp":"2026-02-22T01:30:24.667Z"}
 {"type":"claim","wuId":"WU-1701","timestamp":"2026-02-22T01:33:28.272Z","lane":"Framework: Core Validation","title":"Emergency cleanup: remove domain-specific code from core package"}
 {"type":"complete","wuId":"WU-1701","timestamp":"2026-02-22T01:40:32.496Z"}
-{"type":"claim","wuId":"WU-1702","lane":"Framework: CLI Enforcement","title":"Emergency: remove domain-specific code from CLI and MCP packages","timestamp":"2026-02-22T01:41:45.260Z"}
+{"type":"claim","wuId":"WU-1702","timestamp":"2026-02-22T01:41:45.260Z","lane":"Framework: CLI Enforcement","title":"Emergency: remove domain-specific code from CLI and MCP packages"}
+{"type":"complete","wuId":"WU-1702","timestamp":"2026-02-22T01:53:58.859Z"}
