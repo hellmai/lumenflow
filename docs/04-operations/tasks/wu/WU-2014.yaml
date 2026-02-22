@@ -7,8 +7,14 @@ priority: P2
 created: 2026-02-22
 code_paths:
   - packages/@lumenflow/core/src/wu-done-worktree.ts
-  - packages/@lumenflow/core/src/wu-done-worktree-services.ts
-  - packages/@lumenflow/core/src/wu-done-validators.ts
+  - packages/@lumenflow/core/src/wu-done-preflight-checks.ts
+  - packages/@lumenflow/core/src/wu-done-rebase.ts
+  - packages/@lumenflow/core/src/wu-done-merge.ts
+  - packages/@lumenflow/core/src/wu-done-merge-phase.ts
+  - packages/@lumenflow/core/src/wu-done-zombie-recovery.ts
+  - packages/@lumenflow/core/src/wu-done-error-handling.ts
+  - packages/@lumenflow/core/src/wu-done-main-sync.ts
+  - packages/@lumenflow/core/src/wu-done-utils.ts
 tests:
   manual:
     - Run pnpm gates from worktree — all tests pass
@@ -23,10 +29,17 @@ phase: 2
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-22T15:11:31.787Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2014
+session_id: a6e5e991-d861-4a88-b4c4-8132adc82e13
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T15:11:31.794Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +52,3 @@ acceptance:
   - Each extracted module has single responsibility
   - All existing wu-done tests pass without modification
   - wu:done end-to-end workflow unchanged
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2014
-claimed_at: 2026-02-22T15:11:31.787Z
-baseline_main_sha: dce17f4ee258961579838e42ceac66e505c28e73
-session_id: a6e5e991-d861-4a88-b4c4-8132adc82e13
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-22T15:11:31.794Z
