@@ -27,7 +27,6 @@ import {
   MethodologyConfigSchema,
   type CoverageMode,
 } from './resolve-policy.js';
-
 const DEFAULT_POLICY = getDefaultPolicy();
 
 export const GATES_RUNTIME_DEFAULTS = {

@@ -19,6 +19,9 @@ import { GatesExecutionConfigSchema } from './gates-config.js';
 // WU-1259: Import methodology config schema for resolvePolicy()
 import { MethodologyConfigSchema } from './resolve-policy.js';
 import { LUMENFLOW_CLIENT_IDS } from './wu-context-constants.js';
+// WU-2010: Import shared duration and gate constants
+import { DURATION_MS } from './constants/duration-constants.js';
+import { DEFAULT_MIN_COVERAGE, DEFAULT_MAX_ESLINT_WARNINGS } from './constants/gate-constants.js';
 
 export { WORKSPACE_V2_KEYS };
 
@@ -177,7 +180,7 @@ export const EventArchivalConfigSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(90 * 24 * 60 * 60 * 1000),
+    .default(DURATION_MS.NINETY_DAYS),
 
   /**
    * Whether to keep archive files (default: true).
@@ -480,13 +483,13 @@ export const WuConfigSchema = z.object({
  */
 export const GatesConfigSchema = z.object({
   /** Maximum ESLint warnings allowed (default: 100) */
-  maxEslintWarnings: z.number().int().nonnegative().default(100),
+  maxEslintWarnings: z.number().int().nonnegative().default(DEFAULT_MAX_ESLINT_WARNINGS),
 
   /** Enable coverage gate (default: true) */
   enableCoverage: z.boolean().default(true),
 
   /** Minimum coverage percentage (default: 90) */
-  minCoverage: z.number().min(0).max(100).default(90),
+  minCoverage: z.number().min(0).max(100).default(DEFAULT_MIN_COVERAGE),
 
   /** Enable safety-critical tests (default: true) */
   enableSafetyCriticalTests: z.boolean().default(true),
@@ -596,7 +599,7 @@ export const SignalCleanupConfigSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(7 * 24 * 60 * 60 * 1000),
+    .default(DURATION_MS.SEVEN_DAYS),
 
   /**
    * TTL for unread signals in milliseconds (default: 30 days).
@@ -606,7 +609,7 @@ export const SignalCleanupConfigSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(30 * 24 * 60 * 60 * 1000),
+    .default(DURATION_MS.THIRTY_DAYS),
 
   /**
    * Maximum number of signals to retain (default: 500).
@@ -762,14 +765,14 @@ export const MemoryConfigSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(7 * 24 * 60 * 60 * 1000),
+    .default(DURATION_MS.SEVEN_DAYS),
 
   /** Checkpoint TTL in milliseconds (default: 30 days) */
   checkpointTtl: z
     .number()
     .int()
     .positive()
-    .default(30 * 24 * 60 * 60 * 1000),
+    .default(DURATION_MS.THIRTY_DAYS),
 
   /** Enable auto-cleanup (default: true) */
   enableAutoCleanup: z.boolean().default(true),
