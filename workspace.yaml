@@ -425,6 +425,8 @@ software_delivery:
           - packages/@lumenflow/core/src/backlog-*.ts
           - packages/@lumenflow/core/src/dependency-*.ts
           - packages/@lumenflow/core/src/git-*.ts
+          - packages/@lumenflow/core/src/wu-consistency-*.ts
+          - packages/@lumenflow/core/src/wu-spawn*.ts
       - name: 'Framework: Core Validation'
         wip_limit: 2
         wip_justification: Validation/schema work can parallelize across separate
