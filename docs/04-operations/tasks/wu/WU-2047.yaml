@@ -2,7 +2,7 @@ id: WU-2047
 title: Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-22
 code_paths:
@@ -49,3 +49,11 @@ acceptance:
   - Pack tools execute via runtime-native handlers with parity tests updated and passing.
   - Guard tests fail on any reintroduction of CLI dist shell-out bridges in software-delivery
     tool-impl.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2047
+claimed_at: 2026-02-22T17:07:37.707Z
+baseline_main_sha: f6aeacbe95c505241210e5d7ac48051a43f798cb
+session_id: b54bd1bd-ae41-4314-b471-7c4428298bfa
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T17:07:37.714Z
