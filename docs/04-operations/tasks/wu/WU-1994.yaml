@@ -2,7 +2,7 @@ id: WU-1994
 title: Eliminate React act warnings in web test suite
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -28,8 +28,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Remove current React act warnings emitted by workspace connector and marketplace detail tests by making async state updates explicit and deterministic in tests.
+description: Remove current React act warnings emitted by workspace connector and marketplace detail
+  tests by making async state updates explicit and deterministic in tests.
 acceptance:
   - pnpm --filter @lumenflow/web test passes without React act warnings from touched tests
   - workspace connector tests remain behaviorally equivalent
   - marketplace install-command copy test remains behaviorally equivalent
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/operations-tooling-wu-1994
+claimed_at: 2026-02-22T00:55:12.540Z
+baseline_main_sha: 956e99584e66eb915f32fb99e31ff7538e93a81d
+session_id: 1e3d2be7-2fc5-43bb-b8ee-62719513965e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T00:55:12.545Z
