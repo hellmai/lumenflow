@@ -27,6 +27,7 @@ import { readFile } from 'node:fs/promises';
 import { parse as parseYaml } from 'yaml';
 import path from 'node:path';
 import { LOG_PREFIX, EMOJI, PROTECTED_WU_STATUSES, BRANCHES } from '@lumenflow/core/wu-constants';
+import { formatBytes } from './constants.js';
 
 /**
  * Get active WU IDs (in_progress or blocked) by scanning WU YAML files.
@@ -240,14 +241,4 @@ export async function commitCleanupChanges(
   }
 }
 
-/**
- * Format bytes as human-readable string
- */
-function formatBytes(bytes: number): string {
-  const BYTES_PER_KB = 1024;
-  if (bytes < BYTES_PER_KB) {
-    return `${bytes} B`;
-  }
-  const kb = (bytes / BYTES_PER_KB).toFixed(1);
-  return `${kb} KB`;
-}
+// WU-2044: formatBytes imported from ./constants.js

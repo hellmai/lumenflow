@@ -51,6 +51,7 @@ export {
 export { INLINE_KEYWORD_MAX_OFFSET } from './validation-constants.js';
 
 // WU-2010: Display constants (terminal-renderer.adapter.ts)
+// WU-2044: MS_PER_HOUR, MS_PER_MINUTE, MS_PER_SECOND now exported from duration-constants.ts
 export {
   SECTION_SEPARATOR_WIDTH,
   PROGRESS_BAR_WIDTH,
@@ -58,9 +59,6 @@ export {
   SECTION_HEADER_LINE_COUNT,
   PASS_RATE_GREEN_THRESHOLD,
   PASS_RATE_YELLOW_THRESHOLD,
-  MS_PER_HOUR,
-  MS_PER_MINUTE,
-  MS_PER_SECOND,
 } from './display-constants.js';
 
 // WU-2010: Gate threshold constants (gates-config.ts, lumenflow-config-schema.ts)
@@ -72,4 +70,11 @@ export {
 } from './gate-constants.js';
 
 // WU-2010: Duration constants (lumenflow-config-schema.ts)
-export { DURATION_MS } from './duration-constants.js';
+// WU-2044: Export primitive duration constants alongside DURATION_MS
+export {
+  MS_PER_SECOND,
+  MS_PER_MINUTE,
+  MS_PER_HOUR,
+  MS_PER_DAY,
+  DURATION_MS,
+} from './duration-constants.js';

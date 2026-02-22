@@ -39,6 +39,23 @@ export const WU_EVENT_TYPES = [
 export type WUEventType = (typeof WU_EVENT_TYPES)[number];
 
 /**
+ * WU Event Type constant object (WU-2044)
+ *
+ * Named constants for event type strings, analogous to WU_STATUS.
+ * Use WU_EVENT_TYPE.CLAIM instead of raw 'claim' strings.
+ */
+export const WU_EVENT_TYPE = Object.freeze({
+  CREATE: 'create' as const,
+  CLAIM: 'claim' as const,
+  BLOCK: 'block' as const,
+  UNBLOCK: 'unblock' as const,
+  COMPLETE: 'complete' as const,
+  CHECKPOINT: 'checkpoint' as const,
+  DELEGATION: 'delegation' as const,
+  RELEASE: 'release' as const,
+});
+
+/**
  * WU status values (matches LumenFlow state machine)
  */
 export const WU_STATUSES = ['ready', 'in_progress', 'blocked', 'waiting', 'done'] as const;

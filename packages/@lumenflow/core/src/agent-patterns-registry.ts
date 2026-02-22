@@ -17,6 +17,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { LUMENFLOW_PATHS } from './wu-constants.js';
+import { MS_PER_DAY } from './constants/duration-constants.js';
 
 /** Default agent branch patterns (narrow: just agent/*) */
 export const DEFAULT_AGENT_PATTERNS = ['agent/*'];
@@ -24,8 +25,8 @@ export const DEFAULT_AGENT_PATTERNS = ['agent/*'];
 /** Remote registry URL */
 export const REGISTRY_URL = 'https://lumenflow.dev/registry/agent-patterns.json';
 
-/** Cache TTL: 7 days in milliseconds */
-export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** Cache TTL: 7 days in milliseconds (WU-2044: uses canonical MS_PER_DAY) */
+export const CACHE_TTL_MS = 7 * MS_PER_DAY;
 
 /** Cache file name */
 const CACHE_FILE_NAME = 'agent-patterns-cache.json';

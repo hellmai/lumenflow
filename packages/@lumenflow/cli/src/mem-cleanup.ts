@@ -40,6 +40,8 @@ import { archiveByDecay } from '@lumenflow/memory/decay/archival';
 import { getConfig } from '@lumenflow/core/config';
 import { createWUParser } from '@lumenflow/core/arg-parser';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
+import { MS_PER_DAY } from '@lumenflow/core/constants/duration-constants';
+import { formatBytes } from './constants.js';
 import { runCLI } from './cli-entry-point.js';
 
 /**
@@ -52,10 +54,7 @@ const LOG_PREFIX = '[mem:cleanup]';
  */
 const TOOL_NAME = 'mem:cleanup';
 
-/**
- * Bytes per KB for formatting
- */
-const BYTES_PER_KB = 1024;
+// WU-2044: BYTES_PER_KB imported from ./constants.js
 
 /**
  * CLI argument options specific to mem:cleanup
@@ -121,19 +120,7 @@ async function writeAuditLog(baseDir: UnsafeAny, entry: UnsafeAny) {
   }
 }
 
-/**
- * Format bytes as human-readable string
- *
- * @param {number} bytes - Number of bytes
- * @returns {string} Formatted string (e.g., "1.5 KB")
- */
-function formatBytes(bytes: UnsafeAny) {
-  if (bytes < BYTES_PER_KB) {
-    return `${bytes} B`;
-  }
-  const kb = (bytes / BYTES_PER_KB).toFixed(1);
-  return `${kb} KB`;
-}
+// WU-2044: formatBytes imported from ./constants.js
 
 /**
  * Format compaction ratio as percentage
@@ -234,10 +221,7 @@ function printResult(result: UnsafeAny, quiet: UnsafeAny, ttl: UnsafeAny) {
   }
 }
 
-/**
- * WU-1474: Milliseconds per day for converting half_life_days to halfLifeMs
- */
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
+// WU-2044: MS_PER_DAY imported from @lumenflow/core/constants/duration-constants.js
 
 // WU-1548: Using LUMENFLOW_PATHS.MEMORY_DIR from wu-constants (consolidated)
 

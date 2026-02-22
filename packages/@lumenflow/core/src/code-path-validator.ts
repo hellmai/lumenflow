@@ -651,9 +651,8 @@ export async function validate(
 // that haven't migrated to the unified API yet.
 // ============================================================================
 
-interface WUDoc {
-  code_paths?: string[];
-}
+// WU-2044: Use canonical WUDocBase instead of local definition
+type WUDoc = Pick<import('./wu-doc-types.js').WUDocBase, 'code_paths'>;
 
 interface ExistOptions {
   targetBranch?: string;

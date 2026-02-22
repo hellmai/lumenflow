@@ -28,11 +28,6 @@ export const PASS_RATE_GREEN_THRESHOLD = 90;
 /** Pass rate threshold for yellow (warning) display colour */
 export const PASS_RATE_YELLOW_THRESHOLD = 50;
 
-/** Milliseconds per hour (for duration formatting) */
-export const MS_PER_HOUR = 1_000 * 60 * 60;
-
-/** Milliseconds per minute (for duration formatting) */
-export const MS_PER_MINUTE = 1_000 * 60;
-
-/** Milliseconds per second (for duration formatting) */
-export const MS_PER_SECOND = 1_000;
+// WU-2044: MS_PER_HOUR, MS_PER_MINUTE, MS_PER_SECOND consolidated into duration-constants.ts
+// Re-export from canonical location for backward compatibility
+export { MS_PER_HOUR, MS_PER_MINUTE, MS_PER_SECOND } from './duration-constants.js';

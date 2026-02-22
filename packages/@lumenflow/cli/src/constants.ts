@@ -102,8 +102,9 @@ export const LOG_TAIL_MAX_BYTES = 64 * 1024;
 
 // ── Time Conversion ───────────────────────────────────────────────────
 
-/** Milliseconds per hour (1000 ms * 60 s * 60 min) */
-export const MS_PER_HOUR = 1000 * 60 * 60;
+// WU-2044: MS_PER_HOUR consolidated into @lumenflow/core duration-constants.ts
+// Re-export from canonical location for backward compatibility
+export { MS_PER_HOUR } from '@lumenflow/core/constants/duration-constants';
 
 /** Factor for rounding to one decimal place */
 export const ONE_DECIMAL_ROUNDING_FACTOR = 10;
@@ -112,3 +113,24 @@ export const ONE_DECIMAL_ROUNDING_FACTOR = 10;
 
 /** Standard indentation for JSON.stringify pretty-print output */
 export const JSON_INDENT = 2;
+
+// ── Byte Formatting ──────────────────────────────────────────────────
+
+/** Bytes per kilobyte (WU-2044: consolidated from 4 CLI files) */
+export const BYTES_PER_KB = 1024;
+
+/**
+ * Format bytes as human-readable string.
+ * WU-2044: Consolidated from mem-cleanup.ts, signal-cleanup.ts,
+ * state-cleanup.ts, and wu-done-auto-cleanup.ts.
+ *
+ * @param bytes - Number of bytes
+ * @returns Formatted string (e.g., "1.5 KB")
+ */
+export function formatBytes(bytes: number): string {
+  if (bytes < BYTES_PER_KB) {
+    return `${bytes} B`;
+  }
+  const kb = (bytes / BYTES_PER_KB).toFixed(1);
+  return `${kb} KB`;
+}

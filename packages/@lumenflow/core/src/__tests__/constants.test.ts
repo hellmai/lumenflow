@@ -40,9 +40,6 @@ import {
   SECTION_HEADER_LINE_COUNT,
   PASS_RATE_GREEN_THRESHOLD,
   PASS_RATE_YELLOW_THRESHOLD,
-  MS_PER_HOUR,
-  MS_PER_MINUTE,
-  MS_PER_SECOND,
 
   // Gate constants
   GATE_CONFIG,
@@ -50,9 +47,16 @@ import {
   DEFAULT_MAX_ESLINT_WARNINGS,
   DEFAULT_GATE_TIMEOUT_MS,
 
-  // Duration constants
+  // Duration constants (WU-2044: primitives now exported)
+  MS_PER_SECOND,
+  MS_PER_MINUTE,
+  MS_PER_HOUR,
+  MS_PER_DAY,
   DURATION_MS,
 } from '../constants/index.js';
+
+// WU-2044: WU_EVENT_TYPE constant object
+import { WU_EVENT_TYPE, WU_EVENT_TYPES } from '../wu-state-schema.js';
 
 describe('WU-2010: Extracted constants', () => {
   describe('lock constants', () => {
@@ -155,6 +159,8 @@ describe('WU-2010: Extracted constants', () => {
       expect(MS_PER_SECOND).toBe(1_000);
       expect(MS_PER_MINUTE).toBe(60 * MS_PER_SECOND);
       expect(MS_PER_HOUR).toBe(60 * MS_PER_MINUTE);
+      // WU-2044: MS_PER_DAY now exported from duration-constants.ts
+      expect(MS_PER_DAY).toBe(24 * MS_PER_HOUR);
     });
   });
 
@@ -202,6 +208,32 @@ describe('WU-2010: Extracted constants', () => {
 
     it('DURATION_MS is frozen (immutable)', () => {
       expect(Object.isFrozen(DURATION_MS)).toBe(true);
+    });
+  });
+
+  // WU-2044: WU_EVENT_TYPE constant object tests
+  describe('WU_EVENT_TYPE constants', () => {
+    it('has all event type keys', () => {
+      expect(WU_EVENT_TYPE.CREATE).toBe('create');
+      expect(WU_EVENT_TYPE.CLAIM).toBe('claim');
+      expect(WU_EVENT_TYPE.BLOCK).toBe('block');
+      expect(WU_EVENT_TYPE.UNBLOCK).toBe('unblock');
+      expect(WU_EVENT_TYPE.COMPLETE).toBe('complete');
+      expect(WU_EVENT_TYPE.CHECKPOINT).toBe('checkpoint');
+      expect(WU_EVENT_TYPE.DELEGATION).toBe('delegation');
+      expect(WU_EVENT_TYPE.RELEASE).toBe('release');
+    });
+
+    it('values match WU_EVENT_TYPES array', () => {
+      const eventTypeValues = Object.values(WU_EVENT_TYPE);
+      for (const value of eventTypeValues) {
+        expect(WU_EVENT_TYPES).toContain(value);
+      }
+      expect(eventTypeValues.length).toBe(WU_EVENT_TYPES.length);
+    });
+
+    it('is frozen (immutable)', () => {
+      expect(Object.isFrozen(WU_EVENT_TYPE)).toBe(true);
     });
   });
 });

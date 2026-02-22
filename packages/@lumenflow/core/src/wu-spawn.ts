@@ -134,12 +134,8 @@ async function main() {
   const args = createWUParser({
     name: 'wu-spawn',
     description: 'Generate Task tool invocation for sub-agent WU execution',
+    // WU-2044: Removed duplicate CLI options (copy-paste bug)
     options: [
-      WU_OPTIONS.id,
-      WU_OPTIONS.thinking,
-      WU_OPTIONS.noThinking,
-      WU_OPTIONS.budget,
-      WU_OPTIONS.codex,
       WU_OPTIONS.id,
       WU_OPTIONS.thinking,
       WU_OPTIONS.noThinking,

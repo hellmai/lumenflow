@@ -54,20 +54,8 @@ export {
 
 const PREFIX = LOG_PREFIX.REPAIR;
 
-interface WUDoc extends Record<string, unknown> {
-  id?: string;
-  lane?: string;
-  title?: string;
-  status?: string;
-  notes?: string;
-  initiative?: string;
-  locked?: boolean;
-  claimed_mode?: string;
-  claimed_branch?: string;
-  created?: unknown;
-  completed?: unknown;
-  completed_at?: unknown;
-}
+// WU-2044: Use canonical WUDocBase instead of local definition
+import type { WUDocBase as WUDoc } from './wu-doc-types.js';
 
 interface ClaimMetadataCheckResult {
   valid: boolean;

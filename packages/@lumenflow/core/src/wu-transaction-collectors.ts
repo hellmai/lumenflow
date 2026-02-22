@@ -40,12 +40,8 @@ import {
   computeWUEventsContentWithMainMerge,
 } from './wu-done-concurrent-merge.js';
 
-interface WUDoc extends Record<string, unknown> {
-  status?: string;
-  locked?: boolean;
-  completed_at?: string;
-  completed?: unknown;
-}
+// WU-2044: Use canonical WUDocBase instead of local definition
+import type { WUDocBase as WUDoc } from './wu-doc-types.js';
 
 interface CollectMetadataParams {
   doc: WUDoc;

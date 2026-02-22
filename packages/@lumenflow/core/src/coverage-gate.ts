@@ -18,6 +18,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename, security/detect-object-injection */
 import { readFileSync, existsSync } from 'node:fs';
 import { EMOJI, STRING_LITERALS } from './wu-constants.js';
+import { DEFAULT_MIN_COVERAGE } from './constants/gate-constants.js';
 
 /**
  * Coverage gate modes
@@ -46,11 +47,12 @@ export const HEX_CORE_PATTERNS = Object.freeze([
 
 /**
  * Default coverage threshold for hex core files (percentage)
- * WU-1262: This constant is kept for backwards compatibility.
- * The actual threshold is now determined by resolveCoverageConfig() based on methodology.
+ * WU-1262: Kept for backwards compatibility.
+ * WU-2044: Now delegates to DEFAULT_MIN_COVERAGE from gate-constants.ts (DRY).
+ * The actual threshold is determined by resolveCoverageConfig() based on methodology.
  * @constant {number}
  */
-export const COVERAGE_THRESHOLD = 90;
+export const COVERAGE_THRESHOLD = DEFAULT_MIN_COVERAGE;
 
 /**
  * Default path to coverage summary JSON

@@ -87,9 +87,8 @@ interface LaneConfigWithWip extends LaneConfig {
   lock_policy?: LockPolicy;
 }
 
-interface WUDoc {
-  lane?: string;
-}
+// WU-2044: Use canonical WUDocBase instead of local definition
+type WUDoc = Pick<import('./wu-doc-types.js').WUDocBase, 'lane'>;
 
 // Re-export for test access
 export { getSubLanesForParent };
