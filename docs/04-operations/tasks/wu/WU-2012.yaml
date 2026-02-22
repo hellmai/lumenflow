@@ -7,9 +7,12 @@ priority: P1
 created: 2026-02-22
 code_paths:
   - packages/@lumenflow/core/src/wu-spawn.ts
-  - packages/@lumenflow/core/src/wu-spawn-helpers.ts
-  - packages/@lumenflow/core/src/wu-spawn-skills.ts
-  - packages/@lumenflow/core/src/index.ts
+  - packages/@lumenflow/core/src/spawn-template-assembler.ts
+  - packages/@lumenflow/core/src/spawn-guidance-generators.ts
+  - packages/@lumenflow/core/src/spawn-constraints-generator.ts
+  - packages/@lumenflow/core/src/spawn-agent-guidance.ts
+  - packages/@lumenflow/core/src/spawn-task-builder.ts
+  - packages/@lumenflow/core/src/spawn-prompt-helpers.ts
 tests:
   manual:
     - Run pnpm gates from worktree — all tests pass
@@ -24,10 +27,17 @@ phase: 2
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-22T14:38:45.887Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2012
+session_id: b82b6023-6b72-4fcf-a9b2-9ca11298a52c
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T14:38:45.896Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -42,11 +52,3 @@ acceptance:
   - Each extracted module has a single responsibility and under 500 lines
   - All existing wu-spawn tests pass without modification
   - Public API (index.ts exports) unchanged — zero breaking changes
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2012
-claimed_at: 2026-02-22T14:38:45.887Z
-baseline_main_sha: a45dddb22fbd7207e851c83b6ea4f871c15a05ba
-session_id: b82b6023-6b72-4fcf-a9b2-9ca11298a52c
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-22T14:38:45.896Z
