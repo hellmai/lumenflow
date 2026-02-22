@@ -1,6 +1,6 @@
 id: WU-2011
 title: Extract magic numbers in CLI package (@lumenflow/cli)
-lane: 'Framework: Core Lifecycle'
+lane: 'Framework: CLI Orchestration'
 type: refactor
 status: ready
 priority: P2
@@ -36,7 +36,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Extract all raw numeric and string literals in @lumenflow/cli/src into named constants. Includes: truncation lengths in lane-suggest, mem-summarize, trace-gen, mem-triage, flow-report, agent-issues-query, validate-agent-sync, validate-agent-skills, gates-utils.'
+description: 'Extract all raw numeric and string literals in @lumenflow/cli/src into named
+  constants. Includes: truncation lengths in lane-suggest, mem-summarize, trace-gen, mem-triage,
+  flow-report, agent-issues-query, validate-agent-sync, validate-agent-skills, gates-utils.'
 acceptance:
   - No raw numeric literal (except 0, 1, -1, true, false) in business logic of @lumenflow/cli/src/
   - All truncation and padding constants use named exports
