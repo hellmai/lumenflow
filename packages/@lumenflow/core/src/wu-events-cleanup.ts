@@ -37,14 +37,13 @@ const ms = require('ms') as (value: string) => number;
 import { validateWUEvent, type WUEvent } from './wu-state-schema.js';
 import { WUStateStore, WU_EVENTS_FILE_NAME } from './wu-state-store.js';
 import type { EventArchivalConfig } from './lumenflow-config-schema.js';
+import { MS_PER_DAY } from './constants/duration-constants.js';
 
 // Re-export the type for convenience
 export type { EventArchivalConfig };
 
-/**
- * One day in milliseconds
- */
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+// WU-2044: Use canonical MS_PER_DAY from duration-constants.ts
+const ONE_DAY_MS = MS_PER_DAY;
 
 /**
  * Import centralized path constants (WU-1430)

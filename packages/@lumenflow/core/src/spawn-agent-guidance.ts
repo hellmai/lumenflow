@@ -28,28 +28,9 @@
 import { getConfig } from './lumenflow-config.js';
 import { LUMENFLOW_PATHS } from './wu-constants.js';
 
-/**
- * WU document interface (shared across spawn modules)
- */
-export interface WUDoc {
-  id?: string;
-  title?: string;
-  lane?: string;
-  type?: string;
-  status?: string;
-  description?: string;
-  worktree_path?: string;
-  acceptance?: string[];
-  code_paths?: string[];
-  spec_refs?: string[];
-  notes?: string;
-  risks?: string[];
-  claimed_at?: string;
-  tests?: {
-    manual?: string[];
-  };
-  [key: string]: unknown;
-}
+// WU-2044: Canonical WUDoc type (was independently defined here)
+import type { WUDocBase } from './wu-doc-types.js';
+export type WUDoc = WUDocBase;
 
 /** Generate effort scaling rules section (WU-1986) */
 export function generateEffortScalingRules() {

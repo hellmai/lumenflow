@@ -15,12 +15,8 @@ import { archiveByDecay } from '@lumenflow/memory/decay/archival';
 
 import type { MemoryDecayConfig } from '@lumenflow/core/config-schema';
 import { LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
+import { MS_PER_DAY } from '@lumenflow/core/constants/duration-constants';
 import path from 'node:path';
-
-/**
- * Milliseconds per day for converting half_life_days to halfLifeMs
- */
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
  * Reason strings for skipped decay runs

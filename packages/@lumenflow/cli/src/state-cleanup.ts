@@ -42,6 +42,7 @@ import { EXIT_CODES, LUMENFLOW_PATHS, PROTECTED_WU_STATUSES } from '@lumenflow/c
 import { getConfig } from '@lumenflow/core/config';
 import fg from 'fast-glob';
 import { parse as parseYaml } from 'yaml';
+import { formatBytes } from './constants.js';
 import { runCLI } from './cli-entry-point.js';
 
 /**
@@ -54,10 +55,7 @@ const LOG_PREFIX = '[state:cleanup]';
  */
 const TOOL_NAME = 'state:cleanup';
 
-/**
- * Bytes per KB for formatting
- */
-const BYTES_PER_KB = 1024;
+// WU-2044: BYTES_PER_KB imported from ./constants.js
 
 /**
  * Labels for output formatting
@@ -138,19 +136,7 @@ async function writeAuditLog(baseDir: string, entry: Record<string, unknown>): P
   }
 }
 
-/**
- * Format bytes as human-readable string
- *
- * @param bytes - Number of bytes
- * @returns Formatted string (e.g., "1.5 KB")
- */
-function formatBytes(bytes: number): string {
-  if (bytes < BYTES_PER_KB) {
-    return `${bytes} B`;
-  }
-  const kb = (bytes / BYTES_PER_KB).toFixed(1);
-  return `${kb} KB`;
-}
+// WU-2044: formatBytes imported from ./constants.js
 
 /**
  * Get active WU IDs (in_progress or blocked) by scanning WU YAML files.

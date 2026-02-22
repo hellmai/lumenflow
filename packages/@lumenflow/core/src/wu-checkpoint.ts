@@ -21,6 +21,7 @@ import { existsSync, readFileSync, writeFileSync, unlinkSync, mkdirSync } from '
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { LOG_PREFIX, EMOJI, LUMENFLOW_PATHS } from './wu-constants.js';
+import { MS_PER_DAY } from './constants/duration-constants.js';
 
 /**
  * Schema version for checkpoint files
@@ -35,8 +36,9 @@ const CHECKPOINT_DIR = 'checkpoints';
 
 /**
  * Maximum age for a checkpoint before it's considered stale (24 hours)
+ * WU-2044: Uses canonical MS_PER_DAY from duration-constants.ts
  */
-const CHECKPOINT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+const CHECKPOINT_MAX_AGE_MS = MS_PER_DAY;
 
 /**
  * @typedef {Object} Checkpoint

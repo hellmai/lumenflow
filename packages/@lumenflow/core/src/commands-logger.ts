@@ -21,6 +21,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getCurrentBranch, isMainWorktree } from './wu-helpers.js';
 import { GIT_FLAGS, STRING_LITERALS, LUMENFLOW_PATHS } from './wu-constants.js';
+import { MS_PER_DAY } from './constants/duration-constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -284,7 +285,7 @@ export function rotateLog(logPath = DEFAULT_LOG_PATH, retentionDays = 7) {
     const lines = content.trim().split(STRING_LITERALS.NEWLINE).filter(Boolean);
 
     const now = new Date();
-    const cutoffDate = new Date(now.getTime() - retentionDays * 24 * 60 * 60 * 1000);
+    const cutoffDate = new Date(now.getTime() - retentionDays * MS_PER_DAY);
 
     const recentLines = lines.filter((line) => {
       const entry = parseLogEntry(line);

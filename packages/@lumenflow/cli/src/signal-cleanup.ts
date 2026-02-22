@@ -31,6 +31,7 @@ import { cleanupSignals } from '@lumenflow/memory/signal-cleanup-core';
 import { createWUParser } from '@lumenflow/core/arg-parser';
 import { EXIT_CODES, LUMENFLOW_PATHS, PROTECTED_WU_STATUSES } from '@lumenflow/core/wu-constants';
 import { getConfig } from '@lumenflow/core/config';
+import { formatBytes } from './constants.js';
 import { runCLI } from './cli-entry-point.js';
 
 /**
@@ -43,10 +44,7 @@ const LOG_PREFIX = '[signal:cleanup]';
  */
 const TOOL_NAME = 'signal:cleanup';
 
-/**
- * Bytes per KB for formatting
- */
-const BYTES_PER_KB = 1024;
+// WU-2044: BYTES_PER_KB imported from ./constants.js
 
 /**
  * CLI argument options specific to signal:cleanup
@@ -110,19 +108,7 @@ async function writeAuditLog(baseDir: string, entry: Record<string, unknown>): P
   }
 }
 
-/**
- * Format bytes as human-readable string
- *
- * @param bytes - Number of bytes
- * @returns Formatted string (e.g., "1.5 KB")
- */
-function formatBytes(bytes: number): string {
-  if (bytes < BYTES_PER_KB) {
-    return `${bytes} B`;
-  }
-  const kb = (bytes / BYTES_PER_KB).toFixed(1);
-  return `${kb} KB`;
-}
+// WU-2044: formatBytes imported from ./constants.js
 
 /**
  * Format compaction ratio as percentage

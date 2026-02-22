@@ -12,16 +12,16 @@
  */
 
 /** Milliseconds in one second */
-const MS_PER_SECOND = 1_000;
+export const MS_PER_SECOND = 1_000;
 
 /** Milliseconds in one minute */
-const MS_PER_MINUTE = 60 * MS_PER_SECOND;
+export const MS_PER_MINUTE = 60 * MS_PER_SECOND;
 
 /** Milliseconds in one hour */
-const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+export const MS_PER_HOUR = 60 * MS_PER_MINUTE;
 
 /** Milliseconds in one day */
-const MS_PER_DAY = 24 * MS_PER_HOUR;
+export const MS_PER_DAY = 24 * MS_PER_HOUR;
 
 /**
  * Duration constants in milliseconds, used as schema defaults.

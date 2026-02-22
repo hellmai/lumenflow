@@ -14,15 +14,11 @@ import { parseYAML, readWU } from './wu-yaml.js';
 import { CLAIMED_MODES, EMOJI, LOG_PREFIX, STRING_LITERALS, toKebab } from './wu-constants.js';
 import { detectDocsOnlyByPaths } from './wu-done-docs-only.js';
 
-interface WUDocLike {
-  id?: string;
-  lane?: string;
-  type?: string;
-  code_paths?: string[];
-  claimed_mode?: string;
-  claimed_branch?: string;
-  worktree_path?: string;
-}
+// WU-2044: Use canonical WUDocBase instead of local definition
+type WUDocLike = Pick<
+  import('./wu-doc-types.js').WUDocBase,
+  'id' | 'lane' | 'type' | 'code_paths' | 'claimed_mode' | 'claimed_branch' | 'worktree_path'
+>;
 
 interface DonePathArgs {
   worktree?: string | null;

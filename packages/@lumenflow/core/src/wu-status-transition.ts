@@ -53,13 +53,8 @@ interface TransitionPaths {
   backlog: string;
 }
 
-interface WUDoc {
-  id?: string;
-  lane?: string;
-  title?: string;
-  status?: string;
-  [key: string]: unknown;
-}
+// WU-2044: Use canonical WUDocBase instead of local definition
+import type { WUDocBase as WUDoc } from './wu-doc-types.js';
 
 interface StatusTransitionGitAdapter {
   run(command: string): unknown;

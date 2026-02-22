@@ -12,7 +12,7 @@
  * Use createWUStateStore() factory for new instances.
  */
 
-import { validateWUEvent, type WUEvent } from './wu-state-schema.js';
+import { validateWUEvent, WU_EVENT_TYPE, type WUEvent } from './wu-state-schema.js';
 import { WU_STATUS } from './wu-constants.js';
 import { WUStateIndexer } from './wu-state-indexer.js';
 import { WUEventSourcer } from './wu-event-sourcer.js';
@@ -79,7 +79,7 @@ export class WUStateStore implements IWuStateStore {
       throw new Error(`WU ${wuId} is already ${WU_STATUS.IN_PROGRESS}`);
     }
     await this.sourcer.appendAndApply({
-      type: 'claim',
+      type: WU_EVENT_TYPE.CLAIM,
       wuId,
       lane,
       title,
@@ -90,7 +90,7 @@ export class WUStateStore implements IWuStateStore {
   async complete(wuId: string): Promise<void> {
     assertInProgress(this.indexer, wuId);
     await this.sourcer.appendAndApply({
-      type: 'complete',
+      type: WU_EVENT_TYPE.COMPLETE,
       wuId,
       timestamp: new Date().toISOString(),
     } as WUEvent);
@@ -102,7 +102,7 @@ export class WUStateStore implements IWuStateStore {
 
   createCompleteEvent(wuId: string, timestamp: string = new Date().toISOString()): WUEvent {
     assertInProgress(this.indexer, wuId);
-    return validateOrThrow({ type: 'complete', wuId, timestamp });
+    return validateOrThrow({ type: WU_EVENT_TYPE.COMPLETE, wuId, timestamp });
   }
 
   applyEvent(event: WUEvent): void {
@@ -112,7 +112,7 @@ export class WUStateStore implements IWuStateStore {
   async block(wuId: string, reason: string): Promise<void> {
     assertInProgress(this.indexer, wuId);
     await this.sourcer.appendAndApply({
-      type: 'block',
+      type: WU_EVENT_TYPE.BLOCK,
       wuId,
       reason,
       timestamp: new Date().toISOString(),
@@ -125,7 +125,7 @@ export class WUStateStore implements IWuStateStore {
       throw new Error(`WU ${wuId} is not ${WU_STATUS.BLOCKED}`);
     }
     await this.sourcer.appendAndApply({
-      type: 'unblock',
+      type: WU_EVENT_TYPE.UNBLOCK,
       wuId,
       timestamp: new Date().toISOString(),
     } as WUEvent);
@@ -138,7 +138,7 @@ export class WUStateStore implements IWuStateStore {
   ): Promise<void> {
     const { sessionId, progress, nextSteps } = options;
     const event: Record<string, unknown> = {
-      type: 'checkpoint',
+      type: WU_EVENT_TYPE.CHECKPOINT,
       wuId,
       note,
       timestamp: new Date().toISOString(),
@@ -163,7 +163,7 @@ export class WUStateStore implements IWuStateStore {
 
   async delegate(childWuId: string, parentWuId: string, delegationId: string): Promise<void> {
     await this.sourcer.appendAndApply({
-      type: 'delegation',
+      type: WU_EVENT_TYPE.DELEGATION,
       wuId: childWuId,
       parentWuId,
       delegationId,
@@ -174,7 +174,7 @@ export class WUStateStore implements IWuStateStore {
   async release(wuId: string, reason: string): Promise<void> {
     assertInProgress(this.indexer, wuId);
     await this.sourcer.appendAndApply({
-      type: 'release',
+      type: WU_EVENT_TYPE.RELEASE,
       wuId,
       reason,
       timestamp: new Date().toISOString(),
@@ -187,7 +187,7 @@ export class WUStateStore implements IWuStateStore {
     timestamp: string = new Date().toISOString(),
   ): WUEvent {
     assertInProgress(this.indexer, wuId);
-    return validateOrThrow({ type: 'release', wuId, reason, timestamp });
+    return validateOrThrow({ type: WU_EVENT_TYPE.RELEASE, wuId, reason, timestamp });
   }
 }
 
