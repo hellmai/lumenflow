@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-- [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -976,3 +976,4 @@ _Last updated: 2026-02-22_
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — 2026-02-22
 - [WU-2008 — Remove remaining direct process.exit usage from core modules](wu/WU-2008.yaml) — 2026-02-22
 - [WU-2046 — Fix pre-existing wu-spawn.test.ts failures](wu/WU-2046.yaml) — 2026-02-22
+- [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml) — 2026-02-22
