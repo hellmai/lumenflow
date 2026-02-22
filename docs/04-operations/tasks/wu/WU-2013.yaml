@@ -2,7 +2,7 @@ id: WU-2013
 title: Decompose wu-state-store.ts into focused services (1274 lines)
 lane: 'Framework: Core State Recovery'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-22
 code_paths:
@@ -47,3 +47,6 @@ session_id: b82b6023-6b72-4fcf-a9b2-9ca11298a52c
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T14:38:03.229Z
+locked: true
+completed_at: 2026-02-22T15:00:09.221Z
+completed: 2026-02-22
