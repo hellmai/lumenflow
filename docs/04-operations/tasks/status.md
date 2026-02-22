@@ -6,6 +6,7 @@ _Last updated: 2026-02-22_
 
 - [WU-2016 — Split lumenflow-config-schema.ts into per-section schemas (1564 lines)](wu/WU-2016.yaml)
 - [WU-2042 — Finalize kernel-first parity in tests and docs](wu/WU-2042.yaml)
+- [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml)
 
 ## Completed
 
