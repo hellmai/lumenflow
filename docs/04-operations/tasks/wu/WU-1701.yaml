@@ -2,7 +2,7 @@ id: WU-1701
 title: 'Emergency cleanup: remove domain-specific code from core package'
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-15
 code_paths:
@@ -50,3 +50,6 @@ approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T01:33:28.225Z
 claimed_mode: worktree
+locked: true
+completed_at: 2026-02-22T01:40:27.616Z
+completed: 2026-02-22

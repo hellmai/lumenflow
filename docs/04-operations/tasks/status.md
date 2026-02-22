@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-- [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -930,3 +930,4 @@ _Last updated: 2026-02-22_
 - [WU-1994 — Eliminate React act warnings in web test suite](wu/WU-1994.yaml) — 2026-02-22
 - [WU-1744 — Stabilize flaky full-suite test timeouts](wu/WU-1744.yaml) — 2026-02-22
 - [WU-1960 — Fix release build:dist invariant drift](wu/WU-1960.yaml) — 2026-02-22
+- [WU-1701 — Emergency cleanup: remove domain-specific code from core package](wu/WU-1701.yaml) — 2026-02-22
