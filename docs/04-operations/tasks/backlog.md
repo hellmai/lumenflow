@@ -27,13 +27,13 @@ sections:
 - [WU-2009 — Add claim-validation gate for absolute acceptance criteria drift](wu/WU-2009.yaml) — Framework: Core Validation
 - [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml) — Framework: Core Validation
 - [WU-2046 — Fix pre-existing wu-spawn.test.ts failures](wu/WU-2046.yaml) — Framework: CLI WU Commands
-- [WU-2047 — Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)](wu/WU-2047.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — Framework: Core Lifecycle
 - [WU-2043 — Add unit tests for INIT-034 decomposed sub-modules and strategy patterns](wu/WU-2043.yaml) — Framework: Core Validation
 - [WU-2044 — Constants consolidation round 2: DRY violations from INIT-034 audit](wu/WU-2044.yaml) — Framework: Core Validation
+- [WU-2047 — Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)](wu/WU-2047.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
