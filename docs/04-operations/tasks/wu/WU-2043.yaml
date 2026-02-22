@@ -2,7 +2,7 @@ id: WU-2043
 title: Add unit tests for INIT-034 decomposed sub-modules and strategy patterns
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-22
 code_paths:
@@ -62,3 +62,6 @@ acceptance:
   - 'Strategy map completeness test: all CONSISTENCY_TYPES with canAutoRepair have handlers'
   - spawn-prompt-helpers.test.ts created covering 9 exported functions
   - All new tests pass via pnpm gates
+locked: true
+completed_at: 2026-02-22T17:10:41.675Z
+completed: 2026-02-22
