@@ -11,7 +11,6 @@ tests:
   manual:
     - Run pnpm gates from worktree — all tests pass
   unit:
-    - packages/@lumenflow/core/src/__tests__/invariants-runner.test.ts
     - packages/@lumenflow/core/src/invariants/__tests__/check-automated-tests.test.ts
   e2e: []
 artifacts:
