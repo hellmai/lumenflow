@@ -2,7 +2,7 @@ id: WU-2019
 title: Replace work-classifier domain switch with data map
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -41,3 +41,6 @@ session_id: a6e5e991-d861-4a88-b4c4-8132adc82e13
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T15:13:04.279Z
+locked: true
+completed_at: 2026-02-22T15:38:42.720Z
+completed: 2026-02-22
