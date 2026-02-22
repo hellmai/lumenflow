@@ -2,7 +2,7 @@ id: WU-1999
 title: Ignore symlinked dist artifact roots in incremental format gate
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -36,3 +36,11 @@ acceptance:
   - format:check incremental input excludes symlinked dist artifact roots
   - wu:prep no longer fails on explicit symlink patterns when code changes are otherwise formatted
   - tests cover symlink filtering behavior in gate file selection
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1999
+claimed_at: 2026-02-22T02:40:16.171Z
+baseline_main_sha: 0b0f724f6b1f12b05ad8a4f865351d74ebb6fe03
+session_id: 294d8511-2eb6-45a7-a2a6-74a71324736a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T02:40:16.176Z
