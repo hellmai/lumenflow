@@ -1141,15 +1141,11 @@ export function generateTaskInvocation(
   const templateBaseDir = options.baseDir || DEFAULT_TEMPLATE_BASE_DIR;
   const templates = tryLoadTemplates(clientName, templateContext, templateBaseDir);
 
-  // WU-1142: Use type-aware test guidance instead of hardcoded TDD directive
-  // WU-1288: Use policy-based test guidance that respects methodology.testing config
-  // WU-1253: Try template first, fall back to policy-based guidance
-  // WU-1900: Pass classifier hint to test guidance
-  const testGuidance =
-    templates.get('tdd-directive') ||
-    generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
-      testMethodologyHint: classification.testMethodologyHint,
-    });
+  // WU-2046: Keep policy/type guidance canonical for spawn output.
+  // Template availability must never override resolved methodology behavior.
+  const testGuidance = generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
+    testMethodologyHint: classification.testMethodologyHint,
+  });
 
   // WU-1288: Generate enforcement summary from resolved policy
   const enforcementSummary = generateEnforcementSummary(policy);
