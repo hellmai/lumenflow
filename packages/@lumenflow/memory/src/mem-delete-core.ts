@@ -19,6 +19,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { MS_PER_HOUR, MS_PER_DAY } from '@lumenflow/core/constants/duration-constants';
 import type { MemoryNode } from './memory-schema.js';
 import { loadMemory, MEMORY_FILE_NAME } from './memory-store.js';
 import { LUMENFLOW_MEMORY_PATHS } from './paths.js';
@@ -27,9 +28,9 @@ import { LUMENFLOW_MEMORY_PATHS } from './paths.js';
  * Duration multipliers in milliseconds
  */
 const DURATION_MULTIPLIERS: Record<string, number> = {
-  h: 60 * 60 * 1000,
-  d: 24 * 60 * 60 * 1000,
-  w: 7 * 24 * 60 * 60 * 1000,
+  h: MS_PER_HOUR,
+  d: MS_PER_DAY,
+  w: 7 * MS_PER_DAY,
 };
 
 /**

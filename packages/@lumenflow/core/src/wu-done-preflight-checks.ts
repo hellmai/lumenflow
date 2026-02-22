@@ -28,13 +28,9 @@ import {
   GIT_FLAGS,
 } from './wu-constants.js';
 import { PREFLIGHT } from './wu-done-messages.js';
-import { createError, ErrorCodes } from './error-handler.js';
+import { createError, ErrorCodes, getErrorMessage } from './error-handler.js';
 import { createValidationError } from './wu-done-errors.js';
 import { autoRebaseBranch } from './wu-done-rebase.js';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 function isErrorWithCode(error: unknown, code: string): boolean {
   if (typeof error !== 'object' || error === null || !('code' in error)) {

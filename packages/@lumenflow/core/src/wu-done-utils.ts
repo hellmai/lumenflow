@@ -14,10 +14,7 @@
 
 import { LOG_PREFIX, EMOJI } from './wu-constants.js';
 import type { GitAdapter } from './git-adapter.js';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
+import { getErrorMessage } from './error-handler.js';
 
 /**
  * WU-1943: Check if the session has checkpoints for the given WU

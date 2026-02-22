@@ -14,6 +14,7 @@ import { parseYAML } from './wu-yaml.js';
 import { parseBacklogFrontmatter, getSectionHeadings } from './backlog-parser.js';
 import { extractParent } from './lane-checker.js';
 import { CONFIG_FILES, STRING_LITERALS, WU_STATUS, getProjectRoot } from './wu-constants.js';
+import { getErrorMessage } from './error-handler.js';
 
 const BACKLOG_SECTION_STATUS = {
   ready: WU_STATUS.READY,
@@ -28,10 +29,6 @@ const BACKLOG_SECTIONS = Object.keys(BACKLOG_SECTION_STATUS) as BacklogSection[]
 interface SectionTracker {
   wus: Set<string>;
   lineNumbers: Map<string, number>;
-}
-
-function getErrorMessage(err: unknown): string {
-  return err instanceof Error ? err.message : String(err);
 }
 
 /**

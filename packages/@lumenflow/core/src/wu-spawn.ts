@@ -15,8 +15,7 @@
  * - spawn-constraints-generator.ts: Constraints block generation
  * - spawn-prompt-helpers.ts: WU doc formatting helpers (acceptance, invariants, agents)
  * - spawn-agent-guidance.ts: Agent operational guidance sections
- * - spawn-task-builder.ts: Task invocation and Codex prompt assembly
- * - spawn-lane-occupation.ts: Lane occupation checking and warnings
+ * - spawn-task-builder.ts: Task invocation, Codex prompt assembly, lane occupation
  *
  * Existing helper modules (pre-WU-2012):
  * - wu-spawn-helpers.ts: Thinking mode, spawn registry
@@ -31,7 +30,7 @@ import { fileURLToPath } from 'node:url';
 import { createWUParser, WU_OPTIONS } from './arg-parser.js';
 import { WU_PATHS } from './wu-paths.js';
 import { parseYAML } from './wu-yaml.js';
-import { die } from './error-handler.js';
+import { die, getErrorMessage } from './error-handler.js';
 import { WU_STATUS, PATTERNS, EMOJI, LUMENFLOW_PATHS } from './wu-constants.js';
 import { SpawnStrategyFactory } from './spawn-strategy.js';
 import { getConfig } from './lumenflow-config.js';
@@ -90,12 +89,14 @@ export {
   generateActionSection,
 } from './spawn-agent-guidance.js';
 
-// From spawn-task-builder
-export { generateTaskInvocation, generateCodexPrompt } from './spawn-task-builder.js';
+// From spawn-task-builder (WU-2048: inlined spawn-lane-occupation re-exports)
+export {
+  generateTaskInvocation,
+  generateCodexPrompt,
+  checkLaneOccupation,
+  generateLaneOccupationWarning,
+} from './spawn-task-builder.js';
 export type { SpawnOptions } from './spawn-task-builder.js';
-
-// From spawn-lane-occupation
-export { checkLaneOccupation, generateLaneOccupationWarning } from './spawn-lane-occupation.js';
 
 // ============================================================================
 // CLI Entry Point
@@ -116,10 +117,6 @@ interface SpawnCliArgs {
 type SpawnParserOption = NonNullable<(typeof WU_OPTIONS)[keyof typeof WU_OPTIONS]>;
 
 const LOG_PREFIX = '[wu:spawn]';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 /**
  * Main CLI entry point
@@ -211,9 +208,9 @@ async function main() {
   }
 
   // WU-1603: Check if lane is already occupied and warn
-  const { checkLaneOccupation: checkOccupation } = await import('./spawn-lane-occupation.js');
+  const { checkLaneOccupation: checkOccupation } = await import('./spawn-task-builder.js');
   const { generateLaneOccupationWarning: generateWarning } =
-    await import('./spawn-lane-occupation.js');
+    await import('./spawn-task-builder.js');
   const lane = doc.lane;
   if (lane) {
     const existingLock = checkOccupation(lane);

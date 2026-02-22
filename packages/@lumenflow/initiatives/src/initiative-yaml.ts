@@ -5,6 +5,7 @@ import { existsSync, readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { parseYAML, stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { createError, ErrorCodes } from '@lumenflow/core/error-handler';
+import type { WUDocBase } from '@lumenflow/core/wu-doc-types';
 import { validateInitiative } from './initiative-schema.js';
 import { INIT_PATHS } from './initiative-paths.js';
 import { INIT_PATTERNS } from './initiative-constants.js';
@@ -13,16 +14,12 @@ import { WU_PATHS } from '@lumenflow/core/wu-paths';
 // FILE_SYSTEM removed - not used in this module
 
 /**
- * WU document interface
+ * WU document interface (WU-2048: uses canonical WUDocBase from @lumenflow/core)
  */
-export interface WUDoc {
-  status: string;
-  lane?: string;
-  title?: string;
-  initiative?: string;
+export type WUDoc = Pick<WUDocBase, 'status' | 'lane' | 'title' | 'initiative'> & {
   blocked_by?: string[];
   [key: string]: unknown;
-}
+};
 
 /**
  * Initiative document interface

@@ -25,10 +25,7 @@ import {
   MAX_RECOVERY_ATTEMPTS,
 } from './wu-recovery.js';
 import { prepareRecoveryWithSquash } from './wu-done-retry-helpers.js';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
+import { getErrorMessage } from './error-handler.js';
 
 /**
  * Handle zombie state detection and recovery.

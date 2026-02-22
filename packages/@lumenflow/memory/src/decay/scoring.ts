@@ -16,12 +16,13 @@
  * @see {@link packages/@lumenflow/memory/__tests__/decay-scoring.test.ts} - Tests
  */
 
+import { MS_PER_DAY } from '@lumenflow/core/constants/duration-constants';
 import type { MemoryNode } from '../memory-schema.js';
 
 /**
  * Default half-life for decay scoring: 30 days in milliseconds
  */
-export const DEFAULT_HALF_LIFE_MS = 30 * 24 * 60 * 60 * 1000;
+export const DEFAULT_HALF_LIFE_MS = 30 * MS_PER_DAY;
 
 /**
  * Importance multipliers by priority level.

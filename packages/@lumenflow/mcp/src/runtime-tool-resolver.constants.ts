@@ -9,6 +9,8 @@
  * event kinds, and user-facing messages are defined in one place.
  */
 
+import { MS_PER_DAY } from '@lumenflow/core/constants/duration-constants';
+
 export const STATE_RUNTIME_EVENT_TYPES = {
   CLAIM: 'claim',
   COMPLETE: 'complete',
@@ -26,7 +28,7 @@ export const STATE_RUNTIME_CONSTANTS = {
   DEFAULT_STALE_DAYS_IN_PROGRESS: 7,
   DEFAULT_STALE_DAYS_READY: 30,
   DEFAULT_ARCHIVE_DAYS: 90,
-  ONE_DAY_MS: 24 * 60 * 60 * 1000,
+  ONE_DAY_MS: MS_PER_DAY,
   BOOTSTRAP_BLOCK_REASON: 'Bootstrapped from WU YAML (original reason unknown)',
   UNKNOWN_LANE: 'Unknown',
   UNTITLED_WU: 'Untitled',

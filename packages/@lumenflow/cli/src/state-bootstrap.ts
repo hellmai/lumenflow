@@ -19,7 +19,8 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { readFileSync } from 'node:fs';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
-import { CLI_FLAGS, EXIT_CODES, EMOJI, STRING_LITERALS } from '@lumenflow/core/wu-constants';
+import { CLI_FLAGS, EXIT_CODES, EMOJI, STRING_LITERALS, WU_STATUS } from '@lumenflow/core/wu-constants';
+import { WU_EVENT_TYPE } from '@lumenflow/core/wu-state-schema';
 
 /** Log prefix for consistent output */
 const LOG_PREFIX = '[state-bootstrap]';
@@ -154,14 +155,14 @@ export function inferEventsFromWu(wu: WuBootstrapInfo): BootstrapEvent[] {
   const events: BootstrapEvent[] = [];
 
   // Ready WUs have no events (not yet in the lifecycle)
-  if (wu.status === 'ready' || wu.status === 'backlog' || wu.status === 'todo') {
+  if (wu.status === WU_STATUS.READY || wu.status === WU_STATUS.BACKLOG || wu.status === WU_STATUS.TODO) {
     return events;
   }
 
   // All other states start with a claim event
   const claimTimestamp = toTimestamp(wu.claimed_at, wu.created);
   events.push({
-    type: 'claim',
+    type: WU_EVENT_TYPE.CLAIM,
     wuId: wu.id,
     lane: wu.lane,
     title: wu.title,
@@ -169,10 +170,10 @@ export function inferEventsFromWu(wu: WuBootstrapInfo): BootstrapEvent[] {
   });
 
   // Handle completed/done status
-  if (wu.status === 'done' || wu.status === 'completed') {
+  if (wu.status === WU_STATUS.DONE || wu.status === WU_STATUS.COMPLETED) {
     const completeTimestamp = toTimestamp(wu.completed_at, wu.created);
     events.push({
-      type: 'complete',
+      type: WU_EVENT_TYPE.COMPLETE,
       wuId: wu.id,
       timestamp: completeTimestamp,
     });
@@ -180,13 +181,13 @@ export function inferEventsFromWu(wu: WuBootstrapInfo): BootstrapEvent[] {
   }
 
   // Handle blocked status
-  if (wu.status === 'blocked') {
+  if (wu.status === WU_STATUS.BLOCKED) {
     // Block event timestamp should be after claim
     // We don't have exact block time, so use claim time + 1 second
     const claimDate = new Date(claimTimestamp);
     claimDate.setSeconds(claimDate.getSeconds() + 1);
     events.push({
-      type: 'block',
+      type: WU_EVENT_TYPE.BLOCK,
       wuId: wu.id,
       timestamp: claimDate.toISOString(),
       reason: 'Bootstrapped from WU YAML (original reason unknown)',

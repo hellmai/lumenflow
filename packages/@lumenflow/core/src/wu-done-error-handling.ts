@@ -15,10 +15,7 @@ import { createGitForPath } from './git-adapter.js';
 import { LOG_PREFIX, EMOJI, BOX } from './wu-constants.js';
 import { restoreFromSnapshot, WUTransaction } from './wu-transaction.js';
 import { rollbackBranchOnMergeFailure } from './wu-done-utils.js';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
+import { getErrorMessage } from './error-handler.js';
 
 interface ErrorWithCode extends Error {
   code?: string;

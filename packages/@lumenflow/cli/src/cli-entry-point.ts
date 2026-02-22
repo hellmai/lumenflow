@@ -36,6 +36,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EXIT_CODES } from '@lumenflow/core/wu-constants';
 import { initColorSupport, StreamErrorHandler, ProcessExitError } from '@lumenflow/core';
+import { getErrorMessage } from '@lumenflow/core/error-handler';
 import { printHeader } from './formatters.js';
 
 const HELP_HINT_MESSAGE = 'Hint: Run with --help to see valid options.';
@@ -114,18 +115,7 @@ export async function runCLI(main: () => Promise<void>, options?: RunCLIOptions)
   }
 }
 
-/**
- * Extracts error message from unknown error type.
- */
-function getErrorMessage(err: unknown): string {
-  if (err === null || err === undefined) {
-    return 'Unknown error';
-  }
-  if (err instanceof Error) {
-    return err.message;
-  }
-  return String(err);
-}
+// WU-2048: getErrorMessage imported from @lumenflow/core/error-handler
 
 function shouldPrintHelpHint(err: unknown, message: string): boolean {
   const directCode = getStringProperty(err, 'code');

@@ -7,6 +7,7 @@ import { readWU, readWUAsync } from './wu-yaml.js';
 import { WU_PATHS } from './wu-paths.js';
 import { STRING_LITERALS, WU_STATUS } from './wu-constants.js';
 import { detectCycles, type WUObject } from './cycle-detector.js';
+import type { WUDocBase } from './wu-doc-types.js';
 
 export interface DependencyNode {
   id: string;
@@ -16,9 +17,7 @@ export interface DependencyNode {
   blockedBy: string[];
 }
 
-type WUDoc = {
-  title?: string;
-  status?: string;
+type WUDoc = Pick<WUDocBase, 'title' | 'status'> & {
   blocks?: unknown;
   blocked_by?: unknown;
 };

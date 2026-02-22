@@ -14,33 +14,11 @@
  */
 
 import { WU_STATUS } from './wu-constants.js';
-import type { WUEvent } from './wu-state-schema.js';
+import { WU_EVENT_TYPE, type WUEvent } from './wu-state-schema.js';
+import type { WUStateEntry, CheckpointOptions } from './ports/wu-state.ports.js';
 
-/**
- * Delegation event type constant (matches DELEGATION_CUTOVER.RELATIONSHIP_EVENT_TYPE)
- */
-const DELEGATION_EVENT_TYPE = 'delegation';
-
-/**
- * WU state entry in the in-memory store
- */
-export interface WUStateEntry {
-  status: string;
-  lane: string;
-  title: string;
-  completedAt?: string;
-  lastCheckpoint?: string;
-  lastCheckpointNote?: string;
-}
-
-/**
- * Checkpoint options
- */
-export interface CheckpointOptions {
-  sessionId?: string;
-  progress?: string;
-  nextSteps?: string;
-}
+// Re-export for backward compatibility (consumers importing from wu-state-indexer)
+export type { WUStateEntry, CheckpointOptions };
 
 /**
  * WU State Indexer
@@ -77,23 +55,23 @@ export class WUStateIndexer {
   applyEvent(event: WUEvent): void {
     const { wuId, type } = event;
 
-    if (type === 'create' || type === 'claim') {
-      const claimEvent = event as WUEvent & { lane: string; title: string };
-      this._setState(wuId, WU_STATUS.IN_PROGRESS, claimEvent.lane, claimEvent.title);
+    if (type === WU_EVENT_TYPE.CREATE || type === WU_EVENT_TYPE.CLAIM) {
+      // Discriminated union narrows to CreateEvent | ClaimEvent (both have lane/title)
+      this._setState(wuId, WU_STATUS.IN_PROGRESS, event.lane, event.title);
       return;
     }
 
-    if (type === 'block') {
+    if (type === WU_EVENT_TYPE.BLOCK) {
       this._transitionToStatus(wuId, WU_STATUS.BLOCKED);
       return;
     }
 
-    if (type === 'unblock') {
+    if (type === WU_EVENT_TYPE.UNBLOCK) {
       this._transitionToStatus(wuId, WU_STATUS.IN_PROGRESS);
       return;
     }
 
-    if (type === 'complete') {
+    if (type === WU_EVENT_TYPE.COMPLETE) {
       this._transitionToStatus(wuId, WU_STATUS.DONE);
       // WU-2244: Store completion timestamp for accurate date reporting
       const current = this.wuState.get(wuId);
@@ -103,19 +81,19 @@ export class WUStateIndexer {
       return;
     }
 
-    if (type === 'checkpoint') {
-      const checkpointEvent = event as WUEvent & { note?: string };
+    if (type === WU_EVENT_TYPE.CHECKPOINT) {
+      // Discriminated union narrows to CheckpointEvent (has note field)
       const currentCheckpoint = this.wuState.get(wuId);
       if (currentCheckpoint) {
         currentCheckpoint.lastCheckpoint = event.timestamp;
-        currentCheckpoint.lastCheckpointNote = checkpointEvent.note;
+        currentCheckpoint.lastCheckpointNote = event.note;
       }
       return;
     }
 
-    if (type === DELEGATION_EVENT_TYPE) {
-      const delegationEvent = event as WUEvent & { parentWuId: string };
-      const { parentWuId } = delegationEvent;
+    if (type === WU_EVENT_TYPE.DELEGATION) {
+      // Discriminated union narrows to DelegationEvent (has parentWuId)
+      const { parentWuId } = event;
       if (!this.byParent.has(parentWuId)) {
         this.byParent.set(parentWuId, new Set());
       }
@@ -124,7 +102,7 @@ export class WUStateIndexer {
     }
 
     // WU-1080: Handle release event - transitions from in_progress to ready
-    if (type === 'release') {
+    if (type === WU_EVENT_TYPE.RELEASE) {
       this._transitionToStatus(wuId, WU_STATUS.READY);
     }
   }
