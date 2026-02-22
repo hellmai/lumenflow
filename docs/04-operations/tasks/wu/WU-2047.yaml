@@ -11,7 +11,11 @@ code_paths:
   - packages/@lumenflow/mcp/src
   - packages/@lumenflow/packs/software-delivery/__tests__
 tests:
-  manual: []
+  manual:
+    - Run rg -n 'spawnSync|packages/@lumenflow/cli/dist/'
+      packages/@lumenflow/packs/software-delivery/tool-impl and verify zero matches.
+    - Run pnpm --filter @lumenflow/packs test and verify software-delivery pack tests pass with
+      runtime-native handlers only.
   unit:
     - packages/@lumenflow/packs/software-delivery/__tests__
     - packages/@lumenflow/kernel/src/__tests__
@@ -32,9 +36,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: software-delivery pack still executes most tools via wrapper handlers that spawn CLI dist scripts, leaving a hybrid architecture and breaking reference-pack expectations. Problem: this bridge layer adds failure points and keeps pack behavior unlike consumer packs. Solution: remove CLI-spawn bridge handlers and rewire software-delivery tool implementations to runtime-native handlers only, with no compatibility fallbacks or pending migration stubs.'
+description: 'Context: software-delivery pack still executes most tools via wrapper handlers that
+  spawn CLI dist scripts, leaving a hybrid architecture and breaking reference-pack expectations.
+  Problem: this bridge layer adds failure points and keeps pack behavior unlike consumer packs.
+  Solution: remove CLI-spawn bridge handlers and rewire software-delivery tool implementations to
+  runtime-native handlers only, with no compatibility fallbacks or pending migration stubs.'
 acceptance:
-  - No software-delivery tool implementation uses spawnSync to execute packages/@lumenflow/cli/dist scripts.
-  - software-delivery manifest contains no entries pointing to parity-migration-tools.ts or pending-runtime migration stubs.
+  - No software-delivery tool implementation uses spawnSync to execute packages/@lumenflow/cli/dist
+    scripts.
+  - software-delivery manifest contains no entries pointing to parity-migration-tools.ts or
+    pending-runtime migration stubs.
   - Pack tools execute via runtime-native handlers with parity tests updated and passing.
-  - Guard tests fail on any reintroduction of CLI dist shell-out bridges in software-delivery tool-impl.
+  - Guard tests fail on any reintroduction of CLI dist shell-out bridges in software-delivery
+    tool-impl.
