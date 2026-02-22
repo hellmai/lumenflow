@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2053 — P0: fix TS7006 build break on main](wu/WU-2053.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — Framework: CLI Orchestration
@@ -31,6 +30,7 @@ sections:
 - [WU-2049 — INIT-034 follow-up: consolidate duplicates and fix naming collisions](wu/WU-2049.yaml) — Framework: Core Lifecycle
 - [WU-2050 — Bundled pack resolution for end-user bootstrap](wu/WU-2050.yaml) — Framework: Core Lifecycle
 - [WU-2052 — Fix filterExistingFiles CWD bug in incremental format check](wu/WU-2052.yaml) — Framework: CLI WU Commands
+- [WU-2053 — P0: fix TS7006 build break on main](wu/WU-2053.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
