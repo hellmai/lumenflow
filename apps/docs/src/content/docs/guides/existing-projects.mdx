@@ -25,7 +25,7 @@ Before starting:
 
 LumenFlow adds:
 
-- `.lumenflow.config.yaml` - Configuration file
+- `workspace.yaml` - Configuration file
 - `LUMENFLOW.md` - Workflow entry point
 - `.lumenflow/` - State and constraints
 - `docs/04-operations/tasks/` - WU specs and backlog (optional)
@@ -101,7 +101,7 @@ The CLI provides the fastest path to adoption.
    The init command creates (agent onboarding docs are now included by default):
 
    <FileTree>
-     - .lumenflow.config.yaml (your configuration) - LUMENFLOW.md (workflow entry point) - AGENTS.md
+     - workspace.yaml (your configuration) - LUMENFLOW.md (workflow entry point) - AGENTS.md
      (universal AI agent entry point) - .lumenflow/ - constraints.md (non-negotiable rules) -
      agents/ (AI agent guidance) - docs/04-operations/ - tasks/ - backlog.md - status.md - wu/ (WU
      spec directory) - _frameworks/lumenflow/agent/onboarding/ - quick-ref-commands.md (CLI command
@@ -156,7 +156,7 @@ If you prefer not to use the CLI or are using a non-Node.js project.
 
 1. **Create configuration file**
 
-   Create `.lumenflow.config.yaml` in your repo root:
+   Create `workspace.yaml` in your repo root:
 
    ```yaml
    version: '2.0'
@@ -210,7 +210,7 @@ If you prefer not to use the CLI or are using a non-Node.js project.
    ## Reference
 
    - [LumenFlow Documentation](https://lumenflow.dev)
-   - [Configuration](.lumenflow.config.yaml)
+   - [Configuration](workspace.yaml)
    ```
 
 3. **Create directory structure**
@@ -249,7 +249,7 @@ If you prefer not to use the CLI or are using a non-Node.js project.
      - Configuration file created
      - Directory structure established
    code_paths:
-     - .lumenflow.config.yaml
+     - workspace.yaml
      - LUMENFLOW.md
    ```
 

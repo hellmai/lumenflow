@@ -195,7 +195,7 @@ export const PKG_COMMANDS = {
  *
  * Centralized package names for --filter usage.
  * WU-1068: Changed from @exampleapp to @lumenflow for framework reusability.
- * Project-specific packages should be configured in .lumenflow.config.yaml.
+ * Project-specific packages should be configured in workspace.yaml.
  */
 export const PACKAGES = {
   WEB: 'web',

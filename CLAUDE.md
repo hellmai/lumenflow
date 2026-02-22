@@ -28,7 +28,7 @@ pnpm setup
 # 2. Create a WU (ID auto-generated)
 pnpm wu:create --lane <Lane> --title "Title"
 # Output: Created WU-XXXX at docs/.../wu/WU-XXXX.yaml
-# Note: --id is for migration/re-creation only. Omit it for normal use.
+# Note: --id is for explicit re-creation only. Omit it for normal use.
 
 # 3. Edit WU spec with acceptance criteria
 # Then claim:
@@ -65,7 +65,7 @@ cd /home/tom/source/hellmai/os && pnpm wu:done --id WU-XXXX
 
 ## Lanes
 
-Use "Parent: Sublane" format (e.g., `Framework: CLI WU Commands`). Lanes are defined in `.lumenflow.config.yaml` under the `lanes:` key — that file is the canonical source. Add new lanes as needed via `pnpm lane:edit` or `pnpm config:set`.
+Use "Parent: Sublane" format (e.g., `Framework: CLI WU Commands`). Lanes are defined in `workspace.yaml` under `software_delivery.lanes` — that file is the canonical source. Add new lanes as needed via `pnpm lane:edit` or `pnpm config:set`.
 
 To find the right lane for your work:
 
@@ -109,13 +109,14 @@ ERROR: WRONG_LOCATION - wu:done must be run from main checkout
 FIX: cd /home/user/repo && pnpm wu:done --id WU-1090
 ```
 
-Configure validation in `.lumenflow.config.yaml`:
+Configure validation in `workspace.yaml`:
 
 ```yaml
-experimental:
-  context_validation: true # Enable validation (default: true)
-  validation_mode: 'warn' # 'off' | 'warn' | 'error'
-  show_next_steps: true # Show guidance after success
+software_delivery:
+  experimental:
+    context_validation: true # Enable validation (default: true)
+    validation_mode: 'warn' # 'off' | 'warn' | 'error'
+    show_next_steps: true # Show guidance after success
 ```
 
 ### Enforcement Hooks (WU-1367)
@@ -124,17 +125,18 @@ Claude Code hooks can enforce LumenFlow workflow compliance at the tool level.
 When enabled, hooks block non-compliant operations instead of relying on agents
 to remember workflow rules.
 
-Configure in `.lumenflow.config.yaml`:
+Configure in `workspace.yaml`:
 
 ```yaml
-agents:
-  clients:
-    claude-code:
-      enforcement:
-        hooks: true # Enable enforcement hooks
-        block_outside_worktree: true # Block Write/Edit outside worktree
-        require_wu_for_edits: true # Require claimed WU for edits
-        warn_on_stop_without_wu_done: true # Warn on session end without wu:done
+software_delivery:
+  agents:
+    clients:
+      claude-code:
+        enforcement:
+          hooks: true # Enable enforcement hooks
+          block_outside_worktree: true # Block Write/Edit outside worktree
+          require_wu_for_edits: true # Require claimed WU for edits
+          warn_on_stop_without_wu_done: true # Warn on session end without wu:done
 ```
 
 Generate hooks after configuration:

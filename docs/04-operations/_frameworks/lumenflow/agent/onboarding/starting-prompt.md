@@ -88,7 +88,7 @@ If work spans multiple WUs or multiple days, create an initiative first.
 
 When creating WUs or scoping initiatives, always evaluate whether the assigned lane fits the actual work:
 
-- **Check code_paths alignment**: Compare the WU's `code_paths` against lane definitions in `.lumenflow.config.yaml`. If the majority of paths belong to a different lane, propose a lane change.
+- **Check code_paths alignment**: Compare the WU's `code_paths` against lane definitions in `workspace.yaml`. If the majority of paths belong to a different lane, propose a lane change.
 - **Use lane:suggest**: Run `pnpm lane:suggest --paths "src/file.ts"` to get a recommendation.
 - **Propose changes proactively**: If scope expansion during implementation pushes a WU beyond its lane's boundaries, flag the mismatch to the user and suggest either a lane change or a WU split.
 - **Initiative-level review**: When planning an initiative with multiple WUs, ensure each WU is assigned to the lane whose `code_paths` best cover the work. Systematic mismatches signal that lane taxonomy may need updating.
@@ -149,12 +149,12 @@ pnpm wu:cleanup --id WU-XXXX
 
 1. `--cloud` flag on `wu:claim` (explicit, always wins)
 2. `LUMENFLOW_CLOUD=1` environment variable (explicit, always wins)
-3. Config-driven auto-detection when `cloud.auto_detect: true` in `.lumenflow.config.yaml`
+3. Config-driven auto-detection when `cloud.auto_detect: true` in `workspace.yaml`
 
 **Auto-detection configuration:**
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 cloud:
   auto_detect: true # default: false (opt-in)
   env_signals: # checked only when auto_detect is true
@@ -287,7 +287,7 @@ LUMENFLOW_FORCE=1 LUMENFLOW_FORCE_REASON="backlog corruption recovery" git push
 
 **Never use Write or Edit tools to modify YAML configuration files.** Always use the dedicated CLI commands.
 
-### Modifying .lumenflow.config.yaml
+### Modifying workspace.yaml
 
 ```bash
 # Read a config value

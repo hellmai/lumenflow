@@ -161,7 +161,7 @@ export interface MethodologyTelemetryConfig {
  *
  * @example
  * ```yaml
- * # .lumenflow.config.yaml
+ * # workspace.yaml
  * telemetry:
  *   methodology:
  *     enabled: true  # Opt-in to methodology tracking

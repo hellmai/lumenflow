@@ -130,7 +130,7 @@ rm -rf /tmp/nextjs-scaffold
 | --------------------------- | ---------------------- | -------------------------------------------- |
 | `AGENTS.md`                 | Reference docs         | **Entry point** — first file any agent reads |
 | `CLAUDE.md`                 | Reference docs         | Client-specific instructions, skills, hooks  |
-| `.lumenflow.config.yaml`    | Configure lanes, gates | Lane definitions, gate commands to run       |
+| `workspace.yaml`    | Configure lanes, gates | Lane definitions, gate commands to run       |
 | `.lumenflow/constraints.md` | Understand rules       | Non-negotiable constraints to follow         |
 | `docs/.../backlog.md`       | Track work visually    | Find ready WUs to claim                      |
 
@@ -320,7 +320,7 @@ From the agent's perspective, here's what it consumed and how:
 | `AGENTS.md`              | Understood project workflow, found entry points |
 | `PRODUCT_BRIEF.md`       | Extracted requirements, generated WUs           |
 | `WU-001.yaml`            | Knew scope, paths, acceptance criteria          |
-| `.lumenflow.config.yaml` | Understood lanes, ran correct gate commands     |
+| `workspace.yaml` | Understood lanes, ran correct gate commands     |
 | `/skill tdd-workflow`    | Applied test-first methodology                  |
 | `pnpm wu:prep` output    | Fixed issues before completion                  |
 | `.lumenflow/stamps/`     | Verified dependencies before proceeding         |

@@ -103,7 +103,7 @@ export function isLegacyStampedWU(wu: UnsafeAny, stampedIds: UnsafeAny) {
 /**
  * Check if a WU ID is exempted from stamp-status validation via config.
  *
- * The .lumenflow.config.yaml can specify exemptions for known historical
+ * The workspace.yaml can specify exemptions for known historical
  * artifacts that cannot be fixed (e.g., WU-307, WU-311, WU-1152).
  *
  * @param {string} id - WU ID to check

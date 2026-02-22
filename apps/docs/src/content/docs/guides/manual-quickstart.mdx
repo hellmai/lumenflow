@@ -56,7 +56,7 @@ pnpm exec lumenflow
 
 This creates:
 
-- `.lumenflow.config.yaml` — Configuration (managed)
+- `workspace.yaml` — Configuration (managed)
 - `LUMENFLOW.md` — Workflow entry point (managed)
 - `AGENTS.md` — Universal AI agent entry point (user-owned, LumenFlow inserts managed section)
 - `.lumenflow/constraints.md` — Non-negotiable constraints (managed)
@@ -67,7 +67,7 @@ This creates:
 </Aside>
 
 <Aside type="danger" title="DO NOT">
-  Do not manually create these files. Do not edit `.lumenflow.config.yaml` by hand. Use CLI commands
+  Do not manually create these files. Do not edit `workspace.yaml` by hand. Use CLI commands
   to modify configuration.
 </Aside>
 
@@ -241,7 +241,7 @@ LumenFlow manages certain files automatically. Understand which files you own.
 
 | File/Directory              | Owner     | Action                                                       |
 | --------------------------- | --------- | ------------------------------------------------------------ |
-| `.lumenflow.config.yaml`    | LumenFlow | Do not edit manually. Use CLI commands.                      |
+| `workspace.yaml`    | LumenFlow | Do not edit manually. Use CLI commands.                      |
 | `LUMENFLOW.md`              | LumenFlow | Do not edit. Regenerated on init.                            |
 | `AGENTS.md`                 | You       | User-owned. LumenFlow manages section via markers.           |
 | `.lumenflow/constraints.md` | LumenFlow | Do not edit. Contains workflow rules.                        |

@@ -53,7 +53,7 @@ pnpm lane:status
 Lanes use a `Parent: Sublane` naming convention to organize work hierarchically:
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 lanes:
@@ -161,7 +161,7 @@ Start with `lock_policy: active` on low-conflict lanes like **Content: Documenta
 
 If `lock_policy: active` causes issues:
 
-1. Update `.lumenflow.config.yaml`: change `lock_policy: active` to `lock_policy: all`
+1. Update `workspace.yaml`: change `lock_policy: active` to `lock_policy: all`
 2. Run `pnpm wu:unlock-lane --lane "<lane>"` to clear stale locks
 
 ## Lane Lock Lifecycle

@@ -83,7 +83,7 @@ const validTransitions = machine.getValidTransitions(WuStatus.IN_PROGRESS);
 import { loadConfig, validateConfig, type LumenFlowConfig } from '@lumenflow/core';
 
 // Load config from file
-const config = await loadConfig('/path/to/.lumenflow.config.yaml');
+const config = await loadConfig('/path/to/workspace.yaml');
 
 // Validate config
 const issues = validateConfig(config);

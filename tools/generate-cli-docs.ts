@@ -758,23 +758,21 @@ function generateConfigMdx(sections: ConfigSection[]): string {
     '{/* Run `pnpm docs:generate` to regenerate from source */}',
     '{/* Includes formatting stabilization (WU-1157) */}',
     '',
-    'LumenFlow is configured via `.lumenflow.config.yaml` in your project root.',
+    'LumenFlow is configured via `workspace.yaml` in your project root (`software_delivery` block).',
     '',
     '## Minimal Config',
     '',
     '```yaml',
-    "version: '2.0'",
-    '',
-    'lanes:',
-    '  definitions:',
-    "    - name: 'Framework: Core'",
-    "      code_paths: ['src/**']",
-    '',
-    'gates:',
-    '  format: true',
-    '  lint: true',
-    '  typecheck: true',
-    '  test: true',
+    'software_delivery:',
+    '  lanes:',
+    '    definitions:',
+    "      - name: 'Framework: Core'",
+    "        code_paths: ['src/**']",
+    '  gates:',
+    '    format: true',
+    '    lint: true',
+    '    typecheck: true',
+    '    test: true',
     '```',
     '',
     '## Config Sections',
@@ -918,7 +916,7 @@ const README_CATEGORIES: Record<string, string> = {
   'Setup & Development': 'System & Setup',
   'Metrics & Flow': 'Metrics & Analytics',
   'State Management': 'System & Setup',
-  // Legacy prefix-based category names (fallback for non-manifest commands)
+  // Prefix-based category names for non-manifest commands
   'Work Units': 'Work Unit Management',
   'Memory Layer': 'Memory & Session',
   'Sub-Agents': 'Initiative Orchestration',
@@ -1213,12 +1211,10 @@ function generateReadmeMd(commands: CommandMetadata[]): string {
   lines.push('```');
   lines.push('');
   lines.push(
-    '**Important**: Always run `docs:sync` after upgrading to update agent onboarding documentation, workflow rules, and vendor-specific configurations.',
+    '**Important**: Always run `docs:sync` after package changes to update agent onboarding documentation, workflow rules, and vendor-specific configurations.',
   );
   lines.push('');
-  lines.push(
-    'For detailed upgrade instructions, migration guides, and troubleshooting, see [UPGRADING.md](https://lumenflow.dev/upgrading).',
-  );
+  lines.push('For current setup guidance and troubleshooting, see [LUMENFLOW.md](https://lumenflow.dev).');
   lines.push('');
 
   // License section

@@ -7,23 +7,21 @@ description: LumenFlow configuration file reference
 {/* Run `pnpm docs:generate` to regenerate from source */}
 {/* Includes formatting stabilization (WU-1157) */}
 
-LumenFlow is configured via `.lumenflow.config.yaml` in your project root.
+LumenFlow is configured via `workspace.yaml` in your project root (`software_delivery` block).
 
 ## Minimal Config
 
 ```yaml
-version: '2.0'
-
-lanes:
-  definitions:
-    - name: 'Framework: Core'
-      code_paths: ['src/**']
-
-gates:
-  format: true
-  lint: true
-  typecheck: true
-  test: true
+software_delivery:
+  lanes:
+    definitions:
+      - name: 'Framework: Core'
+        code_paths: ['src/**']
+  gates:
+    format: true
+    lint: true
+    typecheck: true
+    test: true
 ```
 
 ## Config Sections

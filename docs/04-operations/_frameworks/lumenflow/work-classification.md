@@ -69,7 +69,7 @@ Lane parent names matched case-insensitively: Experience, Frontend, UI, Design.
 
 ## Configuration
 
-Extend defaults via `methodology.work_classification` in `.lumenflow.config.yaml`:
+Extend defaults via `methodology.work_classification` in `workspace.yaml`:
 
 ```yaml
 methodology:

@@ -4,22 +4,20 @@ Config-driven quality gates for any language.
 
 ## Overview
 
-LumenFlow Gates reads your gate commands from `.lumenflow.config.yaml`, allowing you to define custom format, lint, and test commands for any language or toolchain. No more hardcoded presets.
+LumenFlow Gates reads your gate commands from `workspace.yaml` (`software_delivery.gates.execution`), allowing you to define custom format, lint, and test commands for any language or toolchain. No more hardcoded presets.
 
 ## Quick Start
 
-### 1. Add gates configuration to `.lumenflow.config.yaml`
+### 1. Add gates configuration to `workspace.yaml`
 
 ```yaml
-# .lumenflow.config.yaml
-version: '2.0'
-
-gates:
-  execution:
-    format: 'pnpm format:check'
-    lint: 'pnpm lint'
-    typecheck: 'pnpm typecheck'
-    test: 'pnpm test'
+software_delivery:
+  gates:
+    execution:
+      format: 'pnpm format:check'
+      lint: 'pnpm lint'
+      typecheck: 'pnpm typecheck'
+      test: 'pnpm test'
 ```
 
 ### 2. Use the action
@@ -37,12 +35,12 @@ gates:
 For common languages, use a preset to get sensible defaults:
 
 ```yaml
-# .lumenflow.config.yaml
-gates:
-  execution:
-    preset: 'python'
-    # Override specific commands
-    lint: 'mypy . && ruff check .'
+software_delivery:
+  gates:
+    execution:
+      preset: 'python'
+      # Override specific commands
+      lint: 'mypy . && ruff check .'
 ```
 
 Available presets: `node`, `python`, `go`, `rust`, `dotnet`
@@ -52,14 +50,14 @@ Available presets: `node`, `python`, `go`, `rust`, `dotnet`
 Define any commands for your toolchain:
 
 ```yaml
-# .lumenflow.config.yaml
-gates:
-  execution:
-    setup: 'pnpm install'
-    format: 'pnpm prettier --check .'
-    lint: 'pnpm eslint .'
-    typecheck: 'pnpm tsc --noEmit'
-    test: 'pnpm vitest run'
+software_delivery:
+  gates:
+    execution:
+      setup: 'pnpm install'
+      format: 'pnpm prettier --check .'
+      lint: 'pnpm eslint .'
+      typecheck: 'pnpm tsc --noEmit'
+      test: 'pnpm vitest run'
 ```
 
 ### Command Options
@@ -67,13 +65,14 @@ gates:
 Commands can be strings or objects with options:
 
 ```yaml
-gates:
-  execution:
-    format: 'dotnet format --verify-no-changes'
-    test:
-      command: 'dotnet test --no-restore'
-      timeout: 300000 # 5 minutes
-      continueOnError: false
+software_delivery:
+  gates:
+    execution:
+      format: 'dotnet format --verify-no-changes'
+      test:
+        command: 'dotnet test --no-restore'
+        timeout: 300000 # 5 minutes
+        continueOnError: false
 ```
 
 ## Language Examples
@@ -81,67 +80,72 @@ gates:
 ### Node.js / TypeScript
 
 ```yaml
-gates:
-  execution:
-    preset: 'node'
-    # Or custom:
-    setup: 'pnpm install --frozen-lockfile'
-    format: 'pnpm prettier --check .'
-    lint: 'pnpm eslint . --max-warnings 0'
-    typecheck: 'pnpm tsc --noEmit'
-    test: 'pnpm vitest run'
+software_delivery:
+  gates:
+    execution:
+      preset: 'node'
+      # Or custom:
+      setup: 'pnpm install --frozen-lockfile'
+      format: 'pnpm prettier --check .'
+      lint: 'pnpm eslint . --max-warnings 0'
+      typecheck: 'pnpm tsc --noEmit'
+      test: 'pnpm vitest run'
 ```
 
 ### Python
 
 ```yaml
-gates:
-  execution:
-    preset: 'python'
-    # Or custom:
-    setup: 'pip install -e ".[dev]"'
-    format: 'ruff format --check .'
-    lint: 'ruff check . && mypy .'
-    test: 'pytest -v'
+software_delivery:
+  gates:
+    execution:
+      preset: 'python'
+      # Or custom:
+      setup: 'pip install -e ".[dev]"'
+      format: 'ruff format --check .'
+      lint: 'ruff check . && mypy .'
+      test: 'pytest -v'
 ```
 
 ### .NET
 
 ```yaml
-gates:
-  execution:
-    preset: 'dotnet'
-    # Or custom:
-    setup: 'dotnet restore'
-    format: 'dotnet format --verify-no-changes'
-    lint: 'dotnet build --no-restore -warnaserror'
-    test: 'dotnet test --no-restore --logger "console;verbosity=normal"'
+software_delivery:
+  gates:
+    execution:
+      preset: 'dotnet'
+      # Or custom:
+      setup: 'dotnet restore'
+      format: 'dotnet format --verify-no-changes'
+      lint: 'dotnet build --no-restore -warnaserror'
+      test: 'dotnet test --no-restore --logger "console;verbosity=normal"'
 ```
 
 ### Go
 
 ```yaml
-gates:
-  execution:
-    preset: 'go'
-    # Or custom:
-    format: 'test -z "$(gofmt -l .)"'
-    lint: 'golangci-lint run'
-    typecheck: 'go vet ./...'
-    test: 'go test -v ./...'
+software_delivery:
+  gates:
+    execution:
+      preset: 'go'
+      # Or custom:
+      format: 'test -z "$(gofmt -l .)"'
+      lint: 'golangci-lint run'
+      typecheck: 'go vet ./...'
+      test: 'go test -v ./...'
 ```
 
 ### Rust
 
 ```yaml
-gates:
-  execution:
-    preset: 'rust'
-    # Or custom:
-    format: 'cargo fmt --check'
-    lint: 'cargo clippy -- -D warnings'
-    typecheck: 'cargo check'
-    test: 'cargo test'
+software_delivery:
+  gates:
+    execution:
+      preset: 'rust'
+      # Or custom:
+      format: 'cargo fmt --check'
+      lint: 'cargo clippy -- -D warnings'
+      typecheck: 'cargo check'
+      test: 'cargo test'
 ```
 
 ## Inputs
@@ -162,9 +166,9 @@ gates:
 | `preset-detected` | Preset/config mode used               |
 | `gates-passed`    | Whether all gates passed (true/false) |
 
-## Backwards Compatibility
+## Auto-Detect Behavior
 
-If no `gates.execution` config is present, the action falls back to auto-detecting your project type based on files present (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, etc.) and uses the corresponding preset defaults.
+If no `software_delivery.gates.execution` config is present, the action auto-detects your project type based on files present (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, etc.) and uses the corresponding preset defaults.
 
 ## Full Workflow Example
 

@@ -296,9 +296,9 @@ pnpm update @lumenflow/cli @lumenflow/core @lumenflow/memory @lumenflow/agent @l
 pnpm exec lumenflow docs:sync
 ```
 
-**Important**: Always run `docs:sync` after upgrading to update agent onboarding documentation, workflow rules, and vendor-specific configurations.
+**Important**: Always run `docs:sync` after package changes to update agent onboarding documentation, workflow rules, and vendor-specific configurations.
 
-For detailed upgrade instructions, migration guides, and troubleshooting, see [UPGRADING.md](https://lumenflow.dev/upgrading).
+For current setup guidance and troubleshooting, see [LUMENFLOW.md](https://lumenflow.dev).
 
 ## License
 

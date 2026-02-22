@@ -26,7 +26,7 @@ All `@lumenflow/*` packages are versioned together for simplicity. The `@lumenfl
 ### Highlights
 
 - **Kernel + Pack architecture**: Domain-agnostic kernel runtime with pluggable packs. The Software Delivery Pack provides 90+ tools; future packs (compliance-audit, infra-ops, security-ops) are scaffolded.
-- **`workspace.yaml`**: New kernel-level configuration file defining packs, lanes, security boundaries, and namespaces — distinct from `.lumenflow.config.yaml` (CLI/tooling layer).
+- **`workspace.yaml`**: Unified workspace configuration. Top-level fields define kernel runtime (packs, lanes, security, namespaces), and `software_delivery` configures CLI/tooling behavior.
 - **14 granular lanes**: Framework lanes split into Core Lifecycle, Core Validation, Core State Recovery, CLI WU Commands, CLI Memory State, CLI Orchestration, CLI Enforcement, plus package-specific lanes. Variable WIP limits (1 or 2) with `lock_policy` and `wip_justification` fields.
 - **Runtime API migration complete (INIT-030)**: Zero remaining shell-outs in MCP tools — all tool implementations now use runtime APIs directly.
 - **New packages**: `@lumenflow/kernel`, `@lumenflow/runtime`, `@lumenflow/packs`, `@lumenflow/mcp`, `@lumenflow/control-plane-sdk` join the existing package family.
@@ -86,7 +86,7 @@ methodology:
 
 ### New Features
 
-- **Methodology configuration**: Configure testing (`tdd`, `test-after`, `none`) and architecture (`hexagonal`, `layered`, `none`) methodology in `.lumenflow.config.yaml`
+- **Methodology configuration**: Configure testing (`tdd`, `test-after`, `none`) and architecture (`hexagonal`, `layered`, `none`) methodology in `workspace.yaml`
 - **Methodology-aware spawn prompts**: Agent prompts now include methodology-specific guidance. TDD includes RED-GREEN-REFACTOR patterns; test-after allows implementation before tests; none removes testing ceremony.
 - **Template-based coverage thresholds**: Each methodology provides sensible defaults:
 
@@ -152,7 +152,7 @@ See the [Upgrade Guide](/getting-started/upgrade) for detailed instructions.
 
 ### Breaking Changes
 
-- **Config version bump**: `.lumenflow.config.yaml` now requires `version: '2.0'`
+- **Config version bump**: `workspace.yaml` now requires `version: '2.0'`
 - **Lane format**: Lanes now use "Parent: Sublane" format (e.g., `Framework: Core`)
 - **Stamp location**: `.lumenflow/stamps/`
 - **State directory**: `.lumenflow/`

@@ -56,7 +56,7 @@ These default to strict settings but can be adjusted:
 ### Config Schema
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 methodology:
   testing: 'tdd' # tdd | test-after | none
   architecture: 'hexagonal' # hexagonal | layered | none
@@ -78,7 +78,7 @@ methodology:
 A central resolver produces a **Resolved Policy** used by all consumers:
 
 ```
-.lumenflow.config.yaml (methodology decisions)
+workspace.yaml (methodology decisions)
               |
       resolvePolicy(config)
               |

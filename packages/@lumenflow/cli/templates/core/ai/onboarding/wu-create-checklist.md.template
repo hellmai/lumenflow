@@ -9,7 +9,7 @@ Before running `pnpm wu:create`, verify these items.
 ## Step 1: Check Valid Lanes
 
 ```bash
-grep -A 30 "lanes:" .lumenflow.config.yaml
+grep -A 30 "lanes:" workspace.yaml
 ```
 
 **Format:** `"Parent: Sublane"` (colon + single space)

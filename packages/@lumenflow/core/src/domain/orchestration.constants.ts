@@ -24,7 +24,7 @@ export const DOD_TOTAL = 11;
  * Valid lane names in the LumenFlow system.
  * Used for type-safe lane validation.
  *
- * Note: This should match the lanes defined in .lumenflow.config.yaml.
+ * Note: This should match the lanes defined in workspace.yaml.
  * These are LumenFlow framework lanes, not application-specific lanes.
  */
 export const LANES = [

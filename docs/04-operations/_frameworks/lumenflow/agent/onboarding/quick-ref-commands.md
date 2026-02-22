@@ -163,7 +163,7 @@ Before rerunning `wu:prep` after docs-heavy edits, format touched docs first:
 
 ### Memory Enforcement (INIT-015)
 
-Auto-checkpoint and decay enforcement are configured in `.lumenflow.config.yaml` under `memory.enforcement` and `memory.decay`. When enabled:
+Auto-checkpoint and decay enforcement are configured in `workspace.yaml` under `memory.enforcement` and `memory.decay`. When enabled:
 
 - **Auto-checkpoint hooks** create checkpoints automatically via PostToolUse (counter-based) and SubagentStop (always) events
 - **wu:done checkpoint gate** warns or blocks if no checkpoints exist for the WU
@@ -220,12 +220,12 @@ Supported mismatch fixes:
 
 | Command                                           | Description                                             |
 | ------------------------------------------------- | ------------------------------------------------------- |
-| `pnpm config:get --key <dotpath>`                 | Read a value from `.lumenflow.config.yaml`              |
-| `pnpm config:set --key <dotpath> --value <value>` | Set a value in `.lumenflow.config.yaml` (Zod-validated) |
+| `pnpm config:get --key <dotpath>`                 | Read a value from `workspace.yaml`              |
+| `pnpm config:set --key <dotpath> --value <value>` | Set a value in `workspace.yaml` (Zod-validated) |
 
 `config:set` validates against the Zod schema before writing and uses the micro-worktree
 pattern for atomic commits. Always use these commands instead of raw Write/Edit on
-`.lumenflow.config.yaml`. See [Constraint 9](../../../../../.lumenflow/constraints.md)
+`workspace.yaml`. See [Constraint 9](../../../../../.lumenflow/constraints.md)
 and [YAML editing policy](../../../../../.lumenflow/rules/yaml-editing-policy.md).
 
 **Common dotpaths:**
@@ -255,7 +255,7 @@ Plans are markdown documents that capture goals, scope, approach, and success cr
 
 ### Plan Storage
 
-Plans are stored in the repo at `docs/04-operations/plans/` by default (configurable via `directories.plansDir` in `.lumenflow.config.yaml`).
+Plans are stored in the repo at `docs/04-operations/plans/` by default (configurable via `directories.plansDir` in `workspace.yaml`).
 
 If the plan exists only in conversation, use `--plan` on `wu:create` to generate a lightweight
 stub in `$LUMENFLOW_HOME/plans/` and automatically set the WU's `plan` field to the
@@ -572,7 +572,7 @@ pnpm lane:status
 
 By default, `wu:create` and `wu:claim` expect an `origin` remote and will fetch `origin/main`.
 
-For local-only or offline development, add this to `.lumenflow.config.yaml`:
+For local-only or offline development, add this to `workspace.yaml`:
 
 ```yaml
 git:
@@ -662,7 +662,7 @@ pnpm wu:cleanup --id WU-XXX
 **Cloud auto-detection (opt-in):**
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 cloud:
   auto_detect: true # default: false
   env_signals:
@@ -677,7 +677,7 @@ cloud:
 Configure hooks that enforce workflow compliance for Claude Code:
 
 ```yaml
-# In .lumenflow.config.yaml
+# In workspace.yaml
 agents:
   clients:
     claude-code:

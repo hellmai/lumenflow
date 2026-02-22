@@ -170,7 +170,7 @@ function createInitiativeYamlInWorktree(
 
 /**
  * Resolve lane lifecycle classification for initiative:create without mutating
- * .lumenflow.config.yaml.
+ * workspace.yaml.
  *
  * WU-1751: initiative:create guidance should be read-only.
  */

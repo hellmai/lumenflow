@@ -35,7 +35,7 @@ export const COVERAGE_GATE_MODES = Object.freeze({
  * These are the critical application layer files.
  *
  * WU-1068: Changed from @exampleapp to @lumenflow for framework reusability.
- * Project-specific patterns should be configured in .lumenflow.config.yaml.
+ * Project-specific patterns should be configured in workspace.yaml.
  *
  * @constant {string[]}
  */

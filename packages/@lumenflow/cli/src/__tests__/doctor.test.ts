@@ -33,7 +33,6 @@ const HUSKY_DIR = '.husky';
 const SCRIPTS_DIR = 'scripts';
 const DOCS_TASKS_DIR = 'docs/04-operations/tasks';
 const WORKSPACE_CONFIG_FILE_NAME = 'workspace.yaml';
-const LEGACY_CONFIG_FILE_NAME = '.lumenflow.config.yaml';
 const WORKSPACE_CONFIG_CONTENT = 'software_delivery: {}\n';
 
 /**
@@ -311,17 +310,15 @@ describe('doctor CLI (WU-1386) - Agent Friction Checks', () => {
       expect(result.workflowHealth?.worktreeSanity).toBeDefined();
     });
 
-    it('should return hard-cut migration guidance for legacy-only config', async () => {
+    it('should return canonical guidance when workspace config is missing', async () => {
       setupMinimalProject(testDir);
       rmSync(join(testDir, WORKSPACE_CONFIG_FILE_NAME), { force: true });
-      writeFileSync(join(testDir, LEGACY_CONFIG_FILE_NAME), 'lanes: []\n', 'utf-8');
 
       const result = await runDoctor(testDir);
 
       expect(result.checks.lumenflowConfig.passed).toBe(false);
-      expect(result.checks.lumenflowConfig.message).toContain(LEGACY_CONFIG_FILE_NAME);
+      expect(result.checks.lumenflowConfig.message).toContain(WORKSPACE_CONFIG_FILE_NAME);
       expect(result.checks.lumenflowConfig.details).toContain('workspace-init');
-      expect(result.checks.lumenflowConfig.details).toContain(WORKSPACE_CONFIG_FILE_NAME);
       expect(result.exitCode).toBe(2);
     });
   });
@@ -369,15 +366,14 @@ describe('doctor auto-run after init (WU-1386)', () => {
     expect(result.blocked).toBe(false);
   });
 
-  it('should report legacy-only config as error with migration guidance', async () => {
+  it('should report missing workspace config as an error with setup guidance', async () => {
     setupMinimalProject(testDir);
     rmSync(join(testDir, WORKSPACE_CONFIG_FILE_NAME), { force: true });
-    writeFileSync(join(testDir, LEGACY_CONFIG_FILE_NAME), 'lanes: []\n', 'utf-8');
 
     const result = await runDoctorForInit(testDir);
 
     expect(result.errors).toBeGreaterThan(0);
-    expect(result.output).toContain(LEGACY_CONFIG_FILE_NAME);
+    expect(result.output).toContain('workspace.yaml missing');
     expect(result.output).toContain('workspace-init');
     expect(result.blocked).toBe(false);
   });

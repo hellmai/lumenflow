@@ -91,7 +91,7 @@ const BIN_ARTIFACT_ROOT_DENYLIST = new Set([NODE_MODULES_DIR]);
  *
  * WU-1068: Removed @exampleapp references. Only @lumenflow packages are
  * relevant to the LumenFlow framework. Project-specific paths should be
- * configured in .lumenflow.config.yaml.
+ * configured in workspace.yaml.
  *
  * @type {string[]}
  */

@@ -1,11 +1,11 @@
 ---
 title: config:set & config:get
-description: CLI commands for safe .lumenflow.config.yaml modification
+description: CLI commands for safe workspace.yaml modification
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-CLI commands for safely reading and modifying `.lumenflow.config.yaml` with Zod schema validation.
+CLI commands for safely reading and modifying `workspace.yaml` with Zod schema validation.
 
 <Aside type="caution">
   `config:set` uses the micro-worktree pattern for atomic commits. It writes to `origin/main` via an
@@ -14,7 +14,7 @@ CLI commands for safely reading and modifying `.lumenflow.config.yaml` with Zod 
 
 ## config:set
 
-Safely updates a value in `.lumenflow.config.yaml`.
+Safely updates a value in `workspace.yaml`.
 
 ```bash
 pnpm config:set --key <dotpath> --value <value>
@@ -86,7 +86,7 @@ If the value fails Zod schema validation, the command exits with a descriptive e
 
 ## config:get
 
-Reads and displays a value from `.lumenflow.config.yaml`.
+Reads and displays a value from `workspace.yaml`.
 
 ```bash
 pnpm config:get --key <dotpath>

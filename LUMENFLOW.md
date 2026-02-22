@@ -91,11 +91,12 @@ pnpm lane:lock       # finalizes lane lifecycle for delivery WUs
 
 By default, `wu:create` expects an `origin` remote and will fetch `origin/main`.
 
-For local-only or offline development, add this to `.lumenflow.config.yaml`:
+For local-only or offline development, add this to `workspace.yaml`:
 
 ```yaml
-git:
-  requireRemote: false
+software_delivery:
+  git:
+    requireRemote: false
 ```
 
 When `requireRemote: false`:
@@ -235,7 +236,7 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 | `pnpm lane:lock`      | Lock lane lifecycle for delivery WUs                   |
 | `pnpm mem:checkpoint` | Save memory checkpoint                                 |
 
-Commands include **context-aware validation** that checks location, WU status, and git state. When validation fails, commands provide copy-paste ready fix commands. Configure in `.lumenflow.config.yaml` under `experimental.context_validation`.
+Commands include **context-aware validation** that checks location, WU status, and git state. When validation fails, commands provide copy-paste ready fix commands. Configure in `workspace.yaml` under `software_delivery.experimental.context_validation`.
 
 For recovery commands, state management, memory coordination, and orchestration tools, see [quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md).
 
@@ -248,7 +249,7 @@ See [.lumenflow/constraints.md](.lumenflow/constraints.md) for the 9 non-negotia
 1. Worktree discipline and git safety
 2. WUs are specs, not code
 3. Docs-only vs code WUs
-4. LLM-first, zero-fallback inference
+4. LLM-first deterministic inference
 5. Gates and skip-gates
 6. Safety and governance
 7. Test ratchet pattern

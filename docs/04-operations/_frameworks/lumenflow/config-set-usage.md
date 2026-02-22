@@ -2,11 +2,11 @@
 
 **Added in:** WU-1902
 
-Safe CLI commands for modifying and reading `.lumenflow.config.yaml` without directly editing YAML files.
+Safe CLI commands for modifying and reading `workspace.yaml` without directly editing YAML files.
 
 ## Why
 
-Agents and users who raw-edit `.lumenflow.config.yaml` with Write/Edit tools risk:
+Agents and users who raw-edit `workspace.yaml` with Write/Edit tools risk:
 
 - Breaking YAML syntax
 - Bypassing Zod schema validation
@@ -18,7 +18,7 @@ Agents and users who raw-edit `.lumenflow.config.yaml` with Write/Edit tools ris
 
 ### config:set
 
-Safely updates a value in `.lumenflow.config.yaml`.
+Safely updates a value in `workspace.yaml`.
 
 ```bash
 pnpm config:set --key <dotpath> --value <value>
@@ -52,7 +52,7 @@ pnpm config:set --key experimental.context_validation --value true
 
 **Behavior:**
 
-1. Reads the current `.lumenflow.config.yaml`
+1. Reads the current `workspace.yaml`
 2. Coerces the string value to the correct type (boolean, number, array append)
 3. Validates the entire config against the Zod schema
 4. If validation fails, rejects with a clear error message
@@ -60,7 +60,7 @@ pnpm config:set --key experimental.context_validation --value true
 
 ### config:get
 
-Reads and displays a value from `.lumenflow.config.yaml`.
+Reads and displays a value from `workspace.yaml`.
 
 ```bash
 pnpm config:get --key <dotpath>
@@ -94,7 +94,7 @@ pnpm config:get --key nonexistent.key
 
 ## Supported Dotpaths
 
-Any key in the `.lumenflow.config.yaml` schema can be addressed via dotpath. Common examples:
+Any key in the `workspace.yaml` schema can be addressed via dotpath. Common examples:
 
 | Dotpath                           | Type     | Description                    |
 | --------------------------------- | -------- | ------------------------------ |

@@ -47,7 +47,7 @@ LumenFlow enforces agent safety through 8 layered protection mechanisms. No sing
 - `.lumenflow/*` (workflow configuration and state)
 - Files matching documentation patterns
 
-**Known gap:** The allowlist means agents can raw-edit `.lumenflow.config.yaml` and WU YAML files without using `config:set` or `wu:edit`. See the [YAML Editing Policy](#yaml-editing-policy) section.
+**Known gap:** The allowlist means agents can raw-edit `workspace.yaml` and WU YAML files without using `config:set` or `wu:edit`. See the [YAML Editing Policy](#yaml-editing-policy) section.
 
 ---
 
@@ -137,9 +137,9 @@ Blocked actions are logged to `.lumenflow/safety-blocks.log`.
 
 ---
 
-### Layer 8: Configuration-Driven Enforcement (.lumenflow.config.yaml)
+### Layer 8: Configuration-Driven Enforcement (workspace.yaml)
 
-**File:** `.lumenflow.config.yaml`
+**File:** `workspace.yaml`
 
 **Scope:** Varies by setting and client
 
@@ -189,14 +189,14 @@ experimental:
 
 ## YAML Editing Policy
 
-YAML configuration files (`.lumenflow.config.yaml`, WU specification files) are in the allowlist for worktree path validation (Layer 2). This means any agent -- including those with tool-level hooks -- can raw-edit these files using Write or Edit tools.
+YAML configuration files (`workspace.yaml`, WU specification files) are in the allowlist for worktree path validation (Layer 2). This means any agent -- including those with tool-level hooks -- can raw-edit these files using Write or Edit tools.
 
 **Policy: Always use CLI tooling to modify YAML files. Never use raw Write/Edit.**
 
 | File                     | Safe Command                                 | Unsafe Alternative                                      |
 | ------------------------ | -------------------------------------------- | ------------------------------------------------------- |
-| `.lumenflow.config.yaml` | `pnpm config:set --key <path> --value <val>` | Write/Edit to `.lumenflow.config.yaml`                  |
-| `.lumenflow.config.yaml` | `pnpm config:get --key <path>` (read)        | Read `.lumenflow.config.yaml` (acceptable for reading)  |
+| `workspace.yaml` | `pnpm config:set --key <path> --value <val>` | Write/Edit to `workspace.yaml`                  |
+| `workspace.yaml` | `pnpm config:get --key <path>` (read)        | Read `workspace.yaml` (acceptable for reading)  |
 | WU YAML specs            | `pnpm wu:edit --id WU-XXX --field value`     | Write/Edit to `docs/04-operations/tasks/wu/WU-XXX.yaml` |
 | WU YAML specs            | `pnpm wu:create ...` (creation)              | Write to create new YAML files                          |
 
@@ -331,7 +331,7 @@ pnpm lumenflow:init --client windsurf
 
 The following enforcement improvements are planned (documentation-first, then tooling):
 
-1. **Hook-level YAML edit blocking** -- Extend Layer 2 to block raw Write/Edit to `.lumenflow.config.yaml` and redirect to `config:set`
+1. **Hook-level YAML edit blocking** -- Extend Layer 2 to block raw Write/Edit to `workspace.yaml` and redirect to `config:set`
 2. **GitHub branch protection** -- Add server-side rules requiring PR reviews and status checks for main
 3. **Active audit alerting** -- Monitor `.lumenflow/audit/` for violations and send alerts
 4. **Cross-client enforcement hooks** -- Extend tool-level hooks to Cursor (via MCP) and other clients

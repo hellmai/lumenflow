@@ -78,7 +78,7 @@ injects relevant memory context into the handoff prompt under a `## Memory Conte
 
 **Configuration:**
 
-Configure max context size in `.lumenflow.config.yaml`:
+Configure max context size in `workspace.yaml`:
 
 ```yaml
 memory:

@@ -21,7 +21,7 @@
  */
 
 /**
- * Environment signal configuration from .lumenflow.config.yaml
+ * Environment signal configuration from workspace.yaml
  *
  * Defines an environment variable match rule.
  *
@@ -38,7 +38,7 @@ export interface CloudEnvSignalConfig {
 }
 
 /**
- * Cloud detection configuration from .lumenflow.config.yaml
+ * Cloud detection configuration from workspace.yaml
  */
 export interface CloudDetectConfig {
   /** Deprecated activation toggle for env signals (ignored by detection logic) */
@@ -55,7 +55,7 @@ export interface CloudDetectInput {
   readonly cloudFlag: boolean;
   /** Environment variables (Record<string, string | undefined>) */
   readonly env: Readonly<Record<string, string | undefined>>;
-  /** Cloud detection config from .lumenflow.config.yaml */
+  /** Cloud detection config from workspace.yaml */
   readonly config: CloudDetectConfig;
 }
 

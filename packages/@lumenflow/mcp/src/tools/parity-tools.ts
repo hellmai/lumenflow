@@ -1600,12 +1600,12 @@ export const signalCleanupTool: ToolDefinition = {
 };
 
 /**
- * config_set - Safely update .lumenflow.config.yaml via micro-worktree
+ * config_set - Safely update workspace.yaml via micro-worktree
  * WU-1902: config:set MCP parity tool
  */
 export const configSetTool: ToolDefinition = {
   name: 'config_set',
-  description: 'Safely update .lumenflow.config.yaml via micro-worktree',
+  description: 'Safely update workspace.yaml via micro-worktree',
   inputSchema: configSetSchema,
 
   async execute(input, options) {
@@ -1648,12 +1648,12 @@ export const configSetTool: ToolDefinition = {
 };
 
 /**
- * config_get - Read and display a value from .lumenflow.config.yaml
+ * config_get - Read and display a value from workspace.yaml
  * WU-1902: config:get MCP parity tool
  */
 export const configGetTool: ToolDefinition = {
   name: 'config_get',
-  description: 'Read and display a value from .lumenflow.config.yaml',
+  description: 'Read and display a value from workspace.yaml',
   inputSchema: configGetSchema,
 
   async execute(input, options) {
