@@ -1,0 +1,40 @@
+id: WU-2047
+title: Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)
+lane: 'Framework: Core Lifecycle'
+type: refactor
+status: ready
+priority: P0
+created: 2026-02-22
+code_paths:
+  - packages/@lumenflow/packs/software-delivery
+  - packages/@lumenflow/kernel/src
+  - packages/@lumenflow/mcp/src
+  - packages/@lumenflow/packs/software-delivery/__tests__
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/packs/software-delivery/__tests__
+    - packages/@lumenflow/kernel/src/__tests__
+    - packages/@lumenflow/mcp/src/__tests__
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2047.done
+dependencies: []
+initiative: INIT-033
+phase: 5
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: software-delivery pack still executes most tools via wrapper handlers that spawn CLI dist scripts, leaving a hybrid architecture and breaking reference-pack expectations. Problem: this bridge layer adds failure points and keeps pack behavior unlike consumer packs. Solution: remove CLI-spawn bridge handlers and rewire software-delivery tool implementations to runtime-native handlers only, with no compatibility fallbacks or pending migration stubs.'
+acceptance:
+  - No software-delivery tool implementation uses spawnSync to execute packages/@lumenflow/cli/dist scripts.
+  - software-delivery manifest contains no entries pointing to parity-migration-tools.ts or pending-runtime migration stubs.
+  - Pack tools execute via runtime-native handlers with parity tests updated and passing.
+  - Guard tests fail on any reintroduction of CLI dist shell-out bridges in software-delivery tool-impl.
