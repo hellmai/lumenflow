@@ -33,7 +33,6 @@ sections:
 
 - [WU-2014 — Decompose wu-done-worktree.ts (1777 lines)](wu/WU-2014.yaml) — Framework: Core Lifecycle
 - [WU-2019 — Replace work-classifier domain switch with data map](wu/WU-2019.yaml) — Framework: Core Validation
-- [WU-2040 — Fix pre-existing agent-verification wuDir expectation regression](wu/WU-2040.yaml) — Framework: Core Validation
 - [WU-2037 — Decompose gates-config.ts (856 lines, 9 responsibilities)](wu/WU-2037.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
@@ -992,6 +991,7 @@ sections:
 - [WU-2041 — Add missing spawn-policy-resolver and spawn-lane-occupation modules](wu/WU-2041.yaml)
 - [WU-2018 — Replace consistency repair switch with strategy map](wu/WU-2018.yaml)
 - [WU-2017 — Replace invariant type dispatch with strategy pattern](wu/WU-2017.yaml)
+- [WU-2040 — Fix pre-existing agent-verification wuDir expectation regression](wu/WU-2040.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
