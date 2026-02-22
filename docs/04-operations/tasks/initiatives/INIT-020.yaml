@@ -7,7 +7,7 @@ description: 'Context: LumenFlow is a critical workflow runtime and currently ha
   Solution: execute a hard one-sweep remediation across command execution, compiler and lint
   guardrails, package API boundaries, runtime exit handling, duplicated constants, and process state
   isolation with full regression validation.'
-status: done
+status: in_progress
 priority: P0
 owner: platform
 created: 2026-02-09
@@ -58,6 +58,9 @@ phases:
   - id: 15
     title: 'K: Fix floating promises + replace polling (WU-1551)'
     status: done
+  - id: 16
+    title: 'Phase 16: Entry-point and core exit hardening follow-through'
+    status: pending
 success_metrics:
   - No string-concatenated shell execution remains in deps-add, deps-remove, or trace-gen.
   - Build and package tsconfig files enforce strict type checking and noEmitOnError.
@@ -74,3 +77,6 @@ success_metrics:
   - pnpm build, pnpm typecheck, pnpm test, and pnpm gates pass after migration.
 labels: []
 related_plan: lumenflow://plans/polished-frolicking-whale.md
+notes:
+  - '2026-02-22 reopened for audit remediation: complete runCLI(main) standardization and remove
+    remaining core process.exit usage.'
