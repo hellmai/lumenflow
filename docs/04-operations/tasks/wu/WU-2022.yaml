@@ -2,7 +2,7 @@ id: WU-2022
 title: 'Close workspace-first hard cut: move remaining legacy config readers'
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-22
 code_paths:
@@ -16,7 +16,8 @@ code_paths:
   - packages/@lumenflow/core/src/object-guards.ts
 tests:
   manual:
-    - Run pnpm lane:setup, pnpm lane:validate, and pnpm lane:lock in a repo with no .lumenflow.config.yaml and verify success paths reference workspace.yaml.
+    - Run pnpm lane:setup, pnpm lane:validate, and pnpm lane:lock in a repo with no
+      .lumenflow.config.yaml and verify success paths reference workspace.yaml.
     - Run pnpm wu:create and pnpm wu:claim on this WU and verify no legacy config missing errors.
   unit:
     - packages/@lumenflow/core/src/__tests__/lane-checker.test.ts
@@ -37,9 +38,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: legacy .lumenflow.config.yaml readers still block true workspace-first runtime behavior and even lifecycle tooling. Problem: commands and helpers still read legacy paths directly, causing drift and breakage when the legacy file is removed. Solution: finish workspace-first cut by migrating remaining runtime readers to workspace.yaml software_delivery, remove hardcoded legacy config path checks/messages, and validate claim/lane lifecycle flow works without legacy file.'
+description: 'Context: legacy .lumenflow.config.yaml readers still block true workspace-first
+  runtime behavior and even lifecycle tooling. Problem: commands and helpers still read legacy paths
+  directly, causing drift and breakage when the legacy file is removed. Solution: finish
+  workspace-first cut by migrating remaining runtime readers to workspace.yaml software_delivery,
+  remove hardcoded legacy config path checks/messages, and validate claim/lane lifecycle flow works
+  without legacy file.'
 acceptance:
   - No runtime command path requires .lumenflow.config.yaml reads
-  - lane:setup, lane:validate, lane:lock, lane:edit, and lane-checker resolve lanes from workspace.yaml software_delivery
+  - lane:setup, lane:validate, lane:lock, lane:edit, and lane-checker resolve lanes from
+    workspace.yaml software_delivery
   - wu:create and wu:claim flow works without legacy config file present
   - Changed modules use shared helpers/constants (no duplicated object-shape literals)
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2022
+claimed_at: 2026-02-22T10:04:16.459Z
+baseline_main_sha: 21d7a30d9df311a39eb4ab9c79779ada6d03ce30
+session_id: fcc32d78-973b-47c3-b572-a4e7c66b621f
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T10:04:16.467Z

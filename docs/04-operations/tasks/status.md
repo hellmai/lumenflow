@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2022 — Close workspace-first hard cut: move remaining legacy config readers](wu/WU-2022.yaml)
 
 ## Completed
 
