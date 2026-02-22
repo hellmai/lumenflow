@@ -13,11 +13,7 @@
  */
 
 import { asRecord, isBoolean, isNumber } from './object-guards.js';
-import {
-  resolvePolicy,
-  getDefaultPolicy,
-  MethodologyConfigSchema,
-} from './resolve-policy.js';
+import { resolvePolicy, getDefaultPolicy, MethodologyConfigSchema } from './resolve-policy.js';
 import type { CoverageConfig, TestPolicy } from './gates-schemas.js';
 import {
   GATES_RUNTIME_DEFAULTS,

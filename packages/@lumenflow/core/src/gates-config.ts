@@ -36,11 +36,7 @@ import type {
   LaneHealthMode,
 } from './gates-schemas.js';
 import { expandPreset } from './gates-presets.js';
-import {
-  GATES_RUNTIME_DEFAULTS,
-  GATES_FIELDS,
-  getGatesSection,
-} from './gates-config-internal.js';
+import { GATES_RUNTIME_DEFAULTS, GATES_FIELDS, getGatesSection } from './gates-config-internal.js';
 
 // ---------------------------------------------------------------------------
 // Re-exports: schemas, types, and interfaces
