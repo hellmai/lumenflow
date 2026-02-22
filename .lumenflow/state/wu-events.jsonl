@@ -2025,3 +2025,4 @@
 {"type":"claim","wuId":"WU-2044","timestamp":"2026-02-22T17:02:32.091Z","lane":"Framework: Core Validation","title":"Constants consolidation round 2: DRY violations from INIT-034 audit"}
 {"type":"claim","wuId":"WU-2047","timestamp":"2026-02-22T17:07:37.755Z","lane":"Framework: Core Lifecycle","title":"Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)"}
 {"type":"complete","wuId":"WU-2043","timestamp":"2026-02-22T17:10:46.650Z"}
+{"type":"complete","wuId":"WU-2020","timestamp":"2026-02-22T17:20:03.912Z"}

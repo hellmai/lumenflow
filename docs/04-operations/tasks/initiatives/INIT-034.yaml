@@ -20,7 +20,7 @@ phases:
     status: done
   - id: 4
     title: 'Phase 4: DIP & ISP Improvements'
-    status: in_progress
+    status: done
 success_metrics:
   - Zero raw numeric literals (except 0, 1, -1) in kernel business logic
   - No source file exceeds 500 lines
