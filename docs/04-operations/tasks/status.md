@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1998 — Reduce misleading no-checkpoint warnings in wu:done warn mode](wu/WU-1998.yaml)
 
 ## Completed
 
