@@ -6,8 +6,8 @@ status: in_progress
 priority: P2
 created: 2026-02-15
 code_paths:
-  - packages/@lumenflow/cli/**
-  - packages/@lumenflow/mcp/**
+  - packages/@lumenflow/cli/src/**
+  - packages/@lumenflow/mcp/src/**
 tests:
   manual:
     - packages/@lumenflow/cli/src/__tests__/file-operations.test.ts
@@ -24,10 +24,17 @@ notes: |-
   Unblocked (2026-02-16): Stale emergency WU; clear lane occupancy after state doctor
   Released (2026-02-16): Return stale emergency WU to ready queue to free lane
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-22T01:41:45.210Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1702
+session_id: 47accd49-bc63-48f8-b250-2943acc2b5d2
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T01:41:45.215Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +42,3 @@ description: Remove all domain-specific-specific code from the @lumenflow/cli an
   packages. The repo was open-sourced with domain-specific code that does not belong.
 acceptance:
   - No domain-specific references in CLI or MCP packages
-claimed_at: 2026-02-22T01:41:45.210Z
-baseline_main_sha: d86de29aae5acf5e93572488001499312c3fbc1f
-session_id: 47accd49-bc63-48f8-b250-2943acc2b5d2
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-22T01:41:45.215Z
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-1702
