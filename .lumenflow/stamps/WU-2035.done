@@ -1,0 +1,2 @@
+WU WU-2035 — Fix crypto.randomUUID crash in non-secure HTTP contexts
+Completed: 2026-02-22

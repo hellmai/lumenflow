@@ -2,7 +2,7 @@ id: WU-2035
 title: Fix crypto.randomUUID crash in non-secure HTTP contexts
 lane: 'Operations: Runtime'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-22
 code_paths:
@@ -40,3 +40,6 @@ description: crypto.randomUUID() is called in workspace-overview-live.tsx (clien
 acceptance:
   - Task creation works over plain HTTP (non-secure context)
   - crypto.getRandomValues fallback generates valid UUID v4
+locked: true
+completed_at: 2026-02-22T13:43:30.426Z
+completed: 2026-02-22

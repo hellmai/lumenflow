@@ -4,7 +4,6 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-- [WU-2035 — Fix crypto.randomUUID crash in non-secure HTTP contexts](wu/WU-2035.yaml)
 - [WU-2036 — Complete 100% kernel-first hard cut and docs parity](wu/WU-2036.yaml)
 
 ## Completed
@@ -947,3 +946,4 @@ _Last updated: 2026-02-22_
 - [WU-2006 — Hard-delete legacy .lumenflow.config.yaml and remediate runtime readers to workspace.yaml v2](wu/WU-2006.yaml) — 2026-02-22
 - [WU-2022 — Close workspace-first hard cut: move remaining legacy config readers](wu/WU-2022.yaml) — 2026-02-22
 - [WU-2034 — Complete kernel-first hard cut from legacy config references](wu/WU-2034.yaml) — 2026-02-22
+- [WU-2035 — Fix crypto.randomUUID crash in non-secure HTTP contexts](wu/WU-2035.yaml) — 2026-02-22
