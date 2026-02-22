@@ -77,7 +77,7 @@ const TASK_CLAIM_OPTIONS = {
   domainData: {
     name: 'domainData',
     flags: '--domain-data <json>',
-    description: 'Optional JSON object payload for domain-specific metadata',
+    description: 'Optional JSON object payload for task-scoped metadata',
   },
   workspaceRoot: {
     name: 'workspaceRoot',

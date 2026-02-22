@@ -5,7 +5,7 @@
  * @file context-tools.ts
  * @description Context/read operations via @lumenflow/core
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1803: Migrated from shell-out/direct core calls to executeViaPack (runtime pack execution)
  */
 

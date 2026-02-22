@@ -281,7 +281,7 @@ async function getMemoryLazy(): Promise<MemoryModuleLike> {
 
 // --- WU-1803: Context in-process handler implementations ---
 // WU-1905: flow:bottlenecks, flow:report, metrics, and metrics:snapshot handlers
-// have been migrated to software-delivery pack handlers in
+// have been migrated to pack handler implementations in
 // packages/@lumenflow/packs/software-delivery/tool-impl/flow-metrics-tools.ts
 
 /**
@@ -2580,7 +2580,7 @@ const retiredWu1897InProcessHandlers = [
 void retiredWu1897InProcessHandlers;
 
 // WU-1890: Remaining file/git/state/validation/lane surfaces are now migrated to
-// software-delivery pack handlers. Keep legacy implementations for reference parity.
+// pack handler implementations. Keep legacy implementations for reference parity.
 const retiredWu1890InProcessHandlers = [
   wuInferLaneInProcess,
   fileReadInProcess,
@@ -2629,7 +2629,7 @@ void retiredWu1890InProcessSchemas;
 
 const registeredInProcessToolHandlers = new Map<string, RegisteredInProcessToolHandler>([
   // WU-1905: flow:bottlenecks, flow:report, metrics:snapshot, metrics, and lumenflow:metrics
-  // have been migrated to software-delivery pack handlers. Their resolver registrations
+  // have been migrated to pack handler implementations. Their resolver registrations
   // are removed; they now execute through the pack handler path.
   [
     'context:get',

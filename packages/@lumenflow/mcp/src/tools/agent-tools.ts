@@ -5,7 +5,7 @@
  * @file agent-tools.ts
  * @description Agent tool implementations
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1425: Agent tools: agent_session, agent_session_end, agent_log_issue, agent_issues_query
  * WU-1457: All agent commands use shared schemas
  * WU-1812: Migrated agent tools from CLI shell-out to executeViaPack runtime path

@@ -5,11 +5,11 @@
  * @file memory-tools.ts
  * @description Memory tool implementations
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1424: Memory tools
  * WU-1456: Memory commands use shared schemas where available
  * WU-1811: Migrated memory tools from CLI shell-out to executeViaPack runtime path
- * WU-1896: Memory resolver stubs removed; software-delivery pack handlers are canonical.
+ * WU-1896: Memory resolver stubs removed; pack handler implementations are canonical.
  */
 
 import { z } from 'zod';
