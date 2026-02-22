@@ -6,8 +6,6 @@ status: in_progress
 priority: P1
 created: 2026-02-22
 code_paths:
-  - apps/docs/src/content/docs
-  - docs/04-operations/_frameworks/lumenflow
   - packages/@lumenflow/cli/__tests__
   - packages/@lumenflow/cli/src/__tests__
   - packages/@lumenflow/cli/e2e
