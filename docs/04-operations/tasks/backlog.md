@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2008 — Remove remaining direct process.exit usage from core modules](wu/WU-2008.yaml) — Framework: Core Lifecycle
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — Framework: CLI Orchestration
 - [WU-2006 — Hard-delete legacy .lumenflow.config.yaml and remediate runtime readers to workspace.yaml v2](wu/WU-2006.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
