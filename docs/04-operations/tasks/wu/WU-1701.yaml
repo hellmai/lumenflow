@@ -8,7 +8,9 @@ created: 2026-02-15
 code_paths:
   - packages/@lumenflow/core/src/wu-paths-constants.ts
 tests:
-  manual: []
+  manual:
+    - Run pnpm --filter @lumenflow/core exec vitest run src/__tests__/constants-decomposition.test.ts
+      and confirm the suite passes
   unit:
     - packages/@lumenflow/core/src/__tests__/constants-decomposition.test.ts
   e2e: []
