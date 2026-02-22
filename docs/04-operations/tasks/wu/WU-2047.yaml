@@ -2,7 +2,7 @@ id: WU-2047
 title: Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-22
 code_paths:
@@ -56,3 +56,6 @@ session_id: b54bd1bd-ae41-4314-b471-7c4428298bfa
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T17:07:37.714Z
+locked: true
+completed_at: 2026-02-22T18:09:35.737Z
+completed: 2026-02-22

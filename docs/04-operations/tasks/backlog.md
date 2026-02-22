@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2053 — Pack architecture documentation](wu/WU-2053.yaml) — Content: Framework Docs
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2007 — Complete runCLI(main) entrypoint standardization for orchestration and agent session commands](wu/WU-2007.yaml) — Framework: CLI Orchestration
@@ -32,10 +31,10 @@ sections:
 - [WU-2050 — Bundled pack resolution for end-user bootstrap](wu/WU-2050.yaml) — Framework: Core Lifecycle
 - [WU-2051 — Extract scm-tools reference domain pack](wu/WU-2051.yaml) — Framework: Core Lifecycle
 - [WU-2052 — Delete stub packs and add manifest examples to docs](wu/WU-2052.yaml) — Framework: Core Lifecycle
+- [WU-2053 — Pack architecture documentation](wu/WU-2053.yaml) — Content: Framework Docs
 
 ## 🔧 In progress
 
-- [WU-2047 — Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)](wu/WU-2047.yaml) — Framework: Core Lifecycle
 - [WU-2048 — Final constants DRY sweep: cross-package literals and WUDoc canonicalization](wu/WU-2048.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
@@ -1004,6 +1003,7 @@ sections:
 - [WU-2043 — Add unit tests for INIT-034 decomposed sub-modules and strategy patterns](wu/WU-2043.yaml)
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml)
 - [WU-2044 — Constants consolidation round 2: DRY violations from INIT-034 audit](wu/WU-2044.yaml)
+- [WU-2047 — Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)](wu/WU-2047.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
