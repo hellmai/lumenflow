@@ -6,7 +6,8 @@ status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
-  - packages/@lumenflow/cli/src/gates.ts
+  - packages/@lumenflow/cli/src/gates-plan-resolvers.ts
+  - packages/@lumenflow/cli/src/gates-runners.ts
 tests:
   manual:
     - Delete a tracked file in scope
@@ -14,6 +15,7 @@ tests:
     - and verify format:check does not pass missing-file paths to prettier.
   unit:
     - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-plan-resolvers.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2021.done
@@ -21,10 +23,17 @@ dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-22T22:44:34.167Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-2021
+session_id: 4d61ee41-92ae-4468-b412-98e45ae7a3c7
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T22:44:34.174Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +42,3 @@ description: Incremental format gate includes deleted paths (e.g., .lumenflow.co
 acceptance:
   - format:check incremental input excludes deleted/non-existent paths
   - wu:done for deletion WUs no longer fails on missing-file prettier arguments
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-2021
-claimed_at: 2026-02-22T22:44:34.167Z
-baseline_main_sha: 139c5e78c2f973d61749a24e4dd8d17cb6478847
-session_id: 4d61ee41-92ae-4468-b412-98e45ae7a3c7
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-22T22:44:34.174Z
