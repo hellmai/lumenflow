@@ -2,7 +2,7 @@ id: WU-2039
 title: Eliminate magic literals in workspace-first config surfaces
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-22
 code_paths:
@@ -44,3 +44,11 @@ acceptance:
     from schema/policy defaults where possible.
   - Core tests cover updated helper/constant behavior and pass.
   - Gates pass for touched packages before completion.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2039
+claimed_at: 2026-02-22T14:44:49.558Z
+baseline_main_sha: 0b75201970193eeb48eb6ba3ce4eba6e275719a1
+session_id: bbafff77-d522-4c8a-b72f-e820a2786d34
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T14:44:49.565Z

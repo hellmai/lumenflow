@@ -34,7 +34,6 @@ sections:
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — Framework: Core Lifecycle
 - [WU-2021 — Filter deleted files from incremental format check input](wu/WU-2021.yaml) — Framework: Core Validation
 - [WU-2037 — Decompose gates-config.ts (856 lines, 9 responsibilities)](wu/WU-2037.yaml) — Framework: Core Validation
-- [WU-2039 — Eliminate magic literals in workspace-first config surfaces](wu/WU-2039.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
@@ -42,6 +41,7 @@ sections:
 - [WU-2013 — Decompose wu-state-store.ts into focused services (1274 lines)](wu/WU-2013.yaml) — Framework: Core State Recovery
 - [WU-2010 — Extract magic numbers into named constants (core kernel)](wu/WU-2010.yaml) — Framework: Core Validation
 - [WU-2012 — Decompose wu-spawn.ts god object (2342 lines)](wu/WU-2012.yaml) — Framework: Core Lifecycle
+- [WU-2039 — Eliminate magic literals in workspace-first config surfaces](wu/WU-2039.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
