@@ -1,0 +1,35 @@
+id: WU-1990
+title: Format web workspace selector files to restore global format gate
+lane: 'Operations: Tooling'
+type: bug
+status: ready
+priority: P2
+created: 2026-02-22
+code_paths:
+  - apps/web/__tests__/workspace-selector.test.tsx
+  - apps/web/src/components/workspace-selector.tsx
+  - apps/web/next-env.d.ts
+tests:
+  manual:
+    - Run pnpm format:check and confirm no prettier violations
+  unit:
+    - apps/web/__tests__/workspace-selector.test.tsx
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-1990.done
+dependencies: []
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: ui
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Global prettier check on main fails due formatting drift in workspace selector files. Normalize formatting to restore format:check and avoid noisy gate failures.
+acceptance:
+  - apps/web/__tests__/workspace-selector.test.tsx passes prettier
+  - apps/web/src/components/workspace-selector.tsx passes prettier
+  - pnpm format:check passes on main
