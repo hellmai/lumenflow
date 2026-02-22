@@ -2,7 +2,7 @@ id: WU-1998
 title: Reduce misleading no-checkpoint warnings in wu:done warn mode
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
 tests:
   manual:
-    - Run pnpm wu:done --id <id> in warn mode with no prior checkpoints and verify informational messaging without warning-style failure text
+    - Run pnpm wu:done --id <id> in warn mode with no prior checkpoints and verify informational
+      messaging without warning-style failure text
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
   e2e: []
@@ -27,8 +28,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:done currently warns 'No checkpoints found' even in warn mode where it auto-creates a pre-gates checkpoint moments later. Replace with accurate informational messaging while keeping block-mode enforcement unchanged.
+description: wu:done currently warns 'No checkpoints found' even in warn mode where it auto-creates
+  a pre-gates checkpoint moments later. Replace with accurate informational messaging while keeping
+  block-mode enforcement unchanged.
 acceptance:
   - warn mode no longer emits failure-style 'No checkpoints found' warning
   - block mode still hard-fails when checkpoints are required and missing
   - tests cover updated warn-mode messaging and preserved block-mode semantics
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1998
+claimed_at: 2026-02-22T02:30:56.687Z
+baseline_main_sha: 22277a6de7e319a7355f4c322e23d16007fe094c
+session_id: 47f4186d-d3a1-415b-b415-2e8f641408dd
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T02:30:56.695Z
