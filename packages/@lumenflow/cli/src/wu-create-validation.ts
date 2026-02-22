@@ -10,6 +10,7 @@
  */
 
 import { todayISO } from '@lumenflow/core/date-utils';
+import type { ZodIssue } from 'zod';
 import { hasSpecRefs } from '@lumenflow/core/wu-create-validators';
 import { WU_TYPES } from '@lumenflow/core/wu-constants';
 import { validateWU } from '@lumenflow/core/wu-schema';
@@ -161,8 +162,10 @@ export function validateCreateSpec({
     // Deduplicate: skip schema errors already covered by field-level checks above
     const fieldErrorFields = new Set(['description', 'acceptance', 'code_paths', 'tests']);
     const schemaErrors = schemaResult.error.issues
-      .filter((issue) => !fieldErrorFields.has(issue.path[0] as string) || errors.length === 0)
-      .map((issue) => `${issue.path.join('.')}: ${issue.message}`);
+      .filter(
+        (issue: ZodIssue) => !fieldErrorFields.has(issue.path[0] as string) || errors.length === 0,
+      )
+      .map((issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`);
     errors.push(...schemaErrors);
   }
 

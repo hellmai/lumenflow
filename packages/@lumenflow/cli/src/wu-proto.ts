@@ -28,6 +28,7 @@ import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import type { ZodIssue } from 'zod';
 import { stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { todayISO } from '@lumenflow/core/date-utils';
 import { validateLaneFormat } from '@lumenflow/core/lane-checker';
@@ -184,7 +185,7 @@ function createProtoWUYamlInWorktree(
   const validationResult = validateWU(wuContent);
   if (!validationResult.success) {
     const errors = validationResult.error.issues
-      .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+      .map((issue: ZodIssue) => `  - ${issue.path.join('.')}: ${issue.message}`)
       .join(STRING_LITERALS.NEWLINE);
     die(`${LOG_PREFIX} WU validation failed:\n\n${errors}`);
   }

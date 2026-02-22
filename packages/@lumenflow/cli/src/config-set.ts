@@ -20,6 +20,7 @@
 import path from 'node:path';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import YAML from 'yaml';
+import type { ZodIssue } from 'zod';
 import { findProjectRoot } from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
@@ -311,7 +312,7 @@ export function applyConfigSet(
 
   if (!parseResult.success) {
     const issues = parseResult.error.issues
-      .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+      .map((issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`)
       .join('; ');
     return {
       ok: false,

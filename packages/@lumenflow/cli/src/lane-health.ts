@@ -151,7 +151,7 @@ export function loadLaneDefinitions(projectRoot: string): LaneDefinition[] {
     });
     return (config.lanes?.definitions ?? [])
       .map(parseLaneDefinition)
-      .filter((lane): lane is LaneDefinition => lane !== null);
+      .filter((lane: LaneDefinition | null): lane is LaneDefinition => lane !== null);
   } catch {
     return [];
   }

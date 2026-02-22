@@ -34,6 +34,7 @@ import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import type { ZodIssue } from 'zod';
 import { stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
@@ -425,7 +426,7 @@ export async function main() {
   const validationResult = validateReadyWU(normalizedForValidation);
   if (!validationResult.success) {
     const errors = validationResult.error.issues
-      .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+      .map((issue: ZodIssue) => `  - ${issue.path.join('.')}: ${issue.message}`)
       .join('\n');
     die(`${PREFIX} WU YAML validation failed:\n\n${errors}\n\nFix the issues above and retry.`);
   }

@@ -11,6 +11,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { access, readFile } from 'node:fs/promises';
+import type { ZodIssue } from 'zod';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
 import { assertTransition } from '@lumenflow/core/state-machine';
 import {
@@ -210,7 +211,7 @@ export function validateYAMLSchema(
   const schemaResult = validateWU(doc);
   if (!schemaResult.success) {
     const issueList = schemaResult.error.issues
-      .map((i) => {
+      .map((i: ZodIssue) => {
         const pathText = i.path.map(String).join('.');
         return `  - ${pathText}: ${i.message}`;
       })

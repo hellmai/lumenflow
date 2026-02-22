@@ -48,6 +48,7 @@ import { wuDoneMachine, WU_DONE_EVENTS } from '@lumenflow/core/wu-done-machine';
 
 import { execSync } from 'node:child_process';
 import prettyMs from 'pretty-ms';
+import type { ZodIssue } from 'zod';
 import { runGates } from './gates.js';
 import { resolveWuDonePreCommitGateDecision } from '@lumenflow/core/gates-agent-mode';
 import { buildClaimRepairCommand } from './wu-claim-repair-guidance.js';
@@ -2177,7 +2178,7 @@ async function executePreFlightChecks({
   const schemaResult = validateWU(docForValidation);
   if (!schemaResult.success) {
     const errors = schemaResult.error.issues
-      .map((issue) => `  ${issue.path.join('.')}: ${issue.message}`)
+      .map((issue: ZodIssue) => `  ${issue.path.join('.')}: ${issue.message}`)
       .join(STRING_LITERALS.NEWLINE);
     die(`❌ WU YAML validation failed:\n\n${errors}\n\nFix these issues before running wu:done`);
   }

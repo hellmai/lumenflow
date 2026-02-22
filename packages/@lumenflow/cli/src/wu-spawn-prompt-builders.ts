@@ -25,7 +25,7 @@ import {
 
 import type { SpawnStrategy } from '@lumenflow/core/spawn-strategy';
 import { getConfig } from '@lumenflow/core/config';
-import type { ClientConfig } from '@lumenflow/core/config-schema';
+import type { ClientBlock, ClientConfig } from '@lumenflow/core/config-schema';
 import {
   generateClientSkillsGuidance,
   generateSkillsSelectionSection,
@@ -999,7 +999,7 @@ pnpm wu:done --id ${id}
 export function generateClientBlocksSection(clientContext: ClientContext | undefined): string {
   if (!clientContext?.config?.blocks?.length) return '';
   const blocks = clientContext.config.blocks
-    .map((block) => `### ${block.title}\n\n${block.content}`)
+    .map((block: ClientBlock) => `### ${block.title}\n\n${block.content}`)
     .join('\n\n');
   return `## Client Guidance (${clientContext.name})\n\n${blocks}`;
 }
