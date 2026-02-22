@@ -303,22 +303,22 @@ function matchDescriptionKeywords(
 }
 
 /**
+ * Domain-to-capabilities data map (OCP-compliant).
+ * Add new domains by extending the record, no switch modification needed.
+ */
+const DOMAIN_CAPABILITIES: Record<WorkDomain, string[]> = {
+  [WORK_DOMAINS.UI]: ['ui-design-awareness', 'component-reuse-check'],
+  [WORK_DOMAINS.DOCS]: ['documentation-structure', 'link-validation'],
+  [WORK_DOMAINS.INFRA]: ['infrastructure-review', 'security-check'],
+  [WORK_DOMAINS.MIXED]: ['cross-domain-awareness'],
+  [WORK_DOMAINS.BACKEND]: [],
+};
+
+/**
  * Map work domain to capabilities (abstract, vendor-agnostic).
  */
 function getCapabilities(domain: WorkDomain): string[] {
-  switch (domain) {
-    case WORK_DOMAINS.UI:
-      return ['ui-design-awareness', 'component-reuse-check'];
-    case WORK_DOMAINS.DOCS:
-      return ['documentation-structure', 'link-validation'];
-    case WORK_DOMAINS.INFRA:
-      return ['infrastructure-review', 'security-check'];
-    case WORK_DOMAINS.MIXED:
-      return ['cross-domain-awareness'];
-    case WORK_DOMAINS.BACKEND:
-    default:
-      return [];
-  }
+  return DOMAIN_CAPABILITIES[domain] ?? [];
 }
 
 // ─── Public API ──────────────────────────────────────────────────────
