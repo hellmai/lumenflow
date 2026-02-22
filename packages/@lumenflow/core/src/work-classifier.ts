@@ -10,7 +10,7 @@
  *
  * Returns abstract capability tags (not client skill names) for
  * vendor-agnostic design. Configurable via methodology.work_classification
- * in .lumenflow.config.yaml with sensible built-in defaults.
+ * in workspace.yaml with sensible built-in defaults.
  *
  * @module work-classifier
  */
@@ -222,7 +222,7 @@ export interface WorkClassification {
 
 /**
  * Optional configuration to extend defaults.
- * Maps to methodology.work_classification in .lumenflow.config.yaml.
+ * Maps to methodology.work_classification in workspace.yaml.
  */
 export interface WorkClassificationConfig {
   ui?: {

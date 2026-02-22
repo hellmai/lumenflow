@@ -105,7 +105,7 @@ export const CONTEXT_VALIDATION = {
     STALE_LOCK_HOURS: 24,
   },
 
-  /** Feature flag keys for .lumenflow.config.yaml */
+  /** Feature flag keys for workspace.yaml */
   FEATURE_FLAGS: {
     /** Enable context-aware validation */
     CONTEXT_VALIDATION: 'context_validation',

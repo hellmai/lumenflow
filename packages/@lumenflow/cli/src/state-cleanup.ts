@@ -13,7 +13,7 @@
  * Cleanup order: signals -> memory -> events (dependency order)
  *
  * Features:
- * - Respects config from .lumenflow.config.yaml
+ * - Respects config from workspace.yaml
  * - Supports --dry-run for preview
  * - Supports --signals-only, --memory-only, --events-only for selective cleanup
  * - Non-fatal: warns on errors but continues with other cleanups

@@ -62,7 +62,7 @@ export interface DecayOnDoneResult {
  * - On UnsafeAny error: capture but never throw (fail-open)
  *
  * @param baseDir - Repository root directory
- * @param decayConfig - Memory decay configuration (from .lumenflow.config.yaml)
+ * @param decayConfig - Memory decay configuration (from workspace.yaml)
  * @returns Result indicating whether decay ran and how many nodes were archived
  *
  * @example

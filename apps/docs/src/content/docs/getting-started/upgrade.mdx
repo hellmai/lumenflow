@@ -1,68 +1,36 @@
 ---
-title: Upgrading LumenFlow
-description: Upgrade to workspace-first LumenFlow v4.0.0
+title: Current Setup
+description: Canonical workspace-first setup for LumenFlow
 ---
 
 import { Steps, Aside, Badge } from '@astrojs/starlight/components';
 
-<Badge text="v4.0.0" variant="danger" />
+<Badge text="Current" variant="success" />
 
-Version 4.0.0 is a **major release**. It hard-cuts to workspace-first runtime semantics.
+This page documents the current setup path for LumenFlow. Use these commands as the canonical workflow.
 
-## What Changed in v4.0.0
-
-- `workspace.yaml` is now the canonical runtime config.
-- Split onboarding entrypoints are retired as primary paths:
-  - `onboard`
-  - `lumenflow-onboard`
-  - `workspace:init`
-- Canonical bootstrap path is now:
-
-```bash
-npx lumenflow
-```
-
-- `config:set` and `config:get` now operate on `workspace.yaml > software_delivery`.
-- Cloud control-plane setup is first-class via:
-
-```bash
-pnpm cloud:connect
-# or: npx lumenflow cloud connect
-```
-
-<Aside type="caution" title="Breaking behavior">
-  Existing docs/scripts that call `onboard` or `workspace:init` should be updated to `npx
-  lumenflow`.
-</Aside>
-
-## Upgrade Path (Recommended)
+## Canonical Setup Flow
 
 <Steps>
-1. **Upgrade packages**
-   ```bash
-   pnpm lumenflow:upgrade --latest
-   ```
-
-2. **Migrate legacy config into workspace.yaml** (if you still have `.lumenflow.config.yaml`)
+1. **Initialize canonical workspace config**
 
    ```bash
-   pnpm lumenflow:upgrade config:migrate-workspace
+   pnpm workspace-init --yes
    ```
 
-3. **Re-run canonical bootstrap in merge mode**
+2. **Run canonical bootstrap**
 
    ```bash
-   pnpm exec lumenflow --client claude --merge
-   # replace "claude" with your client: cursor, windsurf, codex, cline, aider, none
+   npx lumenflow
    ```
 
-4. **Verify runtime health**
+3. **Verify runtime health**
 
    ```bash
    pnpm exec lumenflow-doctor
    ```
 
-5. **Refresh agent docs/templates**
+4. **Refresh agent docs/templates**
 
    ```bash
    pnpm exec lumenflow docs:sync --force
@@ -70,61 +38,42 @@ pnpm cloud:connect
 
 </Steps>
 
-## Post-Upgrade Checks
+## Config Contract
 
-- Validate workspace-first config reads:
-
-```bash
-pnpm config:get --key software_delivery.methodology.testing
-```
-
-- Validate workspace-first config writes:
+- Runtime reads: `workspace.yaml > software_delivery`
+- Config write command:
 
 ```bash
 pnpm config:set --key software_delivery.gates.minCoverage --value 90
 ```
 
-- Optional cloud connect verification:
+- Config read command:
 
 ```bash
-pnpm cloud:connect \
-  --endpoint https://control-plane.example.com \
-  --org-id YOUR_ORG_ID \
-  --project-id YOUR_PROJECT_ID \
-  --token-env LUMENFLOW_CONTROL_PLANE_TOKEN
+pnpm config:get --key software_delivery.methodology.testing
 ```
 
-## Migration Notes
-
-- Legacy split onboarding commands are still present only as **legacy guidance shims**.
-- Runtime behavior no longer depends on `.lumenflow.config.yaml`.
-- Keep all LumenFlow packages on the same major version for compatibility.
+<Aside type="caution" title="Canonical command">
+  Use `npx lumenflow` for setup and onboarding.
+</Aside>
 
 ## Troubleshooting
 
 ### `workspace.yaml` missing
 
-Run canonical bootstrap:
+```bash
+pnpm workspace-init --yes
+```
+
+### Older scripts call split onboarding commands
+
+Replace them with:
 
 ```bash
 npx lumenflow
-```
-
-### Old docs/scripts still call `onboard`
-
-Replace with:
-
-```bash
-npx lumenflow
-```
-
-### Need to migrate existing `.lumenflow.config.yaml`
-
-```bash
-pnpm lumenflow:upgrade config:migrate-workspace
 ```
 
 ## Next Steps
 
 - [CLI Reference](/reference/cli) — full command surface
-- [Changelog](/reference/changelog) — release notes and breaking changes
+- [Configuration](/reference/config) — canonical config model

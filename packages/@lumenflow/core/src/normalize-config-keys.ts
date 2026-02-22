@@ -6,7 +6,7 @@
  *
  * Transforms snake_case YAML keys to camelCase before Zod parsing.
  *
- * Root cause: .lumenflow.config.yaml conventionally uses snake_case keys
+ * Root cause: workspace.yaml conventionally uses snake_case keys
  * (e.g., agent_branch_patterns), but the Zod schema expects camelCase
  * (e.g., agentBranchPatterns). yaml.parse() returns keys as-is, and Zod
  * silently drops unrecognized keys via its default strip mode.

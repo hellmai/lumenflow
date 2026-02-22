@@ -18,9 +18,7 @@ import {
   detectOrphanWorktrees,
   detectMissingTrackedWorktrees,
   getConfigFilePresence,
-  buildLegacyConfigHardCutGuidance,
   WORKSPACE_CONFIG_FILE_NAME,
-  LEGACY_CONFIG_FILE_NAME,
 } from '@lumenflow/core';
 import { loadLaneDefinitions, detectLaneOverlaps } from './lane-health.js';
 import { runCLI } from './cli-entry-point.js';
@@ -148,7 +146,6 @@ export interface DoctorForInitResult {
  */
 const MANAGED_FILE_PATTERNS = [
   WORKSPACE_CONFIG_FILE_NAME,
-  LEGACY_CONFIG_FILE_NAME,
   '.lumenflow.lane-inference.yaml',
   'AGENTS.md',
   'CLAUDE.md',
@@ -240,7 +237,7 @@ function checkSafeGit(projectDir: string): CheckResult {
     const resolved = getResolvedPaths({ projectRoot: projectDir, strictWorkspace: true });
     safeGitPath = resolved.safeGitPath;
   } catch {
-    // Graceful fallback if config can't be loaded
+    // Default location when config cannot be loaded
     safeGitPath = path.join(projectDir, 'scripts', 'safe-git');
   }
   const relativePath = path.relative(projectDir, safeGitPath);
@@ -280,25 +277,16 @@ function checkAgentsMd(projectDir: string): CheckResult {
 }
 
 /**
- * Check whether canonical workspace config exists and legacy-only mode is avoided.
+ * Check whether canonical workspace config exists.
  */
 function checkLumenflowConfig(projectDir: string): CheckResult {
-  const { workspaceConfigExists, legacyConfigExists } = getConfigFilePresence(projectDir);
-
-  if (!workspaceConfigExists && legacyConfigExists) {
-    return {
-      passed: false,
-      message: `Legacy config detected (${LEGACY_CONFIG_FILE_NAME})`,
-      details: buildLegacyConfigHardCutGuidance(projectDir),
-    };
-  }
+  const { workspaceConfigExists } = getConfigFilePresence(projectDir);
 
   if (!workspaceConfigExists) {
     return {
       passed: false,
-      message: `${WORKSPACE_CONFIG_FILE_NAME} missing (legacy config ${LEGACY_CONFIG_FILE_NAME} unsupported)`,
-      details:
-        `${buildLegacyConfigHardCutGuidance(projectDir)}\n` + `Run: pnpm workspace-init --yes`,
+      message: `${WORKSPACE_CONFIG_FILE_NAME} missing`,
+      details: `Run: pnpm workspace-init --yes`,
     };
   }
 

@@ -109,7 +109,7 @@ await worktrees.remove('worktrees/operations-wu-123');
 
 ### Agent Branch Patterns
 
-Check if a branch is an agent branch that can bypass worktree requirements. Patterns are fetched from a central registry with 7-day caching, and can be configured via `.lumenflow.config.yaml`.
+Check if a branch is an agent branch that can bypass worktree requirements. Patterns are fetched from a central registry with 7-day caching, and can be configured via `workspace.yaml` (`software_delivery.git`).
 
 ```typescript
 import { isAgentBranch, isAgentBranchWithDetails, resolveAgentPatterns } from '@lumenflow/core';
@@ -141,22 +141,23 @@ const syncResult = isAgentBranchSync('agent/task-123');
 
 #### Configuration Options
 
-In `.lumenflow.config.yaml`:
+In `workspace.yaml`:
 
 ```yaml
-git:
-  # Patterns to MERGE with registry (default: [])
-  agentBranchPatterns:
-    - 'my-custom-agent/*'
-    - 'internal-tool/*'
+software_delivery:
+  git:
+    # Patterns to MERGE with registry (default: [])
+    agentBranchPatterns:
+      - 'my-custom-agent/*'
+      - 'internal-tool/*'
 
-  # Patterns that REPLACE registry entirely (optional)
-  # agentBranchPatternsOverride:
-  #   - 'claude/*'
-  #   - 'codex/*'
+    # Patterns that REPLACE registry entirely (optional)
+    # agentBranchPatternsOverride:
+    #   - 'claude/*'
+    #   - 'codex/*'
 
-  # Disable registry fetch for airgapped environments (default: false)
-  # disableAgentPatternRegistry: true
+    # Disable registry fetch for airgapped environments (default: false)
+    # disableAgentPatternRegistry: true
 ```
 
 Protected branches (main, master, lane/\*) are **never** bypassed, regardless of patterns.
@@ -478,7 +479,6 @@ const useCase = createComputeContextUseCase({
 ## Further Reading
 
 - [ADR-001: Hexagonal Architecture](../../docs/04-operations/adr/ADR-001-hexagonal-architecture.md)
-- [Migration Guide](../../docs/04-operations/adr/migration-guide-hexagonal-architecture.md)
 - [Port Interfaces Reference](https://lumenflow.dev/reference/ports/)
 
 ## Status

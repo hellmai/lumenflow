@@ -11,6 +11,14 @@ code_paths:
   - packages/@lumenflow/mcp/src
   - packages/@lumenflow/metrics/src
   - packages/@lumenflow/memory/src
+  - packages/@lumenflow/cli/README.md
+  - packages/@lumenflow/cli/templates
+  - packages/@lumenflow/core/README.md
+  - packages/@lumenflow/memory/README.md
+  - actions/lumenflow-gates
+  - tools/generate-cli-docs.ts
+  - LUMENFLOW.md
+  - CLAUDE.md
   - docs
   - apps/docs
 tests:

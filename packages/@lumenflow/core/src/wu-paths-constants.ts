@@ -49,8 +49,8 @@ export const FILE_SYSTEM = {
  * WU-923: Centralized config file names
  */
 export const CONFIG_FILES = {
-  /** LumenFlow main config */
-  LUMENFLOW_CONFIG: '.lumenflow.config.yaml',
+  /** Canonical workspace config */
+  WORKSPACE_CONFIG: 'workspace.yaml',
 
   /** Lane inference taxonomy */
   LANE_INFERENCE: '.lumenflow.lane-inference.yaml',

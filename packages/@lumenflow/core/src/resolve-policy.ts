@@ -145,7 +145,7 @@ export type WorkClassificationSchemaConfig = z.infer<typeof WorkClassificationCo
 /**
  * Main methodology configuration schema
  *
- * Config example in .lumenflow.config.yaml:
+ * Config example in workspace.yaml:
  * ```yaml
  * methodology:
  *   testing: 'tdd'              # tdd | test-after | none

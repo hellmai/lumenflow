@@ -68,7 +68,7 @@ This is the most common migration. Use this when TDD is slowing down a legacy mi
    pnpm test -- --coverage
 
    # Review methodology config
-   cat .lumenflow.config.yaml | grep -A 5 methodology
+   cat workspace.yaml | grep -A 5 methodology
    ```
 
 2. **Create a transitional phase**
@@ -76,7 +76,7 @@ This is the most common migration. Use this when TDD is slowing down a legacy mi
    Don't jump directly to `test-after`. Start by keeping TDD but changing enforcement:
 
    ```yaml
-   # .lumenflow.config.yaml
+   # workspace.yaml
    methodology:
      testing: 'tdd'
      overrides:
@@ -121,7 +121,7 @@ This is the most common migration. Use this when TDD is slowing down a legacy mi
    Set a milestone to review:
 
    ```yaml
-   # .lumenflow.config.yaml
+   # workspace.yaml
    methodology:
      testing: 'test-after'
      # Review milestone: end of Q2 - consider returning to TDD
@@ -275,7 +275,7 @@ Use this when a project deadline requires temporarily reduced enforcement.
 Starting fresh? Use strict TDD from day one.
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 methodology:
@@ -298,7 +298,7 @@ gates:
 Inheriting a codebase with low/no test coverage.
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 methodology:
@@ -334,7 +334,7 @@ gates:
 Exploring an idea quickly without ceremony.
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 methodology:
@@ -361,7 +361,7 @@ gates:
 When different parts of your codebase need different approaches:
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 methodology:
@@ -527,7 +527,7 @@ methodology:
    pnpm exec lumenflow docs:sync
    ```
 
-3. Verify `.lumenflow.config.yaml` is readable:
+3. Verify `workspace.yaml` is readable:
    ```bash
    pnpm exec lumenflow validate
    ```
@@ -558,7 +558,7 @@ methodology:
 **Error:**
 
 ```
-ERROR: .lumenflow.config.yaml validation failed
+ERROR: workspace.yaml validation failed
   - methodology.overrides.coverage_threshold must be between 0 and 100
 ```
 
@@ -592,7 +592,7 @@ If a methodology change caused problems:
 
 ```bash
 # 1. Revert config file
-git checkout HEAD~1 -- .lumenflow.config.yaml
+git checkout HEAD~1 -- workspace.yaml
 
 # 2. Regenerate docs
 pnpm exec lumenflow docs:sync

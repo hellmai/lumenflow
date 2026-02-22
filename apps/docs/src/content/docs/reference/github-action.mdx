@@ -5,7 +5,7 @@ description: LumenFlow Gates GitHub Action reference
 
 import { Aside, Steps } from '@astrojs/starlight/components';
 
-The LumenFlow Gates GitHub Action runs your quality gates in CI/CD pipelines. It reads your gate configuration from `.lumenflow.config.yaml` and executes the appropriate checks.
+The LumenFlow Gates GitHub Action runs your quality gates in CI/CD pipelines. It reads your gate configuration from `workspace.yaml` and executes the appropriate checks.
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ The LumenFlow Gates GitHub Action runs your quality gates in CI/CD pipelines. It
 1. **Add configuration** (if not already present)
 
    ```yaml
-   # .lumenflow.config.yaml
+   # workspace.yaml
    version: '2.0'
 
    gates:
@@ -242,7 +242,7 @@ jobs:
 ```
 
 <Aside type="tip">
-  Each package can have its own `.lumenflow.config.yaml` with different gate commands, or you can
+  Each package can have its own `workspace.yaml` with different gate commands, or you can
   use a shared config at the repo root.
 </Aside>
 

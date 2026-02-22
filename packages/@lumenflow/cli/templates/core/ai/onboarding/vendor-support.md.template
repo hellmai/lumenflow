@@ -193,7 +193,7 @@ auto-detection.
 ### Config-Driven Auto-Detection (Opt-In)
 
 For environments where agents should automatically enter cloud mode, enable
-auto-detection in `.lumenflow.config.yaml`:
+auto-detection in `workspace.yaml`:
 
 ```yaml
 cloud:

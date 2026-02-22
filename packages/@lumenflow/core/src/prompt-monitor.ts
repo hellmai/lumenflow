@@ -120,7 +120,7 @@ async function monitor() {
 
   // Find all prompt files
   // WU-1068: Changed from @exampleapp to generic ai/prompts for framework reusability
-  // Projects should configure prompt paths in .lumenflow.config.yaml
+  // Projects should configure prompt paths in workspace.yaml
   const pattern = 'ai/prompts/**/*.yaml';
   const promptFiles = await glob(pattern, { cwd: ROOT_DIR, absolute: true });
 

@@ -14,7 +14,7 @@ Rust is a systems programming language focused on safety, concurrency, and perfo
 1. **Add preset to your configuration**
 
    ```yaml
-   # .lumenflow.config.yaml
+   # workspace.yaml
    version: '2.0'
 
    gates:
@@ -183,7 +183,7 @@ LumenFlow works well with standard Cargo project layouts:
 
 ```
 myproject/
-├── .lumenflow.config.yaml
+├── workspace.yaml
 ├── Cargo.toml
 ├── Cargo.lock
 ├── src/
@@ -214,7 +214,7 @@ Example workspace structure:
 
 ```
 myworkspace/
-├── .lumenflow.config.yaml
+├── workspace.yaml
 ├── Cargo.toml              # [workspace] definition
 ├── crates/
 │   ├── core/

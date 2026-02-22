@@ -206,7 +206,7 @@ Cloud-hosted agents (like Prompt Studio, GitHub Actions, or custom automation) t
 Add patterns to your config to allow specific branch prefixes:
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 git:
   mainBranch: main
   agentBranchPatterns:
@@ -380,7 +380,7 @@ allowed-tools: Read, Bash, Grep
 
 ### Configuration
 
-Skills per lane can be configured in `.lumenflow.config.yaml`:
+Skills per lane can be configured in `workspace.yaml`:
 
 ```yaml
 agents:

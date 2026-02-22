@@ -50,7 +50,6 @@ import {
   getConfig,
   getResolvedPaths,
   getConfigFilePresence,
-  buildLegacyConfigHardCutGuidance,
   WORKSPACE_CONFIG_FILE_NAME,
 } from '@lumenflow/core/config';
 import { existsSync } from 'node:fs';
@@ -593,16 +592,12 @@ async function createDeps(baseDir: string): Promise<StateDoctorDeps> {
  * Enforce canonical workspace config before running state-doctor checks.
  *
  * @param baseDir - Target repository directory
- * @throws Error when workspace.yaml is missing or legacy-only config is detected
+ * @throws Error when workspace.yaml is missing
  */
 function assertCanonicalWorkspace(baseDir: string): void {
-  const { workspaceConfigExists, legacyConfigExists } = getConfigFilePresence(baseDir);
+  const { workspaceConfigExists } = getConfigFilePresence(baseDir);
   if (workspaceConfigExists) {
     return;
-  }
-
-  if (legacyConfigExists) {
-    throw new Error(buildLegacyConfigHardCutGuidance(baseDir));
   }
 
   throw new Error(
@@ -802,7 +797,7 @@ async function main(): Promise<void> {
   let error: string | null = null;
 
   try {
-    // Hard-cut enforcement: do not run against legacy-only configuration.
+    // Hard-cut enforcement: require canonical workspace configuration.
     assertCanonicalWorkspace(baseDir);
 
     // WU-1301: Warn about missing configured paths

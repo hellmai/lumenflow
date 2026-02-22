@@ -5,8 +5,8 @@
  *
  * TypeScript GitHub Action that reads gate commands from workspace.yaml
  * software_delivery
- * instead of hardcoding language presets. Supports skip flags and backwards
- * compatible auto-detection fallback.
+ * instead of hardcoding language presets. Supports skip flags and
+ * auto-detection when config is absent.
  *
  * Uses @actions/toolkit for GitHub Action integration.
  */

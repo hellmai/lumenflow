@@ -350,7 +350,7 @@ Default sources scanned:
 - **README.md**: Project overview (tagged: `index:architecture`)
 - **LUMENFLOW.md**: Workflow conventions (tagged: `index:conventions`)
 - **package.json**: Monorepo structure (tagged: `index:architecture`)
-- **.lumenflow.config.yaml**: Workflow config (tagged: `index:commands`, `index:conventions`)
+- **workspace.yaml**: Workflow config (tagged: `index:commands`, `index:conventions`)
 - **.lumenflow/constraints.md**: Project invariants (tagged: `index:invariants`)
 
 Each node includes provenance metadata: `source_path`, `source_hash`, `indexed_at`.

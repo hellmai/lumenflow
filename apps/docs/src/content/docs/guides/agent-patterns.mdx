@@ -96,14 +96,14 @@ const result = isAgentBranchSync('agent/task-123');
 
 ## Configuration
 
-Configure agent patterns in `.lumenflow.config.yaml`. There are three modes:
+Configure agent patterns in `workspace.yaml`. There are three modes:
 
 <Tabs>
   <TabItem label="Merge Mode (Default)">
     Custom patterns are merged with registry patterns:
 
     ```yaml
-    # .lumenflow.config.yaml
+    # workspace.yaml
     git:
       # These patterns are ADDED to registry patterns
       agentBranchPatterns:
@@ -119,7 +119,7 @@ Configure agent patterns in `.lumenflow.config.yaml`. There are three modes:
     Replace registry patterns entirely:
 
     ```yaml
-    # .lumenflow.config.yaml
+    # workspace.yaml
     git:
       # These patterns REPLACE registry patterns
       agentBranchPatternsOverride:
@@ -136,7 +136,7 @@ Configure agent patterns in `.lumenflow.config.yaml`. There are three modes:
     Disable network fetch for isolated environments:
 
     ```yaml
-    # .lumenflow.config.yaml
+    # workspace.yaml
     git:
       disableAgentPatternRegistry: true
       agentBranchPatterns:

@@ -1251,7 +1251,7 @@ export const LaneLifecycleSchema = z.object({
 });
 
 /**
- * WU-1322: Lane definition schema for .lumenflow.config.yaml
+ * WU-1322: Lane definition schema for workspace.yaml
  *
  * Extends the existing lane configuration with lock_policy field.
  * Compatible with WU-1016 (wip_limit) and WU-1187 (wip_justification).

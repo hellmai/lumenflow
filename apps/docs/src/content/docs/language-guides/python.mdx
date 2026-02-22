@@ -30,12 +30,12 @@ LumenFlow integrates seamlessly with Python projects. This guide covers setup, c
    lumenflow init
    ```
 
-   This creates `.lumenflow.config.yaml` with Python-optimized defaults.
+   This creates `workspace.yaml` with Python-optimized defaults.
 
 3. **Configure gates**
 
    ```yaml
-   # .lumenflow.config.yaml
+   # workspace.yaml
    version: '2.0'
 
    gates:
@@ -116,7 +116,7 @@ Override specific gates while keeping the preset defaults:
 <Tabs>
   <TabItem label="Django">
     ```yaml
-    # .lumenflow.config.yaml
+    # workspace.yaml
     version: '2.0'
 
     lanes:
@@ -145,13 +145,13 @@ Override specific gates while keeping the preset defaults:
     │   └── serializers.py
     ├── manage.py
     ├── pyproject.toml
-    └── .lumenflow.config.yaml
+    └── workspace.yaml
     ```
 
   </TabItem>
   <TabItem label="FastAPI">
     ```yaml
-    # .lumenflow.config.yaml
+    # workspace.yaml
     version: '2.0'
 
     lanes:
@@ -183,7 +183,7 @@ Override specific gates while keeping the preset defaults:
   </TabItem>
   <TabItem label="Flask">
     ```yaml
-    # .lumenflow.config.yaml
+    # workspace.yaml
     version: '2.0'
 
     lanes:
@@ -367,7 +367,7 @@ quote-style = "double"
 For Python monorepos, configure lanes per package:
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 lanes:

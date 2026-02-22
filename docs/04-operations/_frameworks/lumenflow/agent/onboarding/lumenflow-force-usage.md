@@ -148,7 +148,7 @@ This allows filtering agent bypasses from human bypasses in audit analysis.
 Add optional webhook/notification when LUMENFLOW_FORCE is used without a reason containing "release", "repair", "recovery", or "sync":
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 force_bypass:
   alert_webhook: https://...
   exempt_patterns:

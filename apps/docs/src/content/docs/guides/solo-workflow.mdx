@@ -51,7 +51,7 @@ The simplest LumenFlow setup for solo work.
    This creates only the essentials:
 
    ```
-   .lumenflow.config.yaml
+   workspace.yaml
    LUMENFLOW.md
    .lumenflow/constraints.md
    ```
@@ -111,7 +111,7 @@ npx wu-done --id WU-123
 ### Minimal Config
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 version: '2.0'
 
 directories:
@@ -270,7 +270,7 @@ git log --oneline --grep="wu:done" --since="7 days"
 Solo developers can give AI agents more autonomy:
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 agent:
   approval_required: false # Trust gates, skip human review
   auto_commit: true # Agent can commit passing code
@@ -282,7 +282,7 @@ agent:
 Add project-specific guidance:
 
 ```yaml
-# .lumenflow.config.yaml
+# workspace.yaml
 agent:
   context:
     architecture: 'Next.js App Router + Supabase'

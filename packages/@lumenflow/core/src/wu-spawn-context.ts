@@ -17,7 +17,7 @@
  * - Detects memory layer initialization (memory.jsonl existence)
  * - Delegates to mem-context-core for context generation
  * - Respects lane filter, recency limits, decay/prioritization from mem-context-core
- * - Configurable max context size (default 4KB, from .lumenflow.config.yaml)
+ * - Configurable max context size (default 4KB, from workspace.yaml)
  * - Graceful skip when memory not initialized or @lumenflow/memory unavailable
  * - No LLM calls (vendor-agnostic)
  *

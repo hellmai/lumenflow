@@ -13,7 +13,7 @@
  * 4. WU-1362: Retry logic for push failures (inherited from withMicroWorktree)
  * 5. WU-1420: Emit corrective events to reconcile YAML vs state store mismatches
  *
- * Retry behavior is configured via .lumenflow.config.yaml git.push_retry section.
+ * Retry behavior is configured via workspace.yaml git.push_retry section.
  * Default: 3 retries with exponential backoff and jitter.
  *
  * @see {@link ./state-doctor.ts} - Main CLI that uses these deps

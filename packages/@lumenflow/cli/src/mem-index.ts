@@ -6,7 +6,7 @@
  * Memory Index CLI (WU-1235)
  *
  * Scans project conventions and creates project-lifecycle summary nodes.
- * Indexes README.md, LUMENFLOW.md, package.json, .lumenflow.config.yaml,
+ * Indexes README.md, LUMENFLOW.md, package.json, workspace.yaml,
  * and .lumenflow/constraints.md to provide agent context awareness.
  *
  * Includes audit logging to .lumenflow/telemetry/tools.ndjson.

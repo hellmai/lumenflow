@@ -1,5 +1,5 @@
 name: 'LumenFlow Gates'
-description: 'Config-driven quality gates - reads commands from .lumenflow.config.yaml'
+description: 'Config-driven quality gates - reads commands from workspace.yaml software_delivery.gates.execution'
 author: 'HellmAI'
 
 branding:
