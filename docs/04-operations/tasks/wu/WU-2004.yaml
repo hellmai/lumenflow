@@ -1,0 +1,42 @@
+id: WU-2004
+title: Reconcile completed initiatives still marked in_progress
+lane: 'Content: Specs Governance'
+type: documentation
+status: ready
+priority: P2
+created: 2026-02-22
+code_paths:
+  - docs/04-operations/tasks/initiatives/INIT-008.yaml
+  - docs/04-operations/tasks/initiatives/INIT-009.yaml
+  - docs/04-operations/tasks/initiatives/INIT-010.yaml
+  - docs/04-operations/tasks/initiatives/INIT-012.yaml
+  - docs/04-operations/tasks/initiatives/INIT-013.yaml
+  - docs/04-operations/tasks/initiatives/INIT-015.yaml
+  - docs/04-operations/tasks/initiatives/INIT-016.yaml
+  - docs/04-operations/tasks/initiatives/INIT-017.yaml
+  - docs/04-operations/tasks/initiatives/INIT-018.yaml
+  - docs/04-operations/tasks/initiatives/INIT-MCP.yaml
+tests:
+  manual:
+    - 'Run: pnpm initiative:status --id INIT-008 and verify Status: done'
+    - 'Run: pnpm state:doctor --dry-run and verify no stale initiative status mismatches'
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2004.done
+dependencies: []
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Update legacy initiatives whose WUs are 100% complete but metadata status is still in_progress, so board surfaces and doctor checks are consistent.
+acceptance:
+  - Completed initiatives currently marked in_progress are set to done
+  - initiative:status no longer reports lifecycle mismatch for reconciled initiatives
+  - state:doctor --dry-run reports no stale initiative lifecycle mismatches
