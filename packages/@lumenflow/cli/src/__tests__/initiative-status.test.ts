@@ -28,4 +28,14 @@ describe('deriveInitiativeLifecycleStatus', () => {
     expect(deriveInitiativeLifecycleStatus(' DONE ', [])).toBe(WU_STATUS.DONE);
     expect(deriveInitiativeLifecycleStatus(undefined, [])).toBe(WU_STATUS.IN_PROGRESS);
   });
+
+  it('upgrades in_progress to done when all linked WUs are complete', () => {
+    const status = deriveInitiativeLifecycleStatus(
+      WU_STATUS.IN_PROGRESS,
+      [{ id: 1, status: WU_STATUS.DONE }],
+      { done: 3, total: 3 },
+    );
+
+    expect(status).toBe(WU_STATUS.DONE);
+  });
 });

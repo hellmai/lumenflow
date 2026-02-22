@@ -39,6 +39,10 @@ vi.mock('@lumenflow/core/git-adapter', () => ({
  * Import after mocks are set up
  */
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
+import {
+  applyInitiativeLifecycleStatusFixes,
+  collectInitiativeLifecycleStatusMismatches,
+} from '../state-doctor.js';
 
 /**
  * Constants for test paths
@@ -50,6 +54,31 @@ const MEMORY_DIR = 'memory';
 const DOCS_TASKS_DIR = 'docs/04-operations/tasks';
 const BACKLOG_PATH = `${DOCS_TASKS_DIR}/backlog.md`;
 const STATUS_PATH = `${DOCS_TASKS_DIR}/status.md`;
+const INITIATIVES_DIR = `${DOCS_TASKS_DIR}/initiatives`;
+const WORKSPACE_YAML_PATH = 'workspace.yaml';
+
+const MINIMAL_WORKSPACE_YAML = `id: test-workspace
+name: Test Workspace
+packs:
+  - id: software-delivery
+    version: 1.0.0
+    integrity: dev
+    source: local
+lanes:
+  - id: lane-default
+    title: Default
+    allowed_scopes: []
+security:
+  allowed_scopes:
+    - type: path
+      pattern: '**'
+      access: write
+  network_default: off
+  deny_overlays: []
+software_delivery: {}
+memory_namespace: test-workspace
+event_namespace: test-workspace
+`;
 
 /**
  * Test directory path
@@ -329,13 +358,64 @@ describe('state-doctor CLI (WU-1230)', () => {
       expect(mockWithMicroWorktree).toHaveBeenCalled();
     });
   });
+
+  describe('initiative lifecycle reconciliation', () => {
+    it('detects stale in_progress initiatives when all linked WUs are done', async () => {
+      setupTestState(testDir, {
+        initiatives: [{ id: 'INIT-900', status: 'in_progress' }],
+        wus: [{ id: 'WU-900', status: 'done', initiative: 'INIT-900' }],
+      });
+
+      const mismatches = await collectInitiativeLifecycleStatusMismatches(testDir);
+
+      expect(mismatches).toHaveLength(1);
+      expect(mismatches[0]).toMatchObject({
+        initiativeId: 'INIT-900',
+        currentStatus: 'in_progress',
+        derivedStatus: 'done',
+      });
+    });
+
+    it('updates initiative status to done via micro-worktree fix flow', async () => {
+      setupTestState(testDir, {
+        initiatives: [{ id: 'INIT-901', status: 'in_progress' }],
+        wus: [{ id: 'WU-901', status: 'done', initiative: 'INIT-901' }],
+      });
+
+      const mismatches = await collectInitiativeLifecycleStatusMismatches(testDir);
+      expect(mismatches).toHaveLength(1);
+
+      const mockWithMicroWorktree = vi.mocked(withMicroWorktree);
+      mockWithMicroWorktree.mockImplementation(async (options) => {
+        const result = await options.execute({
+          worktreePath: testDir,
+          gitWorktree: {
+            add: vi.fn(),
+            addWithDeletions: vi.fn(),
+            commit: vi.fn(),
+            push: vi.fn(),
+          } as unknown as Parameters<typeof options.execute>[0]['gitWorktree'],
+        });
+        return { ...result, ref: 'main' };
+      });
+
+      await applyInitiativeLifecycleStatusFixes(testDir, mismatches);
+
+      const initiativePath = join(testDir, INITIATIVES_DIR, 'INIT-901.yaml');
+      const updated = readFileSync(initiativePath, 'utf-8');
+
+      expect(updated).toContain('status: done');
+      expect(mockWithMicroWorktree).toHaveBeenCalled();
+    });
+  });
 });
 
 /**
  * Helper to set up test state files
  */
 interface TestState {
-  wus?: Array<{ id: string; status: string; title?: string }>;
+  wus?: Array<{ id: string; status: string; title?: string; initiative?: string }>;
+  initiatives?: Array<{ id: string; status: string; title?: string; slug?: string }>;
   events?: Array<{ wuId: string; type: string; timestamp: string }>;
   signals?: Array<{ id: string; wuId?: string; message?: string }>;
   backlog?: string;
@@ -349,10 +429,13 @@ function setupTestState(baseDir: string, state: TestState): void {
     join(baseDir, LUMENFLOW_DIR, STAMPS_DIR),
     join(baseDir, LUMENFLOW_DIR, MEMORY_DIR),
     join(baseDir, DOCS_TASKS_DIR, 'wu'),
+    join(baseDir, INITIATIVES_DIR),
   ];
   for (const dir of dirs) {
     mkdirSync(dir, { recursive: true });
   }
+
+  writeFileSync(join(baseDir, WORKSPACE_YAML_PATH), MINIMAL_WORKSPACE_YAML, 'utf-8');
 
   // Create events file
   if (state.events && state.events.length > 0) {
@@ -372,8 +455,21 @@ function setupTestState(baseDir: string, state: TestState): void {
   if (state.wus) {
     for (const wu of state.wus) {
       const wuPath = join(baseDir, DOCS_TASKS_DIR, 'wu', `${wu.id}.yaml`);
-      const content = `id: ${wu.id}\nstatus: ${wu.status}\ntitle: ${wu.title || wu.id}\n`;
+      const initiativeLine = wu.initiative ? `initiative: ${wu.initiative}\n` : '';
+      const content =
+        `id: ${wu.id}\nstatus: ${wu.status}\ntitle: ${wu.title || wu.id}\n` + initiativeLine;
       writeFileSync(wuPath, content, 'utf-8');
+    }
+  }
+
+  if (state.initiatives) {
+    for (const initiative of state.initiatives) {
+      const initiativePath = join(baseDir, INITIATIVES_DIR, `${initiative.id}.yaml`);
+      const slugLine = initiative.slug ? `slug: ${initiative.slug}\n` : '';
+      const content =
+        `id: ${initiative.id}\ntitle: ${initiative.title || initiative.id}\nstatus: ${initiative.status}\n` +
+        slugLine;
+      writeFileSync(initiativePath, content, 'utf-8');
     }
   }
 

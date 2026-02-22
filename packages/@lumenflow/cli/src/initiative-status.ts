@@ -32,6 +32,11 @@ interface InitiativePhaseDoc {
   status?: string;
 }
 
+export interface InitiativeProgressContext {
+  done: number;
+  total: number;
+}
+
 interface GroupedWUs {
   [WU_STATUS.DONE]: WUEntry[];
   [WU_STATUS.IN_PROGRESS]: WUEntry[];
@@ -70,12 +75,33 @@ function hasIncompletePhase(phases: unknown[]): boolean {
   });
 }
 
+function hasAllLinkedWUsDone(progress?: InitiativeProgressContext): boolean {
+  if (!progress) {
+    return false;
+  }
+  return progress.total > 0 && progress.done === progress.total;
+}
+
+function hasIncompleteLinkedWUs(progress?: InitiativeProgressContext): boolean {
+  if (!progress) {
+    return false;
+  }
+  return progress.total > 0 && progress.done < progress.total;
+}
+
 export function deriveInitiativeLifecycleStatus(
   status: unknown,
   phases: InitiativePhaseDoc[],
+  progress?: InitiativeProgressContext,
 ): string {
   const normalizedStatus = normalizeLifecycleStatus(status);
+  if (hasAllLinkedWUsDone(progress)) {
+    return WU_STATUS.DONE;
+  }
   if (normalizedStatus === WU_STATUS.DONE && hasIncompletePhase(phases)) {
+    return WU_STATUS.IN_PROGRESS;
+  }
+  if (normalizedStatus === WU_STATUS.DONE && hasIncompleteLinkedWUs(progress)) {
     return WU_STATUS.IN_PROGRESS;
   }
   return normalizedStatus || WU_STATUS.IN_PROGRESS;
@@ -111,7 +137,7 @@ function renderDetailed(initiative: InitiativeEntry, useColor: boolean): void {
   const wuById = new Map(wus.map((wu) => [wu.id, wu]));
   const phaseGroups: InitiativePhaseGroups = getInitiativePhases(id);
   const phases = toInitiativePhases(doc);
-  const status = deriveInitiativeLifecycleStatus(doc.status, phases);
+  const status = deriveInitiativeLifecycleStatus(doc.status, phases, progress);
   const docTitle = asString(doc.title);
   const rawStatus = asString(doc.status);
   const normalizedRawStatus = normalizeLifecycleStatus(rawStatus);
@@ -227,7 +253,7 @@ function renderJSON(initiative: InitiativeEntry): void {
   const wus: WUEntry[] = getInitiativeWUs(id);
   const phaseGroups: InitiativePhaseGroups = getInitiativePhases(id);
   const phases = toInitiativePhases(doc);
-  const status = deriveInitiativeLifecycleStatus(doc.status, phases);
+  const status = deriveInitiativeLifecycleStatus(doc.status, phases, progress);
 
   const output = {
     id,
