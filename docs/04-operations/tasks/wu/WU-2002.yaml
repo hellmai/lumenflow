@@ -2,7 +2,7 @@ id: WU-2002
 title: Stabilize lane-health test under full CLI test matrix
 lane: 'Framework: Core Validation'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -43,3 +43,6 @@ session_id: 8f52232d-3a27-44fa-86ca-3ee9b46415c3
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T03:28:44.299Z
+locked: true
+completed_at: 2026-02-22T03:41:35.941Z
+completed: 2026-02-22
