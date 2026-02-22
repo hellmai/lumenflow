@@ -4,7 +4,6 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-- [WU-2044 — Constants consolidation round 2: DRY violations from INIT-034 audit](wu/WU-2044.yaml)
 - [WU-2047 — Hard-cut software-delivery pack to runtime-native handlers (remove CLI spawn bridges)](wu/WU-2047.yaml)
 
 ## Completed
@@ -968,3 +967,4 @@ _Last updated: 2026-02-22_
 - [WU-2045 — Fix upgrade docs Steps markup build failure](wu/WU-2045.yaml) — 2026-02-22
 - [WU-2043 — Add unit tests for INIT-034 decomposed sub-modules and strategy patterns](wu/WU-2043.yaml) — 2026-02-22
 - [WU-2020 — Inject WUStateStore via interfaces and replace getConfig() calls](wu/WU-2020.yaml) — 2026-02-22
+- [WU-2044 — Constants consolidation round 2: DRY violations from INIT-034 audit](wu/WU-2044.yaml) — 2026-02-22
