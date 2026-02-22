@@ -26,17 +26,10 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { validateWUEvent } from './wu-state-schema.js';
+import type { RepairResult } from './ports/wu-state.ports.js';
 
-/**
- * Repair result
- */
-export interface RepairResult {
-  success: boolean;
-  linesKept: number;
-  linesRemoved: number;
-  backupPath: string | null;
-  warnings: string[];
-}
+// Re-export for backward compatibility (consumers importing from wu-repair-service)
+export type { RepairResult };
 
 /**
  * Repair a corrupted state file by removing invalid lines.

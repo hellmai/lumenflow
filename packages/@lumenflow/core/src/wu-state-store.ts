@@ -78,22 +78,26 @@ export class WUStateStore implements IWuStateStore {
     if (s && s.status === WU_STATUS.IN_PROGRESS) {
       throw new Error(`WU ${wuId} is already ${WU_STATUS.IN_PROGRESS}`);
     }
-    await this.sourcer.appendAndApply({
-      type: WU_EVENT_TYPE.CLAIM,
-      wuId,
-      lane,
-      title,
-      timestamp: new Date().toISOString(),
-    } as WUEvent);
+    await this.sourcer.appendAndApply(
+      validateOrThrow({
+        type: WU_EVENT_TYPE.CLAIM,
+        wuId,
+        lane,
+        title,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 
   async complete(wuId: string): Promise<void> {
     assertInProgress(this.indexer, wuId);
-    await this.sourcer.appendAndApply({
-      type: WU_EVENT_TYPE.COMPLETE,
-      wuId,
-      timestamp: new Date().toISOString(),
-    } as WUEvent);
+    await this.sourcer.appendAndApply(
+      validateOrThrow({
+        type: WU_EVENT_TYPE.COMPLETE,
+        wuId,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 
   getWUState(wuId: string): ReturnType<WUStateIndexer['getWUState']> {
@@ -106,17 +110,19 @@ export class WUStateStore implements IWuStateStore {
   }
 
   applyEvent(event: WUEvent): void {
-    this.indexer.applyEvent(validateOrThrow(event as unknown as Record<string, unknown>));
+    this.indexer.applyEvent(validateOrThrow(event as Record<string, unknown>));
   }
 
   async block(wuId: string, reason: string): Promise<void> {
     assertInProgress(this.indexer, wuId);
-    await this.sourcer.appendAndApply({
-      type: WU_EVENT_TYPE.BLOCK,
-      wuId,
-      reason,
-      timestamp: new Date().toISOString(),
-    } as WUEvent);
+    await this.sourcer.appendAndApply(
+      validateOrThrow({
+        type: WU_EVENT_TYPE.BLOCK,
+        wuId,
+        reason,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 
   async unblock(wuId: string): Promise<void> {
@@ -124,11 +130,13 @@ export class WUStateStore implements IWuStateStore {
     if (!s || s.status !== WU_STATUS.BLOCKED) {
       throw new Error(`WU ${wuId} is not ${WU_STATUS.BLOCKED}`);
     }
-    await this.sourcer.appendAndApply({
-      type: WU_EVENT_TYPE.UNBLOCK,
-      wuId,
-      timestamp: new Date().toISOString(),
-    } as WUEvent);
+    await this.sourcer.appendAndApply(
+      validateOrThrow({
+        type: WU_EVENT_TYPE.UNBLOCK,
+        wuId,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 
   async checkpoint(
@@ -137,16 +145,16 @@ export class WUStateStore implements IWuStateStore {
     options: { sessionId?: string; progress?: string; nextSteps?: string } = {},
   ): Promise<void> {
     const { sessionId, progress, nextSteps } = options;
-    const event: Record<string, unknown> = {
+    const eventData: Record<string, unknown> = {
       type: WU_EVENT_TYPE.CHECKPOINT,
       wuId,
       note,
       timestamp: new Date().toISOString(),
     };
-    if (sessionId) event.sessionId = sessionId;
-    if (progress) event.progress = progress;
-    if (nextSteps) event.nextSteps = nextSteps;
-    await this.sourcer.appendAndApply(event as WUEvent);
+    if (sessionId) eventData.sessionId = sessionId;
+    if (progress) eventData.progress = progress;
+    if (nextSteps) eventData.nextSteps = nextSteps;
+    await this.sourcer.appendAndApply(validateOrThrow(eventData));
   }
 
   getByStatus(status: string): Set<string> {
@@ -162,23 +170,27 @@ export class WUStateStore implements IWuStateStore {
   }
 
   async delegate(childWuId: string, parentWuId: string, delegationId: string): Promise<void> {
-    await this.sourcer.appendAndApply({
-      type: WU_EVENT_TYPE.DELEGATION,
-      wuId: childWuId,
-      parentWuId,
-      delegationId,
-      timestamp: new Date().toISOString(),
-    } as WUEvent);
+    await this.sourcer.appendAndApply(
+      validateOrThrow({
+        type: WU_EVENT_TYPE.DELEGATION,
+        wuId: childWuId,
+        parentWuId,
+        delegationId,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 
   async release(wuId: string, reason: string): Promise<void> {
     assertInProgress(this.indexer, wuId);
-    await this.sourcer.appendAndApply({
-      type: WU_EVENT_TYPE.RELEASE,
-      wuId,
-      reason,
-      timestamp: new Date().toISOString(),
-    } as WUEvent);
+    await this.sourcer.appendAndApply(
+      validateOrThrow({
+        type: WU_EVENT_TYPE.RELEASE,
+        wuId,
+        reason,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 
   createReleaseEvent(

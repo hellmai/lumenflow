@@ -15,13 +15,9 @@
 import { getGitForCwd, type GitAdapter } from './git-adapter.js';
 import { BRANCHES, REMOTES, LOG_PREFIX, EMOJI, GIT_COMMANDS, GIT_FLAGS } from './wu-constants.js';
 import { MERGE } from './wu-done-messages.js';
-import { createError, ErrorCodes } from './error-handler.js';
+import { createError, ErrorCodes, getErrorMessage } from './error-handler.js';
 import { withRetry, createRetryConfig } from './retry-strategy.js';
 import { autoRebaseBranch } from './wu-done-rebase.js';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 /**
  * Check if main is an ancestor of the given branch.

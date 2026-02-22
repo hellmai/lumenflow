@@ -34,11 +34,8 @@ import {
 } from '@lumenflow/initiatives';
 import { EXIT_CODES } from '@lumenflow/core/wu-constants';
 import { getConfig } from '@lumenflow/core/config';
+import { getErrorMessage } from '@lumenflow/core/error-handler';
 import { runCLI } from './cli-entry-point.js';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 const program = new Command()
   .name('orchestrate-initiative')

@@ -25,14 +25,11 @@ import {
 } from '@lumenflow/initiatives';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
 import { getConfig } from '@lumenflow/core/config';
+import { getErrorMessage } from '@lumenflow/core/error-handler';
 import chalk from 'chalk';
 import { runCLI } from './cli-entry-point.js';
 
 const LOG_PREFIX = '[orchestrate:init-status]';
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 function normalizeLifecycleStatus(value: unknown): string {
   return typeof value === 'string' ? value.trim().toLowerCase() : '';

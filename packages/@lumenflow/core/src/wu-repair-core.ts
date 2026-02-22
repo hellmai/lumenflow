@@ -28,6 +28,7 @@ import {
 import { readWU, writeWU, parseYAML, stringifyYAML } from './wu-yaml.js';
 import { WU_PATHS } from './wu-paths.js';
 import { WUStateStore, WU_EVENTS_FILE_NAME } from './wu-state-store.js';
+import { WU_EVENT_TYPE } from './wu-state-schema.js';
 import { getGitForCwd, createGitForPath } from './git-adapter.js';
 import { EXIT_CODES, LOG_PREFIX, EMOJI, WU_STATUS, LUMENFLOW_PATHS } from './wu-constants.js';
 import { die, getErrorMessage } from './error-handler.js';
@@ -283,7 +284,7 @@ export async function repairClaimMetadata(
 
       // Create claim event
       const claimEvent = {
-        type: 'claim',
+        type: WU_EVENT_TYPE.CLAIM,
         wuId: id,
         lane: lane,
         title: title,

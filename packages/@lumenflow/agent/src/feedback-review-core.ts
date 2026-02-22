@@ -15,6 +15,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { INCIDENT_SEVERITY, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
+import {
+  MS_PER_MINUTE,
+  MS_PER_HOUR,
+  MS_PER_DAY,
+} from '@lumenflow/core/constants/duration-constants';
 
 /**
  * Severity weights for scoring
@@ -42,16 +47,16 @@ const SIMILARITY_THRESHOLD = 0.7;
  * Patterns older than this are weighted less.
  * Default: 30 days
  */
-const RECENCY_DECAY_MS = 30 * 24 * 60 * 60 * 1000;
+const RECENCY_DECAY_MS = 30 * MS_PER_DAY;
 
 /**
  * Duration multipliers
  */
 const DURATION_MULTIPLIERS: Record<string, number> = {
-  m: 60 * 1000, // minutes
-  h: 60 * 60 * 1000, // hours
-  d: 24 * 60 * 60 * 1000, // days
-  w: 7 * 24 * 60 * 60 * 1000, // weeks
+  m: MS_PER_MINUTE, // minutes
+  h: MS_PER_HOUR, // hours
+  d: MS_PER_DAY, // days
+  w: 7 * MS_PER_DAY, // weeks
 };
 
 /**

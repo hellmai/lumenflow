@@ -27,26 +27,24 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { MS_PER_MINUTE } from './constants/duration-constants.js';
+import type { LockData } from './ports/wu-state.ports.js';
+
+// Re-export for backward compatibility (consumers importing from wu-lock-manager)
+export type { LockData };
 
 /**
- * Lock timeout in milliseconds (5 minutes)
+ * Stale lock timeout in milliseconds (5 minutes).
+ * WU-2048: Renamed from LOCK_TIMEOUT_MS to disambiguate from
+ * lock-constants.ts LOCK_TIMEOUT_MS (30s acquisition timeout).
  */
-const LOCK_TIMEOUT_MS = 5 * 60 * 1000;
+const WU_LOCK_STALE_TIMEOUT_MS = 5 * MS_PER_MINUTE;
 
 /**
  * Lock retry configuration
  */
 const LOCK_RETRY_DELAY_MS = 50;
 const LOCK_MAX_RETRIES = 100; // 5 seconds total
-
-/**
- * Lock file data structure
- */
-export interface LockData {
-  pid: number;
-  timestamp: number;
-  hostname: string;
-}
 
 /**
  * Check if a process with given PID is running
@@ -71,7 +69,7 @@ export function isLockStale(lockData: LockData): boolean {
   const lockAge = now - lockData.timestamp;
 
   // Check timeout first (5 minutes)
-  if (lockAge > LOCK_TIMEOUT_MS) {
+  if (lockAge > WU_LOCK_STALE_TIMEOUT_MS) {
     return true;
   }
 

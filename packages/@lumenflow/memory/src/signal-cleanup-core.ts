@@ -23,6 +23,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const ms = require('ms') as (value: string) => number;
 import type { NodeFsError } from '@lumenflow/core/wu-constants';
+import { MS_PER_DAY } from '@lumenflow/core/constants/duration-constants';
 import { LUMENFLOW_MEMORY_PATHS } from './paths.js';
 import {
   SIGNAL_FILE_NAME,
@@ -30,11 +31,6 @@ import {
   type Signal,
   type SignalReceipt,
 } from './mem-signal-core.js';
-
-/**
- * Default TTL values in milliseconds
- */
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Signal cleanup configuration
@@ -52,8 +48,8 @@ export interface SignalCleanupConfig {
  * Default signal cleanup configuration
  */
 export const DEFAULT_SIGNAL_CLEANUP_CONFIG: SignalCleanupConfig = {
-  ttl: 7 * ONE_DAY_MS,
-  unreadTtl: 30 * ONE_DAY_MS,
+  ttl: 7 * MS_PER_DAY,
+  unreadTtl: 30 * MS_PER_DAY,
   maxEntries: 500,
 };
 

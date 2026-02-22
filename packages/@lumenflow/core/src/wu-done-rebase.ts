@@ -39,6 +39,7 @@ import {
   DOC_OUTPUT_FILES,
   formatDocOutputs,
 } from './wu-done-docs-generate.js';
+import { getErrorMessage } from './error-handler.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -90,14 +91,6 @@ const REBASE_CONFLICT_MESSAGES = {
 const REBASE_CONFLICT_LIMITS = {
   MAX_CONTINUE_ATTEMPTS: 6,
 } as const;
-
-// ---------------------------------------------------------------------------
-// Internal helpers
-// ---------------------------------------------------------------------------
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 function toPosixPath(filePath: string): string {
   return filePath.split(path.sep).join('/');

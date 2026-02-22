@@ -23,7 +23,7 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
-import { validateWUEvent, type WUEvent } from './wu-state-schema.js';
+import { validateWUEvent, WU_EVENT_TYPE, type WUEvent } from './wu-state-schema.js';
 import { LUMENFLOW_PATHS, PATTERNS, WU_STATUS } from './wu-constants.js';
 
 const CUTOVER = Object.freeze({
@@ -189,13 +189,13 @@ function buildBootstrapEvents(
     if (isReadyLike && !isDone) continue;
 
     const claimTs = toIsoTimestamp(wu.claimed_at, wu.created ?? stampAt);
-    events.push({ type: 'claim', wuId: wu.id, lane: wu.lane, title: wu.title, timestamp: claimTs });
+    events.push({ type: WU_EVENT_TYPE.CLAIM, wuId: wu.id, lane: wu.lane, title: wu.title, timestamp: claimTs });
 
     if (st === WU_STATUS.BLOCKED && !isDone) {
       const blockedAt = new Date(claimTs);
       blockedAt.setSeconds(blockedAt.getSeconds() + 1);
       events.push({
-        type: 'block',
+        type: WU_EVENT_TYPE.BLOCK,
         wuId: wu.id,
         reason: BLOCKED_REASON,
         timestamp: blockedAt.toISOString(),
@@ -204,7 +204,7 @@ function buildBootstrapEvents(
     }
     if (isDone) {
       events.push({
-        type: 'complete',
+        type: WU_EVENT_TYPE.COMPLETE,
         wuId: wu.id,
         timestamp: toIsoTimestamp(wu.completed_at, stampAt ?? claimTs),
       });

@@ -27,6 +27,7 @@ import {
   WU_STATUS,
   YAML_OPTIONS,
 } from './wu-constants.js';
+import { WU_EVENT_TYPE } from './wu-state-schema.js';
 import { todayISO, normalizeToDateString } from './date-utils.js';
 import { createGitForPath } from './git-adapter.js';
 
@@ -165,20 +166,20 @@ export function deriveStatusFromEvents(eventsContent: string, wuId: string): str
       if (event.wuId !== wuId || !event.type) continue;
 
       switch (event.type) {
-        case 'claim':
-        case 'create':
+        case WU_EVENT_TYPE.CLAIM:
+        case WU_EVENT_TYPE.CREATE:
           status = WU_STATUS.IN_PROGRESS;
           break;
-        case 'release':
+        case WU_EVENT_TYPE.RELEASE:
           status = WU_STATUS.READY;
           break;
-        case 'complete':
+        case WU_EVENT_TYPE.COMPLETE:
           status = WU_STATUS.DONE;
           break;
-        case 'block':
+        case WU_EVENT_TYPE.BLOCK:
           status = WU_STATUS.BLOCKED;
           break;
-        case 'unblock':
+        case WU_EVENT_TYPE.UNBLOCK:
           status = WU_STATUS.IN_PROGRESS;
           break;
       }
@@ -224,7 +225,7 @@ export function appendReconciliationEventsInWorktree({
   const appendEvents: Array<Record<string, string>> = [];
   if (derivedStatus !== WU_STATUS.IN_PROGRESS) {
     appendEvents.push({
-      type: 'claim',
+      type: WU_EVENT_TYPE.CLAIM,
       wuId: id,
       lane: typeof lane === 'string' && lane.trim().length > 0 ? lane : 'Operations: Tooling',
       title: typeof title === 'string' && title.trim().length > 0 ? title : `WU ${id}`,
@@ -232,7 +233,7 @@ export function appendReconciliationEventsInWorktree({
     });
   }
   appendEvents.push({
-    type: 'complete',
+    type: WU_EVENT_TYPE.COMPLETE,
     wuId: id,
     reason: 'wu:repair consistency reconciliation for stamp/yaml mismatch',
     timestamp: now,
