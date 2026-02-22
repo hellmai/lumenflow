@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1702 — Emergency: remove domain-specific code from CLI and MCP packages](wu/WU-1702.yaml)
 
 ## Completed
 
