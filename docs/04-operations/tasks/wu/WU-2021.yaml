@@ -8,7 +8,10 @@ created: 2026-02-22
 code_paths:
   - packages/@lumenflow/cli/src/gates.ts
 tests:
-  manual: []
+  manual:
+    - Delete a tracked file in scope
+    - run pnpm wu:prep --id WU-2021
+    - and verify format:check does not pass missing-file paths to prettier.
   unit:
     - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
   e2e: []
@@ -25,7 +28,8 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Incremental format gate includes deleted paths (e.g., .lumenflow.config.yaml) and causes prettier --check to fail with missing-file diagnostics during wu:done.
+description: Incremental format gate includes deleted paths (e.g., .lumenflow.config.yaml) and
+  causes prettier --check to fail with missing-file diagnostics during wu:done.
 acceptance:
   - format:check incremental input excludes deleted/non-existent paths
   - wu:done for deletion WUs no longer fails on missing-file prettier arguments
