@@ -17,6 +17,14 @@ const ERROR_CREATE_TASK_PREFIX = 'Failed to create task';
 const ERROR_CREATE_TASK_NO_WORKSPACE = 'Workspace is not connected';
 const RETRY_LABEL = 'Retry';
 const TASK_ID_PREFIX = 'task-web-';
+const UUID_BYTE_LENGTH = 16;
+const UUID_VERSION_INDEX = 6;
+const UUID_VARIANT_INDEX = 8;
+const UUID_VERSION_4_MASK = 0x40;
+const UUID_VERSION_CLEAR_MASK = 0x0f;
+const UUID_VARIANT_RFC4122_MASK = 0x80;
+const UUID_VARIANT_CLEAR_MASK = 0x3f;
+const HEX_PAD_WIDTH = 2;
 const DEFAULT_TASK_DOMAIN = 'software-delivery';
 const DEFAULT_TASK_TYPE = 'feature';
 const ACCEPTANCE_PREFIX = 'Deliver: ';
@@ -104,13 +112,25 @@ function useWorkspaceData(enabled: boolean): UseWorkspaceDataResult {
   return { state, data, errorMessage, refetch };
 }
 
+function generateClientUUID(): string {
+  if (typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  const bytes = new Uint8Array(UUID_BYTE_LENGTH);
+  crypto.getRandomValues(bytes);
+  bytes[UUID_VERSION_INDEX] = (bytes[UUID_VERSION_INDEX] & UUID_VERSION_CLEAR_MASK) | UUID_VERSION_4_MASK;
+  bytes[UUID_VARIANT_INDEX] = (bytes[UUID_VARIANT_INDEX] & UUID_VARIANT_CLEAR_MASK) | UUID_VARIANT_RFC4122_MASK;
+  const hex = [...bytes].map((b) => b.toString(16).padStart(HEX_PAD_WIDTH, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 function getTodayDate(): string {
   return new Date().toISOString().split(CREATED_DATE_SEPARATOR)[0] ?? '';
 }
 
 function buildTaskSpec(input: CreateTaskInput, workspaceId: string): TaskSpec {
   return {
-    id: `${TASK_ID_PREFIX}${crypto.randomUUID()}`,
+    id: `${TASK_ID_PREFIX}${generateClientUUID()}`,
     workspace_id: workspaceId,
     lane_id: input.laneId,
     domain: DEFAULT_TASK_DOMAIN,
