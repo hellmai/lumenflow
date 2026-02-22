@@ -2,7 +2,7 @@ id: WU-1960
 title: Fix release build:dist invariant drift
 lane: 'Framework: CLI Orchestration'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-20
 code_paths:
@@ -40,3 +40,6 @@ session_id: b466f4b8-3270-43b0-9858-43c73091daf1
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-22T01:11:57.173Z
+locked: true
+completed_at: 2026-02-22T01:30:19.607Z
+completed: 2026-02-22
