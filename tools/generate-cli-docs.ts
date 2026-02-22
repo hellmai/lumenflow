@@ -1214,7 +1214,9 @@ function generateReadmeMd(commands: CommandMetadata[]): string {
     '**Important**: Always run `docs:sync` after package changes to update agent onboarding documentation, workflow rules, and vendor-specific configurations.',
   );
   lines.push('');
-  lines.push('For current setup guidance and troubleshooting, see [LUMENFLOW.md](https://lumenflow.dev).');
+  lines.push(
+    'For current setup guidance and troubleshooting, see [LUMENFLOW.md](https://lumenflow.dev).',
+  );
   lines.push('');
 
   // License section

@@ -179,14 +179,14 @@ pnpm task:inspect --workspace-root .
 
 ## Relationship to `software_delivery`
 
-| Concern        | `workspace.yaml` top-level          | `workspace.yaml > software_delivery` |
-| -------------- | ----------------------------------- | ------------------------------------ |
-| **Audience**   | Kernel runtime                      | CLI and tooling layer                |
-| **Lanes**      | `LaneSpec` (`id`, scopes, wip)      | Lane definitions (`name`, code_paths)|
-| **Packs**      | `PackPin` (`id`, version, integrity)| Not present                          |
-| **Security**   | Scope intersection boundaries       | Git hooks, safe-git wrapper          |
-| **Gates**      | Pack policies (`on_completion`)     | Gate commands (format, lint, test)   |
-| **Validation** | Zod schema at kernel init           | `lumenflow-doctor` CLI command       |
+| Concern        | `workspace.yaml` top-level           | `workspace.yaml > software_delivery`  |
+| -------------- | ------------------------------------ | ------------------------------------- |
+| **Audience**   | Kernel runtime                       | CLI and tooling layer                 |
+| **Lanes**      | `LaneSpec` (`id`, scopes, wip)       | Lane definitions (`name`, code_paths) |
+| **Packs**      | `PackPin` (`id`, version, integrity) | Not present                           |
+| **Security**   | Scope intersection boundaries        | Git hooks, safe-git wrapper           |
+| **Gates**      | Pack policies (`on_completion`)      | Gate commands (format, lint, test)    |
+| **Validation** | Zod schema at kernel init            | `lumenflow-doctor` CLI command        |
 
 ## Next Steps
 

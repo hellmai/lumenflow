@@ -193,12 +193,12 @@ YAML configuration files (`workspace.yaml`, WU specification files) are in the a
 
 **Policy: Always use CLI tooling to modify YAML files. Never use raw Write/Edit.**
 
-| File                     | Safe Command                                 | Unsafe Alternative                                      |
-| ------------------------ | -------------------------------------------- | ------------------------------------------------------- |
-| `workspace.yaml` | `pnpm config:set --key <path> --value <val>` | Write/Edit to `workspace.yaml`                  |
-| `workspace.yaml` | `pnpm config:get --key <path>` (read)        | Read `workspace.yaml` (acceptable for reading)  |
-| WU YAML specs            | `pnpm wu:edit --id WU-XXX --field value`     | Write/Edit to `docs/04-operations/tasks/wu/WU-XXX.yaml` |
-| WU YAML specs            | `pnpm wu:create ...` (creation)              | Write to create new YAML files                          |
+| File             | Safe Command                                 | Unsafe Alternative                                      |
+| ---------------- | -------------------------------------------- | ------------------------------------------------------- |
+| `workspace.yaml` | `pnpm config:set --key <path> --value <val>` | Write/Edit to `workspace.yaml`                          |
+| `workspace.yaml` | `pnpm config:get --key <path>` (read)        | Read `workspace.yaml` (acceptable for reading)          |
+| WU YAML specs    | `pnpm wu:edit --id WU-XXX --field value`     | Write/Edit to `docs/04-operations/tasks/wu/WU-XXX.yaml` |
+| WU YAML specs    | `pnpm wu:create ...` (creation)              | Write to create new YAML files                          |
 
 **Why CLI tooling is required:**
 
