@@ -1,14 +1,14 @@
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
-const REPO_ROOT = path.dirname(fileURLToPath(import.meta.url));
+import { buildWorkspaceVitestAliases } from './tools/testing/workspace-vitest-aliases';
+
+const REPO_ROOT = fileURLToPath(new URL('.', import.meta.url));
+const workspaceAliases = buildWorkspaceVitestAliases({ repoRoot: REPO_ROOT });
 
 export default defineConfig({
   resolve: {
-    alias: {
-      '@lumenflow/kernel': path.join(REPO_ROOT, 'packages/@lumenflow/kernel/src/index.ts'),
-    },
+    alias: workspaceAliases,
   },
   test: {
     // Gate runner filters safety-critical tests via `--project web`.
