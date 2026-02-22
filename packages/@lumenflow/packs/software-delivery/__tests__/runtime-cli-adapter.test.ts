@@ -29,7 +29,9 @@ describe('runtime CLI adapter', () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('stdout line');
     expect(result.stderr).toContain('stderr line');
-    expect(capturedArgv).toEqual([[process.execPath, RUNTIME_CLI_COMMANDS.WU_STATUS, '--id', 'WU-2047']]);
+    expect(capturedArgv).toEqual([
+      [process.execPath, RUNTIME_CLI_COMMANDS.WU_STATUS, '--id', 'WU-2047'],
+    ]);
   });
 
   it('maps process.exit(code) into non-throwing execution result', async () => {

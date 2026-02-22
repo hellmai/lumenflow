@@ -102,8 +102,7 @@ const VALIDATE_AGENT_SKILLS_TOOL_ENTRY =
 const VALIDATE_AGENT_SYNC_TOOL_ENTRY = 'tool-impl/runtime-native-tools.ts#validateAgentSyncTool';
 const VALIDATE_BACKLOG_SYNC_TOOL_ENTRY =
   'tool-impl/runtime-native-tools.ts#validateBacklogSyncTool';
-const VALIDATE_SKILLS_SPEC_TOOL_ENTRY =
-  'tool-impl/runtime-native-tools.ts#validateSkillsSpecTool';
+const VALIDATE_SKILLS_SPEC_TOOL_ENTRY = 'tool-impl/runtime-native-tools.ts#validateSkillsSpecTool';
 const INITIATIVE_ADD_WU_TOOL_ENTRY =
   'tool-impl/initiative-orchestration-tools.ts#initiativeAddWuTool';
 const INITIATIVE_BULK_ASSIGN_TOOL_ENTRY =

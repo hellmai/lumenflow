@@ -132,7 +132,11 @@ function resolveCliModuleRelativePath(command: RuntimeCliCommand): string {
 }
 
 function resolveCliModuleUrl(command: RuntimeCliCommand): string {
-  const absolutePath = resolvePath(process.cwd(), CLI_SOURCE_ROOT, resolveCliModuleRelativePath(command));
+  const absolutePath = resolvePath(
+    process.cwd(),
+    CLI_SOURCE_ROOT,
+    resolveCliModuleRelativePath(command),
+  );
   return pathToFileURL(absolutePath).href;
 }
 
@@ -156,7 +160,11 @@ function normalizeExitCode(code: number | string | undefined): number {
   return EXIT_STATUS_DEFAULT_OK;
 }
 
-function appendCapturedChunk(target: string[], chunk: string | Uint8Array, encoding: BufferEncoding): void {
+function appendCapturedChunk(
+  target: string[],
+  chunk: string | Uint8Array,
+  encoding: BufferEncoding,
+): void {
   if (typeof chunk === 'string') {
     target.push(chunk);
     return;
@@ -173,10 +181,7 @@ class RuntimeCliExitSignal extends Error {
   }
 }
 
-function patchStreamWrite(
-  stream: NodeJS.WriteStream,
-  target: string[],
-): () => void {
+function patchStreamWrite(stream: NodeJS.WriteStream, target: string[]): () => void {
   const original = stream.write as unknown as WriteFn;
   const patched: WriteFn = (chunk, encodingOrCallback, callback) => {
     const encoding = typeof encodingOrCallback === 'string' ? encodingOrCallback : UTF8_ENCODING;
@@ -197,11 +202,11 @@ function patchStreamWrite(
   };
 }
 
-function patchConsoleMethod(
-  methodName: ConsoleCaptureMethodName,
-  target: string[],
-): () => void {
-  const globalConsole = console as unknown as Record<ConsoleCaptureMethodName, ConsoleCaptureMethod>;
+function patchConsoleMethod(methodName: ConsoleCaptureMethodName, target: string[]): () => void {
+  const globalConsole = console as unknown as Record<
+    ConsoleCaptureMethodName,
+    ConsoleCaptureMethod
+  >;
   const original = globalConsole[methodName];
   const patched: ConsoleCaptureMethod = (...args) => {
     target.push(`${format(...args)}${OUTPUT_LINE_SUFFIX}`);

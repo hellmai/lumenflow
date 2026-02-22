@@ -10,10 +10,7 @@ const TOOL_IMPL_DIR = path.resolve(
   'packages/@lumenflow/packs/software-delivery/tool-impl',
 );
 
-const BRIDGE_PATTERNS = [
-  'spawnSync',
-  'packages/@lumenflow/cli/dist/',
-] as const;
+const BRIDGE_PATTERNS = ['spawnSync', 'packages/@lumenflow/cli/dist/'] as const;
 
 describe('software-delivery bridge regression guard', () => {
   it('contains no CLI dist bridge patterns in tool implementations', () => {
