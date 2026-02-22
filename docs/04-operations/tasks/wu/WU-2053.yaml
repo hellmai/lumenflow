@@ -17,7 +17,8 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
   - packages/@lumenflow/cli/src/wu-validate.ts
 tests:
-  manual: []
+  manual:
+    - Run pnpm --filter @lumenflow/cli build and verify zero TS7006 errors
   unit:
     - packages/@lumenflow/cli/src/**/__tests__/**/*.test.ts
   e2e: []
@@ -34,7 +35,8 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Emergency remediation for main build break: implicit-any callback parameters introduced in CLI sources now fail strict TypeScript and block lifecycle commands.'
+description: 'Emergency remediation for main build break: implicit-any callback parameters
+  introduced in CLI sources now fail strict TypeScript and block lifecycle commands.'
 acceptance:
   - pnpm --filter @lumenflow/cli build passes
   - pnpm build passes on a clean checkout
