@@ -154,7 +154,7 @@ LumenFlow domain pack - version ${version}
 
 ## Overview
 
-This pack provides domain-specific tools and policies for the LumenFlow kernel.
+This pack provides pack-specific tools and policies for the LumenFlow kernel.
 
 ## Structure
 

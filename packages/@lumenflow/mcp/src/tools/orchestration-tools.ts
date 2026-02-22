@@ -5,7 +5,7 @@
  * @file orchestration-tools.ts
  * @description Orchestration and delegation tool implementations
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1425: Orchestration tools + delegation tools
  * WU-1457: All orchestration/delegation commands use shared schemas
  */

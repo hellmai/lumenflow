@@ -5,7 +5,7 @@
  * @file initiative-tools.ts
  * @description Initiative tool implementations
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1424: Initiative tools
  * WU-1455: Initiative command schemas from @lumenflow/core
  */

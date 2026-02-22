@@ -5,7 +5,7 @@
  * @file wu-tools.ts
  * @description WU lifecycle tool implementations (create, claim, done, block, edit, etc.)
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1412: Core WU tools: wu_status, wu_create, wu_claim, wu_done, gates_run
  * WU-1422: Additional WU tools
  * WU-1431: Uses shared Zod schemas from @lumenflow/core for CLI/MCP parity

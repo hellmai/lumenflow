@@ -5,7 +5,7 @@
  * @file tools-shared.ts
  * @description Shared types, constants, error codes, and helpers used across MCP tool domain modules.
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  */
 
 import {

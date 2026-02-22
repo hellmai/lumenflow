@@ -5,7 +5,7 @@
  * @file parity-tools.ts
  * @description Wave-1 and Wave-2 public parity tool implementations
  *
- * WU-1642: Extracted from tools.ts during domain decomposition.
+ * WU-1642: Extracted from tools.ts during modular decomposition.
  * WU-1482: Wave-1 public parity tools
  * WU-1483: Wave-2 public parity tools (file, git, plan, signal, wu:proto)
  */
