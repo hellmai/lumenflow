@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/core/src/wu-rules-resolvers.ts
   - packages/@lumenflow/core/src/__tests__/**
 tests:
-  manual: []
+  manual:
+    - pnpm wu:prep --id WU-1995 completes without ELOOP when code_paths include glob patterns
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-preflight-validators-reality.test.ts
     - packages/@lumenflow/core/src/__tests__/wu-done-preflight.test.ts
@@ -28,7 +29,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:done treats glob code_paths as literal files, and preflight glob checks can recurse into cyclic node_modules symlinks (ELOOP). Make validation glob-aware in wu:done and symlink-loop-safe in resolver glob checks.
+description: wu:done treats glob code_paths as literal files, and preflight glob checks can recurse
+  into cyclic node_modules symlinks (ELOOP). Make validation glob-aware in wu:done and
+  symlink-loop-safe in resolver glob checks.
 acceptance:
   - wu:done accepts glob code_paths when they resolve to at least one path
   - preflight glob checks do not recurse into symlink-loop node_modules trees
