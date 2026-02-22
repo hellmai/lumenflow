@@ -2,7 +2,7 @@ id: WU-1996
 title: Eliminate wu:claim worktree install bin-link ENOENT warnings
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-22
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/core/src/worktree-symlink.ts
 tests:
   manual:
-    - Create a fresh WU and run wu:claim in worktree mode; verify clean setup logs and functional wu:prep
+    - Create a fresh WU and run wu:claim in worktree mode; verify clean setup logs and functional
+      wu:prep
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
   e2e: []
@@ -27,8 +28,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Fresh worktree claims can emit noisy pnpm bin-link ENOENT warnings when workspace bin targets rely on build artifacts absent in newly created worktrees. Make setup deterministic and quiet without reducing safety.
+description: Fresh worktree claims can emit noisy pnpm bin-link ENOENT warnings when workspace bin
+  targets rely on build artifacts absent in newly created worktrees. Make setup deterministic and
+  quiet without reducing safety.
 acceptance:
   - wu:claim default setup no longer emits known bin-link ENOENT warnings in fresh worktrees
   - worktree setup remains deterministic and preserves fallback behavior on install failures
   - unit tests cover warning-prevention setup path and fallback safety
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-1996
+claimed_at: 2026-02-22T02:10:14.157Z
+baseline_main_sha: 93d3b99d78239b950ae32fae017df2a472f81074
+session_id: 07bcbd41-2f8b-494b-998b-5a2c89763a22
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-22T02:10:14.163Z

@@ -4,7 +4,7 @@ _Last updated: 2026-02-22_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-1996 — Eliminate wu:claim worktree install bin-link ENOENT warnings](wu/WU-1996.yaml)
 
 ## Completed
 
