@@ -586,7 +586,6 @@ software_delivery:
         lock_policy: none
         code_paths:
           - docs/04-operations/**
-          - .lumenflow.config.yaml
           - .lumenflow.lane-inference.yaml
           - .lumenflow/**
       - name: 'Content: Framework Docs'

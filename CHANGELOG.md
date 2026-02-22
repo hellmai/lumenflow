@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Methodology Configurability (INIT-010)**: Configure your team's testing and architecture methodology via `.lumenflow.config.yaml`. Choose between TDD, test-after, or no testing enforcement. Select hexagonal, layered, or no architecture guidance.
+- **Methodology Configurability (INIT-010)**: Configure your team's testing and architecture methodology via `workspace.yaml` (`software_delivery.methodology`). Choose between TDD, test-after, or no testing enforcement. Select hexagonal, layered, or no architecture guidance.
 
   ```yaml
   methodology:
@@ -117,7 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 No migration required. To adopt methodology configurability:
 
-1. Add the `methodology` section to your `.lumenflow.config.yaml`
+1. Add the `methodology` section under `software_delivery` in `workspace.yaml`
 2. Choose your testing methodology: `tdd`, `test-after`, or `none`
 3. Choose your architecture methodology: `hexagonal`, `layered`, or `none`
 4. Optionally override template defaults with `overrides`
@@ -151,7 +151,7 @@ See the [Migration Guide](https://lumenflow.dev/guides/migration) for detailed i
 
 ### Breaking Changes
 
-- **Config version bump**: `.lumenflow.config.yaml` now requires `version: '2.0'`
+- **Config version bump**: LumenFlow configuration now requires `version: '2.0'`
 - **Lane format**: Lanes now use "Parent: Sublane" format (e.g., `Framework: Core`)
 - **Stamp location**: Stamps moved from `.lumenflow/stamps/` to `.lumenflow/stamps/`
 - **State directory**: State files moved from `.lumenflow/` to `.lumenflow/`
