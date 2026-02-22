@@ -1,0 +1,36 @@
+id: WU-2050
+title: Bundled pack resolution for end-user bootstrap
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P2
+created: 2026-02-22
+code_paths:
+  - packages/@lumenflow/kernel/src/runtime/kernel-runtime.ts
+  - packages/@lumenflow/cli/package.json
+tests:
+  manual:
+    - Bootstrap in empty directory outside monorepo
+  unit:
+    - packages/@lumenflow/kernel/src/runtime/__tests__/resolve-packs-root.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2050.done
+dependencies: []
+spec_refs:
+  - .claude/plans/vivid-jumping-twilight.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Add CLI-relative candidate to resolvePacksRoot() so software-delivery pack resolves when installed via npm, not just in the monorepo. CLI build step copies software-delivery into dist/packs/.
+acceptance:
+  - resolvePacksRoot falls back to CLI package location when workspace-relative packs dirs dont exist
+  - CLI package.json includes packs/ in npm files array
+  - npx lumenflow in empty project finds software-delivery pack
