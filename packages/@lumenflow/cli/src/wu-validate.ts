@@ -20,6 +20,7 @@
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
+import type { ZodIssue } from 'zod';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
@@ -108,7 +109,7 @@ function validateSingleWU(
   const schemaResult = validateWU(doc);
   if (!schemaResult.success) {
     const schemaErrors = schemaResult.error.issues.map(
-      (issue) => `${issue.path.join('.')}: ${issue.message}`,
+      (issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`,
     );
     errors.push(...schemaErrors);
     return { valid: false, warnings, errors };
