@@ -32,19 +32,20 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import fg from 'fast-glob';
-import { parse as parseYaml } from 'yaml';
+import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import {
   diagnoseState,
   ISSUE_TYPES,
   ISSUE_SEVERITY,
   type StateDiagnosis,
   type StateDoctorDeps,
+  type DiagnosisIssue,
   type MockWU,
   type MockSignal,
   type MockEvent,
 } from '@lumenflow/core/state-doctor-core';
 import { createWUParser } from '@lumenflow/core/arg-parser';
-import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
+import { EXIT_CODES, LUMENFLOW_PATHS, WU_STATUS } from '@lumenflow/core/wu-constants';
 import {
   getConfig,
   getResolvedPaths,
@@ -54,15 +55,23 @@ import {
 } from '@lumenflow/core/config';
 import { existsSync } from 'node:fs';
 import { createStamp } from '@lumenflow/core/stamp-utils';
+import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { createStateDoctorFixDeps } from './state-doctor-fix.js';
 import { runCLI } from './cli-entry-point.js';
 import { resolveStateDoctorStampIds } from './state-doctor-stamps.js';
+import { deriveInitiativeLifecycleStatus } from './initiative-status.js';
 
 /**
  * Log prefix for state:doctor output
  */
 const LOG_PREFIX = '[state:doctor]';
 const WORKSPACE_INIT_COMMAND = 'pnpm workspace-init --yes';
+const INITIATIVE_FILE_GLOB = 'INIT-*.yaml';
+const WU_FILE_GLOB = 'WU-*.yaml';
+const STATUS_RECONCILIATION_OPERATION_ID = 'reconcile-initiative-status';
+const STATUS_RECONCILIATION_COMMIT_MESSAGE =
+  'fix(state-doctor): reconcile stale initiative lifecycle statuses';
+const INITIATIVE_STATUS_RECONCILIATION_SUGGESTION = 'Run with --fix to reconcile initiative status';
 
 // WU-1539/WU-1548: Use centralized LUMENFLOW_PATHS.MEMORY_SIGNALS and LUMENFLOW_PATHS.WU_EVENTS
 
@@ -119,6 +128,236 @@ interface ParsedArgs {
   json?: boolean;
   quiet?: boolean;
   baseDir?: string;
+}
+
+interface InitiativeStatusMismatch {
+  initiativeId: string;
+  relativePath: string;
+  currentStatus: string;
+  derivedStatus: string;
+}
+
+interface InitiativePhaseShape {
+  id: number;
+  status?: string;
+}
+
+interface InitiativeDocShape {
+  id?: string;
+  slug?: string;
+  status?: string;
+  phases?: unknown;
+}
+
+interface InitiativeProgressContext {
+  done: number;
+  total: number;
+}
+
+interface WUDocShape {
+  initiative?: string;
+  status?: string;
+}
+
+function normalizeLifecycleStatus(value: unknown): string {
+  return typeof value === 'string' ? value.trim().toLowerCase() : '';
+}
+
+function toInitiativePhases(value: unknown): InitiativePhaseShape[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value
+    .filter((phase): phase is Record<string, unknown> => phase != null && typeof phase === 'object')
+    .flatMap((phase) => {
+      if (typeof phase.id !== 'number') {
+        return [];
+      }
+      const status = typeof phase.status === 'string' ? phase.status : undefined;
+      return [{ id: phase.id, status }];
+    });
+}
+
+function createInitiativeStatusMismatchIssue(mismatch: InitiativeStatusMismatch): DiagnosisIssue {
+  return {
+    type: ISSUE_TYPES.STATUS_MISMATCH,
+    severity: ISSUE_SEVERITY.WARNING,
+    wuId: mismatch.initiativeId,
+    description: `Initiative ${mismatch.initiativeId} metadata status is '${mismatch.currentStatus}' but linked WUs derive '${mismatch.derivedStatus}'`,
+    suggestion: INITIATIVE_STATUS_RECONCILIATION_SUGGESTION,
+    canAutoFix: true,
+    statusMismatch: {
+      yamlStatus: mismatch.currentStatus,
+      derivedStatus: mismatch.derivedStatus,
+    },
+  };
+}
+
+export async function collectInitiativeLifecycleStatusMismatches(
+  baseDir: string,
+): Promise<InitiativeStatusMismatch[]> {
+  const config = getConfig({ projectRoot: baseDir, strictWorkspace: true });
+  const initiativesDir = path.join(baseDir, config.directories.initiativesDir);
+  const wuDir = path.join(baseDir, config.directories.wuDir);
+
+  const [initiativeFiles, wuFiles] = await Promise.all([
+    fg(INITIATIVE_FILE_GLOB, { cwd: initiativesDir }),
+    fg(WU_FILE_GLOB, { cwd: wuDir }),
+  ]);
+
+  if (initiativeFiles.length === 0) {
+    return [];
+  }
+
+  const initiatives: Array<{
+    id: string;
+    slug: string;
+    status: string;
+    phases: InitiativePhaseShape[];
+    relativePath: string;
+  }> = [];
+
+  const initiativeIdByReference = new Map<string, string>();
+  const progressByInitiativeId = new Map<string, InitiativeProgressContext>();
+
+  for (const file of initiativeFiles) {
+    const relativePath = path.join(config.directories.initiativesDir, file);
+    const fullPath = path.join(initiativesDir, file);
+
+    try {
+      const content = await fs.readFile(fullPath, 'utf-8');
+      const doc = parseYaml(content) as InitiativeDocShape;
+      const initiativeId = typeof doc.id === 'string' && doc.id.length > 0 ? doc.id : '';
+
+      if (!initiativeId) {
+        continue;
+      }
+
+      const slug = typeof doc.slug === 'string' ? doc.slug : '';
+      const status = normalizeLifecycleStatus(doc.status);
+      const phases = toInitiativePhases(doc.phases);
+
+      initiatives.push({
+        id: initiativeId,
+        slug,
+        status,
+        phases,
+        relativePath,
+      });
+
+      initiativeIdByReference.set(initiativeId, initiativeId);
+      if (slug.length > 0) {
+        initiativeIdByReference.set(slug, initiativeId);
+      }
+      progressByInitiativeId.set(initiativeId, { done: 0, total: 0 });
+    } catch {
+      // Skip malformed initiative YAML files during diagnosis.
+    }
+  }
+
+  for (const file of wuFiles) {
+    const fullPath = path.join(wuDir, file);
+    try {
+      const content = await fs.readFile(fullPath, 'utf-8');
+      const doc = parseYaml(content) as WUDocShape;
+      const initiativeRef = typeof doc.initiative === 'string' ? doc.initiative : '';
+      if (!initiativeRef) {
+        continue;
+      }
+
+      const initiativeId = initiativeIdByReference.get(initiativeRef);
+      if (!initiativeId) {
+        continue;
+      }
+
+      const current = progressByInitiativeId.get(initiativeId) || { done: 0, total: 0 };
+      current.total += 1;
+      if (normalizeLifecycleStatus(doc.status) === WU_STATUS.DONE) {
+        current.done += 1;
+      }
+      progressByInitiativeId.set(initiativeId, current);
+    } catch {
+      // Skip malformed WU YAML files during diagnosis.
+    }
+  }
+
+  const mismatches: InitiativeStatusMismatch[] = [];
+  for (const initiative of initiatives) {
+    if (![WU_STATUS.IN_PROGRESS, WU_STATUS.DONE].includes(initiative.status)) {
+      continue;
+    }
+
+    const progress = progressByInitiativeId.get(initiative.id);
+    const derivedStatus = deriveInitiativeLifecycleStatus(
+      initiative.status,
+      initiative.phases,
+      progress,
+    );
+
+    if (derivedStatus !== initiative.status) {
+      mismatches.push({
+        initiativeId: initiative.id,
+        relativePath: initiative.relativePath,
+        currentStatus: initiative.status,
+        derivedStatus,
+      });
+    }
+  }
+
+  return mismatches;
+}
+
+export async function applyInitiativeLifecycleStatusFixes(
+  baseDir: string,
+  mismatches: InitiativeStatusMismatch[],
+): Promise<void> {
+  if (mismatches.length === 0) {
+    return;
+  }
+
+  const uniqueMismatches = Array.from(
+    new Map(mismatches.map((mismatch) => [mismatch.relativePath, mismatch])).values(),
+  );
+
+  await withMicroWorktree({
+    operation: TOOL_NAME,
+    id: STATUS_RECONCILIATION_OPERATION_ID,
+    logPrefix: LOG_PREFIX,
+    pushOnly: true,
+    execute: async ({ worktreePath }) => {
+      const modifiedFiles: string[] = [];
+
+      for (const mismatch of uniqueMismatches) {
+        const initiativePath = path.join(worktreePath, mismatch.relativePath);
+        const content = await fs.readFile(initiativePath, 'utf-8');
+        const doc = parseYaml(content) as InitiativeDocShape;
+        doc.status = mismatch.derivedStatus;
+        await fs.writeFile(initiativePath, stringifyYaml(doc), 'utf-8');
+        modifiedFiles.push(mismatch.relativePath);
+      }
+
+      return {
+        commitMessage: STATUS_RECONCILIATION_COMMIT_MESSAGE,
+        files: modifiedFiles,
+      };
+    },
+  });
+}
+
+function appendInitiativeStatusMismatchIssues(
+  result: StateDiagnosis,
+  mismatches: InitiativeStatusMismatch[],
+): DiagnosisIssue[] {
+  if (mismatches.length === 0) {
+    return [];
+  }
+
+  const issues = mismatches.map((mismatch) => createInitiativeStatusMismatchIssue(mismatch));
+  result.issues.push(...issues);
+  result.summary.statusMismatches += issues.length;
+  result.summary.totalIssues += issues.length;
+  result.healthy = false;
+  return issues;
 }
 
 /**
@@ -587,6 +826,32 @@ async function main(): Promise<void> {
       fix: args.fix,
       dryRun: args.dryRun,
     });
+
+    const initiativeMismatches = await collectInitiativeLifecycleStatusMismatches(baseDir);
+    const initiativeIssues = appendInitiativeStatusMismatchIssues(result, initiativeMismatches);
+
+    if (initiativeIssues.length > 0) {
+      if (args.fix && args.dryRun) {
+        result.dryRun = true;
+        const existingWouldFix = result.wouldFix || [];
+        result.wouldFix = [...existingWouldFix, ...initiativeIssues];
+      } else if (args.fix) {
+        try {
+          await applyInitiativeLifecycleStatusFixes(baseDir, initiativeMismatches);
+          result.fixed.push(...initiativeIssues);
+        } catch (fixErr) {
+          const message = fixErr instanceof Error ? fixErr.message : String(fixErr);
+          for (const issue of initiativeIssues) {
+            result.fixErrors.push({
+              type: issue.type,
+              wuId: issue.wuId,
+              signalId: issue.signalId,
+              error: message,
+            });
+          }
+        }
+      }
+    }
   } catch (err) {
     error = (err as Error).message;
   }
