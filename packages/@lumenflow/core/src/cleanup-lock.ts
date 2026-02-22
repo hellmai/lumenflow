@@ -37,27 +37,27 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { LOG_PREFIX, EMOJI, LUMENFLOW_PATHS, LOCK_DIR_NAME } from './wu-constants.js';
 import { createError, ErrorCodes } from './error-handler.js';
+import {
+  LOCK_TIMEOUT_MS,
+  CLEANUP_LOCK_STALE_MS as CLEANUP_STALE_MS,
+  LOCK_POLL_INTERVAL_MS,
+} from './constants/lock-constants.js';
 
 /**
  * Default timeout for waiting to acquire lock (ms)
  * After this time, acquisition fails if lock is held
  */
-export const CLEANUP_LOCK_TIMEOUT_MS = 30000; // 30 seconds
+export const CLEANUP_LOCK_TIMEOUT_MS = LOCK_TIMEOUT_MS;
 
 /**
  * Time after which a cleanup lock is considered stale (ms)
  * Should be greater than expected cleanup operation duration
  * Cleanup is slower than merge, so longer timeout
  */
-export const CLEANUP_LOCK_STALE_MS = 5 * 60 * 1000; // 5 minutes
+export const CLEANUP_LOCK_STALE_MS = CLEANUP_STALE_MS;
 
 /** Lock file name within .lumenflow directory */
 const LOCK_FILE_NAME = 'cleanup.lock';
-
-/**
- * Polling interval for lock acquisition retries
- */
-const LOCK_POLL_INTERVAL_MS = 500;
 
 /**
  * @typedef {Object} CleanupLockInfo

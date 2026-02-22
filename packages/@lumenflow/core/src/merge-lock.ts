@@ -23,26 +23,26 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { LOG_PREFIX, EMOJI, LUMENFLOW_PATHS, LOCK_DIR_NAME } from './wu-constants.js';
 import { createError, ErrorCodes } from './error-handler.js';
+import {
+  LOCK_TIMEOUT_MS,
+  MERGE_LOCK_STALE_MS as MERGE_STALE_MS,
+  LOCK_POLL_INTERVAL_MS,
+} from './constants/lock-constants.js';
 
 /**
  * Default timeout for waiting to acquire lock (ms)
  * After this time, acquisition fails if lock is held
  */
-export const MERGE_LOCK_TIMEOUT_MS = 30000; // 30 seconds
+export const MERGE_LOCK_TIMEOUT_MS = LOCK_TIMEOUT_MS;
 
 /**
  * Time after which a lock is considered stale and can be forcibly released (ms)
  * Should be greater than expected merge operation duration
  */
-export const MERGE_LOCK_STALE_MS = 60000; // 60 seconds
+export const MERGE_LOCK_STALE_MS = MERGE_STALE_MS;
 
 /** Lock file name within .lumenflow directory */
 const LOCK_FILE_NAME = 'merge.lock';
-
-/**
- * Polling interval for lock acquisition retries
- */
-const LOCK_POLL_INTERVAL_MS = 500;
 
 /**
  * @typedef {Object} LockInfo

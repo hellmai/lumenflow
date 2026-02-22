@@ -39,6 +39,8 @@ import {
   LOG_PREFIX,
   EMOJI,
 } from './wu-constants.js';
+// WU-2010: Import validation constants to eliminate magic numbers
+import { INLINE_KEYWORD_MAX_OFFSET } from './constants/validation-constants.js';
 
 // Type definitions
 interface ExistValidationResult {
@@ -379,7 +381,7 @@ function scanFileForTODOs(filePath: string): {
 
         const commentPart = line.slice(doubleSlashIndex);
         const keywordIndex = commentPart.search(/\b(TODO|FIXME|HACK|XXX)\b/i);
-        if (keywordIndex >= 0 && keywordIndex <= 10) {
+        if (keywordIndex >= 0 && keywordIndex <= INLINE_KEYWORD_MAX_OFFSET) {
           return { found: true, pattern: inlineKeyword.toUpperCase() };
         }
       }

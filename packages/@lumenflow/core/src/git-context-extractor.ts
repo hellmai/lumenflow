@@ -100,10 +100,23 @@ interface SummarizeOptions {
   maxTokens?: number;
 }
 
+import {
+  SHA1_HEX_LENGTH,
+  GIT_COMMAND_TIMEOUT_MS,
+  GIT_MAX_BUFFER_BYTES,
+  GIT_DEFAULT_MAX_COMMITS,
+  GIT_DEFAULT_MAX_RESULTS,
+  GIT_MIN_COMMIT_COUNT,
+  GIT_MIN_CO_OCCURRENCE_COUNT,
+  GIT_MAX_TOP_LEVEL_DIRS,
+  GIT_SUMMARY_ITEM_LIMIT,
+  CHARS_PER_TOKEN,
+  GIT_DEFAULT_MAX_SUMMARY_TOKENS,
+  GIT_TRUNCATION_PADDING,
+} from './constants/git-constants.js';
+import { SECTION_HEADER_LINE_COUNT } from './constants/display-constants.js';
+
 // Constants
-const DEFAULT_MAX_COMMITS = 500;
-const DEFAULT_MAX_RESULTS = 20;
-const CHARS_PER_TOKEN = 4; // Rough approximation
 const DEFAULT_EXCLUDE_PATTERNS = ['*.lock', '*.yaml', '*.yml', '*.json', '*.md', 'pnpm-lock.yaml'];
 
 // Pre-compiled regex patterns for performance
@@ -149,7 +162,7 @@ function parseShortlogFormat(line: string): { count: number; name: string } | nu
  * Uses character-by-character check to avoid slow regex backtracking
  */
 function isCommitHash(str: string): boolean {
-  if (str.length !== 40) return false;
+  if (str.length !== SHA1_HEX_LENGTH) return false;
   for (const char of str) {
     if (!((char >= '0' && char <= '9') || (char >= 'a' && char <= 'f'))) {
       return false;
@@ -190,8 +203,8 @@ function safeGitExec(args: string[], cwd: string): string {
     const result = execSync(cmd, {
       cwd,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024, // 10MB
-      timeout: 30000, // 30 seconds
+      maxBuffer: GIT_MAX_BUFFER_BYTES,
+      timeout: GIT_COMMAND_TIMEOUT_MS,
     });
     return result;
   } catch {
@@ -205,7 +218,7 @@ function safeGitExec(args: string[], cwd: string): string {
 function hasLimitedCommitCount(projectRoot: string): { limited: boolean; count: number } {
   const commitCountStr = safeGitExec(['rev-list', '--count', 'HEAD'], projectRoot).trim();
   const count = parseInt(commitCountStr, 10) || 0;
-  return { limited: count < 10, count };
+  return { limited: count < GIT_MIN_COMMIT_COUNT, count };
 }
 
 /**
@@ -241,7 +254,7 @@ export function extractGitContext(
 
     // Extract co-occurrences
     result.coOccurrences = getFileCoOccurrence(projectRoot, {
-      maxCommits: options.maxCommits ?? DEFAULT_MAX_COMMITS,
+      maxCommits: options.maxCommits ?? GIT_DEFAULT_MAX_COMMITS,
       since: options.since,
     });
 
@@ -251,7 +264,7 @@ export function extractGitContext(
 
     // Extract churn metrics
     result.churn = getChurnMetrics(projectRoot, {
-      maxCommits: options.maxCommits ?? DEFAULT_MAX_COMMITS,
+      maxCommits: options.maxCommits ?? GIT_DEFAULT_MAX_COMMITS,
       since: options.since,
     });
   } catch (error) {
@@ -285,7 +298,7 @@ function getTopLevelDirs(projectRoot: string): string[] {
   return output
     .split('\n')
     .filter((d) => d.trim() && !d.startsWith('.'))
-    .slice(0, 20); // Limit to first 20 directories
+    .slice(0, GIT_MAX_TOP_LEVEL_DIRS);
 }
 
 /**
@@ -358,8 +371,8 @@ export function getFileCoOccurrence(
   projectRoot: string,
   options: CoOccurrenceOptions = {},
 ): CoOccurrence[] {
-  const maxCommits = options.maxCommits ?? DEFAULT_MAX_COMMITS;
-  const maxResults = options.maxResults ?? DEFAULT_MAX_RESULTS;
+  const maxCommits = options.maxCommits ?? GIT_DEFAULT_MAX_COMMITS;
+  const maxResults = options.maxResults ?? GIT_DEFAULT_MAX_RESULTS;
 
   // Build git log args array (safe - no user input in paths)
   const args = ['log', `-n`, String(maxCommits)];
@@ -380,8 +393,7 @@ export function getFileCoOccurrence(
   // Convert to array and filter
   const coOccurrences: CoOccurrence[] = [];
   for (const [pair, count] of pairCounts.entries()) {
-    if (count >= 2) {
-      // Only include pairs that co-occurred at least twice
+    if (count >= GIT_MIN_CO_OCCURRENCE_COUNT) {
       const [file1, file2] = pair.split('::');
       if (!file1 || !file2) continue;
       coOccurrences.push({ file1, file2, count });
@@ -578,8 +590,8 @@ function aggregateFileStats(
  * Extract churn metrics for the repository
  */
 export function getChurnMetrics(projectRoot: string, options: ChurnOptions = {}): ChurnMetric[] {
-  const maxCommits = options.maxCommits ?? DEFAULT_MAX_COMMITS;
-  const maxResults = options.maxResults ?? DEFAULT_MAX_RESULTS;
+  const maxCommits = options.maxCommits ?? GIT_DEFAULT_MAX_COMMITS;
+  const maxResults = options.maxResults ?? GIT_DEFAULT_MAX_RESULTS;
   const excludePatterns = options.excludePatterns ?? DEFAULT_EXCLUDE_PATTERNS;
 
   // Build git log args array
@@ -597,8 +609,8 @@ export function getChurnMetrics(projectRoot: string, options: ChurnOptions = {})
     output = execSync(cmd, {
       cwd: projectRoot,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
-      timeout: 30000,
+      maxBuffer: GIT_MAX_BUFFER_BYTES,
+      timeout: GIT_COMMAND_TIMEOUT_MS,
     });
   } catch {
     return [];
@@ -634,7 +646,7 @@ export function getChurnMetrics(projectRoot: string, options: ChurnOptions = {})
  */
 function buildCoOccurrenceSection(coOccurrences: CoOccurrence[]): string {
   const lines = ['## Co-occurrence Patterns', 'Files frequently changed together:'];
-  for (const co of coOccurrences.slice(0, 10)) {
+  for (const co of coOccurrences.slice(0, GIT_SUMMARY_ITEM_LIMIT)) {
     lines.push(`- ${co.file1} <-> ${co.file2} (${co.count} commits)`);
   }
   return lines.join('\n');
@@ -657,7 +669,7 @@ function buildOwnershipSection(ownership: OwnershipSignal[]): string {
  */
 function buildChurnSection(churn: ChurnMetric[]): string {
   const lines = ['## Churn Hotspots', 'High-change files (potential complexity):'];
-  for (const ch of churn.slice(0, 10)) {
+  for (const ch of churn.slice(0, GIT_SUMMARY_ITEM_LIMIT)) {
     lines.push(`- ${ch.filePath}: ${ch.churnScore} lines changed across ${ch.commitCount} commits`);
   }
   return lines.join('\n');
@@ -670,9 +682,9 @@ function truncateSection(section: string, maxChars: number): string {
   if (section.length <= maxChars) return section;
 
   const lines = section.split('\n');
-  const header = lines.slice(0, 2).join('\n');
-  const items = lines.slice(2);
-  const availableChars = maxChars - header.length - 20;
+  const header = lines.slice(0, SECTION_HEADER_LINE_COUNT).join('\n');
+  const items = lines.slice(SECTION_HEADER_LINE_COUNT);
+  const availableChars = maxChars - header.length - GIT_TRUNCATION_PADDING;
   const truncatedItems: string[] = [];
   let currentChars = 0;
 
@@ -691,7 +703,7 @@ function truncateSection(section: string, maxChars: number): string {
  * Produces a token-efficient summary that fits within specified limits.
  */
 export function summarizeGitContext(context: GitContext, options: SummarizeOptions = {}): string {
-  const maxTokens = options.maxTokens ?? 500;
+  const maxTokens = options.maxTokens ?? GIT_DEFAULT_MAX_SUMMARY_TOKENS;
   const maxChars = maxTokens * CHARS_PER_TOKEN;
 
   // Handle limited history case
@@ -719,7 +731,7 @@ export function summarizeGitContext(context: GitContext, options: SummarizeOptio
 
   // Truncate if needed
   if (result.length > maxChars && sections.length > 0) {
-    const charsPerSection = Math.floor(maxChars / sections.length) - 20;
+    const charsPerSection = Math.floor(maxChars / sections.length) - GIT_TRUNCATION_PADDING;
     const truncatedSections = sections.map((s) => truncateSection(s, charsPerSection));
     result = truncatedSections.join('\n\n');
   }

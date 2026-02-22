@@ -18,6 +18,8 @@ import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { STDIO } from './wu-constants.js';
 import { PLACEHOLDER_SENTINEL } from './wu-schema.js';
+// WU-2010: Import validation constants to eliminate magic numbers
+import { INLINE_KEYWORD_MAX_OFFSET } from './constants/validation-constants.js';
 
 export interface TodoMatch {
   line: number;
@@ -205,8 +207,8 @@ export function scanFileForTODOs(filePath: string): TodoScanResult {
         // Verify the keyword is right after // (not buried in prose)
         const commentPart = line.slice(doubleSlashIndex);
         const keywordIndex = commentPart.search(/\b(TODO|FIXME|HACK|XXX)\b/i);
-        // Only flag if keyword appears within first 10 chars of comment
-        if (keywordIndex >= 0 && keywordIndex <= 10) {
+        // Only flag if keyword appears within first INLINE_KEYWORD_MAX_OFFSET chars of comment
+        if (keywordIndex >= 0 && keywordIndex <= INLINE_KEYWORD_MAX_OFFSET) {
           return { found: true, pattern: inlineKeyword.toUpperCase() };
         }
       }

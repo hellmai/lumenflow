@@ -38,15 +38,26 @@ import type {
   Alert,
 } from '../domain/orchestration.types.js';
 import type { AgentName } from '../domain/orchestration.constants.js';
+// WU-2010: Import display constants to eliminate magic numbers
+import {
+  SECTION_SEPARATOR_WIDTH,
+  PROGRESS_BAR_WIDTH as DISPLAY_PROGRESS_BAR_WIDTH,
+  SEVERITY_LABEL_PAD_WIDTH,
+  PASS_RATE_GREEN_THRESHOLD,
+  PASS_RATE_YELLOW_THRESHOLD,
+  MS_PER_HOUR,
+  MS_PER_MINUTE,
+  MS_PER_SECOND,
+} from '../constants/display-constants.js';
 
 // Constants for rendering (no magic strings)
-const SECTION_SEPARATOR = '\n' + '─'.repeat(80) + '\n';
+const SECTION_SEPARATOR = '\n' + '─'.repeat(SECTION_SEPARATOR_WIDTH) + '\n';
 const HEADER_PREFIX = '▸';
 const BULLET = '•';
 const CHECK_MARK = '✓';
 const CROSS_MARK = '✗';
 const PENDING_MARK = '○';
-const PROGRESS_BAR_WIDTH = 30;
+const PROGRESS_BAR_WIDTH = DISPLAY_PROGRESS_BAR_WIDTH;
 
 // Severity colour mapping
 const SEVERITY_COLOURS = {
@@ -132,7 +143,7 @@ export class TerminalDashboardRenderer implements IDashboardRenderer {
 
     for (const suggestion of suggestions) {
       const priorityColour = SEVERITY_COLOURS[suggestion.priority];
-      const priorityLabel = suggestion.priority.toUpperCase().padEnd(6);
+      const priorityLabel = suggestion.priority.toUpperCase().padEnd(SEVERITY_LABEL_PAD_WIDTH);
 
       console.log(
         `${BULLET} ${priorityColour(priorityLabel)} ${picocolors.bold(suggestion.action)}`,
@@ -211,9 +222,9 @@ export class TerminalDashboardRenderer implements IDashboardRenderer {
     );
 
     if (status.longestRunning) {
-      const durationHours = Math.floor(status.longestRunning.durationMs / (1000 * 60 * 60));
+      const durationHours = Math.floor(status.longestRunning.durationMs / MS_PER_HOUR);
       const durationMinutes = Math.floor(
-        (status.longestRunning.durationMs % (1000 * 60 * 60)) / (1000 * 60),
+        (status.longestRunning.durationMs % MS_PER_HOUR) / MS_PER_MINUTE,
       );
       console.log(
         `${picocolors.gray('Longest Running:')} ${picocolors.cyan(status.longestRunning.wuId)} ${picocolors.gray(`(${durationHours}h ${durationMinutes}m)`)}`,
@@ -232,8 +243,8 @@ export class TerminalDashboardRenderer implements IDashboardRenderer {
       const session = status.activeSession;
       const startTime = new Date(session.started);
       const durationMs = Date.now() - startTime.getTime();
-      const durationMinutes = Math.floor(durationMs / (1000 * 60));
-      const durationSeconds = Math.floor((durationMs % (1000 * 60)) / 1000);
+      const durationMinutes = Math.floor(durationMs / MS_PER_MINUTE);
+      const durationSeconds = Math.floor((durationMs % MS_PER_MINUTE) / MS_PER_SECOND);
 
       console.log(`\n${picocolors.green(BULLET)} ${picocolors.bold('Active Agent Session:')}`);
       console.log(
@@ -291,15 +302,15 @@ export class TerminalDashboardRenderer implements IDashboardRenderer {
 
     for (const [agentName, metric] of Object.entries(metrics)) {
       const passRateColour =
-        metric.passRate >= 90
+        metric.passRate >= PASS_RATE_GREEN_THRESHOLD
           ? picocolors.green
-          : metric.passRate >= 50
+          : metric.passRate >= PASS_RATE_YELLOW_THRESHOLD
             ? picocolors.yellow
             : picocolors.red;
 
       const avgDurationMs = metric.avgDurationMs;
-      const avgDurationMinutes = Math.floor(avgDurationMs / (1000 * 60));
-      const avgDurationSeconds = Math.floor((avgDurationMs % (1000 * 60)) / 1000);
+      const avgDurationMinutes = Math.floor(avgDurationMs / MS_PER_MINUTE);
+      const avgDurationSeconds = Math.floor((avgDurationMs % MS_PER_MINUTE) / MS_PER_SECOND);
 
       const lastRunResult = metric.lastRun
         ? RESULT_COLOURS[metric.lastRun.result](metric.lastRun.result)
@@ -418,7 +429,7 @@ export class TerminalDashboardRenderer implements IDashboardRenderer {
 
     for (const alert of alerts) {
       const severityColour = SEVERITY_COLOURS[alert.severity];
-      const severityLabel = alert.severity.toUpperCase().padEnd(6);
+      const severityLabel = alert.severity.toUpperCase().padEnd(SEVERITY_LABEL_PAD_WIDTH);
 
       console.log(
         `${severityColour(BULLET)} ${severityColour(severityLabel)} ${picocolors.bold(alert.message)}`,
