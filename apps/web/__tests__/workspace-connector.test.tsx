@@ -14,6 +14,21 @@ import type {
   WorkspaceInfo,
 } from '../src/lib/workspace-connection-types';
 
+const JSON_CONTENT_TYPE_HEADER = { 'Content-Type': 'application/json' } as const;
+const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  SERVICE_UNAVAILABLE: 503,
+} as const;
+const HEALTH_ROUTE_ERROR = 'health diagnostics unavailable during test';
+
+function createJsonResponse(status: number, body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: JSON_CONTENT_TYPE_HEADER,
+  });
+}
+
 /* ------------------------------------------------------------------
  * AC1: Workspace root path prompt on first load
  * ------------------------------------------------------------------ */
@@ -80,18 +95,18 @@ describe('WorkspacePathPrompt (AC1)', () => {
 
     const onConnect = vi.fn();
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          success: true,
-          created: true,
-          existing: false,
-          workspaceRoot: 'workspaces/new-project',
-        }),
-        {
-          status: 201,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      ),
+      createJsonResponse(HTTP_STATUS.SERVICE_UNAVAILABLE, {
+        success: false,
+        error: HEALTH_ROUTE_ERROR,
+      }),
+    );
+    fetchMock.mockResolvedValueOnce(
+      createJsonResponse(HTTP_STATUS.CREATED, {
+        success: true,
+        created: true,
+        existing: false,
+        workspaceRoot: 'workspaces/new-project',
+      }),
     );
 
     render(<WorkspacePathPrompt onConnect={onConnect} isConnecting={false} />);
@@ -117,18 +132,18 @@ describe('WorkspacePathPrompt (AC1)', () => {
 
     const onConnect = vi.fn();
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          success: true,
-          created: false,
-          existing: true,
-          workspaceRoot: 'workspaces/existing-project',
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      ),
+      createJsonResponse(HTTP_STATUS.SERVICE_UNAVAILABLE, {
+        success: false,
+        error: HEALTH_ROUTE_ERROR,
+      }),
+    );
+    fetchMock.mockResolvedValueOnce(
+      createJsonResponse(HTTP_STATUS.OK, {
+        success: true,
+        created: false,
+        existing: true,
+        workspaceRoot: 'workspaces/existing-project',
+      }),
     );
 
     render(<WorkspacePathPrompt onConnect={onConnect} isConnecting={false} />);
