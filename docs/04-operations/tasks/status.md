@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2073 — INIT-035 A6b: Render curated CLI docs from manifest metadata](wu/WU-2073.yaml)
 
 ## Completed
 

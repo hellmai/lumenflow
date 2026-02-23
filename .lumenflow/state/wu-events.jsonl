@@ -2096,3 +2096,4 @@
 {"type":"complete","wuId":"WU-2071","timestamp":"2026-02-23T16:05:30.038Z"}
 {"type":"claim","wuId":"WU-2072","timestamp":"2026-02-23T16:06:15.209Z","lane":"Operations: Tooling","title":"INIT-035 A6a: Extend PublicCommand metadata for curated docs surface"}
 {"type":"complete","wuId":"WU-2072","timestamp":"2026-02-23T16:13:37.067Z"}
+{"type":"claim","wuId":"WU-2073","timestamp":"2026-02-23T16:14:20.006Z","lane":"Content: Site Comms","title":"INIT-035 A6b: Render curated CLI docs from manifest metadata"}
