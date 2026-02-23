@@ -32,8 +32,14 @@ repos:
     url: https://github.com/hellmai/lumenflow-example-go
     wave: 1
     delivery: migrate
-    status: in_progress
+    status: repo_verified
     smoke_ci_required: true
+    parity_tracking_wu: WU-2079
+    head_sha: ab37c9858805
+    last_pushed_at: 2026-01-19T09:58:38Z
+    smoke_workflow_url: https://github.com/hellmai/lumenflow-example-go/actions
+    smoke_workflow_status: missing
+    tracking_updated_on: 2026-02-23
   - language: dotnet
     repo: hellmai/lumenflow-example-dotnet
     url: https://github.com/hellmai/lumenflow-example-dotnet

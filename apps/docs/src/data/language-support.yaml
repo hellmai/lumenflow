@@ -60,6 +60,12 @@ languages:
     verification_ref: pending-wave1-migration
     smoke_command: pnpm wu:prep --id WU-EXAMPLE
     last_verified: 2026-02-23
+    parity_tracking_wu: WU-2079
+    repo_head_sha: ab37c9858805
+    repo_last_pushed_at: 2026-01-19T09:58:38Z
+    smoke_workflow_url: https://github.com/hellmai/lumenflow-example-go/actions
+    smoke_workflow_status: missing
+    parity_notes: Companion repo exists; smoke workflow setup is still pending.
   rust:
     label: Rust
     support_status: Planned
