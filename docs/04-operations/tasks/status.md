@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2069 — INIT-035 A3: Relocate/rewrite Software Delivery Pack docs](wu/WU-2069.yaml)
 
 ## Completed
 
