@@ -2,7 +2,7 @@ id: WU-2087
 title: "lumenflow:upgrade self-bootstrap: run target version's script to avoid chicken-and-egg bugs"
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-23
 code_paths:
@@ -26,9 +26,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "The lumenflow:upgrade command runs from the INSTALLED (old) version of @lumenflow/cli. If that version has bugs (e.g., WU-1527 unconditional -w flag), the upgrade fails inside the micro-worktree and agents fall back to manual pnpm add, dirtying main. This is a chicken-and-egg problem: you need the fixed upgrade script to upgrade to the fixed version. The fix: self-bootstrap — download/npx the TARGET version's upgrade script before running the actual upgrade. This also ensures the command works for ALL repo types (single-package, monorepo, JS, TS) since the latest script always has the latest compatibility fixes."
+description: "The lumenflow:upgrade command runs from the INSTALLED (old) version of @lumenflow/cli.
+  If that version has bugs (e.g., WU-1527 unconditional -w flag), the upgrade fails inside the
+  micro-worktree and agents fall back to manual pnpm add, dirtying main. This is a chicken-and-egg
+  problem: you need the fixed upgrade script to upgrade to the fixed version. The fix:
+  self-bootstrap — download/npx the TARGET version's upgrade script before running the actual
+  upgrade. This also ensures the command works for ALL repo types (single-package, monorepo, JS, TS)
+  since the latest script always has the latest compatibility fixes."
 acceptance:
-  - 'lumenflow:upgrade self-bootstraps: fetches target version CLI and delegates to its upgrade script'
+  - 'lumenflow:upgrade self-bootstraps: fetches target version CLI and delegates to its upgrade
+    script'
   - Works in single-package repos (no pnpm-workspace.yaml)
   - Works in pnpm monorepos (with pnpm-workspace.yaml)
   - Micro-worktree isolation preserved (main never dirtied)
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2087
+claimed_at: 2026-02-23T16:59:48.015Z
+baseline_main_sha: 2a0c371ca5eabba899be19f7963b8804421bdc5d
+session_id: bacc95b3-fa2f-4626-8b20-08f95e0322dd
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T16:59:48.024Z
