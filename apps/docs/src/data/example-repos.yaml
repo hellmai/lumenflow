@@ -6,8 +6,14 @@ repos:
     url: https://github.com/hellmai/lumenflow-example-node
     wave: 1
     delivery: migrate
-    status: in_progress
+    status: repo_verified
     smoke_ci_required: true
+    parity_tracking_wu: WU-2077
+    head_sha: cdd0ff2ec6aa
+    last_pushed_at: 2026-01-19T09:55:02Z
+    smoke_workflow_url: https://github.com/hellmai/lumenflow-example-node/actions
+    smoke_workflow_status: missing
+    tracking_updated_on: 2026-02-23
   - language: python
     repo: hellmai/lumenflow-example-python
     url: https://github.com/hellmai/lumenflow-example-python
