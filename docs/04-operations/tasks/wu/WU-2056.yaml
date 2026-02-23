@@ -2,7 +2,7 @@ id: WU-2056
 title: Stabilize consumer integration module-resolution gate
 lane: 'Framework: Core Validation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-23
 code_paths:
@@ -37,3 +37,11 @@ acceptance:
   - consumer-integration test suite passes on main without depending on external npm registry state
   - validate and gates command checks in the consumer fixture do not surface Cannot find module
     errors when using local packaged artifacts
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-2056
+claimed_at: 2026-02-23T09:35:27.631Z
+baseline_main_sha: a78e9ca265b0085a349e314ec2f5fad83900ea7b
+session_id: c5cc1ad1-a82d-4ab9-ac3a-0b9832f00f1e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T09:35:27.638Z
