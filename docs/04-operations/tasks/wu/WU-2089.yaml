@@ -2,7 +2,7 @@ id: WU-2089
 title: Migrate MCP runtime path resolution to getConfig
 lane: 'Framework: MCP'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-23
 code_paths:
@@ -44,3 +44,11 @@ acceptance:
   - runtime-tool-resolver uses configured directories.wuDir/skillsDir/agentsDir paths
   - resources.ts resolves backlog path from config-backed directories.backlogPath
   - MCP path behavior remains compatible with OS defaults and consumer overrides
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-mcp-wu-2089
+claimed_at: 2026-02-23T21:15:24.767Z
+baseline_main_sha: 5b00de6bb624a716d1bfbad8e5af11b39fa31cd2
+session_id: 5d3452e1-cd46-4d55-bf5b-67cd71280f13
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T21:15:24.772Z

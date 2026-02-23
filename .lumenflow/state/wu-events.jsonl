@@ -2126,3 +2126,4 @@
 {"type":"complete","wuId":"WU-2093","timestamp":"2026-02-23T19:40:22.365Z"}
 {"type":"claim","wuId":"WU-2088","timestamp":"2026-02-23T19:47:38.557Z","lane":"Framework: Core Lifecycle","title":"Centralize core docs path resolution via getConfig"}
 {"type":"complete","wuId":"WU-2088","timestamp":"2026-02-23T20:54:01.185Z"}
+{"type":"claim","wuId":"WU-2089","timestamp":"2026-02-23T21:15:24.819Z","lane":"Framework: MCP","title":"Migrate MCP runtime path resolution to getConfig"}
