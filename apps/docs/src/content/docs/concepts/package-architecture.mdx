@@ -83,19 +83,19 @@ The CLI package sits at the top of the dependency graph. Leaf packages (core, me
 
 ## Package Reference
 
-| Package | Path | Role | Key Dependencies |
-|---|---|---|---|
-| `@lumenflow/cli` | `packages/@lumenflow/cli` | 110+ CLI commands, each exporting `main()` | core, memory, agent, metrics, initiatives, kernel |
-| `@lumenflow/core` | `packages/@lumenflow/core` | WU types, YAML parsing, validation, configuration | zod, yaml, fast-glob |
-| `@lumenflow/kernel` | `packages/@lumenflow/kernel` | KernelRuntime, ToolHost, scope intersection, policy engine, evidence store, sandbox dispatch | zod, yaml, micromatch |
-| `@lumenflow/memory` | `packages/@lumenflow/memory` | Session tracking, checkpoints, signals, context recovery | (minimal) |
-| `@lumenflow/agent` | `packages/@lumenflow/agent` | Agent coordination, delegation, spawn management | (minimal) |
-| `@lumenflow/metrics` | `packages/@lumenflow/metrics` | Flow metrics collection and reporting | (minimal) |
-| `@lumenflow/initiatives` | `packages/@lumenflow/initiatives` | Multi-WU initiative tracking and wave orchestration | (minimal) |
-| `@lumenflow/runtime` | `packages/@lumenflow/runtime` | Runtime surface for programmatic API usage | kernel |
-| `@lumenflow/mcp` | `packages/@lumenflow/mcp` | MCP (Model Context Protocol) server for AI agent integration | kernel |
-| `@lumenflow/shims` | `packages/@lumenflow/shims` | Git safety shims (pre-commit, pre-push hooks) | (none) |
-| `software-delivery` | `packages/@lumenflow/packs/software-delivery` | 90+ tool implementations for software development workflows | kernel (types only) |
+| Package                  | Path                                          | Role                                                                                         | Key Dependencies                                  |
+| ------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `@lumenflow/cli`         | `packages/@lumenflow/cli`                     | 110+ CLI commands, each exporting `main()`                                                   | core, memory, agent, metrics, initiatives, kernel |
+| `@lumenflow/core`        | `packages/@lumenflow/core`                    | WU types, YAML parsing, validation, configuration                                            | zod, yaml, fast-glob                              |
+| `@lumenflow/kernel`      | `packages/@lumenflow/kernel`                  | KernelRuntime, ToolHost, scope intersection, policy engine, evidence store, sandbox dispatch | zod, yaml, micromatch                             |
+| `@lumenflow/memory`      | `packages/@lumenflow/memory`                  | Session tracking, checkpoints, signals, context recovery                                     | (minimal)                                         |
+| `@lumenflow/agent`       | `packages/@lumenflow/agent`                   | Agent coordination, delegation, spawn management                                             | (minimal)                                         |
+| `@lumenflow/metrics`     | `packages/@lumenflow/metrics`                 | Flow metrics collection and reporting                                                        | (minimal)                                         |
+| `@lumenflow/initiatives` | `packages/@lumenflow/initiatives`             | Multi-WU initiative tracking and wave orchestration                                          | (minimal)                                         |
+| `@lumenflow/runtime`     | `packages/@lumenflow/runtime`                 | Runtime surface for programmatic API usage                                                   | kernel                                            |
+| `@lumenflow/mcp`         | `packages/@lumenflow/mcp`                     | MCP (Model Context Protocol) server for AI agent integration                                 | kernel                                            |
+| `@lumenflow/shims`       | `packages/@lumenflow/shims`                   | Git safety shims (pre-commit, pre-push hooks)                                                | (none)                                            |
+| `software-delivery`      | `packages/@lumenflow/packs/software-delivery` | 90+ tool implementations for software development workflows                                  | kernel (types only)                               |
 
 <Aside type="note">
   The leaf packages (core, memory, agent, metrics, initiatives) have minimal external dependencies

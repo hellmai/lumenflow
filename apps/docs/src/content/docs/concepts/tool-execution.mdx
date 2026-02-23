@@ -82,11 +82,11 @@ pack.impl -> direct: "git-tools, worktree-tools,\nlane-lock" {
 }
 ```
 
-| Layer | Package | Responsibility |
-|---|---|---|
+| Layer      | Package             | Responsibility                                                                                            |
+| ---------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
 | **Kernel** | `@lumenflow/kernel` | Domain-agnostic orchestration: scope enforcement, policy evaluation, evidence recording, sandbox dispatch |
-| **Pack** | `software-delivery` | Tool implementations: 90+ exported functions grouped by domain (WU lifecycle, memory, git, etc.) |
-| **CLI** | `@lumenflow/cli` | Business logic: each command module exports a `main()` function that performs the actual work |
+| **Pack**   | `software-delivery` | Tool implementations: 90+ exported functions grouped by domain (WU lifecycle, memory, git, etc.)          |
+| **CLI**    | `@lumenflow/cli`    | Business logic: each command module exports a `main()` function that performs the actual work             |
 
 ## Complete Execution Trace
 
@@ -189,24 +189,24 @@ Most tools delegate to existing CLI command modules via the **runtime CLI adapte
 
 Tool implementation files that use this path:
 
-| File | Domain | Tools |
-|---|---|---|
-| `wu-lifecycle-tools.ts` | WU create, claim, prep, done, block, edit, etc. | ~21 |
-| `runtime-native-tools.ts` | File read/write/edit/delete, config, validation, etc. | ~20 |
-| `memory-tools.ts` | Checkpoint, inbox, signal, recover, etc. | ~14 |
-| `initiative-orchestration-tools.ts` | Initiative create, plan, status, orchestrate, etc. | ~11 |
-| `agent-tools.ts` | Agent session management, delegation | ~8 |
-| `flow-metrics-tools.ts` | Flow reports, bottleneck analysis, metrics | ~6 |
+| File                                | Domain                                                | Tools |
+| ----------------------------------- | ----------------------------------------------------- | ----- |
+| `wu-lifecycle-tools.ts`             | WU create, claim, prep, done, block, edit, etc.       | ~21   |
+| `runtime-native-tools.ts`           | File read/write/edit/delete, config, validation, etc. | ~20   |
+| `memory-tools.ts`                   | Checkpoint, inbox, signal, recover, etc.              | ~14   |
+| `initiative-orchestration-tools.ts` | Initiative create, plan, status, orchestrate, etc.    | ~11   |
+| `agent-tools.ts`                    | Agent session management, delegation                  | ~8    |
+| `flow-metrics-tools.ts`             | Flow reports, bottleneck analysis, metrics            | ~6    |
 
 ### Direct Implementation Path (~10 tools)
 
 A smaller set of tools are self-contained implementations that do not use the CLI adapter. These use `simple-git` wrappers or Node builtins directly.
 
-| File | Domain | Why direct |
-|---|---|---|
-| `git-tools.ts` | git:add, git:status, git:commit | Needs fine-grained control over git binary invocation and output parsing |
-| `worktree-tools.ts` | Worktree creation and management | Uses `spawnSync` for worktree operations |
-| `lane-lock.ts` | Lane lock acquisition and release | Lightweight file-based locking, no CLI command equivalent |
+| File                | Domain                            | Why direct                                                               |
+| ------------------- | --------------------------------- | ------------------------------------------------------------------------ |
+| `git-tools.ts`      | git:add, git:status, git:commit   | Needs fine-grained control over git binary invocation and output parsing |
+| `worktree-tools.ts` | Worktree creation and management  | Uses `spawnSync` for worktree operations                                 |
+| `lane-lock.ts`      | Lane lock acquisition and release | Lightweight file-based locking, no CLI command equivalent                |
 
 Direct implementations follow the same `ToolOutput` interface and receive the same `ToolRunnerWorkerContext` — the kernel treats both paths identically.
 
@@ -224,7 +224,10 @@ let executionQueue: Promise<void> = Promise.resolve();
 
 async function runExclusive<T>(operation: () => Promise<T>): Promise<T> {
   const scheduled = executionQueue.then(operation, operation);
-  executionQueue = scheduled.then(() => undefined, () => undefined);
+  executionQueue = scheduled.then(
+    () => undefined,
+    () => undefined,
+  );
   return scheduled;
 }
 ```
@@ -233,14 +236,14 @@ async function runExclusive<T>(operation: () => Promise<T>): Promise<T> {
 
 Before calling a CLI module's `main()`, the adapter patches six global surfaces:
 
-| Global | Patch | Why |
-|---|---|---|
-| `process.argv` | Set to `[execPath, command, ...args]` | CLI modules parse arguments from `process.argv` |
-| `process.exit` | Replaced with a function that throws `RuntimeCliExitSignal` | Prevents the subprocess from actually exiting; captures the exit code instead |
-| `process.stdout.write` | Redirected to a capture buffer | Captures stdout output as a string |
-| `process.stderr.write` | Redirected to a capture buffer | Captures stderr output as a string |
-| `console.log/info/debug` | Redirected to stdout capture buffer | Captures console output that would otherwise go to the real stdout |
-| `console.error/warn` | Redirected to stderr capture buffer | Captures console errors that would otherwise go to the real stderr |
+| Global                   | Patch                                                       | Why                                                                           |
+| ------------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `process.argv`           | Set to `[execPath, command, ...args]`                       | CLI modules parse arguments from `process.argv`                               |
+| `process.exit`           | Replaced with a function that throws `RuntimeCliExitSignal` | Prevents the subprocess from actually exiting; captures the exit code instead |
+| `process.stdout.write`   | Redirected to a capture buffer                              | Captures stdout output as a string                                            |
+| `process.stderr.write`   | Redirected to a capture buffer                              | Captures stderr output as a string                                            |
+| `console.log/info/debug` | Redirected to stdout capture buffer                         | Captures console output that would otherwise go to the real stdout            |
+| `console.error/warn`     | Redirected to stderr capture buffer                         | Captures console errors that would otherwise go to the real stderr            |
 
 All patches are restored in a `finally` block, guaranteeing cleanup even when the CLI module throws.
 
@@ -313,13 +316,13 @@ sandbox.tool -> host.parse: "JSON stdout\n(ToolOutput)" {
 
 The invocation payload sent on stdin contains:
 
-| Field | Purpose |
-|---|---|
-| `tool_name` | Which tool to execute |
-| `handler_entry` | Module path and export name (e.g., `tool-impl/wu-lifecycle-tools.ts#wuCreateTool`) |
-| `input` | The tool's input data |
-| `scope_enforced` | The computed scope intersection (for the tool to reference) |
-| `receipt_id` | UUID linking this execution to the evidence trace |
+| Field            | Purpose                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| `tool_name`      | Which tool to execute                                                              |
+| `handler_entry`  | Module path and export name (e.g., `tool-impl/wu-lifecycle-tools.ts#wuCreateTool`) |
+| `input`          | The tool's input data                                                              |
+| `scope_enforced` | The computed scope intersection (for the tool to reference)                        |
+| `receipt_id`     | UUID linking this execution to the evidence trace                                  |
 
 The response on stdout is a JSON object with an `output` field containing the standard `ToolOutput` structure (`success`, `data`, `error`, `metadata`).
 
@@ -344,6 +347,7 @@ This architecture is an **intentional incremental migration** from CLI-first to 
 </Steps>
 
 This design means:
+
 - **No big rewrite required** — the system works today with full governance
 - **External contributors can add tools either way** — via CLI commands (adapter path) or direct implementations
 - **Migration is incremental** — each tool can be converted independently
