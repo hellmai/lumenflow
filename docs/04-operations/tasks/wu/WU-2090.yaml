@@ -22,6 +22,10 @@ code_paths:
   - packages/@lumenflow/cli/src/gates-utils.ts
   - packages/@lumenflow/cli/src/gates-runners.ts
   - packages/@lumenflow/cli/src/wu-done-auto-cleanup.ts
+  - packages/@lumenflow/cli/src/mem-checkpoint.ts
+  - packages/@lumenflow/cli/src/wu-spawn-strategy-resolver.ts
+  - packages/@lumenflow/cli/src/wu-claim-resume-handler.ts
+  - packages/@lumenflow/cli/src/wu-proto.ts
 tests:
   manual: []
   unit:
@@ -62,3 +66,5 @@ acceptance:
   - Existing CLI behavior remains unchanged under OS defaults and respects workspace overrides
   - wu-done auto-cleanup state/archive dirty-file prefix checks derive from config
     directories.stateDir and directories.archiveDir
+  - CLI runtime state/worktree helper commands (including mem checkpoint, spawn strategy resolver,
+    claim resume, and wu proto) use config/constant-driven paths
