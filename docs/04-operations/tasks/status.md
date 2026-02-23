@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2056 — Stabilize consumer integration module-resolution gate](wu/WU-2056.yaml)
 
 ## Completed
 

@@ -2058,3 +2058,4 @@
 {"type":"complete","wuId":"WU-2054","timestamp":"2026-02-23T00:20:11.863Z"}
 {"type":"claim","wuId":"WU-2055","timestamp":"2026-02-23T09:17:36.484Z","lane":"Operations: Tooling","title":"Prevent release publish artifacts from dirtying main"}
 {"type":"complete","wuId":"WU-2055","timestamp":"2026-02-23T09:30:30.165Z"}
+{"type":"claim","wuId":"WU-2056","timestamp":"2026-02-23T09:35:27.667Z","lane":"Framework: Core Validation","title":"Stabilize consumer integration module-resolution gate"}
