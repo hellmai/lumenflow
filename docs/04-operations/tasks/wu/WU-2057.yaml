@@ -1,7 +1,7 @@
 id: WU-2057
 title: Document pack execution architecture and fix D2 diagram sizing sitewide
 lane: 'Content: Framework Docs'
-type: documentation
+type: feature
 status: in_progress
 priority: P1
 created: 2026-02-23
@@ -25,10 +25,17 @@ dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-23T09:44:09.754Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-2057
+session_id: c5cc1ad1-a82d-4ab9-ac3a-0b9832f00f1e
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T09:44:09.763Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -50,11 +57,3 @@ acceptance:
   - astro.config.mjs sidebar updated with new pages
   - kernel.mdx and packs.mdx have cross-references to tool-execution page
   - Docs build passes with all diagrams rendering correctly
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/content-framework-docs-wu-2057
-claimed_at: 2026-02-23T09:44:09.754Z
-baseline_main_sha: d7f53a09894275b2c109bb146af0fd0073ea53dd
-session_id: c5cc1ad1-a82d-4ab9-ac3a-0b9832f00f1e
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-23T09:44:09.763Z
