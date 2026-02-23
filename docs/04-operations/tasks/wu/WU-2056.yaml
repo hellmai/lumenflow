@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/core/__tests__/consumer-integration.test.ts
   - packages/@lumenflow/core/package.json
 tests:
-  manual: []
+  manual:
+    - Run pnpm --filter @lumenflow/core exec vitest run __tests__/consumer-integration.test.ts and
+      verify validate/gates checks pass without module-resolution errors
   unit:
     - packages/@lumenflow/core/__tests__/consumer-integration.test.ts
   e2e: []
@@ -26,7 +28,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: @lumenflow/core consumer-integration tests currently install @lumenflow packages directly from npm registry, so unrelated registry drift breaks repo-wide gates on main. Problem: test failures block unrelated WUs with ERR_MODULE_NOT_FOUND for validate/gates even when local source is healthy. Solution: make consumer integration tests deterministic against local packaged artifacts and keep assertions focused on real distribution path resolution guarantees.'
+description: 'Context: @lumenflow/core consumer-integration tests currently install @lumenflow
+  packages directly from npm registry, so unrelated registry drift breaks repo-wide gates on main.
+  Problem: test failures block unrelated WUs with ERR_MODULE_NOT_FOUND for validate/gates even when
+  local source is healthy. Solution: make consumer integration tests deterministic against local
+  packaged artifacts and keep assertions focused on real distribution path resolution guarantees.'
 acceptance:
   - consumer-integration test suite passes on main without depending on external npm registry state
-  - validate and gates command checks in the consumer fixture do not surface Cannot find module errors when using local packaged artifacts
+  - validate and gates command checks in the consumer fixture do not surface Cannot find module
+    errors when using local packaged artifacts
