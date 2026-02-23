@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2089 — Migrate MCP runtime path resolution to getConfig](wu/WU-2089.yaml)
 
 ## Completed
 
