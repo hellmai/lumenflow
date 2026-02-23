@@ -2,7 +2,7 @@ id: WU-2071
 title: 'INIT-035 A5: Align releases/changelog to published stable truth'
 lane: 'Content: Site Comms'
 type: documentation
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-23
 code_paths:
@@ -41,3 +41,11 @@ description: Update release and changelog docs to use published stable metadata 
 acceptance:
   - Release index and changelog reflect published stable version and stop claiming unreleased
     versions as latest.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-2071
+claimed_at: 2026-02-23T16:02:13.821Z
+baseline_main_sha: 9aae5d306d9b9afdf52da7ee8f7e42b059bd9639
+session_id: 77477996-03a3-411a-8a3a-06edaca60aa3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T16:02:13.830Z

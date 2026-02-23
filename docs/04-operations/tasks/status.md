@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2071 — INIT-035 A5: Align releases/changelog to published stable truth](wu/WU-2071.yaml)
 
 ## Completed
 
