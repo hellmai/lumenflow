@@ -68,6 +68,9 @@ import {
   checkMemoryLayerInitialized,
   getMemoryContextMaxSize,
 } from '@lumenflow/core/wu-spawn-context';
+import {
+  generateCompletionWorkflowSection as generateSharedCompletionWorkflowSection,
+} from './wu-spawn-completion.js';
 
 // Re-export core constants for backwards compatibility
 export {
@@ -979,25 +982,7 @@ Then implement following all standards above.
  * @returns {string} Completion Workflow section
  */
 export function generateCompletionWorkflowSection(id: string): string {
-  return `## Completion Workflow
-
-**CRITICAL: Complete autonomously. Do NOT ask for permission.**
-
-After all acceptance criteria are satisfied:
-
-1. Run gates in the worktree: \`pnpm gates\`
-2. If gates pass, cd back to main checkout
-3. Run: \`pnpm wu:done --id ${id}\`
-
-\`\`\`bash
-# From worktree, after gates pass:
-cd /path/to/main  # NOT the worktree
-pnpm wu:done --id ${id}
-\`\`\`
-
-**wu:done** handles: merge to main, stamp creation, worktree cleanup.
-
-**Do not ask** "should I run wu:done?" — just run it when gates pass.`;
+  return generateSharedCompletionWorkflowSection(id);
 }
 
 export function generateClientBlocksSection(clientContext: ClientContext | undefined): string {
