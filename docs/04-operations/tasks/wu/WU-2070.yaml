@@ -19,6 +19,8 @@ artifacts:
 dependencies: []
 initiative: INIT-035
 phase: 1
+blocked_by:
+  - WU-2067
 labels:
   - INIT-035
   - A4
@@ -34,6 +36,8 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Implement executable language guide sections and enforce data-backed support status, repo linkage, and smoke-check instructions.
+description: Implement executable language guide sections and enforce data-backed support status,
+  repo linkage, and smoke-check instructions.
 acceptance:
-  - Every language guide contains support status, verified quickstart, gate preset, repo linkage, and smoke-check blocks.
+  - Every language guide contains support status, verified quickstart, gate preset, repo linkage,
+    and smoke-check blocks.
