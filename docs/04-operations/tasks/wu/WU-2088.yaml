@@ -13,7 +13,6 @@ code_paths:
   - packages/@lumenflow/core/src/backlog-generator.ts
   - packages/@lumenflow/core/src/wu-context-constants.ts
   - packages/@lumenflow/core/src/wu-helpers.ts
-  - packages/@lumenflow/core/src/wu-delegation-cutover.ts
   - packages/@lumenflow/core/src/wu-validator.ts
   - packages/@lumenflow/core/src/wu-schema.ts
   - packages/@lumenflow/core/src/wu-create-validators.ts
