@@ -380,3 +380,28 @@ describe('WU-1898: buildSpawnTemplateContext policy enrichment', () => {
     expect(context.type).toBe('feature');
   });
 });
+
+describe('WU-2058: completion workflow prompt hardening', () => {
+  const testWuId = 'WU-2058';
+
+  it('requires status verification before wu:done', async () => {
+    const { generateCompletionWorkflowSection } = await import('../wu-spawn-prompt-builders.js');
+
+    const section = generateCompletionWorkflowSection(testWuId);
+
+    expect(section).toContain(`pnpm wu:status --id ${testWuId}`);
+    expect(section).toContain('If status is `done`');
+    expect(section).toContain(`do NOT run \`pnpm wu:done --id ${testWuId}\``);
+    expect(section).toContain(`do NOT run \`pnpm wu:recover --id ${testWuId}\``);
+    expect(section).toContain('If status is `in_progress`, continue autonomously');
+  });
+
+  it('keeps the builder output in sync with the shared completion generator', async () => {
+    const builders = await import('../wu-spawn-prompt-builders.js');
+    const completion = await import('../wu-spawn-completion.js');
+
+    expect(builders.generateCompletionWorkflowSection(testWuId)).toBe(
+      completion.generateCompletionWorkflowSection(testWuId),
+    );
+  });
+});
