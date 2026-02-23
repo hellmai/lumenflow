@@ -16,7 +16,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { execSync } from 'child_process';
 import * as ts from 'typescript';
 import escapeHtml from 'escape-html';
@@ -41,7 +41,11 @@ import {
   AgentsConfigSchema,
   ClientConfigSchema,
 } from '../packages/@lumenflow/core/src/index.ts';
-import { PUBLIC_MANIFEST } from '../packages/@lumenflow/cli/src/public-manifest.ts';
+import {
+  PUBLIC_MANIFEST,
+  getDocsVisibleManifest,
+  type PublicCommand,
+} from '../packages/@lumenflow/cli/src/public-manifest.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -301,7 +305,7 @@ function extractOptionRefsFromAST(
 // Extract command metadata from package.json and source files
 // ============================================================================
 
-function extractCommandMetadata(): CommandMetadata[] {
+export function extractCommandMetadata(manifestCommands: PublicCommand[] = PUBLIC_MANIFEST): CommandMetadata[] {
   const cliPackageJson = JSON.parse(
     readFileSync(join(ROOT, 'packages/@lumenflow/cli/package.json'), 'utf-8'),
   );
@@ -477,7 +481,7 @@ function extractCommandMetadata(): CommandMetadata[] {
     return extracted;
   }
 
-  for (const manifestCommand of PUBLIC_MANIFEST) {
+  for (const manifestCommand of manifestCommands) {
     const binPath = binEntries[manifestCommand.binName] ?? manifestCommand.binPath;
     const extracted = extractFromBin(manifestCommand.binName, binPath);
     // WU-1656: Prefer manifest category (source of truth), with optional
@@ -656,7 +660,7 @@ function extractConfigSchema(): ConfigSection[] {
 // Generate CLI Reference MDX
 // ============================================================================
 
-function generateCliMdx(commands: CommandMetadata[]): string {
+export function generateCliMdx(commands: CommandMetadata[]): string {
   function escapeMdxTableCell(value: string): string {
     return escapeHtml(value).replace(/\|/g, '\\|');
   }
@@ -673,10 +677,10 @@ function generateCliMdx(commands: CommandMetadata[]): string {
     '',
     "import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';",
     '',
-    'LumenFlow provides a comprehensive CLI for managing Work Units, memory, initiatives, and more.',
+    'LumenFlow provides a curated public CLI surface for everyday workflows.',
     '',
     '<Aside type="tip">',
-    'All commands can be run via `pnpm command` (e.g., `pnpm wu:claim`).',
+    'This page lists primary commands only. Use `pnpm lumenflow:commands` for full command discovery including aliases and legacy entrypoints.',
     '</Aside>',
     '',
   ];
@@ -1279,9 +1283,13 @@ async function main() {
   console.log('📖 Using WU_OPTIONS from @lumenflow/core...');
   console.log(`   Found ${Object.keys(WU_OPTIONS).length} options\n`);
 
+  const docsManifest = getDocsVisibleManifest();
+  const docsCommands = extractCommandMetadata(docsManifest);
+  const allCommands = extractCommandMetadata();
+
   console.log('📖 Extracting command metadata from package.json...');
-  const commands = extractCommandMetadata();
-  console.log(`   Found ${commands.length} commands\n`);
+  console.log(`   Found ${docsCommands.length} curated docs commands`);
+  console.log(`   Found ${allCommands.length} total public commands\n`);
 
   console.log('📖 Extracting config schema via zod-to-json-schema...');
   const configSections = extractConfigSchema();
@@ -1289,14 +1297,14 @@ async function main() {
 
   // Generate MDX
   console.log('📝 Generating CLI reference...');
-  const cliMdx = generateCliMdx(commands);
+  const cliMdx = generateCliMdx(docsCommands);
 
   console.log('📝 Generating config reference...');
   const configMdx = generateConfigMdx(configSections);
 
   // WU-1371: Generate README.md from same data
   console.log('📝 Generating CLI README.md...');
-  const readmeMd = generateReadmeMd(commands);
+  const readmeMd = generateReadmeMd(allCommands);
 
   // Output paths
   const cliPath = join(ROOT, 'apps/docs/src/content/docs/reference/cli.mdx');
@@ -1383,7 +1391,12 @@ async function main() {
   console.log('  3. Commit changes');
 }
 
-main().catch((err) => {
-  console.error('❌ Error:', err.message);
-  process.exit(1);
-});
+const isDirectExecution =
+  process.argv[1] !== undefined && pathToFileURL(process.argv[1]).href === import.meta.url;
+
+if (isDirectExecution) {
+  main().catch((err) => {
+    console.error('❌ Error:', err.message);
+    process.exit(1);
+  });
+}
