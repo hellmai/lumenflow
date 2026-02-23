@@ -2,7 +2,7 @@ id: WU-2060
 title: Fix lumenflow upgrade and release packaging regressions
 lane: 'Operations: Tooling'
 type: bug
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-23
 code_paths:
@@ -48,3 +48,6 @@ session_id: a43374c7-e1a8-4bcc-a7eb-254374843cde
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-23T11:04:18.505Z
+locked: true
+completed_at: 2026-02-23T11:23:46.483Z
+completed: 2026-02-23
