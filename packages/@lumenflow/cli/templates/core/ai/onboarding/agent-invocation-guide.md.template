@@ -52,7 +52,7 @@ The handoff prompt is the bridge between sessions. `wu:brief` generates this pro
 pnpm mem:checkpoint "Progress: completed X, next: Y" --wu WU-XXX
 git add -A && git commit -m "checkpoint: progress on X"
 git push origin lane/<lane>/wu-xxx
-pnpm wu:brief --id WU-XXX --client claude-code
+pnpm wu:brief --id WU-XXX --client <client>
 # Copy generated prompt into Task tool to start the next agent session.
 # Exit current session; start fresh in the new session.
 ```
@@ -90,7 +90,7 @@ memory:
 Use `--no-context` when you want a clean prompt without memory context:
 
 ```bash
-pnpm wu:brief --id WU-XXX --client claude-code --no-context
+pnpm wu:brief --id WU-XXX --client <client> --no-context
 ```
 
 This is useful when:
@@ -120,6 +120,33 @@ Use this structure for sub-agent prompts:
 5. **Progress Artifacts** — checkpoints, commits, signals
 6. **Recovery** — what to do if blocked
 7. **Critical Constraints** — append at the end
+
+---
+
+## 3a) Template Condition Evaluation (WU-1898)
+
+Spawn prompt templates support conditional inclusion via the `condition` field in template frontmatter. Conditions are evaluated against the WU context before templates are included in the assembled prompt.
+
+**How it works:**
+
+- Templates with a `condition` field are only included when the condition evaluates to `true`
+- The `type` context variable (from WU YAML) gates type-specific directives
+- The `policy.testing` and `policy.architecture` context variables gate methodology templates
+- Templates without a `condition` field are always included
+
+**Examples of condition gating:**
+
+| Template                  | Condition                                                              | Effect                                         |
+| ------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------- |
+| `tdd-directive`           | `type !== 'documentation' && type !== 'docs' && type !== 'config'`     | Excluded for documentation WUs                 |
+| `documentation-directive` | `type === 'documentation' \|\| type === 'docs' \|\| type === 'config'` | Included only for documentation WUs            |
+| `refactor-directive`      | `type === 'refactor'`                                                  | Included only for refactor WUs                 |
+| `methodology-tdd`         | `policy.testing === 'tdd'`                                             | Included only when TDD policy is active        |
+| `methodology-test-after`  | `policy.testing === 'test-after'`                                      | Included only when test-after policy is active |
+
+This ensures documentation WUs do not receive TDD directives, and methodology-specific directives are only included when the project's resolved policy matches.
+
+**Reference:** See the [Template Format reference](https://lumenflow.dev/reference/templates/) for full condition syntax and context variables.
 
 ---
 
