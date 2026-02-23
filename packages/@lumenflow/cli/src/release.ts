@@ -40,7 +40,7 @@ import {
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { homedir } from 'node:os';
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { ensureOnMain } from '@lumenflow/core/wu-helpers';
@@ -1050,6 +1050,17 @@ async function cleanupFailedRelease(packageDirs: string[]): Promise<void> {
     //    Safe because assertWorkingTreeClean verified the tree was clean before we started.
     const git = getGitForCwd();
     await git.raw(['checkout', '--', '.']);
+
+    // 4. Reinstall dependencies to restore workspace symlinks.
+    //    WU-2063: git checkout -- . can change package.json files and dist symlinks,
+    //    which invalidates pnpm's link state. Running pnpm install ensures
+    //    workspace package links in node_modules/ are consistent.
+    console.error(`${LOG_PREFIX}   Restoring workspace links...`);
+    execFileSync(PKG_MANAGER, ['install'], {
+      cwd: process.cwd(),
+      stdio: 'inherit',
+      encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+    });
 
     console.error(`${LOG_PREFIX} ✅ Cleanup complete — main is clean`);
   } catch (cleanupError) {
