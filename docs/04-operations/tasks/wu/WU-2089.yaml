@@ -2,7 +2,7 @@ id: WU-2089
 title: Migrate MCP runtime path resolution to getConfig
 lane: 'Framework: MCP'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-23
 code_paths:
@@ -52,3 +52,6 @@ session_id: 5d3452e1-cd46-4d55-bf5b-67cd71280f13
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-23T21:15:24.772Z
+locked: true
+completed_at: 2026-02-23T21:21:21.070Z
+completed: 2026-02-23
