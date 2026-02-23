@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-- [WU-2059 — Wire completion workflow guardrails into wu:brief prompt assembly](wu/WU-2059.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -985,3 +985,4 @@ _Last updated: 2026-02-23_
 - [WU-2056 — Stabilize consumer integration module-resolution gate](wu/WU-2056.yaml) — 2026-02-23
 - [WU-2057 — Document pack execution architecture and fix D2 diagram sizing sitewide](wu/WU-2057.yaml) — 2026-02-23
 - [WU-2058 — Harden sub-agent completion prompts with mandatory status pre-check](wu/WU-2058.yaml) — 2026-02-23
+- [WU-2059 — Wire completion workflow guardrails into wu:brief prompt assembly](wu/WU-2059.yaml) — 2026-02-23
