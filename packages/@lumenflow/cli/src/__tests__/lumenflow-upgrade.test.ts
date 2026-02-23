@@ -16,6 +16,9 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { execSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { tmpdir } from 'node:os';
 
 // Mock modules with inline factories (no external references)
 vi.mock('@lumenflow/core/micro-worktree', () => ({
@@ -161,10 +164,21 @@ describe('lumenflow-upgrade', () => {
 
     it('should include workspace-root flag for monorepo compatibility', () => {
       const args: UpgradeArgs = { version: '1.5.0' };
-      const commands = buildUpgradeCommands(args);
+      const workspaceRoot = mkdtempSync(path.join(tmpdir(), 'lf-upgrade-workspace-'));
+      writeFileSync(path.join(workspaceRoot, 'pnpm-workspace.yaml'), 'packages:\n  - packages/*\n');
+      const commands = buildUpgradeCommands(args, { cwd: workspaceRoot });
+      rmSync(workspaceRoot, { recursive: true, force: true });
 
       // WU-1527: pnpm requires -w to add deps at workspace root
       expect(commands.addCommand).toContain(PKG_FLAGS.WORKSPACE_ROOT);
+    });
+
+    it('should omit workspace-root flag for single-package repositories', () => {
+      const args: UpgradeArgs = { version: '1.5.0' };
+      const singlePackageRoot = mkdtempSync(path.join(tmpdir(), 'lf-upgrade-single-'));
+      const commands = buildUpgradeCommands(args, { cwd: singlePackageRoot });
+      rmSync(singlePackageRoot, { recursive: true, force: true });
+      expect(commands.addCommand).not.toContain(PKG_FLAGS.WORKSPACE_ROOT);
     });
 
     it('should use centralized constants for command structure', () => {

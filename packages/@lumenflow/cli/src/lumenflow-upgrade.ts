@@ -23,6 +23,8 @@
  */
 
 import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import {
   STDIO_MODES,
   EXIT_CODES,
@@ -51,6 +53,7 @@ const ARG_LATEST = '--latest';
 const ARG_LATEST_SHORT = '-l';
 const ARG_DRY_RUN = '--dry-run';
 const ARG_DRY_RUN_SHORT = '-n';
+const PNPM_WORKSPACE_FILE = 'pnpm-workspace.yaml';
 
 /**
  * All @lumenflow/* packages that should be upgraded together
@@ -92,6 +95,11 @@ export interface UpgradeResult {
   versionSpec: string;
 }
 
+export interface BuildUpgradeOptions {
+  /** Working directory used to detect pnpm workspace root context */
+  cwd?: string;
+}
+
 /**
  * Result of main checkout validation
  */
@@ -102,6 +110,13 @@ export interface MainCheckoutValidationResult {
   error?: string;
   /** Suggested fix command */
   fixCommand?: string;
+}
+
+/**
+ * Detect whether a project is a pnpm workspace root.
+ */
+export function isWorkspaceRoot(cwd: string = process.cwd()): boolean {
+  return existsSync(path.join(cwd, PNPM_WORKSPACE_FILE));
 }
 
 /**
@@ -142,22 +157,24 @@ export function parseUpgradeArgs(argv: string[]): UpgradeArgs {
  * @param args - Parsed upgrade arguments
  * @returns Object containing the commands to run
  */
-export function buildUpgradeCommands(args: UpgradeArgs): UpgradeResult {
+export function buildUpgradeCommands(
+  args: UpgradeArgs,
+  options: BuildUpgradeOptions = {},
+): UpgradeResult {
   // Determine version specifier
   const versionSpec = args.latest ? 'latest' : args.version || 'latest';
 
   // Build package list with version
   const packages = LUMENFLOW_PACKAGES.map((pkg) => `${pkg}@${versionSpec}`);
 
-  // Build pnpm add command using array pattern (matches deps-add.ts convention)
-  // WU-1527: -w required for pnpm monorepo workspace root installs
-  const parts: string[] = [
-    PKG_MANAGER,
-    PKG_COMMANDS.ADD,
-    PKG_FLAGS.SAVE_DEV,
-    PKG_FLAGS.WORKSPACE_ROOT,
-    ...packages,
-  ];
+  // Build pnpm add command using array pattern (matches deps-add.ts convention).
+  // -w is required in workspace roots but fails in single-package repos.
+  const parts: string[] = [PKG_MANAGER, PKG_COMMANDS.ADD, PKG_FLAGS.SAVE_DEV];
+  const shouldUseWorkspaceRootFlag = isWorkspaceRoot(options.cwd ?? process.cwd());
+  if (shouldUseWorkspaceRootFlag) {
+    parts.push(PKG_FLAGS.WORKSPACE_ROOT);
+  }
+  parts.push(...packages);
 
   return {
     addCommand: parts.join(' '),

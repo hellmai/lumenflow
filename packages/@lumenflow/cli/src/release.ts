@@ -26,9 +26,18 @@
  */
 
 import { Command } from 'commander';
-import { existsSync, readFileSync, readdirSync, statSync, unlinkSync } from 'node:fs';
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  unlinkSync,
+} from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { homedir } from 'node:os';
 import { execSync } from 'node:child_process';
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
@@ -93,6 +102,59 @@ const GIT_STATUS_SHORT_COMMAND = 'git status --short';
 /** Guidance shown when generated artifacts dirty the repository */
 const CLEAN_TREE_RECOVERY_GUIDANCE =
   'Commit, stash, or clean generated files before retrying release.';
+
+/** Package manifest filename */
+const PACKAGE_JSON_FILENAME = 'package.json';
+
+/** Source directory name used for build sanity checks */
+const SOURCE_DIR_NAME = 'src';
+
+/** Dist directory name used for release artifacts */
+const DIST_DIR_NAME = 'dist';
+
+/** Relative path prefix used in package manifests */
+const RELATIVE_PATH_PREFIX = './';
+
+/** Previous-pack sanity threshold (current must be >= 10% of previous) */
+const PREVIOUS_PACK_MIN_RATIO = 0.1;
+
+/** Path prefix emitted by some pack tools (for example package/dist/index.js) */
+const PACK_TOOL_PACKAGE_PREFIX = 'package/';
+
+/** Path prefixes used when normalizing manifest paths */
+const NODE_PROTOCOL_PREFIX = 'node:';
+const HTTP_PROTOCOL_PREFIX = 'http://';
+const HTTPS_PROTOCOL_PREFIX = 'https://';
+const PARENT_RELATIVE_PREFIX = '../';
+
+/** Path separator constants for normalization */
+const POSIX_PATH_SEPARATOR = '/';
+const WINDOWS_PATH_SEPARATOR = '\\';
+
+/** Labels for release logging phases */
+const PRE_FLIGHT_LABEL = 'preflight';
+const PACK_VALIDATE_LABEL = 'pack:validate';
+const PACK_BASELINE_LABEL = 'pack:baseline';
+
+/** Pack validation error messages */
+const PACK_EMPTY_OUTPUT_ERROR = 'pack command produced empty output';
+const PACK_INVALID_JSON_ERROR = 'pack command produced invalid JSON payload';
+const PACK_MISSING_FILES_ARRAY_ERROR = 'pack command JSON missing required files[]';
+const PACK_INVALID_FILES_ENTRY_ERROR = 'pack command JSON has invalid files[] entry';
+const PACK_ZERO_FILES_ERROR = 'pack dry-run returned zero files';
+const DIST_EMPTY_ERROR = 'dist directory has no files after build';
+const MISSING_CONTRACT_PREFIX = 'Missing packaged files declared by package.json contract: ';
+const RELEASE_VALIDATION_FAILURE_HEADER =
+  'Release artifact validation failed. Refusing to publish broken tarballs.';
+const RELEASE_VALIDATION_FAILURE_FOOTER =
+  'Fix the package exports/build outputs, then re-run release.';
+const DIST_BUILD_INCOMPLETE_PREFIX = 'dist has fewer files than src';
+const DIST_BUILD_INCOMPLETE_SUFFIX = 'build artifacts look incomplete';
+const PACK_COUNT_BELOW_BASELINE_PREFIX = 'packed file count';
+const PACK_COUNT_BELOW_BASELINE_MID = 'is below 10% of previous published version';
+const SKIP_BUILD_SYMLINK_ERROR_PREFIX = 'Refusing release with --skip-build:';
+const SKIP_BUILD_SYMLINK_ERROR_GUIDANCE =
+  'Run release without --skip-build so dist can be rebuilt as real files.';
 
 /**
  * Environment variable for WU tool identification (WU-1296)
@@ -202,7 +264,7 @@ export function findPackageJsonPaths(baseDir: string = process.cwd()): string[] 
     const entries = readdirSync(packagesDir);
     for (const entry of entries) {
       const entryPath = join(packagesDir, entry);
-      const packageJsonPath = join(entryPath, 'package.json');
+      const packageJsonPath = join(entryPath, PACKAGE_JSON_FILENAME);
 
       if (statSync(entryPath).isDirectory() && existsSync(packageJsonPath)) {
         // Read package.json to check if it's private
@@ -219,7 +281,7 @@ export function findPackageJsonPaths(baseDir: string = process.cwd()): string[] 
   }
 
   // WU-1691: Include the bare lumenflow wrapper package
-  const wrapperPackageJson = join(baseDir, LUMENFLOW_WRAPPER_PACKAGE, 'package.json');
+  const wrapperPackageJson = join(baseDir, LUMENFLOW_WRAPPER_PACKAGE, PACKAGE_JSON_FILENAME);
   if (existsSync(wrapperPackageJson)) {
     const content = JSON.parse(
       readFileSync(wrapperPackageJson, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding }),
@@ -252,6 +314,334 @@ export async function updatePackageVersions(paths: string[], version: string): P
     const updated = JSON.stringify(pkg, null, JSON_INDENT) + '\n';
     await writeFile(packagePath, updated, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
   }
+}
+
+export interface PackageManifestContract {
+  name?: string;
+  exports?: unknown;
+  bin?: string | Record<string, string>;
+  main?: string;
+  types?: string;
+  files?: string[];
+}
+
+export interface PackedArtifactValidationInput {
+  packageName: string;
+  packageDir: string;
+  manifest: PackageManifestContract;
+  packedFiles: string[];
+  srcFileCount: number;
+  distFileCount: number;
+  previousPackedFileCount?: number;
+}
+
+export interface PackedArtifactValidationResult {
+  ok: boolean;
+  packageName: string;
+  contractPaths: string[];
+  missingContractPaths: string[];
+  errors: string[];
+}
+
+export interface DistPathMaterializationOptions {
+  skipBuild?: boolean;
+  dryRun?: boolean;
+}
+
+export interface DistPathMaterializationResult {
+  checkedCount: number;
+  materializedCount: number;
+}
+
+interface PackFileEntry {
+  path: string;
+}
+
+interface PackDryRunMetadata {
+  files: PackFileEntry[];
+  entryCount?: number;
+}
+
+/**
+ * Convert manifest file paths (for example "./dist/index.js") into package-relative paths.
+ */
+function normalizeManifestPath(filePath: string): string | null {
+  const trimmed = filePath.trim();
+  if (!trimmed) {
+    return null;
+  }
+  if (
+    trimmed.startsWith(NODE_PROTOCOL_PREFIX) ||
+    trimmed.startsWith(HTTP_PROTOCOL_PREFIX) ||
+    trimmed.startsWith(HTTPS_PROTOCOL_PREFIX)
+  ) {
+    return null;
+  }
+
+  if (trimmed.startsWith(RELATIVE_PATH_PREFIX)) {
+    return trimmed
+      .slice(RELATIVE_PATH_PREFIX.length)
+      .replaceAll(WINDOWS_PATH_SEPARATOR, POSIX_PATH_SEPARATOR);
+  }
+
+  if (trimmed.startsWith(PARENT_RELATIVE_PREFIX) || trimmed.includes(POSIX_PATH_SEPARATOR)) {
+    return trimmed.replaceAll(WINDOWS_PATH_SEPARATOR, POSIX_PATH_SEPARATOR);
+  }
+
+  return null;
+}
+
+/**
+ * Normalize packed tarball paths across npm/pnpm variants.
+ *
+ * Some pack tools emit "package/dist/index.js" while others emit "dist/index.js".
+ * Contract comparisons use package-relative paths, so strip the optional prefix.
+ */
+function normalizePackedPath(filePath: string): string | null {
+  const normalized = normalizeManifestPath(filePath);
+  if (!normalized) {
+    return null;
+  }
+
+  if (normalized.startsWith(PACK_TOOL_PACKAGE_PREFIX)) {
+    return normalized.slice(PACK_TOOL_PACKAGE_PREFIX.length);
+  }
+
+  return normalized;
+}
+
+function buildDistCountMismatchError(distFileCount: number, srcFileCount: number): string {
+  return `${DIST_BUILD_INCOMPLETE_PREFIX} (${distFileCount} < ${srcFileCount}), ${DIST_BUILD_INCOMPLETE_SUFFIX}`;
+}
+
+function buildPackBaselineThresholdError(
+  packedFileCount: number,
+  previousPackedFileCount: number,
+): string {
+  return `${PACK_COUNT_BELOW_BASELINE_PREFIX} ${packedFileCount} ${PACK_COUNT_BELOW_BASELINE_MID} (${previousPackedFileCount})`;
+}
+
+function buildSkipBuildSymlinkError(relativeDistPath: string): string {
+  return (
+    `${SKIP_BUILD_SYMLINK_ERROR_PREFIX} ${relativeDistPath} is a symlink.\n` +
+    `${SKIP_BUILD_SYMLINK_ERROR_GUIDANCE}`
+  );
+}
+
+function buildWorkspacePackDryRunCommand(packageName: string): string {
+  return `${PKG_MANAGER} --filter "${packageName}" pack --json --dry-run`;
+}
+
+function buildLatestPublishedPackDryRunCommand(packageName: string): string {
+  return `npm pack "${packageName}@latest" --json --dry-run`;
+}
+
+/**
+ * Collect all string leaf values from nested export conditions.
+ */
+function collectLeafStringValues(value: unknown, collector: string[]): void {
+  if (typeof value === 'string') {
+    collector.push(value);
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      collectLeafStringValues(entry, collector);
+    }
+    return;
+  }
+
+  if (value && typeof value === 'object') {
+    for (const entry of Object.values(value as Record<string, unknown>)) {
+      collectLeafStringValues(entry, collector);
+    }
+  }
+}
+
+/**
+ * Derive package-file contract paths from package.json fields.
+ *
+ * Contract source of truth:
+ * - exports map (all subpath leaf values)
+ * - main/types
+ * - bin targets
+ */
+export function extractPackageContractPaths(manifest: PackageManifestContract): string[] {
+  const rawPaths: string[] = [];
+
+  if (typeof manifest.main === 'string') {
+    rawPaths.push(manifest.main);
+  }
+
+  if (typeof manifest.types === 'string') {
+    rawPaths.push(manifest.types);
+  }
+
+  if (typeof manifest.bin === 'string') {
+    rawPaths.push(manifest.bin);
+  } else if (manifest.bin && typeof manifest.bin === 'object') {
+    rawPaths.push(...Object.values(manifest.bin));
+  }
+
+  if (manifest.exports !== undefined) {
+    collectLeafStringValues(manifest.exports, rawPaths);
+  }
+
+  const deduped = new Set<string>();
+  for (const rawPath of rawPaths) {
+    const normalized = normalizeManifestPath(rawPath);
+    if (normalized) {
+      deduped.add(normalized);
+    }
+  }
+
+  return [...deduped];
+}
+
+/**
+ * Determine if this package publishes dist artifacts.
+ */
+function packageExpectsDist(manifest: PackageManifestContract, contractPaths: string[]): boolean {
+  const files = manifest.files ?? [];
+  const includesDistInFiles = files.some((entry) => {
+    const normalized = entry
+      .trim()
+      .replaceAll(WINDOWS_PATH_SEPARATOR, POSIX_PATH_SEPARATOR)
+      .replace(/\/+$/, '');
+    return normalized === DIST_DIR_NAME || normalized.startsWith(`${DIST_DIR_NAME}/`);
+  });
+
+  return (
+    includesDistInFiles || contractPaths.some((entry) => entry.startsWith(`${DIST_DIR_NAME}/`))
+  );
+}
+
+/**
+ * Count files recursively for sanity checks.
+ */
+function countFilesRecursive(pathToCount: string): number {
+  if (!existsSync(pathToCount)) {
+    return 0;
+  }
+
+  const stat = lstatSync(pathToCount);
+  if (!stat.isDirectory()) {
+    return 0;
+  }
+
+  let fileCount = 0;
+  const entries = readdirSync(pathToCount, { withFileTypes: true });
+  for (const entry of entries) {
+    const absolutePath = join(pathToCount, entry.name);
+    if (entry.isDirectory()) {
+      fileCount += countFilesRecursive(absolutePath);
+    } else if (entry.isFile()) {
+      fileCount += 1;
+    }
+  }
+
+  return fileCount;
+}
+
+/**
+ * Validate packed artifacts against package contract paths and dynamic sanity checks.
+ */
+export function validatePackedArtifacts(
+  input: PackedArtifactValidationInput,
+): PackedArtifactValidationResult {
+  const contractPaths = extractPackageContractPaths(input.manifest);
+  const normalizedPackedFiles = input.packedFiles
+    .map((entry) => normalizePackedPath(entry))
+    .filter((entry): entry is string => entry !== null);
+  const packedSet = new Set(normalizedPackedFiles);
+  const missingContractPaths = contractPaths.filter((entry) => !packedSet.has(entry));
+  const errors: string[] = [];
+
+  if (input.packedFiles.length === 0) {
+    errors.push(PACK_ZERO_FILES_ERROR);
+  }
+
+  if (missingContractPaths.length > 0) {
+    errors.push(`${MISSING_CONTRACT_PREFIX}${missingContractPaths.join(', ')}`);
+  }
+
+  const expectsDist = packageExpectsDist(input.manifest, contractPaths);
+  if (expectsDist) {
+    if (input.distFileCount === 0) {
+      errors.push(DIST_EMPTY_ERROR);
+    } else if (input.srcFileCount > 0 && input.distFileCount < input.srcFileCount) {
+      errors.push(buildDistCountMismatchError(input.distFileCount, input.srcFileCount));
+    }
+  }
+
+  if (input.previousPackedFileCount !== undefined && input.previousPackedFileCount > 0) {
+    const minimumExpected = Math.max(
+      1,
+      Math.ceil(input.previousPackedFileCount * PREVIOUS_PACK_MIN_RATIO),
+    );
+    if (input.packedFiles.length < minimumExpected) {
+      errors.push(
+        buildPackBaselineThresholdError(input.packedFiles.length, input.previousPackedFileCount),
+      );
+    }
+  }
+
+  return {
+    ok: errors.length === 0,
+    packageName: input.packageName,
+    contractPaths,
+    missingContractPaths,
+    errors,
+  };
+}
+
+/**
+ * Replace symlinked dist directories with real directories.
+ *
+ * This avoids npm pack/publish inconsistencies from cross-worktree dist symlinks.
+ */
+export function ensureDistPathsMaterialized(
+  packageDirs: string[],
+  options: DistPathMaterializationOptions = {},
+): DistPathMaterializationResult {
+  const { skipBuild = false, dryRun = false } = options;
+  let checkedCount = 0;
+  let materializedCount = 0;
+
+  for (const packageDir of packageDirs) {
+    const distPath = join(packageDir, DIST_DIR_NAME);
+    if (!existsSync(distPath)) {
+      continue;
+    }
+
+    const distStat = lstatSync(distPath);
+    if (!distStat.isSymbolicLink()) {
+      continue;
+    }
+
+    checkedCount += 1;
+    const relativeDistPath = distPath.replace(`${process.cwd()}/`, '');
+    if (skipBuild) {
+      die(buildSkipBuildSymlinkError(relativeDistPath));
+    }
+
+    if (dryRun) {
+      console.log(
+        `${LOG_PREFIX} [${PRE_FLIGHT_LABEL}] Would materialize symlinked dist at ${relativeDistPath}`,
+      );
+      continue;
+    }
+
+    rmSync(distPath, { recursive: true, force: true });
+    mkdirSync(distPath, { recursive: true });
+    materializedCount += 1;
+    console.log(
+      `${LOG_PREFIX} [${PRE_FLIGHT_LABEL}] Materialized symlinked dist at ${relativeDistPath}`,
+    );
+  }
+
+  return { checkedCount, materializedCount };
 }
 
 /**
@@ -313,6 +703,164 @@ function runCommand(
   } catch (error) {
     throw new Error(`Command failed: ${cmd}`, { cause: error });
   }
+}
+
+/**
+ * Execute a shell command and capture stdout.
+ */
+function runCommandCapture(cmd: string, options: { cwd?: string; label?: string } = {}): string {
+  const { cwd = process.cwd(), label } = options;
+  const prefix = label ? `[${label}] ` : '';
+  console.log(`${LOG_PREFIX} ${prefix}Running: ${cmd}`);
+  try {
+    return execSync(cmd, {
+      cwd,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+    });
+  } catch (error) {
+    throw new Error(`Command failed: ${cmd}`, { cause: error });
+  }
+}
+
+/**
+ * Parse JSON output from npm/pnpm pack dry runs.
+ */
+function parsePackDryRunMetadata(rawOutput: string): PackDryRunMetadata {
+  const trimmed = rawOutput.trim();
+  if (!trimmed) {
+    throw new Error(PACK_EMPTY_OUTPUT_ERROR);
+  }
+
+  const parsed = JSON.parse(trimmed) as unknown;
+  const normalized = Array.isArray(parsed) ? parsed[0] : parsed;
+  if (!normalized || typeof normalized !== 'object') {
+    throw new Error(PACK_INVALID_JSON_ERROR);
+  }
+
+  const files = (normalized as { files?: unknown }).files;
+  if (!Array.isArray(files)) {
+    throw new Error(PACK_MISSING_FILES_ARRAY_ERROR);
+  }
+
+  for (const file of files) {
+    if (
+      !file ||
+      typeof file !== 'object' ||
+      typeof (file as { path?: unknown }).path !== 'string'
+    ) {
+      throw new Error(PACK_INVALID_FILES_ENTRY_ERROR);
+    }
+  }
+
+  const entryCount = (normalized as { entryCount?: unknown }).entryCount;
+  return {
+    files: files as PackFileEntry[],
+    entryCount: typeof entryCount === 'number' ? entryCount : undefined,
+  };
+}
+
+/**
+ * Read package manifest for release validation.
+ */
+function readPackageManifest(packageJsonPath: string): PackageManifestContract {
+  return JSON.parse(
+    readFileSync(packageJsonPath, {
+      encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
+    }),
+  ) as PackageManifestContract;
+}
+
+/**
+ * Resolve packed file list for a workspace package via pnpm pack --dry-run.
+ */
+function getWorkspacePackedFiles(packageName: string): string[] {
+  const output = runCommandCapture(buildWorkspacePackDryRunCommand(packageName), {
+    label: PACK_VALIDATE_LABEL,
+  });
+  const metadata = parsePackDryRunMetadata(output);
+  return metadata.files
+    .map((entry) => normalizePackedPath(entry.path))
+    .filter((entry): entry is string => entry !== null);
+}
+
+/**
+ * Resolve packed file count for the currently published npm version.
+ */
+function getPreviousPublishedPackFileCount(packageName: string): number | undefined {
+  try {
+    const output = runCommandCapture(buildLatestPublishedPackDryRunCommand(packageName), {
+      label: PACK_BASELINE_LABEL,
+    });
+    const metadata = parsePackDryRunMetadata(output);
+    const entryCount = metadata.entryCount;
+    if (typeof entryCount === 'number') {
+      return entryCount;
+    }
+    return metadata.files.length;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(
+      `${LOG_PREFIX} [${PACK_BASELINE_LABEL}] Skipping previous-version count for ${packageName}: ${message}`,
+    );
+    return undefined;
+  }
+}
+
+/**
+ * Validate release package artifacts before tag/publish.
+ */
+function validateReleaseArtifactsForPublish(packageJsonPaths: string[], dryRun: boolean): void {
+  if (dryRun) {
+    console.log(
+      `${LOG_PREFIX} [${PACK_VALIDATE_LABEL}] Would validate packed artifacts against package contracts`,
+    );
+    return;
+  }
+
+  const failures: PackedArtifactValidationResult[] = [];
+  for (const packageJsonPath of packageJsonPaths) {
+    const packageDir = dirname(packageJsonPath);
+    const manifest = readPackageManifest(packageJsonPath);
+    const packageName = manifest.name ?? packageDir;
+    const packedFiles = getWorkspacePackedFiles(packageName);
+    const previousPackedFileCount = getPreviousPublishedPackFileCount(packageName);
+    const srcFileCount = countFilesRecursive(join(packageDir, SOURCE_DIR_NAME));
+    const distFileCount = countFilesRecursive(join(packageDir, DIST_DIR_NAME));
+
+    const result = validatePackedArtifacts({
+      packageName,
+      packageDir,
+      manifest,
+      packedFiles,
+      srcFileCount,
+      distFileCount,
+      previousPackedFileCount,
+    });
+
+    if (!result.ok) {
+      failures.push(result);
+    }
+  }
+
+  if (failures.length > 0) {
+    const details = failures
+      .map(
+        (failure) =>
+          `- ${failure.packageName}\n` + failure.errors.map((error) => `  - ${error}`).join('\n'),
+      )
+      .join('\n');
+
+    die(
+      `${RELEASE_VALIDATION_FAILURE_HEADER}\n\n` +
+        `${details}\n\n` +
+        `${RELEASE_VALIDATION_FAILURE_FOOTER}`,
+    );
+  }
+
+  console.log(
+    `${LOG_PREFIX} ✅ Packed artifact validation passed for ${packageJsonPaths.length} packages`,
+  );
 }
 
 /**
@@ -467,6 +1015,7 @@ export async function main(): Promise<void> {
   for (const p of packagePaths) {
     console.log(`  - ${p.replace(process.cwd() + '/', '')}`);
   }
+  const packageDirs = packagePaths.map((path) => dirname(path));
 
   // Check npm authentication for publish
   if (!skipPublish && !dryRun && !hasNpmAuth()) {
@@ -532,11 +1081,26 @@ export async function main(): Promise<void> {
   }
 
   // Build packages
+  const distPreparation = ensureDistPathsMaterialized(packageDirs, { skipBuild, dryRun });
+  if (distPreparation.checkedCount > 0 && !dryRun && distPreparation.materializedCount > 0) {
+    console.log(
+      `${LOG_PREFIX} [${PRE_FLIGHT_LABEL}] Materialized ${distPreparation.materializedCount} symlinked dist directories`,
+    );
+  }
+
   if (!skipBuild) {
     runCommand(`${PKG_MANAGER} build`, { dryRun, label: 'build' });
     console.log(`${LOG_PREFIX} ✅ Build complete`);
   } else {
     console.log(`${LOG_PREFIX} Skipping build (--skip-build)`);
+  }
+
+  if (!skipPublish) {
+    validateReleaseArtifactsForPublish(packagePaths, Boolean(dryRun));
+  } else if (dryRun) {
+    console.log(
+      `${LOG_PREFIX} [${PACK_VALIDATE_LABEL}] Would skip artifact validation (--skip-publish)`,
+    );
   }
 
   // Create git tag
