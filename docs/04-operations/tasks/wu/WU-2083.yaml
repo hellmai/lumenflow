@@ -2,7 +2,7 @@ id: WU-2083
 title: 'INIT-035 L7: Create companion repo for Ruby'
 lane: 'Operations: Tooling'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-23
 code_paths:
@@ -40,3 +40,11 @@ description: Track creation of Ruby companion repository as wave-2 fast-follow w
 acceptance:
   - Ruby companion repository parity tasks and smoke requirements are tracked and linked from
     support matrix data.
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/operations-tooling-wu-2083
+claimed_at: 2026-02-23T17:07:51.446Z
+baseline_main_sha: 160029758fbfbd671333a0397780b9b3c1bb5c7e
+session_id: 63a44157-1daf-4e51-aeb9-94404e82bca4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T17:07:51.454Z
