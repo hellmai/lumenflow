@@ -2,7 +2,7 @@ id: WU-2073
 title: 'INIT-035 A6b: Render curated CLI docs from manifest metadata'
 lane: 'Content: Site Comms'
 type: documentation
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-23
 code_paths:
@@ -43,3 +43,11 @@ description: Update CLI docs generator to consume manifest metadata and output c
 acceptance:
   - Generated CLI docs hide alias and legacy surfaces and remain reproducible in docs generation
     checks.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/content-site-comms-wu-2073
+claimed_at: 2026-02-23T16:14:19.955Z
+baseline_main_sha: 5314eb4de7789d33d48f2acd52bfd692029d0969
+session_id: c6d064e1-9dfc-4e35-ad4b-41bf5523ea3f
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T16:14:19.961Z
