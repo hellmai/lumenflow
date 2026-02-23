@@ -2,7 +2,7 @@ id: WU-2073
 title: 'INIT-035 A6b: Render curated CLI docs from manifest metadata'
 lane: 'Content: Site Comms'
 type: feature
-status: in_progress
+status: done
 priority: P0
 created: 2026-02-23
 code_paths:
@@ -50,3 +50,6 @@ description: Update CLI docs generator to consume manifest metadata and output c
 acceptance:
   - Generated CLI docs hide alias and legacy surfaces and remain reproducible in docs generation
     checks.
+locked: true
+completed_at: 2026-02-23T16:20:05.305Z
+completed: 2026-02-23
