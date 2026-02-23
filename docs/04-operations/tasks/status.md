@@ -4,7 +4,7 @@ _Last updated: 2026-02-23_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2054 — Fix web lint security warnings blocking release gates](wu/WU-2054.yaml)
 
 ## Completed
 
