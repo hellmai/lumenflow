@@ -135,7 +135,9 @@ describe('release command', () => {
       };
       const scripts = cliPackageJson.scripts ?? {};
 
-      expect(scripts[CLI_SYNC_BUNDLED_PACKS_SCRIPT_KEY]).toBe(CLI_SYNC_BUNDLED_PACKS_SCRIPT_COMMAND);
+      expect(scripts[CLI_SYNC_BUNDLED_PACKS_SCRIPT_KEY]).toBe(
+        CLI_SYNC_BUNDLED_PACKS_SCRIPT_COMMAND,
+      );
       expect(scripts[CLI_PREPACK_SCRIPT_KEY]).toBe(CLI_PREPACK_SCRIPT_COMMAND);
       expect(scripts[CLI_CLEAN_BUNDLED_PACKS_SCRIPT_KEY]).toBe(
         CLI_CLEAN_BUNDLED_PACKS_SCRIPT_COMMAND,
