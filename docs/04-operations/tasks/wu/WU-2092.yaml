@@ -20,6 +20,7 @@ code_paths:
   - packages/@lumenflow/cli/src/workspace-init.ts
   - packages/@lumenflow/cli/src/init-lane-validation.ts
   - packages/@lumenflow/kernel/src/shared-constants.ts
+  - packages/@lumenflow/cli/src/onboarding-smoke-test.ts
 tests:
   manual: []
   unit:
@@ -31,12 +32,14 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/workspace-init.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-lane-validation.test.ts
     - packages/@lumenflow/kernel/src/__tests__/shared-constants.test.ts
+    - packages/@lumenflow/cli/src/__tests__/onboarding-smoke-test.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2092.done
 dependencies: []
 initiative: INIT-036
 phase: 5
+plan: lumenflow://plans/INIT-036-plan.md
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
@@ -47,10 +50,15 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Deduplicate workspace/docs/worktree-related constant definitions across core, cli, kernel, and mcp while preserving package boundaries and enforcing parity via tests/contracts.
+description: Deduplicate workspace/docs/worktree-related constant definitions across core, cli,
+  kernel, and mcp while preserving package boundaries and enforcing parity via tests/contracts.
 acceptance:
-  - runtime code uses getConfig()/shared constants for workspace/worktrees/docs refs with deprecated constants retained only for compatibility
-  - workspace.yaml token definition is centralized and cross-package parity is covered without introducing kernel->core coupling
-  - duplicate docs-only and lane-inference path literals are eliminated or routed through canonical constants
+  - runtime code uses getConfig()/shared constants for workspace/worktrees/docs refs with deprecated
+    constants retained only for compatibility
+  - workspace.yaml token definition is centralized and cross-package parity is covered without
+    introducing kernel->core coupling
+  - duplicate docs-only and lane-inference path literals are eliminated or routed through canonical
+    constants
   - existing command behavior and docs-only classification semantics remain unchanged
-plan: lumenflow://plans/INIT-036-plan.md
+  - lane inference file references in smoke-test gate use CONFIG_FILES.LANE_INFERENCE constant
+    instead of duplicated literals
