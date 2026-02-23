@@ -305,7 +305,9 @@ function extractOptionRefsFromAST(
 // Extract command metadata from package.json and source files
 // ============================================================================
 
-export function extractCommandMetadata(manifestCommands: PublicCommand[] = PUBLIC_MANIFEST): CommandMetadata[] {
+export function extractCommandMetadata(
+  manifestCommands: PublicCommand[] = PUBLIC_MANIFEST,
+): CommandMetadata[] {
   const cliPackageJson = JSON.parse(
     readFileSync(join(ROOT, 'packages/@lumenflow/cli/package.json'), 'utf-8'),
   );

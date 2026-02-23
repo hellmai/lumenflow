@@ -3,10 +3,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { getDocsVisibleManifest } from '../public-manifest.js';
-import {
-  extractCommandMetadata,
-  generateCliMdx,
-} from '../../../../../tools/generate-cli-docs.ts';
+import { extractCommandMetadata, generateCliMdx } from '../../../../../tools/generate-cli-docs.ts';
 
 describe('CLI docs generator curation', () => {
   it('renders primary command surface only', () => {
