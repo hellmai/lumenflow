@@ -53,3 +53,4 @@ acceptance:
   - CLI state path usage is sourced from getConfig().state.stateDir and no runtime .lumenflow/state literals remain in scoped files
   - CLI worktree/origin-main command defaults use config/constants instead of hardcoded strings
   - Existing CLI behavior remains unchanged under OS defaults and respects workspace overrides
+plan: lumenflow://plans/INIT-036-plan.md
