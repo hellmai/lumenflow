@@ -9,7 +9,7 @@ created: 2026-02-23
 target_date: 2026-04-30
 phases:
   - id: 1
-    title: 'Wave 1: IA + docs correctness + automation + node/python/go/dotnet repos'
+    title: 'Wave 2: java/rust/ruby/php companion repos'
     status: pending
 success_metrics:
   - Kernel vs Packs IA live with repaired internal links
