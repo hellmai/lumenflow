@@ -8,7 +8,9 @@ created: 2026-02-23
 code_paths:
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
 tests:
-  manual: []
+  manual:
+    - Run pnpm wu:brief --id WU-2059 and verify prompt contains Completion Workflow with wu:status
+      pre-check and done/in_progress status decision guidance
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts,packages/@lumenflow/cli/src/__tests__/agent-spawn-coordination.test.ts
   e2e: []
@@ -28,8 +30,11 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Inject completion workflow section into generated spawn prompts so status pre-check guardrails are present in live sub-agent handoff output.
+description: Inject completion workflow section into generated spawn prompts so status pre-check
+  guardrails are present in live sub-agent handoff output.
 acceptance:
-  - generateTaskInvocation output includes Completion Workflow section with wu:status pre-check before wu:done
-  - Completion Workflow section in assembled prompt includes status done short-circuit (no wu:done, no wu:recover)
+  - generateTaskInvocation output includes Completion Workflow section with wu:status pre-check
+    before wu:done
+  - Completion Workflow section in assembled prompt includes status done short-circuit (no wu:done,
+    no wu:recover)
   - Codex prompt output includes equivalent completion workflow guardrails
