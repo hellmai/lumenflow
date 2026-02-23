@@ -2,7 +2,7 @@ id: WU-2054
 title: Fix web lint security warnings blocking release gates
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-23
 code_paths:
@@ -33,3 +33,11 @@ description: Main release gates fail at lint due security/detect-object-injectio
 acceptance:
   - apps/web lint runs with zero warnings
   - pnpm gates passes lint stage on main
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/operations-tooling-wu-2054
+claimed_at: 2026-02-23T00:15:18.486Z
+baseline_main_sha: bbbc591c5f7e58cb2caadfa993abcb71978d218f
+session_id: 7af01638-41a9-4a70-854d-3abc5137d08e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T00:15:18.490Z
