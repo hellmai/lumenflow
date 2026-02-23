@@ -2,7 +2,7 @@ id: WU-2055
 title: Prevent release publish artifacts from dirtying main
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-23
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - packages/@lumenflow/cli/scripts/sync-bundled-packs.mjs
 tests:
   manual:
-    - Run pnpm release --release-version <next> --dry-run and verify no generated packs remain in git status
+    - Run pnpm release --release-version <next> --dry-run and verify no generated packs remain in
+      git status
   unit:
     - packages/@lumenflow/cli/src/__tests__/release.test.ts
   e2e: []
@@ -29,7 +30,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Release publish currently leaves generated CLI bundled-pack files under packages/@lumenflow/cli/packs as untracked artifacts. Make packaging self-cleaning and enforce release clean-tree guarantees.
+description: Release publish currently leaves generated CLI bundled-pack files under
+  packages/@lumenflow/cli/packs as untracked artifacts. Make packaging self-cleaning and enforce
+  release clean-tree guarantees.
 acceptance:
-  - Running npm publish flow for @lumenflow/cli does not leave generated bundled-pack artifacts in repo
+  - Running npm publish flow for @lumenflow/cli does not leave generated bundled-pack artifacts in
+    repo
   - release command fails if working tree is dirty after publish
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/operations-tooling-wu-2055
+claimed_at: 2026-02-23T09:17:36.430Z
+baseline_main_sha: ddd0e73e49bed4e2b38656e94cd9a8a960ca32db
+session_id: e805b720-919e-40ba-aed1-42973c4c852d
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-23T09:17:36.435Z
