@@ -1,0 +1,15 @@
+id: INIT-036
+slug: path-centralization-hardening
+title: Path Centralization and Literal Guard Hardening
+description: ''
+status: draft
+priority: P1
+owner: framework
+created: 2026-02-23
+phases: []
+success_metrics:
+  - No runtime hardcoded docs/state/worktrees/origin/main literals remain in scoped packages
+  - Path-literal guard scans core+cli+mcp+memory+initiatives with AST-based detection
+  - Consumer override test (custom directories.wuDir/worktrees) passes for wu:brief and command
+    suggestions
+labels: []
