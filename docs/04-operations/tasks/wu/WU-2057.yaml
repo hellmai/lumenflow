@@ -12,6 +12,7 @@ code_paths:
   - apps/docs/astro.config.mjs
   - apps/docs/src/content/docs/concepts/kernel.mdx
   - apps/docs/src/content/docs/concepts/packs.mdx
+  - docs/02-technical/README.md
 tests:
   manual:
     - pnpm --filter @lumenflow/docs build succeeds with all D2 diagrams rendering
