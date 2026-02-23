@@ -15,7 +15,15 @@
  * WU-1074: Add release command for npm publishing
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+  rmSync,
+  readFileSync,
+  symlinkSync,
+  lstatSync,
+} from 'node:fs';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -27,6 +35,9 @@ import {
   buildCommitMessage,
   buildTagName,
   assertWorkingTreeClean,
+  extractPackageContractPaths,
+  validatePackedArtifacts,
+  ensureDistPathsMaterialized,
   type ReleaseOptions,
 } from '../release.js';
 import { clearClaimMetadataOnRelease } from '../wu-release.js';
@@ -389,6 +400,177 @@ describe('release command', () => {
     it('should build correct tag name', () => {
       expect(buildTagName('1.3.0')).toBe('v1.3.0');
       expect(buildTagName('1.0.0-beta.1')).toBe('v1.0.0-beta.1');
+    });
+  });
+
+  describe('WU-2060 release artifact guards', () => {
+    it('extracts contract paths from exports/bin/main/types without hardcoded lists', () => {
+      const paths = extractPackageContractPaths({
+        main: './dist/index.js',
+        types: './dist/index.d.ts',
+        exports: {
+          '.': {
+            import: './dist/index.js',
+            types: './dist/index.d.ts',
+          },
+          './config-schema': './dist/lumenflow-config-schema.js',
+          './nested': {
+            node: {
+              import: './dist/nested-node.js',
+            },
+            default: './dist/nested.js',
+          },
+        },
+        bin: {
+          lumenflow: './dist/init.js',
+        },
+      });
+
+      expect(paths).toContain('dist/index.js');
+      expect(paths).toContain('dist/index.d.ts');
+      expect(paths).toContain('dist/lumenflow-config-schema.js');
+      expect(paths).toContain('dist/nested-node.js');
+      expect(paths).toContain('dist/nested.js');
+      expect(paths).toContain('dist/init.js');
+      expect(new Set(paths).size).toBe(paths.length);
+    });
+
+    it('fails validation when packed tarball misses files declared by exports', () => {
+      const result = validatePackedArtifacts({
+        packageName: '@lumenflow/core',
+        packageDir: '/tmp/core',
+        manifest: {
+          exports: {
+            '.': './dist/index.js',
+            './config-schema': './dist/lumenflow-config-schema.js',
+          },
+          files: ['dist', 'README.md'],
+        },
+        packedFiles: ['dist/index.js', 'package.json', 'README.md'],
+        srcFileCount: 2,
+        distFileCount: 2,
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.missingContractPaths).toContain('dist/lumenflow-config-schema.js');
+    });
+
+    it('accepts pack output paths that include a package/ prefix', () => {
+      const result = validatePackedArtifacts({
+        packageName: '@lumenflow/core',
+        packageDir: '/tmp/core',
+        manifest: {
+          exports: {
+            '.': './dist/index.js',
+            './config-schema': './dist/lumenflow-config-schema.js',
+          },
+          files: ['dist', 'README.md'],
+        },
+        packedFiles: [
+          'package/dist/index.js',
+          'package/dist/lumenflow-config-schema.js',
+          'package/package.json',
+          'package/README.md',
+        ],
+        srcFileCount: 2,
+        distFileCount: 2,
+      });
+
+      expect(result.ok).toBe(true);
+    });
+
+    it('fails validation when packed file count drops below 10% of previous published version', () => {
+      const result = validatePackedArtifacts({
+        packageName: '@lumenflow/core',
+        packageDir: '/tmp/core',
+        manifest: {
+          exports: { '.': './dist/index.js' },
+          files: ['dist', 'README.md'],
+        },
+        packedFiles: ['dist/index.js', 'package.json', 'README.md'],
+        srcFileCount: 1,
+        distFileCount: 1,
+        previousPackedFileCount: 100,
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.errors.join('\n')).toContain('10%');
+    });
+
+    it('fails validation when dist has fewer files than src for dist-based packages', () => {
+      const result = validatePackedArtifacts({
+        packageName: '@lumenflow/core',
+        packageDir: '/tmp/core',
+        manifest: {
+          exports: { '.': './dist/index.js' },
+          files: ['dist', 'README.md'],
+        },
+        packedFiles: ['dist/index.js', 'package.json', 'README.md'],
+        srcFileCount: 25,
+        distFileCount: 2,
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.errors.join('\n')).toContain('fewer files than src');
+    });
+
+    it('passes validation when contract paths and sanity checks are satisfied', () => {
+      const result = validatePackedArtifacts({
+        packageName: '@lumenflow/core',
+        packageDir: '/tmp/core',
+        manifest: {
+          exports: {
+            '.': './dist/index.js',
+            './config-schema': './dist/lumenflow-config-schema.js',
+          },
+          bin: {
+            'is-agent-branch': './dist/cli/is-agent-branch.js',
+          },
+          files: ['dist', 'README.md'],
+        },
+        packedFiles: [
+          'dist/index.js',
+          'dist/lumenflow-config-schema.js',
+          'dist/cli/is-agent-branch.js',
+          'package.json',
+          'README.md',
+          'LICENSE',
+          'dist/index.d.ts',
+          'dist/cli/is-agent-branch.d.ts',
+          'dist/chunk-a.js',
+          'dist/chunk-b.js',
+          'dist/chunk-c.js',
+        ],
+        srcFileCount: 4,
+        distFileCount: 7,
+        previousPackedFileCount: 100,
+      });
+
+      expect(result.ok).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('materializes symlinked dist directories before build/publish', () => {
+      const testRoot = join(tmpdir(), `release-dist-symlink-${Date.now()}`);
+      const packageDir = join(testRoot, 'packages/@lumenflow/core');
+      const sourceDist = join(testRoot, 'seed-dist');
+      const distPath = join(packageDir, 'dist');
+
+      mkdirSync(sourceDist, { recursive: true });
+      writeFileSync(join(sourceDist, 'index.js'), 'export const value = 1;\n');
+      mkdirSync(packageDir, { recursive: true });
+      symlinkSync(sourceDist, distPath, 'dir');
+
+      const result = ensureDistPathsMaterialized([packageDir], {
+        skipBuild: false,
+        dryRun: false,
+      });
+
+      expect(result.materializedCount).toBe(1);
+      expect(lstatSync(distPath).isSymbolicLink()).toBe(false);
+      expect(existsSync(distPath)).toBe(true);
+
+      rmSync(testRoot, { recursive: true, force: true });
     });
   });
 });
