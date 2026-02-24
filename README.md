@@ -7,12 +7,14 @@
 [![npm version](https://img.shields.io/npm/v/@lumenflow/cli.svg?color=0366d6)](https://www.npmjs.com/package/@lumenflow/cli)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-lumenflow.dev-8b5cf6.svg)](https://lumenflow.dev)
+[![Discord](https://img.shields.io/discord/1474381039303524534?color=5865F2&label=discord&logo=discord&logoColor=white)](https://discord.gg/BgTQ37GuU6)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Lord_blackadder?style=flat&logo=x&color=000000)](https://x.com/Lord_blackadder)
 
 LumenFlow is an open-source runtime kernel for AI agents.<br/>
 It controls what agents can do, proves what they did,<br/>
 and enforces policies they can't bypass.
 
-[Get Started](#quick-start) &bull; [Documentation](https://lumenflow.dev) &bull; [Medium Article](https://medium.com/@hellmai)
+[Get Started](#quick-start) &bull; [Documentation](https://lumenflow.dev) &bull; [Discord](https://discord.gg/BgTQ37GuU6) &bull; [Twitter](https://x.com/Lord_blackadder)
 
 </div>
 
