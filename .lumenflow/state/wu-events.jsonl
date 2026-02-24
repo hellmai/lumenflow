@@ -2172,3 +2172,4 @@
 {"type":"claim","wuId":"WU-2123","timestamp":"2026-02-24T20:10:07.626Z","lane":"Framework: CLI WU Commands","title":"Deduplicate GateLogContext type defined in both gate-registry.ts and gates-utils.ts"}
 {"type":"complete","wuId":"WU-2110","timestamp":"2026-02-24T20:14:52.393Z"}
 {"type":"complete","wuId":"WU-2123","timestamp":"2026-02-24T20:24:43.581Z"}
+{"type":"claim","wuId":"WU-2111","timestamp":"2026-02-24T20:28:22.309Z","lane":"Framework: Core Lifecycle","title":"Add AST guard banning throw new Error() in production code"}

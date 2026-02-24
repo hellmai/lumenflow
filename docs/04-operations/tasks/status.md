@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2111 — Add AST guard banning throw new Error() in production code](wu/WU-2111.yaml)
 
 ## Completed
 
