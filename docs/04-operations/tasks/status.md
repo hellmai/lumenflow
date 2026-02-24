@@ -5,6 +5,7 @@ _Last updated: 2026-02-24_
 ## In Progress
 
 - [WU-2111 — Add AST guard banning throw new Error() in production code](wu/WU-2111.yaml)
+- [WU-2113 — Extend path-literal-guard with ENV_VARS constant and ban raw LUMENFLOW\_ env var strings](wu/WU-2113.yaml)
 
 ## Completed
 
