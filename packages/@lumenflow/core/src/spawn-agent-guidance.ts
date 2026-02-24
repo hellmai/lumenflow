@@ -26,11 +26,23 @@
  */
 
 import { getConfig } from './lumenflow-config.js';
-import { LUMENFLOW_PATHS } from './wu-constants.js';
+import type { LumenFlowConfig } from './lumenflow-config-schema.js';
+import { CONFIG_FILES, DIRECTORIES, LUMENFLOW_PATHS } from './wu-constants.js';
 
 // WU-2044: Canonical WUDoc type (was independently defined here)
 import type { WUDocBase } from './wu-doc-types.js';
 export type WUDoc = WUDocBase;
+
+const DEFAULT_WORKTREES_DIR_SEGMENT = DIRECTORIES.WORKTREES.replace(/\/+$/g, '');
+
+function normalizeDirectorySegment(value: string): string {
+  return value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+}
+
+function resolveWorktreesDirSegment(config: LumenFlowConfig): string {
+  const normalized = normalizeDirectorySegment(config.directories.worktrees);
+  return normalized.length > 0 ? normalized : DEFAULT_WORKTREES_DIR_SEGMENT;
+}
 
 /** Generate effort scaling rules section (WU-1986) */
 export function generateEffortScalingRules() {
@@ -273,7 +285,7 @@ pnpm wu:infer-lane --id WU-XXX
 pnpm wu:infer-lane --paths "tools/**" --desc "CLI improvements"
 \`\`\`
 
-**Lane taxonomy**: See \`.lumenflow.lane-inference.yaml\` for valid lanes and patterns.
+**Lane taxonomy**: See \`${CONFIG_FILES.LANE_INFERENCE}\` for valid lanes and patterns.
 
 **Why lanes matter**: WIP=1 per lane means correct lane selection enables parallel work across lanes.`;
 }
@@ -432,8 +444,10 @@ export function generateLaneGuidance(lane: string | undefined): string {
  * @param {string} id - WU ID
  * @returns {string} Action section content
  */
-export function generateActionSection(doc: WUDoc, id: string): string {
+export function generateActionSection(doc: WUDoc, id: string, config?: LumenFlowConfig): string {
   const isAlreadyClaimed = doc.claimed_at && doc.worktree_path;
+  const resolvedConfig = config ?? getConfig();
+  const worktreesDirSegment = resolveWorktreesDirSegment(resolvedConfig);
 
   if (isAlreadyClaimed) {
     return `This WU is already claimed. Continue implementation in worktree following all standards above.
@@ -451,7 +465,7 @@ cd ${doc.worktree_path}`;
 
 \`\`\`bash
 pnpm wu:claim --id ${id} --lane "${doc.lane}"
-cd worktrees/${laneSlug}-${id.toLowerCase()}
+cd ${worktreesDirSegment}/${laneSlug}-${id.toLowerCase()}
 \`\`\`
 
 Then implement following all standards above.

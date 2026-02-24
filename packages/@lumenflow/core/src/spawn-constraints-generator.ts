@@ -14,7 +14,11 @@
  * @module spawn-constraints-generator
  */
 
+import { BRANCHES, DIRECTORIES, REMOTES } from './wu-constants.js';
 import { SPAWN_END_SENTINEL } from './spawn-template-assembler.js';
+
+const DEFAULT_MAIN_REF = `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
+const DEFAULT_WORKTREES_DIR_SEGMENT = DIRECTORIES.WORKTREES.replace(/\/+$/g, '');
 
 /**
  * WU-1900: Options for constraints generation
@@ -22,6 +26,15 @@ import { SPAWN_END_SENTINEL } from './spawn-template-assembler.js';
 export interface ConstraintsOptions {
   /** Whether to include TDD CHECKPOINT (constraint 1). Default: true */
   includeTddCheckpoint?: boolean;
+  /** Main branch ref shown in git workflow guidance (default: origin/main) */
+  mainRef?: string;
+  /** Worktrees directory hint shown in worktree discipline guidance */
+  worktreesDirSegment?: string;
+}
+
+function normalizeWorktreesDirSegment(value: string | undefined): string {
+  const normalized = (value ?? '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+  return normalized.length > 0 ? normalized : DEFAULT_WORKTREES_DIR_SEGMENT;
 }
 
 /**
@@ -40,6 +53,8 @@ export interface ConstraintsOptions {
  */
 export function generateConstraints(id: string, options?: ConstraintsOptions): string {
   const includeTdd = options?.includeTddCheckpoint !== false;
+  const mainRef = options?.mainRef ?? DEFAULT_MAIN_REF;
+  const worktreesDirSegment = normalizeWorktreesDirSegment(options?.worktreesDirSegment);
 
   const tddCheckpointBlock = includeTdd
     ? `
@@ -88,7 +103,7 @@ ${neverFabNum}. NEVER FABRICATE COMPLETION
 
 ${gitNum}. GIT WORKFLOW (CRITICAL - GitHub rules reject merge commits)
    - GitHub REJECTS merge commits on main
-   - ALWAYS use \`git rebase origin/main\` before push
+   - ALWAYS use \`git rebase ${mainRef}\` before push
    - Push to main via \`git push origin lane/...:main\` (fast-forward only)
    - NEVER use \`git merge\` on main branch
    - Use \`pnpm wu:prep\` from worktree, then \`pnpm wu:done\` from main (WU-1223)
@@ -107,8 +122,8 @@ ${skipGatesNum}. SKIP-GATES AUTONOMY (WU-1142)
 ${worktreeNum}. WORKTREE DISCIPLINE (WU-1282)
    - CRITICAL: PreToolUse hooks do not propagate to sub-agents spawned via Task tool
    - BEFORE UnsafeAny Write/Edit operation, manually verify you are in a worktree:
-   - Run: \`pwd\` and confirm output contains \`worktrees/\`
-   - If not in worktree, STOP and navigate: \`cd worktrees/<lane>-wu-xxx\`
+   - Run: \`pwd\` and confirm output contains \`${worktreesDirSegment}/\`
+   - If not in worktree, STOP and navigate: \`cd ${worktreesDirSegment}/<lane>-wu-xxx\`
    - Use RELATIVE paths only (never full absolute paths starting with root directory)
    - This constraint exists because Claude Code does not inherit settings.json hooks in sub-agent sessions
 </constraints>
@@ -122,7 +137,9 @@ ${SPAWN_END_SENTINEL}`;
  * @param {string} id - WU ID
  * @returns {string} Codex constraints section
  */
-export function generateCodexConstraints(id: string): string {
+export function generateCodexConstraints(id: string, options?: ConstraintsOptions): string {
+  const worktreesDirSegment = normalizeWorktreesDirSegment(options?.worktreesDirSegment);
+
   return `## Constraints (Critical)
 
 1. **TDD checkpoint**: tests BEFORE implementation; never skip RED
@@ -131,5 +148,5 @@ export function generateCodexConstraints(id: string): string {
 4. **No fabrication**: if blockers remain or verification fails, report INCOMPLETE
 5. **Git workflow**: avoid merge commits; use \`wu:prep\` from worktree, then \`wu:done\` from main
 6. **Scope discipline**: stay within \`code_paths\`; capture out-of-scope issues via \`pnpm mem:create\`
-7. **Worktree discipline (WU-1282)**: BEFORE UnsafeAny Write/Edit, verify \`pwd\` shows \`worktrees/\`; hooks do not propagate to sub-agents`;
+7. **Worktree discipline (WU-1282)**: BEFORE UnsafeAny Write/Edit, verify \`pwd\` shows \`${worktreesDirSegment}/\`; hooks do not propagate to sub-agents`;
 }
