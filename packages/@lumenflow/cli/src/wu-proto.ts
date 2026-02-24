@@ -35,7 +35,12 @@ import { validateLaneFormat } from '@lumenflow/core/lane-checker';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { validateWU } from '@lumenflow/core/wu-schema';
-import { COMMIT_FORMATS, ENV_VARS, FILE_SYSTEM, STRING_LITERALS } from '@lumenflow/core/wu-constants';
+import {
+  COMMIT_FORMATS,
+  ENV_VARS,
+  FILE_SYSTEM,
+  STRING_LITERALS,
+} from '@lumenflow/core/wu-constants';
 import { getConfig } from '@lumenflow/core/config';
 import { ensureOnMain } from '@lumenflow/core/wu-helpers';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
