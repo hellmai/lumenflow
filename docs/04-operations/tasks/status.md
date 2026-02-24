@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-- [WU-2100 — Harden core spawn literal coverage and config-aware prompts](wu/WU-2100.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1026,3 +1026,4 @@ _Last updated: 2026-02-24_
 - [WU-2097 — Remove pending Memory runtime path literal debt (INIT-036)](wu/WU-2097.yaml) — 2026-02-24
 - [WU-2099 — DRY path resolvers and lazy-load module-level config (INIT-036 cleanup)](wu/WU-2099.yaml) — 2026-02-24
 - [WU-2098 — Make wu:brief / wu:spawn prompt templates path-config aware](wu/WU-2098.yaml) — 2026-02-24
+- [WU-2100 — Harden core spawn literal coverage and config-aware prompts](wu/WU-2100.yaml) — 2026-02-24
