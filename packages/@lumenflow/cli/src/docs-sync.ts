@@ -13,7 +13,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createWUParser, WU_OPTIONS, getDefaultConfig } from '@lumenflow/core';
-import { getConfig } from '@lumenflow/core/config';
+import { GIT_DIRECTORY_NAME, getConfig } from '@lumenflow/core/config';
 // WU-1362: Import worktree guard utilities for branch checking
 import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard';
 
@@ -304,7 +304,7 @@ async function checkBranchGuard(targetDir: string): Promise<string[]> {
   const warnings: string[] = [];
 
   // Only check if target is a git repository
-  const gitDir = path.join(targetDir, '.git');
+  const gitDir = path.join(targetDir, GIT_DIRECTORY_NAME);
   if (!fs.existsSync(gitDir)) {
     return warnings;
   }

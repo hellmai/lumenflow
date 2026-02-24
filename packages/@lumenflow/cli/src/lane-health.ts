@@ -19,7 +19,12 @@ import fg from 'fast-glob';
 import { minimatch } from 'minimatch';
 import chalk from 'chalk';
 import { createWUParser } from '@lumenflow/core/arg-parser';
-import { findProjectRoot, getConfig, WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
+import {
+  findProjectRoot,
+  GIT_DIRECTORY_NAME,
+  getConfig,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from '@lumenflow/core/config';
 import { runCLI } from './cli-entry-point.js';
 import { asRecord } from './object-guards.js';
 
@@ -28,11 +33,13 @@ const LOG_PREFIX = '[lane:health]';
 const CONFIG_FILE_NAME = WORKSPACE_CONFIG_FILE_NAME;
 const MAX_DISPLAY_FILES = 5;
 const MAX_DISPLAY_GAPS = 10;
+const GIT_DIR_GLOB = `${GIT_DIRECTORY_NAME}/**`;
+const RECURSIVE_GIT_DIR_GLOB = `**/${GIT_DIRECTORY_NAME}/**`;
 
 /** Default exclude patterns for coverage gap detection */
 const DEFAULT_EXCLUDE_PATTERNS = [
   'node_modules/**',
-  '.git/**',
+  GIT_DIR_GLOB,
   'dist/**',
   'build/**',
   'coverage/**',
@@ -176,7 +183,7 @@ function patternsCanOverlap(patternA: string, patternB: string): boolean {
 function findOverlappingFiles(patternA: string, patternB: string): string[] {
   const globOptions = {
     dot: true,
-    ignore: ['**/node_modules/**', '**/.git/**', '**/worktrees/**'],
+    ignore: ['**/node_modules/**', RECURSIVE_GIT_DIR_GLOB, '**/worktrees/**'],
     followSymbolicLinks: false,
     suppressErrors: true,
   };
@@ -273,7 +280,7 @@ export function detectCoverageGaps(
     for (const pattern of lane.code_paths) {
       const matchedFiles = fg.sync(pattern, {
         ...globOptions,
-        ignore: ['**/node_modules/**', '**/.git/**', '**/worktrees/**'],
+        ignore: ['**/node_modules/**', RECURSIVE_GIT_DIR_GLOB, '**/worktrees/**'],
       });
       matchedFiles.forEach((file) => coveredFiles.add(file));
     }

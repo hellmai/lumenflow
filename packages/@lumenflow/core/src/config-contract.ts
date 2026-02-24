@@ -13,6 +13,10 @@ const YAML_FILE_EXTENSION = 'yaml' as const;
 export const WORKSPACE_CONFIG_FILE_NAME =
   `${WORKSPACE_CONFIG_BASENAME}.${YAML_FILE_EXTENSION}` as const;
 export const GIT_DIRECTORY_NAME = '.git' as const;
+const GIT_WORKTREES_DIRECTORY_NAME = 'worktrees' as const;
+export const GIT_WORKTREES_SEGMENT =
+  `${GIT_DIRECTORY_NAME}/${GIT_WORKTREES_DIRECTORY_NAME}` as const;
+export const GIT_WORKTREES_SENTINEL = `/${GIT_WORKTREES_SEGMENT}/` as const;
 
 export const WORKSPACE_V2_KEYS = {
   SOFTWARE_DELIVERY: 'software_delivery',

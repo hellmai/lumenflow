@@ -75,6 +75,7 @@ const ALWAYS_ALLOWED_PATH_SEGMENTS = [
   'wu-paths-constants.ts',
   'wu-git-constants.ts',
   'lumenflow-config.ts',
+  'config-contract.ts',
   'lumenflow-config-schema.ts',
   'schemas/directories-config.ts',
   'domain/orchestration.constants.ts',
@@ -104,7 +105,6 @@ const ALWAYS_ALLOWED_PATH_SEGMENTS = [
 const INIT_036_PENDING_ALLOWLIST = new Set<string>([
   'packages/@lumenflow/mcp/src/runtime-tool-resolver.ts',
   'packages/@lumenflow/mcp/src/worktree-enforcement.ts',
-  'packages/@lumenflow/memory/src/mem-create-core.ts',
   'packages/@lumenflow/memory/src/paths.ts',
 ]);
 
@@ -141,6 +141,10 @@ const BANNED_RULES: BannedRule[] = [
     token: 'workspace.yaml',
     matches: (value) => hasWorkspaceYamlToken(value),
   },
+  {
+    token: '.git',
+    matches: (value) => hasGitDirectoryToken(value),
+  },
 ];
 
 function normalizePath(filePath: string): string {
@@ -149,6 +153,10 @@ function normalizePath(filePath: string): string {
 
 function hasWorkspaceYamlToken(value: string): boolean {
   return /(?:^|[^A-Za-z0-9_.-])workspace\.yaml(?:$|[^A-Za-z0-9_.-])/.test(value);
+}
+
+function hasGitDirectoryToken(value: string): boolean {
+  return /(?:^|[^A-Za-z0-9_.-])\.git(?:$|[^A-Za-z0-9_.-])/.test(value);
 }
 
 function normalizeLiteralValue(value: string): string {
@@ -338,6 +346,7 @@ describe('WU-2093: AST path literal guard foundations', () => {
       "const docsPath = 'docs/04-operations/tasks/backlog.md';",
       'const worktreePath = `worktrees/${lane}`;',
       "const laneInference = '.lumenflow.lane-inference.yaml';",
+      "const gitDir = '.git';",
     ].join('\n');
 
     const violations = scanSourceTextForBannedPathLiterals(source, 'fixtures/violation.ts');
@@ -346,12 +355,15 @@ describe('WU-2093: AST path literal guard foundations', () => {
     expect(tokens).toContain('docs/04-operations');
     expect(tokens).toContain('worktrees/');
     expect(tokens).toContain('.lumenflow.lane-inference.yaml');
+    expect(tokens).toContain('.git');
   });
 
   it('does not flag workspace.yaml boundary false positives', () => {
     const source = [
       "const pnpmWorkspace = 'pnpm-workspace.yaml';",
       "const configFile = 'workspace.yaml';",
+      "const githubWorkflow = '.github/workflows/release.yaml';",
+      "const gitDirectory = '.git';",
     ].join('\n');
 
     const violations = scanSourceTextForBannedPathLiterals(
@@ -359,9 +371,12 @@ describe('WU-2093: AST path literal guard foundations', () => {
       'fixtures/workspace-boundary.ts',
     );
     const workspaceViolations = violations.filter((v) => v.token === 'workspace.yaml');
+    const gitViolations = violations.filter((v) => v.token === '.git');
 
     expect(workspaceViolations).toHaveLength(1);
     expect(workspaceViolations[0]?.snippet).toContain("'workspace.yaml'");
+    expect(gitViolations).toHaveLength(1);
+    expect(gitViolations[0]?.snippet).toContain("'.git'");
   });
 
   it('respects explicit allowlisted file contexts', () => {

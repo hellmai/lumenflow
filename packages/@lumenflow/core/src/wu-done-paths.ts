@@ -13,13 +13,13 @@ import { WU_PATHS, createWuPaths } from './wu-paths.js';
 import { parseYAML, readWU } from './wu-yaml.js';
 import {
   CLAIMED_MODES,
-  DIRECTORIES,
   EMOJI,
   LOG_PREFIX,
   STRING_LITERALS,
   toKebab,
 } from './wu-constants.js';
 import { detectDocsOnlyByPaths } from './wu-done-docs-only.js';
+import { GIT_DIRECTORY_NAME, GIT_WORKTREES_SENTINEL } from './config-contract.js';
 
 // WU-2044: Use canonical WUDocBase instead of local definition
 type WUDocLike = Pick<
@@ -45,7 +45,7 @@ interface DetectModeAndPathsResult {
   isDocsOnly: boolean;
 }
 
-const GIT_WORKTREES_SEGMENT = `.git/${DIRECTORIES.WORKTREES.replace(/\/+$/, '')}/`;
+const GIT_WORKTREES_SEGMENT = GIT_WORKTREES_SENTINEL;
 
 /**
  * Read WU YAML preferring worktree version over main version
@@ -114,7 +114,7 @@ export function readWUPreferWorktree(
  */
 export function detectCurrentWorktree(): string | null {
   const cwd = process.cwd();
-  const gitPath = path.join(cwd, '.git');
+  const gitPath = path.join(cwd, GIT_DIRECTORY_NAME);
 
   // Check if .git exists and is a file (worktrees have .git file, main has .git directory)
   if (!existsSync(gitPath)) return null;

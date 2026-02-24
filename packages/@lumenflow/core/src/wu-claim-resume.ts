@@ -20,6 +20,7 @@
 import { existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { readLockMetadata, getLockFilePath } from './lane-lock.js';
+import { GIT_DIRECTORY_NAME } from './config-contract.js';
 
 /** Log prefix for resume messages */
 const LOG_PREFIX = '[wu-claim-resume]';
@@ -294,7 +295,7 @@ export function validateWorktreeForResume(worktreePath: UnsafeAny, _expectedBran
   }
 
   // Check if it's a git worktree by looking for .git file
-  const gitPath = path.join(worktreePath, '.git');
+  const gitPath = path.join(worktreePath, GIT_DIRECTORY_NAME);
   if (!existsSync(gitPath)) {
     return {
       valid: false,

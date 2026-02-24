@@ -20,13 +20,14 @@ import * as yaml from 'yaml';
 import { execFileSync } from 'node:child_process';
 import { WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
 import { WORKSPACE_V2_KEYS } from '@lumenflow/core/config-schema';
+import { CONFIG_FILES } from '@lumenflow/core/wu-constants';
 import { scaffoldProject } from './init.js';
 
 /** Package.json file name constant */
 const PACKAGE_JSON_FILE = 'package.json';
 
 /** Lane inference file name constant */
-const LANE_INFERENCE_FILE = '.lumenflow.lane-inference.yaml';
+const LANE_INFERENCE_FILE = CONFIG_FILES.LANE_INFERENCE;
 
 /** Canonical workspace config file name */
 const WORKSPACE_CONFIG_FILE = WORKSPACE_CONFIG_FILE_NAME;

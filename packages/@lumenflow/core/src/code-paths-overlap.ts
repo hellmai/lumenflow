@@ -17,6 +17,9 @@ import { parseYAML } from './wu-yaml.js';
 import fg from 'fast-glob';
 import micromatch from 'micromatch';
 import { STATUS_SECTIONS, BACKLOG_SECTIONS, STRING_LITERALS } from './wu-constants.js';
+import { GIT_DIRECTORY_NAME } from './config-contract.js';
+
+const RECURSIVE_GIT_DIR_GLOB = `${GIT_DIRECTORY_NAME}/**`;
 
 /**
  * Check for code path overlap between two sets of glob patterns
@@ -269,14 +272,14 @@ function concreteFileIntersection(patternA: UnsafeAny, patternB: UnsafeAny) {
   const filesA = new Set(
     fg.sync(patternA, {
       dot: true, // Include dotfiles
-      ignore: ['node_modules/**', '.git/**'], // Exclude common bloat
+      ignore: ['node_modules/**', RECURSIVE_GIT_DIR_GLOB], // Exclude common bloat
     }),
   );
 
   const filesB = new Set(
     fg.sync(patternB, {
       dot: true,
-      ignore: ['node_modules/**', '.git/**'],
+      ignore: ['node_modules/**', RECURSIVE_GIT_DIR_GLOB],
     }),
   );
 

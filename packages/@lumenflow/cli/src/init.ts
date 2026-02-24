@@ -26,6 +26,7 @@ import {
   CLAUDE_HOOKS,
   LUMENFLOW_CLIENT_IDS,
 } from '@lumenflow/core';
+import { GIT_DIRECTORY_NAME } from '@lumenflow/core/config';
 import { WORKSPACE_V2_KEYS } from '@lumenflow/core/config-schema';
 // WU-1067: Import GATE_PRESETS for --preset support
 import { GATE_PRESETS } from '@lumenflow/core/gates-config';
@@ -356,7 +357,7 @@ async function checkBranchGuard(
   result.warnings = result.warnings ?? [];
 
   // Only check if target is a git repository
-  const gitDir = path.join(targetDir, '.git');
+  const gitDir = path.join(targetDir, GIT_DIRECTORY_NAME);
   if (!fs.existsSync(gitDir)) {
     // Not a git repo - allow scaffold (initial setup)
     return;

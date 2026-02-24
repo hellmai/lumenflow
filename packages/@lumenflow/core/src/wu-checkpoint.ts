@@ -22,6 +22,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { LOG_PREFIX, EMOJI, LUMENFLOW_PATHS } from './wu-constants.js';
 import { MS_PER_DAY } from './constants/duration-constants.js';
+import { GIT_DIRECTORY_NAME } from './config-contract.js';
 
 /**
  * Schema version for checkpoint files
@@ -105,7 +106,7 @@ function generateCheckpointId() {
 function getHeadSha(dir: UnsafeAny) {
   try {
     // Try to read .git/HEAD directly for speed
-    const gitDir = path.join(dir, '.git');
+    const gitDir = path.join(dir, GIT_DIRECTORY_NAME);
     if (existsSync(gitDir)) {
       const headPath = path.join(gitDir, 'HEAD');
       if (existsSync(headPath)) {
@@ -123,7 +124,7 @@ function getHeadSha(dir: UnsafeAny) {
     }
 
     // For worktrees, .git is a file pointing to the main repo
-    const gitFile = path.join(dir, '.git');
+    const gitFile = path.join(dir, GIT_DIRECTORY_NAME);
     if (existsSync(gitFile)) {
       const gitFileContent = readFileSync(gitFile, 'utf8').trim();
       if (gitFileContent.startsWith('gitdir: ')) {
