@@ -5,6 +5,7 @@ _Last updated: 2026-02-24_
 ## In Progress
 
 - [WU-2130 — Harden UnsafeAny ratchet guard to prevent baseline self-healing on failure](wu/WU-2130.yaml)
+- [WU-2120 — Create ENV_VARS constant and migrate raw LUMENFLOW\_ env var references](wu/WU-2120.yaml)
 
 ## Completed
 

@@ -2,7 +2,7 @@ id: WU-2120
 title: Create ENV_VARS constant and migrate raw LUMENFLOW_ env var references
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-24
 code_paths:
@@ -50,3 +50,11 @@ acceptance:
   - All raw LUMENFLOW_ env var strings replaced with ENV_VARS.* references across core, cli, shims
   - path-literal-guard LUMENFLOW_ rule reports zero violations
   - pnpm test --filter=@lumenflow/core --filter=@lumenflow/cli --filter=@lumenflow/shims passes
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2120
+claimed_at: 2026-02-24T21:02:31.049Z
+baseline_main_sha: 23a4280f1a98f83e5ea69df18fbb7598b05ed41f
+session_id: 573c27ee-1fad-4cd6-905e-033f8ce33d7c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T21:02:31.056Z
