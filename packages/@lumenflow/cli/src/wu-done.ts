@@ -50,6 +50,8 @@ import { execSync } from 'node:child_process';
 import prettyMs from 'pretty-ms';
 import type { ZodIssue } from 'zod';
 import { runGates } from './gates.js';
+// WU-2102: Import scoped test resolver for wu:done gate fallback
+import { resolveScopedUnitTestsForPrep } from './wu-prep.js';
 import { resolveWuDonePreCommitGateDecision } from '@lumenflow/core/gates-agent-mode';
 import { buildClaimRepairCommand } from './wu-claim-repair-guidance.js';
 import { resolveStateDir, resolveWuEventsRelativePath } from './state-path-resolvers.js';
@@ -1564,9 +1566,9 @@ function checkNodeModulesStaleness(worktreePath: string): void {
 async function runGatesInWorktree(
   worktreePath: string,
   id: string,
-  options: { isDocsOnly?: boolean; docsOnly?: boolean } = {},
+  options: { isDocsOnly?: boolean; docsOnly?: boolean; scopedTestPaths?: string[] } = {},
 ) {
-  const { isDocsOnly = false, docsOnly = false } = options;
+  const { isDocsOnly = false, docsOnly = false, scopedTestPaths } = options;
   console.log(`\n${LOG_PREFIX.DONE} Running gates in worktree: ${worktreePath}`);
 
   // Check for stale node_modules before running gates (prevents confusing failures)
@@ -1587,6 +1589,7 @@ async function runGatesInWorktree(
         cwd: worktreePath,
         docsOnly: useDocsOnlyGates,
         coverageMode: undefined,
+        scopedTestPaths,
       }),
     );
     if (!ok) {
@@ -2556,6 +2559,8 @@ interface ExecuteGatesParams {
   isDocsOnly: boolean;
   worktreePath: string | null;
   branchName?: string;
+  /** WU-2102: Scoped test paths from WU tests.unit for fallback when no checkpoint */
+  scopedTestPaths?: string[];
 }
 
 interface ExecuteGatesResult {
@@ -2571,6 +2576,7 @@ async function executeGates({
   isDocsOnly,
   worktreePath,
   branchName,
+  scopedTestPaths,
 }: ExecuteGatesParams): Promise<ExecuteGatesResult> {
   const gateResult: ExecuteGatesResult = {
     fullGatesRanInCurrentRun: false,
@@ -2729,9 +2735,11 @@ async function executeGates({
   } else if (worktreePath && existsSync(worktreePath)) {
     // Worktree mode: run gates in the dedicated worktree
     // WU-1012: Pass both auto-detected and explicit docs-only flags
+    // WU-2102: Forward scopedTestPaths so wu:done uses scoped tests when no checkpoint skip
     await runGatesInWorktree(worktreePath, id, {
       isDocsOnly,
       docsOnly: Boolean(args.docsOnly),
+      scopedTestPaths,
     });
     gateResult.fullGatesRanInCurrentRun = true;
   } else {
@@ -3034,6 +3042,11 @@ export async function main() {
   // WU-1663: Preparation complete - transition to gating state
   pipelineActor.send({ type: WU_DONE_EVENTS.PREPARATION_COMPLETE });
 
+  // WU-2102: Resolve scoped test paths from WU spec tests.unit for gate fallback
+  const scopedTestPathsForDone = resolveScopedUnitTestsForPrep({
+    tests: docMain.tests,
+  });
+
   // WU-1663: Wrap gates in try/catch to send pipeline failure event
   let gateExecutionResult: Awaited<ReturnType<typeof executeGates>>;
   try {
@@ -3043,6 +3056,7 @@ export async function main() {
       isBranchOnly: effectiveBranchOnly,
       isDocsOnly,
       worktreePath,
+      scopedTestPaths: scopedTestPathsForDone,
     });
   } catch (gateErr) {
     pipelineActor.send({

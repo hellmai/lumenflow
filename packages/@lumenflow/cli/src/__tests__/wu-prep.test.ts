@@ -16,6 +16,9 @@ vi.mock('@lumenflow/core/wu-yaml');
 vi.mock('../gates.js', () => ({
   runGates: vi.fn().mockResolvedValue(true),
 }));
+vi.mock('@lumenflow/core/wu-checkpoint', () => ({
+  createPreGatesCheckpoint: vi.fn().mockResolvedValue({ checkpointId: 'ckpt-test1234' }),
+}));
 
 describe('wu-prep (WU-1223)', () => {
   beforeEach(() => {
@@ -412,6 +415,34 @@ describe('wu-prep test scoping (WU-1676)', () => {
     });
 
     expect(scoped).toEqual(['packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts']);
+  });
+});
+
+describe('wu-prep gates-passed checkpoint (WU-2102)', () => {
+  it('should export createPrepCheckpoint function', async () => {
+    const mod = await import('../wu-prep.js');
+    expect(typeof mod.createPrepCheckpoint).toBe('function');
+  });
+
+  it('should call createPreGatesCheckpoint with gatesPassed: true', async () => {
+    const { createPreGatesCheckpoint } = await import('@lumenflow/core/wu-checkpoint');
+    const { createPrepCheckpoint } = await import('../wu-prep.js');
+
+    await createPrepCheckpoint({
+      wuId: 'WU-TEST',
+      worktreePath: '/repo/worktrees/test-wu-test',
+      branchName: 'lane/test/wu-test',
+    });
+
+    expect(createPreGatesCheckpoint).toHaveBeenCalledWith(
+      expect.objectContaining({
+        wuId: 'WU-TEST',
+        worktreePath: '/repo/worktrees/test-wu-test',
+        branchName: 'lane/test/wu-test',
+        gatesPassed: true,
+      }),
+      expect.any(Object),
+    );
   });
 });
 
