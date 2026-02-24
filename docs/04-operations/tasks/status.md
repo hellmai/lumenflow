@@ -4,7 +4,6 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-- [WU-2120 — Create ENV_VARS constant and migrate raw LUMENFLOW\_ env var references](wu/WU-2120.yaml)
 - [WU-2119 — Reduce UnsafeAny usage in highest-churn hotspot files](wu/WU-2119.yaml)
 - [WU-2121 — Replace raw .endsWith('.yaml') file extension literals with FILE_EXTENSIONS constants](wu/WU-2121.yaml)
 - [WU-2116 — Migrate throw new Error() to createError() in @lumenflow/core (batch)](wu/WU-2116.yaml)
@@ -1050,3 +1049,4 @@ _Last updated: 2026-02-24_
 - [WU-2115 — Add Zod schema validation to writeWU() before writing YAML](wu/WU-2115.yaml) — 2026-02-24
 - [WU-2114 — Extend path-literal-guard to ban raw file extension literals like .yaml .json .md](wu/WU-2114.yaml) — 2026-02-24
 - [WU-2130 — Harden UnsafeAny ratchet guard to prevent baseline self-healing on failure](wu/WU-2130.yaml) — 2026-02-24
+- [WU-2120 — Create ENV_VARS constant and migrate raw LUMENFLOW\_ env var references](wu/WU-2120.yaml) — 2026-02-24
