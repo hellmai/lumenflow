@@ -2,7 +2,7 @@ id: WU-2102
 title: wu:prep checkpoint enables wu:done gate skip + scoped test fallback
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-24
 code_paths:
@@ -50,3 +50,6 @@ acceptance:
   - wu:done skips gates entirely when a valid wu:prep checkpoint exists (canSkipGates returns true)
   - wu:done uses scopedTestPaths from WU tests.unit when no checkpoint and not --full-tests
   - Existing wu:done self-resumption (WU-1747) still works
+locked: true
+completed_at: 2026-02-24T10:22:29.534Z
+completed: 2026-02-24
