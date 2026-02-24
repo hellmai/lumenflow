@@ -24,7 +24,7 @@ phases:
     status: done
   - id: 4
     title: 'Phase 3: Structural Improvements (WU-L through WU-P)'
-    status: pending
+    status: in_progress
 success_metrics:
   - Guard coverage includes all 7 runtime packages
   - UnsafeAny baseline trends downward each wave

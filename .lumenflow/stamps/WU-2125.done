@@ -1,0 +1,2 @@
+WU WU-2125 — Extract shared YAML parse logic from readWU() and readWUAsync() into helper
+Completed: 2026-02-24
