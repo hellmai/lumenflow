@@ -2,7 +2,7 @@ id: WU-2099
 title: DRY path resolvers and lazy-load module-level config (INIT-036 cleanup)
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -30,9 +30,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Code review of INIT-036 found 3 borderline issues: (1) resolveWuEventsPath() duplicated in wu-done.ts, wu-block.ts, wu-claim-state.ts — extract to shared utility; (2) wu-block.ts and wu-claim-state.ts resolvers lack try/catch fallback that wu-done.ts has — add consistent error handling; (3) incremental-lint.ts evaluates createWuPaths() at module level — wrap in lazy getter.'
+description: 'Code review of INIT-036 found 3 borderline issues: (1) resolveWuEventsPath()
+  duplicated in wu-done.ts, wu-block.ts, wu-claim-state.ts — extract to shared utility; (2)
+  wu-block.ts and wu-claim-state.ts resolvers lack try/catch fallback that wu-done.ts has — add
+  consistent error handling; (3) incremental-lint.ts evaluates createWuPaths() at module level —
+  wrap in lazy getter.'
 acceptance:
   - resolveWuEventsPath extracted to shared module, imported by wu-done, wu-block, wu-claim-state
   - All path resolver functions have consistent try/catch fallback to LUMENFLOW_PATHS constants
   - No module-level createWuPaths() calls in incremental-lint.ts (lazy getter instead)
   - All existing tests pass
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2099
+claimed_at: 2026-02-24T08:47:39.928Z
+baseline_main_sha: 04db411b41b5a045aee040286243dff85011d5d9
+session_id: 0e86e49b-994a-4bda-a83a-94ffbf9428b8
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T08:47:39.933Z
