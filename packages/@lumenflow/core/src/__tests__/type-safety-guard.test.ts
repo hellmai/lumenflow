@@ -453,10 +453,7 @@ describe('WU-2130: Baseline non-mutation on failure', () => {
 
     // We validate this by checking that the code structure has the right ordering.
     // Read the source file and verify persistBaseline appears AFTER the fail check.
-    const sourceText = readFileSync(
-      path.join(__dirname, 'type-safety-guard.test.ts'),
-      'utf-8',
-    );
+    const sourceText = readFileSync(path.join(__dirname, 'type-safety-guard.test.ts'), 'utf-8');
 
     const failIndex = sourceText.indexOf('expect.fail(');
     const persistAfterFailIndex = sourceText.indexOf('persistBaseline(currentCount)', failIndex);
