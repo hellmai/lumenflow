@@ -5,6 +5,7 @@ _Last updated: 2026-02-24_
 ## In Progress
 
 - [WU-2124 — Extract shared path factory in core to replace 3 independent resolution patterns](wu/WU-2124.yaml)
+- [WU-2125 — Extract shared YAML parse logic from readWU() and readWUAsync() into helper](wu/WU-2125.yaml)
 
 ## Completed
 
