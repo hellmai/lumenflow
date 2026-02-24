@@ -2,7 +2,7 @@ id: WU-2108
 title: Fix ESLint boundary plugin config to match actual hex directory names
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-24
 code_paths:
@@ -48,3 +48,6 @@ session_id: f838da68-7157-4f3d-bdc8-07eb403fc7c1
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-24T19:44:44.346Z
+locked: true
+completed_at: 2026-02-24T20:00:01.717Z
+completed: 2026-02-24
