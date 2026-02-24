@@ -57,6 +57,7 @@ import {
 } from '@lumenflow/core/wu-constants';
 import { defaultBranchFrom } from '@lumenflow/core/wu-done-paths';
 import { getCurrentBranch } from '@lumenflow/core/wu-helpers';
+import { createPreGatesCheckpoint } from '@lumenflow/core/wu-checkpoint';
 import { runGates } from './gates.js';
 import { evaluateMainDirtyMutationGuard } from './hooks/enforcement-checks.js';
 export {
@@ -429,6 +430,28 @@ function printSuccessMessage(wuId: string, mainCheckout: string): void {
 /**
  * Main entry point.
  */
+/**
+ * WU-2102: Create a gates-passed checkpoint so wu:done can skip gates.
+ *
+ * Called after wu:prep gates succeed. wu:done's canSkipGates() reads this
+ * checkpoint and skips its own gate run when valid.
+ */
+export async function createPrepCheckpoint(params: {
+  wuId: string;
+  worktreePath: string;
+  branchName: string;
+}): Promise<void> {
+  await createPreGatesCheckpoint(
+    {
+      wuId: params.wuId,
+      worktreePath: params.worktreePath,
+      branchName: params.branchName,
+      gatesPassed: true,
+    },
+    {},
+  );
+}
+
 export async function main(): Promise<void> {
   // Parse arguments
   const args = createWUParser({
@@ -652,6 +675,10 @@ export async function main(): Promise<void> {
     // Pre-existing failures - exit with error, handler will print skip-gates command
     process.exit(EXIT_CODES.ERROR);
   }
+
+  // WU-2102: Write gates-passed checkpoint so wu:done can skip gates
+  const branchName = defaultBranchFrom(doc) ?? getCurrentBranch() ?? '';
+  await createPrepCheckpoint({ wuId: id, worktreePath: location.cwd, branchName });
 
   // WU-1493: Success - print mode-appropriate message
   if (branchPr) {
