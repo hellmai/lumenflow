@@ -13,6 +13,7 @@
 
 import path from 'node:path';
 import { tmpdir } from 'node:os';
+import { GIT_DIRECTORY_NAME, WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
 
 /**
  * WU-1548: Shared Node.js filesystem error interface.
@@ -50,7 +51,7 @@ export const FILE_SYSTEM = {
  */
 export const CONFIG_FILES = {
   /** Canonical workspace config */
-  WORKSPACE_CONFIG: 'workspace.yaml',
+  WORKSPACE_CONFIG: WORKSPACE_CONFIG_FILE_NAME,
 
   /** Lane inference taxonomy */
   LANE_INFERENCE: '.lumenflow.lane-inference.yaml',
@@ -103,7 +104,8 @@ export const BUILD_ARTIFACT_GLOBS = {
  *
  * Centralized ignore globs for artifact cleanup.
  */
-export const BUILD_ARTIFACT_IGNORES = ['**/node_modules/**', '**/.git/**', '**/.turbo/**'];
+const GIT_ARTIFACT_IGNORE_GLOB = `**/${GIT_DIRECTORY_NAME}/**`;
+export const BUILD_ARTIFACT_IGNORES = ['**/node_modules/**', GIT_ARTIFACT_IGNORE_GLOB, '**/.turbo/**'];
 
 /**
  * Script file paths

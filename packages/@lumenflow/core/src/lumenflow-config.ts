@@ -21,15 +21,16 @@ import {
   WorkspaceV2ExtensionsSchema,
   WORKSPACE_V2_KEYS,
 } from './lumenflow-config-schema.js';
-import { WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
+import {
+  GIT_DIRECTORY_NAME,
+  GIT_WORKTREES_SENTINEL,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from './config-contract.js';
 import { normalizeConfigKeys } from './normalize-config-keys.js';
 import { asRecord } from './object-guards.js';
 
 /** Canonical workspace config file name (workspace-first architecture) */
-export { WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
-
-/** Git sentinel directory used for project-root discovery */
-const GIT_DIRECTORY_NAME = '.git';
+export { GIT_DIRECTORY_NAME, GIT_WORKTREES_SENTINEL, WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
 
 /** Shared UTF-8 encoding literal for file reads/writes */
 const UTF8_ENCODING = 'utf8';

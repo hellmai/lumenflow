@@ -6,6 +6,7 @@ import {
   DEFAULT_KERNEL_RUNTIME_VERSION,
   DEFAULT_WORKSPACE_CONFIG_HASH,
   EXECUTION_METADATA_KEYS,
+  GIT_DIR_NAME,
   KERNEL_POLICY_IDS,
   KERNEL_RUNTIME_EVENTS_DIR_NAME,
   KERNEL_RUNTIME_EVENTS_FILE_NAME,
@@ -38,6 +39,7 @@ describe('shared constants governance', () => {
   it('defines canonical reserved framework scope boundaries and path segments', () => {
     expect(RESERVED_FRAMEWORK_SCOPE_PREFIX).toBe(`${LUMENFLOW_DIR_NAME}/`);
     expect(RESERVED_FRAMEWORK_SCOPE_GLOB).toBe(`${LUMENFLOW_DIR_NAME}/**`);
+    expect(GIT_DIR_NAME).toBe('.git');
     expect(KERNEL_RUNTIME_ROOT_DIR_NAME).toBe('kernel');
     expect(KERNEL_RUNTIME_TASKS_DIR_NAME).toBe('tasks');
     expect(KERNEL_RUNTIME_EVENTS_DIR_NAME).toBe('events');

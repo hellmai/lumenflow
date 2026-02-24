@@ -35,6 +35,7 @@ import { parseYAML } from './wu-yaml.js';
 // WU-2333: Import automated tests invariant check
 import { checkAutomatedTestsInvariant } from './invariants/check-automated-tests.js';
 import { getErrorMessage } from './error-handler.js';
+import { GIT_DIRECTORY_NAME } from './config-contract.js';
 
 /**
  * Invariant type constants
@@ -54,7 +55,7 @@ export const INVARIANT_TYPES = {
 /**
  * Directories to exclude from pattern scanning
  */
-const EXCLUDED_DIRS = ['node_modules', 'worktrees', '.next', 'dist', '.git'];
+const EXCLUDED_DIRS = ['node_modules', 'worktrees', '.next', 'dist', GIT_DIRECTORY_NAME];
 
 interface InvariantDefinition {
   id: string;

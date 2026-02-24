@@ -21,6 +21,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { GIT_DIRECTORY_NAME, GIT_WORKTREES_SENTINEL } from '@lumenflow/core/config';
 import { generateMemId } from './mem-id.js';
 import { appendNode } from './memory-store.js';
 import {
@@ -124,7 +125,7 @@ function normalizeType(inputType: string): { type: string; aliasTag: string | nu
  * @returns Path to main checkout or null if not a worktree
  */
 async function getMainCheckoutFromWorktree(dir: string): Promise<string | null> {
-  const gitPath = path.join(dir, '.git');
+  const gitPath = path.join(dir, GIT_DIRECTORY_NAME);
   try {
     // eslint-disable-next-line security/detect-non-literal-fs-filename -- Known path
     const stat = await fs.stat(gitPath);
@@ -137,7 +138,7 @@ async function getMainCheckoutFromWorktree(dir: string): Promise<string | null> 
       if (match && match[1]) {
         const gitDir = match[1].trim();
         // Extract main checkout: /path/to/main/.git/worktrees/name → /path/to/main
-        const worktreesIndex = gitDir.indexOf('/.git/worktrees/');
+        const worktreesIndex = gitDir.indexOf(GIT_WORKTREES_SENTINEL);
         if (worktreesIndex !== -1) {
           return gitDir.substring(0, worktreesIndex);
         }

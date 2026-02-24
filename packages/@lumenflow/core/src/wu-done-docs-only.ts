@@ -6,6 +6,7 @@
  *
  * WU-1234 + WU-1255 + WU-1539: Detect docs-only WUs from code_paths.
  */
+import { DOCS_ONLY_PREFIXES, DOCS_ONLY_ROOT_FILES } from './file-classifiers.js';
 
 /**
  * Prefixes for paths that qualify as "docs-only" (no code changes).
@@ -15,14 +16,6 @@
  * WU-1539: Split from shouldSkipWebTests to fix docs-only misclassification.
  * @constant {string[]}
  */
-const DOCS_ONLY_PREFIXES = Object.freeze(['docs/', 'ai/', '.claude/', 'memory-bank/']);
-
-/**
- * Root file patterns that qualify as docs-only.
- * @constant {string[]}
- */
-const DOCS_ONLY_ROOT_FILES = Object.freeze(['readme', 'claude']);
-
 /**
  * Detect docs-only WU from code_paths.
  * Returns true if all code_paths are documentation paths only.

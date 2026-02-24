@@ -21,6 +21,7 @@ import { simpleGit, type SimpleGit } from 'simple-git';
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { CONTEXT_VALIDATION, PATTERNS, type LocationType } from '../wu-constants.js';
+import { GIT_DIRECTORY_NAME } from '../config-contract.js';
 
 const { LOCATION_TYPES } = CONTEXT_VALIDATION;
 
@@ -68,7 +69,7 @@ export async function resolveLocation(cwd: string = process.cwd()): Promise<Loca
 
     // Detect if we're in a worktree (in worktrees, .git is a file not a dir)
     // WU-1223: Fixed - check .git in gitRoot, not the gitDir path returned by rev-parse
-    const isWorktree = isGitDirFile(resolve(gitRoot, '.git'));
+    const isWorktree = isGitDirFile(resolve(gitRoot, GIT_DIRECTORY_NAME));
     const mainCheckout = isWorktree ? await findMainCheckout(git) : gitRoot;
 
     // Parse worktree info

@@ -4,10 +4,10 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { SHA256_ALGORITHM, UTF8_ENCODING } from '../shared-constants.js';
+import { GIT_DIR_NAME, SHA256_ALGORITHM, UTF8_ENCODING } from '../shared-constants.js';
 
 const NULL_BYTE_BUFFER = Buffer.from([0]);
-const DEFAULT_EXCLUSIONS = ['node_modules/', '.git/', 'dist/', '.DS_Store'];
+const DEFAULT_EXCLUSIONS = ['node_modules/', `${GIT_DIR_NAME}/`, 'dist/', '.DS_Store'];
 
 export interface ComputeDeterministicPackHashInput {
   packRoot: string;

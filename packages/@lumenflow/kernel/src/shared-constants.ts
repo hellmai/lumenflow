@@ -9,6 +9,7 @@ export const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/;
 export const SHA256_INTEGRITY_PREFIX = 'sha256:' as const;
 export const SHA256_INTEGRITY_REGEX = /^sha256:[a-f0-9]{64}$/;
 export const WORKSPACE_FILE_NAME = 'workspace.yaml' as const;
+export const GIT_DIR_NAME = '.git' as const;
 export const PACKS_DIR_NAME = 'packs' as const;
 export const PACK_MANIFEST_FILE_NAME = 'manifest.yaml' as const;
 export const PACKAGES_DIR_NAME = 'packages' as const;
