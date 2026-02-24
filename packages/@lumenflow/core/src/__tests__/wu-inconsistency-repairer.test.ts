@@ -90,6 +90,8 @@ describe('FILE_REPAIR_STRATEGIES', () => {
 
     it('should use WU ID as fallback title when title is missing', async () => {
       const { createStampInWorktree } = await import('../wu-consistency-file-repairs.js');
+      const createStampInWorktreeMock = vi.mocked(createStampInWorktree);
+      createStampInWorktreeMock.mockClear();
       const strategy = FILE_REPAIR_STRATEGIES[CONSISTENCY_TYPES.YAML_DONE_NO_STAMP]!;
       const error = makeError({
         type: CONSISTENCY_TYPES.YAML_DONE_NO_STAMP,
@@ -99,7 +101,13 @@ describe('FILE_REPAIR_STRATEGIES', () => {
 
       await strategy(error, '/tmp/wt', '/project');
 
-      expect(createStampInWorktree).toHaveBeenCalledWith('WU-200', 'WU WU-200', '/tmp/wt');
+      expect(createStampInWorktreeMock).toHaveBeenCalledTimes(1);
+      expect(createStampInWorktreeMock).toHaveBeenCalledWith(
+        'WU-200',
+        'WU WU-200',
+        '/tmp/wt',
+        '/project',
+      );
     });
   });
 });
