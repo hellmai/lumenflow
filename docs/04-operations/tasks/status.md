@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-- [WU-2112 — Add optional AST guard preventing reintroduction of as any casts](wu/WU-2112.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1041,3 +1041,4 @@ _Last updated: 2026-02-24_
 - [WU-2123 — Deduplicate GateLogContext type defined in both gate-registry.ts and gates-utils.ts](wu/WU-2123.yaml) — 2026-02-24
 - [WU-2111 — Add AST guard banning throw new Error() in production code](wu/WU-2111.yaml) — 2026-02-24
 - [WU-2113 — Extend path-literal-guard with ENV_VARS constant and ban raw LUMENFLOW\_ env var strings](wu/WU-2113.yaml) — 2026-02-24
+- [WU-2112 — Add optional AST guard preventing reintroduction of as any casts](wu/WU-2112.yaml) — 2026-02-24
