@@ -102,11 +102,7 @@ const ALWAYS_ALLOWED_PATH_SEGMENTS = [
  * These files are being migrated by WU-2088..WU-2092 and should be removed from
  * this list as those WUs land.
  */
-const INIT_036_PENDING_ALLOWLIST = new Set<string>([
-  'packages/@lumenflow/mcp/src/runtime-tool-resolver.ts',
-  'packages/@lumenflow/mcp/src/worktree-enforcement.ts',
-  'packages/@lumenflow/memory/src/paths.ts',
-]);
+const INIT_036_PENDING_ALLOWLIST = new Set<string>(['packages/@lumenflow/memory/src/paths.ts']);
 
 const BANNED_RULES: BannedRule[] = [
   {

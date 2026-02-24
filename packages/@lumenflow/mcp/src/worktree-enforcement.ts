@@ -11,7 +11,7 @@
  * in TypeScript so the MCP server can enforce the same policy.
  *
  * Enforcement check mirrors enforce-worktree.sh:
- *   - Allow writes inside worktrees/
+ *   - Allow writes inside the configured worktrees directory
  *   - Allow writes to .lumenflow/, .claude/, docs/tasks/wu/, plan/
  *   - Block everything else when on main/master and enforcement is active
  *   - Gracefully allow if config cannot be read
