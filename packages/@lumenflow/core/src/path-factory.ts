@@ -26,6 +26,7 @@
 import * as path from 'node:path';
 import { LUMENFLOW_PATHS } from './wu-paths-constants.js';
 import { getProjectRoot as getProjectRootFromConfig } from './lumenflow-config.js';
+import { createError, ErrorCodes } from './error-handler.js';
 
 /**
  * Valid keys for LUMENFLOW_PATHS constant lookups.
@@ -106,7 +107,11 @@ export function createPathFactory(options: PathFactoryOptions = {}): PathFactory
       // Runtime check uses 'in' operator for defense-in-depth without triggering
       // sonarjs/different-types-comparison on the value check.
       if (!(key in LUMENFLOW_PATHS)) {
-        throw new Error(`Unknown LUMENFLOW_PATHS key: ${String(key)}`);
+        throw createError(
+          ErrorCodes.INVALID_ARGUMENT,
+          `Unknown LUMENFLOW_PATHS key: ${String(key)}`,
+          { key: String(key) },
+        );
       }
       const relativePath = LUMENFLOW_PATHS[key];
       return path.join(projectRoot, String(relativePath));
