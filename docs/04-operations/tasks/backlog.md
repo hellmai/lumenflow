@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2121 — Replace raw .endsWith('.yaml') file extension literals with FILE_EXTENSIONS constants](wu/WU-2121.yaml) — Framework: Core Lifecycle
 - [WU-2120 — Create ENV*VARS constant and migrate raw LUMENFLOW* env var references](wu/WU-2120.yaml) — Framework: Core Lifecycle
 - [WU-2119 — Reduce UnsafeAny usage in highest-churn hotspot files](wu/WU-2119.yaml) — Framework: Core Lifecycle
 - [WU-2118 — Migrate throw new Error() to createError() in mcp, memory, initiatives, agent, metrics (batch)](wu/WU-2118.yaml) — Framework: Core Lifecycle
