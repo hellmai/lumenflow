@@ -32,3 +32,5 @@ success_metrics:
   - No net increase in banned literal patterns
   - pnpm gates green after all phases
 labels: []
+wus:
+  - WU-2130
