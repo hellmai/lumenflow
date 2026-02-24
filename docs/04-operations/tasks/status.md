@@ -5,7 +5,6 @@ _Last updated: 2026-02-24_
 ## In Progress
 
 - [WU-2124 — Extract shared path factory in core to replace 3 independent resolution patterns](wu/WU-2124.yaml)
-- [WU-2125 — Extract shared YAML parse logic from readWU() and readWUAsync() into helper](wu/WU-2125.yaml)
 
 ## Completed
 
@@ -1054,3 +1053,4 @@ _Last updated: 2026-02-24_
 - [WU-2119 — Reduce UnsafeAny usage in highest-churn hotspot files](wu/WU-2119.yaml) — 2026-02-24
 - [WU-2118 — Migrate throw new Error() to createError() in mcp, memory, initiatives, agent, metrics (batch)](wu/WU-2118.yaml) — 2026-02-24
 - [WU-2117 — Migrate throw new Error() to createError() in @lumenflow/cli (batch)](wu/WU-2117.yaml) — 2026-02-24
+- [WU-2125 — Extract shared YAML parse logic from readWU() and readWUAsync() into helper](wu/WU-2125.yaml) — 2026-02-24

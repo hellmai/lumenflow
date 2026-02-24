@@ -2,7 +2,7 @@ id: WU-2125
 title: Extract shared YAML parse logic from readWU() and readWUAsync() into helper
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -49,3 +49,6 @@ session_id: 58e2ecb2-7865-4adc-8a0b-d22139c6b900
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-24T22:12:48.737Z
+locked: true
+completed_at: 2026-02-24T22:22:48.000Z
+completed: 2026-02-24
