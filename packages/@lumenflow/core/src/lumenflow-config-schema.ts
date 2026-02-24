@@ -59,6 +59,7 @@ import {
   ExperimentalConfigSchema,
   CleanupConfigSchema,
   TelemetryConfigSchema,
+  EscalationConfigSchema,
 } from './schemas/operational-config.js';
 
 // WU-1259: Re-export methodology types from resolve-policy
@@ -123,6 +124,9 @@ export const LumenFlowConfigSchema = z.object({
 
   /** WU-1345: Lanes configuration */
   lanes: LanesConfigSchema.optional(),
+
+  /** WU-2122: Escalation routing configuration */
+  escalation: EscalationConfigSchema.default(() => EscalationConfigSchema.parse({})),
 
   /** WU-1356: Package manager for CLI operations */
   package_manager: PackageManagerSchema,

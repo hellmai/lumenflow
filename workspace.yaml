@@ -211,6 +211,8 @@ memory_namespace: lumenflow
 event_namespace: lumenflow
 software_delivery:
   version: '2.0'
+  escalation:
+    email: tom@hellm.ai
   directories:
     appsWeb: apps/web/
     worktrees: worktrees/

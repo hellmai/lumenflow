@@ -191,6 +191,31 @@ export const CleanupConfigSchema = z.object({
 /** WU-1366: TypeScript type for cleanup config */
 export type CleanupConfig = z.infer<typeof CleanupConfigSchema>;
 
+/**
+ * WU-2122: Escalation configuration schema
+ *
+ * Configurable escalation routing per-project. Moves hardcoded escalation
+ * email out of code and into workspace.yaml.
+ *
+ * @example
+ * ```yaml
+ * escalation:
+ *   email: 'ops-team@example.com'
+ * ```
+ */
+export const EscalationConfigSchema = z.object({
+  /**
+   * Email address for human escalation notifications.
+   * When escalation triggers fire, this email receives notification.
+   *
+   * @default 'escalation@example.com'
+   */
+  email: z.string().email().default('escalation@example.com'),
+});
+
+/** WU-2122: TypeScript type for escalation config */
+export type EscalationConfig = z.infer<typeof EscalationConfigSchema>;
+
 export type UiConfig = z.infer<typeof UiConfigSchema>;
 export type YamlConfig = z.infer<typeof YamlConfigSchema>;
 export type ExperimentalConfig = z.infer<typeof ExperimentalConfigSchema>;
