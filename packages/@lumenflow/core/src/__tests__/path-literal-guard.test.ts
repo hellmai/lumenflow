@@ -1253,7 +1253,10 @@ describe('WU-2131: path-literal ratchet baseline persistence policy', () => {
   it('keeps file extension regression check before baseline write in source order', () => {
     const sourceText = readFileSync(path.join(__dirname, 'path-literal-guard.test.ts'), 'utf-8');
     const failIndex = sourceText.indexOf('File extension literal ratchet FAILED');
-    const persistAfterFailIndex = sourceText.indexOf('persistFileExtBaseline(currentCount)', failIndex);
+    const persistAfterFailIndex = sourceText.indexOf(
+      'persistFileExtBaseline(currentCount)',
+      failIndex,
+    );
 
     expect(failIndex).toBeGreaterThan(-1);
     expect(persistAfterFailIndex).toBeGreaterThan(failIndex);
@@ -1262,7 +1265,10 @@ describe('WU-2131: path-literal ratchet baseline persistence policy', () => {
   it('keeps env-var regression check before baseline write in source order', () => {
     const sourceText = readFileSync(path.join(__dirname, 'path-literal-guard.test.ts'), 'utf-8');
     const failIndex = sourceText.indexOf('LUMENFLOW_ env var literal ratchet FAILED');
-    const persistAfterFailIndex = sourceText.indexOf('persistEnvVarBaseline(currentCount)', failIndex);
+    const persistAfterFailIndex = sourceText.indexOf(
+      'persistEnvVarBaseline(currentCount)',
+      failIndex,
+    );
 
     expect(failIndex).toBeGreaterThan(-1);
     expect(persistAfterFailIndex).toBeGreaterThan(failIndex);
