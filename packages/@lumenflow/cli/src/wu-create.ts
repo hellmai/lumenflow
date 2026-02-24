@@ -42,7 +42,13 @@ import { createWUParser, WU_CREATE_OPTIONS, WU_OPTIONS } from '@lumenflow/core/a
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { getConfig } from '@lumenflow/core/config';
 import { validateSpecRefs, hasSpecRefs } from '@lumenflow/core/wu-create-validators';
-import { COMMIT_FORMATS, ENV_VARS, REMOTES, STRING_LITERALS, WU_TYPES } from '@lumenflow/core/wu-constants';
+import {
+  COMMIT_FORMATS,
+  ENV_VARS,
+  REMOTES,
+  STRING_LITERALS,
+  WU_TYPES,
+} from '@lumenflow/core/wu-constants';
 import { ensureOnMain, validateWUIDFormat } from '@lumenflow/core/wu-helpers';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { generateWuIdWithRetry } from '@lumenflow/core/wu-id-generator';
