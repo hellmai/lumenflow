@@ -2,7 +2,7 @@ id: WU-2121
 title: Replace raw .endsWith('.yaml') file extension literals with FILE_EXTENSIONS constants
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-24
 code_paths:
@@ -40,3 +40,11 @@ acceptance:
   - All raw .yaml, .yml, .json, .md extension literals replaced with FILE_EXTENSIONS.* references
   - path-literal-guard file extension rule reports zero violations
   - pnpm test --filter=@lumenflow/core --filter=@lumenflow/cli passes
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2121
+claimed_at: 2026-02-24T21:11:30.419Z
+baseline_main_sha: 83cd969e73165128882e47c9149dcc7868f7aae7
+session_id: f8b5a975-75a8-432c-8ffe-3d58bd90febb
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T21:11:30.429Z
