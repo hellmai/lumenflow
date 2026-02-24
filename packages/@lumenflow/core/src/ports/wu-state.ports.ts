@@ -7,6 +7,14 @@
  * Focused interfaces for the decomposed WU state store services.
  * Each interface defines a single responsibility boundary.
  *
+ * Error Contract (WU-2128):
+ * Port methods THROW on failure (boundary contracts). Specifically:
+ * - State transition methods (claim, complete, block, etc.) throw if the
+ *   WU is in an invalid state for the requested transition.
+ * - Lock methods (acquireLock) throw if the lock cannot be acquired.
+ * - Query methods (getWUState, getByStatus) return undefined/empty set for
+ *   "not found" conditions -- absence of data is not an error.
+ *
  * @module ports/wu-state
  */
 

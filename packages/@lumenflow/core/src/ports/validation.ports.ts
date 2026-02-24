@@ -5,9 +5,14 @@
  * Validation Ports
  *
  * WU-1093: INIT-002 Phase 1 - Define ports and domain schemas
+ * WU-2128: Standardize error return contracts
  *
  * Port interfaces for validation-related operations.
  * These abstractions allow external users to inject custom implementations.
+ *
+ * Error Contract (WU-2128):
+ * Port methods return null for "not found" (not an error condition).
+ * Port methods THROW for unexpected failures (e.g., registry corruption).
  *
  * Hexagonal Architecture - Input Ports:
  * - ICommandRegistry: Lookup command definitions and validate commands

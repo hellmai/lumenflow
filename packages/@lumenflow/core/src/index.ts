@@ -239,6 +239,21 @@ export type { EnvVarKey, EnvVarName } from './wu-constants.js';
 export { LocationType } from './domain/context.schemas.js';
 export { RecoveryIssueCode, RecoveryActionType } from './domain/recovery.schemas.js';
 
+// WU-2128: Result type for standardized error contracts
+// Ports throw, adapters return Result<T,E>, CLI catches
+export {
+  ok,
+  fail,
+  unwrap,
+  unwrapOr,
+  mapResult,
+  tryCatch,
+  tryCatchAsync,
+  type Result,
+  type Success,
+  type Failure,
+} from './domain/result.js';
+
 // WU-1549: Slim IToolExecutor for gate consumers (ISP) + full IToolRunner
 export type { IToolExecutor, IToolRunner } from './ports/core-tools.ports.js';
 

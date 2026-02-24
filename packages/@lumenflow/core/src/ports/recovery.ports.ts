@@ -5,9 +5,15 @@
  * Recovery Ports
  *
  * WU-1093: INIT-002 Phase 1 - Define ports and domain schemas
+ * WU-2128: Standardize error return contracts
  *
  * Port interfaces for recovery-related operations.
  * These abstractions allow external users to inject custom implementations.
+ *
+ * Error Contract (WU-2128):
+ * Port methods THROW on failure (boundary contracts).
+ * The analyzeRecovery method returns a RecoveryAnalysis with hasIssues=false
+ * when no problems are detected -- absence of issues is a valid result, not an error.
  *
  * Hexagonal Architecture - Input Ports:
  * - IRecoveryAnalyzer: Analyze WU state issues and suggest recovery actions
@@ -55,8 +61,12 @@ export interface IRecoveryAnalyzer {
   /**
    * Analyze context for recovery issues.
    *
+   * Error contract: THROWS on failure (port boundary contract).
+   * Returns RecoveryAnalysis with hasIssues=false when no problems detected.
+   *
    * @param context - Current WU context
    * @returns Promise<RecoveryAnalysis> - Recovery analysis with issues and suggested actions
+   * @throws Error if analysis fails (e.g., filesystem access error)
    */
   analyzeRecovery(context: WuContext): Promise<RecoveryAnalysis>;
 }

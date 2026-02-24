@@ -5,9 +5,15 @@
  * Context Ports
  *
  * WU-1093: INIT-002 Phase 1 - Define ports and domain schemas
+ * WU-2128: Standardize error return contracts
  *
  * Port interfaces for context-aware validation system.
  * These abstractions allow external users to inject custom implementations.
+ *
+ * Error Contract (WU-2128):
+ * Port methods THROW on failure. This is the boundary contract at the
+ * hexagonal architecture edge. Adapters provide companion *Safe methods
+ * that return Result<T, E> for callers preferring explicit error handling.
  *
  * Hexagonal Architecture - Input Ports:
  * - ILocationResolver: Detect main checkout vs worktree
@@ -56,8 +62,11 @@ export interface ILocationResolver {
   /**
    * Resolve location context for the given working directory.
    *
+   * Error contract: THROWS on failure (port boundary contract).
+   *
    * @param cwd - Current working directory (defaults to process.cwd())
    * @returns Promise<LocationContext> - Resolved location context
+   * @throws Error if location resolution fails (e.g., not a git repository)
    */
   resolveLocation(cwd?: string): Promise<LocationContext>;
 }
@@ -98,8 +107,11 @@ export interface IGitStateReader {
   /**
    * Read current git state for the given working directory.
    *
+   * Error contract: THROWS on failure (port boundary contract).
+   *
    * @param cwd - Current working directory (defaults to process.cwd())
    * @returns Promise<GitState> - Current git state
+   * @throws Error if git state reading fails (e.g., git not available)
    */
   readGitState(cwd?: string): Promise<GitState>;
 }
@@ -133,9 +145,13 @@ export interface IWuStateReader {
   /**
    * Read WU state from YAML and detect inconsistencies.
    *
+   * Error contract: THROWS on failure (port boundary contract).
+   * Returns null (not an error) when the WU does not exist.
+   *
    * @param wuId - WU ID (e.g., 'WU-1093' or 'wu-1093')
    * @param repoRoot - Repository root path
    * @returns Promise<WuStateResult | null> - WU state or null if not found
+   * @throws Error if YAML reading/parsing fails
    */
   readWuState(wuId: string, repoRoot: string): Promise<WuStateResult | null>;
 }
