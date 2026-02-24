@@ -2,7 +2,7 @@ id: WU-2100
 title: Harden core spawn literal coverage and config-aware prompts
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -52,3 +52,6 @@ session_id: 0e662ce1-f4b7-4889-b23f-ce3ee7ff6bcb
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-24T09:12:38.786Z
+locked: true
+completed_at: 2026-02-24T09:34:21.918Z
+completed: 2026-02-24
