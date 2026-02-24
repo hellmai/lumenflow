@@ -22,6 +22,7 @@ import type { LumenFlowConfig } from './lumenflow-config-schema.js';
 import { resolvePolicy } from './resolve-policy.js';
 import { classifyWork } from './work-classifier.js';
 import type { SpawnStrategy } from './spawn-strategy.js';
+import { DIRECTORIES } from './wu-constants.js';
 import { generateExecutionModeSection, generateThinkToolGuidance } from './wu-spawn-helpers.js';
 import { generateClientSkillsGuidance, generateSkillsSelectionSection } from './wu-spawn-skills.js';
 import { TRUNCATION_WARNING_BANNER } from './spawn-template-assembler.js';
@@ -69,6 +70,25 @@ import { checkLaneLock, type LockMetadata } from './lane-lock.js';
 interface LaneOccupationWarningOptions {
   /** Whether the lock is stale (>24h old) */
   isStale?: boolean;
+}
+
+const DEFAULT_WORKTREES_DIR_SEGMENT = DIRECTORIES.WORKTREES.replace(/\/+$/g, '');
+
+function normalizeDirectorySegment(value: string): string {
+  return value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+}
+
+function resolveWorktreesDirSegment(config: LumenFlowConfig): string {
+  const normalized = normalizeDirectorySegment(config.directories.worktrees);
+  return normalized.length > 0 ? normalized : DEFAULT_WORKTREES_DIR_SEGMENT;
+}
+
+function resolveWorktreePathHint(doc: WUDoc, id: string, config: LumenFlowConfig): string {
+  if (doc.worktree_path) {
+    return doc.worktree_path;
+  }
+
+  return `${resolveWorktreesDirSegment(config)}/<lane>-${id.toLowerCase()}`;
 }
 
 // ============================================================================
@@ -119,6 +139,9 @@ export function generateTaskInvocation(
   const preamble = generatePreamble(id, strategy);
   const clientContext = options.client;
   const config = options.config || getConfig();
+  const worktreesDirSegment = resolveWorktreesDirSegment(config);
+  const worktreePathHint = resolveWorktreePathHint(doc, id, config);
+  const mainRef = `${config.git.defaultRemote}/${config.git.mainBranch}`;
 
   // WU-1279: Resolve policy and use policy-based test guidance
   const policy = resolvePolicy(config);
@@ -153,11 +176,14 @@ export function generateTaskInvocation(
   const mandatorySection = generateMandatoryAgentSection(mandatoryAgents, id);
   const laneGuidance = generateLaneGuidance(doc.lane);
   const bugDiscoverySection = generateBugDiscoverySection(id);
+  const action = generateActionSection(doc, id, config);
 
   // WU-1900: Generate constraints with conditional TDD CHECKPOINT
   const shouldIncludeTddCheckpoint = classification.domain !== 'ui' && policy.testing !== 'none';
   const constraints = generateConstraints(id, {
     includeTddCheckpoint: shouldIncludeTddCheckpoint,
+    mainRef,
+    worktreesDirSegment,
   });
 
   // WU-1900: Generate design context section for UI-classified work
@@ -220,7 +246,7 @@ ${testGuidance}
 - **Lane:** ${doc.lane || 'Unknown'}
 - **Type:** ${doc.type || 'feature'}
 - **Status:** ${doc.status || 'unknown'}
-- **Worktree:** ${doc.worktree_path || `worktrees/<lane>-${id.toLowerCase()}`}
+- **Worktree:** ${worktreePathHint}
 
 ## Description
 
@@ -284,7 +310,7 @@ ${laneSelection}
 
 ${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}## Action
 
-${generateActionSection(doc, id)}
+${action}
 
 ${constraints}`;
 
@@ -337,10 +363,16 @@ export function generateCodexPrompt(
   const laneGuidance = generateLaneGuidance(doc.lane);
   const bugDiscoverySection = generateBugDiscoverySection(id);
   const implementationContext = generateImplementationContext(doc);
-  const action = generateActionSection(doc, id);
-  const constraints = generateCodexConstraints(id);
   const clientContext = options.client;
   const config = options.config || getConfig();
+  const worktreesDirSegment = resolveWorktreesDirSegment(config);
+  const worktreePathHint = resolveWorktreePathHint(doc, id, config);
+  const mainRef = `${config.git.defaultRemote}/${config.git.mainBranch}`;
+  const action = generateActionSection(doc, id, config);
+  const constraints = generateCodexConstraints(id, {
+    mainRef,
+    worktreesDirSegment,
+  });
   const clientSkillsGuidance = generateClientSkillsGuidance(clientContext);
   const skillsSection =
     generateSkillsSelectionSection(doc, config, clientContext?.name) +
@@ -382,7 +414,7 @@ ${preamble}
 - **Lane:** ${doc.lane || 'Unknown'}
 - **Type:** ${doc.type || 'feature'}
 - **Status:** ${doc.status || 'unknown'}
-- **Worktree:** ${doc.worktree_path || `worktrees/<lane>-${id.toLowerCase()}`}
+- **Worktree:** ${worktreePathHint}
 
 ## Description
 

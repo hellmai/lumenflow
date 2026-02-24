@@ -136,6 +136,12 @@ const BANNED_RULES: BannedRule[] = [
   },
 ];
 
+const EMBEDDED_TEMPLATE_GUARD_FILES = [
+  path.join(REPO_ROOT, 'packages', '@lumenflow', 'core', 'src', 'spawn-constraints-generator.ts'),
+  path.join(REPO_ROOT, 'packages', '@lumenflow', 'core', 'src', 'spawn-task-builder.ts'),
+  path.join(REPO_ROOT, 'packages', '@lumenflow', 'core', 'src', 'spawn-agent-guidance.ts'),
+];
+
 function normalizePath(filePath: string): string {
   return filePath.split(path.sep).join('/');
 }
@@ -254,6 +260,37 @@ function scanSourceTextForBannedPathLiterals(
   return violations;
 }
 
+function scanSourceTextForEmbeddedBannedPathTokens(
+  sourceText: string,
+  fileName: string,
+): PathLiteralViolation[] {
+  const literals = extractLiteralsFromAst(sourceText, fileName);
+  const violations: PathLiteralViolation[] = [];
+
+  for (const literal of literals) {
+    const candidateValue = normalizeLiteralValue(literal.value);
+    if (candidateValue.length === 0) {
+      continue;
+    }
+
+    for (const rule of BANNED_RULES) {
+      if (!rule.matches(candidateValue)) {
+        continue;
+      }
+
+      violations.push({
+        file: normalizePath(fileName),
+        line: literal.line,
+        snippet: literal.snippet,
+        token: rule.token,
+      });
+      break;
+    }
+  }
+
+  return violations;
+}
+
 function scanFileForBannedPathLiterals(filePath: string): PathLiteralViolation[] {
   if (isAllowlistedFile(filePath)) {
     return [];
@@ -261,6 +298,11 @@ function scanFileForBannedPathLiterals(filePath: string): PathLiteralViolation[]
 
   const sourceText = readFileSync(filePath, 'utf-8');
   return scanSourceTextForBannedPathLiterals(sourceText, filePath);
+}
+
+function scanFileForEmbeddedBannedPathTokens(filePath: string): PathLiteralViolation[] {
+  const sourceText = readFileSync(filePath, 'utf-8');
+  return scanSourceTextForEmbeddedBannedPathTokens(sourceText, filePath);
 }
 
 function formatViolationReport(violations: PathLiteralViolation[]): string {
@@ -381,6 +423,26 @@ describe('WU-2093: AST path literal guard foundations', () => {
 
     expect(violations).toHaveLength(0);
   });
+
+  it('detects banned tokens embedded in multiline template literals', () => {
+    const source = [
+      'const gitGuidance = `',
+      '  Start by rebasing on origin/main',
+      '`;',
+      'const worktreeGuidance = `',
+      '  Then continue from worktrees/<lane>-wu-123',
+      '`;',
+    ].join('\n');
+
+    const violations = scanSourceTextForEmbeddedBannedPathTokens(
+      source,
+      'fixtures/multiline-template.ts',
+    );
+    const tokens = violations.map((v) => v.token);
+
+    expect(tokens).toContain('origin/main');
+    expect(tokens).toContain('worktrees/');
+  });
 });
 
 describe('WU-2093: AST path literal regression guard', () => {
@@ -413,6 +475,24 @@ describe('WU-2093: AST path literal regression guard', () => {
     }
 
     expect(allViolations).toHaveLength(0);
+  });
+
+  it('scans core spawn template generators for embedded banned path tokens', () => {
+    const violations: PathLiteralViolation[] = [];
+
+    for (const filePath of EMBEDDED_TEMPLATE_GUARD_FILES) {
+      violations.push(...scanFileForEmbeddedBannedPathTokens(filePath));
+    }
+
+    if (violations.length > 0) {
+      expect.fail(
+        `Found ${violations.length} embedded banned token(s) in core spawn template generators.\n\n` +
+          `These files render runtime prompt text and must remain config/constant driven.\n` +
+          `Violations:\n${formatViolationReport(violations)}`,
+      );
+    }
+
+    expect(violations).toHaveLength(0);
   });
 });
 

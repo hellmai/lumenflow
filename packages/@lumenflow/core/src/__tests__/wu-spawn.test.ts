@@ -583,6 +583,57 @@ describe('WU-1282: Task-spawned sub-agents must verify worktree discipline', () 
   });
 });
 
+describe('WU-2100: core spawn path configuration awareness', () => {
+  const mockWUDoc = {
+    title: 'Path-aware core spawn',
+    lane: TEST_LANE,
+    type: TEST_TYPE_FEATURE,
+    status: 'ready',
+    description: TEST_DESCRIPTION,
+    acceptance: ['AC1'],
+    code_paths: [TEST_CODE_PATH],
+  };
+
+  it('uses default worktree hint and main ref in task invocation output', () => {
+    const strategy = SpawnStrategyFactory.create(TEST_SPAWN_CLIENT);
+    const output = generateTaskInvocation(mockWUDoc, 'WU-TEST', strategy);
+
+    expect(output).toContain('cd worktrees/framework-core-wu-test');
+    expect(output).toContain('git rebase origin/main');
+  });
+
+  it('uses configured worktrees directory and git ref in task invocation output', () => {
+    const config = parseConfig({
+      directories: {
+        worktrees: 'sandbox/work-lanes',
+      },
+      git: {
+        defaultRemote: 'upstream',
+        mainBranch: 'trunk',
+      },
+    });
+    const strategy = SpawnStrategyFactory.create(TEST_SPAWN_CLIENT);
+    const output = generateTaskInvocation(mockWUDoc, 'WU-TEST', strategy, { config });
+
+    expect(output).toContain('cd sandbox/work-lanes/framework-core-wu-test');
+    expect(output).toContain('git rebase upstream/trunk');
+    expect(output).toContain('sandbox/work-lanes/');
+  });
+
+  it('uses configured worktree hint in codex prompt output', () => {
+    const config = parseConfig({
+      directories: {
+        worktrees: 'sandbox/work-lanes',
+      },
+    });
+    const strategy = SpawnStrategyFactory.create('codex-cli');
+    const output = generateCodexPrompt(mockWUDoc, 'WU-TEST', strategy, { config });
+
+    expect(output).toContain('- **Worktree:** sandbox/work-lanes/<lane>-wu-test');
+    expect(output).toContain('cd sandbox/work-lanes/framework-core-wu-test');
+  });
+});
+
 /**
  * WU-1290: Update Codex spawn prompt to reflect methodology policy
  *
