@@ -11,6 +11,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync, existsSync } from 'node:
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { stringify } from 'yaml';
+import { clearConfigCache, getResolvedPaths } from '@lumenflow/core/config';
 
 // We need to test with controlled directory structure
 // These tests use manual file creation to avoid circular dependencies
@@ -18,19 +19,29 @@ import { stringify } from 'yaml';
 describe('initiative-yaml', () => {
   let testDir: string;
   let originalCwd: string;
+  let initiativesDir: string;
+  let wuDir: string;
 
   beforeEach(() => {
+    clearConfigCache();
     originalCwd = process.cwd();
     testDir = mkdtempSync(join(tmpdir(), 'initiative-yaml-test-'));
     process.chdir(testDir);
 
+    // Resolve fixture paths from runtime config contract.
+    const resolved = getResolvedPaths({ projectRoot: testDir, strictWorkspace: false });
+    initiativesDir = resolved.initiativesDir;
+    wuDir = resolved.wuDir;
+
     // Create standard directory structure
-    mkdirSync(join(testDir, 'docs/04-operations/tasks/initiatives'), { recursive: true });
-    mkdirSync(join(testDir, 'docs/04-operations/tasks/wu'), { recursive: true });
+    mkdirSync(initiativesDir, { recursive: true });
+    mkdirSync(wuDir, { recursive: true });
   });
 
   afterEach(() => {
+    clearConfigCache();
     process.chdir(originalCwd);
+    clearConfigCache();
     if (testDir) {
       rmSync(testDir, { recursive: true, force: true });
     }
@@ -51,7 +62,7 @@ describe('initiative-yaml', () => {
       ...overrides,
     };
 
-    const filePath = join(testDir, 'docs/04-operations/tasks/initiatives', `${id}.yaml`);
+    const filePath = join(initiativesDir, `${id}.yaml`);
     writeFileSync(filePath, stringify(initiative, { lineWidth: 100 }), 'utf8');
     return initiative;
   }
@@ -73,7 +84,7 @@ describe('initiative-yaml', () => {
       ...overrides,
     };
 
-    const filePath = join(testDir, 'docs/04-operations/tasks/wu', `${id}.yaml`);
+    const filePath = join(wuDir, `${id}.yaml`);
     writeFileSync(filePath, stringify(wu, { lineWidth: 100 }), 'utf8');
     return wu;
   }
@@ -89,7 +100,7 @@ describe('initiative-yaml', () => {
       const mod = await import('../src/initiative-yaml.js');
       readInitiative = mod.readInitiative;
 
-      const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-001.yaml');
+      const filePath = join(initiativesDir, 'INIT-001.yaml');
       const result = readInitiative(filePath, 'INIT-001');
 
       expect(result.id).toBe('INIT-001');
@@ -101,12 +112,12 @@ describe('initiative-yaml', () => {
       const mod = await import('../src/initiative-yaml.js');
       readInitiative = mod.readInitiative;
 
-      const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/nonexistent.yaml');
+      const filePath = join(initiativesDir, 'nonexistent.yaml');
       expect(() => readInitiative(filePath, 'INIT-999')).toThrow(/Initiative file not found/);
     });
 
     it('should throw error if YAML is invalid', async () => {
-      const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-001.yaml');
+      const filePath = join(initiativesDir, 'INIT-001.yaml');
       writeFileSync(filePath, 'invalid: yaml: content:', 'utf8');
 
       const mod = await import('../src/initiative-yaml.js');
@@ -121,13 +132,13 @@ describe('initiative-yaml', () => {
       const mod = await import('../src/initiative-yaml.js');
       readInitiative = mod.readInitiative;
 
-      const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-002.yaml');
+      const filePath = join(initiativesDir, 'INIT-002.yaml');
       expect(() => readInitiative(filePath, 'INIT-001')).toThrow(/id mismatch/);
     });
 
     it('should throw error if Initiative fails schema validation', async () => {
       // Create initiative missing required fields
-      const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-003.yaml');
+      const filePath = join(initiativesDir, 'INIT-003.yaml');
       writeFileSync(filePath, stringify({ id: 'INIT-003' }), 'utf8');
 
       const mod = await import('../src/initiative-yaml.js');
@@ -152,7 +163,7 @@ describe('initiative-yaml', () => {
         description: 'Testing writeInitiative function',
       };
 
-      const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-100.yaml');
+      const filePath = join(initiativesDir, 'INIT-100.yaml');
       writeInitiative(filePath, doc);
 
       expect(existsSync(filePath)).toBe(true);
@@ -166,7 +177,7 @@ describe('initiative-yaml', () => {
   });
 
   it('should keep date fields as strings when unquoted', async () => {
-    const filePath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-004.yaml');
+    const filePath = join(initiativesDir, 'INIT-004.yaml');
     writeFileSync(
       filePath,
       [
@@ -190,7 +201,7 @@ describe('initiative-yaml', () => {
   describe('listInitiatives', async () => {
     it('should return empty array if directory does not exist', async () => {
       // Remove the initiatives directory
-      rmSync(join(testDir, 'docs/04-operations/tasks/initiatives'), {
+      rmSync(initiativesDir, {
         recursive: true,
         force: true,
       });
@@ -221,7 +232,7 @@ describe('initiative-yaml', () => {
       createInitiative('INIT-001');
 
       // Create invalid file
-      const invalidPath = join(testDir, 'docs/04-operations/tasks/initiatives/INIT-BAD.yaml');
+      const invalidPath = join(initiativesDir, 'INIT-BAD.yaml');
       writeFileSync(invalidPath, 'invalid: yaml: content:', 'utf8');
 
       const mod = await import('../src/initiative-yaml.js');
@@ -236,7 +247,7 @@ describe('initiative-yaml', () => {
       createInitiative('INIT-001');
 
       // Create file with wrong pattern
-      const wrongPath = join(testDir, 'docs/04-operations/tasks/initiatives/not-an-init.yaml');
+      const wrongPath = join(initiativesDir, 'not-an-init.yaml');
       writeFileSync(wrongPath, stringify({ id: 'not-an-init', slug: 'test' }), 'utf8');
 
       const mod = await import('../src/initiative-yaml.js');
@@ -342,7 +353,7 @@ describe('initiative-yaml', () => {
     });
 
     it('should return empty if WU directory does not exist', async () => {
-      rmSync(join(testDir, 'docs/04-operations/tasks/wu'), { recursive: true, force: true });
+      rmSync(wuDir, { recursive: true, force: true });
 
       const mod = await import('../src/initiative-yaml.js');
       const { getInitiativeWUs } = mod;
@@ -438,11 +449,11 @@ describe('initiative-yaml', () => {
 
   describe('buildInitiativeMap', async () => {
     it('should return empty map for no initiatives', async () => {
-      rmSync(join(testDir, 'docs/04-operations/tasks/initiatives'), {
+      rmSync(initiativesDir, {
         recursive: true,
         force: true,
       });
-      mkdirSync(join(testDir, 'docs/04-operations/tasks/initiatives'), { recursive: true });
+      mkdirSync(initiativesDir, { recursive: true });
 
       const mod = await import('../src/initiative-yaml.js');
       const { buildInitiativeMap } = mod;
