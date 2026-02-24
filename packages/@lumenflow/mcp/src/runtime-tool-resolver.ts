@@ -2074,7 +2074,7 @@ const validateInProcess: InProcessToolFn = async (rawInput, context) => {
 };
 
 /**
- * validate:agent-skills handler — scans skill YAML files for required fields
+ * validate:agent-skills handler — scans configured skill YAML files for required fields
  */
 const validateAgentSkillsInProcess: InProcessToolFn = async (rawInput, context) => {
   const parsedInput = VALIDATE_AGENT_SKILLS_INPUT_SCHEMA.safeParse(rawInput ?? {});
@@ -2203,7 +2203,7 @@ const validateBacklogSyncInProcess: InProcessToolFn = async (_rawInput, context)
 };
 
 /**
- * validate:skills-spec handler — validates skills specification YAML files
+ * validate:skills-spec handler — validates configured skills specification YAML files
  */
 const validateSkillsSpecInProcess: InProcessToolFn = async (_rawInput, context) => {
   try {
