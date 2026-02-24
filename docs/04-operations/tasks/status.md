@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2133 — Restore enforcement guard integrity in core](wu/WU-2133.yaml)
 
 ## Completed
 

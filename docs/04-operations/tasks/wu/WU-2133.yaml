@@ -2,7 +2,7 @@ id: WU-2133
 title: Restore enforcement guard integrity in core
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-02-24
 code_paths:
@@ -46,3 +46,11 @@ acceptance:
   - WU inconsistency repairer tests assert the current createStampInWorktree call contract and
     remain isolated from stale mock call history
   - Targeted core enforcement and repairer test suite passes
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2133
+claimed_at: 2026-02-24T23:35:03.556Z
+baseline_main_sha: 049f036d2db2e5ac2692b10fb08a0439741449f1
+session_id: 50358513-fc6f-4f75-96b7-0fa347836216
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T23:35:03.564Z
