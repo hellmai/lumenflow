@@ -2,7 +2,7 @@ id: WU-2095
 title: Eliminate pending CLI runtime path literals (INIT-036)
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-23
 code_paths:
@@ -48,3 +48,6 @@ acceptance:
   - path-literal-guard no longer needs these CLI files in INIT-036 pending allowlist
   - CLI behavior remains backward-compatible for default OS layout and honors configured directory
     overrides
+locked: true
+completed_at: 2026-02-24T00:36:58.087Z
+completed: 2026-02-24
