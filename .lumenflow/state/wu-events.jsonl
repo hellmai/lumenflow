@@ -2207,3 +2207,4 @@
 {"type":"claim","wuId":"WU-2127","timestamp":"2026-02-24T22:26:09.468Z","lane":"Framework: Core Lifecycle","title":"Split monolithic enforcement-checks module into focused path-utils, config-resolver, git-status-parser, dirty-guard modules"}
 {"type":"claim","wuId":"WU-2126","timestamp":"2026-02-24T22:26:55.861Z","lane":"Framework: Core Lifecycle","title":"Wire clearConfigCache() to config-mutating operations (wu:done, config:set)"}
 {"type":"complete","wuId":"WU-2127","timestamp":"2026-02-24T22:37:08.278Z"}
+{"type":"claim","wuId":"WU-2128","timestamp":"2026-02-24T22:38:39.994Z","lane":"Framework: Core Lifecycle","title":"Standardize error return contracts: ports throw, adapters return Result, CLI catches"}
