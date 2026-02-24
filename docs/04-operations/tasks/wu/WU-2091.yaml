@@ -6,7 +6,6 @@ status: in_progress
 priority: P1
 created: 2026-02-23
 code_paths:
-  - packages/@lumenflow/cli/src/hooks/enforcement-checks.ts
   - packages/@lumenflow/cli/src/hooks/generators/enforce-worktree.ts
   - packages/@lumenflow/cli/src/guard-locked.ts
   - packages/@lumenflow/cli/src/guard-worktree-commit.ts
@@ -35,10 +34,17 @@ plan: lumenflow://plans/INIT-036-plan.md
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-24T00:38:27.990Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-2091
+session_id: b074d986-2514-4618-8047-35dcaa8f0b66
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T00:38:27.996Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -52,11 +58,3 @@ acceptance:
   - CLI enforcement tests pass under default layout and preserve behavior for customized directories
   - worktree guidance fallback text in spawn prompts/guidance uses configured directories.worktrees
     instead of hardcoded worktrees/ literals
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-enforcement-wu-2091
-claimed_at: 2026-02-24T00:38:27.990Z
-baseline_main_sha: 69c0334d725c0764406ee72d59a6bf41cd2ab094
-session_id: b074d986-2514-4618-8047-35dcaa8f0b66
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-24T00:38:27.996Z
