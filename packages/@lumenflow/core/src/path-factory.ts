@@ -102,10 +102,13 @@ export function createPathFactory(options: PathFactoryOptions = {}): PathFactory
     },
 
     resolveLumenflowPath(key: LumenflowPathKey): string {
-      const relativePath = LUMENFLOW_PATHS[key];
-      if (relativePath === undefined) {
+      // TypeScript enforces key validity at compile time via LumenflowPathKey type.
+      // Runtime check uses 'in' operator for defense-in-depth without triggering
+      // sonarjs/different-types-comparison on the value check.
+      if (!(key in LUMENFLOW_PATHS)) {
         throw new Error(`Unknown LUMENFLOW_PATHS key: ${String(key)}`);
       }
+      const relativePath = LUMENFLOW_PATHS[key];
       return path.join(projectRoot, String(relativePath));
     },
   };
