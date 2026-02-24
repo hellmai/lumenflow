@@ -2,7 +2,7 @@ id: WU-2095
 title: Eliminate pending CLI runtime path literals (INIT-036)
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-23
 code_paths:
@@ -27,7 +27,8 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-unblock.ts
 tests:
   manual:
-    - Run primary CLI lifecycle commands with default config and one overridden docs/worktrees layout; verify user-facing guidance paths remain correct
+    - Run primary CLI lifecycle commands with default config and one overridden docs/worktrees
+      layout; verify user-facing guidance paths remain correct
   unit:
     - packages/@lumenflow/core/src/__tests__/path-literal-guard.test.ts
   e2e: []
@@ -46,8 +47,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Migrate remaining CLI runtime files on the INIT-036 allowlist to config/constants-driven path and ref resolution, removing hardcoded docs/worktrees/origin-main style literals in command behavior and operator guidance.
+description: Migrate remaining CLI runtime files on the INIT-036 allowlist to
+  config/constants-driven path and ref resolution, removing hardcoded docs/worktrees/origin-main
+  style literals in command behavior and operator guidance.
 acceptance:
   - All listed CLI runtime files are free of banned runtime path literals
   - path-literal-guard no longer needs these CLI files in INIT-036 pending allowlist
-  - CLI behavior remains backward-compatible for default OS layout and honors configured directory overrides
+  - CLI behavior remains backward-compatible for default OS layout and honors configured directory
+    overrides
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2095
+claimed_at: 2026-02-24T00:27:13.288Z
+baseline_main_sha: de135a3572b42965bd70453683d2e8c5974b6a96
+session_id: e8be12d1-6a00-4760-8d6c-3752b5d08009
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T00:27:13.294Z
