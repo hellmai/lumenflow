@@ -2,7 +2,7 @@ id: WU-2122
 title: Move hardcoded escalation email from wu-schema.ts to workspace.yaml
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -50,3 +50,6 @@ session_id: cc8fd941-79a9-4d23-b19a-8e697a05888d
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-24T20:43:27.498Z
+locked: true
+completed_at: 2026-02-24T20:49:38.076Z
+completed: 2026-02-24
