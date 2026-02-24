@@ -2,7 +2,7 @@ id: WU-2111
 title: Add AST guard banning throw new Error() in production code
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-24
 code_paths:
@@ -46,3 +46,11 @@ acceptance:
   - Guard uses dynamic baseline (fails if count increases above baseline)
   - A deliberate new throw new Error() in production code causes guard to fail
   - pnpm test --testNamePattern=error-pattern-guard passes
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2111
+claimed_at: 2026-02-24T20:28:22.264Z
+baseline_main_sha: 39f5b9dee8a84d29a8e3845a026c15098f53e773
+session_id: ce228c30-8633-4460-9c15-098f3f33bc45
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T20:28:22.272Z
