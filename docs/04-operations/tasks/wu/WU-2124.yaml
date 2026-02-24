@@ -24,10 +24,10 @@ blocked_by:
 spec_refs:
   - /home/tom/.claude/plans/wild-foraging-taco.md
 risks: []
-notes: 'Single-session: ~6 files across 3 packages. Not a shallow multi-file exception — this
-  requires designing and implementing a new PathFactory API and updating 3 independent call
-  patterns. Medium complexity. Sized as Simple (under 20 files, estimated ~40 tool calls). Plan:
-  wild-foraging-taco.md Phase 3 WU-L.'
+notes: 'Single-session: ~6 files across 3 packages (core, cli, mcp). Requires designing and
+  implementing a new PathFactory API and migrating 3 independent call patterns. Sized as Simple per
+  wu-sizing-guide.md (under 20 files, estimated ~40 tool calls). Plan: wild-foraging-taco.md Phase 3
+  WU-L.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
