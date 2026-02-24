@@ -6,9 +6,7 @@ status: ready
 priority: P1
 created: 2026-02-24
 code_paths:
-  - packages/@lumenflow/core/src/state-cleanup.ts
-  - packages/@lumenflow/core/src/state-bootstrap.ts
-  - packages/@lumenflow/cli/src/validate-agent-sync.ts
+  - packages/@lumenflow/cli/src/state-bootstrap.ts
 tests:
   manual:
     - Verify path-literal-guard file extension ratchet reports zero new violations after changes
