@@ -8,23 +8,9 @@ created: 2026-02-23
 code_paths:
   - packages/@lumenflow/cli/src/config-set.ts
   - packages/@lumenflow/cli/src/docs-sync.ts
-  - packages/@lumenflow/cli/src/doctor.ts
-  - packages/@lumenflow/cli/src/gates-runners.ts
-  - packages/@lumenflow/cli/src/gates-utils.ts
   - packages/@lumenflow/cli/src/hooks/enforcement-checks.ts
   - packages/@lumenflow/cli/src/init-lane-validation.ts
-  - packages/@lumenflow/cli/src/mem-checkpoint.ts
   - packages/@lumenflow/cli/src/workspace-init.ts
-  - packages/@lumenflow/cli/src/wu-block.ts
-  - packages/@lumenflow/cli/src/wu-claim-resume-handler.ts
-  - packages/@lumenflow/cli/src/wu-claim.ts
-  - packages/@lumenflow/cli/src/wu-done-auto-cleanup.ts
-  - packages/@lumenflow/cli/src/wu-edit-validators.ts
-  - packages/@lumenflow/cli/src/wu-edit.ts
-  - packages/@lumenflow/cli/src/wu-recover.ts
-  - packages/@lumenflow/cli/src/wu-release.ts
-  - packages/@lumenflow/cli/src/wu-spawn-strategy-resolver.ts
-  - packages/@lumenflow/cli/src/wu-unblock.ts
 tests:
   manual:
     - Run primary CLI lifecycle commands with default config and one overridden docs/worktrees
@@ -40,10 +26,17 @@ phase: 1
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-24T00:27:13.288Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2095
+session_id: e8be12d1-6a00-4760-8d6c-3752b5d08009
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T00:27:13.294Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -55,11 +48,3 @@ acceptance:
   - path-literal-guard no longer needs these CLI files in INIT-036 pending allowlist
   - CLI behavior remains backward-compatible for default OS layout and honors configured directory
     overrides
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2095
-claimed_at: 2026-02-24T00:27:13.288Z
-baseline_main_sha: de135a3572b42965bd70453683d2e8c5974b6a96
-session_id: e8be12d1-6a00-4760-8d6c-3752b5d08009
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-24T00:27:13.294Z
