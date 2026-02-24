@@ -1,0 +1,42 @@
+id: WU-2132
+title: Enforce TDD provenance and wu:brief evidence in WU lifecycle
+lane: 'Framework: CLI WU Commands'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-24
+code_paths:
+  - packages/@lumenflow/cli/src/wu-brief.ts
+  - packages/@lumenflow/cli/src/wu-prep.ts
+  - packages/@lumenflow/cli/src/wu-done.ts
+  - packages/@lumenflow/core/src/wu-event-sourcer.ts
+tests:
+  manual:
+    - Run pnpm wu:brief --id <WU> then verify wu:prep/wu:done enforcement blocks when evidence is missing and passes when present
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2132.done
+dependencies: []
+initiative: INIT-037
+phase: 4
+spec_refs:
+  - /home/USER/.claude/plans/wild-foraging-taco.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Add lifecycle enforcement so feature/bug WUs must provide TDD provenance before completion. Capture wu:brief execution evidence in WU state and require that evidence during wu:prep/wu:done unless an explicit force-bypass reason is supplied. This closes the gap where agents can skip brief context and implement without test-first discipline.
+acceptance:
+  - wu:brief writes auditable execution evidence tied to WU ID and timestamp
+  - wu:prep fails feature/bug WUs when no TDD evidence exists in working diff (tests touched) and no explicit documented exception
+  - wu:done validates wu:brief evidence exists for claimed WU before completion, with force-bypass audit path unchanged
+  - CLI unit tests cover pass/fail paths for new enforcement in wu:brief, wu:prep, wu:done
