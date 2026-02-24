@@ -1,0 +1,40 @@
+id: WU-2107
+title: Wire version-policy.yaml into pnpm release and bump to 3.4.0
+lane: 'Framework: CLI WU Commands'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-24
+code_paths:
+  - packages/@lumenflow/cli/src/release.ts
+  - apps/docs/src/data/version-policy.yaml
+tests:
+  manual:
+    - Run pnpm release --dry-run --release-version 9.9.9 and verify version-policy.yaml would be updated
+  unit:
+    - packages/@lumenflow/cli/tests/release-version-policy.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2107.done
+dependencies: []
+plan: lumenflow://plans/WU-2107-plan.md
+spec_refs:
+  - lumenflow://plans/WU-2107-plan.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: The version-policy.yaml truth file (apps/docs/src/data/version-policy.yaml) was introduced in WU-2071 but never integrated into pnpm release. It has been manually bumped via WUs (WU-2071 set 3.2.0, WU-2104 set 3.3.0). The release command should automatically bump published_stable.version and release_tag in this file as part of the micro-worktree version bump step. Currently stuck at 3.3.0 after v3.4.0 release.
+acceptance:
+  - pnpm release bumps version-policy.yaml published_stable.version to the release version
+  - pnpm release bumps version-policy.yaml published_stable.release_tag to vX.Y.Z
+  - pnpm release updates version-policy.yaml validated_on to current date
+  - version-policy.yaml currently reads 3.4.0 after this WU completes
+  - Existing release unit tests pass
+  - New unit test covers version-policy bump
