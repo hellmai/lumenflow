@@ -1,0 +1,42 @@
+id: WU-2128
+title: 'Standardize error return contracts: ports throw, adapters return Result, CLI catches'
+lane: 'Framework: Core Lifecycle'
+type: refactor
+status: ready
+priority: P2
+created: 2026-02-24
+code_paths:
+  - packages/@lumenflow/core/src/ports/
+  - packages/@lumenflow/core/src/adapters/
+  - packages/@lumenflow/core/src/usecases/
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/core/src/__tests__/
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2128.done
+dependencies: []
+initiative: INIT-037
+phase: 4
+blocked_by:
+  - WU-2116
+  - WU-2117
+spec_refs:
+  - /home/USER/.claude/plans/wild-foraging-taco.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Currently some functions return null on failure, some throw, some return {valid: boolean}. No documented or enforced contract. Standardize: ports throw (boundary contracts), adapters return Result<T,E> discriminated union, CLI command handlers catch and format for output. Document the contract in a brief ADR. Update affected port/adapter/use-case interfaces to match the standard.'
+acceptance:
+  - 'Contract documented: ports throw, adapters return Result<T,E>, CLI catches'
+  - Core port interfaces updated to use consistent error contracts
+  - Key adapters (SimpleGitLocationAdapter, FileSystemWuStateAdapter) return Result types
+  - pnpm test --filter=@lumenflow/core passes
