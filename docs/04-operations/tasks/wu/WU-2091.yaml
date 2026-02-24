@@ -15,7 +15,9 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
   - packages/@lumenflow/core/src/spawn-guidance-generators.ts
 tests:
-  manual: []
+  manual:
+    - Run hook/enforcement flows under default and overridden directories.wuDir/worktreesDir; verify
+      emitted guidance and allowlists match configured paths.
   unit:
     - packages/@lumenflow/cli/src/__tests__/hooks/enforcement.test.ts
     - packages/@lumenflow/cli/src/__tests__/strict-flags-enforcement.test.ts
