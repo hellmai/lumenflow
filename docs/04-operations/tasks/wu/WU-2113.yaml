@@ -9,7 +9,8 @@ code_paths:
   - packages/@lumenflow/core/src/wu-context-constants.ts
   - packages/@lumenflow/core/src/__tests__/path-literal-guard.test.ts
 tests:
-  manual: []
+  manual:
+    - Run pnpm test --testNamePattern=path-literal-guard and verify LUMENFLOW_ banned rule tests pass
   unit:
     - packages/@lumenflow/core/src/__tests__/path-literal-guard.test.ts
   e2e: []
@@ -32,9 +33,14 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Raw LUMENFLOW_ env var strings are scattered across codebase (process.env.LUMENFLOW_HEADLESS, LUMENFLOW_ADMIN, LUMENFLOW_FORCE, etc.) without using a central ENV_VARS constant. Step 1: Create ENV_VARS constant object in core/src/wu-context-constants.ts. Step 2: Add banned rule to path-literal-guard scanning for LUMENFLOW_ pattern in string literals, allowlisting the constants file. Catches both process.env.X and string comparisons.'
+description: 'Raw LUMENFLOW_ env var strings are scattered across codebase
+  (process.env.LUMENFLOW_HEADLESS, LUMENFLOW_ADMIN, LUMENFLOW_FORCE, etc.) without using a central
+  ENV_VARS constant. Step 1: Create ENV_VARS constant object in core/src/wu-context-constants.ts.
+  Step 2: Add banned rule to path-literal-guard scanning for LUMENFLOW_ pattern in string literals,
+  allowlisting the constants file. Catches both process.env.X and string comparisons.'
 acceptance:
-  - ENV_VARS constant created in packages/@lumenflow/core/src/wu-context-constants.ts with all LUMENFLOW_* env var names
+  - ENV_VARS constant created in packages/@lumenflow/core/src/wu-context-constants.ts with all
+    LUMENFLOW_* env var names
   - path-literal-guard extended with LUMENFLOW_ banned pattern
   - Allowlist excludes wu-context-constants.ts (canonical definition)
   - Guard catches process.env.LUMENFLOW_HEADLESS-style literals in test run
