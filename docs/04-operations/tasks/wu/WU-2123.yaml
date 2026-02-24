@@ -9,7 +9,8 @@ code_paths:
   - packages/@lumenflow/cli/src/gate-registry.ts
   - packages/@lumenflow/cli/src/gates-utils.ts
 tests:
-  manual: []
+  manual:
+    - Verify GateLogContext type exists only in gates-utils.ts and is imported in gate-registry.ts
   unit:
     - packages/@lumenflow/cli/src/__tests__/
   e2e: []
@@ -32,7 +33,10 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'GateLogContext type is defined identically in two files: cli/src/gate-registry.ts:19-23 and cli/src/gates-utils.ts:35-39. Define once in gates-utils.ts and import in gate-registry.ts. Classic DRY violation — two identical type definitions that will drift over time.'
+description: 'GateLogContext type is defined identically in two files:
+  cli/src/gate-registry.ts:19-23 and cli/src/gates-utils.ts:35-39. Define once in gates-utils.ts and
+  import in gate-registry.ts. Classic DRY violation — two identical type definitions that will drift
+  over time.'
 acceptance:
   - GateLogContext defined only in gates-utils.ts
   - gate-registry.ts imports GateLogContext from gates-utils.ts
