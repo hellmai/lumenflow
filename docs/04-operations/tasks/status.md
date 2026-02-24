@@ -5,6 +5,7 @@ _Last updated: 2026-02-24_
 ## In Progress
 
 - [WU-2097 — Remove pending Memory runtime path literal debt (INIT-036)](wu/WU-2097.yaml)
+- [WU-2099 — DRY path resolvers and lazy-load module-level config (INIT-036 cleanup)](wu/WU-2099.yaml)
 
 ## Completed
 
