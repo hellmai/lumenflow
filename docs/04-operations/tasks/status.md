@@ -5,6 +5,7 @@ _Last updated: 2026-02-24_
 ## In Progress
 
 - [WU-2126 — Wire clearConfigCache() to config-mutating operations (wu:done, config:set)](wu/WU-2126.yaml)
+- [WU-2128 — Standardize error return contracts: ports throw, adapters return Result, CLI catches](wu/WU-2128.yaml)
 
 ## Completed
 

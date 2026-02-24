@@ -2,7 +2,7 @@ id: WU-2128
 title: 'Standardize error return contracts: ports throw, adapters return Result, CLI catches'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -51,3 +51,11 @@ acceptance:
   - Core port interfaces updated to use consistent error contracts
   - Key adapters (SimpleGitLocationAdapter, FileSystemWuStateAdapter) return Result types
   - pnpm test --filter=@lumenflow/core passes
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2128
+claimed_at: 2026-02-24T22:38:39.968Z
+baseline_main_sha: cb2814908e40705d7ccd8bfb9b024a2d1dc8343b
+session_id: 497a0c0f-089a-488b-bf3c-f1cd913b9e79
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T22:38:39.975Z
