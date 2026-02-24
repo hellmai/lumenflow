@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-- [WU-2103 — Add Discord and Twitter badges to README](wu/WU-2103.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1030,3 +1030,4 @@ _Last updated: 2026-02-24_
 - [WU-2101 — Add schemas/ dir to doc-source pathspecs for wu:done auto-regen](wu/WU-2101.yaml) — 2026-02-24
 - [WU-2102 — wu:prep checkpoint enables wu:done gate skip + scoped test fallback](wu/WU-2102.yaml) — 2026-02-24
 - [WU-2104 — Remove stale GitHub App artifacts and release doc references](wu/WU-2104.yaml) — 2026-02-24
+- [WU-2103 — Add Discord and Twitter badges to README](wu/WU-2103.yaml) — 2026-02-24

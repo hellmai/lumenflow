@@ -2,7 +2,7 @@ id: WU-2103
 title: Add Discord and Twitter badges to README
 lane: 'Content: Site Comms'
 type: documentation
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -39,3 +39,6 @@ session_id: 91bc0fd7-7ccd-4fa7-a540-6d0263c0d594
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-24T14:51:26.203Z
+locked: true
+completed_at: 2026-02-24T15:25:17.454Z
+completed: 2026-02-24
