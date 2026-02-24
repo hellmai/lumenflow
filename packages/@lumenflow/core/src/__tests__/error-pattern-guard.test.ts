@@ -247,7 +247,7 @@ describe('WU-2111: throw new Error() AST error-pattern guard', () => {
   it('detects throw new Error() via AST', () => {
     const source = [
       "throw new Error('something went wrong');",
-      "throw new Error(`template ${msg}`);",
+      'throw new Error(`template ${msg}`);',
       'const safe = new Error();', // not a throw statement
       "throw createError(ErrorCodes.INVALID, 'msg');", // not new Error
     ].join('\n');
@@ -371,9 +371,7 @@ describe('WU-2111: throw new Error() ratcheting regression guard', () => {
       );
     } else {
       // First run: baseline established
-      console.log(
-        `throw new Error() ratchet: baseline established at ${currentCount} occurrences`,
-      );
+      console.log(`throw new Error() ratchet: baseline established at ${currentCount} occurrences`);
     }
 
     // The test itself passes as long as count does not increase
