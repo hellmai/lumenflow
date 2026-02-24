@@ -2,7 +2,7 @@ id: WU-2125
 title: Extract shared YAML parse logic from readWU() and readWUAsync() into helper
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-24
 code_paths:
@@ -41,3 +41,11 @@ acceptance:
   - Both readWU() and readWUAsync() delegate to the same helper
   - No logic duplication between sync and async variants
   - pnpm test --filter=@lumenflow/core passes
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2125
+claimed_at: 2026-02-24T22:12:48.731Z
+baseline_main_sha: a0b05ab43924b5eed6cd0f38000d6366d57fb53f
+session_id: 58e2ecb2-7865-4adc-8a0b-d22139c6b900
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T22:12:48.737Z
