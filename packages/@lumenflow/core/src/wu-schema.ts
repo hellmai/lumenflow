@@ -32,6 +32,7 @@ import {
 } from './wu-constants.js';
 import { createWuPaths } from './wu-paths.js';
 import { normalizeISODateTime } from './date-utils.js';
+import { getConfig } from './lumenflow-config.js';
 
 /**
  * Valid WU status values derived from WU_STATUS constant (DRY principle)
@@ -767,12 +768,16 @@ export function validateDoneWU(wu: WUDoneValidationInput): { valid: boolean; err
 }
 
 /**
- * WU-2080: Human escalation email for notifications
+ * WU-2122: Get escalation email from workspace.yaml configuration.
  *
- * When escalation triggers fire, this email receives notification.
- * In production, this would integrate with PagerDuty/Slack.
+ * Reads `software_delivery.escalation.email` via getConfig() with a
+ * sensible fallback default defined in EscalationConfigSchema.
+ *
+ * @returns Configured escalation email address
  */
-const ESCALATION_EMAIL = 'tom@hellm.ai';
+function getEscalationEmail(): string {
+  return getConfig().escalation.email;
+}
 
 /**
  * WU-2080: Valid escalation trigger types
@@ -821,7 +826,7 @@ export function validateApprovalGates(wu: WUEscalationInput): {
     if (!resolved) {
       errors.push(
         `Human escalation required for: ${triggers.join(', ')}\n` +
-          `   To resolve: Add escalation_resolved_by: "${ESCALATION_EMAIL}" and escalation_resolved_at to WU YAML\n` +
+          `   To resolve: Add escalation_resolved_by: "${getEscalationEmail()}" and escalation_resolved_at to WU YAML\n` +
           `   Or use: pnpm wu:escalate --resolve --id ${wu.id}`,
       );
     }
