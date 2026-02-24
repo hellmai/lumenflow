@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2124 — Extract shared path factory in core to replace 3 independent resolution patterns](wu/WU-2124.yaml)
 
 ## Completed
 

@@ -2200,3 +2200,4 @@
 {"type":"complete","wuId":"WU-2119","timestamp":"2026-02-24T21:52:33.359Z"}
 {"type":"complete","wuId":"WU-2118","timestamp":"2026-02-24T22:03:13.522Z"}
 {"type":"complete","wuId":"WU-2117","timestamp":"2026-02-24T22:09:31.120Z"}
+{"type":"claim","wuId":"WU-2124","timestamp":"2026-02-24T22:12:07.099Z","lane":"Framework: Core Lifecycle","title":"Extract shared path factory in core to replace 3 independent resolution patterns"}
