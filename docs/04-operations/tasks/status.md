@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2106 — Eliminate residual hardcoded docs-layout literals and audit config-driven abstraction](wu/WU-2106.yaml)
 
 ## Completed
 

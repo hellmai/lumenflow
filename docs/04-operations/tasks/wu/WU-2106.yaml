@@ -2,7 +2,7 @@ id: WU-2106
 title: Eliminate residual hardcoded docs-layout literals and audit config-driven abstraction
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-24
 code_paths:
@@ -50,3 +50,11 @@ acceptance:
   - Targeted tests cover changed behavior and pass.
   - Audit summary identifies any remaining high-risk hardcoded patterns and whether they are
     preset-definitions, docs/examples, tests, or runtime code.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2106
+claimed_at: 2026-02-24T17:11:25.879Z
+baseline_main_sha: 5cba0d8e59111185bbaa7017b563dd979d2a3a45
+session_id: 2da976ca-0756-498c-b9b4-7609fe4d4d76
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T17:11:25.885Z
