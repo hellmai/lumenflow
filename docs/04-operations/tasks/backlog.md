@@ -24,14 +24,13 @@ sections:
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2091 — Align CLI hooks and enforcement messaging with configurable paths](wu/WU-2091.yaml) — Framework: CLI Enforcement
 - [WU-2092 — Consolidate path constants and cross-package parity contracts](wu/WU-2092.yaml) — Framework: Core Lifecycle
-- [WU-2095 — Eliminate pending CLI runtime path literals (INIT-036)](wu/WU-2095.yaml) — Framework: CLI WU Commands
 - [WU-2096 — Remove pending MCP runtime path literal debt (INIT-036)](wu/WU-2096.yaml) — Framework: MCP
 - [WU-2097 — Remove pending Memory runtime path literal debt (INIT-036)](wu/WU-2097.yaml) — Framework: Memory
 - [WU-2098 — Make wu:brief / wu:spawn prompt templates path-config aware](wu/WU-2098.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2095 — Eliminate pending CLI runtime path literals (INIT-036)](wu/WU-2095.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 

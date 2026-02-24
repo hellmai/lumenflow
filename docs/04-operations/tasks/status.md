@@ -4,7 +4,7 @@ _Last updated: 2026-02-24_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2095 — Eliminate pending CLI runtime path literals (INIT-036)](wu/WU-2095.yaml)
 
 ## Completed
 

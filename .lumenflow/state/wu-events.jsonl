@@ -2132,3 +2132,4 @@
 {"type":"complete","wuId":"WU-2090","timestamp":"2026-02-23T21:49:25.857Z"}
 {"type":"claim","wuId":"WU-2094","timestamp":"2026-02-23T23:58:08.928Z","lane":"Framework: Core Lifecycle","title":"Purge residual path literals in core config and prompt helpers"}
 {"type":"complete","wuId":"WU-2094","timestamp":"2026-02-24T00:26:03.873Z"}
+{"type":"claim","wuId":"WU-2095","timestamp":"2026-02-24T00:27:13.339Z","lane":"Framework: CLI WU Commands","title":"Eliminate pending CLI runtime path literals (INIT-036)"}
