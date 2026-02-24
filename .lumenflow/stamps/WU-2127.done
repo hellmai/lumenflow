@@ -1,0 +1,2 @@
+WU WU-2127 — Split monolithic enforcement-checks module into focused path-utils, config-resolver, git-status-parser, dirty-guard modules
+Completed: 2026-02-24

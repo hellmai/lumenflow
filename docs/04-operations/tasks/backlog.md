@@ -20,14 +20,13 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2132 — Enforce TDD provenance and wu:brief evidence in WU lifecycle](wu/WU-2132.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2128 — Standardize error return contracts: ports throw, adapters return Result, CLI catches](wu/WU-2128.yaml) — Framework: Core Lifecycle
+- [WU-2132 — Enforce TDD provenance and wu:brief evidence in WU lifecycle](wu/WU-2132.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
-- [WU-2127 — Split monolithic enforcement-checks module into focused path-utils, config-resolver, git-status-parser, dirty-guard modules](wu/WU-2127.yaml) — Framework: Core Lifecycle
 - [WU-2126 — Wire clearConfigCache() to config-mutating operations (wu:done, config:set)](wu/WU-2126.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
@@ -1083,6 +1082,7 @@ sections:
 - [WU-2117 — Migrate throw new Error() to createError() in @lumenflow/cli (batch)](wu/WU-2117.yaml)
 - [WU-2125 — Extract shared YAML parse logic from readWU() and readWUAsync() into helper](wu/WU-2125.yaml)
 - [WU-2124 — Extract shared path factory in core to replace 3 independent resolution patterns](wu/WU-2124.yaml)
+- [WU-2127 — Split monolithic enforcement-checks module into focused path-utils, config-resolver, git-status-parser, dirty-guard modules](wu/WU-2127.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
