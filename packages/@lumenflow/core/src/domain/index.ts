@@ -39,6 +39,20 @@ export {
 // Includes RecoveryIssueCode and RecoveryActionType enum constants
 export * from './recovery.schemas.js';
 
+// Result type (WU-2128: Standardize error return contracts)
+export {
+  ok,
+  fail,
+  unwrap,
+  unwrapOr,
+  mapResult,
+  tryCatch,
+  tryCatchAsync,
+  type Result,
+  type Success,
+  type Failure,
+} from './result.js';
+
 // Orchestration schemas (existing)
 export * from './orchestration.schemas.js';
 export * from './orchestration.constants.js';
