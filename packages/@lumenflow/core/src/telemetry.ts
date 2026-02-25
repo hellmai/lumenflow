@@ -67,6 +67,7 @@ const FLOW_LOG = LUMENFLOW_PATHS.FLOW_LOG;
 const WORKSPACE_FILE = 'workspace.yaml';
 const CLOUD_SYNC_STATE_FILE = `${TELEMETRY_DIR}/cloud-sync-state${FILE_EXTENSIONS.JSON}`;
 const CLOUD_SYNC_LOG_PREFIX = '[telemetry:cloud-sync]';
+const PACK_KEY_SOFTWARE_DELIVERY = 'software_delivery';
 const CONTROL_PLANE_FIELD = 'control_plane';
 const CONTROL_PLANE_AUTH_FIELD = 'auth';
 const CONTROL_PLANE_ENDPOINT_FIELD = 'endpoint';
@@ -724,6 +725,58 @@ async function pushTelemetryBatch(input: {
   }
 }
 
+/** Diagnostic warning for a config key found at the wrong nesting level */
+export interface MisnestedControlPlaneWarning {
+  /** Human-readable description of the misnesting */
+  readonly message: string;
+  /** The dotted path where the key was incorrectly found */
+  readonly detectedPath: string;
+  /** Remediation instruction with a specific CLI command */
+  readonly remediation: string;
+}
+
+/**
+ * Detect when `control_plane` is misnested under a pack block (e.g. `software_delivery`)
+ * instead of being at the workspace root.
+ *
+ * Pure function: no I/O, no side effects. Suitable for direct unit testing.
+ *
+ * @param workspace - The parsed workspace.yaml as a plain record
+ * @returns A diagnostic warning if misnesting is detected, otherwise null
+ */
+export function detectMisnestedControlPlane(
+  workspace: Record<string, unknown>,
+): MisnestedControlPlaneWarning | null {
+  // If control_plane already exists at the root, it is correctly placed -- no warning needed
+  const rootControlPlane = Reflect.get(workspace, CONTROL_PLANE_FIELD);
+  if (isRecord(rootControlPlane)) {
+    return null;
+  }
+
+  // Check if control_plane is misnested under software_delivery
+  const softwareDelivery = Reflect.get(workspace, PACK_KEY_SOFTWARE_DELIVERY);
+  if (!isRecord(softwareDelivery)) {
+    return null;
+  }
+
+  const nestedControlPlane = Reflect.get(softwareDelivery, CONTROL_PLANE_FIELD);
+  if (!isRecord(nestedControlPlane)) {
+    return null;
+  }
+
+  const detectedPath = `${PACK_KEY_SOFTWARE_DELIVERY}.${CONTROL_PLANE_FIELD}`;
+
+  return {
+    message:
+      `${CONTROL_PLANE_FIELD} is misnested under ${PACK_KEY_SOFTWARE_DELIVERY}. ` +
+      `It must be a root-level key in workspace.yaml.`,
+    detectedPath,
+    remediation:
+      `Move ${CONTROL_PLANE_FIELD} to the workspace root. ` +
+      `Run: pnpm config:set --key control_plane.<sub-key> --value <value>`,
+  };
+}
+
 function resolveCloudSyncConfig(input: {
   workspaceRoot: string;
   environment: NodeJS.ProcessEnv;
@@ -755,6 +808,12 @@ function resolveCloudSyncConfig(input: {
 
   const controlPlaneRaw = Reflect.get(parsedWorkspace, CONTROL_PLANE_FIELD);
   if (!isRecord(controlPlaneRaw)) {
+    // Check for common misconfiguration: control_plane nested under a pack block
+    const misnesting = detectMisnestedControlPlane(parsedWorkspace as Record<string, unknown>);
+    if (misnesting) {
+      warnCloudSync(input.logger, misnesting.message);
+      warnCloudSync(input.logger, misnesting.remediation);
+    }
     return null;
   }
 
