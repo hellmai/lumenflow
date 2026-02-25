@@ -22,6 +22,7 @@ phase: 3
 blocked_by:
   - WU-2152
   - WU-2150
+plan: lumenflow://plans/clever-whistling-lobster.md
 spec_refs:
   - /home/tom/.claude/plans/clever-whistling-lobster.md
 risks: []
@@ -34,7 +35,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Add non-bypassable CI gate validating: no control_plane config in local-only test run, local signal/memory flows pass without network, published SDK artifact has no AGPL runtime dependency.'
+description: 'Add non-bypassable CI gate validating: no control_plane config in local-only test run,
+  local signal/memory flows pass without network, published SDK artifact has no AGPL runtime
+  dependency.'
 acceptance:
   - CI gate fails when control_plane config present in local-only test
   - CI gate fails when SDK artifact contains AGPL dependency
