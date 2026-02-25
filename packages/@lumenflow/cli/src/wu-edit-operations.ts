@@ -372,7 +372,7 @@ export function applyEdits(wu: UnsafeAny, opts: UnsafeAny) {
   if (opts.exposure) {
     const exposureResult = validateExposureValue(opts.exposure);
     if (!exposureResult.valid) {
-      die(exposureResult.error);
+      die(exposureResult.error ?? 'Invalid exposure value');
     }
     updated.exposure = opts.exposure;
   }
