@@ -94,9 +94,22 @@ Claude Code has tool-level hooks (PreToolUse) that validate worktree paths, but 
 
 For details, see the [YAML editing policy](.lumenflow/rules/yaml-editing-policy.md) and [agent safety architecture](docs/04-operations/_frameworks/lumenflow/agent-safety-architecture.md).
 
+### Tooling Operations (No WU Required)
+
+These commands use micro-worktree isolation — they commit and push atomically.
+Do NOT wrap them in a WU or use raw `pnpm update`/`git commit`.
+
+| Command                                  | Use Instead Of             |
+| ---------------------------------------- | -------------------------- |
+| `pnpm lumenflow:upgrade --version X.Y.Z` | `pnpm update @lumenflow/*` |
+| `pnpm config:set --key <k> --value <v>`  | Manual YAML editing        |
+| `pnpm cloud:connect`                     | Manual control_plane config|
+| `pnpm docs:sync`                         | Manual doc copying         |
+
 ## Quick Reminders
 
 - **Run `<command> --help` before first use of any unfamiliar CLI command.**
+- **Use `pnpm lumenflow:upgrade` for upgrades** -- never raw `pnpm update @lumenflow/*`.
 - Load `/skill design-first` before implementing features (question, delete, simplify).
 - Always claim WUs with `pnpm wu:claim` and work in the worktree.
 - Run `pnpm gates` before `pnpm wu:done`.

@@ -1,6 +1,6 @@
 # LumenFlow OS Development Guide
 
-**Last updated:** 2026-02-21
+**Last updated:** 2026-02-25
 
 This repo contains LumenFlow source code. We dogfood LumenFlow to build LumenFlow.
 
@@ -94,7 +94,20 @@ pnpm wu:infer-lane --paths "packages/@lumenflow/cli/src/init.ts" --desc "Fix ini
 | `pnpm mem:init`           | Initialize memory layer                             |
 | `pnpm mem:checkpoint`     | Save memory checkpoint                              |
 
-> **CLI reference (60+ commands):** See [quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md). Always run `<command> --help` for the authoritative option list.
+### Tooling Operations (No WU Required)
+
+These commands use micro-worktree isolation — they commit and push atomically.
+Do NOT wrap them in a WU or use raw `pnpm update`.
+
+| Command                                 | Description                          |
+| --------------------------------------- | ------------------------------------ |
+| `pnpm lumenflow:upgrade --version X.Y.Z`| Upgrade all @lumenflow/\* packages   |
+| `pnpm lumenflow:upgrade --latest`       | Upgrade to latest version            |
+| `pnpm config:set --key <k> --value <v>` | Set workspace.yaml config            |
+| `pnpm cloud:connect`                    | Configure cloud control-plane access |
+| `pnpm docs:sync`                        | Sync agent docs after upgrade        |
+
+> **CLI reference (100+ commands):** See [quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md). Always run `<command> --help` for the authoritative option list.
 
 ### Context-Aware Validation (WU-1090)
 
