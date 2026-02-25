@@ -1,0 +1,33 @@
+id: WU-2156
+title: 'Fix manifest-to-scripts alignment: add missing pnpm scripts'
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P2
+created: 2026-02-25
+code_paths:
+  - package.json
+tests:
+  manual:
+    - Run pnpm lumenflow:commands
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/commands.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2156.done
+dependencies: []
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: test@example.com
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 27 public-manifest.ts commands have no matching root package.json script entry
+acceptance:
+  - pnpm lumenflow:commands works
+  - Every manifest command has a matching root script
+  - pnpm gates passes
