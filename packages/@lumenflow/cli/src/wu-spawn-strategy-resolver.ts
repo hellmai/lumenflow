@@ -43,6 +43,8 @@ import {
 import type { WUDocument, SpawnOptions, ClientContext } from './wu-spawn-prompt-builders.js';
 import { generateTaskInvocation, generateCodexPrompt } from './wu-spawn-prompt-builders.js';
 import { resolveStateDir } from './state-path-resolvers.js';
+// WU-2144: Import worktree detection to gate evidence recording
+import { isInWorktree as isInWorktreeDefault } from '@lumenflow/core/core/worktree-guard';
 
 // Re-export types used by consumers
 export type { WUDocument, SpawnOptions, ClientContext };
@@ -327,18 +329,30 @@ interface BriefEvidenceStore {
 
 interface RecordWuBriefEvidenceDependencies {
   createStore?: (stateDir: string) => BriefEvidenceStore;
+  /** WU-2144: Override worktree detection (for testing). Defaults to isInWorktree from worktree-guard. */
+  isInWorktree?: (options?: { cwd?: string }) => boolean;
 }
 
 /**
  * Record auditable wu:brief execution evidence in wu-events.jsonl.
  *
  * WU-2132: Completion lifecycle now requires proof that wu:brief was run.
+ * WU-2144: Evidence recording is gated on worktree context. When run from
+ * main checkout (e.g. orchestrator generating briefs), no state is mutated.
  */
 export async function recordWuBriefEvidence(
   options: RecordWuBriefEvidenceOptions,
   dependencies: RecordWuBriefEvidenceDependencies = {},
 ): Promise<void> {
   const { wuId, workspaceRoot, clientName } = options;
+
+  // WU-2144: Skip evidence recording when not in a worktree context.
+  // This prevents mutating shared state from main checkout.
+  const checkWorktree = dependencies.isInWorktree ?? isInWorktreeDefault;
+  if (!checkWorktree({ cwd: workspaceRoot })) {
+    return;
+  }
+
   const stateDir = resolveStateDir(workspaceRoot);
   const createStore = dependencies.createStore ?? ((dir: string) => new WUStateStore(dir));
   const store = createStore(stateDir);
