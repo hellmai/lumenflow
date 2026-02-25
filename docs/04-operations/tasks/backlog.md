@@ -33,7 +33,7 @@ sections:
 - [WU-2153 — Session lifecycle hooks for control-plane registration](wu/WU-2153.yaml) — Framework: Agent
 - [WU-2154 — OSS-complete CI gate for local-only test pass](wu/WU-2154.yaml) — Operations: Tooling
 - [WU-2158 — Add co-change gate to Software Delivery Pack](wu/WU-2158.yaml) — Framework: Core Lifecycle
-- [WU-2162 — A1: Extract wu:done policy functions](wu/WU-2162.yaml) — Framework: CLI WU Commands
+- [WU-2162 — Extract wu:done policy functions](wu/WU-2162.yaml) — Framework: CLI WU Commands
 - [WU-2163 — A2: Extract wu:done git operation helpers](wu/WU-2163.yaml) — Framework: CLI WU Commands
 - [WU-2164 — A3: Extract wu:done preflight CLI module](wu/WU-2164.yaml) — Framework: CLI WU Commands
 - [WU-2165 — A4: Extract wu:done gates orchestration module](wu/WU-2165.yaml) — Framework: CLI WU Commands
