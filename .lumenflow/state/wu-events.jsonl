@@ -2280,3 +2280,4 @@
 {"type":"complete","wuId":"WU-2182","timestamp":"2026-02-25T22:45:58.059Z"}
 {"type":"checkpoint","wuId":"WU-2183","timestamp":"2026-02-25T22:50:46.165Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2183","timestamp":"2026-02-25T22:51:45.956Z"}
+{"type":"claim","wuId":"WU-2185","timestamp":"2026-02-25T22:53:56.710Z","lane":"Framework: CLI WU Commands","title":"Rewrite config:set with workspace-aware routing"}

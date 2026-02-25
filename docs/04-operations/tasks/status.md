@@ -4,7 +4,7 @@ _Last updated: 2026-02-25_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2185 — Rewrite config:set with workspace-aware routing](wu/WU-2185.yaml)
 
 ## Completed
 
