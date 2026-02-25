@@ -1,0 +1,43 @@
+id: WU-2154
+title: OSS-complete CI gate for local-only test pass
+lane: 'Operations: Tooling'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-25
+code_paths:
+  - scripts
+  - packages/@lumenflow/control-plane-sdk
+tests:
+  manual:
+    - pnpm gates
+  unit:
+    - packages/@lumenflow/control-plane-sdk/__tests__/oss-complete-gate.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2154.done
+dependencies: []
+initiative: INIT-040
+phase: 3
+blocked_by:
+  - WU-2152
+  - WU-2150
+spec_refs:
+  - /home/tom/.claude/plans/clever-whistling-lobster.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Add non-bypassable CI gate validating: no control_plane config in local-only test run, local signal/memory flows pass without network, published SDK artifact has no AGPL runtime dependency.'
+acceptance:
+  - CI gate fails when control_plane config present in local-only test
+  - CI gate fails when SDK artifact contains AGPL dependency
+  - CI gate passes on clean local-only configuration
+  - Gate cannot be bypassed or skipped
+  - pnpm gates passes
