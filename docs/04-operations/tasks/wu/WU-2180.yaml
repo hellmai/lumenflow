@@ -2,7 +2,7 @@ id: WU-2180
 title: 'Fix gitignore scaffold drift: add missing ephemeral path entries'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -27,9 +27,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "REQUIRED_GITIGNORE_EXCLUSIONS in init-templates.ts is missing 4 ephemeral paths that exist in the source repo .gitignore: checkpoints/, locks/, artifacts/, state/spawn-registry.jsonl. Consumer repos that run lumenflow init don't get these entries, causing wu:done clean-tree check failures when wu:prep creates checkpoint files. Discovered on lumenflow-cloud where an agent committed a checkpoint file to the branch to get past the check."
+description: "REQUIRED_GITIGNORE_EXCLUSIONS in init-templates.ts is missing 4 ephemeral paths that
+  exist in the source repo .gitignore: checkpoints/, locks/, artifacts/, state/spawn-registry.jsonl.
+  Consumer repos that run lumenflow init don't get these entries, causing wu:done clean-tree check
+  failures when wu:prep creates checkpoint files. Discovered on lumenflow-cloud where an agent
+  committed a checkpoint file to the branch to get past the check."
 acceptance:
   - REQUIRED_GITIGNORE_EXCLUSIONS includes all .lumenflow/* ephemeral paths from source .gitignore
   - GITIGNORE_TEMPLATE includes the same entries
   - Sync test exists asserting source .gitignore and REQUIRED_GITIGNORE_EXCLUSIONS stay aligned
   - lumenflow init --skip on a repo missing these entries appends them
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2180
+claimed_at: 2026-02-25T19:27:13.733Z
+baseline_main_sha: 43eb601554f09b3c6386280899c6ead6bc3f9968
+session_id: aa5eb9ad-1e1e-4d7f-9f6d-292639b53322
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-25T19:27:13.738Z
