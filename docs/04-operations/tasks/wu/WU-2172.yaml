@@ -1,0 +1,33 @@
+id: WU-2172
+title: 'C1: Migrate remaining raw env reads to ENV_VARS'
+lane: 'Framework: Core Validation'
+type: refactor
+status: ready
+priority: P2
+created: 2026-02-25
+code_paths:
+  - packages/@lumenflow/core/src
+  - packages/@lumenflow/cli/src
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/core/src/__tests__/branch-check.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2172.done
+dependencies: []
+initiative: INIT-043
+phase: 1
+risks: []
+notes: 'source_plan: /home/USER/.claude/plans/gleaming-painting-sonnet.md'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Replace remaining raw environment variable access points with centralized ENV_VARS constants where applicable.
+acceptance:
+  - Raw env read count is reduced and replacements use canonical constants without regressions.
