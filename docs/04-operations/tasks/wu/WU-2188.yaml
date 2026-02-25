@@ -1,0 +1,37 @@
+id: WU-2188
+title: Document multi-pack config architecture and updated config:set/get
+lane: 'Content: Site Comms'
+type: documentation
+status: ready
+priority: P2
+created: 2026-02-25
+code_paths:
+  - apps/docs/src/content/docs/reference/workspace-spec.mdx
+  - apps/docs/src/content/docs/guides/create-a-pack.mdx
+  - apps/docs/src/content/docs/reference/config-commands.mdx
+tests:
+  manual:
+    - Review all updated docs pages for accuracy
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2188.done
+dependencies: []
+spec_refs:
+  - /home/USER/.claude/plans/init-045-multi-pack-config.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Update workspace-spec docs to show full root-level field table including software_delivery and control_plane. Document config_key/config_schema in pack creation guide. Update config-commands docs with fully-qualified key examples. Remove stale references to implicit software_delivery scoping. Update command help text.
+acceptance:
+  - workspace-spec.mdx lists all root-level fields including pack config keys
+  - create-a-pack guide documents config_key and config_schema manifest fields
+  - config-commands.mdx shows fully-qualified key examples
+  - No docs reference implicit software_delivery prefix
