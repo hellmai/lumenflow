@@ -2358,7 +2358,7 @@ async function executePreFlightChecks({
   const backlogPath = WU_PATHS.BACKLOG();
   const backlogConsistency = checkBacklogConsistencyForWU(id, backlogPath);
   if (!backlogConsistency.valid) {
-    die(backlogConsistency.error);
+    die(backlogConsistency.error ?? 'Backlog consistency check failed');
   }
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Backlog consistency check passed`);
 
@@ -2384,7 +2384,7 @@ async function executePreFlightChecks({
 
     const validation = await validateBranchOnlyMode(laneBranch);
     if (!validation.valid) {
-      die(validation.error);
+      die(validation.error ?? 'Branch-only mode validation failed');
     }
 
     console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Branch-Only mode validation passed`);
@@ -2511,7 +2511,7 @@ async function executePreFlightChecks({
     );
 
     if (!ownershipCheck.valid) {
-      die(ownershipCheck.error);
+      die(ownershipCheck.error ?? 'Ownership check failed');
     }
 
     // If override was used, log to audit trail and add to WU notes
