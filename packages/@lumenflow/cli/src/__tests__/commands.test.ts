@@ -28,6 +28,7 @@ import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const packageJsonPath = join(__dirname, '../../package.json');
+const rootPackageJsonPath = join(__dirname, '../../../../../package.json');
 
 // Script commands that are NOT CLI binaries (pnpm scripts only)
 // These appear in the registry but should NOT be in the manifest
@@ -451,5 +452,66 @@ describe('manifest alignment (WU-1432)', () => {
         ).toBe(false);
       }
     });
+  });
+});
+
+// ============================================================================
+// WU-2156: Root package.json scripts alignment with public manifest
+// ============================================================================
+
+describe('root package.json scripts alignment (WU-2156)', () => {
+  // Root-only convenience scripts that wrap CLI binaries with extra flags,
+  // are compound commands, or are explicitly internal/maintainer-only.
+  // These are NOT standalone CLI commands and should not appear in public-manifest.ts.
+  const ROOT_ONLY_SCRIPTS = new Set([
+    'setup', // compound script: install + build + integrate
+    'release', // root alias for lumenflow:release
+    'strict:progress', // metrics check with --baseline flag
+    'deps:add', // internal: maintainer-only dep management
+    'deps:remove', // internal: maintainer-only dep management
+    'spec:linter', // alias for wu-validate --all
+    'tasks:validate', // alias for wu-validate --all
+  ]);
+
+  it('should have a root pnpm script for every public manifest command', () => {
+    const rootPkg = JSON.parse(readFileSync(rootPackageJsonPath, 'utf-8'));
+    const scripts = rootPkg.scripts || {};
+    const manifest = getPublicManifest();
+
+    const missing: string[] = [];
+    for (const cmd of manifest) {
+      if (scripts[cmd.name] === undefined) {
+        missing.push(cmd.name);
+      }
+    }
+
+    expect(
+      missing,
+      `${missing.length} manifest command(s) missing from root package.json scripts:\n  ${missing.join('\n  ')}`,
+    ).toEqual([]);
+  });
+
+  it('should have a manifest entry for every CLI-backed root script', () => {
+    const rootPkg = JSON.parse(readFileSync(rootPackageJsonPath, 'utf-8'));
+    const scripts: Record<string, string> = rootPkg.scripts || {};
+    const publicNames = new Set(getPublicCommandNames());
+
+    const missing: string[] = [];
+    for (const [scriptName, scriptValue] of Object.entries(scripts)) {
+      if (ROOT_ONLY_SCRIPTS.has(scriptName)) continue;
+
+      const isCli =
+        scriptValue.includes('packages/@lumenflow/cli/dist/') ||
+        scriptValue.includes('tools/cli-entry.mjs');
+
+      if (isCli && !publicNames.has(scriptName)) {
+        missing.push(scriptName);
+      }
+    }
+
+    expect(
+      missing,
+      `${missing.length} root script(s) point to CLI dist but are not in public manifest:\n  ${missing.join('\n  ')}`,
+    ).toEqual([]);
   });
 });

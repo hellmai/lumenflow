@@ -630,6 +630,14 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     surface: 'alias',
   },
   {
+    name: 'lumenflow:init',
+    binName: 'lumenflow-init',
+    binPath: './dist/init.js',
+    description: 'Initialize LumenFlow in a project (alias)',
+    category: COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
+    surface: 'alias',
+  },
+  {
     name: 'lumenflow:doctor',
     binName: 'lumenflow-doctor',
     binPath: './dist/doctor.js',
@@ -675,6 +683,14 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
   {
     name: 'sync:templates',
     binName: 'sync-templates',
+    binPath: './dist/sync-templates.js',
+    description: 'Sync templates to project (alias)',
+    category: COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
+    surface: 'alias',
+  },
+  {
+    name: 'templates:sync',
+    binName: 'templates-sync',
     binPath: './dist/sync-templates.js',
     description: 'Sync templates to project (alias)',
     category: COMMAND_CATEGORIES.SETUP_DEVELOPMENT,
