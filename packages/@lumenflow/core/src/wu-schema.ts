@@ -588,9 +588,7 @@ const sharedFields = {
     .refine(
       (data) => {
         if (data.exception_type !== undefined) {
-          return (
-            data.exception_reason !== undefined && data.exception_reason.trim().length > 0
-          );
+          return data.exception_reason !== undefined && data.exception_reason.trim().length > 0;
         }
         return true;
       },
