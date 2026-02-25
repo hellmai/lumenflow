@@ -17,6 +17,7 @@ tests:
     - Verify gate skips when no trigger pattern files are changed
   unit:
     - packages/@lumenflow/cli/tests/gates-co-change.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-co-change.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2158.done
