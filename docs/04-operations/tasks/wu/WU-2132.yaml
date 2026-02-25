@@ -9,7 +9,10 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-brief.ts
   - packages/@lumenflow/cli/src/wu-prep.ts
   - packages/@lumenflow/cli/src/wu-done.ts
+  - packages/@lumenflow/cli/src/wu-spawn-strategy-resolver.ts
+  - packages/@lumenflow/cli/src/wu-spawn.ts
   - packages/@lumenflow/core/src/wu-event-sourcer.ts
+  - packages/@lumenflow/core/src/wu-state-store.ts
 tests:
   manual:
     - Run pnpm wu:brief --id <WU> then verify wu:prep/wu:done enforcement blocks when evidence is
@@ -17,6 +20,8 @@ tests:
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/cli/src/__tests__/agent-spawn-coordination.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-event-sourcer.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2132.done
@@ -28,10 +33,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-24T23:51:59.552Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2132
+session_id: 57baf29f-ba28-45d9-9547-6c72725f4065
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-24T23:51:59.559Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -46,11 +58,3 @@ acceptance:
   - wu:done validates wu:brief evidence exists for claimed WU before completion, with force-bypass
     audit path unchanged
   - CLI unit tests cover pass/fail paths for new enforcement in wu:brief, wu:prep, wu:done
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2132
-claimed_at: 2026-02-24T23:51:59.552Z
-baseline_main_sha: 4f453ac1cbcbb60aef88fa2d976e1a4c65b82a25
-session_id: 57baf29f-ba28-45d9-9547-6c72725f4065
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-24T23:51:59.559Z
