@@ -6,9 +6,7 @@ status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
-  - CHANGELOG.md
-  - apps/docs/src/content/docs/guides/existing-projects.mdx
-  - apps/docs/src/content/docs/packs/software-delivery/setup/existing-projects.mdx
+  - docs/04-operations/tasks/wu/WU-2181.yaml
 tests:
   manual:
     - Review changelog entry and remediation docs for accuracy
