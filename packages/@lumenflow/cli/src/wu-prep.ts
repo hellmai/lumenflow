@@ -43,7 +43,10 @@ import { readWU } from '@lumenflow/core/wu-yaml';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { createGitForPath } from '@lumenflow/core/git-adapter';
 import { TEST_FILE_PATTERNS } from '@lumenflow/core';
-import { resolveChangedFiles, isCodePathCoveredByChangedFiles } from '@lumenflow/core/wu-rules-engine';
+import {
+  resolveChangedFiles,
+  isCodePathCoveredByChangedFiles,
+} from '@lumenflow/core/wu-rules-engine';
 import {
   validatePreflight,
   formatPreflightResult,

@@ -468,8 +468,7 @@ describe('wu-prep dirty-main mutation guard (WU-1750)', () => {
     const result = evaluatePrepMainMutationGuard({
       mainCheckout: '/repo',
       isBranchPr: false,
-      mainStatus:
-        ' M .lumenflow/state/wu-events.jsonl\n?? docs/tasks/wu/WU-1750.yaml\n',
+      mainStatus: ' M .lumenflow/state/wu-events.jsonl\n?? docs/tasks/wu/WU-1750.yaml\n',
     });
 
     expect(result.blocked).toBe(false);
