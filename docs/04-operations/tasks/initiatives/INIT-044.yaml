@@ -4,7 +4,7 @@ title: Architecture Backlog Hardening
 description: 'Capture lower-priority architecture debt items from the sweep: interface segregation
   follow-up, validator ownership documentation, test-helper extraction, and runtime/agent coverage
   expansion.'
-status: open
+status: archived
 priority: P3
 owner: tom@hellm.ai
 created: 2026-02-25
@@ -26,4 +26,6 @@ success_metrics:
 labels: []
 notes:
   - 'source_plan: /home/USER/.claude/plans/gleaming-painting-sonnet.md'
+  - 'Dissolved: D1-D4 are independent backlog items, not a cohesive initiative. Sizing guide review
+    determined grab-bag of unrelated low-priority items does not warrant initiative coordination.'
 related_plan: lumenflow://plans/gleaming-painting-sonnet.md
