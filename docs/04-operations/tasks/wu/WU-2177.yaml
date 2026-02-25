@@ -1,5 +1,5 @@
 id: WU-2177
-title: 'D3: Create shared test-helpers package'
+title: Create shared test-helpers package
 lane: 'Framework: Core Validation'
 type: refactor
 status: ready
@@ -16,8 +16,6 @@ tests:
 artifacts:
   - .lumenflow/stamps/WU-2177.done
 dependencies: []
-initiative: INIT-044
-phase: 2
 risks: []
 notes: 'source_plan: /home/tom/.claude/plans/gleaming-painting-sonnet.md'
 requires_review: false
