@@ -23,6 +23,7 @@ artifacts:
 dependencies: []
 initiative: INIT-038
 phase: 1
+plan: lumenflow://plans/steady-inventing-gosling.md
 spec_refs:
   - /home/USER/.claude/plans/steady-inventing-gosling.md
 risks: []
