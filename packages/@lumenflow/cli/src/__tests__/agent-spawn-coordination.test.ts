@@ -672,11 +672,15 @@ describe('Agent Spawn Coordination Integration Tests (WU-1363)', () => {
       it('records auditable brief evidence tied to WU id and timestamp', async () => {
         process.chdir(tempDir);
 
-        await recordWuBriefEvidence({
-          wuId: TEST_WU_ID,
-          workspaceRoot: tempDir,
-          clientName: 'codex-cli',
-        });
+        // WU-2144: Pass isInWorktree override since tempDir is not a real worktree path
+        await recordWuBriefEvidence(
+          {
+            wuId: TEST_WU_ID,
+            workspaceRoot: tempDir,
+            clientName: 'codex-cli',
+          },
+          { isInWorktree: () => true },
+        );
 
         const evidence = await getLatestWuBriefEvidence(
           join(tempDir, '.lumenflow/state'),
