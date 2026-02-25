@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2143 — Document tooling-backed sizing guardrails and strict mode](wu/WU-2143.yaml) — Content: Framework Docs
 - [WU-2142 — Add initiative scope advisory for over-granular execution plans](wu/WU-2142.yaml) — Framework: Core Lifecycle
 - [WU-2141 — Enforce WU sizing contract in wu:create and wu:brief](wu/WU-2141.yaml) — Framework: CLI WU Commands
 - [WU-2140 — Complete UnsafeAny CLI tail cleanup and lock reduced baseline](wu/WU-2140.yaml) — Framework: CLI WU Commands
