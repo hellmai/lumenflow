@@ -1,5 +1,5 @@
 id: WU-2169
-title: 'B2: Add domain-scoped core barrel exports'
+title: Add domain-scoped core barrel exports
 lane: 'Framework: Core Lifecycle'
 type: refactor
 status: ready
