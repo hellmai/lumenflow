@@ -21,9 +21,11 @@ describe('recordWuBriefEvidence', () => {
   beforeEach(() => {
     checkpointCalls = [];
     mockCreateStore = vi.fn().mockReturnValue({
-      checkpoint: vi.fn().mockImplementation(async (wuId: string, note: string, options?: unknown) => {
-        checkpointCalls.push({ wuId, note, options });
-      }),
+      checkpoint: vi
+        .fn()
+        .mockImplementation(async (wuId: string, note: string, options?: unknown) => {
+          checkpointCalls.push({ wuId, note, options });
+        }),
     });
   });
 
