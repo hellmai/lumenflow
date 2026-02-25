@@ -20,6 +20,7 @@ tests:
     - Run pnpm lumenflow:integrate --client cursor and verify recovery hooks generated
   unit:
     - packages/@lumenflow/memory/src/__tests__/mem-recover-core.test.ts
+    - packages/@lumenflow/memory/__tests__/mem-recover-core.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2157.done
