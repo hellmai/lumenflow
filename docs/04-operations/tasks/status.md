@@ -4,7 +4,7 @@ _Last updated: 2026-02-25_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2142 — Add initiative scope advisory for over-granular execution plans](wu/WU-2142.yaml)
 
 ## Completed
 
