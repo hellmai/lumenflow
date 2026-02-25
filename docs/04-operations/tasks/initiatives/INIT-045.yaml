@@ -14,3 +14,11 @@ success_metrics:
   - Pack manifest declares config_key + config_schema
 labels: []
 related_plan: lumenflow://plans/init-045-multi-pack-config.md
+wus:
+  - WU-2182
+  - WU-2183
+  - WU-2184
+  - WU-2185
+  - WU-2186
+  - WU-2187
+  - WU-2188

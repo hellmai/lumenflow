@@ -27,8 +27,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'resolveCloudSyncConfig silently returns null when control_plane is misnested under software_delivery. No warning, no remediation guidance. Add explicit detection: if a known root key (control_plane) is found nested under a pack block, warn with specific remediation steps. No silent null returns for diagnosable misconfigurations.'
+description: 'resolveCloudSyncConfig silently returns null when control_plane is misnested under
+  software_delivery. No warning, no remediation guidance. Add explicit detection: if a known root
+  key (control_plane) is found nested under a pack block, warn with specific remediation steps. No
+  silent null returns for diagnosable misconfigurations.'
 acceptance:
   - resolveCloudSyncConfig warns when control_plane found at software_delivery.control_plane
   - Warning includes specific remediation command
   - Still returns null (no sync) but with diagnostic output
+initiative: INIT-045
