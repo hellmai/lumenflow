@@ -45,8 +45,10 @@ export interface HttpControlPlaneSyncPortOptions {
   environment?: NodeJS.ProcessEnv;
 }
 
-export interface CreateHttpControlPlaneSyncPortOptions
-  extends Omit<HttpControlPlaneSyncPortOptions, 'logger'> {
+export interface CreateHttpControlPlaneSyncPortOptions extends Omit<
+  HttpControlPlaneSyncPortOptions,
+  'logger'
+> {
   logger?: Pick<Console, 'warn'>;
 }
 
@@ -90,7 +92,10 @@ export class HttpControlPlaneSyncPort implements ControlPlaneSyncPort {
   private readonly fetchFn: typeof fetch;
   private readonly logger?: Pick<Console, 'warn'>;
 
-  public constructor(config: WorkspaceControlPlaneConfig, options: HttpControlPlaneSyncPortOptions = {}) {
+  public constructor(
+    config: WorkspaceControlPlaneConfig,
+    options: HttpControlPlaneSyncPortOptions = {},
+  ) {
     this.config = cloneControlPlaneConfig(config);
     this.endpoint = normalizeEndpoint(config.endpoint);
     this.fetchFn = options.fetchFn ?? fetch;

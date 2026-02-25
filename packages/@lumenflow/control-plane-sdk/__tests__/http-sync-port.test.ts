@@ -6,10 +6,7 @@ import {
   HttpControlPlaneSyncPort,
   createHttpControlPlaneSyncPort,
 } from '../src/http/http-control-plane-sync-port.js';
-import type {
-  ControlPlaneSyncPort,
-  WorkspaceControlPlaneConfig,
-} from '../src/sync-port.js';
+import type { ControlPlaneSyncPort, WorkspaceControlPlaneConfig } from '../src/sync-port.js';
 
 const TEST_TIMEOUT_MS = 5;
 const TOKEN_ENV = 'LUMENFLOW_CLOUD_TOKEN_TEST';
@@ -233,7 +230,9 @@ describe('HttpControlPlaneSyncPort', () => {
     'handles non-2xx response for $methodName',
     async ({ call, expectsThrow, fallback, methodName }) => {
       const logger = { warn: vi.fn() };
-      const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(createJsonResponse({ error: 'bad' }, 503));
+      const fetchFn = vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(createJsonResponse({ error: 'bad' }, 503));
       const port = createPort({ fetchFn, logger });
 
       if (expectsThrow) {
@@ -278,7 +277,9 @@ describe('HttpControlPlaneSyncPort', () => {
   );
 
   it('factory creates an HttpControlPlaneSyncPort with logger wiring', async () => {
-    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(createJsonResponse(SUCCESS_RESPONSES.pullPolicies));
+    const fetchFn = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(createJsonResponse(SUCCESS_RESPONSES.pullPolicies));
     const logger = { warn: vi.fn() };
     const port = createHttpControlPlaneSyncPort(TEST_CONFIG, logger, {
       fetchFn,
