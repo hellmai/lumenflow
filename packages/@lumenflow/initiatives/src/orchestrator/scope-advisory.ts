@@ -201,8 +201,7 @@ function detectOverGranular(wus: WUEntry[]): ScopeAdvisory | null {
       type: 'over-granular',
       severity: 'warning',
       detail: `${wusWithPaths} WUs touch only ${uniqueFiles.size} unique files (ratio: ${ratio.toFixed(1)})`,
-      suggestion:
-        'Consider merging related WUs to reduce context-switching overhead.',
+      suggestion: 'Consider merging related WUs to reduce context-switching overhead.',
     };
   }
 
