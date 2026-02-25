@@ -1,5 +1,5 @@
 id: WU-2173
-title: 'C2: Add startup environment schema validation'
+title: Add startup environment schema validation
 lane: 'Framework: Core Validation'
 type: refactor
 status: ready
