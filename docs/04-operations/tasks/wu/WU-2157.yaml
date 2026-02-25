@@ -2,7 +2,7 @@ id: WU-2157
 title: Enrich post-compaction recovery and extend to all agent clients
 lane: 'Framework: Memory'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -39,11 +39,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Recovery after context compaction is too minimal (2KB summary) and only works for Claude Code via hooks. Improve recovery richness and extend to all supported agent clients.
+description: Recovery after context compaction is too minimal (2KB summary) and only works for
+  Claude Code via hooks. Improve recovery richness and extend to all supported agent clients.
 acceptance:
-  - mem:recover output includes acceptance criteria, code_paths, git diff stat, and loaded skills from last checkpoint
-  - SessionStart hook auto-injects wu:brief-equivalent context instead of just telling agent to run wu:brief
+  - mem:recover output includes acceptance criteria, code_paths, git diff stat, and loaded skills
+    from last checkpoint
+  - SessionStart hook auto-injects wu:brief-equivalent context instead of just telling agent to run
+    wu:brief
   - lumenflow:integrate --client cursor generates session-boundary recovery hooks
   - lumenflow:integrate --client codex-cli generates equivalent recovery mechanism
   - Recovery budget increased from 2KB to support richer context
   - Existing Claude Code recovery still works (no regression)
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-memory-wu-2157
+claimed_at: 2026-02-25T13:54:12.511Z
+baseline_main_sha: cb436152c9b92532af276f5eedd1bce259d4e6db
+session_id: 92a79374-3c33-47ba-9fd5-b2634f8be112
+approved_by:
+  - test@example.com
+approved_at: 2026-02-25T13:54:12.515Z

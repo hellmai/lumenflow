@@ -5,6 +5,7 @@ _Last updated: 2026-02-25_
 ## In Progress
 
 - [WU-2155 — Fix INIT-038 regressions: path-literal guard, missing runtime wiring, schema gap](wu/WU-2155.yaml)
+- [WU-2157 — Enrich post-compaction recovery and extend to all agent clients](wu/WU-2157.yaml)
 
 ## Completed
 
