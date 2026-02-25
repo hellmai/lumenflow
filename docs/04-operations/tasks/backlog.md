@@ -49,12 +49,12 @@ sections:
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
 - [WU-2186 — Fix config:get — remove fallback-to-software_delivery behavior](wu/WU-2186.yaml) — Framework: CLI WU Commands
-- [WU-2187 — Two-phase workspace validation: dynamic root-key validation against pinned packs](wu/WU-2187.yaml) — Framework: Core Validation
 - [WU-2188 — Document multi-pack config architecture and updated config:set/get](wu/WU-2188.yaml) — Content: Site Comms
 
 ## 🔧 In progress
 
 - [WU-2185 — Rewrite config:set with workspace-aware routing](wu/WU-2185.yaml) — Framework: CLI WU Commands
+- [WU-2187 — Two-phase workspace validation: dynamic root-key validation against pinned packs](wu/WU-2187.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
 
