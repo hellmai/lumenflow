@@ -7,11 +7,13 @@ priority: P2
 created: 2026-02-25
 code_paths:
   - packages/@lumenflow/memory/src/mem-recover-core.ts
-  - packages/@lumenflow/cli/src/mem-recover.ts
   - packages/@lumenflow/cli/src/commands/integrate.ts
+  - packages/@lumenflow/cli/src/mem-checkpoint.ts
+  - packages/@lumenflow/memory/src/mem-checkpoint-core.ts
   - .claude/hooks/session-start-recovery.sh
   - .claude/hooks/pre-compact-checkpoint.sh
-  - packages/@lumenflow/cli/templates/vendors
+  - AGENTS.md
+  - .cursor/rules/lumenflow-recovery.md
 tests:
   manual:
     - Run pnpm mem:recover --wu WU-XXX and verify richer output
@@ -28,7 +30,11 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: test@example.com
+claimed_at: 2026-02-25T13:54:12.511Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-memory-wu-2157
+session_id: 92a79374-3c33-47ba-9fd5-b2634f8be112
 exposure: backend-only
 sizing_estimate:
   estimated_files: 8
@@ -36,6 +42,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - test@example.com
+approved_at: 2026-02-25T13:54:12.515Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -50,11 +59,3 @@ acceptance:
   - lumenflow:integrate --client codex-cli generates equivalent recovery mechanism
   - Recovery budget increased from 2KB to support richer context
   - Existing Claude Code recovery still works (no regression)
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-memory-wu-2157
-claimed_at: 2026-02-25T13:54:12.511Z
-baseline_main_sha: cb436152c9b92532af276f5eedd1bce259d4e6db
-session_id: 92a79374-3c33-47ba-9fd5-b2634f8be112
-approved_by:
-  - test@example.com
-approved_at: 2026-02-25T13:54:12.515Z
