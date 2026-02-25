@@ -42,7 +42,9 @@ export function isValidEmail(value: string) {
  * @returns {Promise<string>} Valid email address
  * @throws {Error} If no valid email can be determined
  */
-export async function getAssignedEmail(gitAdapter: { getConfigValue: (key: string) => Promise<string> }) {
+export async function getAssignedEmail(gitAdapter: {
+  getConfigValue: (key: string) => Promise<string>;
+}) {
   // Try git config user.email first (WU-1427: properly await async method)
   try {
     const gitEmail = await gitAdapter.getConfigValue('user.email');
