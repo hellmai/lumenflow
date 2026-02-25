@@ -2,7 +2,7 @@ id: WU-2135
 title: Fix release-blocking gate failures on main
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-25
 code_paths:
@@ -50,3 +50,6 @@ acceptance:
   - 'Targeted suite passes: initiatives orchestrator timeout test'
   - 'Targeted suites pass: sandbox-profile and check-automated-tests'
   - Full pnpm gates passes with no skip-gates workaround
+locked: true
+completed_at: 2026-02-25T10:28:01.405Z
+completed: 2026-02-25

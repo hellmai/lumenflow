@@ -11,7 +11,7 @@ created: 2026-02-25
 phases:
   - id: 1
     title: 'Wave 0: Release Blocker (must complete first)'
-    status: pending
+    status: done
   - id: 2
     title: 'Wave 1: Core Foundation (parallel after Wave 0)'
     status: pending
