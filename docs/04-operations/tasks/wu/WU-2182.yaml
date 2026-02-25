@@ -1,0 +1,37 @@
+id: WU-2182
+title: Add config_key and config_schema to DomainPackManifestSchema
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P2
+created: 2026-02-25
+code_paths:
+  - packages/@lumenflow/kernel/src/pack/manifest.ts
+  - packages/@lumenflow/packs/software-delivery/manifest.yaml
+  - packages/@lumenflow/kernel/src/pack/pack-loader.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/pack-manifest.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2182.done
+dependencies: []
+spec_refs:
+  - /home/tom/.claude/plans/init-045-multi-pack-config.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Pack manifest has no config contract. Add config_key (string, optional) and config_schema (path to JSON Schema, optional) to DomainPackManifestSchema. Update software-delivery manifest to declare config_key: software_delivery. This establishes the contract for pack-declared config namespaces in workspace.yaml.'
+acceptance:
+  - 'DomainPackManifestSchema includes config_key: z.string().min(1).optional()'
+  - 'DomainPackManifestSchema includes config_schema: z.string().optional()'
+  - 'software-delivery manifest.yaml declares config_key: software_delivery'
+  - Pack loader reads and exposes config_key from loaded manifests
