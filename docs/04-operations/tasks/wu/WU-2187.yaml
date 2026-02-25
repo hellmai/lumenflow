@@ -14,7 +14,11 @@ tests:
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2187.done
-dependencies: []
+dependencies:
+  - WU-2182
+  - WU-2183
+initiative: INIT-045
+phase: 2
 spec_refs:
   - /home/USER/.claude/plans/init-045-multi-pack-config.md
 risks: []
@@ -36,4 +40,3 @@ acceptance:
   - Workspace without software_delivery boots when SD pack not pinned
   - Workspace with unknown root key is rejected
   - Workspace with declared pack config_key is accepted
-initiative: INIT-045
