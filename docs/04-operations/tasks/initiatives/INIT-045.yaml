@@ -13,3 +13,4 @@ success_metrics:
   - software_delivery optional in kernel schema when SD pack not pinned
   - Pack manifest declares config_key + config_schema
 labels: []
+related_plan: lumenflow://plans/init-045-multi-pack-config.md
