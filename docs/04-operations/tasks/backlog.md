@@ -53,7 +53,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2180 — Fix gitignore scaffold drift: add missing ephemeral path entries](wu/WU-2180.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1131,6 +1131,7 @@ sections:
 - [WU-2161 — Document wu:brief evidence recording behavior for agent safety](wu/WU-2161.yaml)
 - [WU-2160 — Implement NDJSON telemetry file shipping for gates-only cloud onboarding](wu/WU-2160.yaml)
 - [WU-2179 — Add missing commands and tooling operations concept to agent docs](wu/WU-2179.yaml)
+- [WU-2180 — Fix gitignore scaffold drift: add missing ephemeral path entries](wu/WU-2180.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
