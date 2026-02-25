@@ -1,0 +1,33 @@
+id: WU-2171
+title: 'B4: Evaluate delegation package extraction'
+lane: 'Framework: Core Lifecycle'
+type: refactor
+status: ready
+priority: P2
+created: 2026-02-25
+code_paths:
+  - packages/@lumenflow/core/src/delegation-monitor.ts
+  - packages/@lumenflow/core/src/delegation-tree.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/core/src/__tests__/wu-schema.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2171.done
+dependencies: []
+initiative: INIT-042
+phase: 3
+risks: []
+notes: 'source_plan: /home/tom/.claude/plans/gleaming-painting-sonnet.md'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Assess extracting delegation subsystem into a dedicated package and document cost/benefit and migration path.
+acceptance:
+  - Delegation extraction decision record is captured with executable follow-up recommendations.
