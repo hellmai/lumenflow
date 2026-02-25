@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2151 — Mock signal and memory sync adapter for testing](wu/WU-2151.yaml) — Framework: Core Lifecycle
 - [WU-2150 — SDK packaging boundary hardening - decouple kernel dependency](wu/WU-2150.yaml) — Framework: Core Lifecycle
 - [WU-2149 — SDK signal and memory sync port interfaces](wu/WU-2149.yaml) — Framework: Core Lifecycle
 - [WU-2148 — MCP signal enrichment in CallToolRequest handler](wu/WU-2148.yaml) — Framework: MCP

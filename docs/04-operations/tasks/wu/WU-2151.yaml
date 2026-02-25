@@ -1,0 +1,40 @@
+id: WU-2151
+title: Mock signal and memory sync adapter for testing
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-25
+code_paths:
+  - packages/@lumenflow/control-plane-sdk/src/mock/mock-signal-sync-port.ts
+tests:
+  manual:
+    - pnpm gates
+  unit:
+    - packages/@lumenflow/control-plane-sdk/__tests__/mock-signal-sync-port.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2151.done
+dependencies: []
+initiative: INIT-040
+phase: 2
+blocked_by:
+  - WU-2149
+spec_refs:
+  - /home/tom/.claude/plans/clever-whistling-lobster.md
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: In-memory mock implementing SignalSyncPort and MemorySyncPort for deterministic tests. Supports signal push/pull round-trip, session registration, and memory sync with conflict simulation.
+acceptance:
+  - Mock round-trip test for signals passes
+  - Mock round-trip test for memory sync passes
+  - Session register/list/deregister works against mock
+  - pnpm gates passes
