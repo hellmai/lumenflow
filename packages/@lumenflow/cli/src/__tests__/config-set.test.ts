@@ -180,9 +180,9 @@ describe('parseConfigSetArgs', () => {
   });
 
   it('throws when --value is missing', () => {
-    expect(() =>
-      parseConfigSetArgs(['--key', 'software_delivery.methodology.testing']),
-    ).toThrow('--value is required');
+    expect(() => parseConfigSetArgs(['--key', 'software_delivery.methodology.testing'])).toThrow(
+      '--value is required',
+    );
   });
 
   it('handles --help without throwing', () => {
@@ -205,9 +205,7 @@ describe('parseConfigSetArgs', () => {
       '--value',
       'Experience,Frontend',
     ]);
-    expect(result.key).toBe(
-      'software_delivery.methodology.work_classification.ui.lane_hints',
-    );
+    expect(result.key).toBe('software_delivery.methodology.work_classification.ui.lane_hints');
     expect(result.value).toBe('Experience,Frontend');
   });
 });
@@ -446,9 +444,9 @@ describe('applyConfigSet (workspace-aware routing)', () => {
     );
     expect(result.ok).toBe(true);
     // Architecture should be unchanged
-    expect(
-      getConfigValue(result.config!, 'software_delivery.methodology.architecture'),
-    ).toBe('hexagonal');
+    expect(getConfigValue(result.config!, 'software_delivery.methodology.architecture')).toBe(
+      'hexagonal',
+    );
     // Version should be unchanged
     expect(getConfigValue(result.config!, 'software_delivery.version')).toBe('1.0.0');
   });
@@ -462,9 +460,7 @@ describe('applyConfigSet (workspace-aware routing)', () => {
       PACK_CONFIG_KEYS,
     );
     expect(result.ok).toBe(true);
-    expect(
-      getConfigValue(result.config!, 'software_delivery.gates.enableCoverage'),
-    ).toBe(false);
+    expect(getConfigValue(result.config!, 'software_delivery.gates.enableCoverage')).toBe(false);
   });
 
   it('writes memory_namespace at workspace root as scalar', () => {

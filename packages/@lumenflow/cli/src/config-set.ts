@@ -36,11 +36,7 @@ import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { LumenFlowConfigSchema, WORKSPACE_V2_KEYS } from '@lumenflow/core/config-schema';
 import { normalizeConfigKeys } from '@lumenflow/core/normalize-config-keys';
-import {
-  WRITABLE_ROOT_KEYS,
-  MANAGED_ROOT_KEYS,
-  WORKSPACE_ROOT_KEYS,
-} from '@lumenflow/core/config';
+import { WRITABLE_ROOT_KEYS, MANAGED_ROOT_KEYS, WORKSPACE_ROOT_KEYS } from '@lumenflow/core/config';
 import { runCLI } from './cli-entry-point.js';
 
 // ---------------------------------------------------------------------------
@@ -290,10 +286,7 @@ export function parseConfigGetArgs(argv: string[]): ConfigGetOptions {
  * @param packConfigKeys - Map of config_key -> pack_id from loaded pack manifests
  * @returns Route describing where/how to write the key
  */
-export function routeConfigKey(
-  key: string,
-  packConfigKeys: Map<string, string>,
-): ConfigKeyRoute {
+export function routeConfigKey(key: string, packConfigKeys: Map<string, string>): ConfigKeyRoute {
   const segments = key.split('.');
   const firstSegment = segments[0];
   const subPath = segments.slice(1).join('.');
