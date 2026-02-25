@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2154 — OSS-complete CI gate for local-only test pass](wu/WU-2154.yaml) — Operations: Tooling
 - [WU-2153 — Session lifecycle hooks for control-plane registration](wu/WU-2153.yaml) — Framework: Agent
 - [WU-2152 — Local JSONL to control-plane sync adapter](wu/WU-2152.yaml) — Framework: Memory
 - [WU-2151 — Mock signal and memory sync adapter for testing](wu/WU-2151.yaml) — Framework: Core Lifecycle
