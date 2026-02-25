@@ -4,7 +4,7 @@ _Last updated: 2026-02-25_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2139 — Complete UnsafeAny core tail cleanup tranche](wu/WU-2139.yaml)
 
 ## Completed
 
