@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2167 — A6: Slim wu:done main orchestrator](wu/WU-2167.yaml) — Framework: CLI WU Commands
 - [WU-2166 — A5: Extract wu:done memory and telemetry module](wu/WU-2166.yaml) — Framework: CLI WU Commands
 - [WU-2165 — A4: Extract wu:done gates orchestration module](wu/WU-2165.yaml) — Framework: CLI WU Commands
 - [WU-2164 — A3: Extract wu:done preflight CLI module](wu/WU-2164.yaml) — Framework: CLI WU Commands
