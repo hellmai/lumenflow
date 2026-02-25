@@ -37,6 +37,9 @@ const HTTP = {
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const TIMEOUT_ERROR_PREFIX = 'request timed out after';
+const ERROR_NAME = {
+  ABORT: 'AbortError',
+} as const;
 
 export interface HttpControlPlaneSyncPortOptions {
   fetchFn?: typeof fetch;
@@ -218,8 +221,8 @@ export class HttpControlPlaneSyncPort implements ControlPlaneSyncPort {
       return (await response.json()) as Result;
     } catch (error) {
       const parsedError = asError(error);
-      if (parsedError.name === 'AbortError') {
-        throw new Error(`${TIMEOUT_ERROR_PREFIX} ${this.timeoutMs}ms`);
+      if (parsedError.name === ERROR_NAME.ABORT) {
+        throw new Error(`${TIMEOUT_ERROR_PREFIX} ${this.timeoutMs}ms`, { cause: error });
       }
       throw parsedError;
     } finally {

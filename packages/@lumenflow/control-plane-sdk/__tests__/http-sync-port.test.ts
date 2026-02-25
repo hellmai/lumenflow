@@ -12,6 +12,9 @@ const TEST_TIMEOUT_MS = 5;
 const TOKEN_ENV = 'LUMENFLOW_CLOUD_TOKEN_TEST';
 const TOKEN_VALUE = 'token-test-value';
 const TEST_ENDPOINT = 'https://cloud.example.com';
+const ERROR_NAME = {
+  ABORT: 'AbortError',
+} as const;
 
 const TEST_CONFIG: WorkspaceControlPlaneConfig = {
   endpoint: TEST_ENDPOINT,
@@ -196,9 +199,12 @@ describe('HttpControlPlaneSyncPort', () => {
       ENDPOINTS.heartbeat,
     ];
 
-    fetchFn.mock.calls.forEach((call, index) => {
+    const pendingPaths = [...expectedPaths];
+    fetchFn.mock.calls.forEach((call) => {
       const [url, init] = call;
-      expect(url).toBe(`${TEST_ENDPOINT}${expectedPaths[index]}`);
+      const expectedPath = pendingPaths.shift();
+      expect(expectedPath).toBeDefined();
+      expect(url).toBe(`${TEST_ENDPOINT}${expectedPath}`);
       expect(init?.method).toBe('POST');
 
       const headers = new Headers(init?.headers as HeadersInit);
@@ -255,7 +261,7 @@ describe('HttpControlPlaneSyncPort', () => {
           new Promise((_resolve, reject) => {
             const signal = init?.signal;
             signal?.addEventListener('abort', () => {
-              reject(new DOMException('Aborted', 'AbortError'));
+              reject(new DOMException('Aborted', ERROR_NAME.ABORT));
             });
           }) as Promise<Response>,
       );

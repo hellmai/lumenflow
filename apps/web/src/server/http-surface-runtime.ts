@@ -77,6 +77,10 @@ const NOOP_DISPOSABLE: Disposable = {
   },
 };
 
+function logControlPlaneWarning(message: string): void {
+  process.stderr.write(`${CONTROL_PLANE_LOG_PREFIX} ${message}\n`);
+}
+
 type KernelRuntimeWithEventSubscription = KernelRuntime & {
   subscribeEvents?: (
     filter: ReplayFilter,
@@ -405,7 +409,7 @@ async function createWebHttpSurface(): Promise<HttpSurface> {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.warn(`${CONTROL_PLANE_LOG_PREFIX} Control-plane sync disabled: ${message}`);
+    logControlPlaneWarning(`Control-plane sync disabled: ${message}`);
   }
 
   return createHttpSurface(runtime);
