@@ -257,10 +257,7 @@ tests:
     - Manual verification
   e2e: []
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-001.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-001.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -284,10 +281,7 @@ tests:
   manual: []
   e2e: []
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-002.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-002.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -320,14 +314,8 @@ tests:
   manual:
     - Manual check
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-003.yaml'),
-          wuYaml1,
-        );
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-004.yaml'),
-          wuYaml2,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-003.yaml'), wuYaml1);
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-FAIL-004.yaml'), wuYaml2);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -350,10 +338,7 @@ tests:
   manual:
     - Verify config works
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-001.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-001.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -373,10 +358,7 @@ tests:
   manual:
     - Verify linting works
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-002.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-002.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -396,10 +378,7 @@ tests:
   manual:
     - Verify formatting works
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-003.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-003.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -420,10 +399,7 @@ tests:
   manual:
     - Verify config works
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-004.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-CONFIG-004.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -444,10 +420,7 @@ tests:
   manual:
     - Manual check
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-EDGE-001.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-EDGE-001.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -467,10 +440,7 @@ tests:
   manual:
     - Manual check
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-EDGE-002.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-EDGE-002.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -487,10 +457,7 @@ status: in_progress
 code_paths:
   - tools/lib/some-module.ts
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-EDGE-003.yaml'),
-          wuYaml,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-TEST-EDGE-003.yaml'), wuYaml);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -499,10 +466,7 @@ code_paths:
       });
 
       it('should not crash on invalid YAML', () => {
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-INVALID.yaml'),
-          'not: valid: yaml: :::',
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-INVALID.yaml'), 'not: valid: yaml: :::');
 
         // Should not throw, just skip invalid files
 
@@ -542,10 +506,7 @@ tests:
 `;
         writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-DONE.yaml'), doneWu);
         writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-READY.yaml'), readyWu);
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-BLOCKED.yaml'),
-          blockedWu,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-BLOCKED.yaml'), blockedWu);
 
         const result = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
 
@@ -591,14 +552,8 @@ tests:
   manual:
     - Manual check
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-VALID-001.yaml'),
-          validWu,
-        );
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-INVALID-001.yaml'),
-          invalidWu,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-VALID-001.yaml'), validWu);
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-INVALID-001.yaml'), invalidWu);
 
         // Without wuId, would fail due to WU-INVALID-001
         const resultAll = checkAutomatedTestsInvariant({ baseDir: TEST_DIR });
@@ -628,10 +583,7 @@ tests:
   manual:
     - Manual only
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-SCOPED-FAIL.yaml'),
-          invalidWu,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-SCOPED-FAIL.yaml'), invalidWu);
 
         const result = checkAutomatedTestsInvariant({
           baseDir: TEST_DIR,
@@ -684,10 +636,7 @@ tests:
   manual:
     - Manual only
 `;
-        writeFileSync(
-          path.join(TEST_DIR, WU_SUBDIR, 'WU-DONE-SCOPED.yaml'),
-          doneWu,
-        );
+        writeFileSync(path.join(TEST_DIR, WU_SUBDIR, 'WU-DONE-SCOPED.yaml'), doneWu);
 
         // When explicitly scoped, status should not matter - validate anyway
         // (wu:done sets status to done before validation, so we need to check)

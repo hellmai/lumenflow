@@ -29,9 +29,7 @@ describe('sandbox-profile', () => {
     expect(profile.worktreePath).toBe(
       path.resolve(repoRoot, 'worktrees/framework-core-validation-wu-1684'),
     );
-    expect(profile.wuYamlPath).toBe(
-      path.resolve(repoRoot, `${DIRECTORIES.WU_DIR}/WU-1684.yaml`),
-    );
+    expect(profile.wuYamlPath).toBe(path.resolve(repoRoot, `${DIRECTORIES.WU_DIR}/WU-1684.yaml`));
     expect(profile.statePath).toBe(path.resolve(repoRoot, '.lumenflow/state'));
     expect(profile.tempPath).toBe(path.resolve(os.tmpdir()));
 
