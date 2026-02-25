@@ -20,13 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2188 — Document multi-pack config architecture and updated config:set/get](wu/WU-2188.yaml) — Content: Site Comms
-- [WU-2187 — Two-phase workspace validation: dynamic root-key validation against pinned packs](wu/WU-2187.yaml) — Framework: Core Validation
-- [WU-2186 — Fix config:get — remove fallback-to-software_delivery behavior](wu/WU-2186.yaml) — Framework: CLI WU Commands
-- [WU-2185 — Rewrite config:set with workspace-aware routing](wu/WU-2185.yaml) — Framework: CLI WU Commands
-- [WU-2184 — Runtime diagnostics for misplaced config keys](wu/WU-2184.yaml) — Framework: Core Lifecycle
-- [WU-2183 — Add workspace root key registry to config-contract](wu/WU-2183.yaml) — Framework: Core Lifecycle
-- [WU-2182 — Add config_key and config_schema to DomainPackManifestSchema](wu/WU-2182.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2145 — wu:done project-memory promotion to main checkout](wu/WU-2145.yaml) — Framework: Memory
@@ -55,6 +48,13 @@ sections:
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml) — Content: Framework Docs
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
+- [WU-2182 — Add config_key and config_schema to DomainPackManifestSchema](wu/WU-2182.yaml) — Framework: Core Lifecycle
+- [WU-2183 — Add workspace root key registry to config-contract](wu/WU-2183.yaml) — Framework: Core Lifecycle
+- [WU-2184 — Runtime diagnostics for misplaced config keys](wu/WU-2184.yaml) — Framework: Core Lifecycle
+- [WU-2185 — Rewrite config:set with workspace-aware routing](wu/WU-2185.yaml) — Framework: CLI WU Commands
+- [WU-2186 — Fix config:get — remove fallback-to-software_delivery behavior](wu/WU-2186.yaml) — Framework: CLI WU Commands
+- [WU-2187 — Two-phase workspace validation: dynamic root-key validation against pinned packs](wu/WU-2187.yaml) — Framework: Core Validation
+- [WU-2188 — Document multi-pack config architecture and updated config:set/get](wu/WU-2188.yaml) — Content: Site Comms
 
 ## 🔧 In progress
 

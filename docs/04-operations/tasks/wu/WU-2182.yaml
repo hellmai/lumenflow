@@ -17,6 +17,8 @@ tests:
 artifacts:
   - .lumenflow/stamps/WU-2182.done
 dependencies: []
+initiative: INIT-045
+phase: 1
 spec_refs:
   - /home/tom/.claude/plans/init-045-multi-pack-config.md
 risks: []
@@ -38,4 +40,3 @@ acceptance:
   - 'DomainPackManifestSchema includes config_schema: z.string().optional()'
   - 'software-delivery manifest.yaml declares config_key: software_delivery'
   - Pack loader reads and exposes config_key from loaded manifests
-initiative: INIT-045
