@@ -4,17 +4,21 @@
 
 /**
  * @file config-set.ts
- * WU-1902 / WU-1973: Safe config:set CLI command for workspace.yaml modification
+ * WU-2185: Workspace-aware config:set CLI command
  *
- * Accepts dotpath keys and writes them to workspace.yaml under software_delivery.
- * Values are validated against the LumenFlow config schema before writing.
+ * Routes keys by prefix:
+ * - WRITABLE_ROOT_KEYS -> write at workspace root
+ * - Pack config_key -> write under pack config block (validated against pack schema)
+ * - MANAGED_ROOT_KEYS -> error with "use <command>" guidance
+ * - Unknown -> hard error with did-you-mean
  *
- * Follows the lane:edit pattern (WU-1854).
+ * All keys must be fully qualified from workspace root.
+ * No implicit software_delivery prefixing.
  *
  * Usage:
  *   pnpm config:set --key software_delivery.methodology.testing --value test-after
  *   pnpm config:set --key software_delivery.gates.minCoverage --value 85
- *   pnpm config:set --key software_delivery.agents.methodology.principles --value Library-First,KISS
+ *   pnpm config:set --key control_plane.sync_interval --value 60
  */
 
 import path from 'node:path';
@@ -32,6 +36,11 @@ import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { LumenFlowConfigSchema, WORKSPACE_V2_KEYS } from '@lumenflow/core/config-schema';
 import { normalizeConfigKeys } from '@lumenflow/core/normalize-config-keys';
+import {
+  WRITABLE_ROOT_KEYS,
+  MANAGED_ROOT_KEYS,
+  WORKSPACE_ROOT_KEYS,
+} from '@lumenflow/core/config';
 import { runCLI } from './cli-entry-point.js';
 
 // ---------------------------------------------------------------------------
@@ -48,8 +57,84 @@ const ARG_HELP = '--help';
 const COMMIT_PREFIX = 'chore: config:set';
 const WORKSPACE_INIT_COMMAND = 'pnpm workspace-init --yes';
 export const WORKSPACE_FILE_NAME = WORKSPACE_CONFIG_FILE_NAME;
+
+// ---------------------------------------------------------------------------
+// Backward-compatible exports (deprecated, to be removed by WU-2186)
+// config-get.ts imports these; removing them would break the build.
+// ---------------------------------------------------------------------------
+
+/** @deprecated WU-2185: Use fully-qualified keys. Will be removed by WU-2186. */
 export const WORKSPACE_CONFIG_ROOT_KEY = WORKSPACE_V2_KEYS.SOFTWARE_DELIVERY;
+
+/** @deprecated WU-2185: Use fully-qualified keys. Will be removed by WU-2186. */
 export const WORKSPACE_CONFIG_PREFIX = `${WORKSPACE_CONFIG_ROOT_KEY}.`;
+
+/**
+ * @deprecated WU-2185: No implicit prefixing. Use fully-qualified keys.
+ * Will be removed by WU-2186.
+ */
+export function normalizeWorkspaceConfigKey(key: string): string {
+  if (key === WORKSPACE_CONFIG_ROOT_KEY) {
+    return '';
+  }
+  if (key.startsWith(WORKSPACE_CONFIG_PREFIX)) {
+    return key.slice(WORKSPACE_CONFIG_PREFIX.length);
+  }
+  return key;
+}
+
+/**
+ * @deprecated WU-2185: Use workspace-aware routing. Will be removed by WU-2186.
+ */
+export function getSoftwareDeliveryConfigFromWorkspace(
+  workspace: Record<string, unknown>,
+): Record<string, unknown> {
+  const section = workspace[WORKSPACE_CONFIG_ROOT_KEY];
+  if (!section || typeof section !== 'object' || Array.isArray(section)) {
+    return {};
+  }
+  return section as Record<string, unknown>;
+}
+
+/**
+ * @deprecated WU-2185: Use workspace-aware routing. Will be removed by WU-2186.
+ */
+export function setSoftwareDeliveryConfigInWorkspace(
+  workspace: Record<string, unknown>,
+  config: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    ...workspace,
+    [WORKSPACE_CONFIG_ROOT_KEY]: config,
+  };
+}
+
+/**
+ * Known sub-keys of LumenFlowConfigSchema (software_delivery pack config).
+ * Used for did-you-mean suggestions when a user provides an unqualified key.
+ */
+const KNOWN_SD_SUBKEYS = [
+  'version',
+  'methodology',
+  'gates',
+  'directories',
+  'state',
+  'git',
+  'wu',
+  'memory',
+  'ui',
+  'yaml',
+  'agents',
+  'experimental',
+  'cleanup',
+  'telemetry',
+  'cloud',
+  'lanes',
+  'escalation',
+  'package_manager',
+  'test_runner',
+  'build_command',
+] as const;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -70,6 +155,13 @@ interface ConfigSetResult {
   error?: string;
 }
 
+/** Route result from routeConfigKey */
+export type ConfigKeyRoute =
+  | { type: 'workspace-root'; rootKey: string; subPath: string }
+  | { type: 'pack-config'; rootKey: string; subPath: string; packId: string }
+  | { type: 'managed-error'; rootKey: string; command: string }
+  | { type: 'unknown-error'; rootKey: string; suggestion?: string };
+
 // ---------------------------------------------------------------------------
 // Help text
 // ---------------------------------------------------------------------------
@@ -77,28 +169,32 @@ interface ConfigSetResult {
 const SET_HELP_TEXT = `Usage: pnpm config:set --key <dotpath> --value <value>
 
 Safely update ${WORKSPACE_FILE_NAME} via micro-worktree commit.
-Validates against Zod schema before writing.
+Keys must be fully qualified from the workspace root.
+Validates against schema before writing.
 
 Required:
-  ${ARG_KEY} <dotpath>    Config key in dot notation (e.g., software_delivery.methodology.testing)
+  ${ARG_KEY} <dotpath>    Config key in dot notation (fully qualified)
   ${ARG_VALUE} <value>    Value to set (comma-separated for arrays)
 
 Examples:
   pnpm config:set --key software_delivery.methodology.testing --value test-after
   pnpm config:set --key software_delivery.gates.minCoverage --value 85
-  pnpm config:set --key software_delivery.agents.methodology.principles --value Library-First,KISS
+  pnpm config:set --key control_plane.sync_interval --value 60
+  pnpm config:set --key memory_namespace --value my-project
 `;
 
 const GET_HELP_TEXT = `Usage: pnpm config:get --key <dotpath>
 
 Read and display a value from ${WORKSPACE_FILE_NAME}.
+Keys must be fully qualified from the workspace root.
 
 Required:
-  ${ARG_KEY} <dotpath>    Config key in dot notation (e.g., software_delivery.methodology.testing)
+  ${ARG_KEY} <dotpath>    Config key in dot notation (fully qualified)
 
 Examples:
   pnpm config:get --key software_delivery.methodology.testing
   pnpm config:get --key software_delivery.gates.minCoverage
+  pnpm config:get --key control_plane.sync_interval
 `;
 
 // ---------------------------------------------------------------------------
@@ -177,24 +273,77 @@ export function parseConfigGetArgs(argv: string[]): ConfigGetOptions {
   return { key };
 }
 
+// ---------------------------------------------------------------------------
+// Key routing (pure, no side effects)
+// ---------------------------------------------------------------------------
+
 /**
- * Normalize a user-provided key to software_delivery-relative dotpath.
+ * Route a fully-qualified config key to the correct write target.
  *
- * Supported key forms:
- * - `software_delivery.methodology.testing` (canonical)
- * - `methodology.testing` (shorthand; automatically scoped)
+ * Routing rules (checked in order):
+ * 1. First segment in WRITABLE_ROOT_KEYS -> workspace-root
+ * 2. First segment matches a pack config_key -> pack-config
+ * 3. First segment in MANAGED_ROOT_KEYS -> managed-error
+ * 4. Otherwise -> unknown-error (with optional did-you-mean suggestion)
  *
- * @param key - User-provided config key
- * @returns Dotpath relative to software_delivery
+ * @param key - Fully qualified dotpath key (e.g., "software_delivery.gates.minCoverage")
+ * @param packConfigKeys - Map of config_key -> pack_id from loaded pack manifests
+ * @returns Route describing where/how to write the key
  */
-export function normalizeWorkspaceConfigKey(key: string): string {
-  if (key === WORKSPACE_CONFIG_ROOT_KEY) {
-    return '';
+export function routeConfigKey(
+  key: string,
+  packConfigKeys: Map<string, string>,
+): ConfigKeyRoute {
+  const segments = key.split('.');
+  const firstSegment = segments[0];
+  const subPath = segments.slice(1).join('.');
+
+  // 1. Writable root keys (e.g., control_plane, memory_namespace, event_namespace)
+  if (WRITABLE_ROOT_KEYS.has(firstSegment as (typeof WORKSPACE_ROOT_KEYS)[number])) {
+    return { type: 'workspace-root', rootKey: firstSegment, subPath };
   }
-  if (key.startsWith(WORKSPACE_CONFIG_PREFIX)) {
-    return key.slice(WORKSPACE_CONFIG_PREFIX.length);
+
+  // 2. Pack config_key (e.g., software_delivery -> software-delivery pack)
+  const packId = packConfigKeys.get(firstSegment);
+  if (packId !== undefined) {
+    return { type: 'pack-config', rootKey: firstSegment, subPath, packId };
   }
-  return key;
+
+  // 3. Managed root keys (e.g., packs, lanes, security, id, name, policies)
+  const managedCommand = MANAGED_ROOT_KEYS[firstSegment];
+  if (managedCommand !== undefined) {
+    return { type: 'managed-error', rootKey: firstSegment, command: managedCommand };
+  }
+
+  // 4. Unknown key - check for did-you-mean suggestions
+  const suggestion = buildDidYouMeanSuggestion(key, firstSegment, packConfigKeys);
+  return { type: 'unknown-error', rootKey: firstSegment, suggestion };
+}
+
+/**
+ * Build a did-you-mean suggestion for an unknown key.
+ *
+ * If the first segment matches a known sub-key of a pack config schema,
+ * suggest the fully-qualified version.
+ *
+ * @param fullKey - The full user-provided key
+ * @param firstSegment - The first segment of the key
+ * @param packConfigKeys - Map of config_key -> pack_id
+ * @returns A suggestion string, or undefined if no match
+ */
+function buildDidYouMeanSuggestion(
+  fullKey: string,
+  firstSegment: string,
+  packConfigKeys: Map<string, string>,
+): string | undefined {
+  // Check if first segment is a known SD sub-key
+  if ((KNOWN_SD_SUBKEYS as readonly string[]).includes(firstSegment)) {
+    // Find the pack config_key that owns SD config
+    for (const [configKey] of packConfigKeys) {
+      return `Did you mean "${configKey}.${fullKey}"?`;
+    }
+  }
+  return undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -288,40 +437,104 @@ function coerceValue(value: string, existingValue: unknown): unknown {
 }
 
 // ---------------------------------------------------------------------------
-// Core logic: applyConfigSet (pure, validates via Zod)
+// Core logic: applyConfigSet (workspace-aware routing)
 // ---------------------------------------------------------------------------
 
 /**
- * Apply a config:set operation to a config object.
+ * Apply a config:set operation to a full workspace object.
  *
- * 1. Coerces the string value to the appropriate type
- * 2. Sets the value at the dotpath
- * 3. Normalizes keys for Zod compatibility
- * 4. Validates the resulting config against the Zod schema
+ * Routes the key by prefix, validates against the appropriate schema,
+ * and returns the updated workspace or an error.
  *
- * @param config - Current config object (raw YAML parse, not yet Zod-parsed)
- * @param dotpath - Dot-separated key path
+ * @param workspace - Full workspace object (raw YAML parse)
+ * @param key - Fully qualified dotpath key (e.g., "software_delivery.gates.minCoverage")
  * @param rawValue - String value from CLI
- * @returns Result with updated config or error
+ * @param packConfigKeys - Map of config_key -> pack_id from loaded pack manifests
+ * @returns Result with updated workspace or error
  */
 export function applyConfigSet(
-  config: Record<string, unknown>,
-  dotpath: string,
+  workspace: Record<string, unknown>,
+  key: string,
+  rawValue: string,
+  packConfigKeys: Map<string, string>,
+): ConfigSetResult {
+  const route = routeConfigKey(key, packConfigKeys);
+
+  switch (route.type) {
+    case 'managed-error':
+      return {
+        ok: false,
+        error: `Key "${route.rootKey}" is managed by a dedicated command. Use \`pnpm ${route.command}\` instead.`,
+      };
+
+    case 'unknown-error': {
+      const hint = route.suggestion ? ` ${route.suggestion}` : '';
+      return {
+        ok: false,
+        error: `Unknown root key "${route.rootKey}".${hint} Valid root keys: ${[...WRITABLE_ROOT_KEYS].join(', ')}, or a pack config_key (${[...packConfigKeys.keys()].join(', ')}).`,
+      };
+    }
+
+    case 'workspace-root':
+      return applyWorkspaceRootSet(workspace, key, rawValue);
+
+    case 'pack-config':
+      return applyPackConfigSet(workspace, route, rawValue);
+  }
+}
+
+/**
+ * Apply a set operation at the workspace root level.
+ * Used for WRITABLE_ROOT_KEYS like control_plane, memory_namespace, event_namespace.
+ */
+function applyWorkspaceRootSet(
+  workspace: Record<string, unknown>,
+  key: string,
   rawValue: string,
 ): ConfigSetResult {
+  const existingValue = getConfigValue(workspace, key);
+  const coercedValue = coerceValue(rawValue, existingValue);
+  const updatedWorkspace = setNestedValue(workspace, key, coercedValue);
+  return { ok: true, config: updatedWorkspace };
+}
+
+/**
+ * Apply a set operation within a pack's config block.
+ * Extracts the pack section, applies the change, validates via Zod schema,
+ * then writes back into the workspace.
+ */
+function applyPackConfigSet(
+  workspace: Record<string, unknown>,
+  route: { rootKey: string; subPath: string; packId: string },
+  rawValue: string,
+): ConfigSetResult {
+  // Extract the pack's config section
+  const packSection = workspace[route.rootKey];
+  const packConfig: Record<string, unknown> =
+    packSection && typeof packSection === 'object' && !Array.isArray(packSection)
+      ? (packSection as Record<string, unknown>)
+      : {};
+
+  if (!route.subPath) {
+    return {
+      ok: false,
+      error: `Key must target a nested field under ${route.rootKey} (e.g., ${route.rootKey}.methodology.testing).`,
+    };
+  }
+
   // Get existing value for type inference
-  const existingValue = getConfigValue(config, dotpath);
+  const existingValue = getConfigValue(packConfig, route.subPath);
 
   // Coerce value
   const coercedValue = coerceValue(rawValue, existingValue);
 
-  // Set value in config
-  const updatedConfig = setNestedValue(config, dotpath, coercedValue);
+  // Set value in pack config
+  const updatedPackConfig = setNestedValue(packConfig, route.subPath, coercedValue);
 
   // Normalize keys for Zod compatibility (snake_case -> camelCase)
-  const normalized = normalizeConfigKeys(updatedConfig);
+  const normalized = normalizeConfigKeys(updatedPackConfig);
 
-  // Validate against Zod schema
+  // Validate against LumenFlowConfigSchema (SD pack schema)
   const parseResult = LumenFlowConfigSchema.safeParse(normalized);
 
   if (!parseResult.success) {
@@ -330,12 +543,17 @@ export function applyConfigSet(
       .join('; ');
     return {
       ok: false,
-      error: `Validation failed for ${dotpath}=${rawValue}: ${issues}`,
+      error: `Validation failed for ${route.rootKey}.${route.subPath}=${rawValue}: ${issues}`,
     };
   }
 
-  // Return the updated raw config (not the Zod-parsed one, to preserve YAML structure)
-  return { ok: true, config: updatedConfig };
+  // Write updated pack config back into workspace
+  const updatedWorkspace = {
+    ...workspace,
+    [route.rootKey]: updatedPackConfig,
+  };
+
+  return { ok: true, config: updatedWorkspace };
 }
 
 // ---------------------------------------------------------------------------
@@ -366,36 +584,55 @@ function writeRawWorkspace(workspacePath: string, workspace: Record<string, unkn
 }
 
 /**
- * Extract software_delivery config section from workspace object.
+ * Load pack config_keys from workspace packs field.
+ * Reads pinned pack manifests to discover their declared config_key.
  *
+ * @param projectRoot - Absolute path to project root
  * @param workspace - Parsed workspace object
- * @returns software_delivery config object (empty when unset/invalid)
+ * @returns Map of config_key -> pack_id
  */
-export function getSoftwareDeliveryConfigFromWorkspace(
+function loadPackConfigKeys(
+  projectRoot: string,
   workspace: Record<string, unknown>,
-): Record<string, unknown> {
-  const section = workspace[WORKSPACE_CONFIG_ROOT_KEY];
-  if (!section || typeof section !== 'object' || Array.isArray(section)) {
-    return {};
-  }
-  return section as Record<string, unknown>;
-}
+): Map<string, string> {
+  const result = new Map<string, string>();
+  const packs = workspace.packs;
 
-/**
- * Return a new workspace object with updated software_delivery section.
- *
- * @param workspace - Existing workspace object
- * @param config - Updated software_delivery config object
- * @returns New workspace object with replaced software_delivery section
- */
-export function setSoftwareDeliveryConfigInWorkspace(
-  workspace: Record<string, unknown>,
-  config: Record<string, unknown>,
-): Record<string, unknown> {
-  return {
-    ...workspace,
-    [WORKSPACE_CONFIG_ROOT_KEY]: config,
-  };
+  if (!Array.isArray(packs)) {
+    return result;
+  }
+
+  for (const pack of packs) {
+    if (!pack || typeof pack !== 'object' || !('id' in pack)) {
+      continue;
+    }
+
+    const packId = String(pack.id);
+    const manifestPath = path.join(
+      projectRoot,
+      'packages',
+      '@lumenflow',
+      'packs',
+      packId,
+      'manifest.yaml',
+    );
+
+    if (!existsSync(manifestPath)) {
+      continue;
+    }
+
+    try {
+      const manifestContent = readFileSync(manifestPath, 'utf8');
+      const manifest = YAML.parse(manifestContent) as Record<string, unknown>;
+      if (manifest && typeof manifest.config_key === 'string') {
+        result.set(manifest.config_key, packId);
+      }
+    } catch {
+      // Skip unreadable manifests
+    }
+  }
+
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -405,18 +642,30 @@ export function setSoftwareDeliveryConfigInWorkspace(
 export async function main(): Promise<void> {
   const userArgs = process.argv.slice(2);
   const options = parseConfigSetArgs(userArgs);
-  const configKey = normalizeWorkspaceConfigKey(options.key);
-  if (!configKey) {
-    die(
-      `${LOG_PREFIX} Key must target a nested field under ${WORKSPACE_CONFIG_ROOT_KEY} (e.g., ${WORKSPACE_CONFIG_PREFIX}methodology.testing).`,
-    );
-  }
 
   const projectRoot = findProjectRoot();
   const workspacePath = path.join(projectRoot, WORKSPACE_FILE_NAME);
 
   if (!existsSync(workspacePath)) {
     die(`${LOG_PREFIX} Missing ${WORKSPACE_FILE_NAME}. Run \`${WORKSPACE_INIT_COMMAND}\` first.`);
+  }
+
+  // Load pack config_keys from workspace for routing
+  const rawWorkspace = readRawWorkspace(workspacePath);
+  const packConfigKeys = loadPackConfigKeys(projectRoot, rawWorkspace);
+
+  // Validate routing before starting micro-worktree
+  const route = routeConfigKey(options.key, packConfigKeys);
+  if (route.type === 'managed-error') {
+    die(
+      `${LOG_PREFIX} Key "${route.rootKey}" is managed by a dedicated command. Use \`pnpm ${route.command}\` instead.`,
+    );
+  }
+  if (route.type === 'unknown-error') {
+    const hint = route.suggestion ? ` ${route.suggestion}` : '';
+    die(
+      `${LOG_PREFIX} Unknown root key "${route.rootKey}".${hint} Valid root keys: ${[...WRITABLE_ROOT_KEYS].join(', ')}, or a pack config_key (${[...packConfigKeys.keys()].join(', ')}).`,
+    );
   }
 
   console.log(
@@ -437,19 +686,20 @@ export async function main(): Promise<void> {
         die(`${LOG_PREFIX} Config file not found in micro-worktree: ${workspaceRelPath}`);
       }
 
-      // Read workspace and extract software_delivery config section
+      // Read full workspace
       const workspace = readRawWorkspace(mwWorkspacePath);
-      const softwareDeliveryConfig = getSoftwareDeliveryConfigFromWorkspace(workspace);
 
-      // Apply set
-      const result = applyConfigSet(softwareDeliveryConfig, configKey, options.value);
+      // Re-load pack config keys from micro-worktree workspace
+      const mwPackConfigKeys = loadPackConfigKeys(worktreePath, workspace);
+
+      // Apply set with workspace-aware routing
+      const result = applyConfigSet(workspace, options.key, options.value, mwPackConfigKeys);
       if (!result.ok) {
         die(`${LOG_PREFIX} ${result.error}`);
       }
 
-      // Write updated workspace with replaced software_delivery section
-      const updatedWorkspace = setSoftwareDeliveryConfigInWorkspace(workspace, result.config!);
-      writeRawWorkspace(mwWorkspacePath, updatedWorkspace);
+      // Write updated workspace
+      writeRawWorkspace(mwWorkspacePath, result.config!);
 
       console.log(`${LOG_PREFIX} Config validated and written successfully.`);
 

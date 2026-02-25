@@ -33,6 +33,14 @@ export {
   WORKSPACE_CONFIG_FILE_NAME,
 } from './config-contract.js';
 
+/** WU-2185: Re-export routing constants for config:set workspace-aware routing */
+export {
+  WORKSPACE_ROOT_KEYS,
+  WRITABLE_ROOT_KEYS,
+  MANAGED_ROOT_KEYS,
+  type WorkspaceRootKey,
+} from './config-contract.js';
+
 /** Shared UTF-8 encoding literal for file reads/writes */
 const UTF8_ENCODING = 'utf8';
 
