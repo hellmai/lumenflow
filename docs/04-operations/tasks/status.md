@@ -5,6 +5,7 @@ _Last updated: 2026-02-25_
 ## In Progress
 
 - [WU-2182 — Add config_key and config_schema to DomainPackManifestSchema](wu/WU-2182.yaml)
+- [WU-2183 — Add workspace root key registry to config-contract](wu/WU-2183.yaml)
 
 ## Completed
 
