@@ -4,7 +4,7 @@ _Last updated: 2026-02-25_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2180 — Fix gitignore scaffold drift: add missing ephemeral path entries](wu/WU-2180.yaml)
 
 ## Completed
 
