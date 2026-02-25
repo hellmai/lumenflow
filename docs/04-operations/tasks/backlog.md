@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2187 — Two-phase workspace validation: dynamic root-key validation against pinned packs](wu/WU-2187.yaml) — Framework: Core Validation
 - [WU-2186 — Fix config:get — remove fallback-to-software_delivery behavior](wu/WU-2186.yaml) — Framework: CLI WU Commands
 - [WU-2185 — Rewrite config:set with workspace-aware routing](wu/WU-2185.yaml) — Framework: CLI WU Commands
 - [WU-2184 — Runtime diagnostics for misplaced config keys](wu/WU-2184.yaml) — Framework: Core Lifecycle
