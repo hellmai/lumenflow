@@ -1,6 +1,6 @@
 # Quick Reference: LumenFlow Commands
 
-**Last updated:** 2026-02-19
+**Last updated:** 2026-02-25
 
 Reference for CLI commands. Organized by category for quick discovery.
 
@@ -21,6 +21,7 @@ Run `--help` first, then run the real command with explicit flags.
 | Category            | Help-First Example                    | Real Command Example                                                     |
 | ------------------- | ------------------------------------- | ------------------------------------------------------------------------ |
 | Setup & Development | `pnpm bootstrap --help`               | `pnpm bootstrap`                                                         |
+| Tooling Operations  | `pnpm lumenflow:upgrade --help`       | `pnpm lumenflow:upgrade --latest`                                        |
 | WU Lifecycle        | `pnpm wu:claim --help`                | `pnpm wu:claim --id WU-1561 --lane "Operations: Tooling"`                |
 | WU Maintenance      | `pnpm wu:recover --help`              | `pnpm wu:recover --id WU-1561`                                           |
 | Gates & Quality     | `pnpm gates --help`                   | `pnpm gates --docs-only`                                                 |
@@ -34,7 +35,8 @@ Run `--help` first, then run the real command with explicit flags.
 | Documentation       | `pnpm docs:validate --help`           | `pnpm docs:validate`                                                     |
 | Release             | `pnpm pre-release:check --help`       | `pnpm pre-release:check`                                                 |
 | Configuration       | `pnpm config:set --help`              | `pnpm config:set --key methodology.testing --value test-after`           |
-| Agent Utilities     | `pnpm agent:issues-query --help`      | `pnpm agent:issues-query`                                                |
+| Agent Utilities     | `pnpm agent:session --help`           | `pnpm agent:session`                                                     |
+| Packs               | `pnpm pack:install --help`            | `pnpm pack:install --name software-delivery`                             |
 
 ---
 
@@ -57,6 +59,7 @@ Run `--help` first, then run the real command with explicit flags.
 | `pnpm lumenflow:upgrade`   | Upgrade LumenFlow packages                        |
 | `pnpm lumenflow:doctor`    | Diagnose LumenFlow configuration                  |
 | `pnpm lumenflow:integrate` | Generate enforcement hooks for client             |
+| `pnpm cloud:connect`       | Configure cloud control-plane access              |
 | `npx lumenflow commands`   | List all available CLI commands                   |
 
 **For external projects (end users):**
@@ -73,6 +76,32 @@ pnpm exec lumenflow --client claude   # Claude Code
 pnpm exec lumenflow --client cursor   # Cursor IDE
 pnpm exec lumenflow --client all      # All clients
 ```
+
+---
+
+## Tooling Operations (No WU Required)
+
+These commands use **micro-worktree isolation** internally — they handle their own
+commit and push atomically. Do NOT wrap them in a WU or use raw `pnpm update`/`git commit`.
+
+| Command                                                    | Description                                       |
+| ---------------------------------------------------------- | ------------------------------------------------- |
+| `pnpm lumenflow:upgrade --version 3.5.0`                   | Upgrade all 7 @lumenflow/\* packages              |
+| `pnpm lumenflow:upgrade --latest`                          | Upgrade to latest version                         |
+| `pnpm lumenflow:upgrade --latest --dry-run`                | Preview upgrade without executing                 |
+| `pnpm config:set --key <dotpath> --value <value>`          | Set workspace.yaml config (Zod-validated)         |
+| `pnpm config:get --key <dotpath>`                          | Read workspace.yaml config                        |
+| `pnpm cloud:connect`                                       | Configure cloud control-plane access              |
+| `pnpm docs:sync`                                           | Sync agent docs after upgrade                     |
+| `pnpm sync:templates`                                      | Sync templates to project                         |
+
+**Key principle:** If a LumenFlow CLI command exists for the operation, use it instead of
+raw pnpm/git. These tooling commands commit directly to main via micro-worktree — no dirty
+files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
+
+> **Anti-pattern:** Do NOT use `pnpm update @lumenflow/*` to upgrade packages.
+> This leaves dirty `package.json` and `pnpm-lock.yaml` on main.
+> Use `pnpm lumenflow:upgrade` instead — it handles everything atomically.
 
 ---
 
@@ -93,6 +122,7 @@ pnpm exec lumenflow --client all      # All clients
 | `pnpm wu:brief --id WU-XXX --client <client>`   | Generate handoff prompt + record evidence (worktree only)    |
 | `pnpm wu:brief --id WU-XXX --no-context`        | Generate prompt without memory context injection             |
 | `pnpm wu:delegate --id WU-XXX --parent-wu <P>`  | Generate prompt and record delegation lineage                |
+| `pnpm wu:sandbox --id WU-XXX -- <cmd>`           | Run command through hardened WU sandbox backend              |
 
 ### WU Maintenance
 
@@ -108,6 +138,7 @@ pnpm exec lumenflow --client all      # All clients
 | `pnpm wu:infer-lane --id WU-XXX` | Infer lane from code paths/description   |
 | `pnpm wu:delete --id WU-XXX`     | Delete WU spec and cleanup               |
 | `pnpm wu:unlock-lane --lane <L>` | Unlock stuck lane                        |
+| `pnpm wu:proto --lane <Lane>`    | Create WU prototype (lightweight draft)  |
 
 ---
 
@@ -129,6 +160,7 @@ pnpm exec lumenflow --client all      # All clients
 | `pnpm lane:setup`                 | Create/update draft lane config   |
 | `pnpm lane:validate`              | Validate lane draft artifacts     |
 | `pnpm lane:lock`                  | Lock lane lifecycle for WU create |
+| `pnpm lane:edit --lane <L>`       | Edit lane definition (rename, wip-limit, paths) |
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
@@ -218,10 +250,7 @@ Supported mismatch fixes:
 
 ## Configuration
 
-| Command                                           | Description                                     |
-| ------------------------------------------------- | ----------------------------------------------- |
-| `pnpm config:get --key <dotpath>`                 | Read a value from `workspace.yaml`              |
-| `pnpm config:set --key <dotpath> --value <value>` | Set a value in `workspace.yaml` (Zod-validated) |
+See **Tooling Operations** section above for `config:set` and `config:get` commands.
 
 `config:set` validates against the Zod schema before writing and uses the micro-worktree
 pattern for atomic commits. Always use these commands instead of raw Write/Edit on
@@ -355,9 +384,11 @@ For the complete orchestration workflow (delegation, memory coordination, failur
 
 | Command                 | Description                  |
 | ----------------------- | ---------------------------- |
-| `pnpm flow:report`      | Generate flow metrics report |
-| `pnpm flow:bottlenecks` | Identify flow bottlenecks    |
-| `pnpm metrics:snapshot` | Capture metrics snapshot     |
+| `pnpm flow:report`      | Generate flow metrics report                        |
+| `pnpm flow:bottlenecks` | Identify flow bottlenecks                           |
+| `pnpm metrics:snapshot` | Capture metrics snapshot                            |
+| `pnpm metrics`          | View workflow metrics                               |
+| `pnpm strict:progress`  | Report strict TypeScript backlog and guard regressions |
 
 ---
 
@@ -384,9 +415,45 @@ For the complete orchestration workflow (delegation, memory coordination, failur
 
 ## Agent Utilities
 
-| Command                   | Description                        |
-| ------------------------- | ---------------------------------- |
-| `pnpm agent:issues-query` | Query GitHub issues for agent work |
+| Command                   | Description                                  |
+| ------------------------- | -------------------------------------------- |
+| `pnpm agent:session`      | Start agent session (registers active agent) |
+| `pnpm agent:session-end`  | End agent session                            |
+| `pnpm agent:log-issue`    | Log issue during agent session               |
+| `pnpm agent:issues-query` | Query GitHub issues for agent work           |
+| `pnpm task:claim`         | Claim a task directly through KernelRuntime  |
+
+---
+
+## Packs
+
+| Command                                  | Description                         |
+| ---------------------------------------- | ----------------------------------- |
+| `pnpm pack:author`                       | Author a secure domain pack         |
+| `pnpm pack:scaffold --name <name>`       | Scaffold a new domain pack          |
+| `pnpm pack:validate --path <path>`       | Validate a domain pack for integrity|
+| `pnpm pack:hash --path <path>`           | Compute integrity hash for a pack   |
+| `pnpm pack:publish --path <path>`        | Publish a domain pack to registry   |
+| `pnpm pack:install --name <name>`        | Install a domain pack into workspace|
+| `pnpm pack:search --query <query>`       | Search for packs in registry        |
+
+---
+
+## Audited File & Git Wrappers
+
+These commands wrap standard file/git operations with audit trail logging.
+Use them when audit evidence is required (e.g., during WU execution).
+
+| Command                          | Description                    |
+| -------------------------------- | ------------------------------ |
+| `pnpm file:read --path <path>`   | Read file with audit trail     |
+| `pnpm file:write --path <path>`  | Write file with audit trail    |
+| `pnpm file:edit --path <path>`   | Edit file with audit trail     |
+| `pnpm file:delete --path <path>` | Delete file with audit trail   |
+| `pnpm git:status`                | Show git status with audit trail |
+| `pnpm git:diff`                  | Show git diff with audit trail |
+| `pnpm git:log`                   | Show git log with audit trail  |
+| `pnpm git:branch`               | Show git branch with audit trail |
 
 ---
 
