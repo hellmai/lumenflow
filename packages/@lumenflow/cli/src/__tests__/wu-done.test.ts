@@ -6,14 +6,16 @@ import { readFile } from 'node:fs/promises';
 import { ensureCleanWorktree } from '../wu-done-check.js';
 import {
   CHECKPOINT_GATE_MODES,
-  buildMissingWuBriefEvidenceMessage,
   computeBranchOnlyFallback,
-  enforceWuBriefEvidenceForDone,
   enforceCheckpointGateForDone,
   getYamlStatusForDisplay,
   resolveCheckpointGateMode,
-  shouldEnforceWuBriefEvidence,
 } from '../wu-done.js';
+import {
+  buildMissingWuBriefEvidenceMessage,
+  enforceWuBriefEvidenceForDone,
+  shouldEnforceWuBriefEvidence,
+} from '../wu-done-policies.js';
 import {
   resolveWuDonePreCommitGateDecision,
   WU_DONE_PRE_COMMIT_GATE_DECISION_REASONS,

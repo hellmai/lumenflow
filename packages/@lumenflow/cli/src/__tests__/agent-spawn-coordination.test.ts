@@ -39,7 +39,7 @@ import {
   buildMissingSpawnProvenanceMessage,
   enforceSpawnProvenanceForDone,
   shouldEnforceSpawnProvenance,
-} from '../wu-done.js';
+} from '../wu-done-policies.js';
 import { SpawnStrategyFactory } from '@lumenflow/core/spawn-strategy';
 import { createSignal, loadSignals } from '@lumenflow/memory';
 
