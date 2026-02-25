@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2171 — B4: Evaluate delegation package extraction](wu/WU-2171.yaml) — Framework: Core Lifecycle
 - [WU-2170 — B3: Migrate consumers and deprecate root core barrel](wu/WU-2170.yaml) — Framework: Core Lifecycle
 - [WU-2169 — B2: Add domain-scoped core barrel exports](wu/WU-2169.yaml) — Framework: Core Lifecycle
 - [WU-2168 — B1: Audit and categorize core API surface](wu/WU-2168.yaml) — Framework: Core Lifecycle
