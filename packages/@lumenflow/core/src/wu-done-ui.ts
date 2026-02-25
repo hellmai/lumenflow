@@ -77,9 +77,7 @@ export function printGateFailureBox({
  * @param {string} statusOutput - Raw git status --porcelain output
  */
 export function printStatusPreview(statusOutput: string) {
-  const lines = statusOutput
-    .split(STRING_LITERALS.NEWLINE)
-    .filter((line: string) => line.trim());
+  const lines = statusOutput.split(STRING_LITERALS.NEWLINE).filter((line: string) => line.trim());
   const previewLimit = UI.STATUS_PREVIEW_LINES;
   const preview = lines.slice(0, previewLimit);
 
