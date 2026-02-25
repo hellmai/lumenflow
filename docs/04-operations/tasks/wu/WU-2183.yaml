@@ -27,8 +27,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: config-contract.ts only has WORKSPACE_V2_KEYS with two entries. Add WORKSPACE_ROOT_KEYS (all kernel-owned root keys), WRITABLE_ROOT_KEYS (keys config:set can write directly), and MANAGED_ROOT_KEYS (keys that need dedicated commands, with command name). This is the routing table for config:set/get rewrite.
+description: config-contract.ts only has WORKSPACE_V2_KEYS with two entries. Add WORKSPACE_ROOT_KEYS
+  (all kernel-owned root keys), WRITABLE_ROOT_KEYS (keys config:set can write directly), and
+  MANAGED_ROOT_KEYS (keys that need dedicated commands, with command name). This is the routing
+  table for config:set/get rewrite.
 acceptance:
   - WORKSPACE_ROOT_KEYS constant lists all kernel-owned root keys
   - WRITABLE_ROOT_KEYS set includes control_plane, memory_namespace, event_namespace
   - MANAGED_ROOT_KEYS maps packs->pack:install, lanes->lane:edit, security->dedicated command
+initiative: INIT-045

@@ -27,8 +27,11 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: config:get tries root key first, then falls back to software_delivery.<key>. This masks misconfigurations — a user can read control_plane.endpoint from the wrong location. Remove fallback, use same routing as config:set. If key doesnt resolve in correct scope, error.
+description: config:get tries root key first, then falls back to software_delivery.<key>. This masks
+  misconfigurations — a user can read control_plane.endpoint from the wrong location. Remove
+  fallback, use same routing as config:set. If key doesnt resolve in correct scope, error.
 acceptance:
   - config:get --key control_plane.endpoint reads from root only
   - config:get --key software_delivery.gates.minCoverage reads from SD block
   - config:get does not fall back to software_delivery when root key not found
+initiative: INIT-045

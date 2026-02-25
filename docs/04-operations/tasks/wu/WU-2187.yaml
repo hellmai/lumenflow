@@ -27,9 +27,13 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'WorkspaceSpecSchema requires software_delivery always. Make it optional. Add two-phase validation: phase 1 validates kernel root keys strictly, phase 2 resolves pinned pack manifests and allows only declared config_keys as extra root keys. Unknown root keys are rejected hard — no passthrough.'
+description: 'WorkspaceSpecSchema requires software_delivery always. Make it optional. Add two-phase
+  validation: phase 1 validates kernel root keys strictly, phase 2 resolves pinned pack manifests
+  and allows only declared config_keys as extra root keys. Unknown root keys are rejected hard — no
+  passthrough.'
 acceptance:
   - WorkspaceSpecSchema no longer requires software_delivery
   - Workspace without software_delivery boots when SD pack not pinned
   - Workspace with unknown root key is rejected
   - Workspace with declared pack config_key is accepted
+initiative: INIT-045

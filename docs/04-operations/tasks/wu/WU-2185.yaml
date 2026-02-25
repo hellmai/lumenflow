@@ -27,10 +27,14 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'config:set hardcodes software_delivery as write target. Rewrite: remove implicit SD prefix, all keys fully qualified from workspace root, route by key prefix (kernel root key -> kernel schema, pack config_key -> pack schema, managed key -> error with guidance, unknown -> hard error). Write-path strict validation rejects unknown sub-keys.'
+description: 'config:set hardcodes software_delivery as write target. Rewrite: remove implicit SD
+  prefix, all keys fully qualified from workspace root, route by key prefix (kernel root key ->
+  kernel schema, pack config_key -> pack schema, managed key -> error with guidance, unknown -> hard
+  error). Write-path strict validation rejects unknown sub-keys.'
 acceptance:
   - config:set --key control_plane.sync_interval writes at YAML root
   - config:set --key software_delivery.gates.minCoverage writes under SD block
   - config:set --key gates.minCoverage errors with did-you-mean guidance
   - config:set --key gates.unknown_key errors at write path (strict validation)
   - config:set --key packs.foo errors with use pack:install guidance
+initiative: INIT-045
