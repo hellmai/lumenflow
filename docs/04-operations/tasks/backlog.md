@@ -34,7 +34,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2144 — wu:brief writes checkpoint event to wu-events.jsonl when run outside worktree](wu/WU-2144.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1095,6 +1095,7 @@ sections:
 - [WU-2133 — Restore enforcement guard integrity in core](wu/WU-2133.yaml)
 - [WU-2134 — Stabilize initiatives tests under config-driven path resolution](wu/WU-2134.yaml)
 - [WU-2132 — Enforce TDD provenance and wu:brief evidence in WU lifecycle](wu/WU-2132.yaml)
+- [WU-2144 — wu:brief writes checkpoint event to wu-events.jsonl when run outside worktree](wu/WU-2144.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
