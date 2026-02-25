@@ -8,7 +8,8 @@ created: 2026-02-25
 code_paths:
   - packages/@lumenflow/kernel/src/kernel.schemas.ts
 tests:
-  manual: []
+  manual:
+    - Verify workspace without software_delivery boots when SD pack not pinned
   unit:
     - packages/@lumenflow/kernel/src/__tests__/kernel.schemas.test.ts
   e2e: []
