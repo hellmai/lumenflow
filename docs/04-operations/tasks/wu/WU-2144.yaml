@@ -2,7 +2,7 @@ id: WU-2144
 title: wu:brief writes checkpoint event to wu-events.jsonl when run outside worktree
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -27,8 +27,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:brief calls recordWuBriefEvidence() which writes a checkpoint event to .lumenflow/state/wu-events.jsonl regardless of context. When run from main checkout (e.g. orchestrator generating briefs), this mutates shared state before the WU is even claimed. The evidence recording should be gated on being inside a worktree, or deferred until wu:claim.
+description: wu:brief calls recordWuBriefEvidence() which writes a checkpoint event to
+  .lumenflow/state/wu-events.jsonl regardless of context. When run from main checkout (e.g.
+  orchestrator generating briefs), this mutates shared state before the WU is even claimed. The
+  evidence recording should be gated on being inside a worktree, or deferred until wu:claim.
 acceptance:
   - recordWuBriefEvidence skips writing when not in a worktree context
   - Running wu:brief from main checkout does not modify wu-events.jsonl
   - Running wu:brief from a worktree still records evidence as before
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2144
+claimed_at: 2026-02-25T10:08:25.371Z
+baseline_main_sha: db55b94f09452661a9027d639d0c4f83c709275b
+session_id: 85831f10-5cb3-4278-a7c0-59b8827c0127
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-25T10:08:25.376Z

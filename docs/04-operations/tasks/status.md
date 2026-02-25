@@ -4,7 +4,7 @@ _Last updated: 2026-02-25_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2144 — wu:brief writes checkpoint event to wu-events.jsonl when run outside worktree](wu/WU-2144.yaml)
 
 ## Completed
 
