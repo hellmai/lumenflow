@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2178 — D4: Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
 - [WU-2177 — D3: Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2176 — D2: Document validator boundaries and ownership](wu/WU-2176.yaml) — Content: Framework Docs
 - [WU-2175 — D1: Add focused IWuStateStore injection alternatives](wu/WU-2175.yaml) — Framework: Core Lifecycle
