@@ -460,9 +460,7 @@ describe('wu-id-generator', () => {
       expect(result).toBe(100);
       expect(git.fetch).not.toHaveBeenCalled();
       expect(git.listTreeAtRef).not.toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('offline'),
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('offline'));
 
       consoleSpy.mockRestore();
     });
@@ -514,9 +512,7 @@ describe('wu-id-generator', () => {
       const result = await getHighestWuIdRemoteAware({ git });
       // Falls back to local: YAML=100
       expect(result).toBe(100);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('remote'),
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('remote'));
 
       consoleSpy.mockRestore();
     });
