@@ -2300,3 +2300,4 @@
 {"type":"claim","wuId":"WU-2194","timestamp":"2026-02-26T11:05:33.664Z","lane":"Framework: CLI WU Commands","title":"Remove redundant ensureMainUpToDate pre-flight checks from micro-worktree commands"}
 {"type":"claim","wuId":"WU-2191","timestamp":"2026-02-26T11:06:39.382Z","lane":"Framework: Core Lifecycle","title":"Extract shared pack manifest resolution for config commands"}
 {"type":"complete","wuId":"WU-2189","timestamp":"2026-02-26T11:07:18.861Z"}
+{"type":"complete","wuId":"WU-2194","timestamp":"2026-02-26T11:11:57.965Z"}
