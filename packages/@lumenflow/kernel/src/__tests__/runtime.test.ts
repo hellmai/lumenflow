@@ -1556,10 +1556,11 @@ describe('kernel runtime facade', () => {
       expect(error.message).toContain('software_delivery');
       // Must include actionable remediation — not the generic error
       expect(error.message).toMatch(/software-delivery.*pack/i);
-      // Must include the executable pack:install remediation command
+      // Must include the executable pack:install remediation command with ALL required flags
       expect(error.message).toContain('pnpm pack:install');
       expect(error.message).toContain('--id software-delivery');
-      expect(error.message).toContain('--source local');
+      expect(error.message).toContain('--source registry');
+      expect(error.message).toContain('--version');
       // Must NOT be the generic "Unknown workspace root key" message
       expect(error.message).not.toContain('Unknown workspace root key');
     });
