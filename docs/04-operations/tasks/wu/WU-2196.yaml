@@ -6,7 +6,6 @@ status: in_progress
 priority: P1
 created: 2026-02-26
 code_paths:
-  - packages/@lumenflow/kernel/src/runtime/kernel-runtime.ts
   - packages/@lumenflow/kernel/src/kernel.schemas.ts
 tests:
   manual:
@@ -25,10 +24,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-26T12:10:13.823Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-validation-wu-2196
+session_id: cfa88a85-3208-4e6c-b01f-14425ae6c856
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T12:10:13.829Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -46,11 +52,3 @@ acceptance:
   - Workspaces that have already pinned SD pack continue to boot normally
   - 'Migration tests cover: legacy workspace rejected with actionable message, migrated workspace
     boots cleanly, workspace without software_delivery boots cleanly'
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-validation-wu-2196
-claimed_at: 2026-02-26T12:10:13.823Z
-baseline_main_sha: 90ff96daa95589cde75095be32c12ce5ac50a036
-session_id: cfa88a85-3208-4e6c-b01f-14425ae6c856
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-26T12:10:13.829Z
