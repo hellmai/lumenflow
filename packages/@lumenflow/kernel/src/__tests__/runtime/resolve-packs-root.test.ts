@@ -64,6 +64,7 @@ function createPackManifestText(packId: string): string {
     'evidence_types: []',
     'state_aliases: {}',
     'lane_templates: []',
+    'config_key: software_delivery',
   ].join('\n');
 }
 
