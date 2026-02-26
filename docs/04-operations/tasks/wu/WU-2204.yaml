@@ -2,7 +2,7 @@ id: WU-2204
 title: 'Phase 4: Add adapter injection points for sync and micro-worktree shared helpers'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-26
 code_paths:
@@ -47,3 +47,11 @@ acceptance:
   - Add optional adapter injection parameters to micro-worktree-shared cleanup/sync helpers with
     backward-compatible defaults
   - Unit tests can call these helpers without module-level adapter mocking
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2204
+claimed_at: 2026-02-26T13:14:07.433Z
+baseline_main_sha: 374690c0385ddd2433b634900d320a1df2e65077
+session_id: 92e0cdc2-0d5c-4e9e-81cf-307c4fd43b4c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T13:14:07.439Z
