@@ -1,0 +1,69 @@
+---
+title: "Dogfooding: How We Use LumenFlow to Build LumenFlow"
+date: 2026-02-01
+authors:
+  - lumenflow
+tags:
+  - engineering
+  - dogfooding
+  - workflow
+excerpt: "We've completed over 2,200 Work Units using our own governance framework. Here's what that looks like in practice."
+---
+
+Every commit in the LumenFlow repository goes through the LumenFlow workflow. Every feature, every bug fix, every doc update is tracked as a Work Unit, claimed into a lane, developed in an isolated worktree, and completed through quality gates. We've completed over 2,200 WUs this way.
+
+This isn't a marketing exercise. Dogfooding is how we find the sharp edges.
+
+## What a Typical Day Looks Like
+
+A development session starts with creating or claiming a Work Unit:
+
+```bash
+pnpm wu:create --lane "Framework: CLI WU Commands" --title "Fix release script isolation"
+pnpm wu:claim --id WU-2219 --lane "Framework: CLI WU Commands"
+cd worktrees/framework-cli-wu-commands-wu-2219
+```
+
+The worktree is isolated. Changes can't accidentally bleed into other work. The WU has acceptance criteria that define what "done" means.
+
+When the work is finished:
+
+```bash
+pnpm wu:prep --id WU-2219   # runs gates, validates everything
+pnpm wu:done --id WU-2219   # merges, stamps, cleans up
+```
+
+Gates check formatting, linting, type safety, and test coverage. If any gate fails, the WU can't be completed. No exceptions.
+
+## What We've Found by Eating Our Own Cooking
+
+**WU sizing matters.** Early on, we created WUs that were too large. A WU touching 15 files across 3 packages is hard to review and hard to revert. We now target WUs that touch 1-3 files and complete in a single session. WU-2219 through WU-2224 each fixed one specific release script issue — small, focused, easy to understand.
+
+**Worktree isolation prevents cascading failures.** When WU-2221 introduced a build issue in micro-worktrees, the problem was contained. The main branch was untouched. The fix was a one-line change in an isolated worktree.
+
+**Evidence is underrated.** Every WU records delegation events via `wu:brief`. When we look back at a decision six months later, we can trace exactly what was delegated, to which agent, and what evidence they produced. This isn't theoretical — we've already used it to debug subtle regressions.
+
+**Gates catch real bugs.** The typecheck gate caught a schema mismatch between `@lumenflow/core` and `@lumenflow/kernel` (WU-2223) that would have caused runtime errors in production. The lint gate caught dead code that was masking the real issue. Without gates, this bug would have shipped.
+
+## The Numbers
+
+Looking at the commit history, a few patterns emerge:
+
+- **Average WU size:** 2-4 commits (claim, implement, format/lint, done)
+- **Gate failure rate:** ~15% of first attempts (most common: formatting, then lint)
+- **Worktree recovery rate:** <2% of WUs need `wu:recover`
+- **Regressions caught by gates:** 3-4 per week
+
+## What's Changed Over Time
+
+The workflow has evolved significantly since v1. The biggest changes:
+
+1. **Two-step completion** (WU-1223): Split `wu:done` into `wu:prep` (gates in worktree) + `wu:done` (merge from main). This eliminated a class of "merge then discover gate failures" issues.
+
+2. **Context-aware validation** (WU-1090): Commands now check whether you're in the right location, the WU has the right status, and git state is clean. When something's wrong, they tell you exactly how to fix it.
+
+3. **Enforcement hooks** (WU-1367): Tool-level hooks that block non-compliant operations. Instead of relying on agents to remember rules, the system enforces them.
+
+Each improvement came from hitting a real pain point in our own workflow. That's the power of dogfooding — you can't ignore problems when you experience them every day.
+
+[Learn about the Software Delivery Pack →](/packs/software-delivery/)

@@ -1,0 +1,76 @@
+---
+title: "LumenFlow v3: Packs, Multi-Language Support, and the Road Ahead"
+date: 2026-02-20
+authors:
+  - lumenflow
+tags:
+  - release
+  - roadmap
+  - packs
+excerpt: "v3 solidified the kernel/pack boundary, expanded to 8 languages, and laid the foundation for community packs."
+---
+
+LumenFlow v3 is the release where the architecture finally feels *right*. The kernel/pack separation we introduced in v2 is now fully realized, with clear documentation boundaries, a curated CLI surface, and a path for community-built packs.
+
+## What Changed in v3
+
+### Clean Documentation Architecture
+
+v3.2 reorganized the entire documentation site around two pillars: **Kernel** and **Packs**. This isn't just a docs reshuffle — it reflects the actual architecture.
+
+Kernel docs cover domain-agnostic concepts: the runtime, tool execution, scope intersection, policy engine, and evidence store. These apply regardless of what domain you're governing.
+
+Pack docs cover domain-specific workflows. The Software Delivery Pack has its own section with concepts (WUs, lanes, gates), workflows (solo, team, idea-to-shipping), agent guides, setup instructions, and language-specific guides.
+
+### Eight Language Guides
+
+v3 expanded official language support to eight ecosystems:
+
+- Node.js, Python, Go, .NET, Java, Rust, Ruby, PHP
+
+Each guide covers gate configuration, test runner setup, and language-specific patterns. The guides aren't theoretical — they're tested against real projects.
+
+### Curated CLI Surface
+
+The CLI grew to 100+ commands over v1 and v2. In v3, we curated the surface: primary commands are documented and promoted, aliases exist for discoverability, and legacy commands are clearly marked. Run `pnpm lumenflow:commands` to see the full surface.
+
+### Control Plane Integration
+
+v3.5+ introduced the control plane — a remote coordination layer for fleet management and policy synchronization. The SDK (`@lumenflow/control-plane-sdk`) is Apache 2.0 licensed, so you can integrate it into proprietary systems.
+
+v3.6 added post-command sync, so WU lifecycle events automatically propagate to the control plane after each command. No manual push required.
+
+## The Road Ahead
+
+### Community Packs
+
+The pack system is designed for extensibility. We're finalizing the `create-a-pack` workflow and pack registry so teams can build and share domain-specific packs.
+
+Imagine packs for:
+- **Infrastructure governance** — Terraform plan review, drift detection
+- **Data pipeline governance** — schema validation, lineage tracking
+- **Customer support governance** — response quality gates, escalation policies
+
+The kernel handles the governance mechanics. Packs bring the domain knowledge.
+
+### Initiatives
+
+Multi-phase projects that span multiple WUs and lanes. We use initiatives internally (INIT-045 defined 7 WUs for multi-pack config architecture), and we're polishing the workflow for general use.
+
+### Better Metrics
+
+DORA metrics, cycle time analysis, and flow visualization are already in `@lumenflow/metrics`. We're building dashboards in the web UI to make these accessible without the CLI.
+
+## Try It Today
+
+```bash
+npx lumenflow init
+```
+
+Or if you're already using LumenFlow:
+
+```bash
+pnpm lumenflow:upgrade --latest
+```
+
+[Read the full release notes →](/releases/)

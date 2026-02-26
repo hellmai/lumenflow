@@ -1,0 +1,84 @@
+---
+title: "Deep Dive: How LumenFlow's Safety Architecture Works"
+date: 2026-02-15
+authors:
+  - lumenflow
+tags:
+  - security
+  - architecture
+  - deep-dive
+excerpt: "Four levels of scope intersection, deny-wins cascading, bwrap sandboxes, and content-addressed evidence. A technical look at how LumenFlow keeps agents in check."
+---
+
+"Your AI agent is powerful" is marketing. "Your AI agent is *governable*" is engineering. Here's how LumenFlow makes agents governable at the architectural level.
+
+## The Four-Level Scope Intersection
+
+Every tool call in LumenFlow passes through a 4-level permission check:
+
+1. **Workspace** — What's allowed in this repository?
+2. **Lane** — What's allowed in this development lane?
+3. **Task** — What's allowed for this specific Work Unit?
+4. **Tool** — What's allowed for this specific tool invocation?
+
+All four levels must agree. This is an intersection, not a union. If workspace policy says "no network access" but the tool policy says "allow," the tool is still blocked. Permissions can only get *more* restrictive as you move down the stack.
+
+## Deny-Wins Cascading
+
+LumenFlow uses a deny-wins policy model. When multiple policies apply to the same action, the most restrictive one wins. Always.
+
+This is a deliberate architectural choice. In most permission systems, there's a way to escalate — a superuser flag, an override token, a "just this once" escape hatch. LumenFlow has none of these. If a workspace-level policy denies an action, no lane, task, or tool-level policy can un-deny it.
+
+Why? Because the whole point of governance is that some rules can't be bent. If your compliance team says "agents can't write to production databases," that rule needs to hold even when the agent is convinced it has a good reason.
+
+## OS-Level Isolation with bwrap
+
+LumenFlow doesn't just check permissions — it enforces isolation at the operating system level using `bwrap` (bubblewrap) sandboxes.
+
+When an agent runs inside a LumenFlow sandbox:
+
+- **Write confinement:** The agent can only write to explicitly allowed paths
+- **Deny overlays:** Sensitive paths (like `.env` files, credential stores) are overlaid with deny mounts
+- **Process isolation:** The agent's processes are isolated from the host
+
+This isn't application-level sandboxing that can be bypassed with creative shell commands. It's Linux kernel-level enforcement. The agent literally cannot see or write to protected paths.
+
+## Content-Addressed Evidence
+
+Every action that passes through the governance kernel produces an evidence record. These records are content-addressed — their identifier is derived from their content via cryptographic hash.
+
+This means:
+- Records can't be tampered with after creation
+- Records can be independently verified by anyone with the hash
+- The evidence chain is immutable and append-only
+
+Evidence records capture:
+- What was requested (the tool call and its parameters)
+- What was checked (which policies were evaluated)
+- What happened (the result of the action)
+- When it happened (timestamp with ordering guarantees)
+
+This isn't logging. Logs are mutable, often unstructured, and rarely verified. Evidence is a cryptographic audit trail designed for compliance, debugging, and accountability.
+
+## Enforcement Hooks
+
+LumenFlow v3 introduced enforcement hooks — pre-tool-use checks that run before any file operation. When configured, these hooks:
+
+- Block writes outside the designated worktree
+- Require an active WU claim before edits
+- Warn when a session ends without completing the WU
+
+Hooks implement graceful degradation: if LumenFlow state can't be determined, operations are allowed rather than blocked. This prevents the governance layer from becoming a development bottleneck while still catching the most common violations.
+
+## The Result
+
+These mechanisms compose into a system where:
+- Agents can't exceed their permissions (scope intersection)
+- Restrictive policies can't be overridden (deny-wins)
+- File system access is enforced by the OS kernel (bwrap)
+- Every action is cryptographically recorded (evidence)
+- Tool-level enforcement catches violations before they happen (hooks)
+
+Governance isn't about trusting agents less. It's about building systems where trust is *verifiable*.
+
+[Read the full safety architecture docs →](/reference/agent-safety/)

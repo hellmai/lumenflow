@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
+import starlightBlog from 'starlight-blog';
 import astroD2 from 'astro-d2';
 import remarkComment from 'remark-comment';
 
@@ -14,8 +15,21 @@ export default defineConfig({
   integrations: [
     astroD2(),
     starlight({
-      plugins: [starlightThemeNova()],
-      customCss: ['./src/styles/splash.css'],
+      plugins: [
+        starlightThemeNova(),
+        starlightBlog({
+          title: 'Blog',
+          prefix: 'blog',
+          authors: {
+            lumenflow: {
+              name: 'LumenFlow Team',
+              title: 'Core Maintainers',
+              url: 'https://github.com/hellmai',
+            },
+          },
+        }),
+      ],
+      customCss: ['./src/styles/splash.css', './src/styles/blog.css'],
       title: 'LumenFlow',
       description: 'The governance layer between AI agents and the world',
       social: [],

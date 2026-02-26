@@ -1,0 +1,28 @@
+/* Blog-specific styles for LumenFlow docs */
+
+/* Blog post list cards */
+.blog-post-list article {
+  border-left: 3px solid var(--sl-color-accent);
+  padding-left: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Blog post metadata styling */
+.blog-post-meta {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Blog tag pills */
+.blog-tags a {
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  text-transform: lowercase;
+}
+
+/* Blog post excerpt in listings */
+.blog-post-excerpt {
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}

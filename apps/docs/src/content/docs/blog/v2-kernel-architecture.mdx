@@ -1,0 +1,65 @@
+---
+title: "LumenFlow v2: The Kernel Rewrite"
+date: 2026-01-15
+authors:
+  - lumenflow
+tags:
+  - release
+  - architecture
+  - kernel
+excerpt: "Version 2.0 introduced a proper kernel architecture, new packages, and the skills system. Here's what changed and why."
+---
+
+LumenFlow v2.0 is a ground-up rethink of how agent governance should work. The single-package approach from v1 served us well for proving the concept, but it couldn't scale to the ambitions we had. So we broke everything apart and rebuilt it properly.
+
+## Why a Kernel?
+
+The core insight was that governance is *domain-agnostic*. The mechanisms for intercepting tool calls, checking policies, and recording evidence don't care whether you're building software, managing infrastructure, or running customer support workflows.
+
+What *is* domain-specific is the vocabulary: "Work Units" and "lanes" belong to software delivery. Other domains will have their own primitives.
+
+So we split LumenFlow into two layers:
+
+1. **The Kernel** — domain-agnostic runtime for tool interception, policy evaluation, and evidence recording
+2. **Packs** — pluggable domain extensions that bring tools, policies, and evidence types
+
+## New Package Architecture
+
+v2.0 introduced the `@lumenflow/*` scoped package family:
+
+| Package | Purpose |
+|---------|---------|
+| `@lumenflow/kernel` | Task engine, tool host, policy engine, evidence store |
+| `@lumenflow/core` | WU state machine, validators, git adapters |
+| `@lumenflow/cli` | 60+ CLI commands |
+| `@lumenflow/memory` | Session tracking, context recovery |
+| `@lumenflow/agent` | Agent definitions, skill loading |
+| `@lumenflow/metrics` | DORA metrics, flow analysis |
+
+Each package has a clear boundary and well-defined API surface. No circular dependencies. Clean imports.
+
+## The Skills System
+
+v2.0 also introduced **skills** — loadable expertise modules that agents can activate on demand:
+
+```bash
+/skill tdd-workflow       # RED-GREEN-REFACTOR patterns
+/skill design-first       # Question, delete, simplify before coding
+/skill lumenflow-gates    # Gate troubleshooting
+```
+
+Skills are composable. An agent working on a feature loads `design-first` for the design phase, then `tdd-workflow` for implementation. Each skill brings focused context without bloating the agent's default prompt.
+
+## Breaking Changes, Done Right
+
+v2.0 was a breaking release. We were upfront about it. The migration guide covered every change, and `pnpm lumenflow:upgrade` handled the mechanical parts automatically.
+
+The key lesson: breaking changes are fine when they make the system fundamentally better. The v1 → v2 upgrade took about 10 minutes for most projects.
+
+## What We Learned
+
+Building v2 taught us that **good architecture is governance infrastructure**. When packages have clear boundaries, policy enforcement becomes natural. When evidence is content-addressed, audit trails are automatic.
+
+The kernel architecture also opened the door to multi-language support. If governance is domain-agnostic, it's also language-agnostic. v2.1 added language guides for Python, Go, .NET, Java, Rust, Ruby, and PHP.
+
+[Explore the kernel architecture →](/kernel/)

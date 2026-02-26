@@ -1,0 +1,50 @@
+---
+title: "Introducing LumenFlow: The Governance Layer Your AI Agents Need"
+date: 2025-11-15
+authors:
+  - lumenflow
+tags:
+  - announcement
+  - governance
+  - ai-agents
+excerpt: "AI agents write code, call APIs, and ship features. But nobody is watching them. LumenFlow changes that."
+---
+
+AI agents are writing more code than ever. They push to production, modify infrastructure, and make decisions that affect real systems. But there's a fundamental problem: **nobody is watching them.**
+
+## The Problem We Set Out to Solve
+
+When we started building LumenFlow, we kept running into the same three failures:
+
+**No receipts.** An agent pushes to production. Six months later, compliance asks "Who approved this?" You check git blame, Slack, PR comments — nothing. The agent didn't leave a trail because nobody asked it to.
+
+**No guardrails.** You tell your agent "don't touch .env files." But that's a polite suggestion in a system prompt that nothing enforces. One hallucination later, your secrets are in a commit message.
+
+**No boundaries.** You ask the agent to fix a login bug. It fixes the bug, refactors the payment module, updates three unrelated tests, and adds a dependency you've never heard of. Nothing stopped it because nothing *could*.
+
+## What LumenFlow Does
+
+LumenFlow sits between your agents and everything they touch — a **governance kernel** that enforces rules *before* actions happen, not after.
+
+Every tool call goes through a 4-level scope intersection. Workspace, lane, task, and tool permissions must all agree before an action proceeds. One "no" at any level and it's blocked.
+
+Every action produces an immutable, content-addressed evidence record. Not logs — cryptographic proof that can be independently verified.
+
+Policies can't be loosened. The deny-wins cascade means a restrictive policy at any level stays restrictive. A lane can't override a workspace rule. Strictness only goes one direction.
+
+## Open Source from Day One
+
+We made LumenFlow open source under a dual-license model because governance software that isn't transparent about its own governance would be a contradiction.
+
+- **AGPL v3** for the kernel and all packs
+- **Apache 2.0** for the Control Plane SDK
+
+Every source file carries an SPDX license header. Every package has the correct license in `package.json`.
+
+## What's Next
+
+This is just the beginning. We're building out the **Pack system** — pluggable extensions that add domain-specific tools, policies, and evidence types. The Software Delivery Pack ships built-in with 100+ CLI commands for structured software delivery.
+
+We're using LumenFlow to build LumenFlow itself. Every feature, every bug fix, every refactor goes through the same governance kernel we're building for you.
+
+[Get started today →](/getting-started/introduction/)
