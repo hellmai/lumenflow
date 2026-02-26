@@ -952,4 +952,98 @@ describe('lane-checker missing lane-inference file error (WU-1308)', () => {
       }
     });
   });
+
+  describe('WU-2223: control_plane schema + lane validation', () => {
+    /** Module path for dynamic import */
+    const LANE_CHECKER_MODULE = '../lane-checker.js';
+
+    /**
+     * Helper to mock lumenflow-config.js pointing at testBaseDir,
+     * preserving real getConfig so the runtime config path is exercised.
+     */
+    async function importLaneCheckerWithMockedRoot(): Promise<{
+      validateLaneFormat: typeof import('../lane-checker.js').validateLaneFormat;
+    }> {
+      vi.doMock('../lumenflow-config.js', async (importOriginal) => {
+        const original = (await importOriginal()) as Record<string, unknown>;
+        return {
+          ...original,
+          findProjectRoot: vi.fn().mockReturnValue(testBaseDir),
+          getProjectRoot: vi.fn().mockReturnValue(testBaseDir),
+        };
+      });
+      return import(LANE_CHECKER_MODULE);
+    }
+
+    /**
+     * When workspace.yaml has a kernel-shape control_plane block,
+     * lane validation via the runtime path should still work.
+     */
+    it('should validate lanes when workspace.yaml has kernel-shape control_plane', async () => {
+      // Write workspace.yaml with both software_delivery AND kernel-shape control_plane
+      const workspaceWithControlPlane = {
+        [SOFTWARE_DELIVERY_KEY]: withArc42Directories({
+          lanes: {
+            definitions: [
+              { name: TEST_LANE_FRAMEWORK_CORE, wip_limit: 1 },
+              { name: TEST_LANE_CONTENT_DOCS, wip_limit: 1 },
+            ],
+          },
+        }),
+        control_plane: {
+          endpoint: 'https://cloud.lumenflow.dev',
+          org_id: 'test-org-id',
+          project_id: 'test-project-id',
+          sync_interval: 30,
+          policy_mode: 'tighten-only',
+          auth: { token_env: 'LUMENFLOW_CLOUD_TOKEN' },
+        },
+      };
+      writeFileSync(configFilePath, stringifyYAML(workspaceWithControlPlane));
+
+      // Also write lane-inference so sub-lane validation doesn't fail
+      const laneInferencePath = join(testBaseDir, CONFIG_FILES.LANE_INFERENCE);
+      const laneInference = {
+        Framework: {
+          Core: { code_paths: ['packages/**/core/**'], keywords: ['core'] },
+        },
+        Content: {
+          Documentation: { code_paths: ['docs/**'], keywords: ['docs'] },
+        },
+      };
+      writeFileSync(laneInferencePath, stringifyYAML(laneInference));
+
+      const { validateLaneFormat } = await importLaneCheckerWithMockedRoot();
+
+      // Use null configPath to exercise runtime getConfig path (not readConfigFromPath)
+      const result = validateLaneFormat(TEST_LANE_FRAMEWORK_CORE, null);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should throw CONFIG_ERROR (not FILE_NOT_FOUND) when config parse fails', async () => {
+      // Write workspace.yaml with invalid control_plane to trigger parse failure
+      const workspaceWithBadControlPlane = {
+        [SOFTWARE_DELIVERY_KEY]: withArc42Directories({
+          lanes: {
+            definitions: [{ name: TEST_LANE_FRAMEWORK_CORE, wip_limit: 1 }],
+          },
+        }),
+        control_plane: {
+          invalid_field: true,
+        },
+      };
+      writeFileSync(configFilePath, stringifyYAML(workspaceWithBadControlPlane));
+
+      const { validateLaneFormat } = await importLaneCheckerWithMockedRoot();
+
+      try {
+        // Pass null configPath to trigger runtime config path
+        validateLaneFormat(TEST_LANE_FRAMEWORK, null);
+        expect.fail(EXPECTED_THROW_MESSAGE);
+      } catch (error) {
+        // WU-2223: Should be CONFIG_ERROR, not FILE_NOT_FOUND
+        expect((error as { code?: string }).code).toBe('CONFIG_ERROR');
+      }
+    });
+  });
 });
