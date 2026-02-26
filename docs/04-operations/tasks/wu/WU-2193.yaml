@@ -2,7 +2,7 @@ id: WU-2193
 title: Align workspace-init defaults with pack pinning semantics
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-26
 code_paths:
@@ -32,8 +32,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'workspace-init currently emits packs: [] with an empty software_delivery block, leaving default workspaces without an explicitly pinned pack despite SD-centric defaults. Align initialization behavior so default workspaces pin software-delivery (or remove SD config stubs) consistently with runtime/config routing expectations.'
+description: 'workspace-init currently emits packs: [] with an empty software_delivery block,
+  leaving default workspaces without an explicitly pinned pack despite SD-centric defaults. Align
+  initialization behavior so default workspaces pin software-delivery (or remove SD config stubs)
+  consistently with runtime/config routing expectations.'
 acceptance:
-  - Default workspace-init output has consistent pack/config semantics (no orphaned software_delivery block)
+  - Default workspace-init output has consistent pack/config semantics (no orphaned
+    software_delivery block)
   - If software_delivery config is emitted by default, software-delivery is pinned by default
   - workspace-init tests cover default output contract for packs + software_delivery
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2193
+claimed_at: 2026-02-26T11:18:45.776Z
+baseline_main_sha: c2b84bde023c29283f3a025bb9bf3926d3f48a82
+session_id: e9aa4f2e-0906-44a7-b8cd-9ad615b79e76
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T11:18:45.781Z

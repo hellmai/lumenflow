@@ -5,6 +5,7 @@ _Last updated: 2026-02-26_
 ## In Progress
 
 - [WU-2192 — Validate pack-scoped config:set writes using pack-declared config_schema](wu/WU-2192.yaml)
+- [WU-2193 — Align workspace-init defaults with pack pinning semantics](wu/WU-2193.yaml)
 
 ## Completed
 
