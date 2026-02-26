@@ -38,6 +38,7 @@ import { LumenFlowConfigSchema } from '@lumenflow/core/config-schema';
 import { WorkspaceControlPlaneConfigSchema } from '@lumenflow/core/config-schema';
 import { normalizeConfigKeys } from '@lumenflow/core/normalize-config-keys';
 import { WRITABLE_ROOT_KEYS, MANAGED_ROOT_KEYS, WORKSPACE_ROOT_KEYS } from '@lumenflow/core/config';
+import { resolvePackManifestPaths } from '@lumenflow/kernel/pack';
 import { runCLI } from './cli-entry-point.js';
 
 // ---------------------------------------------------------------------------
@@ -671,6 +672,10 @@ function writeRawWorkspace(workspacePath: string, workspace: Record<string, unkn
  * Load pack config_keys from workspace packs field.
  * Reads pinned pack manifests to discover their declared config_key.
  *
+ * Delegates to the shared pack manifest resolver in @lumenflow/kernel
+ * which handles all pack source types (local, registry, git) instead
+ * of hardcoding a monorepo-only path.
+ *
  * @param projectRoot - Absolute path to project root
  * @param workspace - Parsed workspace object
  * @returns Map of config_key -> pack_id
@@ -679,44 +684,11 @@ export function loadPackConfigKeys(
   projectRoot: string,
   workspace: Record<string, unknown>,
 ): Map<string, string> {
-  const result = new Map<string, string>();
   const packs = workspace.packs;
-
   if (!Array.isArray(packs)) {
-    return result;
+    return new Map();
   }
-
-  for (const pack of packs) {
-    if (!pack || typeof pack !== 'object' || !('id' in pack)) {
-      continue;
-    }
-
-    const packId = String(pack.id);
-    const manifestPath = path.join(
-      projectRoot,
-      'packages',
-      '@lumenflow',
-      'packs',
-      packId,
-      'manifest.yaml',
-    );
-
-    if (!existsSync(manifestPath)) {
-      continue;
-    }
-
-    try {
-      const manifestContent = readFileSync(manifestPath, 'utf8');
-      const manifest = YAML.parse(manifestContent) as Record<string, unknown>;
-      if (manifest && typeof manifest.config_key === 'string') {
-        result.set(manifest.config_key, packId);
-      }
-    } catch {
-      // Skip unreadable manifests
-    }
-  }
-
-  return result;
+  return resolvePackManifestPaths({ projectRoot, packs });
 }
 
 // ---------------------------------------------------------------------------
