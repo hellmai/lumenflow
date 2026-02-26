@@ -7,7 +7,6 @@ priority: P3
 created: 2026-02-26
 code_paths:
   - packages/@lumenflow/cli/src/workspace-init.ts
-  - packages/@lumenflow/cli/src/init.ts
 tests:
   manual:
     - Run workspace-init in a clean repo and verify packs/software_delivery defaults are coherent
@@ -25,10 +24,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-26T11:18:45.776Z
+worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2193
+session_id: e9aa4f2e-0906-44a7-b8cd-9ad615b79e76
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T11:18:45.781Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +47,3 @@ acceptance:
     software_delivery block)
   - If software_delivery config is emitted by default, software-delivery is pinned by default
   - workspace-init tests cover default output contract for packs + software_delivery
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2193
-claimed_at: 2026-02-26T11:18:45.776Z
-baseline_main_sha: c2b84bde023c29283f3a025bb9bf3926d3f48a82
-session_id: e9aa4f2e-0906-44a7-b8cd-9ad615b79e76
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-26T11:18:45.781Z
