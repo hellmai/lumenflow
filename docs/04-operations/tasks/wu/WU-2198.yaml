@@ -2,7 +2,7 @@ id: WU-2198
 title: Fix wu-done ensureMainUpToDate swallowing ProcessExitError from die()
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-26
 code_paths:
@@ -26,11 +26,26 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu-done-git-ops.ts:ensureMainUpToDate() wraps die() inside a try/catch that catches ALL errors including ProcessExitError. When main is out of sync with origin, die() throws ProcessExitError, but the catch at line 249 treats it as a network error and logs 'Proceeding anyway'. This makes the pre-flight sync check effectively a no-op — wu:done always proceeds regardless of sync state. The defense-in-depth check in wu-done-worktree-services.ts:174 (validateMainNotBehindOrigin) catches the 'behind' case but NOT the 'ahead' or 'diverged' cases, so those slip through entirely.
+description: wu-done-git-ops.ts:ensureMainUpToDate() wraps die() inside a try/catch that catches ALL
+  errors including ProcessExitError. When main is out of sync with origin, die() throws
+  ProcessExitError, but the catch at line 249 treats it as a network error and logs 'Proceeding
+  anyway'. This makes the pre-flight sync check effectively a no-op — wu:done always proceeds
+  regardless of sync state. The defense-in-depth check in wu-done-worktree-services.ts:174
+  (validateMainNotBehindOrigin) catches the 'behind' case but NOT the 'ahead' or 'diverged' cases,
+  so those slip through entirely.
 acceptance:
   - ProcessExitError from die() is NOT caught by the network-error catch block in ensureMainUpToDate
   - Sync mismatch (local \!= origin) still calls die() and aborts wu:done
   - Fetch/network failure still fails open (warn + proceed) — existing policy preserved
   - 'Test: sync mismatch triggers abort (ProcessExitError propagates)'
   - 'Test: network/fetch failure triggers fail-open (warn + continue)'
-  - No changes to wu-done-main-sync.ts or wu-done-worktree-services.ts — scope limited to wu-done-git-ops.ts
+  - No changes to wu-done-main-sync.ts or wu-done-worktree-services.ts — scope limited to
+    wu-done-git-ops.ts
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-cli-wu-commands-wu-2198
+claimed_at: 2026-02-26T12:13:26.342Z
+baseline_main_sha: aac4089aa06e53fe913831e83d09365513a2db78
+session_id: cfa88a85-3208-4e6c-b01f-14425ae6c856
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T12:13:26.350Z
