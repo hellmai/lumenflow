@@ -955,3 +955,127 @@ describe('WU-2192: pack-aware schema validation', () => {
     );
   });
 });
+
+// ---------------------------------------------------------------------------
+// WU-2197: findStrippedKeys scoped to write target path
+// ---------------------------------------------------------------------------
+
+describe('WU-2197: findStrippedKeys scoped to write target sub-tree', () => {
+  /**
+   * Helper: creates a workspace where software_delivery has a pre-existing
+   * unknown key in the gates sub-tree (gates.legacy_unknown).
+   */
+  function createWorkspaceWithPreExistingUnknownKey(): Record<string, unknown> {
+    return {
+      id: 'workspace-id',
+      name: 'Workspace Name',
+      packs: [{ id: 'software-delivery', version: '3.0.0', integrity: 'dev', source: 'local' }],
+      software_delivery: {
+        version: '1.0.0',
+        methodology: {
+          testing: 'tdd',
+          architecture: 'hexagonal',
+        },
+        gates: {
+          maxEslintWarnings: 100,
+          enableCoverage: true,
+          minCoverage: 90,
+          legacy_unknown: true, // Pre-existing unknown key in gates
+        },
+        directories: {
+          wuDir: 'docs/04-operations/tasks/wu',
+        },
+      },
+      control_plane: {
+        sync_interval: 30,
+      },
+      memory_namespace: 'lumenflow',
+      event_namespace: 'lumenflow',
+    };
+  }
+
+  // AC1 + AC2: Pre-existing unrelated unknown key does not block valid write
+  it('allows write to methodology.testing when gates.legacy_unknown exists', () => {
+    const workspace = createWorkspaceWithPreExistingUnknownKey();
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.methodology.testing',
+      'test-after',
+      PACK_CONFIG_KEYS,
+    );
+    expect(result.ok).toBe(true);
+    expect(getConfigValue(result.config!, 'software_delivery.methodology.testing')).toBe(
+      'test-after',
+    );
+  });
+
+  // AC1 + AC2: Writing to a different valid sub-tree also succeeds
+  it('allows write to directories.wuDir when gates.legacy_unknown exists', () => {
+    const workspace = createWorkspaceWithPreExistingUnknownKey();
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.directories.wuDir',
+      'custom/wu/path',
+      PACK_CONFIG_KEYS,
+    );
+    expect(result.ok).toBe(true);
+    expect(getConfigValue(result.config!, 'software_delivery.directories.wuDir')).toBe(
+      'custom/wu/path',
+    );
+  });
+
+  // AC3: Unknown key within the write target path is still rejected
+  it('rejects write to gates.unknown_subkey even when gates.legacy_unknown exists', () => {
+    const workspace = createWorkspaceWithPreExistingUnknownKey();
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.gates.unknown_subkey',
+      'true',
+      PACK_CONFIG_KEYS,
+    );
+    expect(result.ok).toBe(false);
+    expect(result.error).toBeDefined();
+    expect(result.error).toContain('unknown_subkey');
+  });
+
+  // AC3: Strictness for the targeted write path — unknown top-level SD key rejected
+  it('rejects write to software_delivery.bogus_section when gates.legacy_unknown exists', () => {
+    const workspace = createWorkspaceWithPreExistingUnknownKey();
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.bogus_section',
+      'val',
+      PACK_CONFIG_KEYS,
+    );
+    expect(result.ok).toBe(false);
+    expect(result.error).toBeDefined();
+  });
+
+  // AC4: Clean config write works as before (no regressions)
+  it('clean config write to gates.minCoverage still works (no regression)', () => {
+    const workspace = createMinimalWorkspace();
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.gates.minCoverage',
+      '85',
+      PACK_CONFIG_KEYS,
+    );
+    expect(result.ok).toBe(true);
+    expect(getConfigValue(result.config!, 'software_delivery.gates.minCoverage')).toBe(85);
+  });
+
+  // AC4: Clean config write to methodology still works
+  it('clean config write to methodology.testing still works (no regression)', () => {
+    const workspace = createMinimalWorkspace();
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.methodology.testing',
+      'test-after',
+      PACK_CONFIG_KEYS,
+    );
+    expect(result.ok).toBe(true);
+    expect(getConfigValue(result.config!, 'software_delivery.methodology.testing')).toBe(
+      'test-after',
+    );
+  });
+});
