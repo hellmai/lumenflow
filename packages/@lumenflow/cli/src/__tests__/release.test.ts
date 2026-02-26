@@ -1236,10 +1236,7 @@ describe('WU-2221: executeReleaseInMicroWorktree installs deps', () => {
    */
   it('should contain pnpm install command before pnpm build in release source', async () => {
     // Read the source to verify install happens before build
-    const releaseSource = readFileSync(
-      join(__dirname, '..', 'release.ts'),
-      'utf-8',
-    );
+    const releaseSource = readFileSync(join(__dirname, '..', 'release.ts'), 'utf-8');
 
     // Find the positions of install and build commands within the execute callback
     const installMatch = releaseSource.match(/runCommand\([^)]*install[^)]*worktreePath/);
