@@ -2361,3 +2361,4 @@
 {"type":"complete","wuId":"WU-2211","timestamp":"2026-02-26T14:36:36.129Z"}
 {"type":"checkpoint","wuId":"WU-2216","timestamp":"2026-02-26T14:37:51.247Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"complete","wuId":"WU-2216","timestamp":"2026-02-26T14:38:21.515Z"}
+{"type":"claim","wuId":"WU-2209","timestamp":"2026-02-26T14:56:49.543Z","lane":"Framework: Core Lifecycle","title":"Collision-safe wu:create retry on push race"}
