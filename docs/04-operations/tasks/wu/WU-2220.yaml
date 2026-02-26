@@ -2,7 +2,7 @@ id: WU-2220
 title: 'Release script: pass worktree cwd to pack validation commands'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-26
 code_paths:
@@ -42,3 +42,6 @@ session_id: 8c0e79e3-33c1-4944-894d-12dab1c324d6
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-26T17:06:36.541Z
+locked: true
+completed_at: 2026-02-26T17:14:08.379Z
+completed: 2026-02-26
