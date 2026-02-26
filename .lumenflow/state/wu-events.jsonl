@@ -2324,3 +2324,4 @@
 {"type":"complete","wuId":"WU-2196","timestamp":"2026-02-26T12:28:01.001Z"}
 {"type":"claim","wuId":"WU-2200","timestamp":"2026-02-26T12:39:32.650Z","lane":"Framework: Core Validation","title":"Migration error provides non-executable remediation command"}
 {"type":"complete","wuId":"WU-2199","timestamp":"2026-02-26T12:41:21.640Z"}
+{"type":"checkpoint","wuId":"WU-2200","timestamp":"2026-02-26T12:44:01.558Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
