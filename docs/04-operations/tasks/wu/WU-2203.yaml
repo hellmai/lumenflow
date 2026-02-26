@@ -2,7 +2,7 @@ id: WU-2203
 title: 'Phase 3: Extract withMicroWorktree sync preamble helper without behavior changes'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-26
 code_paths:
@@ -48,3 +48,6 @@ session_id: 5ba2494a-facd-4097-8d33-4c78fe10b8d0
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-26T13:07:23.591Z
+locked: true
+completed_at: 2026-02-26T13:11:35.408Z
+completed: 2026-02-26
