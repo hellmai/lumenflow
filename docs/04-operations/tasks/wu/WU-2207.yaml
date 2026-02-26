@@ -11,7 +11,9 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
   - packages/@lumenflow/cli/src/__tests__/wu-done-git-ops-sync-bug.test.ts
 tests:
-  manual: []
+  manual:
+    - Verify wu:done no longer references CLI parity helper and still enforces canonical not-behind
+      sync via core validation paths
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done-git-ops-extraction.test.ts
@@ -30,8 +32,13 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: wu:done now enforces canonical not-behind sync semantics via core sync-validator paths. Problem: CLI-level ensureMainUpToDate in wu-done-git-ops is leftover exact-parity logic no longer called by wu:done, plus stale tests around that path. Solution: remove the dead helper and stale tests, keeping canonical sync behavior in core paths only.'
+description: 'Context: wu:done now enforces canonical not-behind sync semantics via core
+  sync-validator paths. Problem: CLI-level ensureMainUpToDate in wu-done-git-ops is leftover
+  exact-parity logic no longer called by wu:done, plus stale tests around that path. Solution:
+  remove the dead helper and stale tests, keeping canonical sync behavior in core paths only.'
 acceptance:
   - Remove unused ensureMainUpToDate helper from wu-done-git-ops and any dead call-site artifacts
-  - Update wu:done sync tests to cover canonical not-behind path without retaining dead parity-helper tests
-  - Keep wu:done preflight and merge-capable sync behavior unchanged (canonical not-behind, fail-closed on verification failure)
+  - Update wu:done sync tests to cover canonical not-behind path without retaining dead
+    parity-helper tests
+  - Keep wu:done preflight and merge-capable sync behavior unchanged (canonical not-behind,
+    fail-closed on verification failure)
