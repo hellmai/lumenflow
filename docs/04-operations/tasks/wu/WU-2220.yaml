@@ -2,7 +2,7 @@ id: WU-2220
 title: 'Release script: pass worktree cwd to pack validation commands'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-26
 code_paths:
@@ -34,3 +34,11 @@ acceptance:
   - getWorkspacePackedFiles passes worktree cwd to runCommandCapture
   - validateReleaseArtifactsForPublish accepts and forwards cwd parameter
   - No files generated on main during pnpm release
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2220
+claimed_at: 2026-02-26T17:06:36.534Z
+baseline_main_sha: d14fb32c5cc0e6d0ab24cd13fef87dc508cc883b
+session_id: 8c0e79e3-33c1-4944-894d-12dab1c324d6
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T17:06:36.541Z

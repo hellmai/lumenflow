@@ -49,11 +49,11 @@ sections:
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
 - [WU-2217 — BUG: Fix pre-existing prettier format failures in wu-done.ts and arg-parser.ts](wu/WU-2217.yaml) — Framework: CLI WU Commands
-- [WU-2220 — Release script: pass worktree cwd to pack validation commands](wu/WU-2220.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
+- [WU-2220 — Release script: pass worktree cwd to pack validation commands](wu/WU-2220.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
