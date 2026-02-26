@@ -152,12 +152,7 @@ describe('scripts/wu-stamp.mjs', () => {
     });
 
     it('exits with error for invalid WU ID format', () => {
-      const result = runWuStamp(testRoot, [
-        '--id',
-        'INVALID-123',
-        '--title',
-        TEST_WU_TITLE,
-      ]);
+      const result = runWuStamp(testRoot, ['--id', 'INVALID-123', '--title', TEST_WU_TITLE]);
       expect(result.exitCode).not.toBe(0);
       expect(result.stderr).toContain('Invalid WU ID format');
     });
