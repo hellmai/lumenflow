@@ -85,6 +85,11 @@ describe('wu-done', () => {
       expect(source).toContain('resolveWuDonePreCommitGateDecision');
       expect(source).toContain('preCommitGateDecision.runPreCommitFullSuite');
     });
+
+    it('worktree preflight no longer runs redundant parity sync check before canonical not-behind guard', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      expect(source).not.toContain('await ensureMainUpToDate()');
+    });
   });
 
   describe('WU-1574: strict status display helper', () => {

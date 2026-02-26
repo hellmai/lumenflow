@@ -95,6 +95,16 @@ export async function ensureMainNotBehindOrigin(
 ): Promise<void> {
   const gitMainPreCheck = options.gitAdapterForMain ?? createGitForPath(mainCheckoutPath);
   const result = await validateMainNotBehindOrigin(gitMainPreCheck);
+  if (result.failOpen) {
+    throw createError(
+      ErrorCodes.GIT_ERROR,
+      `Could not verify local main sync with origin/main.\n\n` +
+        `wu:done requires a successful remote sync check before merge-capable paths.\n` +
+        `Fix remote connectivity (or remote config), then retry:\n` +
+        `  pnpm wu:done --id ${wuId}`,
+      { wuId },
+    );
+  }
   if (!result.valid) {
     throw createError(
       ErrorCodes.GIT_ERROR,

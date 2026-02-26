@@ -30,7 +30,7 @@ import {
 } from './wu-done-validators.js';
 import { validateDoneWU, validateAndNormalizeWUYAML } from './wu-schema.js';
 import { assertTransition } from './state-machine.js';
-import { validateMainNotBehindOrigin, resolveWorktreeMetadataPaths } from './wu-done-worktree.js';
+import { resolveWorktreeMetadataPaths } from './wu-done-worktree.js';
 import { emitLaneSignalForCompletion } from './wu-done-branch-only.js';
 import { WU_DONE_COMPLETION_MODES } from './wu-done-pr.js';
 import { clearRecoveryAttempts, detectZombieState } from './wu-recovery.js';
@@ -46,6 +46,7 @@ import { BRANCHES, LOG_PREFIX, WU_STATUS } from './wu-constants.js';
 import { createError, ErrorCodes } from './error-handler.js';
 import { createValidationError } from './wu-done-errors.js';
 import { createGitForPath } from './git-adapter.js';
+import { ensureMainNotBehindOrigin } from './wu-done-main-sync.js';
 import type { MainSyncGitAdapter } from './sync-validator.js';
 
 // ---------------------------------------------------------------------------
@@ -167,19 +168,13 @@ export async function validateWorktreeState(
     return { valid: false, errors, zombieDetected };
   }
 
-  // Check main is not behind origin
+  // Check main sync using canonical wu:done not-behind invariant (fail-closed on sync errors).
   try {
     const mainGit = gitAdapterForMain ?? createGitForPath(mainCheckoutPath);
-    const mainResult = await validateMainNotBehindOrigin(mainGit);
-    if (!mainResult.valid) {
-      errors.push(
-        `Local main is ${mainResult.commitsBehind} commit(s) behind origin/main. ` +
-          `Fix: git pull origin main`,
-      );
-      return { valid: false, errors, zombieDetected };
-    }
-  } catch {
-    // Fail-open for network errors
+    await ensureMainNotBehindOrigin(mainCheckoutPath, wuId, { gitAdapterForMain: mainGit });
+  } catch (err) {
+    errors.push((err as Error).message);
+    return { valid: false, errors, zombieDetected };
   }
 
   // Validate and normalize WU YAML schema
