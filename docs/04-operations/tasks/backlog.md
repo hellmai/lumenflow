@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2198 — Fix wu-done ensureMainUpToDate swallowing ProcessExitError from die()](wu/WU-2198.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2145 — wu:done project-memory promotion to main checkout](wu/WU-2145.yaml) — Framework: Memory
@@ -55,6 +54,7 @@ sections:
 
 - [WU-2195 — config:set uses wrong control_plane schema (core vs kernel)](wu/WU-2195.yaml) — Framework: CLI WU Commands
 - [WU-2196 — Runtime boot rejects legacy workspaces with software_delivery but no SD pack pin](wu/WU-2196.yaml) — Framework: Core Validation
+- [WU-2198 — Fix wu-done ensureMainUpToDate swallowing ProcessExitError from die()](wu/WU-2198.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
