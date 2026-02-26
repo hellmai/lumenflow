@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2214 — BUG: hook redirect regex false-positives on arrow notation in arguments](wu/WU-2214.yaml) — Framework: CLI Enforcement
 - [WU-2213 — Duplicate-ID detector and repair command](wu/WU-2213.yaml) — Framework: CLI WU Commands
 - [WU-2212 — Break-glass WU finalization tool (no dist dependency)](wu/WU-2212.yaml) — Operations: Tooling
 - [WU-2211 — wu:done --already-merged finalize-only mode](wu/WU-2211.yaml) — Framework: CLI WU Commands
