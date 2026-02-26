@@ -2,7 +2,7 @@ id: WU-2207
 title: 'Phase 6: remove deprecated wu:done parity helper'
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-26
 code_paths:
@@ -42,3 +42,11 @@ acceptance:
     parity-helper tests
   - Keep wu:done preflight and merge-capable sync behavior unchanged (canonical not-behind,
     fail-closed on verification failure)
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-lifecycle-wu-2207
+claimed_at: 2026-02-26T13:39:38.884Z
+baseline_main_sha: e74ac489ae4d040b5ad895398176e60bd6903420
+session_id: 215767af-5470-47d4-aa22-84e83fc5aa6e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T13:39:38.890Z
