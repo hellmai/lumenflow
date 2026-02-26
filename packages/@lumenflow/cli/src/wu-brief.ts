@@ -27,7 +27,7 @@ import { runCLI } from './cli-entry-point.js';
 
 const BRIEF_LOG_PREFIX = '[wu:brief]';
 const BRIEF_DESCRIPTION =
-  'Generate config-aware handoff prompt and record wu:brief evidence for sub-agent execution';
+  'Generate config-aware handoff prompt and record wu:brief evidence (use --evidence-only for self-implementation)';
 
 /**
  * Main entry point for wu:brief (canonical command)

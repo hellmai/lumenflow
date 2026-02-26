@@ -126,21 +126,24 @@ Initiatives often span multiple lanes. Key coordination patterns:
 
 ## Delegating Sub-Agents for Initiative WUs (MANDATORY)
 
-When orchestrating an initiative with multiple WUs, use `wu:brief` or `wu:delegate` to generate complete Task invocations:
+When orchestrating an initiative with multiple WUs, choose delegation vs self-implementation explicitly:
 
 ```bash
-# For each WU being delegated to a sub-agent:
+# For WUs delegated to sub-agents:
 pnpm wu:brief --id WU-1501 --client claude-code    # Prompt generation only
 pnpm wu:delegate --id WU-1502 --parent-wu WU-1500  # Prompt + lineage recording
 pnpm wu:delegate --id WU-1503 --parent-wu WU-1500
+
+# For WUs implemented in current session:
+pnpm wu:brief --id WU-1504 --evidence-only         # Evidence only, no prompt output
 ```
 
 ### Orchestration Pattern
 
-1. **Generate prompts**: Run `pnpm wu:brief --id WU-XXX` (or `wu:delegate` for lineage) for each WU
-2. **Spawn in parallel**: Use Task tool with `run_in_background: true`
-3. **Monitor progress**: Use `pnpm mem:inbox --since 30m` (NOT TaskOutput - causes context explosion)
-4. **Synthesise**: Combine results from all sub-agents
+1. **Choose execution path per WU**: delegation (`wu:brief`/`wu:delegate`) or self-implementation (`wu:brief --evidence-only`)
+2. **Spawn only delegated WUs**: Use Task tool with `run_in_background: true`
+3. **Monitor delegated progress**: Use `pnpm mem:inbox --since 30m` (NOT TaskOutput - causes context explosion)
+4. **Synthesise**: Combine results from sub-agents and self-implemented WUs
 
 ### What wu:brief/wu:delegate Provides
 

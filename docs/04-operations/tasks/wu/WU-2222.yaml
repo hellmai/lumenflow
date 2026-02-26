@@ -7,9 +7,9 @@ priority: P1
 created: 2026-02-26
 code_paths:
   - packages/@lumenflow/cli/src/wu-brief.ts
+  - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
   - packages/@lumenflow/cli/src/wu-spawn-strategy-resolver.ts
   - packages/@lumenflow/cli/src/wu-done-policies.ts
-  - packages/@lumenflow/cli/src/wu-done.ts
   - packages/@lumenflow/core/src/arg-parser.ts
   - packages/@lumenflow/core/src/schemas/wu-lifecycle-schemas.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md

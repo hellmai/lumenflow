@@ -316,6 +316,24 @@ describe('arg-parser', () => {
         expect(WU_OPTIONS.codex.name).toBe('codex');
         expect(WU_OPTIONS.codex.flags).toBe('--codex');
       });
+
+      it('should define evidenceOnly option', () => {
+        expect(WU_OPTIONS.evidenceOnly.name).toBe('evidenceOnly');
+        expect(WU_OPTIONS.evidenceOnly.flags).toBe('--evidence-only');
+        expect(WU_OPTIONS.evidenceOnly.description).toContain('evidence');
+      });
+
+      it('should parse --evidence-only flag', () => {
+        process.argv = [...TEST_ARGV_PREFIX, '--evidence-only'];
+
+        const opts = createWUParser({
+          name: TEST_PARSER_NAME,
+          description: TEST_PARSER_CONFIG_DESC,
+          options: [WU_OPTIONS.evidenceOnly],
+        });
+
+        expect(opts.evidenceOnly).toBe(true);
+      });
     });
 
     // WU-1681: Client option descriptions must be neutral and list codex-cli

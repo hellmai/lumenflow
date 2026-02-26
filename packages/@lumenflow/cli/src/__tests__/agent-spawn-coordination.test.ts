@@ -691,6 +691,52 @@ describe('Agent Spawn Coordination Integration Tests (WU-1363)', () => {
         expect(typeof evidence?.timestamp).toBe('string');
         expect(evidence?.note).toContain('[wu:brief]');
       });
+
+      it('records evidence in branch-pr mode when active branch matches claimed branch', async () => {
+        process.chdir(tempDir);
+        const wuId = 'WU-9921';
+        const claimedBranch = 'lane/framework-cli/wu-9921';
+
+        await recordWuBriefEvidence(
+          {
+            wuId,
+            workspaceRoot: tempDir,
+            clientName: 'codex-cli',
+            claimedMode: 'branch-pr',
+            claimedBranch,
+          },
+          {
+            isInWorktree: () => false,
+            getCurrentBranch: async () => claimedBranch,
+          },
+        );
+
+        const evidence = await getLatestWuBriefEvidence(join(tempDir, '.lumenflow/state'), wuId);
+        expect(evidence).toBeDefined();
+        expect(evidence?.wuId).toBe(wuId);
+      });
+
+      it('skips evidence in branch-pr mode when active branch mismatches claimed branch', async () => {
+        process.chdir(tempDir);
+        const wuId = 'WU-9922';
+
+        await recordWuBriefEvidence(
+          {
+            wuId,
+            workspaceRoot: tempDir,
+            clientName: 'codex-cli',
+            claimedMode: 'branch-pr',
+            claimedBranch: 'lane/framework-cli/wu-9922',
+          },
+          {
+            isInWorktree: () => false,
+            getCurrentBranch: async () => 'lane/framework-core/wu-9000',
+          },
+        );
+
+        const evidence = await getLatestWuBriefEvidence(join(tempDir, '.lumenflow/state'), wuId);
+        expect(evidence).toBeNull();
+      });
     });
 
     describe('complete spawn coordination workflow', () => {

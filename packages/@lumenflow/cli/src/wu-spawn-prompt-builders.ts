@@ -202,6 +202,8 @@ export interface WUDocument {
   risks?: string[];
   tests?: { manual?: string[] };
   claimed_at?: string;
+  claimed_mode?: string;
+  claimed_branch?: string;
   /** WU-2141: Optional sizing estimate metadata */
   sizing_estimate?: {
     estimated_files: number;

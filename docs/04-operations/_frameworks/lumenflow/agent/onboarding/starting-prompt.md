@@ -413,7 +413,7 @@ pnpm wu:done --id WU-XXX --skip-gates \
 
 Use `wu:brief` to create parallel sub-agent handoff prompts for complex WUs. Use `wu:delegate` when you also need explicit lineage recording.
 
-**Evidence recording:** When run from a worktree, `wu:brief` writes a checkpoint event to `.lumenflow/state/wu-events.jsonl`. This evidence is **required** — `wu:done` blocks feature/bug WUs without it (WU-2132). When run from the main checkout, `wu:brief` is side-effect-free (WU-2144). **Never delete or revert `wu-events.jsonl` entries** written by lifecycle commands — if evidence is accidentally lost, rerun `wu:brief` to recreate it.
+**Evidence recording:** `wu:brief` writes a checkpoint event to `.lumenflow/state/wu-events.jsonl` when run in a claimed workspace (worktree mode) or on the claimed lane branch (branch-pr/branch-only mode). This evidence is **required** — `wu:done` blocks feature/bug WUs without it (WU-2132). Running from an unrelated checkout/branch is side-effect-free (WU-2144). **Never delete or revert `wu-events.jsonl` entries** written by lifecycle commands — if evidence is accidentally lost, rerun `wu:brief` to recreate it.
 
 ### When to Use wu:brief
 
@@ -422,11 +422,19 @@ Use `wu:brief` to create parallel sub-agent handoff prompts for complex WUs. Use
 - **Context isolation:** Preventing context limit issues on large WUs
 - **Wave-based execution:** Coordinating multiple phases of work
 
+### Choose the Correct Flow
+
+- **Delegating to a sub-agent:** Run `wu:brief` (or `wu:delegate` for lineage), then pass the generated prompt to Task tool.
+- **Implementing in current session:** Run `wu:brief --evidence-only` to satisfy evidence policy, then do the WU yourself (no spawn prompt output).
+
 ### How to Use wu:brief / wu:delegate
 
 ```bash
 # Generate a handoff prompt + evidence (no lineage side effect)
 pnpm wu:brief --id WU-XXXX --client <client-type>
+
+# Record required evidence without generating handoff prompt output (self-implementation)
+pnpm wu:brief --id WU-XXXX --evidence-only
 
 # Generate + record explicit delegation lineage
 pnpm wu:delegate --id WU-XXXX --parent-wu WU-YYYY --client <client-type>
@@ -459,6 +467,7 @@ pnpm wu:delegate --id WU-XXXX --parent-wu WU-YYYY --client <client-type>
 | `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree) | Start working (cloud)       |
 | `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                      | Update notes/desc           |
 | `pnpm wu:brief --id WU-XXX --client X`         | Generate handoff prompt + evidence       | Complex WUs                 |
+| `pnpm wu:brief --id WU-XXX --evidence-only`    | Record evidence only (no prompt output)  | Self-implementation path    |
 | `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation      | Auditable delegation flows  |
 | `pnpm gates`                                   | Run quality gates                        | Before wu:done              |
 | `pnpm gates --docs-only`                       | Run docs-only gates                      | For documentation WUs       |

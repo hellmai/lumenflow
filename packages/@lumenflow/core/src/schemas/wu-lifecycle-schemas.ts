@@ -255,7 +255,7 @@ export type WuCleanupInput = z.infer<typeof wuCleanupSchema>;
  * Schema for wu:spawn command
  *
  * Required: id
- * Optional: client, thinking, budget, parent_wu, no_context
+ * Optional: client, thinking, budget, parent_wu, no_context, evidence_only
  */
 export const wuSpawnSchema = z.object({
   id: z.string().describe('WU ID to spawn'),
@@ -264,6 +264,10 @@ export const wuSpawnSchema = z.object({
   budget: z.number().optional().describe('Token budget for extended thinking'),
   parent_wu: z.string().optional().describe('Parent WU ID for orchestrator context'),
   no_context: z.boolean().optional().describe('Skip memory context injection'),
+  evidence_only: z
+    .boolean()
+    .optional()
+    .describe('Record wu:brief evidence without generating handoff prompt output'),
 });
 
 export type WuSpawnInput = z.infer<typeof wuSpawnSchema>;
