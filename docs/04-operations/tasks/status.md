@@ -4,7 +4,7 @@ _Last updated: 2026-02-26_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2207 — Phase 6: remove deprecated wu:done parity helper](wu/WU-2207.yaml)
 
 ## Completed
 

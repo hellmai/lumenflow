@@ -48,11 +48,10 @@ sections:
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml) — Content: Framework Docs
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
-- [WU-2207 — Phase 6: remove deprecated wu:done parity helper](wu/WU-2207.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2207 — Phase 6: remove deprecated wu:done parity helper](wu/WU-2207.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
