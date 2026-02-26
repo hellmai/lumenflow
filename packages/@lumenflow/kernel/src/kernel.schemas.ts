@@ -226,10 +226,14 @@ export type KernelOwnedRootKey = (typeof KERNEL_OWNED_ROOT_KEYS)[number];
  * the error should guide the user to pin the pack instead of showing the generic
  * "Unknown workspace root key" message.
  */
-const KNOWN_PACK_CONFIG_KEY_MIGRATIONS: Record<string, { packId: string; packLabel: string }> = {
+const KNOWN_PACK_CONFIG_KEY_MIGRATIONS: Record<
+  string,
+  { packId: string; packLabel: string; version: string }
+> = {
   software_delivery: {
     packId: 'software-delivery',
     packLabel: 'software-delivery',
+    version: '0.1.0',
   },
 };
 
@@ -286,7 +290,7 @@ export function validateWorkspaceRootKeys(
         `Your workspace has a "${key}" config block but the ${migration.packLabel} pack is not pinned. ` +
           `Since LumenFlow 3.x, pack config keys require explicit pack pinning. ` +
           `Add the ${migration.packLabel} pack to your workspace:\n\n` +
-          `  pnpm pack:install --id ${migration.packId} --source local`,
+          `  pnpm pack:install --id ${migration.packId} --source registry --version ${migration.version}`,
       );
       continue;
     }
