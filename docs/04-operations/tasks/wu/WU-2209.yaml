@@ -2,7 +2,7 @@ id: WU-2209
 title: Collision-safe wu:create retry on push race
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-26
 code_paths:
@@ -33,10 +33,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Even with remote-aware ID gen (WU-2208), TOCTOU race exists: two machines fetch simultaneously, both see same highest ID, both generate same next ID. Fix: on push failure (non-fast-forward / detected duplicate), retry with fetch-regenerate-rewrite-push. Bounded retries (3). Extends existing generateWuIdWithRetry() which only handles local filesystem races.'
+description: 'Even with remote-aware ID gen (WU-2208), TOCTOU race exists: two machines fetch
+  simultaneously, both see same highest ID, both generate same next ID. Fix: on push failure
+  (non-fast-forward / detected duplicate), retry with fetch-regenerate-rewrite-push. Bounded retries
+  (3). Extends existing generateWuIdWithRetry() which only handles local filesystem races.'
 acceptance:
   - On push conflict due to duplicate ID, wu:create retries with fresh ID automatically
   - Retry fetches latest main, regenerates ID, rewrites YAML, re-commits, re-pushes
   - Maximum 3 retries with exponential backoff
   - Failure after max retries produces actionable error message
   - Two concurrent wu:create runs on different machines produce distinct IDs
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-core-lifecycle-wu-2209
+claimed_at: 2026-02-26T14:56:49.519Z
+baseline_main_sha: 757cf18dca5362e7da09a75c333547594962d0b7
+session_id: 66591fd5-94fd-4d7c-bb5a-080d7ded0d74
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T14:56:49.525Z

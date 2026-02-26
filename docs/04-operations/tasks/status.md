@@ -4,7 +4,7 @@ _Last updated: 2026-02-26_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2209 — Collision-safe wu:create retry on push race](wu/WU-2209.yaml)
 
 ## Completed
 
