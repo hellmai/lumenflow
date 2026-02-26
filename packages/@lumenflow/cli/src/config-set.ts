@@ -731,7 +731,35 @@ function applyPackConfigSetWithZod(
   }
 
   // WU-2190: Detect unknown keys that Zod silently stripped during parsing.
-  const strippedKeys = findStrippedKeys(normalized, parseResult.data as Record<string, unknown>);
+  // WU-2197: Scope the check to the sub-tree being written, not the full config.
+  // This prevents pre-existing unknown keys in unrelated paths from blocking writes.
+  const parsedData = parseResult.data as Record<string, unknown>;
+  const writeTargetKey = route.subPath.split('.')[0];
+
+  let strippedKeys: string[];
+  if (
+    writeTargetKey &&
+    typeof normalized[writeTargetKey] === 'object' &&
+    normalized[writeTargetKey] !== null &&
+    !Array.isArray(normalized[writeTargetKey]) &&
+    typeof parsedData[writeTargetKey] === 'object' &&
+    parsedData[writeTargetKey] !== null &&
+    !Array.isArray(parsedData[writeTargetKey])
+  ) {
+    // Nested write (e.g., methodology.testing): scope check to the sub-tree
+    strippedKeys = findStrippedKeys(
+      normalized[writeTargetKey] as Record<string, unknown>,
+      parsedData[writeTargetKey] as Record<string, unknown>,
+      writeTargetKey,
+    );
+  } else {
+    // Top-level or scalar write: check only whether the target key itself was stripped
+    strippedKeys =
+      writeTargetKey && writeTargetKey in normalized && !(writeTargetKey in parsedData)
+        ? [writeTargetKey]
+        : [];
+  }
+
   if (strippedKeys.length > 0) {
     return {
       ok: false,
