@@ -2,7 +2,7 @@ id: WU-2214
 title: 'BUG: hook redirect regex false-positives on arrow notation in arguments'
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-26
 code_paths:
@@ -51,3 +51,6 @@ acceptance:
   - Commands with dash-arrow notation in string arguments are not blocked
   - Actual file redirects are still blocked
   - Hook test suite updated with arrow-in-argument test case
+locked: true
+completed_at: 2026-02-26T14:08:48.434Z
+completed: 2026-02-26
