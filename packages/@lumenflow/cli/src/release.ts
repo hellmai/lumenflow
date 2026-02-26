@@ -885,10 +885,16 @@ function readPackageManifest(packageJsonPath: string): PackageManifestContract {
 
 /**
  * Resolve packed file list for a workspace package via pnpm pack --dry-run.
+ *
+ * @param packageName - The workspace package name (e.g., "@lumenflow/core")
+ * @param cwd - Optional working directory for the pack command (WU-2220).
+ *              When running inside a micro-worktree, pass the worktree path
+ *              to prevent pnpm pack from generating artifacts on main.
  */
-function getWorkspacePackedFiles(packageName: string): string[] {
+export function getWorkspacePackedFiles(packageName: string, cwd?: string): string[] {
   const output = runCommandCapture(buildWorkspacePackDryRunCommand(packageName), {
     label: PACK_VALIDATE_LABEL,
+    cwd,
   });
   const metadata = parsePackDryRunMetadata(output);
   return metadata.files
@@ -921,8 +927,18 @@ function getPreviousPublishedPackFileCount(packageName: string): number | undefi
 
 /**
  * Validate release package artifacts before tag/publish.
+ *
+ * @param packageJsonPaths - Absolute paths to package.json files to validate
+ * @param dryRun - When true, skip validation and log intent only
+ * @param cwd - Optional working directory for pack commands (WU-2220).
+ *              Forwarded to getWorkspacePackedFiles to ensure pnpm pack
+ *              runs inside the micro-worktree, not on the main checkout.
  */
-function validateReleaseArtifactsForPublish(packageJsonPaths: string[], dryRun: boolean): void {
+export function validateReleaseArtifactsForPublish(
+  packageJsonPaths: string[],
+  dryRun: boolean,
+  cwd?: string,
+): void {
   if (dryRun) {
     console.log(
       `${LOG_PREFIX} [${PACK_VALIDATE_LABEL}] Would validate packed artifacts against package contracts`,
@@ -935,7 +951,7 @@ function validateReleaseArtifactsForPublish(packageJsonPaths: string[], dryRun: 
     const packageDir = dirname(packageJsonPath);
     const manifest = readPackageManifest(packageJsonPath);
     const packageName = manifest.name ?? packageDir;
-    const packedFiles = getWorkspacePackedFiles(packageName);
+    const packedFiles = getWorkspacePackedFiles(packageName, cwd);
     const previousPackedFileCount = getPreviousPublishedPackFileCount(packageName);
     const srcFileCount = countFilesRecursive(join(packageDir, SOURCE_DIR_NAME));
     const distFileCount = countFilesRecursive(join(packageDir, DIST_DIR_NAME));
@@ -1217,7 +1233,7 @@ export async function executeReleaseInMicroWorktree(opts: ReleaseOptions): Promi
 
         // Phase 3: Validate packed artifacts (after version bump, before publish)
         if (!skipPublish) {
-          validateReleaseArtifactsForPublish(worktreePackagePaths, false);
+          validateReleaseArtifactsForPublish(worktreePackagePaths, false, worktreePath);
         }
 
         // Phase 4: Publish to npm (from micro-worktree)
