@@ -7,7 +7,6 @@ priority: P2
 created: 2026-02-26
 code_paths:
   - packages/@lumenflow/kernel/src/kernel.schemas.ts
-  - packages/@lumenflow/kernel/src/__tests__/runtime.test.ts
 tests:
   manual:
     - Change the SD pack manifest version to 0.2.0 and verify the migration error reflects 0.2.0
@@ -24,10 +23,17 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-26T14:06:48.861Z
+worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-2215
+session_id: e4013ae0-f26b-45b2-9d01-e4f287e11263
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-26T14:06:48.865Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +46,3 @@ acceptance:
   - Remediation command version comes from the pack manifest, not a hardcoded constant
   - KNOWN_PACK_CONFIG_KEY_MIGRATIONS no longer contains a version field
   - Test validates the version in the error message matches the manifest version
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/os/worktrees/framework-core-validation-wu-2215
-claimed_at: 2026-02-26T14:06:48.861Z
-baseline_main_sha: c305a65cfb573ad596fba2cfa8aa4642b4428242
-session_id: e4013ae0-f26b-45b2-9d01-e4f287e11263
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-26T14:06:48.865Z
