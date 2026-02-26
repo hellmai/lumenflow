@@ -14,6 +14,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { validateMainNotBehindOrigin } from '../wu-done-worktree.js';
+import { ensureMainNotBehindOrigin } from '../sync-validator.js';
 
 // ---------------------------------------------------------------------------
 // AC1: validateMainNotBehindOrigin
@@ -73,6 +74,39 @@ describe('legacy rollback helper removal (AC2, AC3)', () => {
     const source = await readFile(new URL('../sync-validator.ts', import.meta.url), 'utf-8');
     expect(source).toContain('wu:done aborted BEFORE file writes to prevent metadata leaks');
     expect(source).not.toContain('wu:done aborted BEFORE UnsafeAny writes');
+  });
+});
+
+describe('ensureMainNotBehindOrigin canonical semantics (WU-2205)', () => {
+  it('allows local-ahead state when not behind origin/main', async () => {
+    const mockGit = {
+      fetch: vi.fn().mockResolvedValue(undefined),
+      getCommitHash: vi
+        .fn()
+        .mockResolvedValueOnce('local-ahead') // local main
+        .mockResolvedValueOnce('remote-main'), // origin/main
+      revList: vi.fn().mockResolvedValue('0'), // not behind
+    };
+
+    await expect(
+      ensureMainNotBehindOrigin('/tmp/unused', 'WU-2205', {
+        gitAdapterForMain: mockGit as never,
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('fails closed when remote sync validation cannot be verified', async () => {
+    const mockGit = {
+      fetch: vi.fn().mockRejectedValue(new Error('network timeout')),
+      getCommitHash: vi.fn(),
+      revList: vi.fn(),
+    };
+
+    await expect(
+      ensureMainNotBehindOrigin('/tmp/unused', 'WU-2205', {
+        gitAdapterForMain: mockGit as never,
+      }),
+    ).rejects.toThrow('Could not verify local main sync with origin/main');
   });
 });
 

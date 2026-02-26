@@ -239,6 +239,23 @@ describe('WU-1664: wu:done worktree completion services', () => {
       expect(result.errors.some((e) => e.includes('behind'))).toBe(true);
     });
 
+    it('should return valid=false when remote sync check cannot be verified', async () => {
+      const doc = createMockWUDoc();
+      const gitAdapter = createMockGitAdapter();
+      gitAdapter.fetch.mockRejectedValueOnce(new Error('network timeout'));
+
+      const result = await validateWorktreeState({
+        wuId: TEST_WU_ID,
+        worktreePath: 'worktrees/test-wu-100',
+        doc,
+        mainCheckoutPath: '/main',
+        gitAdapterForMain: gitAdapter,
+      });
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.includes('Could not verify local main sync'))).toBe(true);
+    });
+
     it('should detect zombie state when status is done and worktree path exists on disk', async () => {
       // detectZombieState checks: doc.status === 'done' && worktreePath exists on disk
       const tempDir = mkdtempSync(join(tmpdir(), 'zombie-test-'));

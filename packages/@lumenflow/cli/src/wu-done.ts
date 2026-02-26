@@ -177,7 +177,6 @@ import {
 } from './wu-done-policies.js';
 import {
   detectParallelCompletions,
-  ensureMainUpToDate,
   ensureNoAutoStagedOrNoop,
   runTripwireCheck,
   validateBranchOnlyMode,
@@ -1503,9 +1502,6 @@ async function executePreFlightChecks({
   } else {
     // Worktree mode: must be on main
     await ensureOnMain(getGitForCwd());
-
-    // Prevent coordination failures by ensuring main is up-to-date
-    await ensureMainUpToDate();
 
     // P0 EMERGENCY FIX Part 1: Restore wu-events.jsonl BEFORE parallel completion check
     // Previous wu:done runs or memory layer writes may have left this file dirty,
