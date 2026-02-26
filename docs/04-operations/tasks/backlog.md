@@ -55,7 +55,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2201 — Phase 1: Canonicalize sync adapter types under ISyncValidatorGitAdapter](wu/WU-2201.yaml) — Framework: Core Lifecycle
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1156,6 +1156,7 @@ sections:
 - [WU-2196 — Runtime boot rejects legacy workspaces with software_delivery but no SD pack pin](wu/WU-2196.yaml)
 - [WU-2199 — Define sync-validator semantics and consolidation plan for main-branch sync checks](wu/WU-2199.yaml)
 - [WU-2200 — Migration error provides non-executable remediation command](wu/WU-2200.yaml)
+- [WU-2201 — Phase 1: Canonicalize sync adapter types under ISyncValidatorGitAdapter](wu/WU-2201.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
