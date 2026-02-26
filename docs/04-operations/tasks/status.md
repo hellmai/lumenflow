@@ -4,7 +4,7 @@ _Last updated: 2026-02-26_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2204 — Phase 4: Add adapter injection points for sync and micro-worktree shared helpers](wu/WU-2204.yaml)
 
 ## Completed
 
