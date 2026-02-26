@@ -4,7 +4,7 @@
 import { scanLogForViolations, rotateLog } from '@lumenflow/core/commands-logger';
 import { getConfig } from '@lumenflow/core/config';
 import { validateDocsOnly, getAllowedPathsDescription } from '@lumenflow/core/docs-path-validator';
-import { die, getErrorMessage } from '@lumenflow/core/error-handler';
+import { die, getErrorMessage, ProcessExitError } from '@lumenflow/core/error-handler';
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import {
   BRANCHES,
@@ -247,6 +247,9 @@ export async function ensureMainUpToDate() {
 
     console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Main is up-to-date with origin`);
   } catch (err) {
+    // WU-2198: Re-throw ProcessExitError from die() — intentional aborts must propagate.
+    // Only catch network/fetch errors (fail-open policy for connectivity issues).
+    if (err instanceof ProcessExitError) throw err;
     console.warn(
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Could not verify main sync: ${getErrorMessage(err)}`,
     );
