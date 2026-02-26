@@ -20,6 +20,7 @@ export default defineConfig({
       'packages/**/*.spec.ts',
       'apps/**/__tests__/**/*.test.ts',
       'tools/**/__tests__/**/*.test.ts',
+      'scripts/__tests__/**/*.test.ts',
       '.husky/hooks/__tests__/**/*.test.ts',
     ],
     exclude: ['**/node_modules/**', '**/dist/**'],
