@@ -508,6 +508,7 @@ describe('WU Lifecycle Schemas (WU-1454)', () => {
         budget: 10000,
         parent_wu: 'WU-1000',
         no_context: false,
+        evidence_only: true,
       };
       const result = wuSpawnSchema.safeParse(input);
       expect(result.success).toBe(true);
@@ -673,6 +674,7 @@ describe('MCP Schema Derivation (WU-1454)', () => {
     expect(jsonSchema.type).toBe('object');
     expect(jsonSchema.properties.id).toBeDefined();
     expect(jsonSchema.properties.client).toBeDefined();
+    expect(jsonSchema.properties.evidence_only).toBeDefined();
     expect(jsonSchema.required).toContain('id');
   });
 

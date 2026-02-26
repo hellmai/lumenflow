@@ -2,11 +2,12 @@
 
 **Last updated:** 2026-01-31
 
-This guide defines how to generate and hand off sub-agent delegation briefs so agents start with the right context, follow LumenFlow constraints, and leave durable artifacts for handoff.
+This guide defines how to generate and hand off sub-agent delegation briefs, or record `wu:brief` evidence for self-implementation, so agents start with the right context, follow LumenFlow constraints, and leave durable artifacts for handoff.
 
 Use this document when:
 
 - Generating delegation briefs for sub-agents or parallel WUs
+- Recording `wu:brief` evidence when implementing a WU in the current session
 - Writing orchestrator prompts
 - Starting a new session after `/clear`
 - Coordinating multi-wave initiatives
@@ -37,7 +38,7 @@ Use Tier 1 after `/clear` to stay lean, then load more only if needed.
 ## 2) Session Management (Start Fresh)
 
 When approaching context limits, **start a fresh agent instead of compaction**.
-The handoff prompt is the bridge between sessions. `wu:brief` generates this prompt; execution happens when you invoke your Task tool with that prompt.
+The handoff prompt is the bridge between sessions. `wu:brief` can either generate this prompt (delegation path) or just record evidence with `--evidence-only` (self-implementation path).
 
 **Mandatory triggers:**
 
@@ -106,6 +107,19 @@ This is useful when:
 `wu:delegate` records **delegation intent**: that a brief was generated for a target WU with explicit parent lineage.
 
 It does **not** by itself prove pickup or execution. Pickup/execution confirmation comes from lifecycle evidence (claim/completion events, checkpoints, signals, and final `wu:done`).
+
+---
+
+## 2c) Self-Implementation Evidence-Only Flow (WU-2222)
+
+Use this when you are **not** delegating and will implement the WU in the current session:
+
+```bash
+pnpm wu:brief --id WU-XXX --evidence-only
+# Then continue implementation directly in this session (no Task spawn).
+```
+
+Use delegation flow (`wu:brief` or `wu:delegate`) only when handing the WU to another agent.
 
 ---
 

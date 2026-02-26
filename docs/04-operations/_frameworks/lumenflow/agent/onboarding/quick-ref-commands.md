@@ -120,6 +120,7 @@ files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
 | `pnpm wu:release --id WU-XXX`                   | Release orphaned WU (in_progress to ready)                   |
 | `pnpm wu:status --id WU-XXX`                    | Show WU status, location, valid commands                     |
 | `pnpm wu:brief --id WU-XXX --client <client>`   | Generate handoff prompt + record evidence (worktree only)    |
+| `pnpm wu:brief --id WU-XXX --evidence-only`     | Record wu:brief evidence only (self-implementation path)     |
 | `pnpm wu:brief --id WU-XXX --no-context`        | Generate prompt without memory context injection             |
 | `pnpm wu:delegate --id WU-XXX --parent-wu <P>`  | Generate prompt and record delegation lineage                |
 | `pnpm wu:sandbox --id WU-XXX -- <cmd>`          | Run command through hardened WU sandbox backend              |

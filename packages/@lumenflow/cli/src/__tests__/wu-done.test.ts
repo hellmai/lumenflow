@@ -167,6 +167,7 @@ describe('wu-done', () => {
       const message = buildMissingWuBriefEvidenceMessage('WU-2132');
       expect(message).toContain('Missing wu:brief evidence');
       expect(message).toContain('pnpm wu:brief --id WU-2132');
+      expect(message).toContain('pnpm wu:brief --id WU-2132 --evidence-only');
       expect(message).toContain('--force');
     });
 

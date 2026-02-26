@@ -482,6 +482,14 @@ export const WU_OPTIONS: Record<string, WUOption> = {
     isNegated: true,
   },
 
+  // WU-2222: Record evidence without generating spawn prompt output
+  evidenceOnly: {
+    name: 'evidenceOnly',
+    flags: '--evidence-only',
+    description:
+      'Record wu:brief evidence without generating handoff prompt output (self-implementation path)',
+  },
+
   // WU-1542: Mandatory agent enforcement for wu:done
   requireAgents: {
     name: 'requireAgents',

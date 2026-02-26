@@ -27,11 +27,14 @@ Activate this skill when:
 # ✅ CORRECT: Use orchestrate:initiative for initiatives
 pnpm orchestrate:initiative --initiative INIT-XXX
 
-# ✅ CORRECT: Use wu:brief for prompt generation
+# ✅ CORRECT: Use wu:brief for delegation prompt generation
 pnpm wu:brief --id WU-XXX --client claude-code
 
 # ✅ CORRECT: Use wu:delegate for lineage-tracked delegation
 pnpm wu:delegate --id WU-XXX --parent-wu WU-YYY
+
+# ✅ CORRECT: Use evidence-only when implementing the WU yourself
+pnpm wu:brief --id WU-XXX --evidence-only
 ```
 
 **❌ NEVER do this:**
@@ -43,8 +46,9 @@ pnpm wu:delegate --id WU-XXX --parent-wu WU-YYY
 **Why this matters:**
 
 1. `wu:brief` generates prompts with context loading preamble, TDD directives, and constraints block
-2. Sub-agents need `wu:claim` (inside generated prompts) to create proper lane locks and event tracking
-3. Direct Task spawns bypass all safety mechanisms, coordination signals, and spawn registry tracking
+2. `wu:brief --evidence-only` satisfies `wu:done` evidence policy when you are not delegating
+3. Sub-agents need `wu:claim` (inside generated prompts) to create proper lane locks and event tracking
+4. Direct Task spawns bypass all safety mechanisms, coordination signals, and spawn registry tracking
 
 **If you see agents running without proper worktree claims, STOP and investigate.**
 
@@ -217,8 +221,10 @@ pnpm wu:brief --id WU-XXX
 
 ```
 Starting WU?
-├── Run: pnpm wu:brief --id WU-XXX --client <client>
-└── Review generated prompt with agent recommendations
+├── Delegating to sub-agent?
+│   ├── Yes: pnpm wu:brief --id WU-XXX --client <client> (or wu:delegate for lineage)
+│   └── No:  pnpm wu:brief --id WU-XXX --evidence-only, then implement directly
+└── If delegated, review generated prompt with agent recommendations
 
 Initiative with multiple WUs?
 ├── Run: pnpm orchestrate:initiative -i INIT-XXX --dry-run

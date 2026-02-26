@@ -2382,3 +2382,4 @@
 {"type":"checkpoint","wuId":"WU-2221","timestamp":"2026-02-26T17:21:22.667Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2221","timestamp":"2026-02-26T17:22:41.383Z"}
 {"type":"claim","wuId":"WU-2222","timestamp":"2026-02-26T17:35:24.920Z","lane":"Framework: CLI WU Commands","title":"Separate wu:brief evidence from delegation spawning"}
+{"type":"checkpoint","wuId":"WU-2222","timestamp":"2026-02-26T17:35:47.073Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}

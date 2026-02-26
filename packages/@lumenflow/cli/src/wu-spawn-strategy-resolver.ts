@@ -16,7 +16,8 @@ import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
 import { die } from '@lumenflow/core/error-handler';
-import { WU_STATUS, PATTERNS, FILE_SYSTEM, EMOJI } from '@lumenflow/core/wu-constants';
+import { WU_STATUS, PATTERNS, FILE_SYSTEM, EMOJI, BRANCHES } from '@lumenflow/core/wu-constants';
+import { createGitForPath } from '@lumenflow/core/git-adapter';
 // WU-1603: Check lane lock status before spawning
 // WU-1325: Import lock policy getter for lane availability check
 import { checkLaneLock } from '@lumenflow/core/lane-lock';
@@ -145,6 +146,7 @@ interface ParsedArgs {
   client?: string;
   vendor?: string;
   noContext?: boolean;
+  evidenceOnly?: boolean;
   /** WU-2141: Strict sizing enforcement flag */
   strictSizing?: boolean;
 }
@@ -183,6 +185,7 @@ function parseAndValidateArgs(parserConfig: BriefParserConfig = BRIEF_PARSER_CON
       WU_OPTIONS.client,
       WU_OPTIONS.vendor,
       WU_OPTIONS.noContext, // WU-1240: Skip memory context injection
+      WU_OPTIONS.evidenceOnly, // WU-2222: Evidence recording without prompt generation
       WU_OPTIONS.strictSizing, // WU-2141: Strict sizing enforcement
     ],
     required: ['id'],
@@ -323,6 +326,8 @@ interface RecordWuBriefEvidenceOptions {
   wuId: string;
   workspaceRoot: string;
   clientName: string;
+  claimedMode?: string;
+  claimedBranch?: string;
 }
 
 interface BriefEvidenceStore {
@@ -337,6 +342,8 @@ interface RecordWuBriefEvidenceDependencies {
   createStore?: (stateDir: string) => BriefEvidenceStore;
   /** WU-2144: Override worktree detection (for testing). Defaults to isInWorktree from worktree-guard. */
   isInWorktree?: (options?: { cwd?: string }) => boolean;
+  /** WU-2222: Override branch lookup for branch-pr evidence tests. */
+  getCurrentBranch?: (cwd: string) => Promise<string>;
 }
 
 /**
@@ -350,12 +357,48 @@ export async function recordWuBriefEvidence(
   options: RecordWuBriefEvidenceOptions,
   dependencies: RecordWuBriefEvidenceDependencies = {},
 ): Promise<void> {
-  const { wuId, workspaceRoot, clientName } = options;
+  const { wuId, workspaceRoot, clientName, claimedMode, claimedBranch } = options;
 
-  // WU-2144: Skip evidence recording when not in a worktree context.
-  // This prevents mutating shared state from main checkout.
   const checkWorktree = dependencies.isInWorktree ?? isInWorktreeDefault;
-  if (!checkWorktree({ cwd: workspaceRoot })) {
+  const isInWorktree = checkWorktree({ cwd: workspaceRoot });
+
+  let shouldRecordEvidence = isInWorktree;
+
+  if (!shouldRecordEvidence) {
+    const normalizedClaimedMode = typeof claimedMode === 'string' ? claimedMode.trim() : '';
+    const isBranchClaim =
+      normalizedClaimedMode === 'branch-pr' || normalizedClaimedMode === 'branch-only';
+
+    if (isBranchClaim) {
+      const getCurrentBranch =
+        dependencies.getCurrentBranch ??
+        (async (cwd: string): Promise<string> => {
+          return createGitForPath(cwd).getCurrentBranch();
+        });
+
+      let activeBranch = '';
+      try {
+        activeBranch = (await getCurrentBranch(workspaceRoot)).trim();
+      } catch {
+        activeBranch = '';
+      }
+
+      const normalizedClaimedBranch = typeof claimedBranch === 'string' ? claimedBranch.trim() : '';
+      if (normalizedClaimedBranch.length > 0) {
+        shouldRecordEvidence = activeBranch === normalizedClaimedBranch;
+      } else {
+        shouldRecordEvidence =
+          activeBranch.length > 0 &&
+          activeBranch !== BRANCHES.MAIN &&
+          activeBranch !== BRANCHES.MASTER;
+      }
+    }
+  }
+
+  // WU-2144 + WU-2222:
+  // - worktree mode: record only from worktree context
+  // - branch-pr/branch-only mode: record from claimed branch context
+  if (!shouldRecordEvidence) {
     return;
   }
 
@@ -463,6 +506,15 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
     );
   }
 
+  if (explicitDelegation && args.evidenceOnly) {
+    die(
+      'wu:delegate does not support --evidence-only.\n\n' +
+        'Use:\n' +
+        '  - pnpm wu:delegate --id WU-123 --parent-wu WU-100 --client <client>  # delegation prompt + lineage\n' +
+        '  - pnpm wu:brief --id WU-123 --evidence-only                           # self-implementation evidence only',
+    );
+  }
+
   if (!explicitDelegation && args.parentWu) {
     console.warn(
       `${effectiveLogPrefix} ${EMOJI.WARNING} --parent-wu does not record lineage in generation-only mode.`,
@@ -525,9 +577,41 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
   // Client Resolution
   const config = getConfig();
   const clientName = resolveClientName(args, config, effectiveLogPrefix);
+  const baseDir = process.cwd();
+
+  const recordEvidenceOrFail = async () => {
+    if (explicitDelegation) {
+      return;
+    }
+
+    try {
+      await recordWuBriefEvidence({
+        wuId: id,
+        workspaceRoot: baseDir,
+        clientName,
+        claimedMode: typeof doc.claimed_mode === 'string' ? doc.claimed_mode : undefined,
+        claimedBranch: typeof doc.claimed_branch === 'string' ? doc.claimed_branch : undefined,
+      });
+    } catch (error) {
+      die(
+        `${effectiveLogPrefix} Failed to record wu:brief evidence for ${id}: ${(error as Error).message}\n\n` +
+          `Fix options:\n` +
+          `  1. Ensure state directory is writable\n` +
+          `  2. Retry: pnpm wu:brief --id ${id}`,
+      );
+    }
+  };
+
+  if (args.evidenceOnly) {
+    await recordEvidenceOrFail();
+    console.log(
+      `${effectiveLogPrefix} Recorded wu:brief evidence for ${id} (evidence-only mode; no handoff prompt generated).`,
+    );
+    console.log(`${effectiveLogPrefix} Continue implementing ${id} in the current session.`);
+    return;
+  }
 
   // WU-1240: Generate memory context if not skipped
-  const baseDir = process.cwd();
   let memoryContextContent = '';
   const shouldIncludeMemoryContext = !args.noContext;
 
@@ -554,27 +638,6 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
   const clientContext = { name: clientName, config: resolveClientConfig(config, clientName) };
 
   const isCodexClient = clientName === 'codex-cli' || args.codex;
-
-  const recordEvidenceOrFail = async () => {
-    if (explicitDelegation) {
-      return;
-    }
-
-    try {
-      await recordWuBriefEvidence({
-        wuId: id,
-        workspaceRoot: baseDir,
-        clientName,
-      });
-    } catch (error) {
-      die(
-        `${effectiveLogPrefix} Failed to record wu:brief evidence for ${id}: ${(error as Error).message}\n\n` +
-          `Fix options:\n` +
-          `  1. Ensure state directory is writable\n` +
-          `  2. Retry: pnpm wu:brief --id ${id}`,
-      );
-    }
-  };
 
   if (isCodexClient) {
     const prompt = generateCodexPrompt(doc, id, strategy, {

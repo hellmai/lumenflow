@@ -190,11 +190,13 @@ export function buildMissingWuBriefEvidenceMessage(id: string): string {
     `Missing wu:brief evidence for ${id}.\n\n` +
     `Completion policy requires an auditable wu:brief execution record for feature/bug WUs.\n\n` +
     `Fix options:\n` +
-    `  1. Run wu:brief in the claimed workspace:\n` +
+    `  1. If you are delegating this WU, generate handoff prompt + evidence:\n` +
     `     pnpm wu:brief --id ${id}\n` +
-    `  2. Retry completion:\n` +
+    `  2. If you are implementing this WU yourself, record evidence only:\n` +
+    `     pnpm wu:brief --id ${id} --evidence-only\n` +
+    `  3. Retry completion:\n` +
     `     pnpm wu:done --id ${id}\n` +
-    `  3. Legacy/manual override (audited):\n` +
+    `  4. Legacy/manual override (audited):\n` +
     `     pnpm wu:done --id ${id} --force`
   );
 }

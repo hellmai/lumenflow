@@ -42,12 +42,13 @@ The dry-run output shows:
 | Checkpoint-per-wave   | `pnpm orchestrate:initiative -i INIT-XXX -c`         | Large initiatives (>3 WUs or >2 waves) |
 | Continuous            | `pnpm orchestrate:initiative -i INIT-XXX`            | Small initiatives (<=3 WUs, 1-2 waves) |
 | Manual brief/delegate | `pnpm wu:brief --id WU-XXX --client <client>` per WU | Testing individual WUs, debugging      |
+| Manual self-implement | `pnpm wu:brief --id WU-XXX --evidence-only` per WU   | You are implementing without sub-agent |
 
 Checkpoint-per-wave is recommended for most initiatives. It processes one wave at a time and writes a manifest before exiting, giving you control between waves.
 
 ### Step 3: Delegate WUs
 
-For each WU in the current wave, generate a handoff prompt:
+For each WU in the current wave, choose delegation vs self-implementation:
 
 ```bash
 # Option A: Generate prompt + evidence (no lineage side effect)
@@ -55,6 +56,9 @@ pnpm wu:brief --id WU-100 --client claude-code
 
 # Option B: Generate prompt + record delegation lineage (for audit)
 pnpm wu:delegate --id WU-100 --parent-wu WU-050 --client claude-code
+
+# Option C: Record evidence only, then implement in current session (no spawn prompt output)
+pnpm wu:brief --id WU-100 --evidence-only
 ```
 
 **Use `wu:delegate` (not `wu:brief`) when:**
@@ -62,6 +66,12 @@ pnpm wu:delegate --id WU-100 --parent-wu WU-050 --client claude-code
 - You are the orchestrator agent managing the initiative
 - You need an audit trail of who-delegated-what
 - The initiative has more than one wave
+
+**Use `wu:brief --evidence-only` when:**
+
+- You are not handing WU ownership to a sub-agent
+- You still need `wu:brief` evidence for `wu:done` policy
+- You will implement directly in the current session
 
 **Verification checklist before spawning:**
 
@@ -371,6 +381,7 @@ pnpm delegation:list --initiative INIT-XXX --json
 | `pnpm orchestrate:init-status -i INIT-XXX`          | Compact progress view                              |
 | `pnpm orchestrate:monitor`                          | Detect stuck agents and zombie locks               |
 | `pnpm wu:brief --id WU-XXX --client <client>`       | Generate handoff prompt + evidence (worktree only) |
+| `pnpm wu:brief --id WU-XXX --evidence-only`         | Record evidence only (self-implementation path)    |
 | `pnpm wu:delegate --id WU-XXX --parent-wu <P>`      | Generate prompt + record delegation                |
 | `pnpm delegation:list --initiative INIT-XXX`        | View delegation tree                               |
 | `pnpm mem:signal "msg" --wu WU-XXX`                 | Broadcast coordination signal                      |
