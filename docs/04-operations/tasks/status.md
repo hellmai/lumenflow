@@ -4,7 +4,7 @@ _Last updated: 2026-02-26_
 
 ## In Progress
 
-- [WU-2203 — Phase 3: Extract withMicroWorktree sync preamble helper without behavior changes](wu/WU-2203.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1103,3 +1103,4 @@ _Last updated: 2026-02-26_
 - [WU-2200 — Migration error provides non-executable remediation command](wu/WU-2200.yaml) — 2026-02-26
 - [WU-2201 — Phase 1: Canonicalize sync adapter types under ISyncValidatorGitAdapter](wu/WU-2201.yaml) — 2026-02-26
 - [WU-2202 — Phase 2: Introduce core sync-validator module with compatibility re-exports](wu/WU-2202.yaml) — 2026-02-26
+- [WU-2203 — Phase 3: Extract withMicroWorktree sync preamble helper without behavior changes](wu/WU-2203.yaml) — 2026-02-26
