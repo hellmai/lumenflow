@@ -27,10 +27,7 @@ import {
 let testDir: string;
 
 /** Create a manifest file at the given directory */
-async function createManifest(
-  dir: string,
-  manifest: Record<string, unknown>,
-): Promise<void> {
+async function createManifest(dir: string, manifest: Record<string, unknown>): Promise<void> {
   await mkdir(dir, { recursive: true });
   await writeFile(join(dir, 'manifest.yaml'), YAML.stringify(manifest), 'utf8');
 }
@@ -79,9 +76,7 @@ describe('resolvePackManifestPaths', () => {
 
       const result = resolvePackManifestPaths({
         projectRoot: testDir,
-        packs: [
-          { id: 'software-delivery', version: '3.0.0', integrity: 'dev', source: 'local' },
-        ],
+        packs: [{ id: 'software-delivery', version: '3.0.0', integrity: 'dev', source: 'local' }],
       });
 
       expect(result.get('software_delivery')).toBe('software-delivery');
@@ -114,9 +109,7 @@ describe('resolvePackManifestPaths', () => {
     it('skips local pack when manifest does not exist', () => {
       const result = resolvePackManifestPaths({
         projectRoot: testDir,
-        packs: [
-          { id: 'nonexistent', version: '1.0.0', integrity: 'dev', source: 'local' },
-        ],
+        packs: [{ id: 'nonexistent', version: '1.0.0', integrity: 'dev', source: 'local' }],
       });
 
       expect(result.size).toBe(0);
@@ -149,9 +142,7 @@ describe('resolvePackManifestPaths', () => {
     it('skips registry pack when manifest does not exist in node_modules', () => {
       const result = resolvePackManifestPaths({
         projectRoot: testDir,
-        packs: [
-          { id: 'nonexistent', version: '1.0.0', integrity: 'dev', source: 'registry' },
-        ],
+        packs: [{ id: 'nonexistent', version: '1.0.0', integrity: 'dev', source: 'registry' }],
       });
 
       expect(result.size).toBe(0);
@@ -224,7 +215,11 @@ describe('resolvePackManifestPaths', () => {
         projectRoot: testDir,
         packs: [
           // No 'source' field - backward compat with old workspace.yaml
-          { id: 'software-delivery', version: '3.0.0', integrity: 'dev' } as PackManifestResolverInput['packs'][number],
+          {
+            id: 'software-delivery',
+            version: '3.0.0',
+            integrity: 'dev',
+          } as PackManifestResolverInput['packs'][number],
         ],
       });
 
@@ -247,9 +242,7 @@ describe('resolvePackManifestPaths', () => {
 
       const result = resolvePackManifestPaths({
         projectRoot: testDir,
-        packs: [
-          { id: 'no-config', version: '1.0.0', integrity: 'dev', source: 'local' },
-        ],
+        packs: [{ id: 'no-config', version: '1.0.0', integrity: 'dev', source: 'local' }],
       });
 
       expect(result.size).toBe(0);
@@ -271,13 +264,7 @@ describe('resolvePackManifestPaths', () => {
       });
 
       // Registry pack
-      const registryDir = join(
-        testDir,
-        'node_modules',
-        '@lumenflow',
-        'packs',
-        'customer-support',
-      );
+      const registryDir = join(testDir, 'node_modules', '@lumenflow', 'packs', 'customer-support');
       await createManifest(registryDir, {
         id: 'customer-support',
         version: '1.0.0',
@@ -307,7 +294,11 @@ describe('resolvePackManifestPaths', () => {
       const result = resolvePackManifestPaths({
         projectRoot: testDir,
         packs: [
-          { version: '1.0.0', integrity: 'dev', source: 'local' } as unknown as PackManifestResolverInput['packs'][number],
+          {
+            version: '1.0.0',
+            integrity: 'dev',
+            source: 'local',
+          } as unknown as PackManifestResolverInput['packs'][number],
         ],
       });
 

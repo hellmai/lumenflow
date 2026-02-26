@@ -35,11 +35,7 @@ import {
 
 const PACK_CACHE_DIR_NAME = 'pack-cache' as const;
 const NODE_MODULES_DIR_NAME = 'node_modules' as const;
-const DEFAULT_PACK_CACHE_DIR = path.join(
-  homedir(),
-  LUMENFLOW_DIR_NAME,
-  PACK_CACHE_DIR_NAME,
-);
+const DEFAULT_PACK_CACHE_DIR = path.join(homedir(), LUMENFLOW_DIR_NAME, PACK_CACHE_DIR_NAME);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -95,11 +91,7 @@ function resolveManifestPath(
 
   if (source === 'git') {
     // Git packs are cloned to the pack cache directory
-    return path.join(
-      packCacheDir,
-      `${pack.id}@${pack.version}`,
-      PACK_MANIFEST_FILE_NAME,
-    );
+    return path.join(packCacheDir, `${pack.id}@${pack.version}`, PACK_MANIFEST_FILE_NAME);
   }
 
   // source === 'local' or missing (backward compatibility)
@@ -132,9 +124,7 @@ function resolveManifestPath(
  * @param input - Project root, pack pins, and optional cache dir override
  * @returns Map of config_key to pack_id
  */
-export function resolvePackManifestPaths(
-  input: PackManifestResolverInput,
-): Map<string, string> {
+export function resolvePackManifestPaths(input: PackManifestResolverInput): Map<string, string> {
   const result = new Map<string, string>();
   const { projectRoot, packs, packCacheDir } = input;
 
