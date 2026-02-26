@@ -7,11 +7,14 @@ priority: P2
 created: 2026-02-26
 code_paths:
   - scripts/wu-stamp.mjs
+  - scripts/__tests__/wu-stamp.test.ts
+  - vitest.config.ts
 tests:
   manual:
     - Run with dist/ directories removed, verify stamp and event created
     - Run twice, verify idempotent
-  unit: []
+  unit:
+    - scripts/__tests__/wu-stamp.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2212.done
