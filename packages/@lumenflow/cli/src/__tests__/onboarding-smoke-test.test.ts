@@ -22,6 +22,14 @@ import {
   validateLaneInferenceFormat,
 } from '../onboarding-smoke-test.js';
 import { connectWorkspaceToCloud } from '../onboard.js';
+import {
+  WorkspaceControlPlaneConfigSchema as KernelSchema,
+  WorkspaceControlPlaneAuthConfigSchema as KernelAuthSchema,
+} from '@lumenflow/kernel';
+import {
+  WorkspaceControlPlaneConfigSchema as CoreSchema,
+  WorkspaceControlPlaneAuthConfigSchema as CoreAuthSchema,
+} from '@lumenflow/core';
 
 /** Constants for test files to avoid duplicate string literals */
 const PACKAGE_JSON_FILE = 'package.json';
@@ -383,6 +391,44 @@ Framework:
       expect(result.success).toBe(false);
       expect(result.error).toContain(TEST_TOKEN_ENV);
       expect(result.error).toContain('Export');
+    });
+  });
+
+  describe('WU-2223: core/kernel control_plane schema parity', () => {
+    /** Canonical config written by cloud:connect */
+    const CLOUD_CONNECT_OUTPUT = {
+      endpoint: TEST_CLOUD_ENDPOINT,
+      org_id: TEST_ORG_ID,
+      project_id: TEST_PROJECT_ID,
+      sync_interval: TEST_SYNC_INTERVAL,
+      policy_mode: TEST_POLICY_MODE,
+      auth: { token_env: TEST_TOKEN_ENV },
+    };
+
+    it('kernel and core schemas accept the same cloud:connect output', () => {
+      const kernelResult = KernelSchema.safeParse(CLOUD_CONNECT_OUTPUT);
+      const coreResult = CoreSchema.safeParse(CLOUD_CONNECT_OUTPUT);
+
+      expect(kernelResult.success).toBe(true);
+      expect(coreResult.success).toBe(true);
+    });
+
+    it('kernel and core auth schemas accept the same token_env shape', () => {
+      const authInput = { token_env: TEST_TOKEN_ENV };
+      const kernelResult = KernelAuthSchema.safeParse(authInput);
+      const coreResult = CoreAuthSchema.safeParse(authInput);
+
+      expect(kernelResult.success).toBe(true);
+      expect(coreResult.success).toBe(true);
+    });
+
+    it('both schemas reject unknown keys (strict mode parity)', () => {
+      const withExtra = { ...CLOUD_CONNECT_OUTPUT, unknown: 'x' };
+      const kernelResult = KernelSchema.safeParse(withExtra);
+      const coreResult = CoreSchema.safeParse(withExtra);
+
+      expect(kernelResult.success).toBe(false);
+      expect(coreResult.success).toBe(false);
     });
   });
 });
