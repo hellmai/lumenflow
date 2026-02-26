@@ -7,7 +7,6 @@ priority: P3
 created: 2026-02-26
 code_paths:
   - packages/@lumenflow/cli/src/config-set.ts
-  - packages/@lumenflow/cli/src/config-get.ts
   - packages/@lumenflow/kernel/src/pack/pack-manifest-resolver.ts
   - packages/@lumenflow/kernel/src/pack/index.ts
 tests:
