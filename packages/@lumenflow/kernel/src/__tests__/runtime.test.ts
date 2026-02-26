@@ -1388,10 +1388,7 @@ describe('kernel runtime facade', () => {
       );
     }
 
-    async function writeManifestWithConfigKey(
-      root: string,
-      configKey: string,
-    ): Promise<void> {
+    async function writeManifestWithConfigKey(root: string, configKey: string): Promise<void> {
       const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
       await writeFile(
         join(packRoot, PACK_MANIFEST_FILE_NAME),
@@ -1485,9 +1482,7 @@ describe('kernel runtime facade', () => {
     it('error message suggests pack config_key when unknown root key is present', async () => {
       await writeWorkspaceWithExtraKey(tempRoot, { observability: '{}' });
 
-      await expect(createRuntime()).rejects.toThrow(
-        /pack.*manifest/i,
-      );
+      await expect(createRuntime()).rejects.toThrow(/pack.*manifest/i);
     });
   });
 });

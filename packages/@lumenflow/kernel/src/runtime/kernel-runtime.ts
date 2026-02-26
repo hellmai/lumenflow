@@ -1361,9 +1361,7 @@ export async function initializeKernelRuntime(
   );
   if (!rootKeyValidation.valid) {
     const keyList = rootKeyValidation.errors.join('\n  - ');
-    throw new Error(
-      `Workspace root-key validation failed:\n  - ${keyList}`,
-    );
+    throw new Error(`Workspace root-key validation failed:\n  - ${keyList}`);
   }
 
   const registry = new ToolRegistry();
