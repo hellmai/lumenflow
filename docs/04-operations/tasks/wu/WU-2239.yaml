@@ -6,7 +6,7 @@ status: in_progress
 priority: P2
 created: 2026-02-27
 code_paths:
-  - packages/@lumenflow/cli/src/wu-edit.ts
+  - packages/@lumenflow/cli/src/wu-edit-operations.ts
 tests:
   manual:
     - Verify wu:edit --spec-file preserves runtime fields on in_progress WU
@@ -20,10 +20,17 @@ initiative: INIT-047
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T15:10:39.959Z
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2239
+session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:10:39.965Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +42,3 @@ acceptance:
   - wu:edit --spec-file preserves runtime fields (worktree_path, assigned_to, claimed_mode,
     session_id, claimed_at)
   - 'Or: wu:edit --spec-file rejects input that would strip required runtime fields with clear error'
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-27T15:10:39.965Z
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2239
-claimed_at: 2026-02-27T15:10:39.959Z
-baseline_main_sha: 1c13185fefa96c45ccf6bf8ef6b2231a2e3ad5c2
-session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
