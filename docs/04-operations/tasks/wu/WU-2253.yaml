@@ -9,7 +9,11 @@ code_paths:
   - packages/@lumenflow/core/src/sandbox-backend-macos.ts
   - packages/@lumenflow/core/src/sandbox-profile.ts
 tests:
-  manual: []
+  manual:
+    - Run vitest for sandbox-backend-macos.test.ts and verify network posture rules are correctly
+      generated for off
+    - allowlist
+    - and full postures
   unit:
     - packages/@lumenflow/core/src/__tests__/sandbox-backend-macos.test.ts
   e2e: []
