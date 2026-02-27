@@ -9,6 +9,7 @@ _Last updated: 2026-02-27_
 - [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml)
 - [WU-2240 — wu:recover --action resume does not emit claim event to state store](wu/WU-2240.yaml)
 - [WU-2250 — Prevent absolute path writes in claim metadata and plan linking](wu/WU-2250.yaml)
+- [WU-2244 — initiative:create blocked from non-main branch](wu/WU-2244.yaml)
 
 ## Completed
 

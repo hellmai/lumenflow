@@ -2,7 +2,7 @@ id: WU-2244
 title: initiative:create blocked from non-main branch
 lane: 'Framework: Initiatives'
 type: bug
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-27
 code_paths:
@@ -33,3 +33,11 @@ description: initiative:create fails when run from a non-main branch with local-
 acceptance:
   - initiative:create works from any branch (it already uses micro-worktree isolation)
   - 'Or: clear error message explaining why main branch is required with copy-paste fix'
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-initiatives-wu-2244
+claimed_at: 2026-02-27T15:13:12.507Z
+baseline_main_sha: 78113570339de21d8d0ee03ec92502907c0b13eb
+session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:13:12.513Z
