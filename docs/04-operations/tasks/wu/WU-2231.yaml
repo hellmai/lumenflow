@@ -2,7 +2,7 @@ id: WU-2231
 title: Sidekick pack scaffold and manifest contract
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -29,7 +29,7 @@ escalation_triggers: []
 requires_human_escalation: false
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-27T13:45:22.965Z
+approved_at: 2026-02-27T17:16:06.341Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,3 +39,8 @@ acceptance:
   - 16 tool declarations exist with schemas, permissions, and scopes
   - pack:validate passes for sidekick
   - .sidekick/ added to .gitignore
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2231
+claimed_at: 2026-02-27T17:16:06.330Z
+baseline_main_sha: 7a30237fff24a2007201fd7a6fe73ecac977dc67
+session_id: 06530872-f3ce-4ec3-93da-3b9fc487ce40
