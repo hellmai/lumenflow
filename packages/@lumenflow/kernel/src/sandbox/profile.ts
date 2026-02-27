@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import type { ToolScope } from '../kernel.schemas.js';
 
-export type SandboxNetworkPosture = 'off' | 'full';
+export type SandboxNetworkPosture = 'off' | 'allowlist' | 'full';
 
 export interface SandboxBindMount {
   source: string;
@@ -21,6 +21,7 @@ export interface SandboxProfile {
   readonly_bind_mounts: SandboxBindMount[];
   writable_bind_mounts: SandboxBindMount[];
   network_posture: SandboxNetworkPosture;
+  network_allowlist: string[];
   deny_overlays: SandboxDenyOverlay[];
   env: Record<string, string>;
 }
@@ -119,11 +120,19 @@ export function buildSandboxProfileFromScopes(
   const writable_bind_mounts: SandboxBindMount[] = [];
   const readonly_bind_mounts: SandboxBindMount[] = [];
   let network_posture: SandboxNetworkPosture = 'off';
+  const allowlistEntries = new Set<string>();
 
   for (const scope of scopeEnforced) {
     if (scope.type === 'network') {
       if (scope.posture === 'full') {
+        // full wins over allowlist; reset to full
         network_posture = 'full';
+      } else if (scope.posture === 'allowlist' && network_posture !== 'full') {
+        network_posture = 'allowlist';
+        const entries = 'allowlist_entries' in scope ? (scope.allowlist_entries as string[]) : [];
+        for (const entry of entries) {
+          allowlistEntries.add(entry);
+        }
       }
       continue;
     }
@@ -144,6 +153,7 @@ export function buildSandboxProfileFromScopes(
     readonly_bind_mounts: dedupeMounts(readonly_bind_mounts),
     writable_bind_mounts: dedupeMounts(writable_bind_mounts),
     network_posture,
+    network_allowlist: network_posture === 'allowlist' ? [...allowlistEntries].sort() : [],
     deny_overlays:
       options.denyOverlays ||
       createDefaultDenyOverlays({

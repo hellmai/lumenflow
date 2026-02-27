@@ -49,6 +49,33 @@ describe('kernel schemas', () => {
       expect(result.success).toBe(true);
     });
 
+    it('accepts network scope with allowlist posture and entries', () => {
+      // AC1: SandboxNetworkPosture includes allowlist variant
+      const result = ToolScopeSchema.safeParse({
+        type: 'network',
+        posture: 'allowlist',
+        allowlist_entries: ['registry.npmjs.org:443', 'api.github.com:443'],
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('rejects allowlist posture without entries', () => {
+      const result = ToolScopeSchema.safeParse({
+        type: 'network',
+        posture: 'allowlist',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects allowlist posture with empty entries array', () => {
+      const result = ToolScopeSchema.safeParse({
+        type: 'network',
+        posture: 'allowlist',
+        allowlist_entries: [],
+      });
+      expect(result.success).toBe(false);
+    });
+
     it('rejects invalid scope variants', () => {
       expect(
         ToolScopeSchema.safeParse({

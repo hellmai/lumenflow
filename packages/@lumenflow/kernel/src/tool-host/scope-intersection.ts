@@ -203,6 +203,16 @@ function intersectPathScopes(
   return [...scopes.values()];
 }
 
+/**
+ * Network posture precedence (deny-wins):
+ *   off < allowlist < full
+ *
+ * When all layers agree on posture, that posture is used.
+ * When layers differ, the most restrictive posture wins:
+ *   - Any layer declaring 'off' blocks all network access
+ *   - 'full' is compatible with 'allowlist' (downgrades to allowlist)
+ *   - 'allowlist' entries are intersected across layers that declare them
+ */
 function intersectNetworkScopes(
   workspaceAllowed: ToolScope[],
   laneAllowed: ToolScope[],
@@ -218,6 +228,81 @@ function intersectNetworkScopes(
     return [];
   }
 
+  const allLayers = [workspace, lane, task, tool];
+
+  // If any layer declares 'off' with no other posture, network is blocked
+  for (const layer of allLayers) {
+    const hasOnlyOff = layer.every((s) => s.posture === 'off');
+    if (hasOnlyOff) {
+      // Check if this layer is compatible with the tool's request
+      const toolWantsNetwork = tool.some((s) => s.posture !== 'off');
+      if (toolWantsNetwork) {
+        return [];
+      }
+    }
+  }
+
+  // Determine the effective posture: most restrictive wins
+  const hasAllowlist = allLayers.some((layer) => layer.some((s) => s.posture === 'allowlist'));
+
+  if (hasAllowlist) {
+    // Collect allowlist entries from all layers that declare allowlist.
+    // Layers declaring 'full' are treated as "allow anything" (no restriction).
+    // Layers declaring 'off' block everything (handled above).
+    const layerEntries: Set<string>[] = [];
+
+    for (const layer of allLayers) {
+      const allowlistScopes = layer.filter((s) => s.posture === 'allowlist');
+      const hasFullScope = layer.some((s) => s.posture === 'full');
+
+      if (allowlistScopes.length > 0) {
+        // Collect all entries from this layer's allowlist scopes
+        const entries = new Set<string>();
+        for (const scope of allowlistScopes) {
+          const scopeEntries =
+            'allowlist_entries' in scope ? (scope.allowlist_entries as string[]) : [];
+          for (const entry of scopeEntries) {
+            entries.add(entry);
+          }
+        }
+        layerEntries.push(entries);
+      } else if (hasFullScope) {
+        // 'full' acts as unrestricted; skip this layer from intersection
+        continue;
+      } else {
+        // Layer has 'off' only -- should have been caught above
+        return [];
+      }
+    }
+
+    if (layerEntries.length === 0) {
+      return [];
+    }
+
+    // Intersect entries across all restricting layers
+    let intersected = layerEntries[0];
+    for (let i = 1; i < layerEntries.length; i++) {
+      const next = layerEntries[i];
+      if (!intersected || !next) {
+        return [];
+      }
+      intersected = new Set([...intersected].filter((entry) => next.has(entry)));
+    }
+
+    if (!intersected || intersected.size === 0) {
+      return [];
+    }
+
+    return [
+      {
+        type: 'network',
+        posture: 'allowlist',
+        allowlist_entries: [...intersected].sort(),
+      } as NetworkScope,
+    ];
+  }
+
+  // No allowlist involved: original logic for off/full
   const scopes = new Map<NetworkScope['posture'], NetworkScope>();
   for (const toolScope of tool) {
     const posture = toolScope.posture;

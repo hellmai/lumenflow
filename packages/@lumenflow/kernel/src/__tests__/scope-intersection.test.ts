@@ -177,4 +177,151 @@ describe('scope intersection', () => {
 
     expect(intersection).toContainEqual({ type: 'network', posture: 'full' });
   });
+
+  describe('allowlist network intersection', () => {
+    it('intersects allowlist entries to the common subset across all layers', () => {
+      // AC2: intersectNetworkScopes handles allowlist intersection
+      const intersection = intersectToolScopes({
+        workspaceAllowed: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443', 'api.github.com:443', 'pypi.org:443'],
+          },
+        ],
+        laneAllowed: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443', 'api.github.com:443'],
+          },
+        ],
+        taskDeclared: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443', 'api.github.com:443'],
+          },
+        ],
+        toolRequired: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+      });
+
+      const networkScopes = intersection.filter((s) => s.type === 'network');
+      expect(networkScopes).toHaveLength(1);
+      expect(networkScopes[0]).toEqual({
+        type: 'network',
+        posture: 'allowlist',
+        allowlist_entries: ['registry.npmjs.org:443'],
+      });
+    });
+
+    it('returns empty when allowlist entries have no common hosts', () => {
+      const intersection = intersectToolScopes({
+        workspaceAllowed: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+        laneAllowed: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['api.github.com:443'],
+          },
+        ],
+        taskDeclared: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+        toolRequired: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+      });
+
+      const networkScopes = intersection.filter((s) => s.type === 'network');
+      expect(networkScopes).toHaveLength(0);
+    });
+
+    it('downgrades full to allowlist when a narrower layer declares allowlist', () => {
+      // When workspace allows full but lane/task restrict to allowlist,
+      // the intersection should produce allowlist with the restricted entries
+      const intersection = intersectToolScopes({
+        workspaceAllowed: [{ type: 'network', posture: 'full' }],
+        laneAllowed: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+        taskDeclared: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+        toolRequired: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+      });
+
+      const networkScopes = intersection.filter((s) => s.type === 'network');
+      expect(networkScopes).toHaveLength(1);
+      expect(networkScopes[0]).toEqual({
+        type: 'network',
+        posture: 'allowlist',
+        allowlist_entries: ['registry.npmjs.org:443'],
+      });
+    });
+
+    it('off posture blocks allowlist regardless of entries', () => {
+      const intersection = intersectToolScopes({
+        workspaceAllowed: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+        laneAllowed: [{ type: 'network', posture: 'off' }],
+        taskDeclared: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+        toolRequired: [
+          {
+            type: 'network',
+            posture: 'allowlist',
+            allowlist_entries: ['registry.npmjs.org:443'],
+          },
+        ],
+      });
+
+      const networkScopes = intersection.filter((s) => s.type === 'network');
+      expect(networkScopes).toHaveLength(0);
+    });
+  });
 });

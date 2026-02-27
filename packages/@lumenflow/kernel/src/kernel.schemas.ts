@@ -58,15 +58,33 @@ export const ToolScopePathSchema = z.object({
   access: z.enum(['read', 'write']),
 });
 
-export const ToolScopeNetworkSchema = z.object({
+const ToolScopeNetworkBaseSchema = z.object({
   type: z.literal('network'),
-  posture: z.enum(['off', 'full']),
+  posture: z.enum(['off', 'full', 'allowlist']),
+  allowlist_entries: z.array(z.string().min(1)).min(1).optional(),
 });
 
-export const ToolScopeSchema = z.discriminatedUnion('type', [
-  ToolScopePathSchema,
-  ToolScopeNetworkSchema,
-]);
+export const ToolScopeNetworkSchema = ToolScopeNetworkBaseSchema.refine(
+  (data) => {
+    if (data.posture === 'allowlist') {
+      return data.allowlist_entries !== undefined && data.allowlist_entries.length > 0;
+    }
+    return true;
+  },
+  { message: 'allowlist_entries required when posture is allowlist' },
+);
+
+export const ToolScopeSchema = z
+  .discriminatedUnion('type', [ToolScopePathSchema, ToolScopeNetworkBaseSchema])
+  .refine(
+    (data) => {
+      if (data.type === 'network' && data.posture === 'allowlist') {
+        return data.allowlist_entries !== undefined && data.allowlist_entries.length > 0;
+      }
+      return true;
+    },
+    { message: 'allowlist_entries required when posture is allowlist' },
+  );
 
 export type ToolScope = z.infer<typeof ToolScopeSchema>;
 
