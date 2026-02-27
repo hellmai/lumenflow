@@ -23,18 +23,26 @@ import { parse as yamlParse } from 'yaml';
 let capturedExecuteFn: ((ctx: { worktreePath: string }) => Promise<unknown>) | null = null;
 
 vi.mock('@lumenflow/core/micro-worktree', () => ({
-  withMicroWorktree: vi.fn(async (options: { execute: (ctx: { worktreePath: string }) => Promise<{ commitMessage: string; files: string[] }> }) => {
-    capturedExecuteFn = options.execute;
-    // Execute the callback with a placeholder path
-    // The test sets up the file at this path before calling resolveEscalation
-    const result = await options.execute({ worktreePath: '/tmp/mock-micro-wt' });
-    return { ...result, ref: 'main' };
-  }),
+  withMicroWorktree: vi.fn(
+    async (options: {
+      execute: (ctx: {
+        worktreePath: string;
+      }) => Promise<{ commitMessage: string; files: string[] }>;
+    }) => {
+      capturedExecuteFn = options.execute;
+      // Execute the callback with a placeholder path
+      // The test sets up the file at this path before calling resolveEscalation
+      const result = await options.execute({ worktreePath: '/tmp/mock-micro-wt' });
+      return { ...result, ref: 'main' };
+    },
+  ),
 }));
 
 // Mock ensureOnMain (not needed for unit tests)
 vi.mock('@lumenflow/core/wu-helpers', async () => {
-  const actual = await vi.importActual<typeof import('@lumenflow/core/wu-helpers')>('@lumenflow/core/wu-helpers');
+  const actual = await vi.importActual<typeof import('@lumenflow/core/wu-helpers')>(
+    '@lumenflow/core/wu-helpers',
+  );
   return {
     ...actual,
     ensureOnMain: vi.fn().mockResolvedValue(undefined),
@@ -139,42 +147,48 @@ describe('wu:escalate', () => {
 
   describe('resolveEscalation', () => {
     it('errors when WU file does not exist', async () => {
-      await expect(
-        resolveEscalation('WU-999', RESOLVER_EMAIL, tempDir),
-      ).rejects.toThrow(/WU-999 not found/);
+      await expect(resolveEscalation('WU-999', RESOLVER_EMAIL, tempDir)).rejects.toThrow(
+        /WU-999 not found/,
+      );
     });
 
     it('errors when WU has no escalation triggers', async () => {
-      writeWUFile(WU_ID, [
-        'id: WU-14',
-        'title: Test WU',
-        'status: in_progress',
-        "lane: 'Framework: Core'",
-        'escalation_triggers: []',
-        'requires_human_escalation: false',
-      ].join('\n'));
+      writeWUFile(
+        WU_ID,
+        [
+          'id: WU-14',
+          'title: Test WU',
+          'status: in_progress',
+          "lane: 'Framework: Core'",
+          'escalation_triggers: []',
+          'requires_human_escalation: false',
+        ].join('\n'),
+      );
 
-      await expect(
-        resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir),
-      ).rejects.toThrow(/no escalation/i);
+      await expect(resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir)).rejects.toThrow(
+        /no escalation/i,
+      );
     });
 
     it('errors when escalation is already resolved', async () => {
-      writeWUFile(WU_ID, [
-        'id: WU-14',
-        'title: Test WU',
-        'status: in_progress',
-        "lane: 'Framework: Core'",
-        'escalation_triggers:',
-        '  - sensitive_data',
-        'requires_human_escalation: true',
-        'escalation_resolved_by: previous@example.com',
-        'escalation_resolved_at: "2026-02-27T10:00:00.000Z"',
-      ].join('\n'));
+      writeWUFile(
+        WU_ID,
+        [
+          'id: WU-14',
+          'title: Test WU',
+          'status: in_progress',
+          "lane: 'Framework: Core'",
+          'escalation_triggers:',
+          '  - sensitive_data',
+          'requires_human_escalation: true',
+          'escalation_resolved_by: previous@example.com',
+          'escalation_resolved_at: "2026-02-27T10:00:00.000Z"',
+        ].join('\n'),
+      );
 
-      await expect(
-        resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir),
-      ).rejects.toThrow(/already resolved/i);
+      await expect(resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir)).rejects.toThrow(
+        /already resolved/i,
+      );
     });
 
     it('sets escalation_resolved_by and escalation_resolved_at via micro-worktree', async () => {

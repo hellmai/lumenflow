@@ -74,10 +74,7 @@ function parseArgs(): WuEscalateArgs {
 /**
  * Load WU YAML from a given root directory
  */
-function loadWU(
-  id: string,
-  rootDir?: string,
-): { wu: Record<string, unknown>; wuPath: string } {
+function loadWU(id: string, rootDir?: string): { wu: Record<string, unknown>; wuPath: string } {
   const relPath = WU_PATHS.WU(id);
   const wuPath = rootDir ? join(rootDir, relPath) : relPath;
 
