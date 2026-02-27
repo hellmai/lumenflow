@@ -8,7 +8,9 @@ created: 2026-02-27
 code_paths:
   - packages/@lumenflow/cli/src/initiative-create.ts
 tests:
-  manual: []
+  manual:
+    - Run initiative:create with --phase and --success-metric flags and verify YAML output contains
+      phases and success_metrics arrays
   unit:
     - packages/@lumenflow/cli/__tests__/initiative-create-flags.test.ts
   e2e: []
