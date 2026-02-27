@@ -2,7 +2,7 @@ id: WU-2265
 title: Publish Sidekick pack to registry
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -47,3 +47,6 @@ acceptance:
   - pnpm pack:validate --id sidekick passes all 5 checks
   - 'Pack is installable locally (source: local) with integrity verification'
   - workspace.yaml includes manifest integrity hash (sha256)
+locked: true
+completed_at: 2026-02-27T18:32:49.684Z
+completed: 2026-02-27

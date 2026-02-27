@@ -52,12 +52,12 @@ sections:
 - [WU-2217 — BUG: Fix pre-existing prettier format failures in wu-done.ts and arg-parser.ts](wu/WU-2217.yaml) — Framework: CLI WU Commands
 - [WU-2258 — Add lane:create command for adding new lanes via tooling](wu/WU-2258.yaml) — Framework: CLI Enforcement
 - [WU-2261 — wu:done leaves bulk staged WU metadata on main](wu/WU-2261.yaml) — Framework: CLI Enforcement
+- [WU-2266 — INIT-048 kernel hardening documentation: network allowlist, macOS sandbox, argument-level policy](wu/WU-2266.yaml) — Content: Framework Docs
 
 ## 🔧 In progress
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
-- [WU-2265 — Publish Sidekick pack to registry](wu/WU-2265.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
@@ -1216,6 +1216,7 @@ sections:
 - [WU-2237 — Sidekick validation, gates, smoke flow, and publish readiness](wu/WU-2237.yaml)
 - [WU-2254 — macOS sandbox read confinement and deny overlays](wu/WU-2254.yaml)
 - [WU-2255 — Argument-level policy evaluation context](wu/WU-2255.yaml)
+- [WU-2265 — Publish Sidekick pack to registry](wu/WU-2265.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

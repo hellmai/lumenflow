@@ -3,7 +3,7 @@ slug: sidekick-pack-runtime
 title: Sidekick Pack and Runtime Surface
 description: 'OSS-only Sidekick initiative for lumenflow-dev: pack contract, storage abstraction,
   runtime surfaces, and publish readiness.'
-status: in_progress
+status: done
 priority: P1
 owner: Framework Team
 created: 2026-02-27
@@ -13,7 +13,7 @@ phases:
     status: done
   - id: 2
     title: 'Phase 2: Consumer abstraction contract and runtime surface'
-    status: pending
+    status: done
   - id: 3
     title: 'Phase 3: Validation and publish readiness'
     status: done

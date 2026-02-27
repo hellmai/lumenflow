@@ -2515,3 +2515,4 @@
 {"type":"claim","wuId":"WU-2265","timestamp":"2026-02-27T18:20:24.003Z","lane":"Framework: Core Lifecycle","title":"Publish Sidekick pack to registry"}
 {"type":"checkpoint","wuId":"WU-2265","timestamp":"2026-02-27T18:20:41.395Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"checkpoint","wuId":"WU-2265","timestamp":"2026-02-27T18:31:00.961Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"complete","wuId":"WU-2265","timestamp":"2026-02-27T18:32:54.001Z"}
