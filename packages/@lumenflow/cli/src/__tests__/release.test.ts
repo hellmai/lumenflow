@@ -312,6 +312,47 @@ describe('release command', () => {
       expect(paths).toHaveLength(1);
       expect(paths).toContain(join(packagesDir, 'core/package.json'));
     });
+
+    it('should include nested domain packs from packs subdirectory (WU-2267)', () => {
+      const packagesDir = join(testDir, 'packages/@lumenflow');
+      mkdirSync(join(packagesDir, 'core'), { recursive: true });
+      mkdirSync(join(packagesDir, 'packs/sidekick'), { recursive: true });
+
+      writeFileSync(
+        join(packagesDir, 'core/package.json'),
+        JSON.stringify({ name: '@lumenflow/core', version: '1.0.0' }),
+      );
+      writeFileSync(
+        join(packagesDir, 'packs/sidekick/package.json'),
+        JSON.stringify({ name: '@lumenflow/packs-sidekick', version: '1.0.0' }),
+      );
+
+      const paths = findPackageJsonPaths(testDir);
+
+      expect(paths).toHaveLength(2);
+      expect(paths).toContain(join(packagesDir, 'core/package.json'));
+      expect(paths).toContain(join(packagesDir, 'packs/sidekick/package.json'));
+    });
+
+    it('should not include private packs from packs subdirectory (WU-2267)', () => {
+      const packagesDir = join(testDir, 'packages/@lumenflow');
+      mkdirSync(join(packagesDir, 'core'), { recursive: true });
+      mkdirSync(join(packagesDir, 'packs/internal-pack'), { recursive: true });
+
+      writeFileSync(
+        join(packagesDir, 'core/package.json'),
+        JSON.stringify({ name: '@lumenflow/core', version: '1.0.0' }),
+      );
+      writeFileSync(
+        join(packagesDir, 'packs/internal-pack/package.json'),
+        JSON.stringify({ name: '@lumenflow/packs-internal', version: '1.0.0', private: true }),
+      );
+
+      const paths = findPackageJsonPaths(testDir);
+
+      expect(paths).toHaveLength(1);
+      expect(paths).toContain(join(packagesDir, 'core/package.json'));
+    });
   });
 
   describe('updatePackageVersions', () => {
