@@ -7,7 +7,6 @@ priority: P1
 created: 2026-02-27
 code_paths:
   - packages/@lumenflow/kernel/src/sandbox/bwrap-invocation.ts
-  - packages/@lumenflow/kernel/src/sandbox/subprocess-dispatcher.ts
 tests:
   manual:
     - Verify bwrap invocation includes iptables OUTPUT ACCEPT rules for each allowlisted host when
@@ -29,10 +28,17 @@ spec_refs:
 risks: []
 notes: Depends on WU-2251 (network allowlist schema).
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T17:47:33.712Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2252
+session_id: c34c4bc3-d629-4f87-be91-79e1b25679da
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T17:47:33.717Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -42,11 +48,3 @@ acceptance:
   - bwrap invocation emits iptables rules for allowlisted hosts
   - Blocked hosts get ECONNREFUSED in sandbox
   - Allowlist threaded through SandboxSubprocessDispatcher
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2252
-claimed_at: 2026-02-27T17:47:33.712Z
-baseline_main_sha: 23cc156bdacb17315a349a5a0c83eb250952f532
-session_id: c34c4bc3-d629-4f87-be91-79e1b25679da
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-27T17:47:33.717Z
