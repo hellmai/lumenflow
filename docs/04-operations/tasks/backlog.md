@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2237 — Sidekick validation, gates, smoke flow, and publish readiness](wu/WU-2237.yaml) — Framework: Core Validation
 - [WU-2236 — Add generic HTTP runtime dispatch endpoint POST /tools/:name](wu/WU-2236.yaml) — Operations: Runtime
 - [WU-2235 — Define Sidekick consumer abstraction contract package](wu/WU-2235.yaml) — Framework: Core Lifecycle
 - [WU-2234 — Implement Sidekick channel, routine, and system tool groups](wu/WU-2234.yaml) — Framework: Core Lifecycle
