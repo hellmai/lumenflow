@@ -183,6 +183,20 @@ all signals are user-configured.
 
 ---
 
+## Top Gotchas (Read This First)
+
+These are the mistakes agents make most often. Memorize these before reading anything else:
+
+1. **wu:done deletes the worktree.** After it completes, your shell CWD is invalid. Immediately `cd` back to the project root.
+2. **When wu:done fails with a non-fast-forward error, just rerun it.** It has built-in auto-rebase. Never manually `git rebase` on main.
+3. **Always run `--help` before first use of any command.** Don't guess flags — 30 seconds reading help saves 5 minutes of failed attempts.
+4. **Never `pnpm update @lumenflow/*` directly.** Use `pnpm lumenflow:upgrade --latest` (uses micro-worktree isolation).
+5. **State files are auto-generated.** Never manually edit `wu-events.jsonl`, `backlog.md`, or `status.md` — lifecycle commands manage them.
+6. **wu:edit requires a clean worktree.** Commit `wu-events.jsonl` and other changes before running `wu:edit`.
+7. **Don't edit on main then stash to a worktree.** If a hook blocks you on main, that means you need a WU. Create one and work in the worktree from the start.
+
+---
+
 ## Before Creating WUs
 
 Before the first delivery WU in a project, complete lane lifecycle:
@@ -420,6 +434,20 @@ pnpm wu:done --id WU-XXX --skip-gates \
   --fix-wu WU-XXX
 ```
 
+### Scenario 6: wu:done fails with non-fast-forward error
+
+**Cause:** Another agent or process pushed to main between your fetch and push (race condition).
+
+**Fix:** Just rerun `wu:done`. It has built-in auto-rebase that handles this cleanly.
+
+```bash
+# WRONG - never manually rebase main
+git rebase origin/main  # DON'T DO THIS
+
+# RIGHT - just rerun the command
+pnpm wu:done --id WU-XXX
+```
+
 ---
 
 ## Delegating Sub-Agents with wu:brief / wu:delegate
@@ -498,14 +526,14 @@ pnpm wu:delegate --id WU-XXXX --parent-wu WU-YYYY --client <client-type>
 ```
 /path/to/repo/
 ├── docs/04-operations/tasks/
-│   ├── backlog.md              # All WUs listed here
+│   ├── backlog.md              # All WUs listed here (auto-generated, don't edit)
 │   └── wu/WU-XXXX.yaml         # Individual WU specs
 ├── worktrees/
 │   └── <lane>-wu-xxxx/         # Your isolated workspace
 ├── .lumenflow/
 │   ├── constraints.md          # Non-negotiable rules
 │   ├── stamps/WU-XXXX.done     # Completion stamps
-│   └── state/wu-events.jsonl   # Event log
+│   └── state/wu-events.jsonl   # Event log (auto-generated, don't edit)
 └── LUMENFLOW.md                # Main workflow docs
 ```
 
@@ -532,6 +560,9 @@ Before reporting a WU complete, verify:
 5. **Don't use LUMENFLOW_FORCE casually** - Only for genuine emergencies
 6. **Don't delete another agent's uncommitted work** - Coordinate with user
 7. **Don't work after context compaction** - Spawn fresh agent instead
+8. **Don't run `pnpm update @lumenflow/*` directly** - Use `pnpm lumenflow:upgrade`
+9. **Don't manually edit state files** - `wu-events.jsonl`, `backlog.md`, `status.md` are auto-generated
+10. **Don't edit on main then stash to worktree** - Create the WU first, work in the worktree from the start
 
 ---
 
