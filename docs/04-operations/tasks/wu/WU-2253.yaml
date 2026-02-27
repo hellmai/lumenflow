@@ -2,7 +2,7 @@ id: WU-2253
 title: macOS sandbox posture-aware network rules
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -43,3 +43,11 @@ acceptance:
   - macOS sandbox denies network when posture is off
   - macOS sandbox allows only listed hosts when posture is allowlist
   - macOS sandbox allows all network when posture is full
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2253
+claimed_at: 2026-02-27T17:55:39.883Z
+baseline_main_sha: d3575d458d8f0f2a600d71751b72688b47419003
+session_id: 561c04a5-9e99-4717-806d-2c7641db2482
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T17:55:39.890Z
