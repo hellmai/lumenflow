@@ -51,9 +51,7 @@ describe('task:create', () => {
   });
 
   it('returns contract-compliant output with success=true and data.task', async () => {
-    const result = await withPort(port, () =>
-      taskTools({ title: 'Buy milk' }, ctx('task:create')),
-    );
+    const result = await withPort(port, () => taskTools({ title: 'Buy milk' }, ctx('task:create')));
     expect(result.success).toBe(true);
     expect(result.data).toBeDefined();
     const data = result.data as Record<string, unknown>;
@@ -153,35 +151,21 @@ describe('task:list', () => {
 
   it('filters by status', async () => {
     await withPort(port, () => taskTools({ title: 'Open' }, ctx('task:create')));
-    const result = await withPort(port, () =>
-      taskTools({ status: 'done' }, ctx('task:list')),
-    );
+    const result = await withPort(port, () => taskTools({ status: 'done' }, ctx('task:list')));
     expect((result.data as Record<string, unknown>).count).toBe(0);
   });
 
   it('filters by priority', async () => {
-    await withPort(port, () =>
-      taskTools({ title: 'Low', priority: 'P3' }, ctx('task:create')),
-    );
-    await withPort(port, () =>
-      taskTools({ title: 'High', priority: 'P0' }, ctx('task:create')),
-    );
-    const result = await withPort(port, () =>
-      taskTools({ priority: 'P0' }, ctx('task:list')),
-    );
+    await withPort(port, () => taskTools({ title: 'Low', priority: 'P3' }, ctx('task:create')));
+    await withPort(port, () => taskTools({ title: 'High', priority: 'P0' }, ctx('task:create')));
+    const result = await withPort(port, () => taskTools({ priority: 'P0' }, ctx('task:list')));
     expect((result.data as Record<string, unknown>).count).toBe(1);
   });
 
   it('filters by tags', async () => {
-    await withPort(port, () =>
-      taskTools({ title: 'Tagged', tags: ['work'] }, ctx('task:create')),
-    );
-    await withPort(port, () =>
-      taskTools({ title: 'Untagged' }, ctx('task:create')),
-    );
-    const result = await withPort(port, () =>
-      taskTools({ tags: ['work'] }, ctx('task:list')),
-    );
+    await withPort(port, () => taskTools({ title: 'Tagged', tags: ['work'] }, ctx('task:create')));
+    await withPort(port, () => taskTools({ title: 'Untagged' }, ctx('task:create')));
+    const result = await withPort(port, () => taskTools({ tags: ['work'] }, ctx('task:list')));
     expect((result.data as Record<string, unknown>).count).toBe(1);
   });
 
@@ -201,9 +185,7 @@ describe('task:list', () => {
   it('respects limit', async () => {
     await withPort(port, () => taskTools({ title: 'A' }, ctx('task:create')));
     await withPort(port, () => taskTools({ title: 'B' }, ctx('task:create')));
-    const result = await withPort(port, () =>
-      taskTools({ limit: 1 }, ctx('task:list')),
-    );
+    const result = await withPort(port, () => taskTools({ limit: 1 }, ctx('task:list')));
     expect((result.data as Record<string, unknown>).count).toBe(1);
   });
 });
@@ -227,9 +209,7 @@ describe('task:complete', () => {
     const taskId = ((createResult.data as Record<string, unknown>).task as Record<string, unknown>)
       .id as string;
 
-    const result = await withPort(port, () =>
-      taskTools({ id: taskId }, ctx('task:complete')),
-    );
+    const result = await withPort(port, () => taskTools({ id: taskId }, ctx('task:complete')));
     expect(result.success).toBe(true);
     const task = (result.data as Record<string, unknown>).task as Record<string, unknown>;
     expect(task.status).toBe('done');
@@ -339,7 +319,10 @@ describe('task:schedule', () => {
       .id as string;
 
     const result = await withPort(port, () =>
-      taskTools({ id: taskId, due_at: '2026-12-25T00:00:00Z', dry_run: true }, ctx('task:schedule')),
+      taskTools(
+        { id: taskId, due_at: '2026-12-25T00:00:00Z', dry_run: true },
+        ctx('task:schedule'),
+      ),
     );
     expect(result.success).toBe(true);
     expect((result.data as Record<string, unknown>).dry_run).toBe(true);
@@ -407,10 +390,7 @@ describe('memory:store', () => {
 
   it('dry_run returns entry but does NOT persist', async () => {
     const result = await withPort(port, () =>
-      memoryTools(
-        { type: 'fact', content: 'Dry store', dry_run: true },
-        ctx('memory:store'),
-      ),
+      memoryTools({ type: 'fact', content: 'Dry store', dry_run: true }, ctx('memory:store')),
     );
     expect(result.success).toBe(true);
     expect((result.data as Record<string, unknown>).dry_run).toBe(true);
@@ -430,19 +410,14 @@ describe('memory:store', () => {
   });
 
   it('rejects missing content', async () => {
-    const result = await withPort(port, () =>
-      memoryTools({ type: 'fact' }, ctx('memory:store')),
-    );
+    const result = await withPort(port, () => memoryTools({ type: 'fact' }, ctx('memory:store')));
     expect(result.success).toBe(false);
     expect(result.error?.code).toBe('INVALID_INPUT');
   });
 
   it('accepts tags', async () => {
     const result = await withPort(port, () =>
-      memoryTools(
-        { type: 'preference', content: 'Dark mode', tags: ['ui'] },
-        ctx('memory:store'),
-      ),
+      memoryTools({ type: 'preference', content: 'Dark mode', tags: ['ui'] }, ctx('memory:store')),
     );
     expect(result.success).toBe(true);
     const memory = (result.data as Record<string, unknown>).memory as Record<string, unknown>;
@@ -469,12 +444,8 @@ describe('memory:recall', () => {
   });
 
   it('returns all memories by default', async () => {
-    await withPort(port, () =>
-      memoryTools({ type: 'fact', content: 'A' }, ctx('memory:store')),
-    );
-    await withPort(port, () =>
-      memoryTools({ type: 'note', content: 'B' }, ctx('memory:store')),
-    );
+    await withPort(port, () => memoryTools({ type: 'fact', content: 'A' }, ctx('memory:store')));
+    await withPort(port, () => memoryTools({ type: 'note', content: 'B' }, ctx('memory:store')));
     const result = await withPort(port, () => memoryTools({}, ctx('memory:recall')));
     expect((result.data as Record<string, unknown>).count).toBe(2);
   });
@@ -499,35 +470,23 @@ describe('memory:recall', () => {
     await withPort(port, () =>
       memoryTools({ type: 'fact', content: 'Untagged' }, ctx('memory:store')),
     );
-    const result = await withPort(port, () =>
-      memoryTools({ tags: ['dev'] }, ctx('memory:recall')),
-    );
+    const result = await withPort(port, () => memoryTools({ tags: ['dev'] }, ctx('memory:recall')));
     expect((result.data as Record<string, unknown>).count).toBe(1);
   });
 
   it('filters by type', async () => {
-    await withPort(port, () =>
-      memoryTools({ type: 'fact', content: 'Fact' }, ctx('memory:store')),
-    );
+    await withPort(port, () => memoryTools({ type: 'fact', content: 'Fact' }, ctx('memory:store')));
     await withPort(port, () =>
       memoryTools({ type: 'preference', content: 'Pref' }, ctx('memory:store')),
     );
-    const result = await withPort(port, () =>
-      memoryTools({ type: 'fact' }, ctx('memory:recall')),
-    );
+    const result = await withPort(port, () => memoryTools({ type: 'fact' }, ctx('memory:recall')));
     expect((result.data as Record<string, unknown>).count).toBe(1);
   });
 
   it('respects limit', async () => {
-    await withPort(port, () =>
-      memoryTools({ type: 'fact', content: 'A' }, ctx('memory:store')),
-    );
-    await withPort(port, () =>
-      memoryTools({ type: 'fact', content: 'B' }, ctx('memory:store')),
-    );
-    const result = await withPort(port, () =>
-      memoryTools({ limit: 1 }, ctx('memory:recall')),
-    );
+    await withPort(port, () => memoryTools({ type: 'fact', content: 'A' }, ctx('memory:store')));
+    await withPort(port, () => memoryTools({ type: 'fact', content: 'B' }, ctx('memory:store')));
+    const result = await withPort(port, () => memoryTools({ limit: 1 }, ctx('memory:recall')));
     expect((result.data as Record<string, unknown>).count).toBe(1);
   });
 });
@@ -551,9 +510,7 @@ describe('memory:forget', () => {
     const memId = ((storeResult.data as Record<string, unknown>).memory as Record<string, unknown>)
       .id as string;
 
-    const result = await withPort(port, () =>
-      memoryTools({ id: memId }, ctx('memory:forget')),
-    );
+    const result = await withPort(port, () => memoryTools({ id: memId }, ctx('memory:forget')));
     expect(result.success).toBe(true);
     expect((result.data as Record<string, unknown>).deleted_id).toBe(memId);
 

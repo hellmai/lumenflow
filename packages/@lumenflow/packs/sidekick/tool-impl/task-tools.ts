@@ -124,9 +124,7 @@ async function taskListTool(input: unknown, _context?: ToolContextLike): Promise
     return true;
   });
 
-  const sorted = filtered.toSorted(
-    (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at),
-  );
+  const sorted = filtered.toSorted((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at));
 
   const items = limit && limit > 0 ? sorted.slice(0, limit) : sorted;
 
