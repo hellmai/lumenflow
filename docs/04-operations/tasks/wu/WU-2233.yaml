@@ -16,7 +16,8 @@ tests:
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2233.done
-dependencies: []
+dependencies:
+  - WU-2232
 initiative: INIT-046
 phase: 1
 spec_refs:
@@ -31,7 +32,8 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Implement Sidekick task and memory tool groups with contract-compliant IO, persistence through StoragePort, dry_run semantics, and audit writes.
+description: Implement Sidekick task and memory tool groups with contract-compliant IO, persistence
+  through StoragePort, dry_run semantics, and audit writes.
 acceptance:
   - task:* and memory:* tools return contract-compliant outputs
   - Write operations append audit events
