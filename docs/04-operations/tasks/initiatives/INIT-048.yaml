@@ -7,14 +7,14 @@ description: 'Harden the LumenFlow kernel based on community feedback and compet
   position (scope + evidence + policy + sandbox) against emerging single-layer competitors
   (AgentBouncr, Reg.Run, Hivemind). See
   ~/.lumenflow/strategy/lumenflow-dev/strategy/hn-competitive-intelligence.md for full research.'
-status: draft
+status: in_progress
 priority: P1
 owner: tom
 created: 2026-02-27
 phases:
   - id: 1
     title: 'Phase 1: Network Policy and macOS Sandbox'
-    status: pending
+    status: in_progress
   - id: 2
     title: 'Phase 2: Advanced Policy Controls'
     status: pending
