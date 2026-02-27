@@ -2,7 +2,7 @@ id: WU-2238
 title: wu:recover --action reset should require --force for destructive ops
 lane: 'Framework: Core State Recovery'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-27
 code_paths:
@@ -42,3 +42,6 @@ session_id: eecec135-dd2b-41c5-9c75-d8c60c7c5892
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T14:08:25.419Z
+locked: true
+completed_at: 2026-02-27T14:14:32.127Z
+completed: 2026-02-27
