@@ -20,11 +20,10 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — Framework: Core State Recovery
-- [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2240 — wu:recover --action resume does not emit claim event to state store](wu/WU-2240.yaml) — Framework: Core State Recovery
+- [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml) — Framework: CLI WU Commands
 - [WU-2145 — wu:done project-memory promotion to main checkout](wu/WU-2145.yaml) — Framework: Memory
 - [WU-2146 — Backward-compatible signal schema extension](wu/WU-2146.yaml) — Framework: Memory
 - [WU-2147 — CLI signal middleware for automatic signal surfacing](wu/WU-2147.yaml) — Framework: CLI WU Commands
@@ -62,12 +61,13 @@ sections:
 - [WU-2244 — initiative:create blocked from non-main branch](wu/WU-2244.yaml) — Framework: Initiatives
 - [WU-2245 — wu:create emits placeholder notes requiring manual cleanup](wu/WU-2245.yaml) — Framework: CLI WU Commands
 - [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
+- [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
+- [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — Framework: Core State Recovery
 
 ## 🔧 In progress
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
-- [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml) — Framework: CLI WU Commands
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
 - [WU-2247 — worktree_path stores absolute home paths in version-controlled YAML](wu/WU-2247.yaml) — Framework: Core Lifecycle
 
