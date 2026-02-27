@@ -8,7 +8,7 @@
  *
  * Analyzes WU state inconsistencies and offers recovery actions:
  * - resume: Reconcile state and continue working (preserves work)
- * - reset: Discard worktree and reset WU to ready
+ * - reset: Discard worktree and reset WU to ready (requires --force)
  * - nuke: Remove all artifacts completely (requires --force)
  * - cleanup: Remove leftover worktree for done WUs
  *
@@ -62,9 +62,44 @@ const VALID_ACTIONS: RecoveryActionType[] = [
 
 /**
  * Check if action requires --force flag
+ *
+ * WU-2238: reset is destructive (deletes remote branch, emits release event)
+ * and now requires --force alongside nuke.
  */
 export function requiresForceFlag(action: string): boolean {
-  return action === RECOVERY_ACTIONS.NUKE;
+  return action === RECOVERY_ACTIONS.NUKE || action === RECOVERY_ACTIONS.RESET;
+}
+
+/**
+ * WU-2238: Get warning message for reset action listing what will be destroyed.
+ */
+export function getResetWarningMessage(wuId: string): string {
+  return [
+    `WARNING: --action reset for ${wuId} is destructive and will:`,
+    `  - Delete the remote branch (origin/lane/...)`,
+    `  - Emit a release event to the state store`,
+    `  - Remove the local worktree (if it exists)`,
+    `  - Reset WU status to ready and clear all claim metadata`,
+    ``,
+    `Any unmerged work on the remote branch will be permanently lost.`,
+    ``,
+    `To proceed, re-run with --force:`,
+    `  pnpm wu:recover --id ${wuId} --action reset --force`,
+  ].join('\n');
+}
+
+/**
+ * WU-2238: Get a warning message for any destructive action.
+ * Returns empty string for non-destructive actions.
+ */
+export function getDestructiveActionWarning(action: string, wuId: string): string {
+  if (action === RECOVERY_ACTIONS.RESET) {
+    return getResetWarningMessage(wuId);
+  }
+  if (action === RECOVERY_ACTIONS.NUKE) {
+    return `Action '${action}' is destructive and requires --force flag for ${wuId}`;
+  }
+  return '';
 }
 
 /**
@@ -592,7 +627,7 @@ export async function main(): Promise<void> {
         name: 'force',
         flags: '-f, --force',
         type: 'boolean',
-        description: 'Required for destructive actions (nuke)',
+        description: 'Required for destructive actions (reset, nuke)',
       },
       {
         name: 'json',
@@ -635,8 +670,12 @@ export async function main(): Promise<void> {
     die(validation.error!);
   }
 
-  // Check force flag for destructive actions
+  // WU-2238: Check force flag for destructive actions with detailed warning
   if (requiresForceFlag(action) && !force) {
+    const warning = getDestructiveActionWarning(action, id);
+    if (warning) {
+      console.error(warning);
+    }
     die(`Action '${action}' requires --force flag`);
   }
 

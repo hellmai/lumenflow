@@ -227,10 +227,10 @@ describe('wu:recover CLI (WU-1090)', () => {
       expect(requiresForceFlag('resume')).toBe(false);
     });
 
-    it('returns false for reset action', async () => {
+    it('returns true for reset action (WU-2238: reset is destructive)', async () => {
       const { requiresForceFlag } = await import('../dist/wu-recover.js');
 
-      expect(requiresForceFlag('reset')).toBe(false);
+      expect(requiresForceFlag('reset')).toBe(true);
     });
 
     it('returns false for cleanup action', async () => {
