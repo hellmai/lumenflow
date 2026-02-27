@@ -1,0 +1,36 @@
+id: WU-2266
+title: 'INIT-048 kernel hardening documentation: network allowlist, macOS sandbox, argument-level policy'
+lane: 'Content: Framework Docs'
+type: documentation
+status: ready
+priority: P2
+created: 2026-02-27
+code_paths:
+  - apps/docs/src/content/docs/kernel/
+  - apps/docs/src/content/docs/reference/
+  - apps/docs/src/content/docs/guides/
+tests:
+  manual: []
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2266.done
+dependencies: []
+initiative: INIT-048
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Document all INIT-048 kernel hardening features in Starlight docs and internal references. Covers: network allowlist posture (off|allowlist|full), allowlist_entries schema, macOS sandbox backend (posture-aware network rules, read confinement, deny overlays for ~/.ssh/~/.aws/~/.gnupg), argument-level policy evaluation (tool_arguments in PolicyEvaluationContext), and when() predicate syntax.'
+acceptance:
+  - scope-intersection.mdx updated with network allowlist section
+  - policy-engine.mdx documents when() predicates and tool_arguments
+  - tool-execution.mdx documents macOS sandbox backend and deny overlays
+  - workspace-spec.mdx updated with allowlist_entries schema and allowlist posture
+  - create-a-pack.mdx includes network allowlist examples in tool manifests
