@@ -1,15 +1,29 @@
 id: INIT-046
 slug: sidekick-pack-runtime
 title: Sidekick Pack and Runtime Surface
-description: ''
+description: 'OSS-only Sidekick initiative for lumenflow-dev: pack contract, storage abstraction,
+  runtime surfaces, and publish readiness. No cloud/commercial implementation in this initiative.'
 status: draft
 priority: P1
 owner: Framework Team
 created: 2026-02-27
-phases: []
+phases:
+  - id: 1
+    title: 'Phase 1: Sidekick pack contract and implementation'
+    status: pending
+  - id: 2
+    title: 'Phase 2: Consumer abstraction contract and runtime surface'
+    status: pending
+  - id: 3
+    title: 'Phase 3: Validation and publish readiness'
+    status: pending
 success_metrics:
   - Sidekick pack contract is defined with 16 tools and validated
   - Storage abstraction supports pluggable ports with fs default
   - Runtime HTTP tool dispatch endpoint is available with enforcement preserved
   - Pack install/validate/publish readiness is documented and green
 labels: []
+lanes:
+  - 'Framework: Core Lifecycle'
+  - 'Framework: Core Validation'
+  - 'Operations: Runtime'
