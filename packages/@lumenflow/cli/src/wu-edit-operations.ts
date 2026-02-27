@@ -193,7 +193,30 @@ export async function regenerateBacklogFromState(backlogPath: string): Promise<v
 }
 
 /**
- * Load spec file and merge with original WU (preserving id and status)
+ * Runtime fields set by wu:claim that must be preserved during --spec-file edits.
+ * These fields are required for subsequent wu:edit, wu:prep, and wu:done operations.
+ *
+ * WU-2239: Without preserving these fields, --spec-file silently overwrites them,
+ * causing a chicken-and-egg problem where subsequent wu:edit calls fail because
+ * worktree_path is gone.
+ */
+const PRESERVED_RUNTIME_FIELDS = [
+  'id',
+  'status',
+  'worktree_path',
+  'assigned_to',
+  'claimed_mode',
+  'session_id',
+  'claimed_at',
+] as const;
+
+/**
+ * Load spec file and merge with original WU (preserving runtime fields).
+ *
+ * WU-2239: Preserves runtime fields (worktree_path, assigned_to, claimed_mode,
+ * session_id, claimed_at) in addition to id and status from the original WU.
+ * If the spec file explicitly provides a runtime field, the spec file value
+ * takes precedence (except id and status which are always from the original).
  */
 function loadSpecFile(
   specPath: string,
@@ -210,11 +233,21 @@ function loadSpecFile(
   });
   const newSpec = parseYAML(specContent);
 
-  // Preserve id and status from original (cannot be changed via edit)
+  // WU-2239: Build a defaults object from original runtime fields.
+  // Spec file values override runtime defaults when explicitly provided,
+  // except id and status which are always preserved from the original.
+  const runtimeDefaults: Record<string, unknown> = {};
+  for (const field of PRESERVED_RUNTIME_FIELDS) {
+    if (originalWU[field] !== undefined) {
+      runtimeDefaults[field] = originalWU[field];
+    }
+  }
+
   return {
-    ...newSpec,
-    id: originalWU.id,
-    status: originalWU.status,
+    ...runtimeDefaults, // Runtime fields as defaults
+    ...newSpec, // Spec file content overrides defaults
+    id: originalWU.id, // id is always from original (cannot be changed)
+    status: originalWU.status, // status is always from original (cannot be changed)
   };
 }
 
