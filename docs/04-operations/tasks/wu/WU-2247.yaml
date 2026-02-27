@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-claim.ts
   - packages/@lumenflow/cli/src/wu-done.ts
 tests:
-  manual: []
+  manual:
+    - Claim a test WU and verify worktree_path is relative (worktrees/<lane>-wu-xxxx) with no /home/
+      path.
   unit:
     - packages/@lumenflow/cli/__tests__/wu-claim-relative-path.test.ts
   e2e: []
@@ -27,7 +29,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:claim writes absolute paths like /home/tom/... or /home/USER/... into worktree_path in WU YAML. These are committed to git and visible in open source repos. Hundreds of WU YAMLs currently contain these paths. worktree_path should be relative and resolved at runtime, and done WUs should have worktree_path stripped entirely.
+description: wu:claim writes absolute paths like /home/USER/... into worktree_path in WU YAML. These
+  are committed to git and visible in open source repos. worktree_path should be relative and
+  resolved at runtime, and done WUs should have worktree_path stripped entirely.
 acceptance:
   - wu:claim writes relative worktree_path (e.g. worktrees/framework-cli-wu-commands-wu-2239)
   - wu:done strips worktree_path from completed WU YAML

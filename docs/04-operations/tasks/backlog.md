@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2247 — worktree_path stores absolute home paths in version-controlled YAML](wu/WU-2247.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2145 — wu:done project-memory promotion to main checkout](wu/WU-2145.yaml) — Framework: Memory
@@ -60,6 +59,7 @@ sections:
 - [WU-2244 — initiative:create blocked from non-main branch](wu/WU-2244.yaml) — Framework: Initiatives
 - [WU-2245 — wu:create emits placeholder notes requiring manual cleanup](wu/WU-2245.yaml) — Framework: CLI WU Commands
 - [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
+- [WU-2247 — worktree_path stores absolute home paths in version-controlled YAML](wu/WU-2247.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
