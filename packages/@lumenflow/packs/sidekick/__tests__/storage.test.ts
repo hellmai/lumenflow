@@ -163,7 +163,7 @@ describe('FsStoragePort lock', () => {
     await expect(
       port.withLock(async () => {
         throw new Error('test-error');
-      })
+      }),
     ).rejects.toThrow('test-error');
 
     // Should be able to acquire lock again
@@ -248,7 +248,7 @@ describe('FsStoragePort concurrent write and audit', () => {
           updated_at: new Date().toISOString(),
         });
         await port.writeStore('tasks', tasks);
-      })
+      }),
     );
     await Promise.all(promises);
 
@@ -259,7 +259,7 @@ describe('FsStoragePort concurrent write and audit', () => {
   it('concurrent audit appends all produce entries', async () => {
     const APPEND_COUNT = 20;
     const promises = Array.from({ length: APPEND_COUNT }, (_, i) =>
-      port.appendAudit(makeAuditEvent({ id: `evt-${i}` }))
+      port.appendAudit(makeAuditEvent({ id: `evt-${i}` })),
     );
     await Promise.all(promises);
 
