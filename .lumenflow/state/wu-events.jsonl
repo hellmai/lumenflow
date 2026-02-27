@@ -2474,4 +2474,5 @@
 {"type":"release","wuId":"WU-2231","timestamp":"2026-02-27T16:59:01.334Z","reason":"Reset via wu:recover --action reset"}
 {"type":"claim","wuId":"WU-2264","timestamp":"2026-02-27T17:03:22.434Z","lane":"Content: Framework Docs","title":"Populate INIT-048 plan file with technical content"}
 {"type":"checkpoint","wuId":"WU-2262","timestamp":"2026-02-27T17:03:45.489Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
+{"type":"complete","wuId":"WU-2262","timestamp":"2026-02-27T17:05:33.968Z"}
 {"type":"complete","wuId":"WU-2264","timestamp":"2026-02-27T17:05:28.704Z"}

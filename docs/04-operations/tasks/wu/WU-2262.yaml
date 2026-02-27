@@ -2,7 +2,7 @@ id: WU-2262
 title: wu:done leaves bulk staged WU metadata on main
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -19,8 +19,7 @@ artifacts:
   - .lumenflow/stamps/WU-2262.done
 dependencies: []
 risks: []
-notes: >-
-  WU-2262 constrains wu:done to avoid local-main metadata spill caused by repo-wide
+notes: WU-2262 constrains wu:done to avoid local-main metadata spill caused by repo-wide
   worktree_path sanitation commit attempts from main checkout.
 requires_review: false
 assigned_to: tom@hellm.ai
@@ -47,3 +46,6 @@ session_id: 87394ffd-3b29-43a4-bb04-21c769b571ac
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T16:51:47.525Z
+locked: true
+completed_at: 2026-02-27T17:05:29.513Z
+completed: 2026-02-27
