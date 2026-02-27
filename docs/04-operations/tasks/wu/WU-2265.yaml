@@ -9,13 +9,16 @@ code_paths:
   - packages/@lumenflow/packs/sidekick
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2265.done
-dependencies: []
+dependencies:
+  - WU-2237
 initiative: INIT-046
+phase: 2
 spec_refs:
   - docs/04-operations/tasks/initiatives/INIT-046.yaml
 risks: []
@@ -28,7 +31,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Publish the Sidekick pack to registry.lumenflow.dev so it can be installed as a dependency by any consumer. Includes version pinning, integrity verification, and registry metadata.
+description: Publish the Sidekick pack to registry.lumenflow.dev so it can be installed as a
+  dependency by any consumer. Includes version pinning, integrity verification, and registry
+  metadata.
 acceptance:
   - Pack is published to registry.lumenflow.dev with correct version
   - pnpm pack:validate --id sidekick passes before publish
