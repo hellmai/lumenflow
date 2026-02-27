@@ -110,6 +110,58 @@ function collectReadonlyAllowlistMounts(
   return dedupeMounts(readonlyMounts).filter((mount) => !writableTargets.has(mount.target));
 }
 
+function escapeShellArg(arg: string): string {
+  return `'${arg.replace(/'/g, "'\\''")}'`;
+}
+
+function parseHostPort(entry: string): { host: string; port: string | null } {
+  // CIDR entries (e.g., "10.0.0.0/24") have no port
+  if (entry.includes('/')) {
+    return { host: entry, port: null };
+  }
+  // host:port entries (e.g., "registry.npmjs.org:443")
+  const lastColon = entry.lastIndexOf(':');
+  if (lastColon > 0) {
+    return {
+      host: entry.slice(0, lastColon),
+      port: entry.slice(lastColon + 1),
+    };
+  }
+  return { host: entry, port: null };
+}
+
+export function buildIptablesAllowlistScript(
+  allowlist: string[],
+  command: string[],
+): string {
+  const lines: string[] = [];
+
+  // Allow loopback traffic unconditionally
+  lines.push('iptables -A OUTPUT -o lo -j ACCEPT');
+
+  // Allow established/related connections (for return traffic)
+  lines.push('iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT');
+
+  // Add ACCEPT rules for each allowlisted entry
+  for (const entry of allowlist) {
+    const { host, port } = parseHostPort(entry);
+    if (port) {
+      lines.push(`iptables -A OUTPUT -d ${host} -p tcp --dport ${port} -j ACCEPT`);
+    } else {
+      lines.push(`iptables -A OUTPUT -d ${host} -j ACCEPT`);
+    }
+  }
+
+  // Default REJECT policy for OUTPUT (produces ECONNREFUSED)
+  lines.push('iptables -A OUTPUT -j REJECT --reject-with icmp-port-unreachable');
+
+  // Exec the original command
+  const escapedCommand = command.map(escapeShellArg).join(' ');
+  lines.push(`exec ${escapedCommand}`);
+
+  return lines.join(' && ');
+}
+
 export function buildBwrapInvocation(input: BuildBwrapInvocationInput): SandboxInvocation {
   assertCommand(input.command);
 
@@ -133,13 +185,28 @@ export function buildBwrapInvocation(input: BuildBwrapInvocationInput): SandboxI
 
   if (input.profile.network_posture === 'off') {
     args.push('--unshare-net');
+  } else if (input.profile.network_posture === 'allowlist') {
+    args.push('--unshare-net');
   }
 
   for (const [key, value] of Object.entries(input.profile.env)) {
     args.push('--setenv', key, value);
   }
 
-  args.push('--proc', '/proc', '--dev', '/dev', '--', ...input.command);
+  args.push('--proc', '/proc', '--dev', '/dev');
+
+  if (
+    input.profile.network_posture === 'allowlist' &&
+    input.profile.network_allowlist.length > 0
+  ) {
+    const iptablesScript = buildIptablesAllowlistScript(
+      input.profile.network_allowlist,
+      input.command,
+    );
+    args.push('--', 'sh', '-c', iptablesScript);
+  } else {
+    args.push('--', ...input.command);
+  }
 
   return {
     command: input.sandboxBinary || 'bwrap',
