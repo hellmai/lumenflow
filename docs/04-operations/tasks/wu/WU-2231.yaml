@@ -6,7 +6,7 @@ status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
-  - packages/@lumenflow/packs/sidekick/**
+  - packages/@lumenflow/packs/sidekick
 tests:
   manual:
     - pnpm pack:validate --id sidekick
@@ -23,7 +23,11 @@ spec_refs:
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T17:16:06.330Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2231
+session_id: 06530872-f3ce-4ec3-93da-3b9fc487ce40
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
@@ -39,8 +43,3 @@ acceptance:
   - 16 tool declarations exist with schemas, permissions, and scopes
   - pack:validate passes for sidekick
   - .sidekick/ added to .gitignore
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2231
-claimed_at: 2026-02-27T17:16:06.330Z
-baseline_main_sha: 7a30237fff24a2007201fd7a6fe73ecac977dc67
-session_id: 06530872-f3ce-4ec3-93da-3b9fc487ce40
