@@ -28,3 +28,6 @@ success_metrics:
   - Time-boxed permissions with auto-expiry
   - Dynamic policy hot-reload without kernel restart
 labels: []
+notes:
+  - Phase 3 (Compliance and Attestation) deferred after design-first review. See plan file for
+    rationale.
