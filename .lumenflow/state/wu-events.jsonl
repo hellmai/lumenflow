@@ -2462,3 +2462,4 @@
 {"type":"checkpoint","wuId":"WU-2249","timestamp":"2026-02-27T15:55:53.277Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2249","timestamp":"2026-02-27T15:57:26.022Z"}
 {"type":"claim","wuId":"WU-2243","timestamp":"2026-02-27T16:02:32.937Z","lane":"Framework: Initiatives","title":"initiative:create ignores --phase and --success-metric flags"}
+{"type":"claim","wuId":"WU-2259","timestamp":"2026-02-27T16:22:42.297Z","lane":"Framework: CLI Enforcement","title":"wu:claim push-only path leaves local-main metadata drift"}

@@ -2,7 +2,7 @@ id: WU-2259
 title: wu:claim push-only path leaves local-main metadata drift
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -36,3 +36,11 @@ acceptance:
     local main
   - No claim metadata files are written to main checkout before/after micro-worktree lifecycle
   - Add regression test covering push-only claim path and assert local main remains clean
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-enforcement-wu-2259
+claimed_at: 2026-02-27T16:22:42.272Z
+baseline_main_sha: 68cc43982e4e4d1bb455c12b2a97e1d3136a0627
+session_id: 87394ffd-3b29-43a4-bb04-21c769b571ac
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T16:22:42.279Z
