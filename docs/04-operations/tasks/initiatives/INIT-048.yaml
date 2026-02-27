@@ -1,0 +1,17 @@
+id: INIT-048
+slug: kernel-hardening
+title: 'Kernel Hardening: Network Policy, macOS Sandbox, Advanced Scope Controls'
+description: ''
+status: draft
+priority: P1
+owner: tom
+created: 2026-02-27
+phases: []
+success_metrics:
+  - Granular network allowlisting (domain/port per scope level)
+  - macOS sandbox backend (Seatbelt/sandbox-exec) functional
+  - Argument-level policy rules for MCP tool calls
+  - Time-boxed permissions with auto-expiry
+  - Dynamic policy hot-reload without kernel restart
+  - NIST AI RMF alignment documented
+labels: []
