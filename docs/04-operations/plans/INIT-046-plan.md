@@ -160,11 +160,10 @@ INIT-046 is complete when all of the following are true:
 4. Runtime surface completeness:
 
 - POST /tools/:name endpoint exists and preserves enforcement constraints.
-- Consumer abstraction contract package is present and validated.
 
 5. Initiative readiness:
 
-- WU-2231..WU-2237 lifecycle status is complete.
+- WU-2231 through WU-2234, WU-2236, and WU-2237 lifecycle status is complete.
 - pnpm pack:validate --id sidekick passes.
 - pnpm gates passes.
 - Smoke flow executes successfully and readiness artifacts are recorded.
