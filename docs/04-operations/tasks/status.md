@@ -5,6 +5,7 @@ _Last updated: 2026-02-27_
 ## In Progress
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml)
+- [WU-2229 — Fix orphan backlog references and detection gaps](wu/WU-2229.yaml)
 
 ## Completed
 
