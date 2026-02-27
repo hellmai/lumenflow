@@ -1129,3 +1129,4 @@ _Last updated: 2026-02-27_
 - [WU-2226 — lumenflow:upgrade should sync new pnpm script entries from CLI public-manifest](wu/WU-2226.yaml) — 2026-02-27
 - [WU-2228 — Add command discovery to onboarding and fix wu:escalate doc parity](wu/WU-2228.yaml) — 2026-02-27
 - [WU-2229 — Fix orphan backlog references and detection gaps](wu/WU-2229.yaml) — 2026-02-27
+- [WU-2230 — Fix new-user friction: init self-install, template formatting, pack-install default](wu/WU-2230.yaml) — 2026-02-27

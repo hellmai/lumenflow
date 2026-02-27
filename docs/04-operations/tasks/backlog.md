@@ -22,7 +22,6 @@ sections:
 
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
-- [WU-2230 — Fix new-user friction: init self-install, template formatting, pack-install default](wu/WU-2230.yaml) — Framework: CLI WU Commands
 - [WU-2145 — wu:done project-memory promotion to main checkout](wu/WU-2145.yaml) — Framework: Memory
 - [WU-2146 — Backward-compatible signal schema extension](wu/WU-2146.yaml) — Framework: Memory
 - [WU-2147 — CLI signal middleware for automatic signal surfacing](wu/WU-2147.yaml) — Framework: CLI WU Commands
@@ -1188,6 +1187,7 @@ sections:
 - [WU-2226 — lumenflow:upgrade should sync new pnpm script entries from CLI public-manifest](wu/WU-2226.yaml)
 - [WU-2228 — Add command discovery to onboarding and fix wu:escalate doc parity](wu/WU-2228.yaml)
 - [WU-2229 — Fix orphan backlog references and detection gaps](wu/WU-2229.yaml)
+- [WU-2230 — Fix new-user friction: init self-install, template formatting, pack-install default](wu/WU-2230.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
