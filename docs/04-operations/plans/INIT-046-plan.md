@@ -62,7 +62,9 @@ INIT-046 is complete when:
 
 ## Open Questions
 
-<!-- Unresolved questions or decisions needed -->
+1. Confirm canonical schema ownership for each tool group file as Phase 1 progresses.
+2. Confirm any additional smoke cases needed beyond task/memory/channel/routine/system happy path.
+3. Confirm expected report format for WU-2237 publish-readiness output artifacts.
 
 ## References
 
