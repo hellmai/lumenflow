@@ -1,0 +1,15 @@
+id: INIT-046
+slug: sidekick-pack-runtime
+title: Sidekick Pack and Runtime Surface
+description: ''
+status: draft
+priority: P1
+owner: Framework Team
+created: 2026-02-27
+phases: []
+success_metrics:
+  - Sidekick pack contract is defined with 16 tools and validated
+  - Storage abstraction supports pluggable ports with fs default
+  - Runtime HTTP tool dispatch endpoint is available with enforcement preserved
+  - Pack install/validate/publish readiness is documented and green
+labels: []
