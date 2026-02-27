@@ -22,7 +22,8 @@ phase: 2
 spec_refs:
   - docs/04-operations/tasks/initiatives/INIT-046.yaml
 risks: []
-notes: ''
+notes: 'tdd-exception: Registration-only WU; pack validation (5 checks) and integrity hash serve as
+  verification. No new application code written — workspace.yaml config change only.'
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
