@@ -6,6 +6,7 @@ _Last updated: 2026-02-27_
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml)
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml)
+- [WU-2238 — wu:recover --action reset should require --force for destructive ops](wu/WU-2238.yaml)
 
 ## Completed
 

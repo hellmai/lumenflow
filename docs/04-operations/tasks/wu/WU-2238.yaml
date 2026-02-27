@@ -2,7 +2,7 @@ id: WU-2238
 title: wu:recover --action reset should require --force for destructive ops
 lane: 'Framework: Core State Recovery'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-27
 code_paths:
@@ -34,3 +34,11 @@ acceptance:
   - wu:recover --action reset without --force prints warning and aborts
   - wu:recover --action reset --force proceeds with current behavior
   - Warning message lists what will be destroyed (remote branch, state store event)
+claimed_mode: worktree
+worktree_path: /home/USER/source/hellmai/lumenflow-dev/worktrees/framework-core-state-recovery-wu-2238
+claimed_at: 2026-02-27T14:08:25.415Z
+baseline_main_sha: 2784b97d481ef53e46784c68133e7f4424c4cf3f
+session_id: eecec135-dd2b-41c5-9c75-d8c60c7c5892
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T14:08:25.419Z

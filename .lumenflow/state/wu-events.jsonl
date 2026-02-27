@@ -2409,3 +2409,4 @@
 {"type":"claim","wuId":"WU-2231","timestamp":"2026-02-27T13:45:22.984Z","lane":"Framework: Core Lifecycle","title":"Sidekick pack scaffold and manifest contract"}
 {"type":"claim","wuId":"WU-2230","timestamp":"2026-02-27T13:54:55.841Z","lane":"Framework: CLI WU Commands","title":"Fix new-user friction: init self-install, template formatting, pack-install default"}
 {"type":"complete","wuId":"WU-2230","timestamp":"2026-02-27T13:55:16.214Z"}
+{"type":"claim","wuId":"WU-2238","timestamp":"2026-02-27T14:08:25.438Z","lane":"Framework: Core State Recovery","title":"wu:recover --action reset should require --force for destructive ops"}
