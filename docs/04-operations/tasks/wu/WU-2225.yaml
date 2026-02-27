@@ -2,7 +2,7 @@ id: WU-2225
 title: Fix misleading Invalid lane format error when workspace.yaml missing
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -48,3 +48,11 @@ acceptance:
   - Command registered in public-manifest.ts and package.json scripts
   - Quick-ref-commands.md, CLAUDE.md, and Starlight docs updated
   - Unit tests cover resolve, status, missing WU, and already-resolved paths
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2225
+claimed_at: 2026-02-27T09:45:49.982Z
+baseline_main_sha: 31699ffeb7d893c155e2d97ef792c5330e563166
+session_id: 124571a6-8601-4691-8071-2ba38f0b8c65
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T09:45:49.987Z
