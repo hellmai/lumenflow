@@ -8,7 +8,11 @@ created: 2026-02-27
 code_paths:
   - packages/@lumenflow/cli/src/initiative-create.ts
 tests:
-  manual: []
+  manual:
+    - Run 'pnpm initiative:create --title test --slug test-slug' without --id and verify it
+      auto-generates INIT-XXX
+    - Run 'pnpm initiative:create --id INIT-999 --title test --slug test-slug' and verify explicit
+      ID still works
   unit:
     - packages/@lumenflow/cli/__tests__/initiative-create-autoid.test.ts
   e2e: []
