@@ -26,5 +26,5 @@ success_metrics:
   - macOS sandbox backend (Seatbelt/sandbox-exec) functional
   - Argument-level policy rules for MCP tool calls
   - Time-boxed permissions with auto-expiry
-  - NIST AI RMF alignment documented
+  - Dynamic policy hot-reload without kernel restart
 labels: []
