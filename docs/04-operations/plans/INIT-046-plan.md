@@ -4,8 +4,15 @@ Created: 2026-02-27
 
 ## Goal
 
-Deliver Sidekick pack and runtime-surface capabilities in lumenflow-dev with a stable, validated 16-tool contract.
-Complete INIT-046 across phases 1-3 with working storage abstraction, runtime dispatch surface, and publish-readiness verification.
+Deliver INIT-046 as a complete Sidekick pack and runtime-surface initiative in lumenflow-dev.
+
+Primary objective:
+
+- Ship a validated, enforcement-aligned 16-tool Sidekick contract and supporting runtime surfaces.
+
+Outcome objective:
+
+- Complete WU-2231 through WU-2237 with green quality gates, reproducible smoke flow, and publish-readiness evidence.
 
 ## Scope
 
