@@ -2,7 +2,7 @@ id: WU-2262
 title: wu:done leaves bulk staged WU metadata on main
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -28,8 +28,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: completing a worktree WU can trigger broad worktree_path metadata rewrites across many WU YAML files and leave them staged on local main. Problem: this contaminates main with unrelated tracked changes and breaks dirty-main safety guarantees. Solution: constrain wu:done sanitization/migration writes to intended scope and ensure no staged residue remains on main after completion.'
+description: 'Context: completing a worktree WU can trigger broad worktree_path metadata rewrites
+  across many WU YAML files and leave them staged on local main. Problem: this contaminates main
+  with unrelated tracked changes and breaks dirty-main safety guarantees. Solution: constrain
+  wu:done sanitization/migration writes to intended scope and ensure no staged residue remains on
+  main after completion.'
 acceptance:
   - Running wu:done for a single worktree WU does not stage unrelated WU YAML files on local main
   - worktree_path migration/sanitization cannot leave tracked staged or unstaged residue on main
   - Add regression test covering wu:done completion path and assert main remains clean
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-enforcement-wu-2262
+claimed_at: 2026-02-27T16:51:47.517Z
+baseline_main_sha: 5b36365e53be14ac4c40a401b4c06af0b9a048bc
+session_id: 87394ffd-3b29-43a4-bb04-21c769b571ac
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T16:51:47.525Z
