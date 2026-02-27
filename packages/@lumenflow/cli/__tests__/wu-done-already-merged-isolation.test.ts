@@ -16,10 +16,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-const WU_DONE_SOURCE_PATH = path.resolve(
-  __dirname,
-  '../src/wu-done.ts',
-);
+const WU_DONE_SOURCE_PATH = path.resolve(__dirname, '../src/wu-done.ts');
 
 const WU_DONE_ALREADY_MERGED_SOURCE_PATH = path.resolve(
   __dirname,
@@ -31,10 +28,7 @@ describe('WU-2248: wu:done already-merged code paths use micro-worktree isolatio
 
   describe('AC1: --already-merged flag path uses micro-worktree', () => {
     it('wu-done-already-merged.ts imports withMicroWorktree from core', () => {
-      const alreadyMergedSource = readFileSync(
-        WU_DONE_ALREADY_MERGED_SOURCE_PATH,
-        'utf-8',
-      );
+      const alreadyMergedSource = readFileSync(WU_DONE_ALREADY_MERGED_SOURCE_PATH, 'utf-8');
       expect(alreadyMergedSource).toContain('withMicroWorktree');
     });
   });
@@ -70,8 +64,7 @@ describe('WU-2248: wu:done already-merged code paths use micro-worktree isolatio
 
     it('wu-done.ts does NOT import executeAlreadyMergedCompletion from core', () => {
       // After WU-2248, the non-isolated function should no longer be imported
-      const importPattern =
-        /import\s*\{[^}]*executeAlreadyMergedCompletion[^}]*\}\s*from/;
+      const importPattern = /import\s*\{[^}]*executeAlreadyMergedCompletion[^}]*\}\s*from/;
       expect(wuDoneSource).not.toMatch(importPattern);
     });
 
