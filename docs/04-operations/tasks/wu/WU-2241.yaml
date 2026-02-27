@@ -1,6 +1,6 @@
 id: WU-2241
 title: Add state:emit command for manual corrective events
-lane: 'Framework: CLI WU Commands'
+lane: 'Framework: Core State Recovery'
 type: feature
 status: ready
 priority: P2
@@ -29,7 +29,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: When the state store (wu-events.jsonl) gets out of sync, there is no CLI command to emit a corrective event. state:doctor detects mismatches but cannot fix them. A state:emit command would allow safe, audited manual correction without raw JSONL editing.
+description: When the state store (wu-events.jsonl) gets out of sync, there is no CLI command to
+  emit a corrective event. state:doctor detects mismatches but cannot fix them. A state:emit command
+  would allow safe, audited manual correction without raw JSONL editing.
 acceptance:
   - state:emit --type claim --wu WU-XXX appends a corrective claim event
   - state:emit --type release --wu WU-XXX appends a corrective release event
