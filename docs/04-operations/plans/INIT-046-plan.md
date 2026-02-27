@@ -9,7 +9,17 @@ Complete INIT-046 across phases 1-3 with working storage abstraction, runtime di
 
 ## Scope
 
-<!-- What is in scope and out of scope? -->
+In scope for this plan:
+
+1. Pack scaffold, manifest contract, schema wiring, and registration under packages/@lumenflow/packs/sidekick.
+2. StoragePort abstraction with filesystem default adapter and concurrency-safe write behavior.
+3. Five tool groups totaling 16 tools with descriptor + implementation coverage.
+4. Consumer abstraction contract package and runtime dispatch endpoint coverage.
+5. Validation, gates, and smoke-flow readiness for release quality.
+
+Primary work units:
+
+- WU-2231 through WU-2237 in INIT-046 execution order.
 
 ## Approach
 
