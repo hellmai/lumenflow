@@ -163,7 +163,7 @@ export async function resolveEscalation(
   }
 
   // Determine resolver email
-  const resolver = resolverEmail || (await getGitForCwd().getUserEmail());
+  const resolver = resolverEmail || (await getGitForCwd().getConfigValue('user.email'));
   if (!resolver) {
     die(
       'Cannot determine resolver email.\n\n' +
