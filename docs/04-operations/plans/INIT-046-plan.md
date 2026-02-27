@@ -16,17 +16,29 @@ Outcome objective:
 
 ## Scope
 
-In scope for this plan:
+Initiative scope is organized by the current WU set and phase model.
 
-1. Pack scaffold, manifest contract, schema wiring, and registration under packages/@lumenflow/packs/sidekick.
-2. StoragePort abstraction with filesystem default adapter and concurrency-safe write behavior.
-3. Five tool groups totaling 16 tools with descriptor + implementation coverage.
-4. Consumer abstraction contract package and runtime dispatch endpoint coverage.
-5. Validation, gates, and smoke-flow readiness for release quality.
+Phase 1 scope (pack contract and implementation):
 
-Primary work units:
+1. WU-2231: Sidekick scaffold, manifest contract, schema + registration wiring.
+2. WU-2232: StoragePort abstraction and filesystem default adapter.
+3. WU-2233: Task and memory tool groups (descriptors + implementations + tests).
+4. WU-2234: Channel, routine, and system tool groups (descriptors + implementations + tests).
 
-- WU-2231 through WU-2237 in INIT-046 execution order.
+Phase 2 scope (consumer abstraction and runtime surface):
+
+1. WU-2235: Consumer abstraction contract package.
+2. WU-2236: Generic HTTP dispatch endpoint POST /tools/:name with enforcement compatibility.
+
+Phase 3 scope (validation and readiness):
+
+1. WU-2237: End-to-end validation, gate convergence, smoke flow, and publish-readiness outputs.
+
+Required contract shape:
+
+- 16 tool declarations with schema-defined IO, explicit permissions, and explicit scope patterns.
+- Write tools include audit scope coverage.
+- Storage remains workspace-local and pack-enforced.
 
 ## Approach
 
