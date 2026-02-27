@@ -2,7 +2,7 @@ id: WU-2233
 title: Implement Sidekick task and memory tool groups
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -38,3 +38,11 @@ acceptance:
   - task:* and memory:* tools return contract-compliant outputs
   - Write operations append audit events
   - dry_run operations perform no persistent writes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2233
+claimed_at: 2026-02-27T17:41:04.773Z
+baseline_main_sha: f89010bfe0513d312a933a9bbacae8308c38a501
+session_id: f9baf7cd-0a25-42af-ae19-31d3ddfc8587
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T17:41:04.779Z
