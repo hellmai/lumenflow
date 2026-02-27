@@ -1,6 +1,6 @@
 id: WU-2238
 title: wu:recover --action reset should require --force for destructive ops
-lane: 'Framework: CLI WU Commands'
+lane: 'Framework: Core State Recovery'
 type: bug
 status: ready
 priority: P2
@@ -26,7 +26,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:recover --action reset deletes the remote branch and emits a release event without any confirmation or --force flag. This is catastrophic when unmerged work exists. Should require --force and warn about consequences.
+description: wu:recover --action reset deletes the remote branch and emits a release event without
+  any confirmation or --force flag. This is catastrophic when unmerged work exists. Should require
+  --force and warn about consequences.
 acceptance:
   - wu:recover --action reset without --force prints warning and aborts
   - wu:recover --action reset --force proceeds with current behavior
