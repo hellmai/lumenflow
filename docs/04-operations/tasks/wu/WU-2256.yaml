@@ -2,7 +2,7 @@ id: WU-2256
 title: Add battle-tested workflow gotchas to starting-prompt onboarding doc
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-27
 code_paths:
@@ -27,9 +27,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Agents repeatedly rediscover the same workflow sharp edges. Battle-tested lessons from production agents: wu:done deletes worktree (cd back), wu:done race condition (just rerun), wu:edit needs clean worktree, never raw pnpm update, state files are auto-generated. Key gotchas missing from starting-prompt.md and critical stuff buried in 657 lines. Add Top Gotchas summary near the top and fill gaps in existing sections.'
+description: 'Agents repeatedly rediscover the same workflow sharp edges. Battle-tested lessons from
+  production agents: wu:done deletes worktree (cd back), wu:done race condition (just rerun),
+  wu:edit needs clean worktree, never raw pnpm update, state files are auto-generated. Key gotchas
+  missing from starting-prompt.md and critical stuff buried in 657 lines. Add Top Gotchas summary
+  near the top and fill gaps in existing sections.'
 acceptance:
   - Top Gotchas summary section added after Quick Start in starting-prompt.md.template
-  - 'Missing scenarios filled: wu:done race condition, state files note, raw pnpm update anti-pattern'
+  - 'Missing scenarios filled: wu:done race condition, state files note, raw pnpm update
+    anti-pattern'
   - Same changes applied to deployed starting-prompt.md
   - pnpm gates --docs-only passes
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/content-framework-docs-wu-2256
+claimed_at: 2026-02-27T15:20:34.997Z
+baseline_main_sha: 0310ea6cbf1c195d4a1e79a2e346110bcff87288
+session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:20:35.004Z

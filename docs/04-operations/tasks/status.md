@@ -8,6 +8,7 @@ _Last updated: 2026-02-27_
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml)
 - [WU-2240 — wu:recover --action resume does not emit claim event to state store](wu/WU-2240.yaml)
 - [WU-2250 — Prevent absolute path writes in claim metadata and plan linking](wu/WU-2250.yaml)
+- [WU-2256 — Add battle-tested workflow gotchas to starting-prompt onboarding doc](wu/WU-2256.yaml)
 
 ## Completed
 
