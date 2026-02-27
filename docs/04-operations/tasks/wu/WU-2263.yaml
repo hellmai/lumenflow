@@ -7,9 +7,6 @@ priority: P1
 created: 2026-02-27
 code_paths:
   - packages/@lumenflow/cli/src/wu-create-validation.ts
-  - packages/@lumenflow/cli/src/wu-claim-validation.ts
-  - packages/@lumenflow/core/src/wu-done-validation.ts
-  - packages/@lumenflow/cli/src/wu-create-validation.ts
 tests:
   manual:
     - Run wu:create --validate for a non-doc WU with empty tests.manual and verify behavior matches
