@@ -9,7 +9,8 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-recover.ts
   - packages/@lumenflow/core/src/state-doctor-core.ts
 tests:
-  manual: []
+  manual:
+    - Verify wu:recover --action resume followed by wu:done succeeds without manual JSONL editing
   unit:
     - packages/@lumenflow/cli/__tests__/wu-recover-resume-state.test.ts
   e2e: []
