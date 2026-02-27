@@ -12,7 +12,7 @@ Primary objective:
 
 Outcome objective:
 
-- Complete WU-2231 through WU-2237 with green quality gates, reproducible smoke flow, and publish-readiness evidence.
+- Complete WU-2231 through WU-2234, WU-2236, and WU-2237 with green quality gates, reproducible smoke flow, and publish-readiness evidence.
 
 ## Scope
 
