@@ -16,11 +16,11 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { getGitForCwd } from '@lumenflow/core/git-adapter';
+import { basename, join, resolve } from 'node:path';
+import { getGitForCwd, createGitForPath } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
-import { WU_PATHS } from '@lumenflow/core/wu-paths';
+import { WU_PATHS, defaultWorktreeFrom } from '@lumenflow/core/wu-paths';
 import { parseYAML, stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { validateWUIDFormat, ensureOnMain } from '@lumenflow/core/wu-helpers';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
@@ -30,7 +30,15 @@ import {
   MICRO_WORKTREE_OPERATIONS,
   LOG_PREFIX,
   COMMIT_FORMATS,
+  getLaneBranch,
 } from '@lumenflow/core/wu-constants';
+// WU-2227: Import worktree detection and validation helpers
+import { detectCurrentWorktree } from '@lumenflow/core/wu-done-validators';
+import {
+  validateWorktreeExists,
+  validateWorktreeClean,
+  validateWorktreeBranch,
+} from './wu-edit-validators.js';
 import { runCLI } from './cli-entry-point.js';
 
 const PREFIX = LOG_PREFIX.ESCALATE ?? '[wu:escalate]';
@@ -123,8 +131,50 @@ export function showEscalationStatus(wu: Record<string, unknown>): void {
 }
 
 /**
+ * WU-2227: Determine if escalation should use worktree-aware mode.
+ *
+ * Returns the absolute worktree path when:
+ * 1. WU status is 'in_progress'
+ * 2. WU has a worktree_path set (not branch-pr mode)
+ * 3. The worktree can be resolved via defaultWorktreeFrom()
+ *
+ * Returns null to fall back to micro-worktree mode.
+ */
+function resolveWorktreeMode(
+  wu: Record<string, unknown>,
+  rootDir?: string,
+): string | null {
+  if (wu.status !== 'in_progress') return null;
+  if (!wu.worktree_path) return null;
+
+  // Use defaultWorktreeFrom to get a canonical worktree path
+  const worktreeRelPath = defaultWorktreeFrom(
+    wu as { lane?: string; id?: string },
+  );
+  if (!worktreeRelPath) return null;
+
+  // WU-1806 pattern: resolve correctly even when running from inside a worktree
+  const currentWorktree = detectCurrentWorktree();
+  const targetWorktreeName = basename(worktreeRelPath);
+
+  if (currentWorktree && basename(currentWorktree) === targetWorktreeName) {
+    // We're inside the target worktree
+    return currentWorktree;
+  }
+
+  // Resolve relative to rootDir (for testing) or cwd
+  return rootDir ? resolve(rootDir, worktreeRelPath) : resolve(worktreeRelPath);
+}
+
+/**
  * Resolve escalation for a WU by setting escalation_resolved_by and
- * escalation_resolved_at via micro-worktree isolation.
+ * escalation_resolved_at.
+ *
+ * WU-2227: Worktree-aware -- for in_progress WUs with an active worktree,
+ * edits the YAML in-place in the worktree (like wu-edit.ts) to prevent
+ * rebase conflicts during wu:done. Falls back to micro-worktree isolation
+ * for non-in_progress WUs.
+ *
  * Exported for testing.
  *
  * @param id - WU ID
@@ -174,56 +224,102 @@ export async function resolveEscalation(
   console.log(`${PREFIX} Resolver: ${resolver}`);
   console.log(`${PREFIX} Triggers: ${triggers.join(', ')}`);
 
-  // Use micro-worktree to atomically update WU YAML
-  const previousWuTool = process.env[ENV_VARS.WU_TOOL];
-  process.env[ENV_VARS.WU_TOOL] = OPERATION_NAME;
+  // WU-2227: Check if we should use worktree-aware mode
+  const worktreePath = resolveWorktreeMode(wu, rootDir);
 
-  try {
+  if (worktreePath) {
+    // WORKTREE MODE: Edit YAML in-place in the active worktree
+    console.log(`${PREFIX} Editing in_progress WU in active worktree...`);
+
+    // Validate worktree state (same checks as wu-edit.ts)
+    validateWorktreeExists(worktreePath, id);
+    await validateWorktreeClean(worktreePath, id);
+
+    const expectedBranch = getLaneBranch(wu.lane as string, id);
+    await validateWorktreeBranch(worktreePath, expectedBranch, id);
+
+    // Read WU YAML from worktree, apply escalation fields, write back
+    const wuRelPath = WU_PATHS.WU(id);
+    const wuPath = join(worktreePath, wuRelPath);
+
+    const content = readFileSync(wuPath, {
+      encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+    });
+    const wuDoc = parseYAML(content) as Record<string, unknown>;
+
+    wuDoc.escalation_resolved_by = resolver;
+    wuDoc.escalation_resolved_at = resolvedAt;
+
+    const yamlContent = stringifyYAML(wuDoc);
+    writeFileSync(wuPath, yamlContent, {
+      encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+    });
+
+    // Commit and push to the lane branch
     const commitFormat =
       typeof COMMIT_FORMATS.ESCALATE === 'function'
         ? COMMIT_FORMATS.ESCALATE(id)
         : `wu(${id.toLowerCase()}): resolve escalation`;
 
-    await withMicroWorktree({
-      operation: OPERATION_NAME,
-      id,
-      logPrefix: PREFIX,
-      execute: async ({ worktreePath }) => {
-        const wuRelPath = WU_PATHS.WU(id);
-        const wuPath = join(worktreePath, wuRelPath);
+    const worktreeGit = createGitForPath(worktreePath);
+    await worktreeGit.add(wuRelPath);
+    await worktreeGit.commit(commitFormat);
+    await worktreeGit.push('origin', expectedBranch);
 
-        // Read the WU file from the micro-worktree
-        const content = readFileSync(wuPath, {
-          encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
-        });
-        const wuDoc = parseYAML(content) as Record<string, unknown>;
+    console.log(`${PREFIX} Successfully resolved escalation for ${id} in worktree`);
+    console.log(`${PREFIX} Changes committed to lane branch ${expectedBranch}`);
+  } else {
+    // MICRO-WORKTREE MODE: Atomically update on main (existing behavior)
+    const previousWuTool = process.env[ENV_VARS.WU_TOOL];
+    process.env[ENV_VARS.WU_TOOL] = OPERATION_NAME;
 
-        // Set escalation resolution fields
-        wuDoc.escalation_resolved_by = resolver;
-        wuDoc.escalation_resolved_at = resolvedAt;
+    try {
+      const commitFormat =
+        typeof COMMIT_FORMATS.ESCALATE === 'function'
+          ? COMMIT_FORMATS.ESCALATE(id)
+          : `wu(${id.toLowerCase()}): resolve escalation`;
 
-        // Write back
-        const yamlContent = stringifyYAML(wuDoc);
-        writeFileSync(wuPath, yamlContent, {
-          encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
-        });
+      await withMicroWorktree({
+        operation: OPERATION_NAME,
+        id,
+        logPrefix: PREFIX,
+        execute: async ({ worktreePath: mwPath }) => {
+          const wuRelPath = WU_PATHS.WU(id);
+          const wuPath = join(mwPath, wuRelPath);
 
-        return {
-          commitMessage: commitFormat,
-          files: [wuRelPath],
-        };
-      },
-    });
-  } finally {
-    if (previousWuTool === undefined) {
-      delete process.env[ENV_VARS.WU_TOOL];
-    } else {
-      process.env[ENV_VARS.WU_TOOL] = previousWuTool;
+          // Read the WU file from the micro-worktree
+          const content = readFileSync(wuPath, {
+            encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+          });
+          const wuDoc = parseYAML(content) as Record<string, unknown>;
+
+          // Set escalation resolution fields
+          wuDoc.escalation_resolved_by = resolver;
+          wuDoc.escalation_resolved_at = resolvedAt;
+
+          // Write back
+          const yamlContent = stringifyYAML(wuDoc);
+          writeFileSync(wuPath, yamlContent, {
+            encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+          });
+
+          return {
+            commitMessage: commitFormat,
+            files: [wuRelPath],
+          };
+        },
+      });
+    } finally {
+      if (previousWuTool === undefined) {
+        delete process.env[ENV_VARS.WU_TOOL];
+      } else {
+        process.env[ENV_VARS.WU_TOOL] = previousWuTool;
+      }
     }
-  }
 
-  console.log(`${PREFIX} Successfully resolved escalation for ${id}`);
-  console.log(`${PREFIX} Changes pushed to origin/main`);
+    console.log(`${PREFIX} Successfully resolved escalation for ${id}`);
+    console.log(`${PREFIX} Changes pushed to origin/main`);
+  }
 
   return { resolver, resolvedAt };
 }
@@ -239,7 +335,13 @@ export async function main(): Promise<void> {
 
   if (opts.resolve) {
     // Resolve mode: set escalation fields
-    await ensureOnMain(getGitForCwd());
+    // WU-2227: Check if the WU is in_progress with a worktree before requiring main
+    const { wu } = loadWU(id);
+    const worktreeMode = resolveWorktreeMode(wu);
+    if (!worktreeMode) {
+      // Only require main for micro-worktree mode
+      await ensureOnMain(getGitForCwd());
+    }
     await resolveEscalation(id, opts.resolver);
   } else {
     // Status mode: show current escalation state
