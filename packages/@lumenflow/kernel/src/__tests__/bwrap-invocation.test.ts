@@ -8,10 +8,7 @@ import {
   buildBwrapInvocation,
   type BuildBwrapInvocationInput,
 } from '../sandbox/bwrap-invocation.js';
-import {
-  buildSandboxProfileFromScopes,
-  type SandboxProfile,
-} from '../sandbox/profile.js';
+import { buildSandboxProfileFromScopes, type SandboxProfile } from '../sandbox/profile.js';
 import {
   SandboxSubprocessDispatcher,
   type SubprocessTransport,
@@ -44,10 +41,7 @@ describe('buildBwrapInvocation with network allowlist', () => {
   });
 
   it('emits iptables OUTPUT ACCEPT rules for each allowlisted host', () => {
-    const profile = makeAllowlistProfile([
-      'registry.npmjs.org:443',
-      'api.github.com:443',
-    ]);
+    const profile = makeAllowlistProfile(['registry.npmjs.org:443', 'api.github.com:443']);
     const invocation = buildBwrapInvocation({
       profile,
       command: ['node', '/tmp/worker.js'],

@@ -130,10 +130,7 @@ function parseHostPort(entry: string): { host: string; port: string | null } {
   return { host: entry, port: null };
 }
 
-export function buildIptablesAllowlistScript(
-  allowlist: string[],
-  command: string[],
-): string {
+export function buildIptablesAllowlistScript(allowlist: string[], command: string[]): string {
   const lines: string[] = [];
 
   // Allow loopback traffic unconditionally
@@ -195,10 +192,7 @@ export function buildBwrapInvocation(input: BuildBwrapInvocationInput): SandboxI
 
   args.push('--proc', '/proc', '--dev', '/dev');
 
-  if (
-    input.profile.network_posture === 'allowlist' &&
-    input.profile.network_allowlist.length > 0
-  ) {
+  if (input.profile.network_posture === 'allowlist' && input.profile.network_allowlist.length > 0) {
     const iptablesScript = buildIptablesAllowlistScript(
       input.profile.network_allowlist,
       input.command,
