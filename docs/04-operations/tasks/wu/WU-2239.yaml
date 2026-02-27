@@ -2,7 +2,7 @@ id: WU-2239
 title: wu:edit --spec-file silently overwrites runtime fields
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-27
 code_paths:
@@ -37,4 +37,9 @@ acceptance:
   - 'Or: wu:edit --spec-file rejects input that would strip required runtime fields with clear error'
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-27T14:08:42.750Z
+approved_at: 2026-02-27T15:10:39.965Z
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2239
+claimed_at: 2026-02-27T15:10:39.959Z
+baseline_main_sha: 1c13185fefa96c45ccf6bf8ef6b2231a2e3ad5c2
+session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
