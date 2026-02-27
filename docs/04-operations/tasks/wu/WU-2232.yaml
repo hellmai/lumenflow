@@ -16,7 +16,8 @@ tests:
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2232.done
-dependencies: []
+dependencies:
+  - WU-2231
 initiative: INIT-046
 phase: 1
 spec_refs:
@@ -31,7 +32,8 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Introduce a pluggable StoragePort for Sidekick with FsStoragePort default, lock serialization, and audit append semantics.
+description: Introduce a pluggable StoragePort for Sidekick with FsStoragePort default, lock
+  serialization, and audit append semantics.
 acceptance:
   - StoragePort interface is defined in sidekick tool-impl storage module
   - FsStoragePort implements read/write, lock, and audit operations
