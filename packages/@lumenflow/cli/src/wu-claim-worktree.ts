@@ -39,6 +39,7 @@ import {
   maybeProgressInitiativeStatus,
   getWorktreeCommitFiles,
   applyStagedChangesToMicroWorktree,
+  resolveClaimPathInWorktree,
 } from './wu-claim-state.js';
 import {
   surfaceUnreadSignalsForDisplay,
@@ -128,8 +129,8 @@ async function handleNoPushMetadataUpdate(ctx: ClaimContext & { worktreePath: st
   if (args.noAuto) {
     await applyStagedChangesToMicroWorktree(worktreePath, stagedChanges ?? []);
   } else {
-    const wtWUPath = path.join(worktreePath, WU_PATH);
-    const wtBacklogPath = path.join(worktreePath, BACKLOG_PATH);
+    const wtWUPath = resolveClaimPathInWorktree(WU_PATH, worktreePath);
+    const wtBacklogPath = resolveClaimPathInWorktree(BACKLOG_PATH, worktreePath);
 
     if (fixableIssues && fixableIssues.length > 0) {
       console.log(`${PREFIX} Applying ${fixableIssues.length} YAML fix(es)...`);

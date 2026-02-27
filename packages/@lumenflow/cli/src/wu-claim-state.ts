@@ -153,6 +153,39 @@ function normalizeWorktreePathForYaml(rawPath: string): string {
 }
 
 /**
+ * Normalize claim metadata paths so micro-worktree writes stay scoped to the
+ * target worktree even when config paths are absolute under the source repo root.
+ */
+export function normalizeClaimPathForWorktree(
+  claimPath: string,
+  sourceRoot: string = process.cwd(),
+): string {
+  if (!claimPath) return claimPath;
+  if (!path.isAbsolute(claimPath)) {
+    return normalizeWorktreePathForYaml(claimPath);
+  }
+
+  const relative = path.relative(sourceRoot, claimPath);
+  if (relative && !relative.startsWith('..') && !path.isAbsolute(relative)) {
+    return normalizeWorktreePathForYaml(relative);
+  }
+
+  return normalizeWorktreePathForYaml(claimPath);
+}
+
+/**
+ * Resolve a claim metadata path inside a target worktree/project root.
+ */
+export function resolveClaimPathInWorktree(
+  claimPath: string,
+  worktreePath: string,
+  sourceRoot: string = process.cwd(),
+): string {
+  const normalized = normalizeClaimPathForWorktree(claimPath, sourceRoot);
+  return path.join(worktreePath, normalized);
+}
+
+/**
  * Normalize claim-time worktree paths for version-controlled YAML storage.
  * Converts absolute paths to repo-relative form and normalizes separators.
  */
@@ -558,8 +591,9 @@ export function getWorktreeCommitFiles(wuId: string): string[] {
   // WU-1311: Use config-based paths instead of hardcoded docs-layout paths
   const config = getConfig();
   return [
-    `${config.directories.wuDir}/${wuId}.yaml`,
-    resolveWuEventsRelativePath(process.cwd()), // WU-1740: Event store is source of truth
+    normalizeClaimPathForWorktree(`${config.directories.wuDir}/${wuId}.yaml`),
+    // WU-1740: Event store is source of truth
+    normalizeClaimPathForWorktree(resolveWuEventsRelativePath(process.cwd())),
     // WU-1746: Explicitly NOT including backlog.md and status.md
     // These generated files cause merge conflicts when main advances
   ];
@@ -677,6 +711,7 @@ export async function applyCanonicalClaimUpdate(
   } = ctx;
   const commitMsg = COMMIT_FORMATS.CLAIM(id.toLowerCase(), laneK);
   const laneForUpdate = args.lane ?? laneK;
+  const sourceRoot = process.cwd();
   const worktreePathForYaml =
     claimedMode === CLAIMED_MODES.BRANCH_ONLY
       ? null
@@ -692,7 +727,7 @@ export async function applyCanonicalClaimUpdate(
           WU_PATHS.STATUS(),
           WU_PATHS.BACKLOG(),
           resolveWuEventsRelativePath(process.cwd()),
-        ];
+        ].map((claimPath) => normalizeClaimPathForWorktree(claimPath, sourceRoot));
 
   console.log(`${PREFIX} Updating canonical claim state (push-only)...`);
 
@@ -702,9 +737,9 @@ export async function applyCanonicalClaimUpdate(
     logPrefix: PREFIX,
     pushOnly: true,
     execute: async ({ worktreePath }) => {
-      const microWUPath = path.join(worktreePath, WU_PATH);
-      const microStatusPath = path.join(worktreePath, STATUS_PATH);
-      const microBacklogPath = path.join(worktreePath, BACKLOG_PATH);
+      const microWUPath = resolveClaimPathInWorktree(WU_PATH, worktreePath, sourceRoot);
+      const microStatusPath = resolveClaimPathInWorktree(STATUS_PATH, worktreePath, sourceRoot);
+      const microBacklogPath = resolveClaimPathInWorktree(BACKLOG_PATH, worktreePath, sourceRoot);
 
       if (args.noAuto) {
         await applyStagedChangesToMicroWorktree(worktreePath, stagedChanges);
@@ -796,7 +831,8 @@ export async function rollbackCanonicalClaim(
       logPrefix: PREFIX,
       pushOnly: true,
       execute: async ({ worktreePath }) => {
-        const microWUPath = path.join(worktreePath, WU_PATHS.WU(id));
+        const sourceRoot = process.cwd();
+        const microWUPath = resolveClaimPathInWorktree(WU_PATHS.WU(id), worktreePath, sourceRoot);
 
         // Read the current (claimed) YAML from the micro-worktree
         const text = await readFile(microWUPath, {
@@ -812,7 +848,11 @@ export async function rollbackCanonicalClaim(
         });
 
         // Emit a release event to the state store so the claim event is reversed
-        const microBacklogPath = path.join(worktreePath, WU_PATHS.BACKLOG());
+        const microBacklogPath = resolveClaimPathInWorktree(
+          WU_PATHS.BACKLOG(),
+          worktreePath,
+          sourceRoot,
+        );
         const stateDir = getStateStoreDirFromBacklog(microBacklogPath);
         const store = new WUStateStore(stateDir);
         await store.load();
@@ -823,7 +863,11 @@ export async function rollbackCanonicalClaim(
         await writeFile(microBacklogPath, backlogContent, {
           encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
         });
-        const microStatusPath = path.join(worktreePath, WU_PATHS.STATUS());
+        const microStatusPath = resolveClaimPathInWorktree(
+          WU_PATHS.STATUS(),
+          worktreePath,
+          sourceRoot,
+        );
         const statusContent = await generateStatus(store);
         await writeFile(microStatusPath, statusContent, {
           encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
@@ -832,10 +876,10 @@ export async function rollbackCanonicalClaim(
         return {
           commitMessage: `wu(${id.toLowerCase()}): rollback claim after partial failure`,
           files: [
-            WU_PATHS.WU(id),
-            WU_PATHS.STATUS(),
-            WU_PATHS.BACKLOG(),
-            resolveWuEventsRelativePath(worktreePath),
+            normalizeClaimPathForWorktree(WU_PATHS.WU(id), sourceRoot),
+            normalizeClaimPathForWorktree(WU_PATHS.STATUS(), sourceRoot),
+            normalizeClaimPathForWorktree(WU_PATHS.BACKLOG(), sourceRoot),
+            normalizeClaimPathForWorktree(resolveWuEventsRelativePath(worktreePath), sourceRoot),
           ],
         };
       },
