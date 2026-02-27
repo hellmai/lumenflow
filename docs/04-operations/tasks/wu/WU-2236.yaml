@@ -2,7 +2,7 @@ id: WU-2236
 title: Add generic HTTP runtime dispatch endpoint POST /tools/:name
 lane: 'Operations: Runtime'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -39,3 +39,11 @@ acceptance:
   - HTTP surface exposes POST /tools/:name
   - Endpoint dispatches only allowlisted tools
   - Policy/scope/tool-not-found responses are enforced and tested
+claimed_mode: worktree
+worktree_path: worktrees/operations-runtime-wu-2236
+claimed_at: 2026-02-27T17:16:40.858Z
+baseline_main_sha: 38f57c24b3afb5296e3a7c272451ac73626939cc
+session_id: 06530872-f3ce-4ec3-93da-3b9fc487ce40
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T17:16:40.865Z

@@ -8,6 +8,7 @@ _Last updated: 2026-02-27_
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
 - [WU-2263 — wu:create validate diverges from wu:claim manual-test requirement](wu/WU-2263.yaml)
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml)
+- [WU-2236 — Add generic HTTP runtime dispatch endpoint POST /tools/:name](wu/WU-2236.yaml)
 
 ## Completed
 
