@@ -2,7 +2,7 @@ id: WU-2266
 title: 'INIT-048 kernel hardening documentation: network allowlist, macOS sandbox, argument-level policy'
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-27
 code_paths:
@@ -27,10 +27,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Document all INIT-048 kernel hardening features in Starlight docs and internal references. Covers: network allowlist posture (off|allowlist|full), allowlist_entries schema, macOS sandbox backend (posture-aware network rules, read confinement, deny overlays for ~/.ssh/~/.aws/~/.gnupg), argument-level policy evaluation (tool_arguments in PolicyEvaluationContext), and when() predicate syntax.'
+description: 'Document all INIT-048 kernel hardening features in Starlight docs and internal
+  references. Covers: network allowlist posture (off|allowlist|full), allowlist_entries schema,
+  macOS sandbox backend (posture-aware network rules, read confinement, deny overlays for
+  ~/.ssh/~/.aws/~/.gnupg), argument-level policy evaluation (tool_arguments in
+  PolicyEvaluationContext), and when() predicate syntax.'
 acceptance:
   - scope-intersection.mdx updated with network allowlist section
   - policy-engine.mdx documents when() predicates and tool_arguments
   - tool-execution.mdx documents macOS sandbox backend and deny overlays
   - workspace-spec.mdx updated with allowlist_entries schema and allowlist posture
   - create-a-pack.mdx includes network allowlist examples in tool manifests
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2266
+claimed_at: 2026-02-27T18:34:18.959Z
+baseline_main_sha: 2e530334233aea9094154bfe9436fef701ea0dab
+session_id: 773cb4e6-c10f-478e-8b86-bfc1ca818ece
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T18:34:18.965Z

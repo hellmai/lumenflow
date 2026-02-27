@@ -2516,3 +2516,4 @@
 {"type":"checkpoint","wuId":"WU-2265","timestamp":"2026-02-27T18:20:41.395Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"checkpoint","wuId":"WU-2265","timestamp":"2026-02-27T18:31:00.961Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2265","timestamp":"2026-02-27T18:32:54.001Z"}
+{"type":"claim","wuId":"WU-2266","timestamp":"2026-02-27T18:34:18.984Z","lane":"Content: Framework Docs","title":"INIT-048 kernel hardening documentation: network allowlist, macOS sandbox, argument-level policy"}
