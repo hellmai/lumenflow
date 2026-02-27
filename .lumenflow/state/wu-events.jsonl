@@ -2488,3 +2488,4 @@
 {"type":"claim","wuId":"WU-2232","timestamp":"2026-02-27T17:34:28.783Z","lane":"Framework: Core Lifecycle","title":"Sidekick StoragePort and filesystem storage adapter"}
 {"type":"checkpoint","wuId":"WU-2232","timestamp":"2026-02-27T17:36:39.513Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"claim","wuId":"WU-2251","timestamp":"2026-02-27T17:37:12.847Z","lane":"Framework: Core Lifecycle","title":"Network allowlist schema and scope intersection"}
+{"type":"complete","wuId":"WU-2232","timestamp":"2026-02-27T17:38:42.710Z"}
