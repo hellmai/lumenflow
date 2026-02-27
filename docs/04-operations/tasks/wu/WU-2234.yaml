@@ -2,7 +2,7 @@ id: WU-2234
 title: Implement Sidekick channel, routine, and system tool groups
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -39,3 +39,11 @@ acceptance:
   - channel:* and sidekick:* tools return contract-compliant outputs
   - routine:run returns plan-only output and does not execute tool steps
   - All write operations append audit events
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2234
+claimed_at: 2026-02-27T17:48:21.963Z
+baseline_main_sha: 4a6f62296195334a5d183fc0ab9bde188a9f7dc7
+session_id: c34c4bc3-d629-4f87-be91-79e1b25679da
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T17:48:21.969Z
