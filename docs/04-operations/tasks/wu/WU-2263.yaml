@@ -12,11 +12,6 @@ tests:
     - Run wu:create --validate for a non-doc WU with empty tests.manual and verify behavior matches
       wu:claim policy
   unit:
-    - packages/@lumenflow/cli/src/__tests__/wu-claim-validation.test.ts
-    - packages/@lumenflow/cli/src/__tests__/wu-create-validation.test.ts
-    - packages/@lumenflow/cli/src/__tests__/wu-create-manual-test-policy.test.ts
-    - packages/@lumenflow/cli/src/__tests__/wu-create-required-fields.test.ts
-    - packages/@lumenflow/cli/src/__tests__/wu-create.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-create-manual-test-policy.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-create-required-fields.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-create.test.ts
