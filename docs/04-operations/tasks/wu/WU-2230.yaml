@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/cli/src/commands/init.ts
   - packages/@lumenflow/cli/templates/
 tests:
-  manual: []
+  manual:
+    - Run lumenflow init on fresh Next.js project and verify all pnpm commands work without manual
+      dep install
   unit: []
   e2e:
     - packages/@lumenflow/cli/src/__tests__/init.e2e.test.ts
@@ -26,7 +28,11 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Testing lumenflow init on a fresh Next.js project revealed 5 friction points. Problem: (1) init does not install lumenflow as devDep so all commands fail post-scaffold, (2) npx lumenflow init fails because init is not a subcommand, (3) pack install fails by default, (4) scaffolded templates are not prettier-formatted so gates fail immediately, (5) pnpm setup collides with built-in pnpm command.'
+description: 'Context: Testing lumenflow init on a fresh Next.js project revealed 5 friction points.
+  Problem: (1) init does not install lumenflow as devDep so all commands fail post-scaffold, (2) npx
+  lumenflow init fails because init is not a subcommand, (3) pack install fails by default, (4)
+  scaffolded templates are not prettier-formatted so gates fail immediately, (5) pnpm setup collides
+  with built-in pnpm command.'
 acceptance:
   - lumenflow init on a fresh project results in working CLI commands without manual intervention
   - Scaffolded files pass prettier format check out of the box
