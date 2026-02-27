@@ -2485,3 +2485,4 @@
 {"type":"complete","wuId":"WU-2236","timestamp":"2026-02-27T17:22:42.172Z"}
 {"type":"complete","wuId":"WU-2263","timestamp":"2026-02-27T17:26:31.730Z"}
 {"type":"complete","wuId":"WU-2231","timestamp":"2026-02-27T17:28:10.675Z"}
+{"type":"claim","wuId":"WU-2232","timestamp":"2026-02-27T17:34:28.783Z","lane":"Framework: Core Lifecycle","title":"Sidekick StoragePort and filesystem storage adapter"}
