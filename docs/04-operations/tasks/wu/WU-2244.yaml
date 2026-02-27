@@ -2,7 +2,7 @@ id: WU-2244
 title: initiative:create blocked from non-main branch
 lane: 'Framework: Initiatives'
 type: bug
-status: in_progress
+status: done
 priority: P3
 created: 2026-02-27
 code_paths:
@@ -41,3 +41,6 @@ session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T15:13:12.513Z
+locked: true
+completed_at: 2026-02-27T15:19:45.450Z
+completed: 2026-02-27
