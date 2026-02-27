@@ -2,7 +2,7 @@ id: WU-2243
 title: initiative:create ignores --phase and --success-metric flags
 lane: 'Framework: Initiatives'
 type: bug
-status: done
+status: ready
 priority: P3
 created: 2026-02-27
 code_paths:
@@ -37,11 +37,6 @@ description: "initiative:create accepts --phase and --success-metric flags but s
 acceptance:
   - initiative:create --phase populates phases array in YAML
   - initiative:create --success-metric populates success_metrics array in YAML
-claimed_mode: worktree
-worktree_path: /home/USER/source/hellmai/lumenflow-dev/worktrees/framework-initiatives-wu-2243
-claimed_at: 2026-02-27T14:18:17.177Z
-baseline_main_sha: ff28e8ed100cbfe19dfeb24b18e0774a2ab6665f
-session_id: 693d6807-be4b-4d1f-acfa-7a16cdfc0725
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T14:18:17.182Z
