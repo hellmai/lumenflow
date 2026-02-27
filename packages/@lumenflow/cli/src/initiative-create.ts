@@ -280,7 +280,8 @@ export async function main() {
               priority: args.priority,
               owner: args.owner,
               targetDate: args.targetDate,
-              initDescription: args.initDescription,
+              // WU-2246: Commander maps --description to opts.description, not opts.initDescription
+              initDescription: args.description,
               initPhase: args.initPhase,
               successMetric: args.successMetric,
             },
@@ -317,7 +318,8 @@ export async function main() {
         id: initId,
         slug: args.slug,
         title: args.title,
-        description: args.initDescription || '',
+        // WU-2246: Commander maps --description to opts.description, not opts.initDescription
+        description: args.description || '',
         status: INIT_DEFAULTS.STATUS,
         phases: completenessPhases,
         success_metrics: completenessMetrics,
