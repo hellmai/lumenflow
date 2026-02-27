@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2257 — Lane lifecycle commands write directly to main, bypass micro-worktree](wu/WU-2257.yaml) — Framework: CLI Enforcement
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
@@ -57,7 +56,6 @@ sections:
 - [WU-2235 — Define Sidekick consumer abstraction contract package](wu/WU-2235.yaml) — Framework: Core Lifecycle
 - [WU-2236 — Add generic HTTP runtime dispatch endpoint POST /tools/:name](wu/WU-2236.yaml) — Operations: Runtime
 - [WU-2237 — Sidekick validation, gates, smoke flow, and publish readiness](wu/WU-2237.yaml) — Framework: Core Validation
-- [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
 - [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
 - [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — Framework: Core State Recovery
 - [WU-2251 — Network allowlist schema and scope intersection](wu/WU-2251.yaml) — Framework: Core Lifecycle
@@ -65,6 +63,7 @@ sections:
 - [WU-2253 — macOS sandbox posture-aware network rules](wu/WU-2253.yaml) — Framework: Core Lifecycle
 - [WU-2254 — macOS sandbox read confinement and deny overlays](wu/WU-2254.yaml) — Framework: Core Lifecycle
 - [WU-2255 — Argument-level policy evaluation context](wu/WU-2255.yaml) — Framework: Core Lifecycle
+- [WU-2257 — Lane lifecycle commands write directly to main, bypass micro-worktree](wu/WU-2257.yaml) — Framework: CLI Enforcement
 
 ## 🔧 In progress
 
@@ -72,6 +71,7 @@ sections:
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
 - [WU-2245 — wu:create emits placeholder notes requiring manual cleanup](wu/WU-2245.yaml) — Framework: CLI WU Commands
 - [WU-2241 — Add state:emit command for manual corrective events](wu/WU-2241.yaml) — Framework: Core State Recovery
+- [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
 
 ## ⛔ Blocked
 

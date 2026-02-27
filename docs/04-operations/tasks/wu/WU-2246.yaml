@@ -2,7 +2,7 @@ id: WU-2246
 title: initiative:create ignores --description flag
 lane: 'Framework: Initiatives'
 type: bug
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-27
 code_paths:
@@ -31,3 +31,11 @@ description: initiative:create accepts --description flag but the created YAML h
   Same pattern as --phase and --success-metric being silently ignored.
 acceptance:
   - initiative:create --description populates description field in YAML
+claimed_mode: worktree
+worktree_path: worktrees/framework-initiatives-wu-2246
+claimed_at: 2026-02-27T15:38:45.783Z
+baseline_main_sha: 38e1456cb184fe01dec8f76909e81cd0b47cee14
+session_id: 8a509da7-ea1f-4899-93dd-1d4ba2f351a7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:38:45.788Z
