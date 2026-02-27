@@ -1,0 +1,37 @@
+id: WU-2231
+title: Sidekick pack scaffold and manifest contract
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-02-27
+code_paths:
+  - packages/@lumenflow/packs/sidekick/**
+tests:
+  manual:
+    - pnpm pack:validate --id sidekick
+  unit:
+    - packages/@lumenflow/packs/sidekick/__tests__/manifest.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2231.done
+dependencies: []
+initiative: INIT-046
+phase: 1
+spec_refs:
+  - docs/04-operations/tasks/initiatives/INIT-046.yaml
+risks: []
+notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Scaffold the Sidekick pack in lumenflow-dev and define the 16-tool contract in manifest + schemas.
+acceptance:
+  - Pack folder scaffolded under packages/@lumenflow/packs/sidekick
+  - 16 tool declarations exist with schemas, permissions, and scopes
+  - pack:validate passes for sidekick
