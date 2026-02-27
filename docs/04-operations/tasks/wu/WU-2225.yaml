@@ -9,9 +9,11 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-escalate.ts
   - packages/@lumenflow/core/src/wu-schema.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
-  - packages/@lumenflow/cli/src/commands.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
   - apps/docs/src/content/docs/packs/software-delivery/workflows/wu-prep-workflow.mdx
+  - packages/@lumenflow/core/src/wu-ui-constants.ts
+  - packages/@lumenflow/core/src/wu-cli-constants.ts
+  - packages/@lumenflow/core/src/wu-domain-constants.ts
 tests:
   manual:
     - Run pnpm wu:escalate --resolve --id WU-14 against a WU with escalation_triggers and verify
@@ -26,10 +28,17 @@ dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T09:45:49.982Z
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2225
+session_id: 124571a6-8601-4691-8071-2ba38f0b8c65
 exposure: ui
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T09:45:49.987Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -48,11 +57,3 @@ acceptance:
   - Command registered in public-manifest.ts and package.json scripts
   - Quick-ref-commands.md, CLAUDE.md, and Starlight docs updated
   - Unit tests cover resolve, status, missing WU, and already-resolved paths
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2225
-claimed_at: 2026-02-27T09:45:49.982Z
-baseline_main_sha: 31699ffeb7d893c155e2d97ef792c5330e563166
-session_id: 124571a6-8601-4691-8071-2ba38f0b8c65
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-27T09:45:49.987Z
