@@ -1,0 +1,35 @@
+id: WU-2258
+title: Add lane:create command for adding new lanes via tooling
+lane: 'Framework: CLI Enforcement'
+type: feature
+status: ready
+priority: P2
+created: 2026-02-27
+code_paths:
+  - packages/@lumenflow/cli/src/lane-create.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/lane-create.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2258.done
+dependencies: []
+spec_refs:
+  - packages/@lumenflow/cli/src/lane-edit.ts
+risks: []
+notes: 'Discovered during INIT-048 planning — could not create Framework: Kernel lane. Reference lane-edit.ts for micro-worktree pattern.'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: No CLI command exists to add a new lane. lane:edit only modifies existing lanes (hard fail if missing). config:set intentionally blocks lanes.* keys. Need lane:create with micro-worktree isolation, validation, duplicate-name guard, and ordered insert into workspace.yaml definitions array.
+acceptance:
+  - lane:create adds a new lane definition to workspace.yaml
+  - Uses micro-worktree isolation
+  - Validates lane name format and rejects duplicates
+  - Supports --name, --wip-limit, --add-path, --description flags
