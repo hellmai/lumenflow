@@ -62,7 +62,6 @@ sections:
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
-- [WU-2251 — Network allowlist schema and scope intersection](wu/WU-2251.yaml) — Framework: Core Lifecycle
 - [WU-2233 — Implement Sidekick task and memory tool groups](wu/WU-2233.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
@@ -1214,6 +1213,7 @@ sections:
 - [WU-2263 — wu:create validate diverges from wu:claim manual-test requirement](wu/WU-2263.yaml)
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml)
 - [WU-2232 — Sidekick StoragePort and filesystem storage adapter](wu/WU-2232.yaml)
+- [WU-2251 — Network allowlist schema and scope intersection](wu/WU-2251.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

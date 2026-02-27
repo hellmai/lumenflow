@@ -2,7 +2,7 @@ id: WU-2251
 title: Network allowlist schema and scope intersection
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -49,3 +49,6 @@ session_id: 7937ad71-258b-492c-831a-8d5c71fc0950
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T17:37:12.825Z
+locked: true
+completed_at: 2026-02-27T17:44:23.374Z
+completed: 2026-02-27
