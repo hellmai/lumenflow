@@ -62,13 +62,12 @@ sections:
 - [WU-2255 — Argument-level policy evaluation context](wu/WU-2255.yaml) — Framework: Core Lifecycle
 - [WU-2258 — Add lane:create command for adding new lanes via tooling](wu/WU-2258.yaml) — Framework: CLI Enforcement
 - [WU-2261 — wu:done leaves bulk staged WU metadata on main](wu/WU-2261.yaml) — Framework: CLI Enforcement
-- [WU-2263 — wu:create validate diverges from wu:claim manual-test requirement](wu/WU-2263.yaml) — Framework: CLI Enforcement
 
 ## 🔧 In progress
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
-- [WU-2264 — Populate INIT-048 plan file with technical content](wu/WU-2264.yaml) — Content: Framework Docs
+- [WU-2263 — wu:create validate diverges from wu:claim manual-test requirement](wu/WU-2263.yaml) — Framework: CLI Enforcement
 
 ## ⛔ Blocked
 
@@ -1214,6 +1213,7 @@ sections:
 - [WU-2260 — INIT-047 review follow-ups: silent catch, loose type, redundant error](wu/WU-2260.yaml)
 - [WU-2259 — wu:claim push-only path leaves local-main metadata drift](wu/WU-2259.yaml)
 - [WU-2262 — wu:done leaves bulk staged WU metadata on main](wu/WU-2262.yaml)
+- [WU-2264 — Populate INIT-048 plan file with technical content](wu/WU-2264.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

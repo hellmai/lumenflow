@@ -6,7 +6,7 @@ _Last updated: 2026-02-27_
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml)
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
-- [WU-2264 — Populate INIT-048 plan file with technical content](wu/WU-2264.yaml)
+- [WU-2263 — wu:create validate diverges from wu:claim manual-test requirement](wu/WU-2263.yaml)
 
 ## Completed
 
@@ -1148,3 +1148,4 @@ _Last updated: 2026-02-27_
 - [WU-2260 — INIT-047 review follow-ups: silent catch, loose type, redundant error](wu/WU-2260.yaml) — 2026-02-27
 - [WU-2259 — wu:claim push-only path leaves local-main metadata drift](wu/WU-2259.yaml) — 2026-02-27
 - [WU-2262 — wu:done leaves bulk staged WU metadata on main](wu/WU-2262.yaml) — 2026-02-27
+- [WU-2264 — Populate INIT-048 plan file with technical content](wu/WU-2264.yaml) — 2026-02-27

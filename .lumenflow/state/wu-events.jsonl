@@ -2476,3 +2476,4 @@
 {"type":"checkpoint","wuId":"WU-2262","timestamp":"2026-02-27T17:03:45.489Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"complete","wuId":"WU-2262","timestamp":"2026-02-27T17:05:33.968Z"}
 {"type":"complete","wuId":"WU-2264","timestamp":"2026-02-27T17:05:28.704Z"}
+{"type":"claim","wuId":"WU-2263","timestamp":"2026-02-27T17:12:37.641Z","lane":"Framework: CLI Enforcement","title":"wu:create validate diverges from wu:claim manual-test requirement"}
