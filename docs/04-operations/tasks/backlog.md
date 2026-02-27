@@ -67,7 +67,6 @@ sections:
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
 - [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml) — Framework: CLI WU Commands
-- [WU-2242 — initiative:create requires explicit --id despite documenting auto-gen](wu/WU-2242.yaml) — Framework: Initiatives
 
 ## ⛔ Blocked
 
@@ -1197,6 +1196,7 @@ sections:
 - [WU-2229 — Fix orphan backlog references and detection gaps](wu/WU-2229.yaml)
 - [WU-2230 — Fix new-user friction: init self-install, template formatting, pack-install default](wu/WU-2230.yaml)
 - [WU-2238 — wu:recover --action reset should require --force for destructive ops](wu/WU-2238.yaml)
+- [WU-2242 — initiative:create requires explicit --id despite documenting auto-gen](wu/WU-2242.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
