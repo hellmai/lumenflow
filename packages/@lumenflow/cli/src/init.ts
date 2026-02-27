@@ -1316,7 +1316,10 @@ export async function runPostScaffoldInstall(
         pm = 'pnpm';
       } else if (fs.existsSync(path.join(targetDir, 'yarn.lock'))) {
         pm = 'yarn';
-      } else if (fs.existsSync(path.join(targetDir, 'bun.lockb')) || fs.existsSync(path.join(targetDir, 'bun.lock'))) {
+      } else if (
+        fs.existsSync(path.join(targetDir, 'bun.lockb')) ||
+        fs.existsSync(path.join(targetDir, 'bun.lock'))
+      ) {
         pm = 'bun';
       }
       // else default to npm

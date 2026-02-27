@@ -111,11 +111,7 @@ describe('WU-2230: new-user friction fixes', () => {
     it('should detect pnpm from packageManager field and run pnpm install', async () => {
       fs.writeFileSync(
         path.join(tempDir, 'package.json'),
-        JSON.stringify(
-          { name: 'test', version: '0.1.0', packageManager: 'pnpm@10.28.1' },
-          null,
-          2,
-        ),
+        JSON.stringify({ name: 'test', version: '0.1.0', packageManager: 'pnpm@10.28.1' }, null, 2),
       );
 
       const { runPostScaffoldInstall } = await import('../src/init.js');
