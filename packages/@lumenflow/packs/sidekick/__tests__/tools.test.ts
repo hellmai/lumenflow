@@ -15,6 +15,12 @@ import { FsStoragePort, runWithStoragePort, type StoragePort } from '../tool-imp
 import taskTools from '../tool-impl/task-tools.js';
 // Memory tools
 import memoryTools from '../tool-impl/memory-tools.js';
+// Channel tools
+import channelTools from '../tool-impl/channel-tools.js';
+// Routine tools
+import routineTools from '../tool-impl/routine-tools.js';
+// System tools
+import systemTools from '../tool-impl/system-tools.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -557,6 +563,560 @@ describe('memory:forget', () => {
 });
 
 // ============================================================================
+// CHANNEL TOOLS
+// ============================================================================
+
+describe('channel:configure', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('creates a channel and returns contract-compliant output', async () => {
+    const result = await withPort(port, () =>
+      channelTools({ name: 'alerts' }, ctx('channel:configure')),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    const channel = data.channel as Record<string, unknown>;
+    expect(channel.id).toMatch(/^chan-/);
+    expect(channel.name).toBe('alerts');
+  });
+
+  it('persists the channel to the store', async () => {
+    await withPort(port, () => channelTools({ name: 'persist-test' }, ctx('channel:configure')));
+    const channels = await port.readStore('channels');
+    expect(channels).toHaveLength(1);
+    expect(channels[0]?.name).toBe('persist-test');
+  });
+
+  it('updates an existing channel by name', async () => {
+    await withPort(port, () => channelTools({ name: 'updates' }, ctx('channel:configure')));
+    await withPort(port, () => channelTools({ name: 'updates' }, ctx('channel:configure')));
+    const channels = await port.readStore('channels');
+    expect(channels).toHaveLength(1);
+  });
+
+  it('appends an audit event on configure', async () => {
+    await withPort(port, () => channelTools({ name: 'audited' }, ctx('channel:configure')));
+    const events = await port.readAuditEvents();
+    const configureEvents = events.filter((e) => e.tool === 'channel:configure');
+    expect(configureEvents).toHaveLength(1);
+    expect(configureEvents[0]?.op).toBe('create');
+  });
+
+  it('dry_run returns channel but does NOT persist', async () => {
+    const result = await withPort(port, () =>
+      channelTools({ name: 'dry', dry_run: true }, ctx('channel:configure')),
+    );
+    expect(result.success).toBe(true);
+    expect((result.data as Record<string, unknown>).dry_run).toBe(true);
+    const channels = await port.readStore('channels');
+    expect(channels).toHaveLength(0);
+  });
+
+  it('rejects missing name', async () => {
+    const result = await withPort(port, () => channelTools({}, ctx('channel:configure')));
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('INVALID_INPUT');
+  });
+});
+
+describe('channel:send', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('sends a message and returns contract-compliant output', async () => {
+    const result = await withPort(port, () =>
+      channelTools({ content: 'hello world' }, ctx('channel:send')),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    const message = data.message as Record<string, unknown>;
+    expect(message.id).toMatch(/^msg-/);
+    expect(message.content).toBe('hello world');
+  });
+
+  it('persists the message to the outbox', async () => {
+    await withPort(port, () => channelTools({ content: 'stored' }, ctx('channel:send')));
+    const messages = await port.readStore('messages');
+    expect(messages).toHaveLength(1);
+    expect(messages[0]?.content).toBe('stored');
+  });
+
+  it('auto-creates a default channel when none specified', async () => {
+    await withPort(port, () => channelTools({ content: 'auto' }, ctx('channel:send')));
+    const channels = await port.readStore('channels');
+    expect(channels).toHaveLength(1);
+    expect(channels[0]?.name).toBe('default');
+  });
+
+  it('uses specified channel name', async () => {
+    await withPort(port, () =>
+      channelTools({ content: 'test', channel: 'alerts' }, ctx('channel:send')),
+    );
+    const channels = await port.readStore('channels');
+    expect(channels[0]?.name).toBe('alerts');
+  });
+
+  it('caps outbox at 100 messages', async () => {
+    // Seed 100 messages
+    for (let i = 0; i < 100; i++) {
+      await withPort(port, () =>
+        channelTools({ content: `msg-${i}` }, ctx('channel:send')),
+      );
+    }
+    // Send one more
+    await withPort(port, () =>
+      channelTools({ content: 'overflow' }, ctx('channel:send')),
+    );
+    const messages = await port.readStore('messages');
+    expect(messages).toHaveLength(100);
+    // Oldest should be trimmed, newest should be present
+    expect(messages[messages.length - 1]?.content).toBe('overflow');
+  });
+
+  it('appends an audit event on send', async () => {
+    await withPort(port, () => channelTools({ content: 'audited' }, ctx('channel:send')));
+    const events = await port.readAuditEvents();
+    const sendEvents = events.filter((e) => e.tool === 'channel:send');
+    expect(sendEvents).toHaveLength(1);
+    expect(sendEvents[0]?.op).toBe('create');
+  });
+
+  it('dry_run returns message but does NOT persist', async () => {
+    const result = await withPort(port, () =>
+      channelTools({ content: 'dry msg', dry_run: true }, ctx('channel:send')),
+    );
+    expect(result.success).toBe(true);
+    expect((result.data as Record<string, unknown>).dry_run).toBe(true);
+    const messages = await port.readStore('messages');
+    expect(messages).toHaveLength(0);
+  });
+
+  it('rejects missing content', async () => {
+    const result = await withPort(port, () => channelTools({}, ctx('channel:send')));
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('INVALID_INPUT');
+  });
+});
+
+describe('channel:receive', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('returns empty items when no messages exist', async () => {
+    const result = await withPort(port, () => channelTools({}, ctx('channel:receive')));
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    expect(data.items).toEqual([]);
+    expect(data.count).toBe(0);
+  });
+
+  it('returns messages from outbox', async () => {
+    await withPort(port, () => channelTools({ content: 'A' }, ctx('channel:send')));
+    await withPort(port, () => channelTools({ content: 'B' }, ctx('channel:send')));
+    const result = await withPort(port, () => channelTools({}, ctx('channel:receive')));
+    expect(result.success).toBe(true);
+    expect((result.data as Record<string, unknown>).count).toBe(2);
+  });
+
+  it('filters by channel name', async () => {
+    await withPort(port, () =>
+      channelTools({ content: 'alert msg', channel: 'alerts' }, ctx('channel:send')),
+    );
+    await withPort(port, () =>
+      channelTools({ content: 'log msg', channel: 'logs' }, ctx('channel:send')),
+    );
+    const result = await withPort(port, () =>
+      channelTools({ channel: 'alerts' }, ctx('channel:receive')),
+    );
+    expect((result.data as Record<string, unknown>).count).toBe(1);
+  });
+
+  it('respects limit', async () => {
+    await withPort(port, () => channelTools({ content: 'A' }, ctx('channel:send')));
+    await withPort(port, () => channelTools({ content: 'B' }, ctx('channel:send')));
+    const result = await withPort(port, () =>
+      channelTools({ limit: 1 }, ctx('channel:receive')),
+    );
+    expect((result.data as Record<string, unknown>).count).toBe(1);
+  });
+});
+
+// ============================================================================
+// ROUTINE TOOLS
+// ============================================================================
+
+describe('routine:create', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('creates a routine and returns contract-compliant output', async () => {
+    const result = await withPort(port, () =>
+      routineTools(
+        { name: 'daily-check', steps: [{ tool: 'task:list', input: {} }] },
+        ctx('routine:create'),
+      ),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    const routine = data.routine as Record<string, unknown>;
+    expect(routine.name).toBe('daily-check');
+    expect((routine.steps as unknown[]).length).toBe(1);
+  });
+
+  it('persists the routine to the store', async () => {
+    await withPort(port, () =>
+      routineTools(
+        { name: 'persisted', steps: [{ tool: 'task:list' }] },
+        ctx('routine:create'),
+      ),
+    );
+    const routines = await port.readStore('routines');
+    expect(routines).toHaveLength(1);
+    expect(routines[0]?.name).toBe('persisted');
+  });
+
+  it('appends an audit event on create', async () => {
+    await withPort(port, () =>
+      routineTools(
+        { name: 'audited', steps: [{ tool: 'task:list' }] },
+        ctx('routine:create'),
+      ),
+    );
+    const events = await port.readAuditEvents();
+    const createEvents = events.filter((e) => e.tool === 'routine:create');
+    expect(createEvents).toHaveLength(1);
+    expect(createEvents[0]?.op).toBe('create');
+  });
+
+  it('dry_run returns routine but does NOT persist', async () => {
+    const result = await withPort(port, () =>
+      routineTools(
+        { name: 'dry', steps: [{ tool: 'task:list' }], dry_run: true },
+        ctx('routine:create'),
+      ),
+    );
+    expect(result.success).toBe(true);
+    expect((result.data as Record<string, unknown>).dry_run).toBe(true);
+    const routines = await port.readStore('routines');
+    expect(routines).toHaveLength(0);
+  });
+
+  it('rejects missing name', async () => {
+    const result = await withPort(port, () =>
+      routineTools({ steps: [{ tool: 'task:list' }] }, ctx('routine:create')),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('INVALID_INPUT');
+  });
+
+  it('rejects missing or empty steps', async () => {
+    const result = await withPort(port, () =>
+      routineTools({ name: 'empty', steps: [] }, ctx('routine:create')),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('INVALID_INPUT');
+  });
+});
+
+describe('routine:list', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('returns empty items when no routines exist', async () => {
+    const result = await withPort(port, () => routineTools({}, ctx('routine:list')));
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    expect(data.items).toEqual([]);
+    expect(data.count).toBe(0);
+  });
+
+  it('returns all routines by default', async () => {
+    await withPort(port, () =>
+      routineTools({ name: 'A', steps: [{ tool: 'task:list' }] }, ctx('routine:create')),
+    );
+    await withPort(port, () =>
+      routineTools({ name: 'B', steps: [{ tool: 'task:list' }] }, ctx('routine:create')),
+    );
+    const result = await withPort(port, () => routineTools({}, ctx('routine:list')));
+    expect((result.data as Record<string, unknown>).count).toBe(2);
+  });
+
+  it('respects limit', async () => {
+    await withPort(port, () =>
+      routineTools({ name: 'A', steps: [{ tool: 'task:list' }] }, ctx('routine:create')),
+    );
+    await withPort(port, () =>
+      routineTools({ name: 'B', steps: [{ tool: 'task:list' }] }, ctx('routine:create')),
+    );
+    const result = await withPort(port, () => routineTools({ limit: 1 }, ctx('routine:list')));
+    expect((result.data as Record<string, unknown>).count).toBe(1);
+  });
+});
+
+describe('routine:run', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('returns plan-only output and does NOT execute tool steps', async () => {
+    await withPort(port, () =>
+      routineTools(
+        {
+          name: 'plan-test',
+          steps: [
+            { tool: 'task:create', input: { title: 'Should NOT be created' } },
+            { tool: 'memory:store', input: { type: 'fact', content: 'Should NOT be stored' } },
+          ],
+        },
+        ctx('routine:create'),
+      ),
+    );
+    const routines = await port.readStore('routines');
+    const routineId = routines[0]?.id as string;
+
+    const result = await withPort(port, () =>
+      routineTools({ id: routineId }, ctx('routine:run')),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    expect(data.plan_only).toBe(true);
+    expect(data.routine_id).toBe(routineId);
+
+    // Verify plan contains the steps
+    const plan = data.plan as Array<Record<string, unknown>>;
+    expect(plan).toHaveLength(2);
+    expect(plan[0]?.tool).toBe('task:create');
+    expect(plan[1]?.tool).toBe('memory:store');
+
+    // Verify no tasks or memories were actually created (plan-only)
+    const tasks = await port.readStore('tasks');
+    expect(tasks).toHaveLength(0);
+    const memories = await port.readStore('memories');
+    expect(memories).toHaveLength(0);
+  });
+
+  it('appends an audit event on run', async () => {
+    await withPort(port, () =>
+      routineTools(
+        { name: 'audit-run', steps: [{ tool: 'task:list' }] },
+        ctx('routine:create'),
+      ),
+    );
+    const routines = await port.readStore('routines');
+    const routineId = routines[0]?.id as string;
+
+    await withPort(port, () => routineTools({ id: routineId }, ctx('routine:run')));
+    const events = await port.readAuditEvents();
+    const runEvents = events.filter((e) => e.tool === 'routine:run');
+    expect(runEvents).toHaveLength(1);
+    expect(runEvents[0]?.op).toBe('execute');
+  });
+
+  it('returns NOT_FOUND for unknown id', async () => {
+    const result = await withPort(port, () =>
+      routineTools({ id: 'routine-nonexistent' }, ctx('routine:run')),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('NOT_FOUND');
+  });
+
+  it('rejects missing id', async () => {
+    const result = await withPort(port, () => routineTools({}, ctx('routine:run')));
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('INVALID_INPUT');
+  });
+});
+
+// ============================================================================
+// SYSTEM TOOLS
+// ============================================================================
+
+describe('sidekick:init', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('initializes sidekick directories and returns success', async () => {
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:init')));
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    expect(data.initialized).toBe(true);
+  });
+
+  it('is idempotent (second call succeeds without error)', async () => {
+    await withPort(port, () => systemTools({}, ctx('sidekick:init')));
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:init')));
+    expect(result.success).toBe(true);
+  });
+
+  it('appends an audit event on init', async () => {
+    await withPort(port, () => systemTools({}, ctx('sidekick:init')));
+    const events = await port.readAuditEvents();
+    const initEvents = events.filter((e) => e.tool === 'sidekick:init');
+    expect(initEvents).toHaveLength(1);
+    expect(initEvents[0]?.op).toBe('create');
+  });
+});
+
+describe('sidekick:status', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('returns status of all stores', async () => {
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:status')));
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    expect(data).toHaveProperty('task_count');
+    expect(data).toHaveProperty('memory_entries');
+    expect(data).toHaveProperty('channels');
+    expect(data).toHaveProperty('messages');
+    expect(data).toHaveProperty('routines');
+    expect(data).toHaveProperty('audit_events');
+  });
+
+  it('reflects actual store counts', async () => {
+    await withPort(port, () => taskTools({ title: 'A' }, ctx('task:create')));
+    await withPort(port, () => taskTools({ title: 'B' }, ctx('task:create')));
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:status')));
+    const data = result.data as Record<string, unknown>;
+    expect(data.task_count).toBe(2);
+  });
+
+  it('appends an audit event on status', async () => {
+    await withPort(port, () => systemTools({}, ctx('sidekick:status')));
+    const events = await port.readAuditEvents();
+    const statusEvents = events.filter((e) => e.tool === 'sidekick:status');
+    expect(statusEvents).toHaveLength(1);
+    expect(statusEvents[0]?.op).toBe('read');
+  });
+});
+
+describe('sidekick:export', () => {
+  let port: FsStoragePort;
+
+  beforeEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+    port = makePort();
+  });
+
+  afterEach(async () => {
+    await rm(TEST_ROOT, { recursive: true, force: true });
+  });
+
+  it('returns all data as JSON bundle', async () => {
+    await withPort(port, () => taskTools({ title: 'Export task' }, ctx('task:create')));
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:export')));
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    expect(data).toHaveProperty('exported_at');
+    expect(data).toHaveProperty('data');
+    const bundle = data.data as Record<string, unknown>;
+    expect(bundle).toHaveProperty('tasks');
+    expect(bundle).toHaveProperty('memories');
+    expect(bundle).toHaveProperty('channels');
+    expect(bundle).toHaveProperty('messages');
+    expect(bundle).toHaveProperty('routines');
+  });
+
+  it('includes audit events by default', async () => {
+    await withPort(port, () => taskTools({ title: 'Audit export' }, ctx('task:create')));
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:export')));
+    const bundle = (result.data as Record<string, unknown>).data as Record<string, unknown>;
+    expect(bundle).toHaveProperty('audit');
+  });
+
+  it('excludes audit events when include_audit=false', async () => {
+    await withPort(port, () => taskTools({ title: 'No audit' }, ctx('task:create')));
+    const result = await withPort(port, () =>
+      systemTools({ include_audit: false }, ctx('sidekick:export')),
+    );
+    const bundle = (result.data as Record<string, unknown>).data as Record<string, unknown>;
+    expect(bundle.audit).toBeUndefined();
+  });
+
+  it('appends an audit event on export', async () => {
+    await withPort(port, () => systemTools({}, ctx('sidekick:export')));
+    const events = await port.readAuditEvents();
+    const exportEvents = events.filter((e) => e.tool === 'sidekick:export');
+    expect(exportEvents).toHaveLength(1);
+    expect(exportEvents[0]?.op).toBe('export');
+  });
+
+  it('is READ-ONLY (no file write, only returns data)', async () => {
+    // This test verifies sidekick:export returns data inline and does not create any export files.
+    // The export tool should only return the bundle in the output, not write to disk.
+    const result = await withPort(port, () => systemTools({}, ctx('sidekick:export')));
+    expect(result.success).toBe(true);
+    // Data is returned inline, no file path in output
+    const data = result.data as Record<string, unknown>;
+    expect(data.file_path).toBeUndefined();
+  });
+});
+
+// ============================================================================
 // Unknown tool routing
 // ============================================================================
 
@@ -569,6 +1129,24 @@ describe('unknown tool routing', () => {
 
   it('memory tools returns UNKNOWN_TOOL for unrecognized tool_name', async () => {
     const result = await memoryTools({}, ctx('memory:bogus'));
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('UNKNOWN_TOOL');
+  });
+
+  it('channel tools returns UNKNOWN_TOOL for unrecognized tool_name', async () => {
+    const result = await channelTools({}, ctx('channel:bogus'));
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('UNKNOWN_TOOL');
+  });
+
+  it('routine tools returns UNKNOWN_TOOL for unrecognized tool_name', async () => {
+    const result = await routineTools({}, ctx('routine:bogus'));
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('UNKNOWN_TOOL');
+  });
+
+  it('system tools returns UNKNOWN_TOOL for unrecognized tool_name', async () => {
+    const result = await systemTools({}, ctx('sidekick:bogus'));
     expect(result.success).toBe(false);
     expect(result.error?.code).toBe('UNKNOWN_TOOL');
   });
