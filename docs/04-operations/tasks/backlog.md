@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: CLI WU Commands
 - [WU-2245 — wu:create emits placeholder notes requiring manual cleanup](wu/WU-2245.yaml) — Framework: CLI WU Commands
 - [WU-2244 — initiative:create blocked from non-main branch](wu/WU-2244.yaml) — Framework: CLI WU Commands
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: CLI WU Commands
