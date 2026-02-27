@@ -6,25 +6,33 @@ status: ready
 priority: P2
 created: 2026-02-27
 code_paths:
-  - packages/@lumenflow/cli/src/commands/init.ts
-  - packages/@lumenflow/cli/templates/
+  - packages/@lumenflow/cli/src/init.ts
+  - packages/lumenflow/bin/lumenflow.mjs
 tests:
   manual:
     - Run lumenflow init on fresh Next.js project and verify all pnpm commands work without manual
       dep install
-  unit: []
-  e2e:
-    - packages/@lumenflow/cli/src/__tests__/init.e2e.test.ts
+    - Verified npx lumenflow init no longer throws 'too many arguments'
+    - Verified pack-install failure produces warning not exception
+  unit:
+    - packages/@lumenflow/cli/__tests__/init-new-user-friction.test.ts
 artifacts:
   - .lumenflow/stamps/WU-2230.done
 dependencies: []
 risks: []
 notes: (auto) Add implementation notes, rollout context, or a short summary of the plan/conversation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T13:05:19.736Z
+worktree_path: /home/USER/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2230
+session_id: 8de56ee0-65cc-496d-9eac-dbbb751fb8a2
 exposure: api
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T13:05:19.741Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -38,6 +46,3 @@ acceptance:
   - Scaffolded files pass prettier format check out of the box
   - npx lumenflow init works as invocation (init recognized as implicit)
   - Pack install failure does not block init for new external projects
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-27T13:05:19.741Z
