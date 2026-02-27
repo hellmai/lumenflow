@@ -137,13 +137,35 @@ Smoke flow sequence target:
 
 ## Success Criteria
 
-INIT-046 is complete when:
+INIT-046 is complete when all of the following are true:
 
-1. Sidekick manifest contract defines 16 tools with schemas, permissions, and scopes, and validates cleanly.
-2. Storage abstraction supports pluggable ports with filesystem default and tested locking semantics.
-3. Runtime dispatch endpoint POST /tools/:name is available with enforcement preserved.
-4. Sidekick validation, smoke flow, and publish-readiness checks pass.
-5. WU-2231 through WU-2237 are completed in initiative state and delivery artifacts are present.
+1. Contract completeness:
+
+- Sidekick manifest contains exactly 16 declared tools.
+- Every tool has schema, permission, and scope declarations.
+- Pack validation for Sidekick is green.
+
+2. Storage architecture completeness:
+
+- StoragePort abstraction is implemented and exercised by tests.
+- Filesystem adapter is default and validated for consistency under concurrent writes.
+
+3. Tooling completeness:
+
+- All five tool groups are implemented and test-covered.
+- Descriptor wiring, manifest mapping, and registration are consistent.
+
+4. Runtime surface completeness:
+
+- POST /tools/:name endpoint exists and preserves enforcement constraints.
+- Consumer abstraction contract package is present and validated.
+
+5. Initiative readiness:
+
+- WU-2231..WU-2237 lifecycle status is complete.
+- pnpm pack:validate --id sidekick passes.
+- pnpm gates passes.
+- Smoke flow executes successfully and readiness artifacts are recorded.
 
 ## Risks
 
