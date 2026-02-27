@@ -131,23 +131,25 @@ async function channelSendTool(input: unknown, context?: ToolContextLike): Promi
 
   await storage.withLock(async () => {
     const channels = await storage.readStore('channels');
-    let existing = channels.find((c) => c.name === channelName);
+    const found = channels.find((c) => c.name === channelName);
+    let channelId: string;
 
-    if (!existing) {
-      existing = {
-        id: createId('chan'),
+    if (!found) {
+      channelId = createId('chan');
+      channels.push({
+        id: channelId,
         name: channelName,
         created_at: now,
         updated_at: now,
-      };
-      channels.push(existing);
+      });
       await storage.writeStore('channels', channels);
     } else {
-      const updated = channels.map((c) => (c.id === existing!.id ? { ...c, updated_at: now } : c));
+      channelId = found.id;
+      const updated = channels.map((c) => (c.id === channelId ? { ...c, updated_at: now } : c));
       await storage.writeStore('channels', updated);
     }
 
-    resolvedMessage = { ...message, channel_id: existing.id };
+    resolvedMessage = { ...message, channel_id: channelId };
 
     const messages = await storage.readStore('messages');
     messages.push(resolvedMessage);
@@ -161,7 +163,7 @@ async function channelSendTool(input: unknown, context?: ToolContextLike): Promi
         tool: TOOL_NAMES.SEND,
         op: 'create',
         context,
-        ids: [existing.id, resolvedMessage.id],
+        ids: [channelId, resolvedMessage.id],
       }),
     );
   });
