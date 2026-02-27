@@ -21,12 +21,20 @@ artifacts:
   - .lumenflow/stamps/WU-2263.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'WU-2263: Aligned wu:create tests.manual validation with wu:claim policy (WU-1508). Added
+  hasManualTests check to validateCreateSpec.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T17:12:37.618Z
+worktree_path: worktrees/framework-cli-enforcement-wu-2263
+session_id: 06530872-f3ce-4ec3-93da-3b9fc487ce40
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T17:12:37.624Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +47,3 @@ acceptance:
     relaxed) per single documented policy
   - Validation behavior is consistent across wu:create --validate and wu:claim
   - Regression tests cover the mismatched scenario (manual empty + unit tests present)
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-enforcement-wu-2263
-claimed_at: 2026-02-27T17:12:37.618Z
-baseline_main_sha: 2465a74f5987f37a909f5cf907eee3b866028588
-session_id: 06530872-f3ce-4ec3-93da-3b9fc487ce40
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-27T17:12:37.624Z
