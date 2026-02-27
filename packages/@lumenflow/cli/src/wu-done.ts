@@ -136,10 +136,9 @@ import {
 } from '@lumenflow/core/wu-done-branch-only';
 import { executeWorktreeCompletion, autoRebaseBranch } from '@lumenflow/core/wu-done-worktree';
 // WU-1746: Already-merged worktree resilience
-import {
-  detectAlreadyMergedNoWorktree,
-  executeAlreadyMergedCompletion,
-} from '@lumenflow/core/wu-done-merged-worktree';
+// WU-2248: Removed executeAlreadyMergedCompletion (wrote directly to local main).
+// Both code paths now use executeAlreadyMergedFinalizeFromModule (micro-worktree isolation).
+import { detectAlreadyMergedNoWorktree } from '@lumenflow/core/wu-done-merged-worktree';
 // WU-2211: --already-merged finalize-only mode
 import {
   verifyCodePathsOnMainHead,
@@ -2598,10 +2597,14 @@ export async function main() {
             console.log(
               `${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-1746: Worktree missing but branch already merged to main`,
             );
-            const mergedResult = await executeAlreadyMergedCompletion({
+            // WU-2248: Use micro-worktree isolation (same as --already-merged flag path)
+            // Previously called executeAlreadyMergedCompletion which wrote directly to local main.
+            const mergedTitle = title || String(docMain.title || id);
+            const mergedResult = await executeAlreadyMergedFinalizeFromModule({
               id,
-              title: title || String(docMain.title || id),
+              title: mergedTitle,
               lane: String(docMain.lane || ''),
+              doc: docMain as Record<string, unknown>,
             });
             completionResult = {
               success: mergedResult.success,
