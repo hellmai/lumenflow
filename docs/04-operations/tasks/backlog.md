@@ -61,7 +61,6 @@ sections:
 - [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
 - [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
 - [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — Framework: Core State Recovery
-- [WU-2250 — Prevent absolute path writes in claim metadata and plan linking](wu/WU-2250.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
@@ -70,6 +69,7 @@ sections:
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
 - [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml) — Framework: CLI WU Commands
 - [WU-2240 — wu:recover --action resume does not emit claim event to state store](wu/WU-2240.yaml) — Framework: Core State Recovery
+- [WU-2250 — Prevent absolute path writes in claim metadata and plan linking](wu/WU-2250.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 

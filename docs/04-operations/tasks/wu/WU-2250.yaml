@@ -2,7 +2,7 @@ id: WU-2250
 title: Prevent absolute path writes in claim metadata and plan linking
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -38,3 +38,11 @@ acceptance:
   - Canonical claim metadata never writes absolute worktree_path to WU YAML.
   - plan:link rejects non-lumenflow://plans/ URIs and path-traversal/absolute path attempts.
   - Existing plan:link and wu:claim behaviors remain green via updated unit tests.
+claimed_mode: worktree
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2250
+claimed_at: 2026-02-27T15:11:35.744Z
+baseline_main_sha: 6e244e4c9c65c7568ef38b65e851d9fde6dbf1a1
+session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:11:35.751Z
