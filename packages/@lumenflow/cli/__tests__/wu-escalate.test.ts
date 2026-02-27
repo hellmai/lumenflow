@@ -3,13 +3,15 @@
 
 /**
  * @file wu-escalate.test.ts
- * Tests for the wu:escalate CLI command (WU-2225)
+ * Tests for the wu:escalate CLI command (WU-2225, WU-2227)
  *
  * Covers acceptance criteria:
  * - --resolve sets escalation_resolved_by and escalation_resolved_at
  * - Without --resolve shows current escalation status
  * - Missing WU errors
  * - Already-resolved path
+ * - WU-2227: Worktree-aware mode for in_progress WUs
+ * - WU-2227: Micro-worktree fallback for non-in_progress WUs
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -49,14 +51,55 @@ vi.mock('@lumenflow/core/wu-helpers', async () => {
   };
 });
 
-// Mock git adapter for getUserEmail
+// WU-2227: Mock wu-edit-validators for worktree validation functions
+const mockValidateWorktreeExists = vi.fn();
+const mockValidateWorktreeClean = vi.fn().mockResolvedValue(undefined);
+const mockValidateWorktreeBranch = vi.fn().mockResolvedValue(undefined);
+
+vi.mock('../src/wu-edit-validators.js', () => ({
+  validateWorktreeExists: (...args: unknown[]) => mockValidateWorktreeExists(...args),
+  validateWorktreeClean: (...args: unknown[]) => mockValidateWorktreeClean(...args),
+  validateWorktreeBranch: (...args: unknown[]) => mockValidateWorktreeBranch(...args),
+}));
+
+// WU-2227: Mock defaultWorktreeFrom from wu-paths
+vi.mock('@lumenflow/core/wu-paths', async () => {
+  const actual = await vi.importActual<typeof import('@lumenflow/core/wu-paths')>(
+    '@lumenflow/core/wu-paths',
+  );
+  return {
+    ...actual,
+    defaultWorktreeFrom: vi.fn((doc: { lane?: string; id?: string }) => {
+      if (!doc?.lane || !doc?.id) return null;
+      const lanePart = doc.lane.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+      return `worktrees/${lanePart}-${doc.id.toLowerCase()}`;
+    }),
+  };
+});
+
+// WU-2227: Mock detectCurrentWorktree from wu-done-validators
+vi.mock('@lumenflow/core/wu-done-validators', () => ({
+  detectCurrentWorktree: vi.fn().mockReturnValue(null),
+}));
+
+// WU-2227: Mock createGitForPath for worktree git operations
+const mockWorktreeGit = {
+  raw: vi.fn().mockResolvedValue(''),
+  add: vi.fn().mockResolvedValue(undefined),
+  commit: vi.fn().mockResolvedValue(undefined),
+  push: vi.fn().mockResolvedValue(undefined),
+};
+
 vi.mock('@lumenflow/core/git-adapter', () => ({
   getGitForCwd: () => ({
     getConfigValue: vi.fn().mockResolvedValue('agent@example.com'),
     getCurrentBranch: vi.fn().mockResolvedValue('main'),
     getStatus: vi.fn().mockResolvedValue(''),
   }),
+  createGitForPath: vi.fn(() => mockWorktreeGit),
 }));
+
+// (git-adapter mock moved above with createGitForPath support)
 
 // Test constants
 const WU_ID = 'WU-14';
@@ -68,6 +111,8 @@ const RM_OPTS = { recursive: true, force: true } as const;
 
 // Import module under test AFTER mocks are set up
 import { showEscalationStatus, resolveEscalation } from '../src/wu-escalate.js';
+import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
+import { detectCurrentWorktree } from '@lumenflow/core/wu-done-validators';
 
 describe('wu:escalate', () => {
   let tempDir: string;
@@ -247,6 +292,124 @@ describe('wu:escalate', () => {
 
       // Should have used the mock git email
       expect(result.resolver).toBe('agent@example.com');
+    });
+
+    // WU-2227: Worktree-aware escalation resolution tests
+    describe('worktree-aware mode (WU-2227)', () => {
+      const IN_PROGRESS_WU_CONTENT = [
+        'id: WU-14',
+        'title: Test WU',
+        'status: in_progress',
+        "lane: 'Framework: Core'",
+        "worktree_path: worktrees/framework-core-wu-14",
+        'escalation_triggers:',
+        '  - sensitive_data',
+        'requires_human_escalation: true',
+      ].join('\n');
+
+      const READY_WU_CONTENT = [
+        'id: WU-14',
+        'title: Test WU',
+        'status: ready',
+        "lane: 'Framework: Core'",
+        'escalation_triggers:',
+        '  - sensitive_data',
+        'requires_human_escalation: true',
+      ].join('\n');
+
+      beforeEach(() => {
+        mockValidateWorktreeExists.mockReturnValue(undefined);
+        mockValidateWorktreeClean.mockResolvedValue(undefined);
+        mockValidateWorktreeBranch.mockResolvedValue(undefined);
+        mockWorktreeGit.raw.mockResolvedValue('');
+        mockWorktreeGit.add.mockResolvedValue(undefined);
+        mockWorktreeGit.commit.mockResolvedValue(undefined);
+        mockWorktreeGit.push.mockResolvedValue(undefined);
+        vi.mocked(withMicroWorktree).mockClear();
+        vi.mocked(detectCurrentWorktree).mockReturnValue(null);
+      });
+
+      it('edits YAML in-place for in_progress WU with worktree_path', async () => {
+        // Write WU file at rootDir (simulates reading from main or worktree)
+        writeWUFile(WU_ID, IN_PROGRESS_WU_CONTENT);
+
+        // Also create the WU file in the resolved worktree path
+        const worktreeDir = path.resolve(tempDir, 'worktrees/framework-core-wu-14');
+        writeWUFile(WU_ID, IN_PROGRESS_WU_CONTENT, worktreeDir);
+
+        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+        const result = await resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir);
+        consoleSpy.mockRestore();
+
+        expect(result).toBeDefined();
+        expect(result.resolver).toBe(RESOLVER_EMAIL);
+        expect(result.resolvedAt).toBeDefined();
+
+        // Should NOT have called withMicroWorktree
+        expect(withMicroWorktree).not.toHaveBeenCalled();
+
+        // Verify the worktree WU file was updated
+        const updatedPath = path.join(worktreeDir, WU_DIR, `${WU_ID}.yaml`);
+        const updatedContent = readFileSync(updatedPath, 'utf-8');
+        const updatedWU = yamlParse(updatedContent);
+
+        expect(updatedWU.escalation_resolved_by).toBe(RESOLVER_EMAIL);
+        expect(updatedWU.escalation_resolved_at).toBe(result.resolvedAt);
+      });
+
+      it('uses micro-worktree for ready WU (no worktree_path)', async () => {
+        writeWUFile(WU_ID, READY_WU_CONTENT);
+        writeWUFile(WU_ID, READY_WU_CONTENT, '/tmp/mock-micro-wt');
+
+        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+        const result = await resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir);
+        consoleSpy.mockRestore();
+
+        expect(result).toBeDefined();
+        expect(result.resolver).toBe(RESOLVER_EMAIL);
+
+        // Should have called withMicroWorktree
+        expect(withMicroWorktree).toHaveBeenCalled();
+      });
+
+      it('uses micro-worktree for in_progress WU without worktree_path', async () => {
+        const wuWithoutWorktree = [
+          'id: WU-14',
+          'title: Test WU',
+          'status: in_progress',
+          "lane: 'Framework: Core'",
+          'escalation_triggers:',
+          '  - sensitive_data',
+          'requires_human_escalation: true',
+        ].join('\n');
+
+        writeWUFile(WU_ID, wuWithoutWorktree);
+        writeWUFile(WU_ID, wuWithoutWorktree, '/tmp/mock-micro-wt');
+
+        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+        const result = await resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir);
+        consoleSpy.mockRestore();
+
+        expect(result).toBeDefined();
+        // Should fallback to micro-worktree since no worktree_path
+        expect(withMicroWorktree).toHaveBeenCalled();
+      });
+
+      it('commits and pushes to lane branch in worktree mode', async () => {
+        writeWUFile(WU_ID, IN_PROGRESS_WU_CONTENT);
+
+        const worktreeDir = path.resolve(tempDir, 'worktrees/framework-core-wu-14');
+        writeWUFile(WU_ID, IN_PROGRESS_WU_CONTENT, worktreeDir);
+
+        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+        await resolveEscalation(WU_ID, RESOLVER_EMAIL, tempDir);
+        consoleSpy.mockRestore();
+
+        // Should have committed and pushed using worktree git
+        expect(mockWorktreeGit.add).toHaveBeenCalled();
+        expect(mockWorktreeGit.commit).toHaveBeenCalled();
+        expect(mockWorktreeGit.push).toHaveBeenCalled();
+      });
     });
   });
 });
