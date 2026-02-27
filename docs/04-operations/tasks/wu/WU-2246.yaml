@@ -8,7 +8,8 @@ created: 2026-02-27
 code_paths:
   - packages/@lumenflow/cli/src/initiative-create.ts
 tests:
-  manual: []
+  manual:
+    - Run initiative:create --description 'test desc' and verify YAML contains description field
   unit:
     - packages/@lumenflow/cli/__tests__/initiative-create-description.test.ts
   e2e: []
