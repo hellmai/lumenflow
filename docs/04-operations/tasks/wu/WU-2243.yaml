@@ -2,7 +2,7 @@ id: WU-2243
 title: initiative:create ignores --phase and --success-metric flags
 lane: 'Framework: Initiatives'
 type: bug
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-27
 code_paths:
@@ -39,5 +39,10 @@ acceptance:
   - initiative:create --success-metric populates success_metrics array in YAML
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-02-27T14:18:17.182Z
+approved_at: 2026-02-27T16:02:32.914Z
 locked: true
+claimed_mode: worktree
+worktree_path: worktrees/framework-initiatives-wu-2243
+claimed_at: 2026-02-27T16:02:32.907Z
+baseline_main_sha: f82a529cfd6b1f67ef46b7f7c1eea2b99cb5f5b0
+session_id: 8a509da7-ea1f-4899-93dd-1d4ba2f351a7
