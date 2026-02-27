@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-recover.ts
   - packages/@lumenflow/cli/src/state-emit.ts
 tests:
-  manual: []
+  manual:
+    - Verify wu:recover --action reset without --force shows single warning message
+    - not duplicate
   unit:
     - packages/@lumenflow/cli/__tests__/init-047-review-followups.test.ts
   e2e: []
@@ -27,8 +29,12 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Code review of INIT-047 found three minor issues: (1) WU-2249 checkWorktreeForDirtyFiles swallows all errors silently, risking data loss if git status fails for non-trivial reasons. (2) WU-2241 emitCorrectiveEvent accepts ValidEmitType|string, weakening compile-time safety. (3) WU-2238 prints redundant error: detailed warning then die() message.'
+description: 'Code review of INIT-047 found three minor issues: (1) WU-2249
+  checkWorktreeForDirtyFiles swallows all errors silently, risking data loss if git status fails for
+  non-trivial reasons. (2) WU-2241 emitCorrectiveEvent accepts ValidEmitType|string, weakening
+  compile-time safety. (3) WU-2238 prints redundant error: detailed warning then die() message.'
 acceptance:
   - checkWorktreeForDirtyFiles catch block logs a warning before returning empty array
-  - emitCorrectiveEvent type parameter uses ValidEmitType only, string accepted only at CLI parse layer
+  - emitCorrectiveEvent type parameter uses ValidEmitType only, string accepted only at CLI parse
+    layer
   - wu:recover reset prints either the detailed warning or the die message, not both
