@@ -2,7 +2,7 @@ id: WU-2240
 title: wu:recover --action resume does not emit claim event to state store
 lane: 'Framework: Core State Recovery'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -44,3 +44,6 @@ worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/framework-core-s
 claimed_at: 2026-02-27T15:11:19.413Z
 baseline_main_sha: dd1546e5adf6f1cc8e01beddc23cd24a665a6799
 session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
+locked: true
+completed_at: 2026-02-27T15:27:51.755Z
+completed: 2026-02-27
