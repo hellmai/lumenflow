@@ -31,7 +31,7 @@
 
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
-import { existsSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { createWUParser, WU_OPTIONS, INITIATIVE_CREATE_OPTIONS } from '@lumenflow/core/arg-parser';
@@ -60,6 +60,43 @@ const LOG_PREFIX = '[initiative:create]';
 
 /** Micro-worktree operation name */
 const OPERATION_NAME = 'initiative-create';
+
+/** Initiative ID prefix */
+const INIT_ID_PREFIX = 'INIT-';
+
+/** Pattern to extract numeric part from INIT-NNN.yaml filenames */
+const INIT_FILENAME_PATTERN = /^INIT-(\d+)\.yaml$/;
+
+/**
+ * Get the next sequential Initiative ID by scanning an initiatives directory.
+ *
+ * WU-2242: Enables auto-generation of INIT-XXX IDs when --id is omitted.
+ * Scans the given directory for INIT-NNN.yaml files and returns INIT-(highest+1).
+ * Returns INIT-1 when no initiatives exist or the directory does not exist.
+ *
+ * @param {string} initiativesDir - Path to the initiatives directory to scan
+ * @returns {string} Next sequential Initiative ID (e.g., 'INIT-6')
+ */
+export function getNextInitiativeId(initiativesDir: string): string {
+  if (!existsSync(initiativesDir)) {
+    return `${INIT_ID_PREFIX}1`;
+  }
+
+  const files = readdirSync(initiativesDir);
+  let highest = 0;
+
+  for (const file of files) {
+    const match = INIT_FILENAME_PATTERN.exec(file);
+    if (match?.[1]) {
+      const num = parseInt(match[1], 10);
+      if (!isNaN(num) && num > highest) {
+        highest = num;
+      }
+    }
+  }
+
+  return `${INIT_ID_PREFIX}${highest + 1}`;
+}
 
 /**
  * Validate Initiative ID format
@@ -195,16 +232,26 @@ export async function main() {
       INITIATIVE_CREATE_OPTIONS.initPhase,
       INITIATIVE_CREATE_OPTIONS.successMetric,
     ],
-    required: ['id', 'slug', 'title'],
+    required: ['slug', 'title'],
     allowPositionalId: false,
   });
 
-  console.log(`${LOG_PREFIX} Creating Initiative ${args.id} (${args.slug})...`);
+  // WU-2242: Auto-generate Initiative ID when --id is not provided
+  let initId: string;
+  if (args.id) {
+    initId = args.id;
+  } else {
+    const initiativesDir = INIT_PATHS.INITIATIVES_DIR();
+    initId = getNextInitiativeId(initiativesDir);
+    console.log(`${LOG_PREFIX} Auto-generated Initiative ID: ${initId}`);
+  }
+
+  console.log(`${LOG_PREFIX} Creating Initiative ${initId} (${args.slug})...`);
 
   // Pre-flight checks (validation only - no main modification)
-  validateInitIdFormat(args.id);
+  validateInitIdFormat(initId);
   validateSlugFormat(args.slug);
-  checkInitiativeExists(args.id);
+  checkInitiativeExists(initId);
   await ensureOnMain(getGitForCwd());
 
   // WU-1748: initiative:create does not design lanes.
@@ -222,13 +269,13 @@ export async function main() {
     try {
       await withMicroWorktree({
         operation: OPERATION_NAME,
-        id: args.id,
+        id: initId,
         logPrefix: LOG_PREFIX,
         execute: async ({ worktreePath }) => {
           // Create Initiative YAML in micro-worktree
           const initPath = createInitiativeYamlInWorktree(
             worktreePath,
-            args.id,
+            initId,
             args.slug,
             args.title,
             {
@@ -243,7 +290,7 @@ export async function main() {
 
           // Return commit message and files to commit
           return {
-            commitMessage: INIT_COMMIT_FORMATS.CREATE(args.id, args.title),
+            commitMessage: INIT_COMMIT_FORMATS.CREATE(initId, args.title),
             files: [initPath],
           };
         },
@@ -251,15 +298,15 @@ export async function main() {
 
       console.log(`\n${LOG_PREFIX} ✅ Transaction complete!`);
       console.log(`\nInitiative Created:`);
-      console.log(`  ID:     ${args.id}`);
+      console.log(`  ID:     ${initId}`);
       console.log(`  Slug:   ${args.slug}`);
       console.log(`  Title:  ${args.title}`);
       console.log(`  Status: ${INIT_DEFAULTS.STATUS}`);
-      console.log(`  File:   ${INIT_PATHS.INITIATIVE(args.id)}`);
+      console.log(`  File:   ${INIT_PATHS.INITIATIVE(initId)}`);
 
       // WU-1211: Check completeness and emit warnings
       const initContent = {
-        id: args.id,
+        id: initId,
         slug: args.slug,
         title: args.title,
         description: '',
@@ -276,9 +323,9 @@ export async function main() {
       }
 
       console.log(`\nNext steps:`);
-      console.log(`  1. Edit ${args.id}.yaml to add description, phases, and success_metrics`);
-      console.log(`  2. Link WUs to this initiative: pnpm wu:create --initiative ${args.id} ...`);
-      console.log(`  3. View status: pnpm initiative:status ${args.id}`);
+      console.log(`  1. Edit ${initId}.yaml to add description, phases, and success_metrics`);
+      console.log(`  2. Link WUs to this initiative: pnpm wu:create --initiative ${initId} ...`);
+      console.log(`  3. View status: pnpm initiative:status ${initId}`);
     } catch (error) {
       die(
         `Transaction failed: ${error.message}\n\n` +
