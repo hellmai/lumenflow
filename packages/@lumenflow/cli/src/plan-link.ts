@@ -128,8 +128,9 @@ export function resolveTargetType(id: string): TargetType {
  * @throws Error if plan file doesn't exist
  */
 export function validatePlanExists(worktreePath: string, planUri: string): void {
+  const normalizedPlanUri = normalizePlanUri(planUri);
   // Extract filename from URI
-  const filename = planUri.replace(PLAN_URI_SCHEME, '');
+  const filename = normalizedPlanUri.replace(PLAN_URI_SCHEME, '');
   const plansDir = join(worktreePath, WU_PATHS.PLANS_DIR());
   const planPath = join(plansDir, filename);
 
@@ -139,6 +140,44 @@ export function validatePlanExists(worktreePath: string, planUri: string): void 
         `Create it first with: pnpm plan:create --id <ID> --title "Title"`,
     );
   }
+}
+
+/**
+ * Normalize and validate plan URI input.
+ * Enforces lumenflow://plans/ scheme and rejects absolute/traversal paths.
+ */
+export function normalizePlanUri(planUri: string): string {
+  const raw = planUri.trim();
+  if (!raw.startsWith(PLAN_URI_SCHEME)) {
+    die(
+      `Invalid plan URI: "${planUri}"\n\n` +
+        `Expected format: lumenflow://plans/<filename>.md`,
+    );
+  }
+
+  const filename = raw.slice(PLAN_URI_SCHEME.length).replaceAll('\\', '/').trim();
+  if (!filename) {
+    die(
+      `Invalid plan URI: "${planUri}"\n\n` +
+        `Expected format: lumenflow://plans/<filename>.md`,
+    );
+  }
+
+  if (filename.startsWith('/') || filename.includes('/../') || filename.startsWith('../')) {
+    die(
+      `Invalid plan URI: "${planUri}"\n\n` +
+        `Plan URI must not contain absolute or traversal segments.`,
+    );
+  }
+
+  if (filename.includes('/./') || filename.startsWith('./')) {
+    die(
+      `Invalid plan URI: "${planUri}"\n\n` +
+        `Plan URI must not contain dot segments.`,
+    );
+  }
+
+  return `${PLAN_URI_SCHEME}${filename}`;
 }
 
 /**
@@ -269,7 +308,7 @@ export async function main(): Promise<void> {
   });
 
   const id = args.id as string;
-  const planUri = args.plan as string;
+  const planUri = normalizePlanUri(args.plan as string);
 
   // Resolve target type
   const targetType = resolveTargetType(id);

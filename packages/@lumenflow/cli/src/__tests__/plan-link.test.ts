@@ -301,6 +301,27 @@ describe('plan:link command', () => {
 
       expect(() => validatePlanExists(tempDir, 'lumenflow://plans/nonexistent.md')).toThrow();
     });
+
+    it('should reject absolute filesystem paths even when file exists', async () => {
+      const { validatePlanExists } = await import('../plan-link.js');
+
+      const absolutePlanPath = join(tempDir, 'absolute-plan.md');
+      writeFileSync(absolutePlanPath, '# Absolute Plan');
+
+      expect(() => validatePlanExists(tempDir, absolutePlanPath)).toThrow(/lumenflow:\/\/plans\//i);
+    });
+
+    it('should reject path traversal plan URIs', async () => {
+      const { validatePlanExists } = await import('../plan-link.js');
+
+      const parentPlanPath = join(tempDir, 'docs/04-operations', 'escape.md');
+      mkdirSync(join(tempDir, 'docs/04-operations'), { recursive: true });
+      writeFileSync(parentPlanPath, '# Escaped Plan');
+
+      expect(() => validatePlanExists(tempDir, 'lumenflow://plans/../escape.md')).toThrow(
+        /invalid plan uri/i,
+      );
+    });
   });
 
   describe('resolveTargetType', () => {

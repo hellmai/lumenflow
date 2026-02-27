@@ -6,7 +6,10 @@ import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { clearConfigCache } from '@lumenflow/core/config';
-import { removeFromReadyAndAddToInProgressBacklog } from '../wu-claim-state.js';
+import {
+  removeFromReadyAndAddToInProgressBacklog,
+  toRelativeClaimWorktreePathForStorage,
+} from '../wu-claim-state.js';
 
 function createTempDir(): string {
   return mkdtempSync(path.join(tmpdir(), 'lumenflow-wu-claim-state-'));
@@ -57,5 +60,25 @@ describe('removeFromReadyAndAddToInProgressBacklog', () => {
     expect(existsSync(backlogPath)).toBe(true);
     expect(existsSync(statusPath)).toBe(true);
     expect(existsSync(legacySiblingStatusPath)).toBe(false);
+  });
+});
+
+describe('toRelativeClaimWorktreePathForStorage', () => {
+  it('converts absolute worktree path to repo-relative path', () => {
+    const value = toRelativeClaimWorktreePathForStorage(
+      '/home/USER/source/hellmai/lumenflow-dev/worktrees/framework-cli-wu-commands-wu-2250',
+      '/home/USER/source/hellmai/lumenflow-dev',
+    );
+
+    expect(value).toBe('worktrees/framework-cli-wu-commands-wu-2250');
+  });
+
+  it('normalizes relative path separators and strips leading dot segments', () => {
+    const value = toRelativeClaimWorktreePathForStorage(
+      './worktrees\\framework-cli-wu-commands-wu-2250',
+      '/home/USER/source/hellmai/lumenflow-dev',
+    );
+
+    expect(value).toBe('worktrees/framework-cli-wu-commands-wu-2250');
   });
 });

@@ -148,6 +148,25 @@ export function resolveClaimBaselineRef(input: { skipRemote?: boolean } = {}): s
   return input.skipRemote === true ? BRANCHES.MAIN : GIT_REFS.ORIGIN_MAIN;
 }
 
+function normalizeWorktreePathForYaml(rawPath: string): string {
+  return rawPath.replaceAll('\\', '/').replace(/^\.\/+/, '');
+}
+
+/**
+ * Normalize claim-time worktree paths for version-controlled YAML storage.
+ * Converts absolute paths to repo-relative form and normalizes separators.
+ */
+export function toRelativeClaimWorktreePathForStorage(
+  worktreePath: string,
+  repoRoot: string = process.cwd(),
+): string {
+  const trimmed = worktreePath.trim();
+  if (!trimmed) return trimmed;
+  const candidate = path.isAbsolute(trimmed) ? path.relative(repoRoot, trimmed) : trimmed;
+  const normalized = normalizeWorktreePathForYaml(candidate);
+  return normalized.length > 0 ? normalized : '.';
+}
+
 /**
  * WU-1521: Build a rolled-back version of a WU YAML doc by stripping claim metadata.
  *
@@ -322,7 +341,7 @@ export async function updateWUYaml(
   }
   // WU-1226: Record worktree path to prevent resolution failures if lane field changes
   if (worktreePath) {
-    doc.worktree_path = worktreePath;
+    doc.worktree_path = toRelativeClaimWorktreePathForStorage(worktreePath, process.cwd());
   }
   const git: GitAdapter = gitAdapter || getGitForCwd();
   // WU-1423: Record owner using validated email (no silent username fallback)
@@ -659,7 +678,9 @@ export async function applyCanonicalClaimUpdate(
   const commitMsg = COMMIT_FORMATS.CLAIM(id.toLowerCase(), laneK);
   const laneForUpdate = args.lane ?? laneK;
   const worktreePathForYaml =
-    claimedMode === CLAIMED_MODES.BRANCH_ONLY ? null : path.resolve(worktree);
+    claimedMode === CLAIMED_MODES.BRANCH_ONLY
+      ? null
+      : toRelativeClaimWorktreePathForStorage(worktree, process.cwd());
   let updatedTitle = '';
   const filesToCommit: string[] =
     args.noAuto && stagedChanges.length > 0
