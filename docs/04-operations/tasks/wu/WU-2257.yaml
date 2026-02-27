@@ -1,0 +1,35 @@
+id: WU-2257
+title: Lane lifecycle commands write directly to main, bypass micro-worktree
+lane: 'Framework: CLI Enforcement'
+type: bug
+status: ready
+priority: P2
+created: 2026-02-27
+code_paths:
+  - packages/@lumenflow/cli/src/lane-lock.ts
+  - packages/@lumenflow/cli/src/lane-validate.ts
+  - packages/@lumenflow/cli/src/lane-setup.ts
+  - packages/@lumenflow/cli/src/lane-status.ts
+tests:
+  manual: []
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/lane-lock.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2257.done
+dependencies: []
+risks: []
+notes: Discovered during INIT-048 planning. lane:lock reformatted 1107 files on main. Reference lane-edit.ts for correct micro-worktree pattern.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: lane:lock, lane:validate, and lane:setup --lock write directly to workspace.yaml on the current checkout without micro-worktree isolation. lane:lock reformatted 1107 WU YAML files as a side effect. Additionally, --help is broken on lane:lock, lane:setup, lane:validate, and lane:status — they execute normal logic instead of showing help.
+acceptance:
+  - lane:lock uses micro-worktree isolation like lane:edit
+  - lane:validate and lane:setup --lock use micro-worktree isolation
+  - --help flag works on all lane lifecycle commands
