@@ -17,6 +17,9 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/wu-create-manual-test-policy.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-create-required-fields.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-create.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-create-manual-test-policy.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-create-required-fields.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-create.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2263.done
