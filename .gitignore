@@ -79,3 +79,7 @@ coverage/
 # force test
 .vercel
 /.lumenflow/artifacts/
+
+# Sidekick local data (personal assistant storage, never commit)
+/.sidekick/
+**/.sidekick/
