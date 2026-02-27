@@ -8,7 +8,6 @@ _Last updated: 2026-02-27_
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
 - [WU-2263 — wu:create validate diverges from wu:claim manual-test requirement](wu/WU-2263.yaml)
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml)
-- [WU-2236 — Add generic HTTP runtime dispatch endpoint POST /tools/:name](wu/WU-2236.yaml)
 
 ## Completed
 
@@ -1149,5 +1148,6 @@ _Last updated: 2026-02-27_
 - [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — 2026-02-27
 - [WU-2260 — INIT-047 review follow-ups: silent catch, loose type, redundant error](wu/WU-2260.yaml) — 2026-02-27
 - [WU-2259 — wu:claim push-only path leaves local-main metadata drift](wu/WU-2259.yaml) — 2026-02-27
-- [WU-2262 — wu:done leaves bulk staged WU metadata on main](wu/WU-2262.yaml) — 2026-02-27
 - [WU-2264 — Populate INIT-048 plan file with technical content](wu/WU-2264.yaml) — 2026-02-27
+- [WU-2262 — wu:done leaves bulk staged WU metadata on main](wu/WU-2262.yaml) — 2026-02-27
+- [WU-2236 — Add generic HTTP runtime dispatch endpoint POST /tools/:name](wu/WU-2236.yaml) — 2026-02-27

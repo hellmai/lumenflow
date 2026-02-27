@@ -1,7 +1,8 @@
 id: INIT-046
 slug: sidekick-pack-runtime
 title: Sidekick Pack and Runtime Surface
-description: 'OSS-only Sidekick initiative for lumenflow-dev: pack contract, storage abstraction, runtime surfaces, and publish readiness.'
+description: 'OSS-only Sidekick initiative for lumenflow-dev: pack contract, storage abstraction,
+  runtime surfaces, and publish readiness.'
 status: in_progress
 priority: P1
 owner: Framework Team
@@ -9,7 +10,7 @@ created: 2026-02-27
 phases:
   - id: 1
     title: 'Phase 1: Sidekick pack contract and implementation'
-    status: pending
+    status: in_progress
   - id: 2
     title: 'Phase 2: Consumer abstraction contract and runtime surface'
     status: pending
