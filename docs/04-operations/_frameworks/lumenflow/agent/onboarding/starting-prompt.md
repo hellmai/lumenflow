@@ -486,10 +486,10 @@ pnpm wu:delegate --id WU-XXXX --parent-wu WU-YYYY --client <client-type>
 | `pnpm gates --docs-only`                       | Run docs-only gates                      | For documentation WUs       |
 | `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)       | After gates pass            |
 | `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)           | After PR merge (cloud only) |
-| `pnpm wu:escalate --id WU-XXX`                  | Show or resolve escalation status        | Escalation-triggered WUs    |
-| `pnpm wu:escalate --resolve --id WU-XXX`        | Resolve human escalation                 | Before wu:done (escalation) |
-| `pnpm wu:delete --id WU-XXX`                    | Delete WU spec and cleanup               | Cancel stale/throwaway WUs  |
-| `pnpm wu:recover --id WU-XXX`                   | Fix inconsistent WU state                | When state is broken        |
+| `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status        | Escalation-triggered WUs    |
+| `pnpm wu:escalate --resolve --id WU-XXX`       | Resolve human escalation                 | Before wu:done (escalation) |
+| `pnpm wu:delete --id WU-XXX`                   | Delete WU spec and cleanup               | Cancel stale/throwaway WUs  |
+| `pnpm wu:recover --id WU-XXX`                  | Fix inconsistent WU state                | When state is broken        |
 
 ---
 

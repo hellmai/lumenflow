@@ -51,12 +51,12 @@ pnpm wu:done --id WU-XXX
 
 ### Gates & Orchestration
 
-| Command                                    | Description                                        |
-| ------------------------------------------ | -------------------------------------------------- |
-| `pnpm gates`                               | Run all quality gates                              |
-| `pnpm lumenflow:commands`                  | List all public commands (primary + alias + legacy) |
-| `pnpm mem:checkpoint --wu WU-XXX`          | Save progress checkpoint                           |
-| `pnpm mem:recover --wu WU-XXX`             | Generate recovery context                          |
+| Command                           | Description                                         |
+| --------------------------------- | --------------------------------------------------- |
+| `pnpm gates`                      | Run all quality gates                               |
+| `pnpm lumenflow:commands`         | List all public commands (primary + alias + legacy) |
+| `pnpm mem:checkpoint --wu WU-XXX` | Save progress checkpoint                            |
+| `pnpm mem:recover --wu WU-XXX`    | Generate recovery context                           |
 
 ---
 
