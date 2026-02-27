@@ -10,7 +10,9 @@ code_paths:
   - packages/@lumenflow/kernel/src/tool-host/scope-intersection.ts
   - packages/@lumenflow/kernel/src/sandbox/profile.ts
 tests:
-  manual: []
+  manual:
+    - Verify pnpm vitest scope-intersection.test.ts passes with allowlist intersection tests
+    - Verify pnpm vitest sandbox-profile.test.ts passes with allowlist profile tests
   unit:
     - packages/@lumenflow/kernel/src/__tests__/scope-intersection.test.ts
     - packages/@lumenflow/kernel/src/__tests__/sandbox-profile.test.ts
