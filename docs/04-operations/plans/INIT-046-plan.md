@@ -194,5 +194,7 @@ INIT-046 is complete when all of the following are true:
 ## References
 
 - docs/04-operations/tasks/initiatives/INIT-046.yaml
-- docs/04-operations/tasks/wu/WU-2231.yaml through docs/04-operations/tasks/wu/WU-2237.yaml
+- docs/04-operations/tasks/wu/WU-2231.yaml through WU-2234.yaml
+- docs/04-operations/tasks/wu/WU-2236.yaml
+- docs/04-operations/tasks/wu/WU-2237.yaml
 - docs/04-operations/\_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
