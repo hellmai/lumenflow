@@ -11,13 +11,13 @@ tools -- all scoped to a local `.sidekick/` directory.
 
 ## Tool Groups
 
-| Group     | Tools                                         | Description                       |
-| --------- | --------------------------------------------- | --------------------------------- |
-| Task      | `task:create`, `task:list`, `task:complete`, `task:schedule` | Create, query, complete, and schedule tasks |
-| Memory    | `memory:store`, `memory:recall`, `memory:forget`             | Persist and retrieve workspace knowledge    |
-| Channel   | `channel:configure`, `channel:send`, `channel:receive`       | Named message channels                      |
-| Routine   | `routine:create`, `routine:list`, `routine:run`              | Multi-step tool sequences (plan-only)       |
-| System    | `sidekick:init`, `sidekick:status`, `sidekick:export`        | Bootstrap, health check, data export        |
+| Group   | Tools                                                        | Description                                 |
+| ------- | ------------------------------------------------------------ | ------------------------------------------- |
+| Task    | `task:create`, `task:list`, `task:complete`, `task:schedule` | Create, query, complete, and schedule tasks |
+| Memory  | `memory:store`, `memory:recall`, `memory:forget`             | Persist and retrieve workspace knowledge    |
+| Channel | `channel:configure`, `channel:send`, `channel:receive`       | Named message channels                      |
+| Routine | `routine:create`, `routine:list`, `routine:run`              | Multi-step tool sequences (plan-only)       |
+| System  | `sidekick:init`, `sidekick:status`, `sidekick:export`        | Bootstrap, health check, data export        |
 
 **Total**: 16 tools
 
