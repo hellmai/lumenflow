@@ -8,6 +8,7 @@ _Last updated: 2026-02-27_
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml)
 - [WU-2257 — Lane lifecycle commands write directly to main, bypass micro-worktree](wu/WU-2257.yaml)
 - [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml)
+- [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml)
 
 ## Completed
 

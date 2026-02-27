@@ -2,7 +2,7 @@ id: WU-2249
 title: wu:recover --action reset deletes worktree without checking for uncommitted work
 lane: 'Framework: Core State Recovery'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -37,3 +37,11 @@ acceptance:
   - wu:recover --action reset checks worktree for uncommitted changes before deletion
   - If uncommitted changes exist, abort with list of dirty files and instruction to commit or use
     --discard-changes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-state-recovery-wu-2249
+claimed_at: 2026-02-27T15:51:36.245Z
+baseline_main_sha: 5517b43e9b4af6352230325028049bd43ab5e04c
+session_id: 8a509da7-ea1f-4899-93dd-1d4ba2f351a7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:51:36.250Z
