@@ -16,7 +16,7 @@ phases:
     title: 'Phase 1: Network Policy and macOS Sandbox'
     status: pending
   - id: 2
-    title: 'Phase 2: Argument-Level Policy'
+    title: 'Phase 2: Advanced Policy Controls'
     status: pending
   - id: 3
     title: 'Phase 3: Compliance and Attestation'
@@ -25,7 +25,6 @@ success_metrics:
   - Granular network allowlisting (domain/port per scope level)
   - macOS sandbox backend (Seatbelt/sandbox-exec) functional
   - Argument-level policy rules for MCP tool calls
-  - Time-boxed permissions with auto-expiry
   - Dynamic policy hot-reload without kernel restart
   - NIST AI RMF alignment documented
 labels: []
