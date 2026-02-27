@@ -35,6 +35,8 @@ export interface PolicyHookInput {
   input: unknown;
   context: ExecutionContext;
   scopeEnforced: ToolScope[];
+  /** Parsed tool input as a Record, or undefined if input is not a plain object. */
+  tool_arguments?: Record<string, unknown>;
 }
 
 export type PolicyHook = (input: PolicyHookInput) => Promise<PolicyDecision[]>;
@@ -397,11 +399,17 @@ export class ToolHost {
       return { denied: true, output };
     }
 
+    const tool_arguments =
+      input !== null && typeof input === 'object' && !Array.isArray(input)
+        ? (input as Record<string, unknown>)
+        : undefined;
+
     const policyDecisions = await this.policyHook({
       capability,
       input,
       context,
       scopeEnforced,
+      tool_arguments,
     });
 
     if (policyDecisions.some((decision) => decision.decision === 'deny')) {

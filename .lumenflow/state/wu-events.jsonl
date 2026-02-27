@@ -2510,3 +2510,4 @@
 {"type":"complete","wuId":"WU-2237","timestamp":"2026-02-27T18:03:34.541Z"}
 {"type":"complete","wuId":"WU-2254","timestamp":"2026-02-27T18:07:07.464Z"}
 {"type":"claim","wuId":"WU-2255","timestamp":"2026-02-27T18:09:41.557Z","lane":"Framework: Core Lifecycle","title":"Argument-level policy evaluation context"}
+{"type":"checkpoint","wuId":"WU-2255","timestamp":"2026-02-27T18:10:03.097Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}

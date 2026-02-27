@@ -12,6 +12,7 @@ import {
   ToolHost,
   ToolRegistry,
   allowAllPolicyHook,
+  type PolicyHookInput,
   type ToolHostOptions,
 } from '../tool-host/index.js';
 
@@ -1298,6 +1299,92 @@ describe('tool host', () => {
       );
 
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe('tool_arguments in policy hook (WU-2255)', () => {
+    it('passes parsed tool input as tool_arguments to the policy hook', async () => {
+      const registry = new ToolRegistry();
+      registry.register(makeInProcessCapability());
+
+      const evidenceStore = new EvidenceStore({ evidenceRoot });
+      let capturedInput: PolicyHookInput | undefined;
+
+      const capturingPolicyHook = async (hookInput: PolicyHookInput) => {
+        capturedInput = hookInput;
+        return [
+          {
+            policy_id: 'test.allow',
+            decision: 'allow' as const,
+            reason: 'test',
+          },
+        ];
+      };
+
+      const host = new ToolHost({
+        registry,
+        evidenceStore,
+        policyHook: capturingPolicyHook,
+      });
+
+      const toolInput = {
+        path: 'packages/@lumenflow/kernel/src/tool-host/index.ts',
+        content: 'ok',
+      };
+
+      await host.execute('fs:write', toolInput, makeExecutionContext());
+
+      expect(capturedInput).toBeDefined();
+      expect(capturedInput!.tool_arguments).toEqual(toolInput);
+    });
+
+    it('sets tool_arguments to undefined when input is not a plain object', async () => {
+      const registry = new ToolRegistry();
+      const capability: ToolCapability = {
+        name: 'echo:string',
+        domain: 'test',
+        version: '1.0.0',
+        input_schema: z.string(),
+        permission: 'read',
+        required_scopes: [
+          {
+            type: 'path',
+            pattern: 'packages/@lumenflow/kernel/src/tool-host/**',
+            access: 'write',
+          },
+        ],
+        handler: {
+          kind: 'in-process',
+          fn: async (input) => ({ success: true, data: input }),
+        },
+        description: 'Echo string input',
+      };
+      registry.register(capability);
+
+      const evidenceStore = new EvidenceStore({ evidenceRoot });
+      let capturedInput: PolicyHookInput | undefined;
+
+      const capturingPolicyHook = async (hookInput: PolicyHookInput) => {
+        capturedInput = hookInput;
+        return [
+          {
+            policy_id: 'test.allow',
+            decision: 'allow' as const,
+            reason: 'test',
+          },
+        ];
+      };
+
+      const host = new ToolHost({
+        registry,
+        evidenceStore,
+        policyHook: capturingPolicyHook,
+      });
+
+      await host.execute('echo:string', 'hello', makeExecutionContext());
+
+      expect(capturedInput).toBeDefined();
+      expect(capturedInput!.tool_arguments).toBeUndefined();
     });
   });
 });

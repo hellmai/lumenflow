@@ -877,6 +877,7 @@ function createRuntimePolicyHook(policyEngine: PolicyEngine): PolicyHook {
       task_id: input.context.task_id,
       tool_name: input.capability.name,
       pack_id: input.capability.pack,
+      tool_arguments: input.tool_arguments,
     };
 
     const evaluation = await policyEngine.evaluate(context);

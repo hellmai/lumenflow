@@ -21,6 +21,8 @@ export interface PolicyEvaluationContext {
   task_id?: string;
   lane_id?: string;
   pack_id?: string;
+  /** Parsed tool input arguments, available for argument-level policy matching. */
+  tool_arguments?: Record<string, unknown>;
 }
 
 export interface PolicyRule {

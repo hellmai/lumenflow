@@ -444,6 +444,76 @@ describe('policy engine', () => {
     expect(result.decision).toBe('deny');
   });
 
+  it('accepts tool_arguments in PolicyEvaluationContext', async () => {
+    const engine = new PolicyEngine({
+      layers: [
+        {
+          level: 'workspace',
+          default_decision: 'allow',
+          rules: [
+            {
+              id: 'workspace.deny.etc-write',
+              trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+              decision: 'deny',
+              when: (context) => {
+                const args = context.tool_arguments as Record<string, unknown> | undefined;
+                return typeof args?.path === 'string' && args.path.startsWith('/etc/');
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    // With tool_arguments that match the when() predicate
+    const denied = await engine.evaluate({
+      trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+      run_id: 'run-2255-args-deny',
+      tool_name: 'fs:write',
+      tool_arguments: { path: '/etc/passwd', content: 'bad' },
+    });
+    expect(denied.decision).toBe('deny');
+
+    // With tool_arguments that do NOT match the when() predicate
+    const allowed = await engine.evaluate({
+      trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+      run_id: 'run-2255-args-allow',
+      tool_name: 'fs:write',
+      tool_arguments: { path: '/home/user/file.txt', content: 'ok' },
+    });
+    expect(allowed.decision).toBe('allow');
+  });
+
+  it('evaluates unchanged when tool_arguments not provided', async () => {
+    const engine = new PolicyEngine({
+      layers: [
+        {
+          level: 'workspace',
+          default_decision: 'allow',
+          rules: [
+            {
+              id: 'workspace.deny.etc-write',
+              trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+              decision: 'deny',
+              when: (context) => {
+                const args = context.tool_arguments as Record<string, unknown> | undefined;
+                return typeof args?.path === 'string' && args.path.startsWith('/etc/');
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    // Without tool_arguments, the when() predicate should not match
+    const result = await engine.evaluate({
+      trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
+      run_id: 'run-2255-no-args',
+      tool_name: 'fs:write',
+    });
+    expect(result.decision).toBe('allow');
+  });
+
   it('PolicyDecisionSchema accepts approval_required decision', () => {
     const parsed = PolicyDecisionSchema.parse({
       policy_id: 'test.approval',
