@@ -2,7 +2,7 @@ id: WU-2255
 title: Argument-level policy evaluation context
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -50,3 +50,6 @@ session_id: 4ac8e788-3c6b-4e45-a06e-c321baaff6e4
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T18:09:41.536Z
+locked: true
+completed_at: 2026-02-27T18:18:43.421Z
+completed: 2026-02-27

@@ -15,7 +15,7 @@ phases:
     status: done
   - id: 2
     title: 'Phase 2: Advanced Policy Controls'
-    status: pending
+    status: done
   - id: 3
     title: 'Phase 3: Compliance and Attestation'
     status: pending
