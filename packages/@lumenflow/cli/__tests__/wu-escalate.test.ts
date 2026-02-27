@@ -44,7 +44,7 @@ vi.mock('@lumenflow/core/wu-helpers', async () => {
 // Mock git adapter for getUserEmail
 vi.mock('@lumenflow/core/git-adapter', () => ({
   getGitForCwd: () => ({
-    getUserEmail: vi.fn().mockResolvedValue('agent@example.com'),
+    getConfigValue: vi.fn().mockResolvedValue('agent@example.com'),
     getCurrentBranch: vi.fn().mockResolvedValue('main'),
     getStatus: vi.fn().mockResolvedValue(''),
   }),
