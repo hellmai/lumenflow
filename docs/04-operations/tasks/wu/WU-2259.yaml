@@ -6,13 +6,16 @@ status: in_progress
 priority: P1
 created: 2026-02-27
 code_paths:
-  - packages/@lumenflow/cli/src/wu-claim.ts,packages/@lumenflow/cli/src/wu-claim-state.ts,packages/@lumenflow/core/src/micro-worktree.ts
+  - packages/@lumenflow/cli/src/wu-claim.ts
+  - packages/@lumenflow/cli/src/wu-claim-state.ts
+  - packages/@lumenflow/core/src/micro-worktree.ts
 tests:
   manual:
     - Run wu:claim for WU-2259 on clean main and verify no tracked files are modified on main after
       claim completes.
   unit:
-    - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts,packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
+    - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2259.done
