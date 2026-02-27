@@ -121,9 +121,7 @@ describe('sandbox-backend-macos', () => {
 
       const policy = extractPolicy(plan);
       expect(policy).toContain('(deny network*)');
-      expect(policy).toContain(
-        '(allow network-outbound (remote ip "registry.npmjs.org:443"))',
-      );
+      expect(policy).toContain('(allow network-outbound (remote ip "registry.npmjs.org:443"))');
       expect(policy).toContain('(allow network-outbound (remote ip "127.0.0.1:3000"))');
     });
 
