@@ -8,7 +8,10 @@ created: 2026-02-27
 code_paths:
   - packages/@lumenflow/cli/src/state-emit.ts
 tests:
-  manual: []
+  manual:
+    - Run pnpm state:emit --type claim --wu WU-999 and verify event appended to wu-events.jsonl
+    - Run pnpm state:emit --type release --wu WU-999 and verify event appended
+    - Run pnpm state:doctor --fix and verify it uses state:emit internally
   unit:
     - packages/@lumenflow/cli/__tests__/state-emit.test.ts
   e2e: []
