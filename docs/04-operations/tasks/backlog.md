@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2233 — Implement Sidekick task and memory tool groups](wu/WU-2233.yaml) — Framework: Core Lifecycle
 - [WU-2232 — Sidekick StoragePort and filesystem storage adapter](wu/WU-2232.yaml) — Framework: Core Lifecycle
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
