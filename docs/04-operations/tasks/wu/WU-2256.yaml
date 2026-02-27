@@ -1,7 +1,7 @@
 id: WU-2256
 title: Add battle-tested workflow gotchas to starting-prompt onboarding doc
 lane: 'Content: Framework Docs'
-type: documentation
+type: feature
 status: in_progress
 priority: P2
 created: 2026-02-27
@@ -20,10 +20,17 @@ dependencies: []
 risks: []
 notes: 'tdd-exception: docs-only WU, no code changes'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-27T15:20:34.997Z
+worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/content-framework-docs-wu-2256
+session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-27T15:20:35.004Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -38,11 +45,3 @@ acceptance:
     anti-pattern'
   - Same changes applied to deployed starting-prompt.md
   - pnpm gates --docs-only passes
-claimed_mode: worktree
-worktree_path: /home/tom/source/hellmai/lumenflow-dev/worktrees/content-framework-docs-wu-2256
-claimed_at: 2026-02-27T15:20:34.997Z
-baseline_main_sha: 0310ea6cbf1c195d4a1e79a2e346110bcff87288
-session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-27T15:20:35.004Z
