@@ -528,7 +528,8 @@ describe('state-doctor-core', () => {
       expect(result.issues[0].wuId).toBe('WU-100');
       expect(result.issues[0].description).toContain('in_progress');
       expect(result.issues[0].description).toContain('ready');
-      expect(result.issues[0].canAutoFix).toBe(false);
+      // WU-2240: This transition is now auto-fixable via corrective claim event
+      expect(result.issues[0].canAutoFix).toBe(true);
     });
 
     it('should detect when YAML status is in_progress but state store says done', async () => {
@@ -740,8 +741,8 @@ describe('state-doctor-core', () => {
       expect(result.fixErrors[0].error).toContain('Write failed');
     });
 
-    it('should not attempt auto-fix for unsupported status transitions', async () => {
-      const emitEvent = vi.fn();
+    it('should auto-fix YAML=in_progress, state=ready via claim event (WU-2240)', async () => {
+      const emitEvent = vi.fn().mockResolvedValue(undefined);
       const deps = createMockDeps({
         listWUs: vi
           .fn()
@@ -751,6 +752,38 @@ describe('state-doctor-core', () => {
         listEvents: vi.fn().mockResolvedValue([
           { wuId: 'WU-100', type: 'claim', lane: 'Framework: Core', title: 'Test WU' },
           { wuId: 'WU-100', type: 'release', reason: 'manual recovery' },
+        ]),
+        emitEvent,
+      });
+
+      const result = await diagnoseState(TEST_PROJECT_DIR, deps, { fix: true });
+
+      expect(result.issues).toHaveLength(1);
+      expect(result.issues[0].type).toBe(ISSUE_TYPES.STATUS_MISMATCH);
+      // WU-2240: This transition is now auto-fixable via corrective claim event
+      expect(result.issues[0].canAutoFix).toBe(true);
+      expect(emitEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          wuId: 'WU-100',
+          type: 'claim',
+          lane: 'Framework: Core',
+          title: 'Test WU',
+        }),
+      );
+      expect(result.fixed).toHaveLength(1);
+    });
+
+    it('should not attempt auto-fix for truly unsupported transitions (done -> in_progress)', async () => {
+      const emitEvent = vi.fn();
+      const deps = createMockDeps({
+        listWUs: vi
+          .fn()
+          .mockResolvedValue([
+            { id: 'WU-100', status: 'in_progress', lane: 'Framework: Core', title: 'Test WU' },
+          ]),
+        listEvents: vi.fn().mockResolvedValue([
+          { wuId: 'WU-100', type: 'claim', lane: 'Framework: Core', title: 'Test WU' },
+          { wuId: 'WU-100', type: 'complete' },
         ]),
         emitEvent,
       });

@@ -115,13 +115,20 @@ export interface MockEvent {
 }
 
 /**
- * Event to emit for fixing status mismatches (WU-1420)
+ * Event to emit for fixing status mismatches (WU-1420, WU-2240)
+ *
+ * WU-2240: Added 'claim' type so state:doctor --fix can reconcile
+ * YAML=in_progress / state=ready mismatches by emitting a corrective claim event.
  */
 export interface EmitEventPayload {
   wuId: string;
-  type: 'release' | 'complete';
+  type: 'release' | 'complete' | 'claim';
   reason?: string;
   timestamp?: string;
+  /** Lane context required for claim events (WU-2240) */
+  lane?: string;
+  /** Title context required for claim events (WU-2240) */
+  title?: string;
 }
 
 /**
@@ -494,7 +501,7 @@ function calculateSummary(issues: DiagnosisIssue[]): DiagnosisSummary {
 function getCorrectiveEventType(
   yamlStatus: string,
   derivedStatus: string,
-): 'release' | 'complete' | null {
+): 'release' | 'complete' | 'claim' | null {
   // Transition from in_progress to ready: emit release
   if (yamlStatus === WU_STATUS.READY && derivedStatus === WU_STATUS.IN_PROGRESS) {
     return 'release';
@@ -505,8 +512,13 @@ function getCorrectiveEventType(
     return 'complete';
   }
 
+  // WU-2240: Transition from ready to in_progress: emit claim
+  // Lane/title context is available from the WU YAML data passed to fixIssue().
+  if (yamlStatus === WU_STATUS.IN_PROGRESS && derivedStatus === WU_STATUS.READY) {
+    return 'claim';
+  }
+
   // Other transitions are not auto-fixable by emitting events
-  // - ready -> in_progress would need claim (requires lane/title context)
   // - done -> in_progress would need to revert complete (not supported)
   return null;
 }
@@ -561,12 +573,23 @@ async function fixIssue(
           };
         }
 
-        await deps.emitEvent({
+        // WU-2240: For claim events, include lane/title context from WU data
+        const eventPayload: EmitEventPayload = {
           wuId: issue.wuId,
           type: eventType,
           reason: `state:doctor --fix: reconciling state store with YAML status '${yamlStatus}'`,
           timestamp: new Date().toISOString(),
-        });
+        };
+
+        if (eventType === 'claim') {
+          const wu = wus.find((w) => w.id === issue.wuId);
+          if (wu) {
+            eventPayload.lane = wu.lane;
+            eventPayload.title = wu.title;
+          }
+        }
+
+        await deps.emitEvent(eventPayload);
         return { fixed: true };
       }
 

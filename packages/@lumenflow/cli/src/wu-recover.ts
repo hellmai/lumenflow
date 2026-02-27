@@ -281,6 +281,7 @@ async function executeResume(wuId: string): Promise<boolean> {
   }
 
   // WU-1226: Use micro-worktree isolation for state changes
+  // WU-2240: Also emit claim event to state store so wu:done succeeds
   try {
     await withMicroWorktree({
       operation: OPERATION_NAME,
@@ -296,9 +297,20 @@ async function executeResume(wuId: string): Promise<boolean> {
         microDoc.status = WU_STATUS.IN_PROGRESS;
         writeWU(microWuPath, microDoc);
 
+        // WU-2240: Emit corrective claim event to state store
+        // Without this, state store still thinks WU is ready, and wu:done
+        // fails with "status ready, expected in_progress"
+        const stateDir = resolveStateDir(worktreePath);
+        const store = new WUStateStore(stateDir);
+        await store.load();
+        const lane = (microDoc.lane as string) || '';
+        const title = (microDoc.title as string) || `WU ${wuId}`;
+        await store.claim(wuId, lane, title);
+        console.log(`${LOG_PREFIX} Emitted claim event to state store`);
+
         return {
           commitMessage: `fix(wu-recover): resume ${wuId} - set status to in_progress`,
-          files: [relative(process.cwd(), wuPath)],
+          files: [relative(process.cwd(), wuPath), resolveWuEventsRelativePath(worktreePath)],
         };
       },
     });
