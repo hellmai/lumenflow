@@ -20,11 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2255 — Argument-level policy evaluation context](wu/WU-2255.yaml) — Framework: Core Lifecycle
-- [WU-2254 — macOS sandbox read confinement and deny overlays](wu/WU-2254.yaml) — Framework: Core Lifecycle
-- [WU-2253 — macOS sandbox posture-aware network rules](wu/WU-2253.yaml) — Framework: Core Lifecycle
-- [WU-2252 — Network allowlist enforcement in bwrap](wu/WU-2252.yaml) — Framework: Core Lifecycle
-- [WU-2251 — Network allowlist schema and scope intersection](wu/WU-2251.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
@@ -66,12 +61,16 @@ sections:
 - [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
 - [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
 - [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — Framework: Core State Recovery
+- [WU-2251 — Network allowlist schema and scope intersection](wu/WU-2251.yaml) — Framework: Core Lifecycle
+- [WU-2252 — Network allowlist enforcement in bwrap](wu/WU-2252.yaml) — Framework: Core Lifecycle
+- [WU-2253 — macOS sandbox posture-aware network rules](wu/WU-2253.yaml) — Framework: Core Lifecycle
+- [WU-2254 — macOS sandbox read confinement and deny overlays](wu/WU-2254.yaml) — Framework: Core Lifecycle
+- [WU-2255 — Argument-level policy evaluation context](wu/WU-2255.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
-- [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml) — Framework: CLI WU Commands
 - [WU-2240 — wu:recover --action resume does not emit claim event to state store](wu/WU-2240.yaml) — Framework: Core State Recovery
 - [WU-2250 — Prevent absolute path writes in claim metadata and plan linking](wu/WU-2250.yaml) — Framework: CLI WU Commands
 - [WU-2244 — initiative:create blocked from non-main branch](wu/WU-2244.yaml) — Framework: Initiatives
@@ -1206,6 +1205,7 @@ sections:
 - [WU-2238 — wu:recover --action reset should require --force for destructive ops](wu/WU-2238.yaml)
 - [WU-2242 — initiative:create requires explicit --id despite documenting auto-gen](wu/WU-2242.yaml)
 - [WU-2247 — worktree_path stores absolute home paths in version-controlled YAML](wu/WU-2247.yaml)
+- [WU-2239 — wu:edit --spec-file silently overwrites runtime fields](wu/WU-2239.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
