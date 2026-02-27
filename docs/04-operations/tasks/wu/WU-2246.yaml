@@ -2,7 +2,7 @@ id: WU-2246
 title: initiative:create ignores --description flag
 lane: 'Framework: Initiatives'
 type: bug
-status: in_progress
+status: done
 priority: P3
 created: 2026-02-27
 code_paths:
@@ -39,3 +39,6 @@ session_id: 8a509da7-ea1f-4899-93dd-1d4ba2f351a7
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T15:38:45.788Z
+locked: true
+completed_at: 2026-02-27T15:46:01.702Z
+completed: 2026-02-27

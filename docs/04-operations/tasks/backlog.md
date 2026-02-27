@@ -69,7 +69,6 @@ sections:
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
-- [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml) — Framework: Initiatives
 
 ## ⛔ Blocked
 
@@ -1208,6 +1207,7 @@ sections:
 - [WU-2250 — Prevent absolute path writes in claim metadata and plan linking](wu/WU-2250.yaml)
 - [WU-2245 — wu:create emits placeholder notes requiring manual cleanup](wu/WU-2245.yaml)
 - [WU-2241 — Add state:emit command for manual corrective events](wu/WU-2241.yaml)
+- [WU-2246 — initiative:create ignores --description flag](wu/WU-2246.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
