@@ -9,7 +9,10 @@ code_paths:
   - packages/@lumenflow/kernel/src/sandbox/bwrap-invocation.ts
   - packages/@lumenflow/kernel/src/sandbox/subprocess-dispatcher.ts
 tests:
-  manual: []
+  manual:
+    - Verify bwrap invocation includes iptables OUTPUT ACCEPT rules for each allowlisted host when
+      network_posture is allowlist
+    - Verify blocked hosts receive ECONNREFUSED when network_posture is allowlist
   unit:
     - packages/@lumenflow/kernel/src/__tests__/bwrap-invocation.test.ts
   e2e: []
