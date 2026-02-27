@@ -2448,3 +2448,4 @@
 {"type":"claim","wuId":"WU-2246","timestamp":"2026-02-27T15:38:45.805Z","lane":"Framework: Initiatives","title":"initiative:create ignores --description flag"}
 {"type":"complete","wuId":"WU-2245","timestamp":"2026-02-27T15:40:26.560Z"}
 {"type":"checkpoint","wuId":"WU-2241","timestamp":"2026-02-27T15:41:31.268Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"complete","wuId":"WU-2241","timestamp":"2026-02-27T15:42:11.578Z"}
