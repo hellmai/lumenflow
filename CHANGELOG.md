@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Sidekick Pack** (INIT-046): New personal productivity domain pack for the LumenFlow kernel.
+  Provides 16 tools across five groups -- Task (create, list, complete, schedule), Memory (store,
+  recall, forget), Channel (configure, send, receive), Routine (create, list, run), and System
+  (init, status, export). All state is workspace-local under `.sidekick/`. Routine execution
+  returns a plan only (no side-effects). Export is read-only (returns data, no file writes).
+  Every write tool supports `dry_run` mode. Includes `StoragePort` abstraction with filesystem
+  adapter, pack manifest with schema validation, and `pack:validate` integration.
+- **HTTP tool dispatch surface** (WU-2236): `POST /tools/:name` endpoint for dispatching pack
+  tools over HTTP. Supports execution-context validation, tool allowlisting, and structured
+  error mapping. Works with any registered pack including the new Sidekick pack.
+
 ### Fixed
 
 - **Gitignore scaffold drift** (WU-2180): `lumenflow init` was missing four ephemeral paths from `REQUIRED_GITIGNORE_EXCLUSIONS`: `.lumenflow/checkpoints/`, `.lumenflow/locks/`, `.lumenflow/artifacts/`, and `.lumenflow/state/spawn-registry.jsonl`. Consumer repos that ran `lumenflow init` before this fix may have these files tracked in git, causing `wu:done` clean-tree checks to fail. See [Migration](#gitignore-scaffold-drift-remediation) below.
