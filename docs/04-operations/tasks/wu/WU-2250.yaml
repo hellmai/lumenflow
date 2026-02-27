@@ -2,7 +2,7 @@ id: WU-2250
 title: Prevent absolute path writes in claim metadata and plan linking
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -46,3 +46,6 @@ session_id: aef43c23-4edb-45fc-bcbb-eeb07da47700
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T15:11:35.751Z
+locked: true
+completed_at: 2026-02-27T15:30:04.351Z
+completed: 2026-02-27

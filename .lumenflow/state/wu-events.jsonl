@@ -2441,3 +2441,4 @@
 {"type":"checkpoint","wuId":"WU-2256","timestamp":"2026-02-27T15:20:57.120Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2256","timestamp":"2026-02-27T15:26:30.154Z"}
 {"type":"complete","wuId":"WU-2240","timestamp":"2026-02-27T15:27:56.112Z"}
+{"type":"complete","wuId":"WU-2250","timestamp":"2026-02-27T15:30:08.801Z"}
