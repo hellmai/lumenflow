@@ -6,6 +6,7 @@ _Last updated: 2026-02-27_
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml)
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
+- [WU-2265 — Publish Sidekick pack to registry](wu/WU-2265.yaml)
 
 ## Completed
 
