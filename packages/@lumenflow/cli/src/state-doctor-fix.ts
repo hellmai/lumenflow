@@ -26,7 +26,7 @@ import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import type { StateDoctorDeps, EmitEventPayload } from '@lumenflow/core/state-doctor-core';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
-import { emitCorrectiveEvent } from './state-emit.js';
+import { emitCorrectiveEvent, type ValidEmitType } from './state-emit.js';
 
 /**
  * Operation name for micro-worktree isolation
@@ -237,7 +237,7 @@ export function createStateDoctorFixDeps(
           const auditLogPath = path.join(worktreePath, LUMENFLOW_PATHS.AUDIT_LOG);
 
           await emitCorrectiveEvent({
-            type: event.type,
+            type: event.type as ValidEmitType,
             wuId: event.wuId,
             reason: event.reason ?? `state:doctor --fix: reconciling state for ${event.wuId}`,
             eventsFilePath: eventsPath,

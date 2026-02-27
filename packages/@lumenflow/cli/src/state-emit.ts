@@ -57,7 +57,7 @@ const TOOL_NAME = 'state:emit';
  * Accepts explicit file paths for testability.
  */
 export interface EmitCorrectiveEventOptions {
-  type: ValidEmitType | string;
+  type: ValidEmitType;
   wuId: string;
   reason: string;
   eventsFilePath: string;
@@ -222,7 +222,7 @@ export async function main(): Promise<void> {
 
   try {
     await emitCorrectiveEvent({
-      type: args.type,
+      type: args.type as ValidEmitType,
       wuId: args.wu,
       reason: args.reason,
       eventsFilePath,

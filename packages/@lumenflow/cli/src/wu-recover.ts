@@ -192,8 +192,9 @@ export async function checkWorktreeForDirtyFiles(worktreePath: string): Promise<
       return [];
     }
     return status.split('\n').filter((line: string) => line.trim() !== '');
-  } catch {
-    // If git status fails (e.g., not a valid git dir), treat as clean
+  } catch (err) {
+    // If git status fails (e.g., not a valid git dir), treat as clean but warn
+    console.warn(`${LOG_PREFIX} Warning: could not check worktree for dirty files: ${err}`);
     return [];
   }
 }
@@ -745,10 +746,7 @@ export async function main(): Promise<void> {
   // WU-2238: Check force flag for destructive actions with detailed warning
   if (requiresForceFlag(action) && !force) {
     const warning = getDestructiveActionWarning(action, id);
-    if (warning) {
-      console.error(warning);
-    }
-    die(`Action '${action}' requires --force flag`);
+    die(warning || `Action '${action}' requires --force flag`);
   }
 
   // Execute action
