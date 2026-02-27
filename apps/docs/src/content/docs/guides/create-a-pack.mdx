@@ -181,15 +181,15 @@ execution proceeds.
 - type: network
   posture: allowlist
   allowlist_entries:
-    - 'registry.npmjs.org:443'  # host:port format
-    - '10.0.0.0/24'             # CIDR format
+    - 'registry.npmjs.org:443' # host:port format
+    - '10.0.0.0/24' # CIDR format
 ```
 
 <Aside type="tip">
-  Use the narrowest scope that works. A read-only tool should never declare `access: write`.
-  For network access, prefer `posture: allowlist` over `posture: full` whenever possible --
-  list only the hosts the tool actually needs. The kernel enforces the intersection, so overly
-  broad scopes are capped by the workspace and lane configuration.
+  Use the narrowest scope that works. A read-only tool should never declare `access: write`. For
+  network access, prefer `posture: allowlist` over `posture: full` whenever possible -- list only
+  the hosts the tool actually needs. The kernel enforces the intersection, so overly broad scopes
+  are capped by the workspace and lane configuration.
 </Aside>
 
 #### Network allowlist in tool manifests

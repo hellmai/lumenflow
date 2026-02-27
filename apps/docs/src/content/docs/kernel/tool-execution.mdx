@@ -338,13 +338,13 @@ The kernel dispatches tool execution through platform-specific sandbox backends.
 
 On Linux, the kernel uses `bwrap` (bubblewrap) to create a user-namespace sandbox. The `SandboxProfile` is translated into bwrap flags:
 
-| Profile field           | bwrap behavior                                                           |
-| ----------------------- | ------------------------------------------------------------------------ |
-| `readonly_bind_mounts`  | `--ro-bind source target` per mount                                      |
-| `writable_bind_mounts`  | `--bind source target` per mount                                         |
-| `deny_overlays`         | `--bind /dev/null path` (files) or `--tmpfs path` (directories)          |
-| `network_posture: off`  | `--unshare-net`                                                          |
-| `network_posture: full` | No network flag (default allows network)                                 |
+| Profile field           | bwrap behavior                                                  |
+| ----------------------- | --------------------------------------------------------------- |
+| `readonly_bind_mounts`  | `--ro-bind source target` per mount                             |
+| `writable_bind_mounts`  | `--bind source target` per mount                                |
+| `deny_overlays`         | `--bind /dev/null path` (files) or `--tmpfs path` (directories) |
+| `network_posture: off`  | `--unshare-net`                                                 |
+| `network_posture: full` | No network flag (default allows network)                        |
 
 #### Network allowlist on Linux
 
@@ -408,18 +408,18 @@ These deny rules use `(deny file-read* (subpath "..."))` and are placed _after_ 
 
 Both backends enforce the same security properties from the same `SandboxProfile`:
 
-| Property             | Linux (bwrap)                    | macOS (sandbox-exec)            |
-| -------------------- | -------------------------------- | ------------------------------- |
-| Filesystem isolation | Bind mounts (paths not mounted are invisible) | SBPL subpath rules              |
-| Network blocking     | `--unshare-net`                  | `(deny network*)`              |
-| Network allowlist    | iptables OUTPUT rules            | SBPL `network-outbound` rules  |
-| Deny overlays        | `/dev/null` bind / `--tmpfs`     | `(deny file-read*)` rules      |
-| Sensitive paths      | `~/.ssh`, `~/.aws`, `~/.gnupg`, `.env` | `~/.ssh`, `~/.aws`, `~/.gnupg` |
+| Property             | Linux (bwrap)                                 | macOS (sandbox-exec)           |
+| -------------------- | --------------------------------------------- | ------------------------------ |
+| Filesystem isolation | Bind mounts (paths not mounted are invisible) | SBPL subpath rules             |
+| Network blocking     | `--unshare-net`                               | `(deny network*)`              |
+| Network allowlist    | iptables OUTPUT rules                         | SBPL `network-outbound` rules  |
+| Deny overlays        | `/dev/null` bind / `--tmpfs`                  | `(deny file-read*)` rules      |
+| Sensitive paths      | `~/.ssh`, `~/.aws`, `~/.gnupg`, `.env`        | `~/.ssh`, `~/.aws`, `~/.gnupg` |
 
 <Aside type="note">
-  On Linux, the default deny overlays also include `.env` files (bind-mounted to `/dev/null`).
-  The macOS backend focuses on home-directory credential directories. Both platforms protect
-  against credential exfiltration by sandboxed tools.
+  On Linux, the default deny overlays also include `.env` files (bind-mounted to `/dev/null`). The
+  macOS backend focuses on home-directory credential directories. Both platforms protect against
+  credential exfiltration by sandboxed tools.
 </Aside>
 
 ## Why This Architecture

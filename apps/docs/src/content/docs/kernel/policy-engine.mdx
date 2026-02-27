@@ -117,15 +117,15 @@ const rule: PolicyRule = {
 
 The `when` predicate receives a `PolicyEvaluationContext` with these fields:
 
-| Field             | Type                           | Description                                                |
-| ----------------- | ------------------------------ | ---------------------------------------------------------- |
-| `trigger`         | `string`                       | The trigger type that fired this evaluation                |
-| `run_id`          | `string`                       | Current run identifier                                     |
-| `tool_name`       | `string?`                      | Name of the tool being called (for `on_tool_request`)      |
-| `task_id`         | `string?`                      | Active task identifier                                     |
-| `lane_id`         | `string?`                      | Lane the task belongs to                                   |
-| `pack_id`         | `string?`                      | Pack that provides the tool                                |
-| `tool_arguments`  | `Record<string, unknown>?`     | Parsed tool input arguments (see below)                    |
+| Field            | Type                       | Description                                           |
+| ---------------- | -------------------------- | ----------------------------------------------------- |
+| `trigger`        | `string`                   | The trigger type that fired this evaluation           |
+| `run_id`         | `string`                   | Current run identifier                                |
+| `tool_name`      | `string?`                  | Name of the tool being called (for `on_tool_request`) |
+| `task_id`        | `string?`                  | Active task identifier                                |
+| `lane_id`        | `string?`                  | Lane the task belongs to                              |
+| `pack_id`        | `string?`                  | Pack that provides the tool                           |
+| `tool_arguments` | `Record<string, unknown>?` | Parsed tool input arguments (see below)               |
 
 ### Argument-level policy evaluation
 
