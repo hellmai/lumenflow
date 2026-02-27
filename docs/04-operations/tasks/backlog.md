@@ -56,7 +56,6 @@ sections:
 - [WU-2235 — Define Sidekick consumer abstraction contract package](wu/WU-2235.yaml) — Framework: Core Lifecycle
 - [WU-2236 — Add generic HTTP runtime dispatch endpoint POST /tools/:name](wu/WU-2236.yaml) — Operations: Runtime
 - [WU-2237 — Sidekick validation, gates, smoke flow, and publish readiness](wu/WU-2237.yaml) — Framework: Core Validation
-- [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
 - [WU-2249 — wu:recover --action reset deletes worktree without checking for uncommitted work](wu/WU-2249.yaml) — Framework: Core State Recovery
 - [WU-2251 — Network allowlist schema and scope intersection](wu/WU-2251.yaml) — Framework: Core Lifecycle
 - [WU-2252 — Network allowlist enforcement in bwrap](wu/WU-2252.yaml) — Framework: Core Lifecycle
@@ -70,6 +69,7 @@ sections:
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2231 — Sidekick pack scaffold and manifest contract](wu/WU-2231.yaml) — Framework: Core Lifecycle
 - [WU-2257 — Lane lifecycle commands write directly to main, bypass micro-worktree](wu/WU-2257.yaml) — Framework: CLI Enforcement
+- [WU-2248 — wu:done --already-merged writes directly to local main bypassing micro-worktree isolation](wu/WU-2248.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
