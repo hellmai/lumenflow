@@ -235,12 +235,18 @@ export function createStateDoctorFixDeps(
           const eventsPath = path.join(worktreePath, LUMENFLOW_PATHS.WU_EVENTS);
 
           // Build the event object
-          const eventLine = JSON.stringify({
+          // WU-2240: Include lane/title for claim events
+          const eventObj: Record<string, unknown> = {
             wuId: event.wuId,
             type: event.type,
             reason: event.reason,
             timestamp: event.timestamp || new Date().toISOString(),
-          });
+          };
+          if (event.type === 'claim') {
+            eventObj.lane = event.lane ?? '';
+            eventObj.title = event.title ?? `WU ${event.wuId}`;
+          }
+          const eventLine = JSON.stringify(eventObj);
 
           // Append to events file (create if needed)
           await fs.mkdir(path.dirname(eventsPath), { recursive: true });

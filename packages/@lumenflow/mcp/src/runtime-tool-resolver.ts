@@ -1564,8 +1564,13 @@ function buildStateDoctorDeps(core: CoreModule, projectRoot: string) {
     },
     emitEvent: async (event: {
       wuId: string;
-      type: typeof STATE_RUNTIME_EVENT_TYPES.RELEASE | typeof STATE_RUNTIME_EVENT_TYPES.COMPLETE;
+      type:
+        | typeof STATE_RUNTIME_EVENT_TYPES.RELEASE
+        | typeof STATE_RUNTIME_EVENT_TYPES.COMPLETE
+        | typeof STATE_RUNTIME_EVENT_TYPES.CLAIM;
       reason?: string;
+      lane?: string;
+      title?: string;
     }) => {
       const stateStore = new core.WUStateStore(stateDir);
       await stateStore.load();
@@ -1574,6 +1579,11 @@ function buildStateDoctorDeps(core: CoreModule, projectRoot: string) {
           event.wuId,
           event.reason ?? STATE_RUNTIME_CONSTANTS.STATE_DOCTOR_FIX_REASON,
         );
+        return;
+      }
+      // WU-2240: Support corrective claim events from state:doctor --fix
+      if (event.type === STATE_RUNTIME_EVENT_TYPES.CLAIM) {
+        await stateStore.claim(event.wuId, event.lane ?? '', event.title ?? `WU ${event.wuId}`);
         return;
       }
       await stateStore.complete(event.wuId);
