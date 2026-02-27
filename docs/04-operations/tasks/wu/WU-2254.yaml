@@ -2,7 +2,7 @@ id: WU-2254
 title: macOS sandbox read confinement and deny overlays
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-27
 code_paths:
@@ -49,3 +49,6 @@ session_id: 12064739-5a04-4efd-9948-f2f42b8a6307
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-27T18:02:36.846Z
+locked: true
+completed_at: 2026-02-27T18:07:03.158Z
+completed: 2026-02-27
