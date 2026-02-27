@@ -2,7 +2,7 @@ id: WU-2230
 title: 'Fix new-user friction: init self-install, template formatting, pack-install default'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-27
 code_paths:
