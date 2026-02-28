@@ -6,7 +6,6 @@ _Last updated: 2026-02-28_
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml)
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
-- [WU-2278 — Sync missing public command aliases during integrate --sync](wu/WU-2278.yaml)
 
 ## Completed
 
@@ -1173,3 +1172,4 @@ _Last updated: 2026-02-28_
 - [WU-2275 — Enforce vendor-agnostic workflow controls for wu:done, upgrade, and wu:edit](wu/WU-2275.yaml) — 2026-02-28
 - [WU-2276 — Fix non-repo path resolution in write enforcement hooks](wu/WU-2276.yaml) — 2026-02-28
 - [WU-2277 — Fix require-wu path scope to repo](wu/WU-2277.yaml) — 2026-02-28
+- [WU-2278 — Sync missing public command aliases during integrate --sync](wu/WU-2278.yaml) — 2026-02-28

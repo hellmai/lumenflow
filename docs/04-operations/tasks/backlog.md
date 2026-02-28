@@ -56,7 +56,6 @@ sections:
 
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
-- [WU-2278 — Sync missing public command aliases during integrate --sync](wu/WU-2278.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1227,6 +1226,7 @@ sections:
 - [WU-2275 — Enforce vendor-agnostic workflow controls for wu:done, upgrade, and wu:edit](wu/WU-2275.yaml)
 - [WU-2276 — Fix non-repo path resolution in write enforcement hooks](wu/WU-2276.yaml)
 - [WU-2277 — Fix require-wu path scope to repo](wu/WU-2277.yaml)
+- [WU-2278 — Sync missing public command aliases during integrate --sync](wu/WU-2278.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
