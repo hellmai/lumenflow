@@ -2,14 +2,15 @@ id: WU-2283
 title: Fix lumenflow:upgrade false failure after successful push
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-01
 code_paths:
   - packages/@lumenflow/cli/src/lumenflow-upgrade.ts,packages/@lumenflow/core/src/micro-worktree.ts
 tests:
   manual:
-    - Run pnpm lumenflow:upgrade --latest in a repo where origin/main advances during push; command exits 0 and leaves no divergent local commit
+    - Run pnpm lumenflow:upgrade --latest in a repo where origin/main advances during push; command
+      exits 0 and leaves no divergent local commit
   unit:
     - packages/@lumenflow/cli/src/__tests__/lumenflow-upgrade.test.ts
   e2e: []
@@ -28,8 +29,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: When origin/main moves during upgrade, lumenflow:upgrade may complete package upgrade + push, then still emit fatal divergence failure from retry path. Make command idempotent and treat already-pushed result as success.
+description: When origin/main moves during upgrade, lumenflow:upgrade may complete package upgrade +
+  push, then still emit fatal divergence failure from retry path. Make command idempotent and treat
+  already-pushed result as success.
 acceptance:
   - Upgrade returns success when target commit already exists on origin/main after retry path
   - No duplicate/local-only upgrade commit left behind after successful remote push
   - Regression test covers retry/remote-ahead path
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2283
+claimed_at: 2026-02-28T23:37:02.936Z
+baseline_main_sha: 9269819ea71a1a21bf194c583b8ce6bffa2b61d9
+session_id: aab8d306-ad2e-4444-8766-725d6024c726
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T23:37:02.943Z
