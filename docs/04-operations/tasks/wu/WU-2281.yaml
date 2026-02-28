@@ -2,7 +2,7 @@ id: WU-2281
 title: Fix pre-existing @lumenflow/cli test failures in gate runs
 lane: 'Framework: CLI Memory State'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-28
 code_paths:
@@ -34,3 +34,11 @@ acceptance:
   - pnpm gates passes for representative worktree WUs without needing --skip-gates for these
     pre-existing test failures
   - '@lumenflow/cli failing test set from wu:prep logs is resolved'
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-memory-state-wu-2281
+claimed_at: 2026-02-28T20:14:42.928Z
+baseline_main_sha: 31f2b7ea1c5304942f505bc543135bc7b262ec3e
+session_id: 81775c68-c0a6-4726-84ec-790de5a6c9fa
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T20:14:42.934Z
