@@ -32,6 +32,8 @@
  * WU-1952: CLI added pack:author; MCP parity follow-up remains tracked explicitly in INIT-032.
  * WU-1980: CLI added cloud:connect; MCP parity implementation is intentionally
  * tracked in WU-1983 (INIT-033 phase sequence).
+ * WU-2275: CLI added lumenflow:pre-commit-check for local hook/CI delegation.
+ * No MCP exposure required because this command is intentionally local-only.
  */
 
 // Re-export shared types and helpers
