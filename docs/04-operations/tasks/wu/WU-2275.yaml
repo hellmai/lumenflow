@@ -18,6 +18,7 @@ code_paths:
   - packages/@lumenflow/cli/src/commands/integrate.ts
   - packages/@lumenflow/cli/templates/core/.husky/pre-commit.template
   - packages/@lumenflow/cli/templates/core/.github/workflows/lumenflow-ci.yml.template
+  - packages/@lumenflow/mcp/src/tools.ts
 tests:
   manual:
     - Attempt wu:done on a WU claimed by another agent/session; verify block and verify --force
