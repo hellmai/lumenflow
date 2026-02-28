@@ -2,7 +2,7 @@ id: WU-2281
 title: Fix pre-existing @lumenflow/cli test failures in gate runs
 lane: 'Framework: CLI Memory State'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-28
 code_paths:
@@ -42,3 +42,6 @@ session_id: 81775c68-c0a6-4726-84ec-790de5a6c9fa
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-02-28T20:14:42.934Z
+locked: true
+completed_at: 2026-02-28T20:20:28.194Z
+completed: 2026-02-28
