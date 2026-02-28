@@ -2,7 +2,7 @@ id: WU-2271
 title: Remove false-positive redirect regex from block-bash-file-commands hook
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-28
 code_paths:
@@ -50,3 +50,6 @@ description: The redirect detection regex in block-bash-file-commands.sh falsely
 acceptance:
   - Hook no longer blocks git commits containing Co-Authored-By trailers
   - Named command blocks (echo, cat) still catch redirect-based file writes
+locked: true
+completed_at: 2026-02-28T11:08:54.505Z
+completed: 2026-02-28
