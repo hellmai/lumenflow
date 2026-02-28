@@ -2,7 +2,7 @@ id: WU-2268
 title: Add package.json to software-delivery pack for npm publish and registry
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-28
 code_paths:
@@ -45,3 +45,6 @@ acceptance:
   - software-delivery pack builds cleanly
   - pnpm release includes software-delivery in version bump
   - software-delivery pack published to registry.lumenflow.dev
+locked: true
+completed_at: 2026-02-28T10:00:25.215Z
+completed: 2026-02-28
