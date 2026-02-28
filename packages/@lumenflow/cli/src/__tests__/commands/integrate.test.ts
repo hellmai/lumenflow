@@ -70,6 +70,71 @@ describe('WU-1367: Integrate Command', () => {
       expect(wrotePreCommit).toBe(true);
       expect(wroteCi).toBe(true);
     });
+
+    it('syncs missing command aliases into package.json from public manifest', async () => {
+      vi.mocked(fs.existsSync).mockImplementation((filePath) => {
+        const file = String(filePath);
+        return file.endsWith('package.json');
+      });
+      vi.mocked(fs.readFileSync).mockImplementation((filePath) => {
+        const file = String(filePath);
+        if (file.endsWith('package.json')) {
+          return JSON.stringify({
+            name: 'consumer-project',
+            scripts: {
+              'wu:create': 'wu-create',
+              'wu:claim': 'wu-claim',
+            },
+          });
+        }
+        return '{}';
+      });
+      const writeSpy = vi.mocked(fs.writeFileSync);
+      writeSpy.mockClear();
+
+      const { syncPackageJsonScripts } = await import('../../commands/integrate.js');
+      const result = syncPackageJsonScripts(TEST_PROJECT_DIR);
+
+      expect(result.modified).toBe(true);
+      expect(result.added.length).toBeGreaterThan(0);
+      expect(result.added).toContain('wu:status');
+      expect(result.added).toContain('wu:brief');
+
+      const packageJsonWrite = writeSpy.mock.calls.find((call) =>
+        String(call[0]).endsWith(path.join(TEST_PROJECT_DIR, 'package.json')),
+      );
+      expect(packageJsonWrite).toBeDefined();
+      const updated = JSON.parse(String(packageJsonWrite?.[1]));
+      expect(updated.scripts['wu:status']).toBe('wu-status');
+      expect(updated.scripts['wu:brief']).toBe('wu-brief');
+    });
+
+    it('does not overwrite existing custom aliases when syncing package.json scripts', async () => {
+      vi.mocked(fs.existsSync).mockImplementation((filePath) => String(filePath).endsWith('package.json'));
+      vi.mocked(fs.readFileSync).mockImplementation((filePath) => {
+        if (String(filePath).endsWith('package.json')) {
+          return JSON.stringify({
+            name: 'consumer-project',
+            scripts: {
+              'wu:brief': 'custom-brief --verbose',
+            },
+          });
+        }
+        return '{}';
+      });
+      const writeSpy = vi.mocked(fs.writeFileSync);
+      writeSpy.mockClear();
+
+      const { syncPackageJsonScripts } = await import('../../commands/integrate.js');
+      syncPackageJsonScripts(TEST_PROJECT_DIR);
+
+      const packageJsonWrite = writeSpy.mock.calls.find((call) =>
+        String(call[0]).endsWith(path.join(TEST_PROJECT_DIR, 'package.json')),
+      );
+      expect(packageJsonWrite).toBeDefined();
+      const updated = JSON.parse(String(packageJsonWrite?.[1]));
+      expect(updated.scripts['wu:brief']).toBe('custom-brief --verbose');
+    });
   });
 
   describe('integrateClaudeCode', () => {

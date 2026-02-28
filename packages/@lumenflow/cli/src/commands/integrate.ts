@@ -38,6 +38,7 @@ import {
   type GeneratedHooks,
 } from '../hooks/enforcement-generator.js';
 import { loadTemplate } from '../init-scaffolding.js';
+import { generateScriptsFromManifest } from '../public-manifest.js';
 import { runCLI } from '../cli-entry-point.js';
 
 /**
@@ -61,7 +62,8 @@ const INTEGRATE_OPTIONS = {
   sync: {
     name: 'sync',
     flags: '--sync',
-    description: 'Re-scaffold vendor-agnostic pre-commit/CI delegators for existing repositories',
+    description:
+      'Re-scaffold vendor-agnostic pre-commit/CI delegators and sync package.json command aliases',
   },
   force: WU_OPTIONS.force,
 };
@@ -159,6 +161,48 @@ export function syncCoreEnforcementDelegators(projectDir: string): string[] {
   created.push(PROJECT_CI_PATH);
 
   return created;
+}
+
+/**
+ * Sync package.json scripts with the public command manifest.
+ *
+ * Adds missing command aliases (for example: wu:status, wu:brief, wu:prep)
+ * without overwriting existing script entries.
+ */
+export interface ScriptSyncResult {
+  added: string[];
+  modified: boolean;
+}
+
+export function syncPackageJsonScripts(projectDir: string): ScriptSyncResult {
+  const packageJsonPath = path.join(projectDir, 'package.json');
+
+  if (!fs.existsSync(packageJsonPath)) {
+    return { added: [], modified: false };
+  }
+
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')) as Record<string, unknown>;
+  if (!packageJson.scripts || typeof packageJson.scripts !== 'object') {
+    packageJson.scripts = {};
+  }
+
+  const scripts = packageJson.scripts as Record<string, string>;
+  const manifestScripts = generateScriptsFromManifest();
+  const added: string[] = [];
+
+  for (const [name, command] of Object.entries(manifestScripts)) {
+    if (!(name in scripts)) {
+      scripts[name] = command;
+      added.push(name);
+    }
+  }
+
+  const modified = added.length > 0;
+  if (modified) {
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n', 'utf-8');
+  }
+
+  return { added, modified };
 }
 
 /**
@@ -499,6 +543,15 @@ export async function main(): Promise<void> {
     const synced = syncCoreEnforcementDelegators(projectDir);
     for (const file of synced) {
       console.log(`[integrate] Synced ${file}`);
+    }
+
+    const scriptSync = syncPackageJsonScripts(projectDir);
+    if (scriptSync.modified) {
+      console.log(
+        `[integrate] Added ${scriptSync.added.length} command alias(es): ${scriptSync.added.join(', ')}`,
+      );
+    } else {
+      console.log('[integrate] package.json command aliases already up to date');
     }
   }
 
