@@ -202,6 +202,15 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 <!-- END AUTO-GENERATED SECTION -->
 
+### Additional Bin Aliases & Utilities
+
+These binaries are also shipped and supported:
+
+- `templates-sync` (alias of `sync-templates`)
+- `lumenflow-pre-commit-check` (run pre-commit safety checks)
+- `state-emit` (emit state events for reconciliation/admin flows)
+- `wu-escalate` (show/resolve escalation status for a WU)
+
 ## Usage
 
 Commands are typically invoked via pnpm scripts in your project:
