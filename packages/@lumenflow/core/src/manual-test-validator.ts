@@ -12,6 +12,7 @@
  * Exemptions:
  * - type: documentation only
  * - code_paths containing only documentation/config files (no code files)
+ * - WU-2273: notes containing tdd-exception: marker (explicit opt-out)
  *
  * @see {@link packages/@lumenflow/cli/src/lib/wu-done-validators.ts} - Integration point
  * @see {@link config.directories.completeGuidePath} - TDD requirements
@@ -26,6 +27,7 @@ interface WuDocForTests {
   code_paths?: unknown;
   tests?: unknown;
   test_paths?: unknown;
+  notes?: unknown;
 }
 
 /**
@@ -83,6 +85,16 @@ export const EXEMPT_LANES = Object.freeze([]);
 export const EXEMPT_TYPES = Object.freeze([WU_TYPES.DOCUMENTATION]);
 
 /**
+ * Marker prefix in WU notes that explicitly opts out of automated test requirement.
+ * Must match the marker used by wu:prep (packages/@lumenflow/cli/src/wu-prep.ts).
+ *
+ * WU-2273: Ensures wu:done and wu:prep agree on tdd-exception behavior.
+ *
+ * @constant {string}
+ */
+const TDD_EXCEPTION_MARKER = 'tdd-exception:';
+
+/**
  * Determine if a file path represents a code file requiring automated tests.
  *
  * Code files are those with extensions like .ts, .ts, .tsx, .js
@@ -137,9 +149,37 @@ export function containsHexCoreCode(codePaths: unknown) {
 }
 
 /**
+ * Check if WU notes contain an explicit tdd-exception marker.
+ *
+ * Supports both string and array-of-strings notes formats.
+ * Uses case-insensitive matching consistent with wu:prep behavior.
+ *
+ * WU-2273: Extracted to share logic with isExemptFromAutomatedTests.
+ *
+ * @param {unknown} notes - WU notes field (string, string[], or other)
+ * @returns {boolean} True if notes contain the tdd-exception marker
+ */
+function hasDocumentedTddException(notes: unknown): boolean {
+  if (typeof notes === 'string') {
+    return notes.toLowerCase().includes(TDD_EXCEPTION_MARKER);
+  }
+
+  if (Array.isArray(notes)) {
+    return notes.some(
+      (entry) => typeof entry === 'string' && hasDocumentedTddException(entry),
+    );
+  }
+
+  return false;
+}
+
+/**
  * Check if a WU is exempt from automated test requirement.
  *
  * WU-2332: Only type: 'documentation' is exempt.
+ * WU-2273: Also exempt if notes contain tdd-exception: marker,
+ * aligning wu:done with wu:prep behavior.
+ *
  * Lane-based exemptions have been removed - test requirements
  * are now based on file types in code_paths.
  *
@@ -149,9 +189,14 @@ export function containsHexCoreCode(codePaths: unknown) {
 export function isExemptFromAutomatedTests(doc: WuDocForTests | null | undefined) {
   if (!doc) return false;
 
-  // Only type: documentation is exempt
+  // type: documentation is exempt
   const type = doc.type || '';
   if (typeof type === 'string' && EXEMPT_TYPES.includes(type)) {
+    return true;
+  }
+
+  // WU-2273: tdd-exception: in notes is an explicit opt-out
+  if (hasDocumentedTddException(doc.notes)) {
     return true;
   }
 
