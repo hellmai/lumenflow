@@ -20,12 +20,20 @@ dependencies: []
 spec_refs:
   - lumenflow://wu/WU-2267
 risks: []
-notes: ''
+notes: 'Mirrors sidekick pack pattern. Added package.json, tsconfig.json, fixed TS2722 in
+  runtime-cli-adapter.ts with optional chaining. tdd-exception: config-only WU, no new logic.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-28T09:53:10.820Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2268
+session_id: 0f111811-151b-44a7-83bf-df5b8270dcb0
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T09:53:10.826Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -37,11 +45,3 @@ acceptance:
   - software-delivery pack builds cleanly
   - pnpm release includes software-delivery in version bump
   - software-delivery pack published to registry.lumenflow.dev
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2268
-claimed_at: 2026-02-28T09:53:10.820Z
-baseline_main_sha: 14e023ef2b5fc38c979c92ca55ef67e8ac961f08
-session_id: 0f111811-151b-44a7-83bf-df5b8270dcb0
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-28T09:53:10.826Z
