@@ -26,12 +26,21 @@ artifacts:
   - .lumenflow/stamps/WU-2276.done
 dependencies: []
 risks: []
-notes: ''
+notes: Implemented shared library-based path canonicalization for Write/Edit enforcement
+  (home-relative expansion + absolute resolution), wired runtime/generator/active hook parity, and
+  added regression tests for non-repo home-relative paths.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-28T13:03:01.950Z
+worktree_path: worktrees/framework-cli-enforcement-wu-2276
+session_id: 9f5569d9-bc7e-45de-a50a-d3dbd1b825a6
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T13:03:01.956Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -48,11 +57,3 @@ acceptance:
     standard library expansion.
   - Hook/runtime behavior remains unchanged for actual in-repo paths and existing allowlist/claim
     enforcement.
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-enforcement-wu-2276
-claimed_at: 2026-02-28T13:03:01.950Z
-baseline_main_sha: e78107261b170e062f71d00453fab466fa30fc50
-session_id: 9f5569d9-bc7e-45de-a50a-d3dbd1b825a6
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-28T13:03:01.956Z
