@@ -75,7 +75,12 @@ security:
       access: write
   network_default: off
   deny_overlays: []
-software_delivery: {}
+software_delivery:
+  directories:
+    wuDir: docs/04-operations/tasks/wu
+    initiativesDir: docs/04-operations/tasks/initiatives
+    backlogPath: docs/04-operations/tasks/backlog.md
+    statusPath: docs/04-operations/tasks/status.md
 memory_namespace: test-workspace
 event_namespace: test-workspace
 `;
