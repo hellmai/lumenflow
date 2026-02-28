@@ -19,12 +19,22 @@ artifacts:
   - .lumenflow/stamps/WU-2279.done
 dependencies: []
 risks: []
-notes: ''
+notes: "Root cause: applyInitiativeLifecycleStatusFixes used operation 'state:doctor' for
+  withMicroWorktree; colon is invalid in git branch refs and produced tmp/state:doctor/... failures.
+  Fix: use branch-safe operation token 'state-doctor' for initiative reconciliation path and add
+  regression assertion in state-doctor test."
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-28T19:11:10.706Z
+worktree_path: worktrees/framework-cli-memory-state-wu-2279
+session_id: db5772c0-0ccf-4cf2-92f5-be8943adf287
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T19:11:10.712Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -37,11 +47,3 @@ acceptance:
   - initiative lifecycle status fixes run through micro-worktree path successfully when mismatches
     are fixable
   - state-doctor regression test asserts branch-safe micro-worktree operation usage
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-memory-state-wu-2279
-claimed_at: 2026-02-28T19:11:10.706Z
-baseline_main_sha: c355c657b0fa93bc4dca8b4c09ca560a94cd4afe
-session_id: db5772c0-0ccf-4cf2-92f5-be8943adf287
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-28T19:11:10.712Z
