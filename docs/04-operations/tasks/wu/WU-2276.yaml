@@ -2,7 +2,7 @@ id: WU-2276
 title: Fix non-repo path resolution in write enforcement hooks
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-28
 code_paths:
@@ -14,8 +14,10 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/hooks/enforcement.test.ts
 tests:
   manual:
-    - Simulate hook input with file_path=~/.claude/plans/example.md and verify operation is allowed as outside-repo path.
-    - Simulate hook input with an in-repo file path and verify claim/worktree enforcement still applies.
+    - Simulate hook input with file_path=~/.claude/plans/example.md and verify operation is allowed
+      as outside-repo path.
+    - Simulate hook input with an in-repo file path and verify claim/worktree enforcement still
+      applies.
   unit:
     - packages/@lumenflow/cli/src/__tests__/hooks/path-utils.test.ts
     - packages/@lumenflow/cli/src/__tests__/hooks/enforcement.test.ts
@@ -33,8 +35,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: Write/Edit enforcement currently misclassifies home-relative tool paths (for example '~/...') as repo-local when path expansion is not applied before resolution. Problem: legitimate non-repo writes can be blocked with no_active_claim even though enforcement should only apply inside the project repo. Solution: add shared, library-based path canonicalization for tool inputs and use it in runtime enforcement plus generated/active hook wrappers so outside-repo writes are always allowed without vendor-specific handling."
+description: "Context: Write/Edit enforcement currently misclassifies home-relative tool paths (for
+  example '~/...') as repo-local when path expansion is not applied before resolution. Problem:
+  legitimate non-repo writes can be blocked with no_active_claim even though enforcement should only
+  apply inside the project repo. Solution: add shared, library-based path canonicalization for tool
+  inputs and use it in runtime enforcement plus generated/active hook wrappers so outside-repo
+  writes are always allowed without vendor-specific handling."
 acceptance:
-  - Write/Edit checks treat non-repo targets as outside repository after canonicalization, including home-relative paths.
-  - No vendor-specific path logic is introduced; behavior comes from shared path utilities and standard library expansion.
-  - Hook/runtime behavior remains unchanged for actual in-repo paths and existing allowlist/claim enforcement.
+  - Write/Edit checks treat non-repo targets as outside repository after canonicalization, including
+    home-relative paths.
+  - No vendor-specific path logic is introduced; behavior comes from shared path utilities and
+    standard library expansion.
+  - Hook/runtime behavior remains unchanged for actual in-repo paths and existing allowlist/claim
+    enforcement.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-enforcement-wu-2276
+claimed_at: 2026-02-28T13:03:01.950Z
+baseline_main_sha: e78107261b170e062f71d00453fab466fa30fc50
+session_id: 9f5569d9-bc7e-45de-a50a-d3dbd1b825a6
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T13:03:01.956Z
