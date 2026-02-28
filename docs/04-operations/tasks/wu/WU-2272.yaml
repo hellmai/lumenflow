@@ -2,7 +2,7 @@ id: WU-2272
 title: Add allowOverwrite to Vercel Blob registry uploads
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-28
 code_paths:
