@@ -2,7 +2,7 @@ id: WU-2277
 title: Fix require-wu path scope to repo
 lane: 'Framework: CLI Enforcement'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-28
 code_paths:
@@ -28,6 +28,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: require-wu hook currently blocks Write/Edit outside repo because it only checks claimed WU state. Add path-aware repo boundary check so enforcement applies only to repo writes.
+description: require-wu hook currently blocks Write/Edit outside repo because it only checks claimed
+  WU state. Add path-aware repo boundary check so enforcement applies only to repo writes.
 acceptance:
-  - Outside-repo writes (including /tmp and home-relative paths) are allowed without WU; in-repo writes still require claimed WU; generated hook script and runtime checks stay consistent.
+  - Outside-repo writes (including /tmp and home-relative paths) are allowed without WU; in-repo
+    writes still require claimed WU; generated hook script and runtime checks stay consistent.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-enforcement-wu-2277
+claimed_at: 2026-02-28T15:35:01.622Z
+baseline_main_sha: 7574d83fd4fce3bfce3ccef1f3d3623415e2182e
+session_id: e7dd7574-85cd-48c0-a47c-2c31024d998c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T15:35:01.628Z

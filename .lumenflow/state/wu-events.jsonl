@@ -2548,3 +2548,4 @@
 {"type":"checkpoint","wuId":"WU-2276","timestamp":"2026-02-28T13:06:52.805Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"checkpoint","wuId":"WU-2276","timestamp":"2026-02-28T13:08:18.140Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2276.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2276","timestamp":"2026-02-28T13:27:44.150Z"}
+{"type":"claim","wuId":"WU-2277","timestamp":"2026-02-28T15:35:01.649Z","lane":"Framework: CLI Enforcement","title":"Fix require-wu path scope to repo"}
