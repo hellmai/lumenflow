@@ -17,12 +17,22 @@ artifacts:
   - .lumenflow/stamps/WU-2271.done
 dependencies: []
 risks: []
-notes: ''
+notes: Removed the redirect regex pattern from block-bash-file-commands.sh that was falsely matching
+  angle brackets in email addresses (e.g. Co-Authored-By trailers in git commit messages). The named
+  command blocks for echo and cat already cover redirect-based file writes, making the generic
+  redirect regex redundant and harmful.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-02-28T10:19:47.350Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2271
+session_id: f1911752-c5ea-47d7-bb32-cb996ff3e2f5
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-02-28T10:19:47.355Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -32,11 +42,3 @@ description: The redirect detection regex in block-bash-file-commands.sh falsely
 acceptance:
   - Hook no longer blocks git commits containing Co-Authored-By trailers
   - Named command blocks (echo, cat) still catch redirect-based file writes
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2271
-claimed_at: 2026-02-28T10:19:47.350Z
-baseline_main_sha: 16eb58191d8c88f1a17adf47c30dc310fdfa500e
-session_id: f1911752-c5ea-47d7-bb32-cb996ff3e2f5
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-02-28T10:19:47.355Z
