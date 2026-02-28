@@ -165,9 +165,7 @@ function hasDocumentedTddException(notes: unknown): boolean {
   }
 
   if (Array.isArray(notes)) {
-    return notes.some(
-      (entry) => typeof entry === 'string' && hasDocumentedTddException(entry),
-    );
+    return notes.some((entry) => typeof entry === 'string' && hasDocumentedTddException(entry));
   }
 
   return false;
