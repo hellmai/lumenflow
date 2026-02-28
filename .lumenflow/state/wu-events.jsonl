@@ -2545,3 +2545,4 @@
 {"type":"checkpoint","wuId":"WU-2275","timestamp":"2026-02-28T12:18:11.500Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"complete","wuId":"WU-2275","timestamp":"2026-02-28T12:38:34.580Z"}
 {"type":"claim","wuId":"WU-2276","timestamp":"2026-02-28T13:03:01.974Z","lane":"Framework: CLI Enforcement","title":"Fix non-repo path resolution in write enforcement hooks"}
+{"type":"checkpoint","wuId":"WU-2276","timestamp":"2026-02-28T13:06:52.805Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}

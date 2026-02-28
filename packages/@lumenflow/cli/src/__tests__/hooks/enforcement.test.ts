@@ -428,6 +428,29 @@ describe('WU-1501: Fail-closed default on main', () => {
       expect(result.reason).toContain('allowlist');
     });
 
+    it('should allow Write to home-relative path outside the repo', async () => {
+      const { checkWorktreeEnforcement } = await import('../../hooks/enforcement-checks.js');
+      mockNoActiveClaim();
+
+      const previousHome = process.env.HOME;
+      process.env.HOME = '/home/test-user';
+      try {
+        const result = await checkWorktreeEnforcement(
+          { file_path: '~/.claude/plans/example.md', tool_name: 'Write' },
+          '/test/project',
+        );
+
+        expect(result.allowed).toBe(true);
+        expect(result.reason).toContain('outside repository');
+      } finally {
+        if (previousHome === undefined) {
+          delete process.env.HOME;
+        } else {
+          process.env.HOME = previousHome;
+        }
+      }
+    });
+
     it('should block Write to non-allowlisted paths on main', async () => {
       const { checkWorktreeEnforcement } = await import('../../hooks/enforcement-checks.js');
       mockNoActiveClaim();
@@ -528,6 +551,15 @@ describe('WU-1501: Fail-closed default on main', () => {
       expect(script).toContain('.lumenflow/');
       expect(script).toContain('.claude/');
       expect(script).toContain(expectedWuAllowlistPrefix);
+    });
+
+    it('should canonicalize home-relative paths in generated script', async () => {
+      const { generateEnforceWorktreeScript } =
+        await import('../../hooks/enforcement-generator.js');
+      const script = generateEnforceWorktreeScript();
+
+      expect(script).toContain('CANONICAL_PATH="$FILE_PATH"');
+      expect(script).toContain('CANONICAL_PATH="${HOME}/${CANONICAL_PATH:2}"');
     });
 
     it('should check for branch-pr claimed_mode in generated script', async () => {

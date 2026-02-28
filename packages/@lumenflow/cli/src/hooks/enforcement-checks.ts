@@ -22,12 +22,14 @@ import {
   resolveWorktreesDirSegment,
   resolveMainWriteAllowlistPrefixes,
 } from './config-resolver.js';
-import { isAllowlistedPath } from './path-utils.js';
+import { isAllowlistedPath, resolveToolInputPath } from './path-utils.js';
 
 // Re-export sub-module public APIs for backward compatibility
 export {
   normalizeDirectorySegment,
   ensureRepoRelativePrefix,
+  expandHomeRelativePath,
+  resolveToolInputPath,
   isAllowlistedPath,
 } from './path-utils.js';
 export {
@@ -134,7 +136,7 @@ export async function checkWorktreeEnforcement(
   // Resolve the file path
   let resolvedPath: string;
   try {
-    resolvedPath = path.resolve(input.file_path);
+    resolvedPath = resolveToolInputPath(input.file_path);
   } catch {
     return {
       allowed: true,

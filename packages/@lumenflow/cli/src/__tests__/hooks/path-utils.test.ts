@@ -12,6 +12,8 @@ import {
   ensureRepoRelativePrefix,
   stripWrappingQuotes,
   normalizeRepoRelativePath,
+  expandHomeRelativePath,
+  resolveToolInputPath,
   isAllowlistedPath,
 } from '../../hooks/path-utils.js';
 
@@ -81,6 +83,53 @@ describe('WU-2127: path-utils sub-module', () => {
 
     it('should handle combined normalization', () => {
       expect(normalizeRepoRelativePath('"./src\\path\\file.ts"')).toBe('src/path/file.ts');
+    });
+  });
+
+  describe('expandHomeRelativePath', () => {
+    it('should expand ~/ prefix using provided home directory', () => {
+      expect(expandHomeRelativePath('~/plans/example.md', { homeDir: '/home/tester' })).toBe(
+        '/home/tester/plans/example.md',
+      );
+    });
+
+    it('should expand ~\\ prefix using provided home directory', () => {
+      expect(expandHomeRelativePath('~\\plans\\example.md', { homeDir: '/home/tester' })).toBe(
+        '/home/tester/plans/example.md',
+      );
+    });
+
+    it('should expand bare ~ using provided home directory', () => {
+      expect(expandHomeRelativePath('~', { homeDir: '/home/tester' })).toBe('/home/tester');
+    });
+
+    it('should leave ~user paths unchanged', () => {
+      expect(
+        expandHomeRelativePath('~otheruser/plans/example.md', { homeDir: '/home/tester' }),
+      ).toBe('~otheruser/plans/example.md');
+    });
+  });
+
+  describe('resolveToolInputPath', () => {
+    it('should resolve relative paths against provided cwd', () => {
+      expect(resolveToolInputPath('docs/file.md', { cwd: '/test/project' })).toBe(
+        '/test/project/docs/file.md',
+      );
+    });
+
+    it('should resolve home-relative paths before absolutizing', () => {
+      expect(
+        resolveToolInputPath('~/plans/example.md', {
+          cwd: '/test/project',
+          homeDir: '/home/tester',
+        }),
+      ).toBe('/home/tester/plans/example.md');
+    });
+
+    it('should preserve absolute paths', () => {
+      expect(resolveToolInputPath('/var/tmp/file.md', { cwd: '/test/project' })).toBe(
+        '/var/tmp/file.md',
+      );
     });
   });
 

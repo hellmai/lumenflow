@@ -189,8 +189,20 @@ if [[ -z "$FILE_PATH" ]]; then
     "file_path is required for ${TOOL_NAME} operations but was empty or missing."
 fi
 
-# Resolve the file path
-RESOLVED_PATH=$(realpath -m "$FILE_PATH" 2>/dev/null || echo "$FILE_PATH")
+# Canonicalize tool path before resolution (e.g., "~/" -> "$HOME/")
+CANONICAL_PATH="$FILE_PATH"
+if [[ "$CANONICAL_PATH" == "~" ]]; then
+  if [[ -n "${HOME:-}" ]]; then
+    CANONICAL_PATH="$HOME"
+  fi
+elif [[ "$CANONICAL_PATH" == "~/"* || "$CANONICAL_PATH" == "~\\"* ]]; then
+  if [[ -n "${HOME:-}" ]]; then
+    CANONICAL_PATH="${HOME}/${CANONICAL_PATH:2}"
+  fi
+fi
+
+# Resolve the canonicalized file path
+RESOLVED_PATH=$(realpath -m "$CANONICAL_PATH" 2>/dev/null || echo "$CANONICAL_PATH")
 
 # Allow if path is outside the repo entirely
 if [[ "$RESOLVED_PATH" != "${MAIN_REPO_PATH}/"* && "$RESOLVED_PATH" != "${MAIN_REPO_PATH}" ]]; then

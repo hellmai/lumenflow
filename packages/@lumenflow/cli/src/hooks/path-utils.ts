@@ -10,11 +10,18 @@
  */
 
 import * as path from 'node:path';
+import * as os from 'node:os';
 
 const GIT_STATUS_QUOTE = '"';
 const PATH_PREFIX_CURRENT_DIR = './';
 const PATH_SEPARATOR_WINDOWS = '\\';
 const PATH_SEPARATOR_POSIX = '/';
+const HOME_PATH_PREFIX = '~';
+
+interface ToolPathResolutionOptions {
+  cwd?: string;
+  homeDir?: string;
+}
 
 export function normalizeDirectorySegment(value: string, fallback: string): string {
   const normalized = value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
@@ -42,6 +49,59 @@ export function normalizeRepoRelativePath(value: string): string {
     return normalizedSeparators.slice(PATH_PREFIX_CURRENT_DIR.length);
   }
   return normalizedSeparators;
+}
+
+function resolveHomeDirectory(homeDir?: string): string | undefined {
+  if (homeDir && homeDir.length > 0) {
+    return homeDir;
+  }
+  const envHome = process.env.HOME ?? process.env.USERPROFILE;
+  if (envHome && envHome.length > 0) {
+    return envHome;
+  }
+  try {
+    const detectedHome = os.homedir();
+    return detectedHome.length > 0 ? detectedHome : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Expand leading "~" in tool file paths without any vendor-specific path rules.
+ * Unknown "~user" style inputs are left unchanged.
+ */
+export function expandHomeRelativePath(
+  value: string,
+  options: Pick<ToolPathResolutionOptions, 'homeDir'> = {},
+): string {
+  const trimmedValue = value.trim();
+  if (trimmedValue === HOME_PATH_PREFIX) {
+    return resolveHomeDirectory(options.homeDir) ?? trimmedValue;
+  }
+  if (!trimmedValue.startsWith('~/') && !trimmedValue.startsWith('~\\')) {
+    return trimmedValue;
+  }
+  const homeDirectory = resolveHomeDirectory(options.homeDir);
+  if (!homeDirectory) {
+    return trimmedValue;
+  }
+  const relativeSuffix = trimmedValue.slice(2);
+  const normalizedSuffix = relativeSuffix.replace(/[\\/]/g, path.sep);
+  return normalizedSuffix.length > 0 ? path.join(homeDirectory, normalizedSuffix) : homeDirectory;
+}
+
+/**
+ * Resolve tool-provided file paths to canonical absolute paths.
+ * Handles home-relative paths and relative paths against the provided cwd.
+ */
+export function resolveToolInputPath(
+  value: string,
+  options: ToolPathResolutionOptions = {},
+): string {
+  const cwd = options.cwd ?? process.cwd();
+  const expandedPath = expandHomeRelativePath(value, { homeDir: options.homeDir });
+  return path.resolve(cwd, expandedPath);
 }
 
 /**
