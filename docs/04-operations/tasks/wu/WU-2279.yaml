@@ -2,7 +2,7 @@ id: WU-2279
 title: Fix state:doctor --fix invalid temp branch name
 lane: 'Framework: CLI Memory State'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-02-28
 code_paths:
@@ -47,3 +47,6 @@ acceptance:
   - initiative lifecycle status fixes run through micro-worktree path successfully when mismatches
     are fixable
   - state-doctor regression test asserts branch-safe micro-worktree operation usage
+locked: true
+completed_at: 2026-02-28T19:20:37.441Z
+completed: 2026-02-28
