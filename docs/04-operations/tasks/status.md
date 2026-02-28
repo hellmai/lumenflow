@@ -7,10 +7,6 @@ _Last updated: 2026-02-28_
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml)
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
 
-## Blocked
-
-- [WU-2269 — Add allowOverwrite to registry blob uploads](wu/WU-2269.yaml) — Abandoned - fixing inline
-
 ## Completed
 
 - [WU-1001 — Complete LumenFlow dogfooding setup](wu/WU-1001.yaml) — 2026-01-18
