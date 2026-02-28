@@ -10,6 +10,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { getConfig } from '@lumenflow/core/config';
 import {
   applyEdits,
   buildWuEditStampNote,
@@ -213,11 +214,12 @@ describe('WU-1618: replace-code-paths UX', () => {
 
 describe('WU-1618: scope-relevant branch change detection', () => {
   it('returns false for metadata-only branch changes', () => {
+    const config = getConfig({ projectRoot: process.cwd() });
     const result = hasScopeRelevantBranchChanges([
-      '.lumenflow/state/wu-events.jsonl',
-      'docs/04-operations/tasks/backlog.md',
-      'docs/04-operations/tasks/status.md',
-      'docs/04-operations/tasks/wu/WU-1618.yaml',
+      `${config.state.stateDir}/wu-events.jsonl`,
+      config.directories.backlogPath,
+      config.directories.statusPath,
+      `${config.directories.wuDir}/WU-1618.yaml`,
     ]);
     expect(result).toBe(false);
   });
