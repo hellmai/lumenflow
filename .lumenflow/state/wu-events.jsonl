@@ -2565,3 +2565,4 @@
 {"type":"complete","wuId":"WU-2280","timestamp":"2026-02-28T19:43:09.611Z"}
 {"type":"claim","wuId":"WU-2281","timestamp":"2026-02-28T20:09:29.286Z","lane":"Framework: CLI Memory State","title":"Fix pre-existing @lumenflow/cli test failures in gate runs"}
 {"type":"checkpoint","wuId":"WU-2281","timestamp":"2026-02-28T20:13:18.326Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2281.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"release","wuId":"WU-2281","timestamp":"2026-02-28T20:13:49.577Z","reason":"Reset via wu:recover --action reset"}
