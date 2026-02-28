@@ -2563,3 +2563,4 @@
 {"type":"checkpoint","wuId":"WU-2280","timestamp":"2026-02-28T19:38:55.743Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"checkpoint","wuId":"WU-2280","timestamp":"2026-02-28T19:42:47.301Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2280.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2280","timestamp":"2026-02-28T19:43:09.611Z"}
+{"type":"claim","wuId":"WU-2281","timestamp":"2026-02-28T20:09:29.286Z","lane":"Framework: CLI Memory State","title":"Fix pre-existing @lumenflow/cli test failures in gate runs"}
