@@ -6,7 +6,8 @@ status: in_progress
 priority: P2
 created: 2026-02-28
 code_paths:
-  - packages/@lumenflow/cli/src/hooks/**
+  - packages/@lumenflow/cli/src/hooks/enforcement-checks.ts
+  - packages/@lumenflow/cli/src/hooks/generators/require-wu.ts
 tests:
   manual:
     - Verify Write/Edit to /tmp and ~/.claude do not require claimed WU while repo writes still do
