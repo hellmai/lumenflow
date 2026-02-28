@@ -51,7 +51,6 @@ sections:
 - [WU-2217 — BUG: Fix pre-existing prettier format failures in wu-done.ts and arg-parser.ts](wu/WU-2217.yaml) — Framework: CLI WU Commands
 - [WU-2258 — Add lane:create command for adding new lanes via tooling](wu/WU-2258.yaml) — Framework: CLI Enforcement
 - [WU-2261 — wu:done leaves bulk staged WU metadata on main](wu/WU-2261.yaml) — Framework: CLI Enforcement
-- [WU-2273 — Honor tdd-exception in wu:done spec completeness validator](wu/WU-2273.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
@@ -59,6 +58,7 @@ sections:
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
 - [WU-2271 — Remove false-positive redirect regex from block-bash-file-commands hook](wu/WU-2271.yaml) — Framework: CLI WU Commands
 - [WU-2272 — Add allowOverwrite to Vercel Blob registry uploads](wu/WU-2272.yaml) — Framework: Core Lifecycle
+- [WU-2273 — Honor tdd-exception in wu:done spec completeness validator](wu/WU-2273.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 

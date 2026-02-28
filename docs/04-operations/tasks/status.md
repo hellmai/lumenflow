@@ -8,6 +8,7 @@ _Last updated: 2026-02-28_
 - [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
 - [WU-2271 — Remove false-positive redirect regex from block-bash-file-commands hook](wu/WU-2271.yaml)
 - [WU-2272 — Add allowOverwrite to Vercel Blob registry uploads](wu/WU-2272.yaml)
+- [WU-2273 — Honor tdd-exception in wu:done spec completeness validator](wu/WU-2273.yaml)
 
 ## Completed
 
