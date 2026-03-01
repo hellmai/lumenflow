@@ -4,7 +4,7 @@ _Last updated: 2026-03-01_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2145 — wu:done project-memory promotion to main checkout](wu/WU-2145.yaml)
 
 ## Completed
 

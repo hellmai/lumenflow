@@ -3,7 +3,7 @@ slug: agent-memory-coordination
 title: Agent Memory + Coordination Layer
 description: 'Local-first signal surfacing, project-memory promotion, and optional control-plane
   bridge for agent coordination. OSS-complete: all local behavior works without network.'
-status: open
+status: in_progress
 priority: P1
 owner: tom@hellm.ai
 created: 2026-02-25
@@ -23,6 +23,3 @@ success_metrics:
   - SDK publishes without AGPL runtime dependency
   - OSS-complete CI gate enforces local-only test pass
 labels: []
-notes:
-  - 'related_plan: lumenflow://plans/clever-whistling-lobster.md'
-related_plan: lumenflow://plans/clever-whistling-lobster.md

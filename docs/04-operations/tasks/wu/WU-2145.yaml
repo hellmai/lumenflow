@@ -2,7 +2,7 @@ id: WU-2145
 title: wu:done project-memory promotion to main checkout
 lane: 'Framework: Memory'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-25
 code_paths:
@@ -39,3 +39,11 @@ acceptance:
   - Non-project nodes are not promoted
   - No-op when no project nodes exist
   - pnpm gates passes
+claimed_mode: worktree
+worktree_path: worktrees/framework-memory-wu-2145
+claimed_at: 2026-03-01T20:52:49.613Z
+baseline_main_sha: dc2db0bc3c62d01ecf6ee16ca645e7ec8bb005fa
+session_id: 63045f4d-6d0f-4d85-b105-db8759f0eb51
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-01T20:52:49.618Z
