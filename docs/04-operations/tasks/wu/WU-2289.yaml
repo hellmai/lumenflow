@@ -2,7 +2,7 @@ id: WU-2289
 title: Add wu:brief staleness policy and freshness checks for long-lived WUs
 lane: 'Framework: Core Validation'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-01
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - packages/@lumenflow/core/src/lumenflow-config-schema.ts
 tests:
   manual:
-    - Backdate brief evidence beyond threshold, run wu:prep, verify stale warning/block and remediation
+    - Backdate brief evidence beyond threshold, run wu:prep, verify stale warning/block and
+      remediation
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
@@ -31,10 +32,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: agents may run wu:brief once and continue implementing for long periods while task scope drifts. Problem: lifecycle checks only validate existence of brief evidence, not freshness, so stale briefs can satisfy policy while being misleading in autonomous environments. Solution: add configurable staleness threshold for wu:brief evidence and enforce freshness checks with clear regeneration guidance at wu:prep/wu:done.'
+description: 'Context: agents may run wu:brief once and continue implementing for long periods while
+  task scope drifts. Problem: lifecycle checks only validate existence of brief evidence, not
+  freshness, so stale briefs can satisfy policy while being misleading in autonomous environments.
+  Solution: add configurable staleness threshold for wu:brief evidence and enforce freshness checks
+  with clear regeneration guidance at wu:prep/wu:done.'
 acceptance:
   - Config supports brief freshness threshold in minutes with sensible default and disable option
   - wu:prep/wu:done detect stale brief evidence and surface explicit regeneration guidance
   - required mode can block on stale evidence while manual/off modes do not
   - tests cover fresh vs stale evidence and threshold override behavior
   - pnpm gates passes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2289
+claimed_at: 2026-03-01T19:04:44.898Z
+baseline_main_sha: 9c8258b8291e5f3bfa2337be61ff890e6f1d2d73
+session_id: edd7b356-0c9c-43a7-b48a-74a38cc3490b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-01T19:04:44.905Z
