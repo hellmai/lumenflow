@@ -401,7 +401,7 @@ export async function applyInitiativeLifecycleStatusFixes(
 /**
  * Regenerate backlog.md and status.md from state store to remove stale references.
  */
-export async function applyStaleReferenceFixes(baseDir: string): Promise<void> {
+export async function applyStaleReferenceFixes(_baseDir: string): Promise<void> {
   await withMicroWorktree({
     operation: STATUS_RECONCILIATION_OPERATION,
     id: STALE_DOC_RECONCILIATION_OPERATION_ID,
