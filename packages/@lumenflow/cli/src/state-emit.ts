@@ -26,6 +26,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createWUParser } from '@lumenflow/core/arg-parser';
+import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { EXIT_CODES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
 import { runCLI } from './cli-entry-point.js';
 
@@ -67,11 +68,30 @@ export interface EmitCorrectiveEventOptions {
 }
 
 /**
+ * Options for transactional corrective event emission.
+ *
+ * WU-2286: Uses micro-worktree push-only mode to commit event updates
+ * without leaving the local main checkout dirty.
+ */
+export interface EmitCorrectiveEventTransactionalOptions {
+  type: ValidEmitType;
+  wuId: string;
+  reason: string;
+  lane?: string;
+  title?: string;
+}
+
+interface EmitCorrectiveEventTransactionalDeps {
+  withMicroWorktreeImpl?: typeof withMicroWorktree;
+  emitCorrectiveEventImpl?: typeof emitCorrectiveEvent;
+}
+
+/**
  * Validate emit parameters.
  *
  * @throws Error if type, wuId, or reason are invalid
  */
-function validateParams(opts: EmitCorrectiveEventOptions): void {
+function validateParams(opts: Pick<EmitCorrectiveEventOptions, 'type' | 'wuId' | 'reason'>): void {
   if (!VALID_EMIT_TYPES.includes(opts.type as ValidEmitType)) {
     throw new Error(
       `Invalid event type: '${opts.type}'. Valid types: ${VALID_EMIT_TYPES.join(', ')}`,
@@ -85,6 +105,11 @@ function validateParams(opts: EmitCorrectiveEventOptions): void {
   if (!WU_ID_PATTERN.test(opts.wuId)) {
     throw new Error(`Invalid WU ID: '${opts.wuId}'. Must match pattern WU-XXX (e.g., WU-123)`);
   }
+}
+
+function getTransactionalCommitMessage(type: ValidEmitType, wuId: string): string {
+  // Use lowercase subject text to satisfy strict commitlint subject-case hooks.
+  return `chore(repair): emit corrective ${type} event for ${wuId.toLowerCase()}`;
 }
 
 /**
@@ -139,6 +164,48 @@ export async function emitCorrectiveEvent(opts: EmitCorrectiveEventOptions): Pro
 }
 
 /**
+ * Emit a corrective event transactionally via micro-worktree push-only mode.
+ *
+ * WU-2286: This mode commits the event update directly to origin/main from
+ * a temporary micro-worktree, so local main remains clean.
+ */
+export async function emitCorrectiveEventTransactionally(
+  opts: EmitCorrectiveEventTransactionalOptions,
+  deps: EmitCorrectiveEventTransactionalDeps = {},
+): Promise<void> {
+  validateParams(opts);
+
+  const withMicroWorktreeImpl = deps.withMicroWorktreeImpl ?? withMicroWorktree;
+  const emitCorrectiveEventImpl = deps.emitCorrectiveEventImpl ?? emitCorrectiveEvent;
+
+  await withMicroWorktreeImpl({
+    operation: 'state-emit',
+    id: `emit-${opts.wuId.toLowerCase()}-${opts.type}`,
+    logPrefix: LOG_PREFIX,
+    pushOnly: true,
+    execute: async ({ worktreePath }) => {
+      const eventsFilePath = path.join(worktreePath, LUMENFLOW_PATHS.WU_EVENTS);
+      const auditLogPath = path.join(worktreePath, LUMENFLOW_PATHS.AUDIT_LOG);
+
+      await emitCorrectiveEventImpl({
+        type: opts.type,
+        wuId: opts.wuId,
+        reason: opts.reason,
+        eventsFilePath,
+        auditLogPath,
+        lane: opts.lane,
+        title: opts.title,
+      });
+
+      return {
+        commitMessage: getTransactionalCommitMessage(opts.type, opts.wuId),
+        files: [LUMENFLOW_PATHS.WU_EVENTS],
+      };
+    },
+  });
+}
+
+/**
  * Write an audit log entry.
  *
  * @param logPath - Path to audit log file
@@ -161,6 +228,7 @@ interface ParsedArgs {
   wu?: string;
   reason?: string;
   baseDir?: string;
+  transactional?: boolean;
 }
 
 /**
@@ -190,6 +258,11 @@ function parseArguments(): ParsedArgs {
         name: 'baseDir',
         flags: '-b, --base-dir <path>',
         description: 'Base directory (defaults to current directory)',
+      },
+      {
+        name: 'transactional',
+        flags: '--transactional',
+        description: 'Commit corrective event via micro-worktree (push-only mode)',
       },
     ],
     required: [],
@@ -221,17 +294,39 @@ export async function main(): Promise<void> {
   const auditLogPath = path.join(baseDir, LUMENFLOW_PATHS.AUDIT_LOG);
 
   try {
-    await emitCorrectiveEvent({
-      type: args.type as ValidEmitType,
-      wuId: args.wu,
-      reason: args.reason,
-      eventsFilePath,
-      auditLogPath,
-    });
+    if (args.transactional) {
+      const resolvedBaseDir = path.resolve(baseDir);
+      const resolvedCwd = path.resolve(process.cwd());
 
-    console.log(`${LOG_PREFIX} Emitted corrective '${args.type}' event for ${args.wu}`);
-    console.log(`${LOG_PREFIX} Reason: ${args.reason}`);
-    console.log(`${LOG_PREFIX} Events file: ${eventsFilePath}`);
+      if (resolvedBaseDir !== resolvedCwd) {
+        throw new Error(
+          'Transactional mode requires running from target repo root; --base-dir is not supported',
+        );
+      }
+
+      await emitCorrectiveEventTransactionally({
+        type: args.type as ValidEmitType,
+        wuId: args.wu,
+        reason: args.reason,
+      });
+
+      console.log(`${LOG_PREFIX} Emitted corrective '${args.type}' event for ${args.wu}`);
+      console.log(`${LOG_PREFIX} Mode: transactional (micro-worktree push-only)`);
+      console.log(`${LOG_PREFIX} Reason: ${args.reason}`);
+    } else {
+      await emitCorrectiveEvent({
+        type: args.type as ValidEmitType,
+        wuId: args.wu,
+        reason: args.reason,
+        eventsFilePath,
+        auditLogPath,
+      });
+
+      console.log(`${LOG_PREFIX} Emitted corrective '${args.type}' event for ${args.wu}`);
+      console.log(`${LOG_PREFIX} Mode: append-only`);
+      console.log(`${LOG_PREFIX} Reason: ${args.reason}`);
+      console.log(`${LOG_PREFIX} Events file: ${eventsFilePath}`);
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`${LOG_PREFIX} Error: ${message}`);

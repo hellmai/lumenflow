@@ -212,4 +212,68 @@ describe('state:emit CLI (WU-2241)', () => {
       expect(VALID_EMIT_TYPES).toContain('release');
     });
   });
+
+  describe('emitCorrectiveEventTransactionally', () => {
+    it('uses micro-worktree with push-only mode and writes event in worktree', async () => {
+      const microWorktreeDir = await fs.mkdtemp(path.join(os.tmpdir(), 'state-emit-micro-'));
+      const withMicroWorktreeImpl = vi.fn(async (options: Record<string, unknown>) => {
+        const execute = options.execute as (context: { worktreePath: string }) => Promise<unknown>;
+        await execute({ worktreePath: microWorktreeDir });
+      });
+
+      const { emitCorrectiveEventTransactionally } = await import('../src/state-emit.js');
+
+      await emitCorrectiveEventTransactionally(
+        {
+          type: 'complete',
+          wuId: 'WU-700',
+          reason: 'Transactional correction test',
+        },
+        { withMicroWorktreeImpl },
+      );
+
+      expect(withMicroWorktreeImpl).toHaveBeenCalledTimes(1);
+      expect(withMicroWorktreeImpl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          operation: 'state-emit',
+          pushOnly: true,
+        }),
+      );
+
+      const microEventsPath = path.join(microWorktreeDir, '.lumenflow', 'state', 'wu-events.jsonl');
+      const microContent = await fs.readFile(microEventsPath, 'utf-8');
+      const event = JSON.parse(microContent.trim());
+      expect(event.wuId).toBe('WU-700');
+      expect(event.type).toBe('complete');
+      expect(event.corrective).toBe(true);
+    });
+
+    it('uses a main-safe commit message format for transactional commits', async () => {
+      let commitMessage = '';
+      const withMicroWorktreeImpl = vi.fn(async (options: Record<string, unknown>) => {
+        const execute = options.execute as (context: { worktreePath: string }) => Promise<{
+          commitMessage: string;
+          files: string[];
+        }>;
+        const microWorktreeDir = await fs.mkdtemp(path.join(os.tmpdir(), 'state-emit-micro-msg-'));
+        const result = await execute({ worktreePath: microWorktreeDir });
+        commitMessage = result.commitMessage;
+      });
+
+      const { emitCorrectiveEventTransactionally } = await import('../src/state-emit.js');
+
+      await emitCorrectiveEventTransactionally(
+        {
+          type: 'release',
+          wuId: 'WU-701',
+          reason: 'Ensure policy-safe commit message',
+        },
+        { withMicroWorktreeImpl },
+      );
+
+      expect(commitMessage).toBe(
+        'chore(repair): emit corrective release event for wu-701',
+      );
+    });
+  });
 });
