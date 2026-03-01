@@ -2,7 +2,7 @@ id: WU-2286
 title: state:emit should support transactional commit mode for corrective events
 lane: 'Framework: Core State Recovery'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-01
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/core/src/micro-worktree.ts
 tests:
   manual:
-    - Run state:emit in transactional mode for a corrective complete event and verify no uncommitted changes remain on main
+    - Run state:emit in transactional mode for a corrective complete event and verify no uncommitted
+      changes remain on main
   unit:
     - packages/@lumenflow/cli/__tests__/state-emit.test.ts
   e2e: []
@@ -27,11 +28,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: state:emit appends corrective events but leaves main dirty, and claim flows then fail until operators manually commit under branch and hook constraints. Problem: recovery guidance often requires corrective events, yet the operational path can deadlock in strict repos where raw git on main is blocked. Solution: add an optional transactional commit mode for state:emit that uses micro-worktree/push-only workflow to persist corrective events with compliant commit messaging and audit metadata, avoiding manual git steps.'
+description: 'Context: state:emit appends corrective events but leaves main dirty, and claim flows
+  then fail until operators manually commit under branch and hook constraints. Problem: recovery
+  guidance often requires corrective events, yet the operational path can deadlock in strict repos
+  where raw git on main is blocked. Solution: add an optional transactional commit mode for
+  state:emit that uses micro-worktree/push-only workflow to persist corrective events with compliant
+  commit messaging and audit metadata, avoiding manual git steps.'
 acceptance:
-  - state:emit supports an explicit transactional mode that commits corrective event changes via micro-worktree
+  - state:emit supports an explicit transactional mode that commits corrective event changes via
+    micro-worktree
   - transactional mode succeeds without leaving local main dirty
   - commit message and audit trail comply with main-branch policy hooks
   - existing append-only mode remains available for repos that prefer manual commit
   - regression tests cover transactional and non-transactional state:emit flows
   - pnpm gates passes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-state-recovery-wu-2286
+claimed_at: 2026-03-01T19:37:54.333Z
+baseline_main_sha: af6e2199ccd9f7867fbcf43a73c5423a836d55fb
+session_id: d22853e4-ebf9-44b5-bba9-b1ec5f583c77
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-01T19:37:54.340Z

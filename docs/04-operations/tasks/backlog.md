@@ -49,11 +49,10 @@ sections:
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
 - [WU-2258 — Add lane:create command for adding new lanes via tooling](wu/WU-2258.yaml) — Framework: CLI Enforcement
-- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml) — Framework: Core State Recovery
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml) — Framework: Core State Recovery
 
 ## ⛔ Blocked
 

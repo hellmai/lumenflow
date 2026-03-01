@@ -4,7 +4,7 @@ _Last updated: 2026-03-01_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml)
 
 ## Completed
 
