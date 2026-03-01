@@ -271,9 +271,7 @@ describe('state:emit CLI (WU-2241)', () => {
         { withMicroWorktreeImpl },
       );
 
-      expect(commitMessage).toBe(
-        'chore(repair): emit corrective release event for wu-701',
-      );
+      expect(commitMessage).toBe('chore(repair): emit corrective release event for wu-701');
     });
   });
 });
