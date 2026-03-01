@@ -1,11 +1,11 @@
 id: INIT-048
 slug: kernel-hardening
 title: 'Kernel Hardening: Network Policy, macOS Sandbox, Advanced Scope Controls'
-description: 'Harden the LumenFlow kernel based on community feedback. Addresses top gaps: granular
-  network allowlisting, macOS sandbox hardening, and argument-level policy rules. Extends the
-  existing four-layer kernel (scope + evidence + policy + sandbox) with network-level controls and
-  platform parity.'
-status: in_progress
+description: 'Harden the LumenFlow kernel based on community feedback. Addresses
+  top gaps: granular network allowlisting, macOS sandbox hardening, and
+  argument-level policy rules. Extends the existing four-layer kernel (scope +
+  evidence + policy + sandbox) with network-level controls and platform parity.'
+status: done
 priority: P1
 owner: tom
 created: 2026-02-27
@@ -25,8 +25,9 @@ success_metrics:
   - Argument-level policy rules for MCP tool calls
 labels: []
 notes:
-  - Phase 3 (Compliance and Attestation) deferred after design-first review. See plan file for
-    rationale.
-  - 'Time-boxed permissions and dynamic policy reload deferred to future initiative. Phase 1+2
-    scope: network allowlisting, macOS hardening, argument-level policy.'
+  - Phase 3 (Compliance and Attestation) deferred after design-first review. See
+    plan file for rationale.
+  - 'Time-boxed permissions and dynamic policy reload deferred to future
+    initiative. Phase 1+2 scope: network allowlisting, macOS hardening,
+    argument-level policy.'
 related_plan: lumenflow://plans/INIT-048-kernel-hardening-network-polic.md
