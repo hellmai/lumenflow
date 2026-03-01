@@ -4,7 +4,7 @@ _Last updated: 2026-03-01_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2285 — state:doctor should detect stale status/backlog references for non-active WUs](wu/WU-2285.yaml)
 
 ## Completed
 

@@ -2,7 +2,7 @@ id: WU-2285
 title: state:doctor should detect stale status/backlog references for non-active WUs
 lane: 'Framework: Core State Recovery'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-01
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/state-doctor.ts
 tests:
   manual:
-    - Seed status.md In Progress with a superseded WU and verify state:doctor flags it, then verify state:doctor --fix removes it
+    - Seed status.md In Progress with a superseded WU and verify state:doctor flags it, then verify
+      state:doctor --fix removes it
   unit:
     - packages/@lumenflow/core/src/__tests__/state-doctor-core.test.ts
     - packages/@lumenflow/cli/src/__tests__/state-doctor.test.ts
@@ -28,10 +29,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: operators rely on state:doctor as the primary health check before claim and recovery actions. Problem: stale status.md/backlog entries can still list WUs as in progress even when YAML/state indicate non-active status, but state:doctor may report healthy or unrelated issues only, leaving lane-blocking drift undetected. Solution: extend diagnostics to explicitly flag stale status/backlog references that contradict canonical WU status and provide a fix path that regenerates affected docs from the state store.'
+description: 'Context: operators rely on state:doctor as the primary health check before claim and
+  recovery actions. Problem: stale status.md/backlog entries can still list WUs as in progress even
+  when YAML/state indicate non-active status, but state:doctor may report healthy or unrelated
+  issues only, leaving lane-blocking drift undetected. Solution: extend diagnostics to explicitly
+  flag stale status/backlog references that contradict canonical WU status and provide a fix path
+  that regenerates affected docs from the state store.'
 acceptance:
-  - state:doctor reports stale In Progress references when referenced WU status is superseded, done, or cancelled
+  - state:doctor reports stale In Progress references when referenced WU status is superseded, done,
+    or cancelled
   - state:doctor reports stale backlog references that contradict canonical WU status
   - --fix regenerates status/backlog so stale references are removed
   - regression tests cover stale WU references and successful fix behavior
   - pnpm gates passes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-state-recovery-wu-2285
+claimed_at: 2026-03-01T18:16:06.324Z
+baseline_main_sha: b5333bacbc5f98b0ba3d5e8d079481e806e86d35
+session_id: fc70ea06-a310-4cdb-b4d9-df85252e7192
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-01T18:16:06.330Z

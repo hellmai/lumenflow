@@ -2582,3 +2582,4 @@
 {"type":"claim","wuId":"WU-2284","timestamp":"2026-03-01T18:09:57.146Z","lane":"Framework: Core Lifecycle","title":"wu:claim lane occupancy should ignore non-active WUs in status sections"}
 {"type":"checkpoint","wuId":"WU-2284","timestamp":"2026-03-01T18:14:56.878Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2284","timestamp":"2026-03-01T18:15:31.577Z"}
+{"type":"claim","wuId":"WU-2285","timestamp":"2026-03-01T18:16:06.349Z","lane":"Framework: Core State Recovery","title":"state:doctor should detect stale status/backlog references for non-active WUs"}
