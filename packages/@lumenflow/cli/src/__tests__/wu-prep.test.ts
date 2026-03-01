@@ -600,3 +600,23 @@ describe('wu-prep TDD provenance enforcement (WU-2132)', () => {
     });
   });
 });
+
+describe('WU-2288: wu:brief policy enforcement in wu:prep', () => {
+  it('threads --force and --reason through parser options', async () => {
+    const source = await import('node:fs/promises').then((fs) =>
+      fs.readFile(new URL('../wu-prep.ts', import.meta.url), 'utf-8'),
+    );
+
+    expect(source).toMatch(/PREP_OPTIONS\.force/);
+    expect(source).toMatch(/PREP_OPTIONS\.reason/);
+  });
+
+  it('invokes prep-time wu:brief policy enforcement before gate execution', async () => {
+    const source = await import('node:fs/promises').then((fs) =>
+      fs.readFile(new URL('../wu-prep.ts', import.meta.url), 'utf-8'),
+    );
+
+    expect(source).toMatch(/await enforceWuBriefEvidenceForPrep\(/);
+    expect(source).toMatch(/mode:\s*resolveWuBriefPolicyMode\(\)/);
+  });
+});

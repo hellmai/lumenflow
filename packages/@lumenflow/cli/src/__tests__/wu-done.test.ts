@@ -18,13 +18,17 @@ import {
 } from '../wu-done.js';
 import {
   buildMissingWuBriefEvidenceMessage,
+  buildMissingWuBriefEvidenceMessageForPrep,
   enforceWuBriefEvidenceForDone,
+  enforceWuBriefEvidenceForPrep,
+  resolveWuBriefPolicyMode,
   shouldEnforceWuBriefEvidence,
 } from '../wu-done-policies.js';
 import {
   resolveWuDonePreCommitGateDecision,
   WU_DONE_PRE_COMMIT_GATE_DECISION_REASONS,
 } from '@lumenflow/core/gates-agent-mode';
+import type { LumenFlowConfig } from '@lumenflow/core/lumenflow-config-schema';
 import * as gitAdapter from '@lumenflow/core/git-adapter';
 import * as errorHandler from '@lumenflow/core/error-handler';
 import { validateInputs } from '@lumenflow/core/wu-done-inputs';
@@ -358,6 +362,162 @@ status: done
 
       expect(blocker).not.toHaveBeenCalled();
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('brief evidence override'));
+    });
+
+    it('resolves wu.brief.policyMode default to auto', () => {
+      const mode = resolveWuBriefPolicyMode({ wu: {} } as LumenFlowConfig);
+      expect(mode).toBe('auto');
+    });
+
+    it('resolves configured wu.brief.policyMode when present', () => {
+      const mode = resolveWuBriefPolicyMode({
+        wu: {
+          brief: {
+            policyMode: 'required',
+          },
+        },
+      } as LumenFlowConfig);
+      expect(mode).toBe('required');
+    });
+
+    it('returns prep remediation with policy and bypass guidance', () => {
+      const message = buildMissingWuBriefEvidenceMessageForPrep('WU-2288', 'required');
+      expect(message).toContain('policy=required');
+      expect(message).toContain('pnpm wu:brief --id WU-2288');
+      expect(message).toContain('--force --reason');
+    });
+
+    it('prep required policy blocks when evidence is missing and force is false', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const recordBypassAudit = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2288',
+        { type: 'bug' },
+        {
+          mode: 'required',
+          force: false,
+          getBriefEvidenceFn: vi.fn().mockResolvedValue(null),
+          blocker,
+          warn,
+          recordBypassAudit,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('policy=required'));
+      expect(warn).not.toHaveBeenCalled();
+      expect(recordBypassAudit).not.toHaveBeenCalled();
+    });
+
+    it('prep auto policy warns but does not block when evidence is missing', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const recordBypassAudit = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2288',
+        { type: 'feature' },
+        {
+          mode: 'auto',
+          getBriefEvidenceFn: vi.fn().mockResolvedValue(null),
+          blocker,
+          warn,
+          recordBypassAudit,
+        },
+      );
+
+      expect(blocker).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('wu:brief evidence missing for WU-2288 (policy=auto)'),
+      );
+      expect(recordBypassAudit).not.toHaveBeenCalled();
+    });
+
+    it('prep manual/off policies skip enforcement', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const getBriefEvidenceFn = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2288',
+        { type: 'feature' },
+        {
+          mode: 'manual',
+          getBriefEvidenceFn,
+          blocker,
+          warn,
+        },
+      );
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2288',
+        { type: 'feature' },
+        {
+          mode: 'off',
+          getBriefEvidenceFn,
+          blocker,
+          warn,
+        },
+      );
+
+      expect(getBriefEvidenceFn).not.toHaveBeenCalled();
+      expect(blocker).not.toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('prep required policy allows force bypass only with explicit reason and records audit', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const recordBypassAudit = vi.fn(async () => undefined);
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2288',
+        { type: 'feature' },
+        {
+          mode: 'required',
+          force: true,
+          reason: 'legacy WU missing generated evidence',
+          getBriefEvidenceFn: vi.fn().mockResolvedValue(null),
+          blocker,
+          warn,
+          recordBypassAudit,
+        },
+      );
+
+      expect(blocker).not.toHaveBeenCalled();
+      expect(recordBypassAudit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          wuId: 'WU-2288',
+          reason: 'legacy WU missing generated evidence',
+          policyMode: 'required',
+        }),
+      );
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('policy override accepted'));
+    });
+
+    it('prep required policy force bypass without reason is rejected', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const recordBypassAudit = vi.fn(async () => undefined);
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2288',
+        { type: 'feature' },
+        {
+          mode: 'required',
+          force: true,
+          reason: '   ',
+          getBriefEvidenceFn: vi.fn().mockResolvedValue(null),
+          blocker,
+          warn,
+          recordBypassAudit,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalledWith(
+        expect.stringContaining('Missing required --reason for wu:brief policy bypass'),
+      );
+      expect(recordBypassAudit).not.toHaveBeenCalled();
     });
   });
 

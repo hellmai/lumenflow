@@ -2589,3 +2589,5 @@
 {"type":"checkpoint","wuId":"WU-2287","timestamp":"2026-03-01T18:25:50.655Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"complete","wuId":"WU-2287","timestamp":"2026-03-01T18:37:42.613Z"}
 {"type":"claim","wuId":"WU-2288","timestamp":"2026-03-01T18:54:37.642Z","lane":"Framework: CLI WU Commands","title":"Enforce wu:brief policy at wu:prep with mode-aware blocking"}
+{"type":"checkpoint","wuId":"WU-2288","timestamp":"2026-03-01T18:54:47.772Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
+{"type":"checkpoint","wuId":"WU-2288","timestamp":"2026-03-01T19:01:22.490Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}

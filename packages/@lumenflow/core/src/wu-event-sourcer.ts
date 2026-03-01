@@ -32,6 +32,13 @@ export interface WuBriefEvidence {
   note: string;
 }
 
+/**
+ * Returns true when a checkpoint note represents wu:brief evidence.
+ */
+export function isWuBriefEvidenceNote(note: unknown): note is string {
+  return typeof note === 'string' && note.startsWith(WU_BRIEF_EVIDENCE_NOTE_PREFIX);
+}
+
 const FILE_NOT_FOUND_ERROR_CODE = 'ENOENT';
 
 function getErrorCode(error: unknown): string | null {
@@ -112,11 +119,7 @@ export function findLatestWuBriefEvidence(
       continue;
     }
 
-    if (
-      event.wuId === wuId &&
-      typeof event.note === 'string' &&
-      event.note.startsWith(WU_BRIEF_EVIDENCE_NOTE_PREFIX)
-    ) {
+    if (event.wuId === wuId && isWuBriefEvidenceNote(event.note)) {
       return { wuId: event.wuId, timestamp: event.timestamp, note: event.note };
     }
   }

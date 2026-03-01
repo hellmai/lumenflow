@@ -66,6 +66,10 @@ import { getCurrentBranch } from '@lumenflow/core/wu-helpers';
 import { createPreGatesCheckpoint } from '@lumenflow/core/wu-checkpoint';
 import { runGates } from './gates.js';
 import { evaluateMainDirtyMutationGuard } from './hooks/dirty-guard.js';
+import {
+  enforceWuBriefEvidenceForPrep,
+  resolveWuBriefPolicyMode,
+} from './wu-done-policies.js';
 export {
   isCodePathCoveredByChanges,
   findMissingCodePathCoverage,
@@ -117,6 +121,8 @@ const PREP_OPTIONS = {
     flags: '--full-tests',
     description: 'Run full incremental test suite (disable tests.unit scoped execution)',
   },
+  force: WU_OPTIONS.force,
+  reason: WU_OPTIONS.reason,
 };
 
 export function resolveScopedUnitTestsForPrep(options: {
@@ -639,7 +645,13 @@ export async function main(): Promise<void> {
   const args = createWUParser({
     name: 'wu-prep',
     description: 'Prepare WU for completion (run gates in worktree)',
-    options: [WU_OPTIONS.id, PREP_OPTIONS.docsOnly, PREP_OPTIONS.fullTests],
+    options: [
+      WU_OPTIONS.id,
+      PREP_OPTIONS.docsOnly,
+      PREP_OPTIONS.fullTests,
+      PREP_OPTIONS.force,
+      PREP_OPTIONS.reason,
+    ],
     required: ['id'],
     allowPositionalId: true,
   });
@@ -730,6 +742,13 @@ export async function main(): Promise<void> {
         `wu:prep can only be run on WUs that are in progress.`,
     );
   }
+
+  await enforceWuBriefEvidenceForPrep(id, doc, {
+    baseDir: location.cwd,
+    mode: resolveWuBriefPolicyMode(),
+    force: Boolean(args.force),
+    reason: typeof args.reason === 'string' ? args.reason : undefined,
+  });
 
   if (!branchPr) {
     const mainStatus = await createGitForPath(location.mainCheckout).getStatus();

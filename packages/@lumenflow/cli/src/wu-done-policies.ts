@@ -3,6 +3,7 @@
 
 import { getDocsOnlyPrefixes, DOCS_ONLY_ROOT_FILES } from '@lumenflow/core';
 import { DelegationRegistryStore } from '@lumenflow/core/delegation-registry-store';
+import { getConfig } from '@lumenflow/core/config';
 import { die, getErrorMessage } from '@lumenflow/core/error-handler';
 import { isDocumentationType } from '@lumenflow/core/wu-type-helpers';
 import {
@@ -14,7 +15,7 @@ import {
   WU_EXPOSURE,
   WU_TYPES,
 } from '@lumenflow/core/wu-constants';
-import { getLatestWuBriefEvidence } from '@lumenflow/core/wu-state-store';
+import { getLatestWuBriefEvidence, WUStateStore } from '@lumenflow/core/wu-state-store';
 import { validateExposure, validateFeatureAccessibility } from '@lumenflow/core/wu-validation';
 import { createSignal } from '@lumenflow/memory/signal';
 import { resolveStateDir } from './state-path-resolvers.js';
@@ -24,6 +25,13 @@ interface WUDocLike extends Record<string, unknown> {
   lane?: string;
   type?: string;
 }
+
+export const WU_BRIEF_POLICY_MODES = ['off', 'manual', 'auto', 'required'] as const;
+export type WuBriefPolicyMode = (typeof WU_BRIEF_POLICY_MODES)[number];
+const DEFAULT_WU_BRIEF_POLICY_MODE: WuBriefPolicyMode = 'auto';
+const PREP_LOG_PREFIX = '[wu-prep]';
+const PREP_FORCE_REASON_REQUIRED_MESSAGE =
+  'Missing required --reason for wu:brief policy bypass in wu:prep.';
 
 interface SpawnEntryLike {
   pickedUpAt?: string;
@@ -182,6 +190,23 @@ export function shouldEnforceWuBriefEvidence(doc: WUDocLike): boolean {
   return doc.type === WU_TYPES.FEATURE || doc.type === WU_TYPES.BUG;
 }
 
+function isWuBriefPolicyMode(value: unknown): value is WuBriefPolicyMode {
+  return (
+    typeof value === 'string' &&
+    WU_BRIEF_POLICY_MODES.includes(value as (typeof WU_BRIEF_POLICY_MODES)[number])
+  );
+}
+
+export function resolveWuBriefPolicyMode(
+  config: ReturnType<typeof getConfig> = getConfig(),
+): WuBriefPolicyMode {
+  const configured = config.wu?.brief?.policyMode;
+  if (isWuBriefPolicyMode(configured)) {
+    return configured;
+  }
+  return DEFAULT_WU_BRIEF_POLICY_MODE;
+}
+
 /**
  * Build remediation guidance when wu:brief evidence is missing.
  */
@@ -198,6 +223,119 @@ export function buildMissingWuBriefEvidenceMessage(id: string): string {
     `     pnpm wu:done --id ${id}\n` +
     `  4. Legacy/manual override (audited):\n` +
     `     pnpm wu:done --id ${id} --force`
+  );
+}
+
+export function buildMissingWuBriefEvidenceMessageForPrep(
+  id: string,
+  mode: WuBriefPolicyMode,
+): string {
+  return (
+    `Missing wu:brief evidence for ${id} (policy=${mode}).\n\n` +
+    `wu:prep enforces wu:brief evidence when policy mode is required.\n\n` +
+    `Fix options:\n` +
+    `  1. Record evidence by generating a brief prompt:\n` +
+    `     pnpm wu:brief --id ${id}\n` +
+    `  2. If self-implementing, record evidence only:\n` +
+    `     pnpm wu:brief --id ${id} --evidence-only\n` +
+    `  3. Retry prep:\n` +
+    `     pnpm wu:prep --id ${id}\n` +
+    `  4. Emergency audited bypass (requires explicit reason):\n` +
+    `     pnpm wu:prep --id ${id} --force --reason "<why bypass is required>"`
+  );
+}
+
+export async function recordWuBriefPrepBypassAudit(options: {
+  wuId: string;
+  baseDir?: string;
+  reason: string;
+  policyMode: WuBriefPolicyMode;
+}): Promise<void> {
+  const baseDir = options.baseDir ?? process.cwd();
+  const stateDir = resolveStateDir(baseDir);
+  const store = new WUStateStore(stateDir);
+  await store.checkpoint(
+    options.wuId,
+    `[wu:brief] prep force bypass accepted (${options.policyMode}): ${options.reason}`,
+    {
+      progress: 'wu:brief policy bypass',
+      nextSteps: `policy=${options.policyMode}`,
+    },
+  );
+}
+
+export async function enforceWuBriefEvidenceForPrep(
+  id: string,
+  doc: WUDocLike,
+  options: {
+    baseDir?: string;
+    mode?: WuBriefPolicyMode;
+    force?: boolean;
+    reason?: string;
+    getBriefEvidenceFn?: typeof getLatestWuBriefEvidence;
+    blocker?: (message: string) => void;
+    warn?: (message: string) => void;
+    recordBypassAudit?: typeof recordWuBriefPrepBypassAudit;
+  } = {},
+): Promise<void> {
+  if (!shouldEnforceWuBriefEvidence(doc)) {
+    return;
+  }
+
+  const mode = options.mode ?? resolveWuBriefPolicyMode();
+  if (mode === 'off' || mode === 'manual') {
+    return;
+  }
+
+  const baseDir = options.baseDir ?? process.cwd();
+  const stateDir = resolveStateDir(baseDir);
+  const force = options.force === true;
+  const getBriefEvidenceFn = options.getBriefEvidenceFn ?? getLatestWuBriefEvidence;
+  const blocker = options.blocker ?? ((message: string) => die(message));
+  const warn = options.warn ?? console.warn;
+  const recordBypassAudit = options.recordBypassAudit ?? recordWuBriefPrepBypassAudit;
+
+  let evidence;
+  try {
+    evidence = await getBriefEvidenceFn(stateDir, id);
+  } catch (error) {
+    if (mode === 'required' && !force) {
+      blocker(buildWuBriefEvidenceReadFailureMessage(id, stateDir, error));
+      return;
+    }
+
+    warn(
+      `${PREP_LOG_PREFIX} ${EMOJI.WARNING} Could not verify wu:brief evidence for ${id}: ${getErrorMessage(error)}`,
+    );
+    return;
+  }
+
+  if (evidence) {
+    return;
+  }
+
+  if (mode === 'auto') {
+    warn(
+      `${PREP_LOG_PREFIX} ${EMOJI.WARNING} wu:brief evidence missing for ${id} (policy=auto).`,
+    );
+    warn(buildMissingWuBriefEvidenceMessageForPrep(id, mode));
+    return;
+  }
+
+  if (!force) {
+    blocker(buildMissingWuBriefEvidenceMessageForPrep(id, mode));
+    return;
+  }
+
+  const reason = typeof options.reason === 'string' ? options.reason.trim() : '';
+  if (!reason) {
+    blocker(PREP_FORCE_REASON_REQUIRED_MESSAGE);
+    return;
+  }
+
+  await recordBypassAudit({ wuId: id, baseDir, reason, policyMode: mode });
+  warn(
+    `${PREP_LOG_PREFIX} ${EMOJI.WARNING} wu:brief policy override accepted for ${id} (policy=${mode}, reason="${reason}").`,
   );
 }
 

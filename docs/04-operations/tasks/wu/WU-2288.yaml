@@ -17,6 +17,7 @@ tests:
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-event-sourcer.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2288.done

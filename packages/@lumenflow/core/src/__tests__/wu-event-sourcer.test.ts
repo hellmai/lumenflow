@@ -20,6 +20,7 @@ import {
   WU_EVENTS_FILE_NAME,
   WU_BRIEF_EVIDENCE_NOTE_PREFIX,
   findLatestWuBriefEvidence,
+  isWuBriefEvidenceNote,
 } from '../wu-event-sourcer.js';
 import type { WUStateIndexer } from '../wu-state-indexer.js';
 import type { WUEvent } from '../wu-state-schema.js';
@@ -80,6 +81,14 @@ describe('WUEventSourcer', () => {
   });
 
   describe('findLatestWuBriefEvidence', () => {
+    it('identifies wu:brief checkpoint notes', () => {
+      expect(isWuBriefEvidenceNote(`${WU_BRIEF_EVIDENCE_NOTE_PREFIX} generated via codex-cli`)).toBe(
+        true,
+      );
+      expect(isWuBriefEvidenceNote('regular checkpoint')).toBe(false);
+      expect(isWuBriefEvidenceNote(undefined)).toBe(false);
+    });
+
     it('should return null when no wu:brief evidence exists for target WU', () => {
       const events = [
         makeClaimEvent('WU-100'),
