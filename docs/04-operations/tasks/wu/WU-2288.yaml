@@ -2,7 +2,7 @@ id: WU-2288
 title: Enforce wu:brief policy at wu:prep with mode-aware blocking
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-01
 code_paths:
@@ -23,7 +23,10 @@ artifacts:
   - .lumenflow/stamps/WU-2288.done
 dependencies: []
 risks: []
-notes: 'Added wu:prep policy enforcement path with mode-aware behavior (off/manual skip, auto warn, required block unless force+reason). Added explicit prep bypass audit checkpoint and shared brief evidence helper in core event sourcer; covered with unit tests in wu-prep, wu-done, and wu-event-sourcer test suites.'
+notes: Added wu:prep policy enforcement path with mode-aware behavior (off/manual skip, auto warn,
+  required block unless force+reason). Added explicit prep bypass audit checkpoint and shared brief
+  evidence helper in core event sourcer; covered with unit tests in wu-prep, wu-done, and
+  wu-event-sourcer test suites.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -52,3 +55,6 @@ session_id: b71e3759-b310-4f58-a6aa-a3a4bbc3f051
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-01T18:54:37.625Z
+locked: true
+completed_at: 2026-03-01T19:03:38.874Z
+completed: 2026-03-01
