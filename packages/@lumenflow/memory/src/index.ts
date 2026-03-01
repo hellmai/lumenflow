@@ -26,6 +26,7 @@ export {
 export * from './mem-triage-core.js';
 export * from './mem-index-core.js';
 export * from './mem-promote-core.js';
+export * from './memory-promotion.js';
 export * from './mem-profile-core.js';
 export * from './mem-delete-core.js';
 export * from './mem-recover-core.js';

@@ -6,6 +6,7 @@
  */
 
 import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { getGitForCwd } from './git-adapter.js';
 import { withCleanupLock } from './cleanup-lock.js';
 import { validateWorktreeOwnership } from './worktree-ownership.js';
@@ -18,6 +19,60 @@ import { exec as execCallback } from 'node:child_process';
 import { promisify } from 'node:util';
 
 const execAsync = promisify(execCallback);
+
+interface ProjectMemoryPromotionResult {
+  promotedCount: number;
+  promotedNodeIds: string[];
+}
+
+interface MemoryPromotionModule {
+  promoteProjectMemory?: (
+    worktreeDir: string,
+    mainDir: string,
+  ) => Promise<ProjectMemoryPromotionResult>;
+}
+
+function isMemoryModuleMissing(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes('@lumenflow/memory') &&
+    (message.includes('Cannot find module') || message.includes('ERR_MODULE_NOT_FOUND'))
+  );
+}
+
+/**
+ * WU-2145: Promote project-lifecycle memory from worktree to main before deletion.
+ *
+ * Fails closed if the memory module exists but promotion fails, to avoid silent
+ * data loss during worktree cleanup.
+ */
+async function promoteProjectMemoryForCleanup(worktreePath: string): Promise<void> {
+  const resolvedWorktreePath = path.resolve(worktreePath);
+  const mainCheckoutPath = process.cwd();
+
+  try {
+    const memoryModule = (await import('@lumenflow/memory')) as MemoryPromotionModule;
+    if (typeof memoryModule.promoteProjectMemory !== 'function') {
+      return;
+    }
+
+    const result = await memoryModule.promoteProjectMemory(resolvedWorktreePath, mainCheckoutPath);
+    if (result.promotedCount > 0) {
+      console.log(
+        `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Promoted ${result.promotedCount} project memory node(s) from worktree`,
+      );
+    }
+  } catch (error) {
+    if (isMemoryModuleMissing(error)) {
+      console.log(
+        `${LOG_PREFIX.DONE} ${EMOJI.INFO} @lumenflow/memory unavailable; skipping project memory promotion`,
+      );
+      return;
+    }
+
+    throw error;
+  }
+}
 
 /**
  * Run cleanup operations after successful merge
@@ -69,6 +124,8 @@ async function runCleanupInternal(docMain: UnsafeAny, args: UnsafeAny, worktreeP
 
   if (!args.noRemove && !prModeEnabled) {
     if (worktreePath && existsSync(worktreePath)) {
+      await promoteProjectMemoryForCleanup(worktreePath);
+
       try {
         await getGitForCwd().worktreeRemove(worktreePath, { force: true });
         console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Removed worktree ${worktreePath}`);

@@ -18,6 +18,7 @@ const mockGit = {
   raw: vi.fn(),
   fetch: vi.fn(),
 };
+const mockPromoteProjectMemory = vi.fn();
 
 vi.mock('../git-adapter.js', () => ({
   getGitForCwd: () => mockGit,
@@ -50,6 +51,10 @@ vi.mock('../wu-done-branch-utils.js', () => ({
   isBranchAlreadyMerged: vi.fn(() => true),
 }));
 
+vi.mock('@lumenflow/memory', () => ({
+  promoteProjectMemory: mockPromoteProjectMemory,
+}));
+
 vi.mock('node:fs', async () => {
   const actual = await vi.importActual('node:fs');
   return {
@@ -76,6 +81,7 @@ import { isBranchAlreadyMerged } from '../wu-done-branch-utils.js';
 describe('wu-done-cleanup branch-pr handling (WU-1492)', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mockPromoteProjectMemory.mockResolvedValue({ promotedCount: 0, promotedNodeIds: [] });
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -128,6 +134,18 @@ describe('wu-done-cleanup branch-pr handling (WU-1492)', () => {
 
     // Worktree SHOULD be removed in default worktree mode
     expect(mockGit.worktreeRemove).toHaveBeenCalled();
+  });
+
+  it('promotes project memory before worktree cleanup in worktree mode', async () => {
+    const doc = {
+      id: 'WU-2145',
+      lane: 'Framework: Memory',
+      claimed_mode: 'worktree',
+    };
+
+    await runCleanup(doc, {});
+
+    expect(mockPromoteProjectMemory).toHaveBeenCalledTimes(1);
   });
 
   it('retries local branch deletion with force when remote main already contains the branch', async () => {
