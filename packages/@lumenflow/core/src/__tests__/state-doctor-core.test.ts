@@ -58,6 +58,8 @@ interface StateDoctorDeps {
   listStamps: () => Promise<string[]>;
   listSignals: () => Promise<MockSignal[]>;
   listEvents: () => Promise<MockEvent[]>;
+  listInProgressStatusRefs?: () => Promise<string[]>;
+  listInProgressBacklogRefs?: () => Promise<string[]>;
   removeSignal?: (id: string) => Promise<void>;
   removeEvent?: (wuId: string) => Promise<void>;
 }
@@ -475,6 +477,67 @@ describe('state-doctor-core', () => {
 
       expect(result.summary.orphanBacklogRefs).toBe(2);
       expect(result.summary.totalIssues).toBe(2);
+    });
+  });
+
+  describe('stale in-progress reference detection (WU-2285)', () => {
+    it('should report stale status.md In Progress references for non-active WUs', async () => {
+      const deps = createMockDeps({
+        listWUs: vi
+          .fn()
+          .mockResolvedValue([
+            { id: 'WU-200', status: 'superseded', lane: 'Framework: Core', title: 'Legacy WU' },
+          ]),
+        listInProgressStatusRefs: vi.fn().mockResolvedValue(['WU-200']),
+      });
+
+      const result = await diagnoseState(TEST_PROJECT_DIR, deps);
+
+      expect(result.healthy).toBe(false);
+      expect(result.issues).toHaveLength(1);
+      expect(result.issues[0].type).toBe(ISSUE_TYPES.STATUS_MISMATCH);
+      expect(result.issues[0].description).toContain('status.md');
+      expect(result.issues[0].description).toContain('In Progress');
+      expect(result.issues[0].description).toContain('superseded');
+      expect(result.summary.statusMismatches).toBe(1);
+    });
+
+    it('should report stale backlog In Progress references for done/cancelled WUs', async () => {
+      const deps = createMockDeps({
+        listWUs: vi.fn().mockResolvedValue([
+          { id: 'WU-201', status: 'done', lane: 'Framework: Core', title: 'Completed WU' },
+          { id: 'WU-202', status: 'cancelled', lane: 'Framework: Core', title: 'Cancelled WU' },
+        ]),
+        listStamps: vi.fn().mockResolvedValue(['WU-201']),
+        listInProgressBacklogRefs: vi.fn().mockResolvedValue(['WU-201', 'WU-202']),
+      });
+
+      const result = await diagnoseState(TEST_PROJECT_DIR, deps);
+
+      expect(result.healthy).toBe(false);
+      expect(result.issues).toHaveLength(2);
+      expect(result.issues.every((issue) => issue.type === ISSUE_TYPES.STATUS_MISMATCH)).toBe(true);
+      expect(result.issues[0].description).toContain('backlog.md');
+      expect(result.issues[1].description).toContain('backlog.md');
+      expect(result.summary.statusMismatches).toBe(2);
+    });
+
+    it('should ignore In Progress references for active statuses', async () => {
+      const deps = createMockDeps({
+        listWUs: vi.fn().mockResolvedValue([
+          { id: 'WU-210', status: 'ready', lane: 'Framework: Core', title: 'Ready WU' },
+          { id: 'WU-211', status: 'in_progress', lane: 'Framework: Core', title: 'Active WU' },
+          { id: 'WU-212', status: 'blocked', lane: 'Framework: Core', title: 'Blocked WU' },
+        ]),
+        listInProgressStatusRefs: vi.fn().mockResolvedValue(['WU-210', 'WU-211', 'WU-212']),
+        listInProgressBacklogRefs: vi.fn().mockResolvedValue(['WU-210', 'WU-211', 'WU-212']),
+      });
+
+      const result = await diagnoseState(TEST_PROJECT_DIR, deps);
+
+      expect(result.healthy).toBe(true);
+      expect(result.issues).toHaveLength(0);
+      expect(result.summary.statusMismatches).toBe(0);
     });
   });
 

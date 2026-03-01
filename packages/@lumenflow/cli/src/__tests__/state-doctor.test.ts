@@ -42,6 +42,8 @@ import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import {
   applyInitiativeLifecycleStatusFixes,
   collectInitiativeLifecycleStatusMismatches,
+  applyStaleReferenceFixes,
+  extractInProgressWuRefs,
 } from '../state-doctor.js';
 
 /**
@@ -459,6 +461,84 @@ describe('state-doctor CLI (WU-1230)', () => {
       );
     });
   });
+
+  describe('stale in-progress reference reconciliation (WU-2285)', () => {
+    it('extracts WU IDs only from the In Progress section', () => {
+      const content = `# Backlog
+
+## In Progress
+
+- [WU-300 — Legacy item](wu/WU-300.yaml)
+- WU-301: Another active item
+
+## Completed
+
+- [WU-300 — Legacy item](wu/WU-300.yaml)
+- [WU-999 — Historical item](wu/WU-999.yaml)
+`;
+
+      expect(extractInProgressWuRefs(content)).toEqual(['WU-300', 'WU-301']);
+    });
+
+    it('regenerates backlog.md and status.md from state store when stale refs are fixed', async () => {
+      setupTestState(testDir, {
+        wus: [{ id: 'WU-300', status: 'superseded', title: 'Superseded WU' }],
+        events: [
+          {
+            wuId: 'WU-300',
+            type: 'claim',
+            timestamp: new Date().toISOString(),
+            lane: 'Framework: Core State Recovery',
+            title: 'Superseded WU',
+          },
+          { wuId: 'WU-300', type: 'complete', timestamp: new Date().toISOString() },
+        ],
+        backlog: `# Work Units Backlog
+
+## In Progress
+
+- [WU-300 — Superseded WU](wu/WU-300.yaml)
+`,
+        status: `# Status
+
+## In Progress
+
+- [WU-300 — Superseded WU](wu/WU-300.yaml)
+`,
+      });
+
+      const mockWithMicroWorktree = vi.mocked(withMicroWorktree);
+      mockWithMicroWorktree.mockImplementation(async (options) => {
+        const result = await options.execute({
+          worktreePath: testDir,
+          gitWorktree: {
+            add: vi.fn(),
+            addWithDeletions: vi.fn(),
+            commit: vi.fn(),
+            push: vi.fn(),
+          } as unknown as Parameters<typeof options.execute>[0]['gitWorktree'],
+        });
+        return { ...result, ref: 'main' };
+      });
+
+      await applyStaleReferenceFixes(testDir);
+
+      const backlogContent = readFileSync(join(testDir, BACKLOG_PATH), 'utf-8');
+      const statusContent = readFileSync(join(testDir, STATUS_PATH), 'utf-8');
+      const backlogInProgress = extractMarkdownSection(backlogContent, 'In Progress');
+      const statusInProgress = extractMarkdownSection(statusContent, 'In Progress');
+
+      expect(backlogInProgress).not.toContain('WU-300');
+      expect(statusInProgress).not.toContain('WU-300');
+      expect(mockWithMicroWorktree).toHaveBeenCalledWith(
+        expect.objectContaining({
+          operation: 'state-doctor',
+          id: 'reconcile-stale-doc-refs',
+          pushOnly: true,
+        }),
+      );
+    });
+  });
 });
 
 /**
@@ -467,7 +547,14 @@ describe('state-doctor CLI (WU-1230)', () => {
 interface TestState {
   wus?: Array<{ id: string; status: string; title?: string; initiative?: string }>;
   initiatives?: Array<{ id: string; status: string; title?: string; slug?: string }>;
-  events?: Array<{ wuId: string; type: string; timestamp: string }>;
+  events?: Array<{
+    wuId: string;
+    type: string;
+    timestamp: string;
+    lane?: string;
+    title?: string;
+    reason?: string;
+  }>;
   signals?: Array<{ id: string; wuId?: string; message?: string }>;
   backlog?: string;
   status?: string;
@@ -535,4 +622,20 @@ function setupTestState(baseDir: string, state: TestState): void {
     const statusPath = join(baseDir, STATUS_PATH);
     writeFileSync(statusPath, state.status, 'utf-8');
   }
+}
+
+function extractMarkdownSection(content: string, sectionTitle: string): string {
+  const header = `## ${sectionTitle}`;
+  const start = content.indexOf(header);
+  if (start < 0) {
+    return '';
+  }
+
+  const afterHeader = content.slice(start + header.length);
+  const nextSectionIdx = afterHeader.search(/\n##\s+/);
+  if (nextSectionIdx < 0) {
+    return afterHeader;
+  }
+
+  return afterHeader.slice(0, nextSectionIdx);
 }

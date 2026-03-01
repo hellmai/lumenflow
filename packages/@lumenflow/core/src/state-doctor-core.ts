@@ -72,6 +72,15 @@ const STATUS_MISMATCH_SUGGESTION = {
     'Manual reconciliation required: state transition is not representable via corrective events',
 } as const;
 
+const STALE_IN_PROGRESS_REFERENCE_SUGGESTION =
+  'Regenerate backlog.md and status.md from state store using: pnpm state:doctor --fix';
+
+const NON_ACTIVE_STATUSES = new Set<string>([
+  WU_STATUS.DONE,
+  WU_STATUS.CANCELLED,
+  WU_STATUS.SUPERSEDED,
+]);
+
 /**
  * Issue type (union)
  */
@@ -161,6 +170,10 @@ export interface StateDoctorDeps {
   emitEvent?: (event: EmitEventPayload) => Promise<void>;
   /** List WU IDs referenced in backlog.md (WU-2229) */
   listBacklogRefs?: () => Promise<string[]>;
+  /** List WU IDs in status.md "In Progress" section (WU-2285) */
+  listInProgressStatusRefs?: () => Promise<string[]>;
+  /** List WU IDs in backlog.md "In Progress" section (WU-2285) */
+  listInProgressBacklogRefs?: () => Promise<string[]>;
 }
 
 /**
@@ -183,6 +196,8 @@ export interface DiagnosisIssue {
   canAutoFix: boolean;
   /** Status mismatch details for fixing (WU-1420) */
   statusMismatch?: StatusMismatchDetails;
+  /** Source document metadata for stale in-progress references (WU-2285) */
+  staleReferenceSource?: 'status_in_progress' | 'backlog_in_progress';
 }
 
 /**
@@ -449,6 +464,39 @@ function detectOrphanBacklogRefs(backlogRefs: string[], wuIds: Set<string>): Dia
   return issues;
 }
 
+function detectStaleInProgressRefs(
+  refs: string[],
+  wuById: Map<string, MockWU>,
+  source: 'status_in_progress' | 'backlog_in_progress',
+): DiagnosisIssue[] {
+  const issues: DiagnosisIssue[] = [];
+
+  for (const wuId of refs) {
+    const wu = wuById.get(wuId);
+    if (!wu) {
+      continue;
+    }
+
+    const normalizedStatus = wu.status.trim().toLowerCase();
+    if (!NON_ACTIVE_STATUSES.has(normalizedStatus)) {
+      continue;
+    }
+
+    const sourceLabel = source === 'status_in_progress' ? 'status.md' : 'backlog.md';
+    issues.push({
+      type: ISSUE_TYPES.STATUS_MISMATCH,
+      severity: ISSUE_SEVERITY.WARNING,
+      wuId,
+      description: `WU ${wuId} is listed in ${sourceLabel} In Progress but canonical YAML status is '${normalizedStatus}'`,
+      suggestion: STALE_IN_PROGRESS_REFERENCE_SUGGESTION,
+      canAutoFix: false,
+      staleReferenceSource: source,
+    });
+  }
+
+  return issues;
+}
+
 /**
  * Calculate summary statistics from issues
  */
@@ -672,12 +720,27 @@ export async function diagnoseState(
   // Build lookup sets
   const wuIds = new Set(wus.map((wu) => wu.id));
   const stampIds = new Set(stamps);
+  const wuById = new Map(wus.map((wu) => [wu.id, wu]));
 
   // Detect issues
   const orphanedWUissues = detectOrphanedWUs(wus, stampIds);
   const danglingSignalIssues = detectDanglingSignals(signals, wuIds);
   const brokenEventIssues = detectBrokenEvents(events, wuIds);
   const statusMismatchIssues = detectStatusMismatches(wus, events);
+  const inProgressStatusRefs = deps.listInProgressStatusRefs
+    ? await deps.listInProgressStatusRefs()
+    : [];
+  const inProgressBacklogRefs = deps.listInProgressBacklogRefs
+    ? await deps.listInProgressBacklogRefs()
+    : [];
+  const staleStatusRefIssues =
+    inProgressStatusRefs.length > 0
+      ? detectStaleInProgressRefs(inProgressStatusRefs, wuById, 'status_in_progress')
+      : [];
+  const staleBacklogRefIssues =
+    inProgressBacklogRefs.length > 0
+      ? detectStaleInProgressRefs(inProgressBacklogRefs, wuById, 'backlog_in_progress')
+      : [];
 
   // WU-2229: Detect orphan backlog references (optional — backward compatible)
   const backlogRefs = deps.listBacklogRefs ? await deps.listBacklogRefs() : [];
@@ -689,6 +752,8 @@ export async function diagnoseState(
     ...danglingSignalIssues,
     ...brokenEventIssues,
     ...statusMismatchIssues,
+    ...staleStatusRefIssues,
+    ...staleBacklogRefIssues,
     ...orphanBacklogRefIssues,
   ];
   const summary = calculateSummary(issues);

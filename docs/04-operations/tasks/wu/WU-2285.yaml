@@ -20,7 +20,9 @@ artifacts:
   - .lumenflow/stamps/WU-2285.done
 dependencies: []
 risks: []
-notes: ''
+notes: Added stale In Progress reference detection in state-doctor core (status.md/backlog.md
+  sections), and CLI --fix reconciliation that regenerates status/backlog from WUStateStore in
+  micro-worktree isolation.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

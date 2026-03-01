@@ -46,6 +46,8 @@ import {
 } from '@lumenflow/core/state-doctor-core';
 import { createWUParser } from '@lumenflow/core/arg-parser';
 import { EXIT_CODES, LUMENFLOW_PATHS, WU_STATUS } from '@lumenflow/core/wu-constants';
+import { generateBacklog, generateStatus } from '@lumenflow/core/backlog-generator';
+import { WUStateStore } from '@lumenflow/core/wu-state-store';
 import {
   getConfig,
   getResolvedPaths,
@@ -60,6 +62,7 @@ import { createStateDoctorFixDeps } from './state-doctor-fix.js';
 import { runCLI } from './cli-entry-point.js';
 import { resolveStateDoctorStampIds } from './state-doctor-stamps.js';
 import { deriveInitiativeLifecycleStatus } from './initiative-status.js';
+import { resolveStateDir } from './state-path-resolvers.js';
 
 /**
  * Log prefix for state:doctor output
@@ -73,6 +76,9 @@ const STATUS_RECONCILIATION_OPERATION_ID = 'reconcile-initiative-status';
 const STATUS_RECONCILIATION_COMMIT_MESSAGE =
   'fix(state-doctor): reconcile stale initiative lifecycle statuses';
 const INITIATIVE_STATUS_RECONCILIATION_SUGGESTION = 'Run with --fix to reconcile initiative status';
+const STALE_DOC_RECONCILIATION_OPERATION_ID = 'reconcile-stale-doc-refs';
+const STALE_DOC_RECONCILIATION_COMMIT_MESSAGE =
+  'fix(state-doctor): reconcile stale in-progress references in backlog/status';
 
 // WU-1539/WU-1548: Use centralized LUMENFLOW_PATHS.MEMORY_SIGNALS and LUMENFLOW_PATHS.WU_EVENTS
 
@@ -158,6 +164,52 @@ interface InitiativeProgressContext {
 interface WUDocShape {
   initiative?: string;
   status?: string;
+}
+
+function readFileSafe(filePath: string): Promise<string> {
+  return fs.readFile(filePath, 'utf-8').catch(() => '');
+}
+
+/**
+ * Extract WU IDs from the "In Progress" markdown section.
+ */
+export function extractInProgressWuRefs(content: string): string[] {
+  if (!content) {
+    return [];
+  }
+
+  const lines = content.split(/\r?\n/);
+  const inProgressHeader = /^##\s+In Progress\s*$/i;
+  const sectionHeader = /^##\s+/;
+  const seen = new Set<string>();
+  const refs: string[] = [];
+
+  let inSection = false;
+  for (const line of lines) {
+    if (!inSection && inProgressHeader.test(line.trim())) {
+      inSection = true;
+      continue;
+    }
+
+    if (inSection && sectionHeader.test(line.trim())) {
+      break;
+    }
+
+    if (!inSection) {
+      continue;
+    }
+
+    const matches = line.match(/WU-\d+/gi) || [];
+    for (const match of matches) {
+      const wuId = match.toUpperCase();
+      if (!seen.has(wuId)) {
+        seen.add(wuId);
+        refs.push(wuId);
+      }
+    }
+  }
+
+  return refs;
 }
 
 function normalizeLifecycleStatus(value: unknown): string {
@@ -340,6 +392,54 @@ export async function applyInitiativeLifecycleStatusFixes(
 
       return {
         commitMessage: STATUS_RECONCILIATION_COMMIT_MESSAGE,
+        files: modifiedFiles,
+      };
+    },
+  });
+}
+
+/**
+ * Regenerate backlog.md and status.md from state store to remove stale references.
+ */
+export async function applyStaleReferenceFixes(baseDir: string): Promise<void> {
+  await withMicroWorktree({
+    operation: STATUS_RECONCILIATION_OPERATION,
+    id: STALE_DOC_RECONCILIATION_OPERATION_ID,
+    logPrefix: LOG_PREFIX,
+    pushOnly: true,
+    execute: async ({ worktreePath }) => {
+      const config = getConfig({ projectRoot: worktreePath, strictWorkspace: true });
+      const backlogRelativePath = config.directories.backlogPath;
+      const statusRelativePath = config.directories.statusPath;
+      const backlogPath = path.join(worktreePath, backlogRelativePath);
+      const statusPath = path.join(worktreePath, statusRelativePath);
+
+      const [currentBacklog, currentStatus] = await Promise.all([
+        readFileSafe(backlogPath),
+        readFileSafe(statusPath),
+      ]);
+
+      const store = new WUStateStore(resolveStateDir(worktreePath));
+      await store.load();
+
+      const [nextBacklog, nextStatus] = await Promise.all([
+        generateBacklog(store),
+        generateStatus(store),
+      ]);
+
+      const modifiedFiles: string[] = [];
+      if (nextBacklog !== currentBacklog) {
+        await fs.writeFile(backlogPath, nextBacklog, 'utf-8');
+        modifiedFiles.push(backlogRelativePath);
+      }
+
+      if (nextStatus !== currentStatus) {
+        await fs.writeFile(statusPath, nextStatus, 'utf-8');
+        modifiedFiles.push(statusRelativePath);
+      }
+
+      return {
+        commitMessage: STALE_DOC_RECONCILIATION_COMMIT_MESSAGE,
         files: modifiedFiles,
       };
     },
@@ -554,6 +654,32 @@ async function createDeps(baseDir: string): Promise<StateDoctorDeps> {
           }
         }
         return wuIds;
+      } catch {
+        return [];
+      }
+    },
+
+    /**
+     * List WU IDs from backlog.md "In Progress" section (WU-2285)
+     */
+    listInProgressBacklogRefs: async (): Promise<string[]> => {
+      try {
+        const backlogPath = path.join(baseDir, config.directories.backlogPath);
+        const content = await fs.readFile(backlogPath, 'utf-8');
+        return extractInProgressWuRefs(content);
+      } catch {
+        return [];
+      }
+    },
+
+    /**
+     * List WU IDs from status.md "In Progress" section (WU-2285)
+     */
+    listInProgressStatusRefs: async (): Promise<string[]> => {
+      try {
+        const statusPath = path.join(baseDir, config.directories.statusPath);
+        const content = await fs.readFile(statusPath, 'utf-8');
+        return extractInProgressWuRefs(content);
       } catch {
         return [];
       }
@@ -852,6 +978,30 @@ export async function main(): Promise<void> {
       fix: args.fix,
       dryRun: args.dryRun,
     });
+
+    const staleReferenceIssues = result.issues.filter((issue) => issue.staleReferenceSource);
+    if (staleReferenceIssues.length > 0) {
+      if (args.fix && args.dryRun) {
+        result.dryRun = true;
+        const existingWouldFix = result.wouldFix || [];
+        result.wouldFix = [...existingWouldFix, ...staleReferenceIssues];
+      } else if (args.fix) {
+        try {
+          await applyStaleReferenceFixes(baseDir);
+          result.fixed.push(...staleReferenceIssues);
+        } catch (fixErr) {
+          const message = fixErr instanceof Error ? fixErr.message : String(fixErr);
+          for (const issue of staleReferenceIssues) {
+            result.fixErrors.push({
+              type: issue.type,
+              wuId: issue.wuId,
+              signalId: issue.signalId,
+              error: message,
+            });
+          }
+        }
+      }
+    }
 
     const initiativeMismatches = await collectInitiativeLifecycleStatusMismatches(baseDir);
     const initiativeIssues = appendInitiativeStatusMismatchIssues(result, initiativeMismatches);
