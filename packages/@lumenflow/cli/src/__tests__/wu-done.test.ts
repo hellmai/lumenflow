@@ -21,6 +21,7 @@ import {
   buildMissingWuBriefEvidenceMessageForPrep,
   enforceWuBriefEvidenceForDone,
   enforceWuBriefEvidenceForPrep,
+  resolveWuBriefFreshnessMinutes,
   resolveWuBriefPolicyMode,
   shouldEnforceWuBriefEvidence,
 } from '../wu-done-policies.js';
@@ -330,6 +331,7 @@ status: done
         {
           baseDir: '/repo',
           force: false,
+          freshnessMinutes: null,
           getBriefEvidenceFn: vi.fn().mockResolvedValue({
             wuId: 'WU-2132',
             timestamp: '2026-02-24T12:00:00.000Z',
@@ -378,6 +380,20 @@ status: done
         },
       } as LumenFlowConfig);
       expect(mode).toBe('required');
+    });
+
+    it('resolves wu.brief freshness default and disable override', () => {
+      const defaultFreshness = resolveWuBriefFreshnessMinutes({ wu: {} } as LumenFlowConfig);
+      const disabledFreshness = resolveWuBriefFreshnessMinutes({
+        wu: {
+          brief: {
+            freshnessMinutes: 0,
+          },
+        },
+      } as LumenFlowConfig);
+
+      expect(defaultFreshness).toBe(1440);
+      expect(disabledFreshness).toBeNull();
     });
 
     it('returns prep remediation with policy and bypass guidance', () => {
@@ -518,6 +534,109 @@ status: done
         expect.stringContaining('Missing required --reason for wu:brief policy bypass'),
       );
       expect(recordBypassAudit).not.toHaveBeenCalled();
+    });
+
+    it('prep required policy blocks stale brief evidence', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2289',
+        { type: 'bug' },
+        {
+          mode: 'required',
+          force: false,
+          freshnessMinutes: 60,
+          now: new Date('2026-03-01T11:00:00.000Z'),
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2289',
+            timestamp: '2026-03-01T10:00:00.000Z',
+            note: '[wu:brief] evidence',
+          }),
+          blocker,
+          warn,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('Stale'));
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('prep auto policy warns but does not block stale brief evidence', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2289',
+        { type: 'feature' },
+        {
+          mode: 'auto',
+          freshnessMinutes: 60,
+          now: new Date('2026-03-01T11:00:00.000Z'),
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2289',
+            timestamp: '2026-03-01T10:00:00.000Z',
+            note: '[wu:brief] evidence',
+          }),
+          blocker,
+          warn,
+        },
+      );
+
+      expect(blocker).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('stale'));
+    });
+
+    it('done required policy blocks stale brief evidence', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceWuBriefEvidenceForDone(
+        'WU-2289',
+        { type: 'bug' },
+        {
+          mode: 'required',
+          force: false,
+          freshnessMinutes: 30,
+          now: new Date('2026-03-01T11:00:00.000Z'),
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2289',
+            timestamp: '2026-03-01T10:00:00.000Z',
+            note: '[wu:brief] stale evidence',
+          }),
+          blocker,
+          warn,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('Stale'));
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('done manual policy allows stale brief evidence without blocking', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceWuBriefEvidenceForDone(
+        'WU-2289',
+        { type: 'feature' },
+        {
+          mode: 'manual',
+          force: false,
+          freshnessMinutes: 30,
+          now: new Date('2026-03-01T11:00:00.000Z'),
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2289',
+            timestamp: '2026-03-01T10:00:00.000Z',
+            note: '[wu:brief] stale evidence',
+          }),
+          blocker,
+          warn,
+        },
+      );
+
+      expect(blocker).not.toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalled();
     });
   });
 

@@ -67,6 +67,7 @@ const TEST_WIP_JUSTIFICATION = 'Docs WUs are low-conflict parallel work';
 const LOCK_POLICY_ALL = 'all';
 const LOCK_POLICY_ACTIVE = 'active';
 const LOCK_POLICY_NONE = 'none';
+const DEFAULT_WU_BRIEF_FRESHNESS_MINUTES = 1440;
 
 describe('WU-2287: wu:brief policy config schema', () => {
   it('defaults wu.brief.policyMode to auto', () => {
@@ -91,6 +92,38 @@ describe('WU-2287: wu:brief policy config schema', () => {
     }
   });
 
+  it('defaults wu.brief.freshnessMinutes to 1440', () => {
+    const result = WuConfigSchema.safeParse({});
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.brief.freshnessMinutes).toBe(DEFAULT_WU_BRIEF_FRESHNESS_MINUTES);
+    }
+  });
+
+  it('accepts wu.brief.freshnessMinutes = 0 to disable staleness checks', () => {
+    const result = WuConfigSchema.safeParse({
+      brief: {
+        freshnessMinutes: 0,
+      },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.brief.freshnessMinutes).toBe(0);
+    }
+  });
+
+  it('rejects negative wu.brief.freshnessMinutes values', () => {
+    const result = WuConfigSchema.safeParse({
+      brief: {
+        freshnessMinutes: -1,
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('rejects unknown policy modes', () => {
     const result = WuConfigSchema.safeParse({
       brief: {
@@ -113,6 +146,21 @@ describe('WU-2287: wu:brief policy config schema', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.wu.brief.policyMode).toBe('off');
+    }
+  });
+
+  it('propagates wu.brief.freshnessMinutes through full config parsing', () => {
+    const result = LumenFlowConfigSchema.safeParse({
+      wu: {
+        brief: {
+          freshnessMinutes: 30,
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.wu.brief.freshnessMinutes).toBe(30);
     }
   });
 

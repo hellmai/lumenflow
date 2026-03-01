@@ -618,5 +618,6 @@ describe('WU-2288: wu:brief policy enforcement in wu:prep', () => {
 
     expect(source).toMatch(/await enforceWuBriefEvidenceForPrep\(/);
     expect(source).toMatch(/mode:\s*resolveWuBriefPolicyMode\(\)/);
+    expect(source).toMatch(/freshnessMinutes:\s*resolveWuBriefFreshnessMinutes\(\)/);
   });
 });

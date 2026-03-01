@@ -5,6 +5,8 @@
  * LumenFlow Configuration Schema - Composition File
  *
  * WU-2016: Split into per-section schemas under schemas/.
+ * WU-2289: wu.brief.freshnessMinutes threshold is defined in schemas/wu-config.ts
+ *          and composed here through WuConfigSchema.
  * This file composes the full LumenFlowConfigSchema from section schemas
  * and re-exports all symbols for backward compatibility.
  *

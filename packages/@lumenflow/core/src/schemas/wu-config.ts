@@ -22,6 +22,11 @@ export const WuBriefPolicyModeSchema = z.enum(['off', 'manual', 'auto', 'require
 export const WuBriefConfigSchema = z.object({
   /** Claim-time wu:brief policy mode (default: 'auto') */
   policyMode: WuBriefPolicyModeSchema.default('auto'),
+  /**
+   * Brief freshness threshold in minutes.
+   * Set to 0 to disable freshness checks.
+   */
+  freshnessMinutes: z.number().int().nonnegative().default(1440),
 });
 
 /**

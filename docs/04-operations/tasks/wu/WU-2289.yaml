@@ -10,6 +10,7 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-done-policies.ts
   - packages/@lumenflow/core/src/wu-event-sourcer.ts
   - packages/@lumenflow/core/src/lumenflow-config-schema.ts
+  - packages/@lumenflow/core/src/schemas/wu-config.ts
 tests:
   manual:
     - Backdate brief evidence beyond threshold, run wu:prep, verify stale warning/block and
@@ -18,12 +19,15 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
     - packages/@lumenflow/core/src/__tests__/wu-event-sourcer.test.ts
+    - packages/@lumenflow/core/src/__tests__/lumenflow-config-schema.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2289.done
 dependencies: []
 risks: []
-notes: ''
+notes: Added wu.brief.freshnessMinutes config (default 1440, 0 disables), stale-evidence helpers,
+  and mode-aware stale enforcement in wu:prep and wu:done. Added unit coverage for freshness
+  parsing, event-sourcer staleness helpers, and prep/done stale branching behavior.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

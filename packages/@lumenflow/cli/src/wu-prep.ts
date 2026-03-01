@@ -66,7 +66,11 @@ import { getCurrentBranch } from '@lumenflow/core/wu-helpers';
 import { createPreGatesCheckpoint } from '@lumenflow/core/wu-checkpoint';
 import { runGates } from './gates.js';
 import { evaluateMainDirtyMutationGuard } from './hooks/dirty-guard.js';
-import { enforceWuBriefEvidenceForPrep, resolveWuBriefPolicyMode } from './wu-done-policies.js';
+import {
+  enforceWuBriefEvidenceForPrep,
+  resolveWuBriefFreshnessMinutes,
+  resolveWuBriefPolicyMode,
+} from './wu-done-policies.js';
 export {
   isCodePathCoveredByChanges,
   findMissingCodePathCoverage,
@@ -743,6 +747,7 @@ export async function main(): Promise<void> {
   await enforceWuBriefEvidenceForPrep(id, doc, {
     baseDir: location.cwd,
     mode: resolveWuBriefPolicyMode(),
+    freshnessMinutes: resolveWuBriefFreshnessMinutes(),
     force: Boolean(args.force),
     reason: typeof args.reason === 'string' ? args.reason : undefined,
   });

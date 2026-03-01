@@ -39,6 +39,39 @@ export function isWuBriefEvidenceNote(note: unknown): note is string {
   return typeof note === 'string' && note.startsWith(WU_BRIEF_EVIDENCE_NOTE_PREFIX);
 }
 
+/**
+ * Compute evidence age in whole minutes.
+ * Returns null when the timestamp cannot be parsed.
+ */
+export function getWuBriefEvidenceAgeMinutes(
+  timestamp: string,
+  now: Date = new Date(),
+): number | null {
+  const parsed = Date.parse(timestamp);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+
+  const ageMs = Math.max(0, now.getTime() - parsed);
+  return Math.floor(ageMs / (60 * 1000));
+}
+
+/**
+ * Evaluate whether wu:brief evidence is stale for a configured threshold.
+ * Unparseable timestamps are treated as stale to keep policy enforcement conservative.
+ */
+export function isWuBriefEvidenceStale(options: {
+  timestamp: string;
+  freshnessMinutes: number;
+  now?: Date;
+}): boolean {
+  const ageMinutes = getWuBriefEvidenceAgeMinutes(options.timestamp, options.now);
+  if (ageMinutes === null) {
+    return true;
+  }
+  return ageMinutes >= options.freshnessMinutes;
+}
+
 const FILE_NOT_FOUND_ERROR_CODE = 'ENOENT';
 
 function getErrorCode(error: unknown): string | null {

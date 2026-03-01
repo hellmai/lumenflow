@@ -20,7 +20,9 @@ import {
   WU_EVENTS_FILE_NAME,
   WU_BRIEF_EVIDENCE_NOTE_PREFIX,
   findLatestWuBriefEvidence,
+  getWuBriefEvidenceAgeMinutes,
   isWuBriefEvidenceNote,
+  isWuBriefEvidenceStale,
 } from '../wu-event-sourcer.js';
 import type { WUStateIndexer } from '../wu-state-indexer.js';
 import type { WUEvent } from '../wu-state-schema.js';
@@ -142,6 +144,46 @@ describe('WUEventSourcer', () => {
 
       const result = findLatestWuBriefEvidence(events, 'WU-100');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('WU-2289: wu:brief freshness helpers', () => {
+    it('computes age in minutes from an evidence timestamp', () => {
+      const ageMinutes = getWuBriefEvidenceAgeMinutes(
+        '2026-03-01T10:00:00.000Z',
+        new Date('2026-03-01T10:45:00.000Z'),
+      );
+
+      expect(ageMinutes).toBe(45);
+    });
+
+    it('returns null age when timestamp is invalid', () => {
+      const ageMinutes = getWuBriefEvidenceAgeMinutes(
+        'not-a-date',
+        new Date('2026-03-01T11:00:00Z'),
+      );
+
+      expect(ageMinutes).toBeNull();
+    });
+
+    it('detects stale evidence when age meets or exceeds threshold', () => {
+      const stale = isWuBriefEvidenceStale({
+        timestamp: '2026-03-01T10:00:00.000Z',
+        freshnessMinutes: 60,
+        now: new Date('2026-03-01T11:00:00.000Z'),
+      });
+
+      expect(stale).toBe(true);
+    });
+
+    it('treats unparsable timestamps as stale', () => {
+      const stale = isWuBriefEvidenceStale({
+        timestamp: 'bad-ts',
+        freshnessMinutes: 60,
+        now: new Date('2026-03-01T11:00:00.000Z'),
+      });
+
+      expect(stale).toBe(true);
     });
   });
 

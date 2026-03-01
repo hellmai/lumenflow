@@ -28,6 +28,8 @@ export {
   WU_BRIEF_EVIDENCE_NOTE_PREFIX,
   findLatestWuBriefEvidence,
   getLatestWuBriefEvidence,
+  getWuBriefEvidenceAgeMinutes,
+  isWuBriefEvidenceStale,
 } from './wu-event-sourcer.js';
 export type { WUStateEntry, CheckpointOptions } from './wu-state-indexer.js';
 export { isLockStale, acquireLock, releaseLock } from './wu-lock-manager.js';

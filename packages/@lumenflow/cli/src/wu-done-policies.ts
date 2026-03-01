@@ -15,7 +15,12 @@ import {
   WU_EXPOSURE,
   WU_TYPES,
 } from '@lumenflow/core/wu-constants';
-import { getLatestWuBriefEvidence, WUStateStore } from '@lumenflow/core/wu-state-store';
+import {
+  getLatestWuBriefEvidence,
+  getWuBriefEvidenceAgeMinutes,
+  isWuBriefEvidenceStale,
+  WUStateStore,
+} from '@lumenflow/core/wu-state-store';
 import { validateExposure, validateFeatureAccessibility } from '@lumenflow/core/wu-validation';
 import { createSignal } from '@lumenflow/memory/signal';
 import { resolveStateDir } from './state-path-resolvers.js';
@@ -29,6 +34,7 @@ interface WUDocLike extends Record<string, unknown> {
 export const WU_BRIEF_POLICY_MODES = ['off', 'manual', 'auto', 'required'] as const;
 export type WuBriefPolicyMode = (typeof WU_BRIEF_POLICY_MODES)[number];
 const DEFAULT_WU_BRIEF_POLICY_MODE: WuBriefPolicyMode = 'auto';
+const DEFAULT_WU_BRIEF_FRESHNESS_MINUTES = 1440;
 const PREP_LOG_PREFIX = '[wu-prep]';
 const PREP_FORCE_REASON_REQUIRED_MESSAGE =
   'Missing required --reason for wu:brief policy bypass in wu:prep.';
@@ -208,6 +214,24 @@ export function resolveWuBriefPolicyMode(
 }
 
 /**
+ * Resolve wu:brief freshness threshold in minutes.
+ * 0 disables freshness checks.
+ */
+export function resolveWuBriefFreshnessMinutes(
+  config: ReturnType<typeof getConfig> = getConfig(),
+): number | null {
+  const configured = config.wu?.brief?.freshnessMinutes;
+  if (typeof configured === 'number' && Number.isFinite(configured)) {
+    if (configured <= 0) {
+      return null;
+    }
+    return Math.floor(configured);
+  }
+
+  return DEFAULT_WU_BRIEF_FRESHNESS_MINUTES;
+}
+
+/**
  * Build remediation guidance when wu:brief evidence is missing.
  */
 export function buildMissingWuBriefEvidenceMessage(id: string): string {
@@ -245,6 +269,63 @@ export function buildMissingWuBriefEvidenceMessageForPrep(
   );
 }
 
+function describeWuBriefFreshness(
+  evidenceTimestamp: string,
+  freshnessMinutes: number,
+  now: Date,
+): string {
+  const ageMinutes = getWuBriefEvidenceAgeMinutes(evidenceTimestamp, now);
+  if (ageMinutes === null) {
+    return `Evidence timestamp is invalid: ${evidenceTimestamp}`;
+  }
+
+  return `Evidence age is ${ageMinutes} minute(s); threshold is ${freshnessMinutes} minute(s).`;
+}
+
+function buildStaleWuBriefEvidenceMessageForPrep(options: {
+  id: string;
+  mode: WuBriefPolicyMode;
+  evidenceTimestamp: string;
+  freshnessMinutes: number;
+  now: Date;
+}): string {
+  return (
+    `Stale wu:brief evidence for ${options.id} (policy=${options.mode}).\n\n` +
+    `${describeWuBriefFreshness(options.evidenceTimestamp, options.freshnessMinutes, options.now)}\n\n` +
+    `Fix options:\n` +
+    `  1. Refresh evidence:\n` +
+    `     pnpm wu:brief --id ${options.id}\n` +
+    `  2. If self-implementing, refresh evidence only:\n` +
+    `     pnpm wu:brief --id ${options.id} --evidence-only\n` +
+    `  3. Retry prep:\n` +
+    `     pnpm wu:prep --id ${options.id}\n` +
+    `  4. Emergency audited bypass (requires explicit reason):\n` +
+    `     pnpm wu:prep --id ${options.id} --force --reason "<why stale evidence bypass is required>"`
+  );
+}
+
+function buildStaleWuBriefEvidenceMessageForDone(options: {
+  id: string;
+  mode: WuBriefPolicyMode;
+  evidenceTimestamp: string;
+  freshnessMinutes: number;
+  now: Date;
+}): string {
+  return (
+    `Stale wu:brief evidence for ${options.id} (policy=${options.mode}).\n\n` +
+    `${describeWuBriefFreshness(options.evidenceTimestamp, options.freshnessMinutes, options.now)}\n\n` +
+    `Fix options:\n` +
+    `  1. Refresh evidence:\n` +
+    `     pnpm wu:brief --id ${options.id}\n` +
+    `  2. If self-implementing, refresh evidence only:\n` +
+    `     pnpm wu:brief --id ${options.id} --evidence-only\n` +
+    `  3. Retry completion:\n` +
+    `     pnpm wu:done --id ${options.id}\n` +
+    `  4. Legacy/manual override (audited):\n` +
+    `     pnpm wu:done --id ${options.id} --force`
+  );
+}
+
 export async function recordWuBriefPrepBypassAudit(options: {
   wuId: string;
   baseDir?: string;
@@ -272,6 +353,8 @@ export async function enforceWuBriefEvidenceForPrep(
     mode?: WuBriefPolicyMode;
     force?: boolean;
     reason?: string;
+    freshnessMinutes?: number | null;
+    now?: Date;
     getBriefEvidenceFn?: typeof getLatestWuBriefEvidence;
     blocker?: (message: string) => void;
     warn?: (message: string) => void;
@@ -294,6 +377,11 @@ export async function enforceWuBriefEvidenceForPrep(
   const blocker = options.blocker ?? ((message: string) => die(message));
   const warn = options.warn ?? console.warn;
   const recordBypassAudit = options.recordBypassAudit ?? recordWuBriefPrepBypassAudit;
+  const freshnessMinutes =
+    options.freshnessMinutes === undefined
+      ? resolveWuBriefFreshnessMinutes()
+      : options.freshnessMinutes;
+  const now = options.now ?? new Date();
 
   let evidence;
   try {
@@ -306,6 +394,51 @@ export async function enforceWuBriefEvidenceForPrep(
 
     warn(
       `${PREP_LOG_PREFIX} ${EMOJI.WARNING} Could not verify wu:brief evidence for ${id}: ${getErrorMessage(error)}`,
+    );
+    return;
+  }
+
+  if (
+    evidence &&
+    freshnessMinutes !== null &&
+    isWuBriefEvidenceStale({ timestamp: evidence.timestamp, freshnessMinutes, now })
+  ) {
+    if (mode === 'auto') {
+      warn(`${PREP_LOG_PREFIX} ${EMOJI.WARNING} wu:brief evidence stale for ${id} (policy=auto).`);
+      warn(
+        buildStaleWuBriefEvidenceMessageForPrep({
+          id,
+          mode,
+          evidenceTimestamp: evidence.timestamp,
+          freshnessMinutes,
+          now,
+        }),
+      );
+      return;
+    }
+
+    if (!force) {
+      blocker(
+        buildStaleWuBriefEvidenceMessageForPrep({
+          id,
+          mode,
+          evidenceTimestamp: evidence.timestamp,
+          freshnessMinutes,
+          now,
+        }),
+      );
+      return;
+    }
+
+    const reason = typeof options.reason === 'string' ? options.reason.trim() : '';
+    if (!reason) {
+      blocker(PREP_FORCE_REASON_REQUIRED_MESSAGE);
+      return;
+    }
+
+    await recordBypassAudit({ wuId: id, baseDir, reason, policyMode: mode });
+    warn(
+      `${PREP_LOG_PREFIX} ${EMOJI.WARNING} wu:brief policy override accepted for ${id} (policy=${mode}, reason="${reason}").`,
     );
     return;
   }
@@ -357,7 +490,10 @@ export async function enforceWuBriefEvidenceForDone(
   doc: WUDocLike,
   options: {
     baseDir?: string;
+    mode?: WuBriefPolicyMode;
     force?: boolean;
+    freshnessMinutes?: number | null;
+    now?: Date;
     getBriefEvidenceFn?: typeof getLatestWuBriefEvidence;
     blocker?: (message: string) => void;
     warn?: (message: string) => void;
@@ -368,7 +504,13 @@ export async function enforceWuBriefEvidenceForDone(
   }
 
   const baseDir = options.baseDir ?? process.cwd();
+  const mode = options.mode ?? resolveWuBriefPolicyMode();
   const force = options.force === true;
+  const freshnessMinutes =
+    options.freshnessMinutes === undefined
+      ? resolveWuBriefFreshnessMinutes()
+      : options.freshnessMinutes;
+  const now = options.now ?? new Date();
   const stateDir = resolveStateDir(baseDir);
   const getBriefEvidenceFn = options.getBriefEvidenceFn ?? getLatestWuBriefEvidence;
   const blocker = options.blocker ?? ((message: string) => die(message));
@@ -385,6 +527,48 @@ export async function enforceWuBriefEvidenceForDone(
 
     warn(
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2132: brief evidence verification failed for ${id}, override accepted via --force`,
+    );
+    return;
+  }
+
+  if (
+    evidence &&
+    freshnessMinutes !== null &&
+    isWuBriefEvidenceStale({ timestamp: evidence.timestamp, freshnessMinutes, now })
+  ) {
+    if (mode === 'off' || mode === 'manual') {
+      return;
+    }
+
+    if (mode === 'auto') {
+      warn(`${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2289: stale wu:brief evidence for ${id}`);
+      warn(
+        buildStaleWuBriefEvidenceMessageForDone({
+          id,
+          mode,
+          evidenceTimestamp: evidence.timestamp,
+          freshnessMinutes,
+          now,
+        }),
+      );
+      return;
+    }
+
+    if (!force) {
+      blocker(
+        buildStaleWuBriefEvidenceMessageForDone({
+          id,
+          mode,
+          evidenceTimestamp: evidence.timestamp,
+          freshnessMinutes,
+          now,
+        }),
+      );
+      return;
+    }
+
+    warn(
+      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2289: stale brief evidence override accepted for ${id} via --force`,
     );
     return;
   }
