@@ -1,0 +1,40 @@
+id: WU-2289
+title: Add wu:brief staleness policy and freshness checks for long-lived WUs
+lane: 'Framework: Core Validation'
+type: bug
+status: ready
+priority: P2
+created: 2026-03-01
+code_paths:
+  - packages/@lumenflow/cli/src/wu-prep.ts
+  - packages/@lumenflow/cli/src/wu-done-policies.ts
+  - packages/@lumenflow/core/src/wu-event-sourcer.ts
+  - packages/@lumenflow/core/src/lumenflow-config-schema.ts
+tests:
+  manual:
+    - Backdate brief evidence beyond threshold, run wu:prep, verify stale warning/block and remediation
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-event-sourcer.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2289.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: agents may run wu:brief once and continue implementing for long periods while task scope drifts. Problem: lifecycle checks only validate existence of brief evidence, not freshness, so stale briefs can satisfy policy while being misleading in autonomous environments. Solution: add configurable staleness threshold for wu:brief evidence and enforce freshness checks with clear regeneration guidance at wu:prep/wu:done.'
+acceptance:
+  - Config supports brief freshness threshold in minutes with sensible default and disable option
+  - wu:prep/wu:done detect stale brief evidence and surface explicit regeneration guidance
+  - required mode can block on stale evidence while manual/off modes do not
+  - tests cover fresh vs stale evidence and threshold override behavior
+  - pnpm gates passes
