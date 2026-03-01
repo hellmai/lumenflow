@@ -2,7 +2,7 @@ id: WU-2286
 title: state:emit should support transactional commit mode for corrective events
 lane: 'Framework: Core State Recovery'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-01
 code_paths:
@@ -18,8 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2286.done
 dependencies: []
 risks: []
-notes: 'Added explicit --transactional mode to state:emit using micro-worktree push-only flow
-  with policy-safe commit message "chore(repair): ..."; append-only mode remains default.'
+notes: 'Added explicit --transactional mode to state:emit using micro-worktree push-only flow with
+  policy-safe commit message "chore(repair): ..."; append-only mode remains default.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -50,3 +50,6 @@ session_id: d22853e4-ebf9-44b5-bba9-b1ec5f583c77
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-01T19:37:54.340Z
+locked: true
+completed_at: 2026-03-01T20:39:18.273Z
+completed: 2026-03-01

@@ -4,7 +4,7 @@ _Last updated: 2026-03-01_
 
 ## In Progress
 
-- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1183,3 +1183,4 @@ _Last updated: 2026-03-01_
 - [WU-2287 — Add configurable wu:brief policy mode with default auto on wu:claim](wu/WU-2287.yaml) — 2026-03-01
 - [WU-2288 — Enforce wu:brief policy at wu:prep with mode-aware blocking](wu/WU-2288.yaml) — 2026-03-01
 - [WU-2289 — Add wu:brief staleness policy and freshness checks for long-lived WUs](wu/WU-2289.yaml) — 2026-03-01
+- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml) — 2026-03-01
