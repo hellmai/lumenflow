@@ -4,6 +4,8 @@ _Last updated: 2026-03-01_
 
 ## In Progress
 
+- [WU-2284 — wu:claim lane occupancy should ignore non-active WUs in status sections](wu/WU-2284.yaml)
+
 ## Completed
 
 - [WU-1001 — Complete LumenFlow dogfooding setup](wu/WU-1001.yaml) — 2026-01-18
@@ -1175,3 +1177,4 @@ _Last updated: 2026-03-01_
 - [WU-2281 — Fix pre-existing @lumenflow/cli test failures in gate runs](wu/WU-2281.yaml) — 2026-02-28
 - [WU-2282 — Scope wu:done checkpoint writes to worktree instead of main](wu/WU-2282.yaml) — 2026-02-28
 - [WU-2283 — Fix lumenflow:upgrade false failure after successful push](wu/WU-2283.yaml) — 2026-02-28
+- [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — 2026-03-01

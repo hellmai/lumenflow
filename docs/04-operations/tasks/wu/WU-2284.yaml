@@ -2,7 +2,7 @@ id: WU-2284
 title: wu:claim lane occupancy should ignore non-active WUs in status sections
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-01
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-claim-validation.ts
 tests:
   manual:
-    - Create a fixture where status.md lists a superseded WU under In Progress in the same lane, then run wu:claim and verify claim is not blocked by that WU
+    - Create a fixture where status.md lists a superseded WU under In Progress in the same lane,
+      then run wu:claim and verify claim is not blocked by that WU
   unit:
     - packages/@lumenflow/core/src/__tests__/lane-checker.test.ts
     - packages/@lumenflow/cli/__tests__/wu-claim.test.ts
@@ -28,10 +29,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: lane WIP enforcement in wu:claim reads status.md sections and lane-matches referenced WUs. Problem: WUs listed in status.md In Progress can still be counted toward WIP even when their YAML status is no longer active (for example superseded/cancelled/done), causing false lane blockage and force-claim pressure. Solution: update lane occupancy evaluation to filter candidates by canonical YAML status and count only active statuses under lane lock policy, with regression coverage for superseded ghost entries.'
+description: 'Context: lane WIP enforcement in wu:claim reads status.md sections and lane-matches
+  referenced WUs. Problem: WUs listed in status.md In Progress can still be counted toward WIP even
+  when their YAML status is no longer active (for example superseded/cancelled/done), causing false
+  lane blockage and force-claim pressure. Solution: update lane occupancy evaluation to filter
+  candidates by canonical YAML status and count only active statuses under lane lock policy, with
+  regression coverage for superseded ghost entries.'
 acceptance:
   - wu:claim does not count superseded WUs toward lane WIP occupancy
   - wu:claim does not count done or cancelled WUs toward lane WIP occupancy
   - lane occupancy output still reports genuinely active blockers with correct IDs
   - regression tests cover stale status.md entries that reference non-active WUs
   - pnpm gates passes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2284
+claimed_at: 2026-03-01T18:09:57.122Z
+baseline_main_sha: 292adb3b2321864e3850c0e573f976474a977ade
+session_id: ff8eb138-a4fa-45ee-aa4a-ad5c4156f53a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-01T18:09:57.129Z

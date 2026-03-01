@@ -20,12 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2289 — Add wu:brief staleness policy and freshness checks for long-lived WUs](wu/WU-2289.yaml) — Framework: Core Validation
-- [WU-2288 — Enforce wu:brief policy at wu:prep with mode-aware blocking](wu/WU-2288.yaml) — Framework: CLI WU Commands
-- [WU-2287 — Add configurable wu:brief policy mode with default auto on wu:claim](wu/WU-2287.yaml) — Framework: CLI WU Commands
-- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml) — Framework: Core State Recovery
-- [WU-2285 — state:doctor should detect stale status/backlog references for non-active WUs](wu/WU-2285.yaml) — Framework: Core State Recovery
-- [WU-2284 — wu:claim lane occupancy should ignore non-active WUs in status sections](wu/WU-2284.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -51,17 +45,19 @@ sections:
 - [WU-2172 — Migrate remaining raw env reads to ENV_VARS](wu/WU-2172.yaml) — Framework: Core Validation
 - [WU-2173 — Add startup environment schema validation](wu/WU-2173.yaml) — Framework: Core Validation
 - [WU-2174 — Introduce getEnv and requireEnv accessors](wu/WU-2174.yaml) — Framework: Core Validation
-- [WU-2175 — Add focused IWuStateStore injection alternatives](wu/WU-2175.yaml) — Framework: Core Lifecycle
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml) — Content: Framework Docs
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — Operations: Runtime
-- [WU-2217 — BUG: Fix pre-existing prettier format failures in wu-done.ts and arg-parser.ts](wu/WU-2217.yaml) — Framework: CLI WU Commands
 - [WU-2258 — Add lane:create command for adding new lanes via tooling](wu/WU-2258.yaml) — Framework: CLI Enforcement
-- [WU-2261 — wu:done leaves bulk staged WU metadata on main](wu/WU-2261.yaml) — Framework: CLI Enforcement
+- [WU-2285 — state:doctor should detect stale status/backlog references for non-active WUs](wu/WU-2285.yaml) — Framework: Core State Recovery
+- [WU-2286 — state:emit should support transactional commit mode for corrective events](wu/WU-2286.yaml) — Framework: Core State Recovery
+- [WU-2287 — Add configurable wu:brief policy mode with default auto on wu:claim](wu/WU-2287.yaml) — Framework: CLI WU Commands
+- [WU-2288 — Enforce wu:brief policy at wu:prep with mode-aware blocking](wu/WU-2288.yaml) — Framework: CLI WU Commands
+- [WU-2289 — Add wu:brief staleness policy and freshness checks for long-lived WUs](wu/WU-2289.yaml) — Framework: Core Validation
 
 ## 🔧 In progress
 
-- [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml) — Framework: Initiatives
+- [WU-2284 — wu:claim lane occupancy should ignore non-active WUs in status sections](wu/WU-2284.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
@@ -1238,6 +1234,10 @@ sections:
 - [WU-2281 — Fix pre-existing @lumenflow/cli test failures in gate runs](wu/WU-2281.yaml)
 - [WU-2282 — Scope wu:done checkpoint writes to worktree instead of main](wu/WU-2282.yaml)
 - [WU-2283 — Fix lumenflow:upgrade false failure after successful push](wu/WU-2283.yaml)
+- [WU-2243 — initiative:create ignores --phase and --success-metric flags](wu/WU-2243.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
+- [WU-2175 — Add focused IWuStateStore injection alternatives](wu/WU-2175.yaml)
+- [WU-2217 — BUG: Fix pre-existing prettier format failures in wu-done.ts and arg-parser.ts](wu/WU-2217.yaml)
+- [WU-2261 — wu:done leaves bulk staged WU metadata on main](wu/WU-2261.yaml)
