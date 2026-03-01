@@ -51,7 +51,9 @@ async function promoteProjectMemoryForCleanup(worktreePath: string): Promise<voi
   const mainCheckoutPath = process.cwd();
 
   try {
-    const memoryModule = (await import('@lumenflow/memory')) as MemoryPromotionModule;
+    // Use non-literal import to avoid hard compile-time dependency on optional peer.
+    const memoryModuleName: string = '@lumenflow/memory';
+    const memoryModule = (await import(memoryModuleName)) as MemoryPromotionModule;
     if (typeof memoryModule.promoteProjectMemory !== 'function') {
       return;
     }
