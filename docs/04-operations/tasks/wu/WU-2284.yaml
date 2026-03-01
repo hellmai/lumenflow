@@ -7,7 +7,7 @@ priority: P1
 created: 2026-03-01
 code_paths:
   - packages/@lumenflow/core/src/lane-checker.ts
-  - packages/@lumenflow/cli/src/wu-claim-validation.ts
+  - packages/@lumenflow/core/src/__tests__/lane-checker.test.ts
 tests:
   manual:
     - Create a fixture where status.md lists a superseded WU under In Progress in the same lane,
