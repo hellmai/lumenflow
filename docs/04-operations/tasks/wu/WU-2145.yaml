@@ -6,8 +6,9 @@ status: in_progress
 priority: P1
 created: 2026-02-25
 code_paths:
-  - packages/@lumenflow/memory/src
-  - packages/@lumenflow/core/src/wu-done-*.ts
+  - packages/@lumenflow/memory/src/memory-promotion.ts
+  - packages/@lumenflow/memory/src/index.ts
+  - packages/@lumenflow/core/src/wu-done-cleanup.ts
   - packages/@lumenflow/core/src/__tests__/wu-done-cleanup.test.ts
 tests:
   manual:
