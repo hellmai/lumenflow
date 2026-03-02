@@ -2,7 +2,7 @@ id: WU-2177
 title: Create shared test-helpers package
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-25
 code_paths:
@@ -34,3 +34,11 @@ requires_design_approval: false
 description: Establish shared fixtures and helper utilities to reduce test duplication across packages.
 acceptance:
   - A shared helper module is introduced and adopted by at least one target package test suite.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2177
+claimed_at: 2026-03-02T14:50:07.455Z
+baseline_main_sha: 5aca7b15c5e2af92693cddb30710998e67271760
+session_id: 83de0107-c4f9-4825-996d-14de5e4d2e73
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T14:50:07.461Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml)
 
 ## Completed
 
