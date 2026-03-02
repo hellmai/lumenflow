@@ -5,6 +5,7 @@ _Last updated: 2026-03-02_
 ## In Progress
 
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml)
+- [WU-2296 — Remove legacy .lumenflow.config.yaml references from active docs and config](wu/WU-2296.yaml)
 
 ## Completed
 
