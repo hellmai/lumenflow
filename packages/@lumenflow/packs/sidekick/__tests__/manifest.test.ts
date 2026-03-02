@@ -39,6 +39,20 @@ const EXPECTED_TOOL_NAMES = [
 ] as const;
 
 describe('sidekick manifest contract', () => {
+  it('exports wildcard tool implementation subpaths for consumers', async () => {
+    const packageJsonPath = path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      '..',
+      'package.json',
+    );
+    const packageJsonRaw = await readFile(packageJsonPath, 'utf8');
+    const packageJson = JSON.parse(packageJsonRaw) as {
+      exports?: Record<string, string>;
+    };
+
+    expect(packageJson.exports?.['./tool-impl/*']).toBe('./dist/tool-impl/*.js');
+  });
+
   it('defines the expected pack identity', () => {
     expect(SIDEKICK_MANIFEST.id).toBe(SIDEKICK_PACK_ID);
     expect(SIDEKICK_MANIFEST.version).toBe(SIDEKICK_PACK_VERSION);
