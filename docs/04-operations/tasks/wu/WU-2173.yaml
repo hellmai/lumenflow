@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/core/src
   - packages/@lumenflow/mcp/src
 tests:
-  manual: []
+  manual:
+    - Start CLI/MCP with intentionally missing env vars and verify schema diagnostics are clear and
+      actionable
   unit:
     - packages/@lumenflow/core/src/__tests__/branch-check.test.ts
   e2e: []
