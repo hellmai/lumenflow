@@ -2,7 +2,7 @@ id: WU-2173
 title: Add startup environment schema validation
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -41,3 +41,11 @@ description: Add typed environment schema validation with fail-fast or soft-warn
 acceptance:
   - Environment schema validation runs at startup and emits clear diagnostics for missing or
     malformed values.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2173
+claimed_at: 2026-03-02T14:11:13.502Z
+baseline_main_sha: e054ed1135a2b737ed32f2c94e9ced6435314f52
+session_id: dd282829-e66f-486b-911b-7ba122644b7e
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T14:11:13.508Z
