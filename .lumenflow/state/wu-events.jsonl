@@ -2709,3 +2709,4 @@
 {"type":"checkpoint","wuId":"WU-2176","timestamp":"2026-03-02T14:41:57.935Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2176.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2176","timestamp":"2026-03-02T14:47:56.967Z"}
 {"type":"claim","wuId":"WU-2177","timestamp":"2026-03-02T14:50:07.480Z","lane":"Framework: Core Validation","title":"Create shared test-helpers package"}
+{"type":"complete","wuId":"WU-2177","timestamp":"2026-03-02T15:00:21.150Z"}

@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-- [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1214,3 +1214,4 @@ _Last updated: 2026-03-02_
 - [WU-2173 — Add startup environment schema validation](wu/WU-2173.yaml) — 2026-03-02
 - [WU-2174 — Introduce getEnv and requireEnv accessors](wu/WU-2174.yaml) — 2026-03-02
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml) — 2026-03-02
+- [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — 2026-03-02

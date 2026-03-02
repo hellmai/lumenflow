@@ -27,7 +27,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — Framework: Core Validation
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1241,6 +1241,7 @@ sections:
 - [WU-2173 — Add startup environment schema validation](wu/WU-2173.yaml)
 - [WU-2174 — Introduce getEnv and requireEnv accessors](wu/WU-2174.yaml)
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml)
+- [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
