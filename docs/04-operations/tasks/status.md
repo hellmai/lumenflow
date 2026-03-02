@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2168 — Audit and categorize core API surface](wu/WU-2168.yaml)
 
 ## Completed
 

@@ -2,7 +2,7 @@ id: WU-2168
 title: Audit and categorize core API surface
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -37,3 +37,11 @@ requires_design_approval: false
 description: Audit @lumenflow/core exports and define domain-oriented grouping boundaries for migration.
 acceptance:
   - API surface groups are documented with clear ownership and migration intent.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2168
+claimed_at: 2026-03-02T13:24:28.596Z
+baseline_main_sha: 1fb493888b1824863cdb0424be46027fcf130bb5
+session_id: 1577ab48-1274-445c-ba93-321ab0492d63
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T13:24:28.601Z
