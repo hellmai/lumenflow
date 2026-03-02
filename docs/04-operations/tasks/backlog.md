@@ -26,7 +26,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2296 — Remove legacy .lumenflow.config.yaml references from active docs and config](wu/WU-2296.yaml) — Content: Framework Docs
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1242,6 +1242,7 @@ sections:
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml)
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml)
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml)
+- [WU-2296 — Remove legacy .lumenflow.config.yaml references from active docs and config](wu/WU-2296.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

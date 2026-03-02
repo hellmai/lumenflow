@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-- [WU-2296 — Remove legacy .lumenflow.config.yaml references from active docs and config](wu/WU-2296.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1216,3 +1216,4 @@ _Last updated: 2026-03-02_
 - [WU-2176 — Document validator boundaries and ownership](wu/WU-2176.yaml) — 2026-03-02
 - [WU-2177 — Create shared test-helpers package](wu/WU-2177.yaml) — 2026-03-02
 - [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml) — 2026-03-02
+- [WU-2296 — Remove legacy .lumenflow.config.yaml references from active docs and config](wu/WU-2296.yaml) — 2026-03-02
