@@ -2661,3 +2661,4 @@
 {"type":"complete","wuId":"WU-2293","timestamp":"2026-03-02T12:22:38.433Z"}
 {"type":"claim","wuId":"WU-2295","timestamp":"2026-03-02T12:31:22.826Z","lane":"Content: Framework Docs","title":"Align wu:brief docs with evidence and claim-time policy behavior"}
 {"type":"checkpoint","wuId":"WU-2295","timestamp":"2026-03-02T12:31:31.570Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
+{"type":"checkpoint","wuId":"WU-2295","timestamp":"2026-03-02T12:36:05.164Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2295.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
