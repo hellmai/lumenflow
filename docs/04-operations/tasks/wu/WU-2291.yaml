@@ -2,7 +2,7 @@ id: WU-2291
 title: 'Supersede WU-2146: enforce strict signal schema (no backward-compat/fallback path)'
 lane: 'Framework: Memory'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-02
 code_paths:
@@ -33,10 +33,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: WU-2146 added optional signal metadata fields with explicit backward-compatibility framing. Problem: this bakes compatibility behavior into active code paths and dilutes strict contract enforcement. Solution: supersede WU-2146 by moving to a strict signal contract with explicit required fields where needed, removing compatibility language and fallback handling from signal schema/read-write flow, and adding deterministic migration handling for pre-existing records instead of silent compatibility.'
+description: 'Context: WU-2146 added optional signal metadata fields with explicit
+  backward-compatibility framing. Problem: this bakes compatibility behavior into active code paths
+  and dilutes strict contract enforcement. Solution: supersede WU-2146 by moving to a strict signal
+  contract with explicit required fields where needed, removing compatibility language and fallback
+  handling from signal schema/read-write flow, and adding deterministic migration handling for
+  pre-existing records instead of silent compatibility.'
 acceptance:
   - WU-2146 compatibility framing is superseded and recorded in this WU notes
-  - Signal schema and memory signal write/read path enforce strict contract; no silent backward-compatible fallback path remains
-  - Legacy signal records are handled via explicit migration/repair step (or explicit failure), not implicit permissive parsing
+  - Signal schema and memory signal write/read path enforce strict contract; no silent
+    backward-compatible fallback path remains
+  - Legacy signal records are handled via explicit migration/repair step (or explicit failure), not
+    implicit permissive parsing
   - Unit tests cover strict validation behavior and legacy-record handling behavior
   - pnpm gates passes
+claimed_mode: worktree
+worktree_path: worktrees/framework-memory-wu-2291
+claimed_at: 2026-03-02T09:41:34.477Z
+baseline_main_sha: ceaf47cf7b8de2394bf94c1bf8c64c38c1521643
+session_id: 4566a733-3d75-4df7-8619-70aa7220877a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T09:41:34.482Z

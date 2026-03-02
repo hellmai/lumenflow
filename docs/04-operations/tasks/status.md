@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2291 — Supersede WU-2146: enforce strict signal schema (no backward-compat/fallback path)](wu/WU-2291.yaml)
 
 ## Completed
 
