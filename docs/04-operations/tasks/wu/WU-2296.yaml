@@ -2,7 +2,7 @@ id: WU-2296
 title: Remove legacy .lumenflow.config.yaml references from active docs and config
 lane: 'Content: Framework Docs'
 type: chore
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-02
 code_paths:
