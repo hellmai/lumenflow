@@ -2,7 +2,7 @@ id: WU-2170
 title: Migrate consumers and deprecate root core barrel
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -43,3 +43,11 @@ description: Move consuming packages to grouped core barrels and leave compatibi
   guidance for root index usage.
 acceptance:
   - Consumer imports are migrated to grouped barrels without breaking existing behavior.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2170
+claimed_at: 2026-03-02T13:39:28.185Z
+baseline_main_sha: a788a5e9d7d747b06d6740d6ee83ea60ee258a15
+session_id: 442d1c1e-a905-4d1d-8fab-b0e28c314c53
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T13:39:28.190Z

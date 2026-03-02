@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2170 — Migrate consumers and deprecate root core barrel](wu/WU-2170.yaml)
 
 ## Completed
 
