@@ -9,7 +9,8 @@ code_paths:
   - packages/@lumenflow/runtime
   - packages/@lumenflow/agent
 tests:
-  manual: []
+  manual:
+    - Run runtime/agent coverage command and verify coverage target is met and tests are stable
   unit:
     - packages/@lumenflow/runtime/__tests__/daemon.test.ts
   e2e: []
