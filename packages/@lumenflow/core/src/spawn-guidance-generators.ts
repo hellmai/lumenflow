@@ -161,6 +161,118 @@ export interface TestGuidanceOptions {
   testMethodologyHint?: string;
 }
 
+/** WU-2292: Generate concrete code craft guidance with examples. */
+export function generateCodeCraftGuidance(): string {
+  return `## Code Craft
+
+Use these implementation standards while you write code:
+
+1. **Extract repeated literals to named constants**. Use your project's duplicate-string threshold (configured in \`eslint.config.mjs\`) and extract meaningful numbers.
+\`\`\`ts
+// Before
+if (status === 'in_progress') notify('in_progress');
+if (nextStatus === 'in_progress') log('in_progress');
+if (prevStatus === 'in_progress') audit('in_progress');
+
+// After
+const STATUS_IN_PROGRESS = 'in_progress';
+if (status === STATUS_IN_PROGRESS) notify(STATUS_IN_PROGRESS);
+\`\`\`
+
+2. **Write error messages with context**: what failed, why, and next action.
+\`\`\`ts
+// Before
+die('failed');
+
+// After
+die('Failed to parse workspace.yaml: missing lane field. Run pnpm lane:setup to regenerate.');
+\`\`\`
+
+3. **Prefer existing libraries for common problems** (parsing, validation, dates, schema, paths) before custom implementations.
+\`\`\`ts
+// Before
+function parseDate(input: string) { /* custom parser */ }
+
+// After
+import { parseISO } from 'date-fns';
+const parsed = parseISO(input);
+\`\`\`
+
+4. **Use type narrowing instead of unsafe casts**.
+\`\`\`ts
+// Before
+const id = (payload as { id: string }).id;
+
+// After
+if (payload && typeof payload === 'object' && 'id' in payload) {
+  const id = String(payload.id);
+}
+\`\`\`
+
+5. **Extract duplicated logic when it appears at your project's extraction threshold**.
+\`\`\`ts
+// Before: same branch checks repeated in multiple files
+if (mode === 'branch-pr') { /* ... */ }
+
+// After
+function isBranchPrMode(mode: string): boolean {
+  return mode === 'branch-pr';
+}
+\`\`\`
+
+6. **Keep functions focused**. One function should do one clear job.
+\`\`\`ts
+// Before
+function completeWuAndNotifyAndWriteAudit() { /* many responsibilities */ }
+
+// After
+function completeWu() { /* completion only */ }
+function notifyCompletion() { /* notification only */ }
+\`\`\`
+
+7. **Inject infrastructure dependencies into application logic** instead of importing them directly.
+\`\`\`ts
+// Before
+import { readFileSync } from 'node:fs';
+function loadSpec(path: string) { return readFileSync(path, 'utf8'); }
+
+// After
+function loadSpec(path: string, readText: (p: string) => string) {
+  return readText(path);
+}
+\`\`\``;
+}
+
+/** WU-2292: Require reading and impact analysis before editing. */
+export function generateReadBeforeWriteDiscipline(): string {
+  return `## Read Before Write
+
+Understand the change before touching code:
+
+1. Read each file you plan to edit from top to bottom.
+2. Read adjacent files that define related types, helpers, and boundaries.
+3. Find callers and dependents (for example with \`rg\`) before changing behavior.
+4. Confirm acceptance criteria and code_paths still match your intended scope.
+5. Never edit a file you have not read first.
+6. If you cannot determine impact from reading alone, ask before proceeding.`;
+}
+
+/** WU-2292: Force a self-review pass before completion. */
+export function generateSelfReviewDirective(id: string): string {
+  return `## Self-Review Before Completion
+
+Before you finish ${id}, review your own diff against gate and craft checks:
+
+1. [GATE] Repeated strings at your project threshold are extracted to named constants.
+2. [STANDARD] Semantic numbers use named constants (except simple loop indexes and 0/1 guards).
+3. [STANDARD] Error messages explain what failed, why, and how to fix.
+4. [STANDARD] No \`as\` casts without preceding type narrowing or guards.
+5. [GATE] No \`TODO\` or \`FIXME\` markers in production changes.
+6. [GATE] Architecture boundaries are respected (no forbidden cross-layer imports).
+
+Fix any failed checks before running completion commands.`;
+}
+
 /** WU-1279: Generate the Mandatory Standards section based on resolved policy */
 export function generateMandatoryStandards(policy: ResolvedPolicy): string {
   const lines: string[] = ['## Mandatory Standards', ''];
@@ -194,12 +306,11 @@ export function generateMandatoryStandards(policy: ResolvedPolicy): string {
   // For architecture: 'none', we don't add any architecture guidance
 
   // Always include these standards
-  lines.push('- **SOLID/DRY/YAGNI/KISS**: No over-engineering, no premature abstraction');
   lines.push(
-    '- **Library-First**: Search context7 before writing custom code. No reinventing wheels',
+    '- **Code Craft**: See Code Craft section below for constants, DRY, SRP, DI, error handling, and type safety rules with examples',
   );
   lines.push(
-    '- **Code Quality**: No string literals, no magic numbers, no brittle regexes when libraries exist',
+    '- **KISS/YAGNI**: Solve the stated problem with the minimum code. Do not add features, parameters, abstractions, or configurability beyond what acceptance criteria require',
   );
   lines.push(
     '- **Worktree Discipline**: ALWAYS use `pnpm wu:claim` to create worktrees (never `git worktree add` directly). Work ONLY in the worktree, never edit main',

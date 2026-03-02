@@ -72,11 +72,11 @@ defaults:
   tokenFormat: "{TOKEN}"
 templates:
   - id: tdd-directive
-    path: delegation-prompt/tdd-directive.md
+    path: spawn-prompt/tdd-directive.md
     required: true
     order: 10
   - id: constraints
-    path: delegation-prompt/constraints.md
+    path: spawn-prompt/constraints.md
     required: true
     order: 1000
 `;
@@ -230,10 +230,10 @@ Feature-only content.
   });
 
   describe('loadTemplatesWithOverrides', () => {
-    it('should load base templates from templates/delegation-prompt/', () => {
+    it('should load base templates from templates/spawn-prompt/', () => {
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/tdd.md',
+        '.lumenflow/templates/spawn-prompt/tdd.md',
         `---
 id: tdd
 name: TDD
@@ -251,11 +251,11 @@ Base TDD content.
       expect(templates.get('tdd')?.content).toContain('Base TDD content');
     });
 
-    it('should override with client-specific templates (templates.{client}/)', () => {
+    it('should resolve claude-code to templates.claude override directory', () => {
       // Base template
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/skills.md',
+        '.lumenflow/templates/spawn-prompt/skills.md',
         `---
 id: skills
 name: Skills Selection
@@ -270,7 +270,7 @@ Generic skills guidance.
       // Claude-specific override
       writeTestFile(
         testDir,
-        '.lumenflow/templates.claude/delegation-prompt/skills.md',
+        '.lumenflow/templates.claude/spawn-prompt/skills.md',
         `---
 id: skills
 name: Skills Selection
@@ -282,16 +282,50 @@ Load skills with /skill <name> command.
 `,
       );
 
-      const templates = loadTemplatesWithOverrides(testDir, 'claude');
+      const templates = loadTemplatesWithOverrides(testDir, 'claude-code');
 
       expect(templates.get('skills')?.content).toContain('/skill <name>');
       expect(templates.get('skills')?.content).not.toContain('Generic skills');
     });
 
+    it('should resolve codex-cli to templates.codex override directory', () => {
+      writeTestFile(
+        testDir,
+        '.lumenflow/templates/spawn-prompt/code-craft.md',
+        `---
+id: code-craft
+name: Code Craft
+required: true
+order: 55
+---
+
+Base code craft guidance.
+`,
+      );
+
+      writeTestFile(
+        testDir,
+        '.lumenflow/templates.codex/spawn-prompt/code-craft.md',
+        `---
+id: code-craft
+name: Code Craft (Codex)
+required: true
+order: 55
+---
+
+Codex-specific code craft guidance.
+`,
+      );
+
+      const templates = loadTemplatesWithOverrides(testDir, 'codex-cli');
+      expect(templates.get('code-craft')?.content).toContain('Codex-specific');
+      expect(templates.get('code-craft')?.content).not.toContain('Base code craft');
+    });
+
     it('should fall back to base template if client override is missing', () => {
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/constraints.md',
+        '.lumenflow/templates/spawn-prompt/constraints.md',
         `---
 id: constraints
 name: Constraints
@@ -313,7 +347,7 @@ Base constraints.
       // Two base templates
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/tdd.md',
+        '.lumenflow/templates/spawn-prompt/tdd.md',
         `---
 id: tdd
 name: TDD
@@ -326,7 +360,7 @@ TDD content.
       );
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/constraints.md',
+        '.lumenflow/templates/spawn-prompt/constraints.md',
         `---
 id: constraints
 name: Constraints
@@ -341,7 +375,7 @@ Constraints content.
       // Only override tdd for claude
       writeTestFile(
         testDir,
-        '.lumenflow/templates.claude/delegation-prompt/tdd.md',
+        '.lumenflow/templates.claude/spawn-prompt/tdd.md',
         `---
 id: tdd
 name: TDD
@@ -364,7 +398,7 @@ Claude TDD content.
     it('should handle missing client override directory gracefully', () => {
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/test.md',
+        '.lumenflow/templates/spawn-prompt/test.md',
         `---
 id: test
 name: Test
@@ -789,7 +823,7 @@ Test content.
       // Create methodology templates
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/methodology/tdd-directive.md',
+        '.lumenflow/templates/spawn-prompt/methodology/tdd-directive.md',
         `---
 id: methodology-tdd
 name: TDD Directive
@@ -806,7 +840,7 @@ Test-first workflow.
 
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/methodology/test-after-directive.md',
+        '.lumenflow/templates/spawn-prompt/methodology/test-after-directive.md',
         `---
 id: methodology-test-after
 name: Test After Directive
@@ -823,7 +857,7 @@ Implementation-first workflow.
 
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/methodology/none-directive.md',
+        '.lumenflow/templates/spawn-prompt/methodology/none-directive.md',
         `---
 id: methodology-none
 name: No Testing Directive
@@ -853,7 +887,7 @@ No specific testing methodology enforced.
       // Create methodology templates
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/methodology/tdd-directive.md',
+        '.lumenflow/templates/spawn-prompt/methodology/tdd-directive.md',
         `---
 id: methodology-tdd
 name: TDD Directive
@@ -867,7 +901,7 @@ TDD CONTENT
 
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/methodology/test-after-directive.md',
+        '.lumenflow/templates/spawn-prompt/methodology/test-after-directive.md',
         `---
 id: methodology-test-after
 name: Test After Directive
@@ -887,14 +921,14 @@ TEST-AFTER CONTENT
         templates: [
           {
             id: 'methodology-tdd',
-            path: 'delegation-prompt/methodology/tdd-directive.md',
+            path: 'spawn-prompt/methodology/tdd-directive.md',
             required: false,
             order: 10,
             condition: "policy.testing === 'tdd'",
           },
           {
             id: 'methodology-test-after',
-            path: 'delegation-prompt/methodology/test-after-directive.md',
+            path: 'spawn-prompt/methodology/test-after-directive.md',
             required: false,
             order: 10,
             condition: "policy.testing === 'test-after'",
@@ -931,7 +965,7 @@ TEST-AFTER CONTENT
       // Create architecture templates
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/architecture/hexagonal-directive.md',
+        '.lumenflow/templates/spawn-prompt/architecture/hexagonal-directive.md',
         `---
 id: architecture-hexagonal
 name: Hexagonal Architecture Directive
@@ -948,7 +982,7 @@ Ports-first design.
 
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/architecture/layered-directive.md',
+        '.lumenflow/templates/spawn-prompt/architecture/layered-directive.md',
         `---
 id: architecture-layered
 name: Layered Architecture Directive
@@ -965,7 +999,7 @@ Traditional layers.
 
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/architecture/none-directive.md',
+        '.lumenflow/templates/spawn-prompt/architecture/none-directive.md',
         `---
 id: architecture-none
 name: No Architecture Directive
@@ -995,7 +1029,7 @@ No specific architecture enforced.
       // Create architecture templates
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/architecture/hexagonal-directive.md',
+        '.lumenflow/templates/spawn-prompt/architecture/hexagonal-directive.md',
         `---
 id: architecture-hexagonal
 name: Hexagonal Directive
@@ -1009,7 +1043,7 @@ HEXAGONAL CONTENT
 
       writeTestFile(
         testDir,
-        '.lumenflow/templates/delegation-prompt/architecture/layered-directive.md',
+        '.lumenflow/templates/spawn-prompt/architecture/layered-directive.md',
         `---
 id: architecture-layered
 name: Layered Directive
@@ -1029,14 +1063,14 @@ LAYERED CONTENT
         templates: [
           {
             id: 'architecture-hexagonal',
-            path: 'delegation-prompt/architecture/hexagonal-directive.md',
+            path: 'spawn-prompt/architecture/hexagonal-directive.md',
             required: false,
             order: 15,
             condition: "policy.architecture === 'hexagonal'",
           },
           {
             id: 'architecture-layered',
-            path: 'delegation-prompt/architecture/layered-directive.md',
+            path: 'spawn-prompt/architecture/layered-directive.md',
             required: false,
             order: 15,
             condition: "policy.architecture === 'layered'",

@@ -63,7 +63,7 @@ export interface LoadedTemplate {
 export interface ManifestEntry {
   /** Template identifier matching frontmatter id */
   id: string;
-  /** Relative path within templates/delegation-prompt/ */
+  /** Relative path within templates/spawn-prompt/ */
   path: string;
   /** Must be present for assembly to succeed */
   required: boolean;
@@ -113,8 +113,24 @@ export interface TemplateContext {
 
 /** WU-1430: Use centralized constants for template paths */
 const MANIFEST_PATH = LUMENFLOW_PATHS.TEMPLATE_MANIFEST;
-const TEMPLATES_DIR = LUMENFLOW_PATHS.DELEGATION_PROMPT_DIR;
-const TEMPLATE_SUBDIR = 'delegation-prompt';
+const TEMPLATES_DIR = LUMENFLOW_PATHS.SPAWN_PROMPT_DIR;
+const TEMPLATE_SUBDIR = 'spawn-prompt';
+
+const CLIENT_ALIAS_MAP: Readonly<Record<string, string>> = {
+  'claude-code': 'claude',
+  'codex-cli': 'codex',
+  'gemini-cli': 'gemini',
+};
+
+function resolveClientAlias(clientName: string): string {
+  const normalizedName = clientName.trim().toLowerCase();
+  const mappedAlias = CLIENT_ALIAS_MAP[normalizedName];
+  if (mappedAlias) {
+    return mappedAlias;
+  }
+
+  return normalizedName.replace(/-cli$/, '');
+}
 
 /**
  * Validate a template entry from the manifest.
@@ -315,8 +331,8 @@ export function loadTemplate(templatePath: string): LoadedTemplate {
  * Load all templates from a directory, respecting client overrides.
  *
  * Override resolution order:
- * 1. .lumenflow/templates.{client}/delegation-prompt/{template}.md (highest priority)
- * 2. .lumenflow/templates/delegation-prompt/{template}.md
+ * 1. .lumenflow/templates.{client}/spawn-prompt/{template}.md (highest priority)
+ * 2. .lumenflow/templates/spawn-prompt/{template}.md
  *
  * @param baseDir - Project root directory
  * @param clientName - Client name for overrides (e.g., 'claude', 'cursor')
@@ -328,10 +344,11 @@ export function loadTemplatesWithOverrides(
 ): Map<string, LoadedTemplate> {
   const templates = new Map<string, LoadedTemplate>();
   const baseTemplatesDir = join(baseDir, TEMPLATES_DIR);
+  const clientAlias = resolveClientAlias(clientName);
   // WU-1430: Construct client templates path from constants
   const clientTemplatesDir = join(
     baseDir,
-    `${LUMENFLOW_PATHS.BASE}/templates.${clientName}/${TEMPLATE_SUBDIR}`,
+    `${LUMENFLOW_PATHS.BASE}/templates.${clientAlias}/${TEMPLATE_SUBDIR}`,
   );
 
   // Load base templates first.

@@ -895,7 +895,13 @@ describe('WU-1291: Spawn template system activation', () => {
  * - Design context section is vendor-agnostic
  * - Integration: bug WU with CSS code_paths gets full treatment
  */
-import { generateMandatoryStandards, generateDesignContextSection } from '../wu-spawn.js';
+import {
+  generateMandatoryStandards,
+  generateDesignContextSection,
+  generateCodeCraftGuidance,
+  generateReadBeforeWriteDiscipline,
+  generateSelfReviewDirective,
+} from '../wu-spawn.js';
 import { classifyWork, WORK_DOMAINS } from '../work-classifier.js';
 
 describe('WU-1900: Wire work classifier into wu:brief generation', () => {
@@ -1017,6 +1023,80 @@ describe('WU-1900: Wire work classifier into wu:brief generation', () => {
 
       expect(result).not.toContain('frontend-design');
       expect(result).not.toContain('library-first');
+    });
+  });
+
+  describe('WU-2292: Code craft and self-review guidance', () => {
+    it('generateCodeCraftGuidance is vendor-agnostic', () => {
+      const result = generateCodeCraftGuidance();
+      expect(result).toContain('## Code Craft');
+      expect(result).not.toContain('/skill');
+      expect(result).not.toContain('context7');
+    });
+
+    it('generateReadBeforeWriteDiscipline includes uncertainty handling', () => {
+      const result = generateReadBeforeWriteDiscipline();
+      expect(result).toContain('## Read Before Write');
+      expect(result).toContain('If you cannot determine impact');
+    });
+
+    it('generateSelfReviewDirective includes gate and standard checks', () => {
+      const result = generateSelfReviewDirective('WU-2292');
+      expect(result).toContain('## Self-Review Before Completion');
+      expect(result).toContain('[GATE]');
+      expect(result).toContain('[STANDARD]');
+      expect(result).toContain('WU-2292');
+    });
+
+    it('Task invocation orders Code Craft and Self-Review correctly', () => {
+      const strategy = SpawnStrategyFactory.create(TEST_SPAWN_CLIENT);
+      const config = parseConfig({});
+      const doc = {
+        title: 'Ordering test',
+        lane: TEST_LANE,
+        type: TEST_TYPE_FEATURE,
+        status: 'ready',
+        description: TEST_DESCRIPTION,
+        code_paths: [TEST_CODE_PATH],
+        acceptance: ['AC1'],
+      };
+      const output = generateTaskInvocation(doc, 'WU-2292', strategy, { config });
+
+      const codeCraftIndex = output.indexOf('## Code Craft');
+      const readBeforeWriteIndex = output.indexOf('## Read Before Write');
+      const bugDiscoveryIndex = output.indexOf('## Bug Discovery');
+      const selfReviewIndex = output.indexOf('## Self-Review Before Completion');
+      const constraintsIndex = output.indexOf('CRITICAL RULES');
+
+      expect(codeCraftIndex).toBeGreaterThan(-1);
+      expect(readBeforeWriteIndex).toBeGreaterThan(-1);
+      expect(selfReviewIndex).toBeGreaterThan(-1);
+      expect(codeCraftIndex).toBeLessThan(readBeforeWriteIndex);
+      expect(readBeforeWriteIndex).toBeLessThan(bugDiscoveryIndex);
+      expect(selfReviewIndex).toBeLessThan(constraintsIndex);
+    });
+
+    it('Codex prompt includes Code Craft, Read Before Write, and Self-Review', () => {
+      const strategy = SpawnStrategyFactory.create(TEST_SPAWN_CLIENT);
+      const config = parseConfig({});
+      const doc = {
+        title: 'Codex ordering test',
+        lane: TEST_LANE,
+        type: TEST_TYPE_FEATURE,
+        status: 'ready',
+        description: TEST_DESCRIPTION,
+        code_paths: [TEST_CODE_PATH],
+        acceptance: ['AC1'],
+      };
+      const output = generateCodexPrompt(doc, 'WU-2292', strategy, { config });
+
+      expect(output).toContain('## Code Craft');
+      expect(output).toContain('## Read Before Write');
+      expect(output).toContain('## Self-Review Before Completion');
+      expect(output.indexOf('## Code Craft')).toBeLessThan(output.indexOf('## Bug Discovery'));
+      expect(output.indexOf('## Self-Review Before Completion')).toBeLessThan(
+        output.indexOf('## Constraints (Critical)'),
+      );
     });
   });
 

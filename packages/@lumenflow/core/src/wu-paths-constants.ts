@@ -277,8 +277,8 @@ export const LUMENFLOW_PATHS = {
   /** Templates directory (WU-1430) */
   TEMPLATES_DIR: '.lumenflow/templates',
 
-  /** Delegation prompt templates (WU-1674) */
-  DELEGATION_PROMPT_DIR: '.lumenflow/templates/delegation-prompt',
+  /** Spawn prompt templates (WU-1674) */
+  SPAWN_PROMPT_DIR: '.lumenflow/templates/spawn-prompt',
 
   /** Template manifest file (WU-1430) */
   TEMPLATE_MANIFEST: '.lumenflow/templates/manifest.yaml',

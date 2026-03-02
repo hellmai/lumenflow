@@ -722,7 +722,7 @@ describe('wu-spawn methodology policy integration (WU-1288)', () => {
     it('uses policy guidance even when cwd has a tdd-directive template', async () => {
       const originalCwd = process.cwd();
       const tempRoot = await mkdtemp(path.join(tmpdir(), 'wu-spawn-cwd-'));
-      const templateDir = path.join(tempRoot, '.lumenflow', 'templates', 'delegation-prompt');
+      const templateDir = path.join(tempRoot, '.lumenflow', 'templates', 'spawn-prompt');
       const customDirective = 'CUSTOM TEMPLATE: SHOULD NOT OVERRIDE TEST-AFTER';
       const templateContent = `---
 id: tdd-directive

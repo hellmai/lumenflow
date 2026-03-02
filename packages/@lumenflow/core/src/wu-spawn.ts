@@ -62,6 +62,9 @@ export {
   generatePolicyBasedTestGuidance,
   generatePolicyBasedArchitectureGuidance,
   generateDesignContextSection,
+  generateCodeCraftGuidance,
+  generateReadBeforeWriteDiscipline,
+  generateSelfReviewDirective,
 } from './spawn-guidance-generators.js';
 export type { TestGuidanceOptions } from './spawn-guidance-generators.js';
 

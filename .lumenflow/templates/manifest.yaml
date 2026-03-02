@@ -98,6 +98,16 @@ templates:
     required: true
     order: 50
 
+  - id: code-craft
+    path: spawn-prompt/code-craft.md
+    required: true
+    order: 55
+
+  - id: read-before-write
+    path: spawn-prompt/read-before-write.md
+    required: true
+    order: 60
+
   # ─────────────────────────────────────────────────────────────────────
   # Phase 2: Agent guidance (order 100-200)
   # ─────────────────────────────────────────────────────────────────────
@@ -169,6 +179,11 @@ templates:
     required: false
     order: 400
     condition: "laneParent === 'Content'"
+
+  - id: self-review
+    path: spawn-prompt/self-review.md
+    required: true
+    order: 850
 
   # ─────────────────────────────────────────────────────────────────────
   # Phase 6: Constraints (order 900+) - ALWAYS LAST

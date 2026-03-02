@@ -60,6 +60,9 @@ import {
   generateMandatoryStandards,
   generateEnforcementSummary,
   generateDesignContextSection,
+  generateCodeCraftGuidance,
+  generateReadBeforeWriteDiscipline,
+  generateSelfReviewDirective,
 } from '@lumenflow/core/wu-spawn';
 
 // WU-1900: Import work classifier for domain-aware prompt generation
@@ -1197,6 +1200,10 @@ export function generateTaskInvocation(
 
   // WU-1288: Generate mandatory standards based on resolved policy
   const mandatoryStandards = generateMandatoryStandards(policy);
+  const codeCraftGuidance = templates.get('code-craft') || generateCodeCraftGuidance();
+  const readBeforeWrite =
+    templates.get('read-before-write') || generateReadBeforeWriteDiscipline();
+  const selfReviewDirective = templates.get('self-review') || generateSelfReviewDirective(id);
   // WU-1142: Pass lane to get byLane skills
   const clientSkillsGuidance = generateClientSkillsGuidance(clientContext, doc.lane);
   // WU-1253: Try template for skills-selection, build skills section
@@ -1319,6 +1326,14 @@ ${mandatoryStandards}
 
 ${enforcementSummary}
 
+---
+
+${codeCraftGuidance}
+
+---
+
+${readBeforeWrite}
+
 ${designContextSection ? `---\n\n${designContextSection}\n\n` : ''}${clientBlocks ? `---\n\n${clientBlocks}\n\n` : ''}${worktreeGuidance ? `---\n\n${worktreeGuidance}\n\n` : ''}---
 
 ${bugDiscoverySection}
@@ -1367,6 +1382,10 @@ ${generateActionSection(doc, id, config)}
 
 ---
 
+${selfReviewDirective}
+
+---
+
 ${worktreeBlockRecovery}
 
 ${constraints}
@@ -1408,24 +1427,56 @@ export function generateCodexPrompt(
   const codePaths = doc.code_paths || [];
   const mandatoryAgents = detectMandatoryAgents(codePaths);
   const config = options.config || getConfig();
+  const clientContext = options.client;
+
+  // WU-1288: Resolve methodology policy from config
+  const policy = resolvePolicy(config);
+
+  // WU-1900: Run work classifier for domain-aware prompt generation
+  const classificationConfig = config?.methodology?.work_classification;
+  const classification = classifyWork(
+    {
+      code_paths: doc.code_paths,
+      lane: doc.lane,
+      type: doc.type,
+      description: doc.description,
+    },
+    classificationConfig,
+  );
 
   const preamble = generatePreamble(id, strategy);
-  // WU-1142: Use type-aware test guidance instead of hardcoded TDD directive
-  const testGuidance = generateTestGuidance(doc.type || 'feature');
+  const testGuidance = generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
+    testMethodologyHint: classification.testMethodologyHint,
+  });
+  const mandatoryStandards = generateMandatoryStandards(policy);
+  const enforcementSummary = generateEnforcementSummary(policy);
   const mandatorySection = generateMandatoryAgentSection(mandatoryAgents, id);
   const laneGuidance = generateLaneGuidance(doc.lane);
-  const bugDiscoverySection = generateBugDiscoverySection(id);
   const implementationContext = generateImplementationContext(doc);
   const action = generateActionSection(doc, id, config);
-  const completionWorkflow = generateCompletionWorkflowSection(id);
   const constraints = generateCodexConstraints(id);
-  const clientContext = options.client;
   const worktreePathHint = resolveWorktreePathHint(doc, id, config);
+  const designContextSection = generateDesignContextSection(classification);
+
+  const clientName = options.client?.name || 'claude-code';
+  const templateContext = buildSpawnTemplateContext(doc, id, policy);
+  const templateBaseDir = options.baseDir || DEFAULT_TEMPLATE_BASE_DIR;
+  const templates = tryLoadTemplates(clientName, templateContext, templateBaseDir);
+
+  const codeCraftGuidance = templates.get('code-craft') || generateCodeCraftGuidance();
+  const readBeforeWrite =
+    templates.get('read-before-write') || generateReadBeforeWriteDiscipline();
+  const selfReviewDirective = templates.get('self-review') || generateSelfReviewDirective(id);
+  const bugDiscoverySection = templates.get('bug-discovery') || generateBugDiscoverySection(id);
+  const completionWorkflow =
+    templates.get('completion-workflow') || generateCompletionWorkflowSection(id);
   // WU-1142: Pass lane to get byLane skills
   const clientSkillsGuidance = generateClientSkillsGuidance(clientContext, doc.lane);
+  const skillsTemplateContent = templates.get('skills-selection');
+  const skillsBaseContent =
+    skillsTemplateContent || generateSkillsSelectionSection(doc, config, clientContext?.name);
   const skillsSection =
-    generateSkillsSelectionSection(doc, config, clientContext?.name) +
-    (clientSkillsGuidance ? `\n${clientSkillsGuidance}` : '');
+    skillsBaseContent + (clientSkillsGuidance ? `\n${clientSkillsGuidance}` : '');
   const clientBlocks = generateClientBlocksSection(clientContext);
 
   const executionModeSection = generateExecutionModeSection(options);
@@ -1480,7 +1531,21 @@ ${formatAcceptance(doc.acceptance)}
 
 ---
 
-${skillsSection}
+${mandatoryStandards}
+
+---
+
+${enforcementSummary}
+
+---
+
+${codeCraftGuidance}
+
+---
+
+${readBeforeWrite}
+
+${designContextSection ? `---\n\n${designContextSection}\n\n` : ''}${skillsSection}
 ${memoryContextSection ? `---\n\n${memoryContextSection}\n\n` : ''}---
 
 ## Action
@@ -1504,7 +1569,11 @@ ${mandatorySection}${implementationContext ? `${implementationContext}\n\n---\n\
 
 ---
 
-${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}${worktreeBlockRecovery}
+${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}${selfReviewDirective}
+
+---
+
+${worktreeBlockRecovery}
 
 ---
 

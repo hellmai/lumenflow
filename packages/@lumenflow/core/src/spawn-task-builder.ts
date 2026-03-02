@@ -31,6 +31,9 @@ import {
   generateDesignContextSection,
   generateMandatoryStandards,
   generateEnforcementSummary,
+  generateCodeCraftGuidance,
+  generateReadBeforeWriteDiscipline,
+  generateSelfReviewDirective,
 } from './spawn-guidance-generators.js';
 import { generateConstraints, generateCodexConstraints } from './spawn-constraints-generator.js';
 import {
@@ -168,6 +171,8 @@ export function generateTaskInvocation(
 
   // WU-1279: Generate mandatory standards based on resolved policy
   const mandatoryStandards = generateMandatoryStandards(policy);
+  const codeCraftGuidance = generateCodeCraftGuidance();
+  const readBeforeWrite = generateReadBeforeWriteDiscipline();
   const clientSkillsGuidance = generateClientSkillsGuidance(clientContext);
   const skillsSection =
     generateSkillsSelectionSection(doc, config, clientContext?.name) +
@@ -177,6 +182,7 @@ export function generateTaskInvocation(
   const laneGuidance = generateLaneGuidance(doc.lane);
   const bugDiscoverySection = generateBugDiscoverySection(id);
   const action = generateActionSection(doc, id, config);
+  const selfReviewDirective = generateSelfReviewDirective(id);
 
   // WU-1900: Generate constraints with conditional TDD CHECKPOINT
   const shouldIncludeTddCheckpoint = classification.domain !== 'ui' && policy.testing !== 'none';
@@ -270,6 +276,14 @@ ${mandatoryStandards}
 
 ${enforcementSummary}
 
+---
+
+${codeCraftGuidance}
+
+---
+
+${readBeforeWrite}
+
 ${designContextSection ? `---\n\n${designContextSection}\n\n` : ''}${clientBlocks ? `---\n\n${clientBlocks}\n\n` : ''}${worktreeGuidance ? `---\n\n${worktreeGuidance}\n\n` : ''}---
 
 ${bugDiscoverySection}
@@ -311,6 +325,10 @@ ${laneSelection}
 ${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}## Action
 
 ${action}
+
+---
+
+${selfReviewDirective}
 
 ${constraints}`;
 
@@ -365,6 +383,16 @@ export function generateCodexPrompt(
   const implementationContext = generateImplementationContext(doc);
   const clientContext = options.client;
   const config = options.config || getConfig();
+  const classificationConfig = config?.methodology?.work_classification;
+  const classification = classifyWork(
+    {
+      code_paths: doc.code_paths,
+      lane: doc.lane,
+      type: doc.type,
+      description: doc.description,
+    },
+    classificationConfig,
+  );
   const worktreesDirSegment = resolveWorktreesDirSegment(config);
   const worktreePathHint = resolveWorktreePathHint(doc, id, config);
   const mainRef = `${config.git.defaultRemote}/${config.git.mainBranch}`;
@@ -381,13 +409,19 @@ export function generateCodexPrompt(
 
   // WU-1290: Resolve policy and use policy-based test guidance
   const policy = resolvePolicy(config);
-  const testGuidance = generatePolicyBasedTestGuidance(doc.type || 'feature', policy);
+  const testGuidance = generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
+    testMethodologyHint: classification.testMethodologyHint,
+  });
 
   // WU-1290: Generate enforcement summary from resolved policy
   const enforcementSummary = generateEnforcementSummary(policy);
 
   // WU-1290: Generate mandatory standards based on resolved policy
   const mandatoryStandards = generateMandatoryStandards(policy);
+  const codeCraftGuidance = generateCodeCraftGuidance();
+  const readBeforeWrite = generateReadBeforeWriteDiscipline();
+  const selfReviewDirective = generateSelfReviewDirective(id);
+  const designContextSection = generateDesignContextSection(classification);
 
   const executionModeSection = generateExecutionModeSection(options);
   const thinkToolGuidance = generateThinkToolGuidance(options);
@@ -440,6 +474,14 @@ ${enforcementSummary}
 
 ---
 
+${codeCraftGuidance}
+
+---
+
+${readBeforeWrite}
+
+${designContextSection ? `---\n\n${designContextSection}\n\n` : ''}---
+
 ${skillsSection}
 
 ---
@@ -461,7 +503,11 @@ ${mandatorySection}${implementationContext ? `${implementationContext}\n\n---\n\
 
 ---
 
-${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}${constraints}
+${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}${selfReviewDirective}
+
+---
+
+${constraints}
 `;
 }
 

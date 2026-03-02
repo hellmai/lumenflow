@@ -463,3 +463,73 @@ describe('WU-2098: prompt path configuration awareness', () => {
     expect(constraints).toContain('git rebase origin/main');
   });
 });
+
+describe('WU-2292: spawn prompt template overrides for new sections', () => {
+  const id = 'WU-2292';
+  const strategy: SpawnStrategy = {
+    getPreamble: () => 'Load context preamble',
+    getSkillLoadingInstruction: () => 'Load skills instruction',
+  };
+
+  const baseDoc = {
+    title: 'Template override coverage',
+    lane: 'Framework: CLI',
+    type: 'feature',
+    status: 'ready',
+    code_paths: ['packages/@lumenflow/cli/src/wu-brief.ts'],
+    acceptance: ['AC1'],
+    description: 'Validate new section template keys',
+  };
+
+  const config = LumenFlowConfigSchema.parse({
+    directories: {
+      skillsDir: '.claude/skills',
+      agentsDir: '.claude/agents',
+    },
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('uses template override content for code-craft/read-before-write/self-review', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+
+    const templates = new Map<string, LoadedTemplate>();
+    templates.set('code-craft', makeTemplate('code-craft', undefined, 'OVERRIDE: CODE CRAFT'));
+    templates.set(
+      'read-before-write',
+      makeTemplate('read-before-write', undefined, 'OVERRIDE: READ BEFORE WRITE'),
+    );
+    templates.set('self-review', makeTemplate('self-review', undefined, 'OVERRIDE: SELF REVIEW'));
+    mockLoad.mockReturnValue(templates);
+
+    const { generateTaskInvocation, generateCodexPrompt } = await import(
+      '../wu-spawn-prompt-builders.js'
+    );
+
+    const taskPrompt = generateTaskInvocation(baseDoc, id, strategy, { config });
+    const codexPrompt = generateCodexPrompt(baseDoc, id, strategy, { config });
+
+    expect(taskPrompt).toContain('OVERRIDE: CODE CRAFT');
+    expect(taskPrompt).toContain('OVERRIDE: READ BEFORE WRITE');
+    expect(taskPrompt).toContain('OVERRIDE: SELF REVIEW');
+    expect(codexPrompt).toContain('OVERRIDE: CODE CRAFT');
+    expect(codexPrompt).toContain('OVERRIDE: READ BEFORE WRITE');
+    expect(codexPrompt).toContain('OVERRIDE: SELF REVIEW');
+  });
+
+  it('falls back to core guidance when templates are missing', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    mockLoad.mockReturnValue(new Map<string, LoadedTemplate>());
+
+    const { generateTaskInvocation } = await import('../wu-spawn-prompt-builders.js');
+    const taskPrompt = generateTaskInvocation(baseDoc, id, strategy, { config });
+
+    expect(taskPrompt).toContain('## Code Craft');
+    expect(taskPrompt).toContain('## Read Before Write');
+    expect(taskPrompt).toContain('## Self-Review Before Completion');
+  });
+});
