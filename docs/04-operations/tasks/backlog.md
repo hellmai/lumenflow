@@ -39,7 +39,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2165 — Extract wu:done gates orchestration module](wu/WU-2165.yaml) — Framework: CLI WU Commands
-- [WU-2292 — Clean redesign of wu:brief guidance system (core+cli+templates)](wu/WU-2292.yaml) — Framework: Core Lifecycle
 - [WU-2293 — Update spawn prompt docs for clean wu:brief redesign](wu/WU-2293.yaml) — Content: Site Comms
 - [WU-2294 — Fix doc parity: stale commands, broken links, missing steps across all consumer-facing docs](wu/WU-2294.yaml) — Operations: Tooling
 
@@ -1240,6 +1239,7 @@ sections:
 - [WU-2154 — OSS-complete CI gate for local-only test pass](wu/WU-2154.yaml)
 - [WU-2291 — Supersede WU-2146: enforce strict signal schema (no backward-compat/fallback path)](wu/WU-2291.yaml)
 - [WU-2164 — Extract wu:done preflight CLI module](wu/WU-2164.yaml)
+- [WU-2292 — Clean redesign of wu:brief guidance system (core+cli+templates)](wu/WU-2292.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

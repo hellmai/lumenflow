@@ -2,7 +2,7 @@ id: WU-2292
 title: Clean redesign of wu:brief guidance system (core+cli+templates)
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-02
 code_paths:
@@ -73,3 +73,6 @@ session_id: 6dd281c5-3b88-425b-953c-c02a0c81caea
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-02T11:56:04.771Z
+locked: true
+completed_at: 2026-03-02T12:14:54.048Z
+completed: 2026-03-02
