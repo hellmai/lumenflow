@@ -2,7 +2,7 @@ id: WU-2178
 title: Raise runtime and agent test coverage to target
 lane: 'Operations: Runtime'
 type: refactor
-status: ready
+status: in_progress
 priority: P3
 created: 2026-02-25
 code_paths:
@@ -35,3 +35,11 @@ description: Increase runtime and agent coverage with focused tests to meet targ
   reduce blind spots.
 acceptance:
   - Coverage for runtime and agent packages reaches the agreed target with stable test outcomes.
+claimed_mode: worktree
+worktree_path: worktrees/operations-runtime-wu-2178
+claimed_at: 2026-03-02T15:01:38.019Z
+baseline_main_sha: fed8e594a5c169dbc750e8c00415977a2f75b692
+session_id: 91890033-a69f-4a52-9e71-183b45332505
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T15:01:38.028Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2178 — Raise runtime and agent test coverage to target](wu/WU-2178.yaml)
 
 ## Completed
 
