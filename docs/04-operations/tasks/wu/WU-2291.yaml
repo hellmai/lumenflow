@@ -10,12 +10,16 @@ code_paths:
   - packages/@lumenflow/memory/src/mem-signal-core.ts
   - packages/@lumenflow/memory/src/__tests__/signal-schema-extension.test.ts
   - packages/@lumenflow/core/src/__tests__/schema-parity.test.ts
+  - packages/@lumenflow/memory/__tests__/signal-receipts.test.ts
+  - packages/@lumenflow/memory/__tests__/control-plane-sync-adapter.test.ts
 tests:
   manual:
     - Run pnpm gates and verify no fallback/backward-compat signal parsing behavior is retained
   unit:
     - packages/@lumenflow/memory/src/__tests__/signal-schema-extension.test.ts
     - packages/@lumenflow/core/src/__tests__/schema-parity.test.ts
+    - packages/@lumenflow/memory/__tests__/signal-receipts.test.ts
+    - packages/@lumenflow/memory/__tests__/control-plane-sync-adapter.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2291.done
@@ -24,12 +28,20 @@ plan: lumenflow://plans/WU-2291-plan.md
 spec_refs:
   - lumenflow://plans/WU-2291-plan.md
 risks: []
-notes: ''
+notes: 'Supersedes WU-2146 compatibility framing: strict signal contract enforced; legacy signal
+  records now fail explicitly until migrated/repaired.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-02T09:41:34.477Z
+worktree_path: worktrees/framework-memory-wu-2291
+session_id: 4566a733-3d75-4df7-8619-70aa7220877a
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T09:41:34.482Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -47,11 +59,3 @@ acceptance:
     implicit permissive parsing
   - Unit tests cover strict validation behavior and legacy-record handling behavior
   - pnpm gates passes
-claimed_mode: worktree
-worktree_path: worktrees/framework-memory-wu-2291
-claimed_at: 2026-03-02T09:41:34.477Z
-baseline_main_sha: ceaf47cf7b8de2394bf94c1bf8c64c38c1521643
-session_id: 4566a733-3d75-4df7-8619-70aa7220877a
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-02T09:41:34.482Z
