@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2295 — Align wu:brief docs with evidence and claim-time policy behavior](wu/WU-2295.yaml) — Content: Framework Docs
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -40,6 +39,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-2165 — Extract wu:done gates orchestration module](wu/WU-2165.yaml) — Framework: CLI WU Commands
+- [WU-2295 — Align wu:brief docs with evidence and claim-time policy behavior](wu/WU-2295.yaml) — Content: Framework Docs
 
 ## ⛔ Blocked
 

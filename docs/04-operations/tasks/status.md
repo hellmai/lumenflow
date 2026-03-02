@@ -5,6 +5,7 @@ _Last updated: 2026-03-02_
 ## In Progress
 
 - [WU-2165 — Extract wu:done gates orchestration module](wu/WU-2165.yaml)
+- [WU-2295 — Align wu:brief docs with evidence and claim-time policy behavior](wu/WU-2295.yaml)
 
 ## Completed
 
