@@ -167,6 +167,7 @@ For cloud agents (Codex/Claude web/CI) operating on feature branches:
 - **.lumenflow/constraints.md** - Non-negotiable workflow constraints
 - **.lumenflow/rules/** - Workflow rules (git-safety.md, wu-workflow.md, etc.)
 - **docs/04-operations/\_frameworks/lumenflow/agent/onboarding/** - Agent onboarding documentation
+- **docs/04-operations/\_frameworks/lumenflow/validator-boundaries.md** - Validator ownership and package boundaries
 
 ### Public Starlight Docs (Kernel/Packs IA)
 
