@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/core/package.json
   - packages/@lumenflow/core/src
 tests:
-  manual: []
+  manual:
+    - Build @lumenflow/core and verify new domain-scoped import entrypoints resolve from package
+      exports
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-schema.test.ts
   e2e: []
