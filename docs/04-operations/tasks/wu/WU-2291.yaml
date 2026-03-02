@@ -2,7 +2,7 @@ id: WU-2291
 title: 'Supersede WU-2146: enforce strict signal schema (no backward-compat/fallback path)'
 lane: 'Framework: Memory'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-02
 code_paths:
@@ -59,3 +59,6 @@ acceptance:
     implicit permissive parsing
   - Unit tests cover strict validation behavior and legacy-record handling behavior
   - pnpm gates passes
+locked: true
+completed_at: 2026-03-02T09:52:23.809Z
+completed: 2026-03-02
