@@ -20,7 +20,9 @@ artifacts:
   - .lumenflow/stamps/WU-2293.done
 dependencies: []
 risks: []
-notes: 'Source plan: /home/tom/.claude/plans/cryptic-floating-flamingo.md'
+notes: |
+  Source plan: /home/tom/.claude/plans/cryptic-floating-flamingo.md
+  tdd-exception: docs content updates only; no automated test files are expected.
 spec_refs:
   - lumenflow://plans/cryptic-floating-flamingo.md
 requires_review: false
