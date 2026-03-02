@@ -1,2 +1,5 @@
 # Ignore legacy directories (runtime artifacts)
 .lumenflow/
+
+# Allow .lumenflow in CLI templates (synced source docs)
+!cli/templates/core/.lumenflow/
