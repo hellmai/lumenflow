@@ -1,0 +1,41 @@
+id: WU-2293
+title: Update spawn prompt docs for clean wu:brief redesign
+lane: 'Content: Site Comms'
+type: documentation
+status: ready
+priority: P2
+created: 2026-03-02
+code_paths:
+  - apps/docs/src/content/docs/packs/software-delivery/advanced/customizing-spawn-prompts.mdx
+  - apps/docs/src/content/docs/guides/customizing-spawn-prompts.mdx
+  - apps/docs/src/content/docs/reference/templates.mdx
+  - apps/docs/src/content/docs/reference/spawn-manifest.mdx
+tests:
+  manual:
+    - Open docs pages and verify no delegation-prompt path references remain in updated pages.
+    - Verify supported client mapping table shows short alias override directories.
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2293.done
+dependencies: []
+risks: []
+notes: 'Source plan: /home/tom/.claude/plans/cryptic-floating-flamingo.md'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+sizing_estimate:
+  estimated_files: 4
+  estimated_tool_calls: 25
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Update public docs to reflect spawn-prompt path canonicalization, short client alias override mapping, and new template keys (code-craft, read-before-write, self-review).
+acceptance:
+  - Customizing docs document the new template keys and expected section purpose.
+  - Reference docs use spawn-prompt paths (no delegation-prompt references).
+  - Client mapping documents short alias override directories (for example claude-code -> templates.claude).
+  - Examples stay consistent across pack, guide, and reference docs.

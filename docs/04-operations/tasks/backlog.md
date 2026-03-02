@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2293 — Update spawn prompt docs for clean wu:brief redesign](wu/WU-2293.yaml) — Content: Site Comms
 - [WU-2292 — Clean redesign of wu:brief guidance system (core+cli+templates)](wu/WU-2292.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
