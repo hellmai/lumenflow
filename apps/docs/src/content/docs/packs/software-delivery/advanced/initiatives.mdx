@@ -241,7 +241,8 @@ When orchestrating an initiative, you delegate individual WUs to sub-agents. Lum
 
 ### wu:brief -- Generate Handoff Prompt
 
-`wu:brief` generates a complete context-loaded prompt for a sub-agent without any side effects:
+`wu:brief` generates a complete context-loaded prompt for a sub-agent and records `wu:brief`
+execution evidence for lifecycle policy checks:
 
 ```bash
 pnpm wu:brief --id WU-100 --client claude-code
@@ -254,7 +255,8 @@ The generated prompt includes:
 - TDD directives and constraints block
 - Truncation sentinels for verification
 
-Use `wu:brief` when you want to review the prompt before spawning, or when delegation lineage tracking is not needed.
+Use `wu:brief` when you want to review the prompt before spawning and you do not need delegation
+lineage intent recording.
 
 ### wu:delegate -- Generate Prompt with Lineage
 
