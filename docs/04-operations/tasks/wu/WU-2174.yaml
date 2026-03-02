@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/core/src
   - packages/@lumenflow/cli/src
 tests:
-  manual: []
+  manual:
+    - Run CLI flows using new getEnv/requireEnv accessors and verify required vars fail fast while
+      optional vars preserve defaults
   unit:
     - packages/@lumenflow/core/src/__tests__/branch-check.test.ts
   e2e: []
