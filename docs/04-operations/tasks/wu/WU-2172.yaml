@@ -9,7 +9,9 @@ code_paths:
   - packages/@lumenflow/core/src
   - packages/@lumenflow/cli/src
 tests:
-  manual: []
+  manual:
+    - Run target core/cli tests; run a representative command path and confirm behavior unchanged
+      with ENV_VARS-backed reads
   unit:
     - packages/@lumenflow/core/src/__tests__/branch-check.test.ts
   e2e: []
