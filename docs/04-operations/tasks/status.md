@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2300 — Fix sidekick export map for release validator](wu/WU-2300.yaml)
 
 ## Completed
 
