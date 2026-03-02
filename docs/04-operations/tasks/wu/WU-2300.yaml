@@ -2,7 +2,7 @@ id: WU-2300
 title: Fix sidekick export map for release validator
 lane: 'Framework: Core Lifecycle'
 type: chore
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-02
 code_paths:
@@ -40,3 +40,6 @@ session_id: dfa056c6-75ef-4d41-afb1-a26b66baff4c
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-02T18:37:08.390Z
+locked: true
+completed_at: 2026-03-02T18:39:08.597Z
+completed: 2026-03-02

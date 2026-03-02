@@ -26,7 +26,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2300 — Fix sidekick export map for release validator](wu/WU-2300.yaml) — Framework: Core Lifecycle
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1246,6 +1246,7 @@ sections:
 - [WU-2297 — Fix sync:templates gitignore exclusion for .lumenflow template dir](wu/WU-2297.yaml)
 - [WU-2298 — Fix stale lockfile importer blocking frozen install for release](wu/WU-2298.yaml)
 - [WU-2299 — Add wildcard export for @lumenflow/packs-sidekick](wu/WU-2299.yaml)
+- [WU-2300 — Fix sidekick export map for release validator](wu/WU-2300.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

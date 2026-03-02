@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-- [WU-2300 — Fix sidekick export map for release validator](wu/WU-2300.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1220,3 +1220,4 @@ _Last updated: 2026-03-02_
 - [WU-2297 — Fix sync:templates gitignore exclusion for .lumenflow template dir](wu/WU-2297.yaml) — 2026-03-02
 - [WU-2298 — Fix stale lockfile importer blocking frozen install for release](wu/WU-2298.yaml) — 2026-03-02
 - [WU-2299 — Add wildcard export for @lumenflow/packs-sidekick](wu/WU-2299.yaml) — 2026-03-02
+- [WU-2300 — Fix sidekick export map for release validator](wu/WU-2300.yaml) — 2026-03-02
