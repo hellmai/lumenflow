@@ -2650,10 +2650,12 @@
 {"type":"claim","wuId":"WU-2293","timestamp":"2026-03-02T11:56:35.761Z","lane":"Content: Site Comms","title":"Update spawn prompt docs for clean wu:brief redesign"}
 {"type":"checkpoint","wuId":"WU-2293","timestamp":"2026-03-02T11:56:44.692Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2293","timestamp":"2026-03-02T11:56:50.890Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
-{"type":"checkpoint","wuId":"WU-2293","timestamp":"2026-03-02T12:20:15.044Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2293.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2294","timestamp":"2026-03-02T12:03:38.062Z","lane":"Operations: Tooling","title":"Fix doc parity: stale commands, broken links, missing steps across all consumer-facing docs"}
 {"type":"checkpoint","wuId":"WU-2294","timestamp":"2026-03-02T12:03:46.651Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2294","timestamp":"2026-03-02T12:14:16.548Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"complete","wuId":"WU-2292","timestamp":"2026-03-02T12:14:58.357Z"}
+{"type":"checkpoint","wuId":"WU-2293","timestamp":"2026-03-02T12:20:15.044Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2293.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2294","timestamp":"2026-03-02T12:21:13.253Z","note":"[wu:done] force ownership override claimed_session=6dd281c5-3b88-425b-953c-c02a0c81caea active_session=none","progress":"wu:done ownership override","nextSteps":"Continuation of same user session after context compaction"}
 {"type":"complete","wuId":"WU-2294","timestamp":"2026-03-02T12:21:18.873Z"}
+{"type":"checkpoint","wuId":"WU-2293","timestamp":"2026-03-02T12:22:32.797Z","note":"[wu:done] force ownership override claimed_session=6dd281c5-3b88-425b-953c-c02a0c81caea active_session=none","progress":"wu:done ownership override","nextSteps":"orphan recovery after session handoff"}
+{"type":"complete","wuId":"WU-2293","timestamp":"2026-03-02T12:22:38.433Z"}

@@ -5,7 +5,6 @@ _Last updated: 2026-03-02_
 ## In Progress
 
 - [WU-2165 — Extract wu:done gates orchestration module](wu/WU-2165.yaml)
-- [WU-2293 — Update spawn prompt docs for clean wu:brief redesign](wu/WU-2293.yaml)
 
 ## Completed
 
@@ -1202,3 +1201,4 @@ _Last updated: 2026-03-02_
 - [WU-2164 — Extract wu:done preflight CLI module](wu/WU-2164.yaml) — 2026-03-02
 - [WU-2292 — Clean redesign of wu:brief guidance system (core+cli+templates)](wu/WU-2292.yaml) — 2026-03-02
 - [WU-2294 — Fix doc parity: stale commands, broken links, missing steps across all consumer-facing docs](wu/WU-2294.yaml) — 2026-03-02
+- [WU-2293 — Update spawn prompt docs for clean wu:brief redesign](wu/WU-2293.yaml) — 2026-03-02

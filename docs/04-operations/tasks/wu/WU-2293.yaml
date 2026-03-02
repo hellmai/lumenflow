@@ -2,7 +2,7 @@ id: WU-2293
 title: Update spawn prompt docs for clean wu:brief redesign
 lane: 'Content: Site Comms'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-02
 code_paths:
@@ -52,3 +52,6 @@ acceptance:
   - Client mapping documents short alias override directories (for example claude-code ->
     templates.claude).
   - Examples stay consistent across pack, guide, and reference docs.
+locked: true
+completed_at: 2026-03-02T12:22:34.065Z
+completed: 2026-03-02
