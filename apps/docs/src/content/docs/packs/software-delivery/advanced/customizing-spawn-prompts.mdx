@@ -87,21 +87,37 @@ Different AI tools have different capabilities. Override templates to provide to
 .lumenflow/
   templates/
     spawn-prompt/
-      skills-selection.md        # Base template
+      code-craft.md              # Base template
   templates.claude/
     spawn-prompt/
-      skills-selection.md        # Claude Code override
+      code-craft.md              # Claude Code override
   templates.cursor/
     spawn-prompt/
-      skills-selection.md        # Cursor override
+      code-craft.md              # Cursor override
 ```
 
 ### How Override Resolution Works
 
 1. Load base template from `templates/spawn-prompt/`
-2. Check for client override in `templates.{client}/spawn-prompt/`
-3. If override exists with matching `id`, use it instead of base
-4. If no override, use base template
+2. Normalize client name to an alias (for example `claude-code` -> `claude`)
+3. Check for client override in `templates.{alias}/spawn-prompt/`
+4. If override exists with matching `id`, use it instead of base
+5. If no override, use base template
+
+### Client Alias Mapping
+
+| Client Flag (`--client`) | Alias    | Override Directory    |
+| ------------------------ | -------- | --------------------- |
+| `claude-code`            | claude   | `templates.claude/`   |
+| `codex-cli`              | codex    | `templates.codex/`    |
+| `gemini-cli`             | gemini   | `templates.gemini/`   |
+| `cursor`                 | cursor   | `templates.cursor/`   |
+| `windsurf`               | windsurf | `templates.windsurf/` |
+
+<Aside type="note">
+  Client values ending in `-cli` are normalized by stripping `-cli` when no explicit alias mapping
+  exists.
+</Aside>
 
 ### Creating a Client Override
 
@@ -164,14 +180,38 @@ Different AI tools have different capabilities. Override templates to provide to
   </TabItem>
 </Tabs>
 
-### Supported Clients
+### Built-In Redesign Keys
 
-| Client     | Override Directory    | Used When              |
-| ---------- | --------------------- | ---------------------- |
-| `claude`   | `templates.claude/`   | `--client claude-code` |
-| `cursor`   | `templates.cursor/`   | `--client cursor`      |
-| `windsurf` | `templates.windsurf/` | `--client windsurf`    |
-| `codex`    | `templates.codex/`    | `--client codex`       |
+These template IDs are part of the wu:brief redesign and can be overridden per client:
+
+| Template ID         | Default Order | Purpose                                         |
+| ------------------- | ------------- | ----------------------------------------------- |
+| `code-craft`        | `55`          | Concrete code quality guidance with examples    |
+| `read-before-write` | `60`          | Understand impact before editing                |
+| `self-review`       | `850`         | Pre-completion checklist near the end of prompt |
+
+### Example: Claude-Specific Code Craft Override
+
+```markdown
+---
+id: code-craft
+name: Code Craft (Claude)
+required: true
+order: 55
+---
+
+## Code Craft (Claude)
+
+Before writing custom code, run a focused library/context search for existing patterns.
+
+<example>
+// Before
+die('failed');
+
+// After
+die('Failed to parse workspace.yaml: missing lane field. Run pnpm lane:setup to regenerate.');
+</example>
+```
 
 <Aside type="tip">
   You don't need to create overrides for every template. Only override templates where client
@@ -469,7 +509,7 @@ pnpm wu:brief --id WU-XXX --client <client>
 
 **Client override not applied:**
 
-1. Verify directory name: `templates.{client}/`
+1. Verify directory name: `templates.{alias}/` (see Client Alias Mapping)
 2. Check override has same `id` as base template
 3. Confirm using correct `--client` flag
 

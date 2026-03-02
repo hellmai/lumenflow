@@ -91,11 +91,12 @@ Templates are sorted by `order` before assembly. Use these ranges:
 | Range   | Purpose                   | Examples                           |
 | ------- | ------------------------- | ---------------------------------- |
 | 10-50   | Type-specific directives  | `tdd-directive`, `docs-directive`  |
-| 50-100  | Skills and methodology    | `skills-selection`                 |
+| 50-60   | Skills and code craft     | `skills-selection`, `code-craft`   |
 | 100-200 | Agent guidance            | `effort-scaling`, `parallel-calls` |
 | 200-300 | Operational guidance      | `bug-discovery`, `quick-fix`       |
 | 300-400 | Recovery and worktree     | `worktree-recovery`                |
 | 400-500 | Lane-specific guidance    | `lane-guidance-operations`         |
+| 850     | Completion self-review    | `self-review`                      |
 | 900+    | Constraints (always last) | `constraints`                      |
 
 <Aside type="tip">
@@ -276,11 +277,12 @@ When `wu:brief` runs, templates are assembled in this order:
 
 1. **Load manifest** from `.lumenflow/templates/manifest.yaml`
 2. **Load templates** from `spawn-prompt/` directory
-3. **Apply client overrides** (e.g., `templates.claude/spawn-prompt/`)
-4. **Sort by order** field (ascending)
-5. **Evaluate conditions** for each template against the WU context
-6. **Replace tokens** in included templates
-7. **Concatenate** with double newlines between sections
+3. **Resolve client alias** (for example `claude-code` -> `claude`, `codex-cli` -> `codex`)
+4. **Apply client overrides** (e.g., `templates.claude/spawn-prompt/`)
+5. **Sort by order** field (ascending)
+6. **Evaluate conditions** for each template against the WU context
+7. **Replace tokens** in included templates
+8. **Concatenate** with double newlines between sections
 
 <Aside type="note" title="Condition evaluation in both code paths (WU-1898)">
   Template conditions are evaluated in **both** assembly paths:
@@ -311,8 +313,24 @@ Client-specific templates take priority:
 When running `wu:brief --id WU-XXX --client <client>`:
 
 1. Load base `skills-selection.md`
-2. Override with `templates.claude/spawn-prompt/skills-selection.md`
-3. Cursor template is ignored
+2. Resolve alias (`claude-code` -> `claude`)
+3. Override with `templates.claude/spawn-prompt/skills-selection.md`
+4. Other client directories are ignored
+
+### Client Alias Mapping
+
+| Client Flag (`--client`) | Alias    | Override Directory    |
+| ------------------------ | -------- | --------------------- |
+| `claude-code`            | claude   | `templates.claude/`   |
+| `codex-cli`              | codex    | `templates.codex/`    |
+| `gemini-cli`             | gemini   | `templates.gemini/`   |
+| `cursor`                 | cursor   | `templates.cursor/`   |
+| `windsurf`               | windsurf | `templates.windsurf/` |
+
+<Aside type="note">
+  Three new spawn template keys are now first-class override points: `code-craft`,
+  `read-before-write`, and `self-review`.
+</Aside>
 
 ## Error Handling
 

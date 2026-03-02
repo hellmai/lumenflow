@@ -59,6 +59,16 @@ templates:
     required: true
     order: 50
 
+  - id: code-craft
+    path: spawn-prompt/code-craft.md
+    required: true
+    order: 55
+
+  - id: read-before-write
+    path: spawn-prompt/read-before-write.md
+    required: true
+    order: 60
+
   - id: effort-scaling
     path: spawn-prompt/effort-scaling.md
     required: true
@@ -70,6 +80,12 @@ templates:
     required: false
     order: 400
     condition: "laneParent === 'Framework'"
+
+  # Self-review near completion (order 850)
+  - id: self-review
+    path: spawn-prompt/self-review.md
+    required: true
+    order: 850
 
   # Constraints always last (order 900+)
   - id: constraints
@@ -197,11 +213,12 @@ templates:
 | Range   | Purpose                   |
 | ------- | ------------------------- |
 | 10-50   | Type-specific directives  |
-| 50-100  | Skills and methodology    |
+| 50-60   | Skills and code craft     |
 | 100-200 | Agent guidance            |
 | 200-300 | Operational guidance      |
 | 300-400 | Recovery and worktree     |
 | 400-500 | Lane-specific guidance    |
+| 850     | Completion self-review    |
 | 900+    | Constraints (always last) |
 
 **Equal order values:**
@@ -298,12 +315,13 @@ When `wu:brief` assembles templates:
 
 1. **Parse manifest** - Validate structure and entries
 2. **Load templates** - Read files from `spawn-prompt/`
-3. **Apply overrides** - Replace base templates with client-specific versions
-4. **Sort entries** - Order by `order` field ascending
-5. **Evaluate conditions** - Skip templates where condition is false
-6. **Check required** - Error if required template is missing
-7. **Replace tokens** - Substitute `{TOKEN}` placeholders
-8. **Join sections** - Concatenate with double newlines
+3. **Resolve client alias** - Example: `claude-code` -> `claude`, `codex-cli` -> `codex`
+4. **Apply overrides** - Replace base templates with client-specific versions
+5. **Sort entries** - Order by `order` field ascending
+6. **Evaluate conditions** - Skip templates where condition is false
+7. **Check required** - Error if required template is missing
+8. **Replace tokens** - Substitute `{TOKEN}` placeholders
+9. **Join sections** - Concatenate with double newlines
 
 ## Client Override Resolution
 
@@ -320,11 +338,22 @@ Client-specific manifests are not supported. Overrides work at the template leve
       skills-selection.md      # Claude override (same id)
 ```
 
-When assembling for `claude`:
+When assembling for `--client claude-code`:
 
 1. Load base template with `id: skills-selection`
-2. Load override from `templates.claude/spawn-prompt/skills-selection.md`
-3. Override replaces base (matched by `id`)
+2. Resolve alias to `claude`
+3. Load override from `templates.claude/spawn-prompt/skills-selection.md`
+4. Override replaces base (matched by `id`)
+
+### Client Alias Mapping
+
+| Client Flag (`--client`) | Alias    | Override Directory    |
+| ------------------------ | -------- | --------------------- |
+| `claude-code`            | claude   | `templates.claude/`   |
+| `codex-cli`              | codex    | `templates.codex/`    |
+| `gemini-cli`             | gemini   | `templates.gemini/`   |
+| `cursor`                 | cursor   | `templates.cursor/`   |
+| `windsurf`               | windsurf | `templates.windsurf/` |
 
 <Aside type="tip">
   To add client-specific templates not in the base manifest, add them to the manifest with a
@@ -377,6 +406,16 @@ templates:
     path: spawn-prompt/skills-selection.md
     required: true
     order: 50
+
+  - id: code-craft
+    path: spawn-prompt/code-craft.md
+    required: true
+    order: 55
+
+  - id: read-before-write
+    path: spawn-prompt/read-before-write.md
+    required: true
+    order: 60
 
   # ─────────────────────────────────────────────────────────────────────
   # Phase 2: Agent guidance (order 100-200)
@@ -448,6 +487,11 @@ templates:
     required: false
     order: 400
     condition: "laneParent === 'Content'"
+
+  - id: self-review
+    path: spawn-prompt/self-review.md
+    required: true
+    order: 850
 
   # ─────────────────────────────────────────────────────────────────────
   # Phase 6: Constraints (order 900+) - ALWAYS LAST
