@@ -2,7 +2,7 @@ id: WU-2174
 title: Introduce getEnv and requireEnv accessors
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -40,3 +40,11 @@ description: Create standardized environment accessor utilities and migrate dire
 acceptance:
   - Direct environment reads are replaced by accessors in targeted modules and behavior remains
     consistent.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2174
+claimed_at: 2026-03-02T14:23:46.257Z
+baseline_main_sha: 5d0c39d509f43e4df44684a3c559f5ab37b29992
+session_id: a75ad19a-0413-4e28-a3b6-379dcc5c6512
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T14:23:46.262Z

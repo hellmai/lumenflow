@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2174 — Introduce getEnv and requireEnv accessors](wu/WU-2174.yaml)
 
 ## Completed
 
