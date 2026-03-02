@@ -62,7 +62,7 @@ import {
   computeBranchOnlyFallback,
   runWuDoneStagedValidation,
 } from './wu-done-preflight.js';
-import { getGitForCwd, createGitForPath } from '@lumenflow/core/git-adapter';
+import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die, getErrorMessage } from '@lumenflow/core/error-handler';
 // WU-1223: Location detection for worktree check
 import { resolveLocation } from '@lumenflow/core/context/location-resolver';
@@ -125,21 +125,13 @@ import {
   validateDoneWU,
   validateApprovalGates,
 } from '@lumenflow/core/wu-schema';
-import {
-  executeBranchOnlyCompletion,
-  // WU-1492: Import branch-pr completion path
-  executeBranchPRCompletion,
-} from '@lumenflow/core/wu-done-branch-only';
-import { executeWorktreeCompletion, autoRebaseBranch } from '@lumenflow/core/wu-done-worktree';
-// WU-1746: Already-merged worktree resilience
-// WU-2248: Removed executeAlreadyMergedCompletion (wrote directly to local main).
-// Both code paths now use executeAlreadyMergedFinalizeFromModule (micro-worktree isolation).
-import { detectAlreadyMergedNoWorktree } from '@lumenflow/core/wu-done-merged-worktree';
+import { autoRebaseBranch } from '@lumenflow/core/wu-done-worktree';
 // WU-2211: --already-merged finalize-only mode
 import {
   verifyCodePathsOnMainHead,
   executeAlreadyMergedFinalize as executeAlreadyMergedFinalizeFromModule,
 } from './wu-done-already-merged.js';
+import { executeModeSpecificCompletion } from './wu-done-mode-execution.js';
 import { checkWUConsistency } from '@lumenflow/core/wu-consistency-checker';
 // WU-1542: Use blocking mode compliance check (replaces non-blocking checkMandatoryAgentsCompliance)
 import { checkMandatoryAgentsComplianceBlocking } from '@lumenflow/core/orchestration-rules';
@@ -1692,10 +1684,8 @@ export async function main() {
     runGatesFn: ({ cwd }) => runGates({ cwd, docsOnly: false }),
   });
 
-  // Step 1: Execute mode-specific completion workflow (WU-1215: extracted to mode modules)
-  // Worktree mode: Update metadata in worktree → commit → merge to main
-  // Branch-Only mode: Merge to main → update metadata on main → commit
-  // WU-1811: Track cleanupSafe flag to conditionally skip worktree removal on failure
+  // Step 1: Execute mode-specific completion workflow (WU-2167)
+  // Main remains orchestration-only; execution details live in wu-done-mode-execution.ts.
   let completionResult: {
     cleanupSafe?: boolean;
     success?: boolean;
@@ -1704,170 +1694,32 @@ export async function main() {
     merged?: boolean;
     recovered?: boolean;
     prUrl?: string | null;
-  } = { cleanupSafe: true }; // Default to safe for no-auto mode
+  } = { cleanupSafe: true };
 
   if (!args.noAuto) {
-    // Build context for mode-specific execution
-    // WU-1369: Worktree mode uses atomic transaction pattern (no recordTransactionState/rollbackTransaction)
-    // Branch-only mode still uses the old rollback mechanism
-    const baseContext = {
+    completionResult = await executeModeSpecificCompletion({
       id,
       args,
       docMain,
       title,
       isDocsOnly,
       maxCommitLength: getCommitHeaderLimit(),
+      isBranchPR,
+      effectiveBranchOnly,
+      worktreePath,
+      resolvedWorktreePath,
+      pipelineActor: {
+        send: (event) => pipelineActor.send(event as never),
+        stop: () => pipelineActor.stop(),
+        getSnapshot: () =>
+          pipelineActor.getSnapshot() as { value: unknown; context: { failedAt?: unknown } },
+      },
       validateStagedFiles,
-    };
-
-    try {
-      if (isBranchPR) {
-        // WU-1492: Branch-PR mode: commit metadata on lane branch, push, create PR
-        // Never checks out or merges to main
-        const laneBranch = defaultBranchFrom(docMain);
-        const branchPRContext = {
-          ...baseContext,
-          laneBranch,
-        };
-        completionResult = await executeBranchPRCompletion(branchPRContext);
-      } else if (effectiveBranchOnly) {
-        // Branch-Only mode: merge first, then update metadata on main
-        // NOTE: Branch-only still uses old rollback mechanism
-        const branchOnlyContext = {
-          ...baseContext,
-          recordTransactionState,
-          rollbackTransaction,
-        };
-        completionResult = await executeBranchOnlyCompletion(branchOnlyContext);
-      } else {
-        // Worktree mode: update in worktree, commit, then merge or create PR
-        // WU-1369: Uses atomic transaction pattern
-        // WU-1541: Create worktree-aware validateStagedFiles to avoid process.chdir dependency
-        if (!worktreePath) {
-          // WU-1746: Before dying, check if branch is already merged to main
-          // This handles the case where worktree was manually deleted after branch was merged
-          const laneBranch = defaultBranchFrom(docMain);
-          const mergedDetection = await detectAlreadyMergedNoWorktree({
-            wuId: id,
-            laneBranch: laneBranch || '',
-            worktreePath: resolvedWorktreePath,
-          });
-
-          if (mergedDetection.merged && !mergedDetection.worktreeExists) {
-            console.log(
-              `${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-1746: Worktree missing but branch already merged to main`,
-            );
-            // WU-2248: Use micro-worktree isolation (same as --already-merged flag path)
-            // Previously called executeAlreadyMergedCompletion which wrote directly to local main.
-            const mergedTitle = title || String(docMain.title || id);
-            const mergedResult = await executeAlreadyMergedFinalizeFromModule({
-              id,
-              title: mergedTitle,
-              lane: String(docMain.lane || ''),
-              doc: docMain as Record<string, unknown>,
-            });
-            completionResult = {
-              success: mergedResult.success,
-              committed: true,
-              pushed: true,
-              merged: true,
-              cleanupSafe: true,
-            };
-          } else {
-            die(`Missing worktree path for ${id} completion in worktree mode`);
-          }
-        } else {
-          const worktreeGitForValidation = createGitForPath(worktreePath);
-          const worktreeContext = {
-            ...baseContext,
-            worktreePath,
-            validateStagedFiles: (
-              wuId: string,
-              docsOnly: boolean,
-              options?: { metadataAllowlist?: string[] },
-            ) => validateStagedFiles(wuId, docsOnly, worktreeGitForValidation, options),
-          };
-          completionResult = await executeWorktreeCompletion(worktreeContext);
-        }
-      }
-
-      // WU-1663: Mode-specific completion succeeded - send pipeline events.
-      // The completion modules handle commit, merge, and push internally.
-      // We send the corresponding pipeline events based on the completion result.
-      pipelineActor.send({ type: WU_DONE_EVENTS.COMMIT_COMPLETE });
-      pipelineActor.send({ type: WU_DONE_EVENTS.MERGE_COMPLETE });
-      pipelineActor.send({ type: WU_DONE_EVENTS.PUSH_COMPLETE });
-
-      // Handle recovery mode (zombie state cleanup completed)
-      if ('recovered' in completionResult && completionResult.recovered) {
-        // P0 FIX: Release lane lock before early exit
-        try {
-          const lane = docMain.lane;
-          if (lane) releaseLaneLock(lane, { wuId: id });
-        } catch {
-          // Intentionally ignore lock release errors during cleanup
-        }
-        pipelineActor.stop();
-        process.exit(EXIT_CODES.SUCCESS);
-      }
-    } catch (err) {
-      // WU-1663: Mode execution failed - determine which stage failed
-      // based on completion result flags and send appropriate failure event.
-      const failureStage =
-        completionResult.committed === false
-          ? WU_DONE_EVENTS.COMMIT_FAILED
-          : completionResult.merged === false
-            ? WU_DONE_EVENTS.MERGE_FAILED
-            : completionResult.pushed === false
-              ? WU_DONE_EVENTS.PUSH_FAILED
-              : WU_DONE_EVENTS.COMMIT_FAILED; // Default to commit as earliest possible failure
-
-      pipelineActor.send({
-        type: failureStage,
-        error: getErrorMessage(err),
-      });
-
-      // WU-1663: Log pipeline state for diagnostics
-      const failedSnapshot = pipelineActor.getSnapshot();
-      console.error(
-        `${LOG_PREFIX.DONE} Pipeline state: ${failedSnapshot.value} (failedAt: ${failedSnapshot.context.failedAt})`,
-      );
-      pipelineActor.stop();
-
-      // P0 FIX: Release lane lock before error exit
-      try {
-        const lane = docMain.lane;
-        if (lane) releaseLaneLock(lane, { wuId: id });
-      } catch {
-        // Intentionally ignore lock release errors during error handling
-      }
-
-      console.error(
-        `\n${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Mode execution failed: ${getErrorMessage(err)}`,
-      );
-      console.error(
-        `${LOG_PREFIX.DONE} ${EMOJI.INFO} Next step: resolve the reported error and retry: pnpm wu:done --id ${id}`,
-      );
-
-      // WU-1811: Check if cleanup is safe before removing worktree
-      // If cleanupSafe is false (or undefined), preserve worktree for recovery
-      const cleanupSafe =
-        typeof err === 'object' &&
-        err !== null &&
-        'cleanupSafe' in err &&
-        typeof (err as { cleanupSafe?: unknown }).cleanupSafe === 'boolean'
-          ? (err as { cleanupSafe?: boolean }).cleanupSafe
-          : undefined;
-      if (cleanupSafe === false) {
-        console.log(
-          `\n${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-1811: Worktree preserved - rerun wu:done to recover`,
-        );
-      }
-
-      // Mode modules handle rollback internally, we just need to exit
-      // Exit code 1 = recoverable (rebase/fix and retry)
-      process.exit(EXIT_CODES.ERROR);
-    }
+      defaultBranchFrom: (doc) => defaultBranchFrom(doc as Record<string, unknown>),
+      executeAlreadyMergedFinalize: executeAlreadyMergedFinalizeFromModule,
+      recordTransactionState,
+      rollbackTransaction,
+    });
   } else {
     await ensureNoAutoStagedOrNoop([WU_PATH, STATUS_PATH, BACKLOG_PATH, STAMPS_DIR]);
   }

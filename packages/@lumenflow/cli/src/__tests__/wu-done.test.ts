@@ -163,9 +163,15 @@ status: done
 
   describe('WU-1634: mode-execution failure messaging', () => {
     it('surfaces root error context and retry guidance before exiting', async () => {
-      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
-      expect(source).toContain('Mode execution failed:');
-      expect(source).toContain(
+      const orchestratorSource = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      const modeExecutionSource = await readFile(
+        new URL('../wu-done-mode-execution.ts', import.meta.url),
+        'utf-8',
+      );
+
+      expect(orchestratorSource).toContain("from './wu-done-mode-execution.js'");
+      expect(modeExecutionSource).toContain('Mode execution failed:');
+      expect(modeExecutionSource).toContain(
         'Next step: resolve the reported error and retry: pnpm wu:done --id ${id}',
       );
     });
