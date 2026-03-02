@@ -2,7 +2,7 @@ id: WU-2172
 title: Migrate remaining raw env reads to ENV_VARS
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -38,3 +38,11 @@ description: Replace remaining raw environment variable access points with centr
   constants where applicable.
 acceptance:
   - Raw env read count is reduced and replacements use canonical constants without regressions.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2172
+claimed_at: 2026-03-02T14:01:52.103Z
+baseline_main_sha: 408f019509805413c6ac9800ffd3f22d4a394243
+session_id: 31af1309-aaa5-41cb-a10a-0b0cd7444946
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T14:01:52.108Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2172 — Migrate remaining raw env reads to ENV_VARS](wu/WU-2172.yaml)
 
 ## Completed
 

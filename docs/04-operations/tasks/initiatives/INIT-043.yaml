@@ -3,7 +3,7 @@ slug: environment-variable-hardening
 title: Environment Variable Hardening
 description: Eliminate remaining raw process.env access patterns, introduce typed environment
   validation, and standardize env reads behind explicit access utilities.
-status: open
+status: in_progress
 priority: P2
 owner: tom@hellm.ai
 created: 2026-02-25
@@ -24,6 +24,3 @@ success_metrics:
   - Missing/malformed env values fail fast with actionable diagnostics
   - Env access patterns are uniform across core, cli, and mcp
 labels: []
-notes:
-  - 'source_plan: /home/USER/.claude/plans/gleaming-painting-sonnet.md'
-related_plan: lumenflow://plans/gleaming-painting-sonnet.md
