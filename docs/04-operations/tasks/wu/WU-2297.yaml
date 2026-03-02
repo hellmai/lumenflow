@@ -2,7 +2,7 @@ id: WU-2297
 title: Fix sync:templates gitignore exclusion for .lumenflow template dir
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-02
 code_paths:
@@ -38,3 +38,6 @@ description: sync:templates fails because packages/@lumenflow/.gitignore blocks 
 acceptance:
   - sync:templates completes successfully
   - Templates are synced and committed
+locked: true
+completed_at: 2026-03-02T15:26:32.854Z
+completed: 2026-03-02
