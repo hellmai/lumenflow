@@ -20,6 +20,8 @@ Reference for CLI commands. Organized by category for quick discovery.
 > ```
 >
 > **Never conclude a command doesn't exist without running `pnpm lumenflow:commands` first.**
+>
+> Maintainer reference for validation ownership: [validator-boundaries.md](../../validator-boundaries.md).
 
 ## Help-First Usage Examples By Category
 
