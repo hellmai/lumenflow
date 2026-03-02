@@ -17,12 +17,19 @@ artifacts:
   - .lumenflow/stamps/WU-2297.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: one-line gitignore fix, no testable logic'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-02T15:24:22.513Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2297
+session_id: 986ba533-5d8b-44ae-899f-365889d106cf
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T15:24:22.519Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -31,11 +38,3 @@ description: sync:templates fails because packages/@lumenflow/.gitignore blocks 
 acceptance:
   - sync:templates completes successfully
   - Templates are synced and committed
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2297
-claimed_at: 2026-03-02T15:24:22.513Z
-baseline_main_sha: b58f3c0749bd9f3710b8d6f7c132fcc277792052
-session_id: 986ba533-5d8b-44ae-899f-365889d106cf
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-02T15:24:22.519Z

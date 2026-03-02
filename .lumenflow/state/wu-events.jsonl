@@ -2720,3 +2720,4 @@
 {"type":"claim","wuId":"WU-2297","timestamp":"2026-03-02T15:24:22.535Z","lane":"Framework: CLI WU Commands","title":"Fix sync:templates gitignore exclusion for .lumenflow template dir"}
 {"type":"checkpoint","wuId":"WU-2297","timestamp":"2026-03-02T15:24:31.193Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2297","timestamp":"2026-03-02T15:24:56.229Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"checkpoint","wuId":"WU-2297","timestamp":"2026-03-02T15:25:27.480Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2297.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
