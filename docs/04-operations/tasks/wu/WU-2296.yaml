@@ -2,12 +2,15 @@ id: WU-2296
 title: Remove legacy .lumenflow.config.yaml references from active docs and config
 lane: 'Content: Framework Docs'
 type: chore
-status: in_progress
+status: ready
 priority: P2
 created: 2026-03-02
 code_paths:
   - .claude/**
   - .lumenflow/**
+  - .cursorrules
+  - .claude/CLAUDE.md
+  - .lumenflow/constraints.md
   - .cursorrules
 tests:
   manual:
@@ -36,11 +39,3 @@ acceptance:
   - No active doc or config file presents .lumenflow.config.yaml as current behavior
   - Historical WU specs, stamps, events, and plans are left untouched
   - Claim validator and its test still reference the legacy name (they should)
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2296
-claimed_at: 2026-03-02T15:06:34.281Z
-baseline_main_sha: 246472524d7d381148e1d44b0afb3a7332a25adb
-session_id: 91890033-a69f-4a52-9e71-183b45332505
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-02T15:06:34.287Z
