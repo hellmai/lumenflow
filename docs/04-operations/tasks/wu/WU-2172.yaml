@@ -2,7 +2,7 @@ id: WU-2172
 title: Migrate remaining raw env reads to ENV_VARS
 lane: 'Framework: Core Validation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-02-25
 code_paths:
@@ -49,3 +49,6 @@ session_id: 31af1309-aaa5-41cb-a10a-0b0cd7444946
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-02T14:01:52.108Z
+locked: true
+completed_at: 2026-03-02T14:10:26.750Z
+completed: 2026-03-02

@@ -10,7 +10,7 @@ created: 2026-02-25
 phases:
   - id: 1
     title: 'Phase 1: Migrate raw env reads to ENV_VARS constants'
-    status: pending
+    status: done
   - id: 2
     title: 'Phase 2: Add startup env schema validation'
     status: pending
