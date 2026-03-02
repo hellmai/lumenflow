@@ -2,7 +2,7 @@ id: WU-2295
 title: Align wu:brief docs with evidence and claim-time policy behavior
 lane: 'Content: Framework Docs'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-02
 code_paths:
@@ -42,3 +42,6 @@ acceptance:
   - Docs no longer say wu:brief has no side effects
   - Docs no longer claim wu:brief is worktree-only
   - CLI/reference guidance clearly distinguishes wu:brief evidence vs wu:delegate lineage
+locked: true
+completed_at: 2026-03-02T12:36:36.958Z
+completed: 2026-03-02
