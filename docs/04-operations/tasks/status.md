@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2167 — Slim wu:done main orchestrator](wu/WU-2167.yaml)
 
 ## Completed
 

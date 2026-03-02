@@ -2,7 +2,7 @@ id: WU-2167
 title: Slim wu:done main orchestrator
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-02-25
 code_paths:
@@ -46,3 +46,11 @@ description: Refactor wu:done main() into a thin orchestrator that coordinates e
 acceptance:
   - Main orchestrator is reduced to coordination logic and wu-done.ts stays within target size
     envelope.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2167
+claimed_at: 2026-03-02T12:54:57.919Z
+baseline_main_sha: ae6b8522f78cf083a2b5f5ca46849ed517bbeff1
+session_id: e9051076-93f9-4674-994c-826bc515bcce
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-02T12:54:57.924Z
