@@ -203,7 +203,7 @@ The `--merge` flag uses bounded markers (`LUMENFLOW:START`/`END`) to safely inse
 
 After claiming a WU, immediately `cd worktrees/<lane>-wu-xxx` and work exclusively in the worktree. Main checkout becomes read-only -- hooks will block WU commits from main. Return to main only to run `wu:done`.
 
-For the full worktree lifecycle (parallel execution, bootstrap, isolation guarantees), see [lumenflow-agent-capsule.md](docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md). For the mandatory pre-write check, see [.lumenflow/constraints.md](.lumenflow/constraints.md).
+For the full worktree lifecycle (parallel execution, bootstrap, isolation guarantees), see [LumenFlow Agent Capsule](docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md). For the mandatory pre-write check, see [.lumenflow/constraints.md](.lumenflow/constraints.md).
 
 ### Vendor-Agnostic Dirty-Main Guard
 

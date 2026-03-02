@@ -3,6 +3,7 @@ name: wu-lifecycle
 description: Work Unit claim/block/done workflow automation. Use when claiming WUs, blocking/unblocking, running wu:prep + wu:done, or understanding WU state transitions.
 version: 2.2.0
 source: docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source_sections: WU Lifecycle
 last_updated: {{DATE}}
 allowed-tools: Read, Bash, Grep
 ---
@@ -115,4 +116,4 @@ pnpm wu:done --id WU-XXX --skip-gates --reason "Pre-existing" --fix-wu WU-YYY
 
 ---
 
-**Full spec**: [lumenflow-agent-capsule.md](../../../docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)
+**Full spec**: [LumenFlow Agent Capsule](../../../docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)
