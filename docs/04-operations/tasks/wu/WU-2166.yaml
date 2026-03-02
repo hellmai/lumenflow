@@ -7,7 +7,7 @@ priority: P1
 created: 2026-02-25
 code_paths:
   - packages/@lumenflow/cli/src/wu-done.ts
-  - packages/@lumenflow/core/src/telemetry.ts
+  - packages/@lumenflow/cli/src/wu-done-memory-telemetry.ts
 tests:
   manual:
     - Run pnpm wu:prep --id WU-2166 and verify gates pass with no behavior change in wu:done flow
@@ -15,6 +15,7 @@ tests:
       still emit expected messages
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done-memory-telemetry-extraction.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2166.done

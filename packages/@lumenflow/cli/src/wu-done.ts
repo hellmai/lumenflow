@@ -146,13 +146,8 @@ import { checkMandatoryAgentsComplianceBlocking } from '@lumenflow/core/orchestr
 import { endSessionForWU, getCurrentSessionForWU } from '@lumenflow/agent/auto-session';
 import { runBackgroundProcessCheck } from '@lumenflow/core/process-detector';
 import { WUStateStore } from '@lumenflow/core/wu-state-store';
-// WU-1588: INIT-007 memory layer integration
-import { createCheckpoint } from '@lumenflow/memory/checkpoint';
-import { createSignal, loadSignals } from '@lumenflow/memory/signal';
 // WU-1763: Memory store for loading discoveries (lifecycle nudges)
-import { loadMemory, queryByWu } from '@lumenflow/memory/store';
-// WU-1943: Checkpoint warning helper
-import { hasSessionCheckpoints } from '@lumenflow/core/wu-done-worktree';
+import { loadMemory } from '@lumenflow/memory/store';
 // WU-1603: Atomic lane locking - release lock on WU completion
 import { releaseLaneLock } from '@lumenflow/core/lane-lock';
 // WU-1747: Checkpoint and lock for concurrent load resilience
@@ -172,6 +167,15 @@ import { evaluateMainDirtyMutationGuard } from './hooks/dirty-guard.js';
 // WU-1474: Decay policy invocation during completion lifecycle
 import { runDecayOnDone } from './wu-done-decay.js';
 import { validateClaimSessionOwnership } from './wu-done-ownership.js';
+import {
+  CHECKPOINT_GATE_MODES,
+  broadcastCompletionSignal,
+  checkInboxForRecentSignals,
+  createPreGatesCheckpoint,
+  emitTelemetry,
+  enforceCheckpointGateForDone,
+  resolveCheckpointGateMode,
+} from './wu-done-memory-telemetry.js';
 import {
   enforceSpawnProvenanceForDone,
   enforceWuBriefEvidenceForDone,
@@ -209,104 +213,11 @@ export {
   computeBranchOnlyFallback,
   normalizeUsername,
 } from './wu-done-preflight.js';
-
-// WU-1588: Memory layer constants
-const MEMORY_SIGNAL_TYPES = {
-  WU_COMPLETION: 'wu_completion',
-};
-const MEMORY_CHECKPOINT_NOTES = {
-  PRE_GATES: 'Pre-gates checkpoint for recovery if gates fail',
-};
-const MEMORY_SIGNAL_WINDOW_MS = 60 * 60 * 1000; // 1 hour for recent signals
-
-export const CHECKPOINT_GATE_MODES = {
-  OFF: 'off',
-  WARN: 'warn',
-  BLOCK: 'block',
-} as const;
-
-type CheckpointGateMode = (typeof CHECKPOINT_GATE_MODES)[keyof typeof CHECKPOINT_GATE_MODES];
-
-const CHECKPOINT_GATE_CONFIG = {
-  PATH: 'memory.enforcement.require_checkpoint_for_done',
-  COMMAND_PREFIX: 'pnpm mem:checkpoint --wu',
-  WARN_TAG: 'WU-1998',
-} as const;
-
-type CheckpointNodes = Awaited<ReturnType<typeof queryByWu>>;
-
-interface EnforceCheckpointGateForDoneOptions {
-  id: string;
-  workspacePath: string;
-  mode: CheckpointGateMode;
-  queryByWuFn?: (basePath: string, wuId: string) => Promise<CheckpointNodes>;
-  hasSessionCheckpointsFn?: (wuId: string, wuNodes: CheckpointNodes) => boolean;
-  log?: (message: string) => void;
-  blocker?: (message: string) => void;
-}
-
-function buildCheckpointGateBlockMessage(id: string): string {
-  return (
-    `${STRING_LITERALS.NEWLINE}${LOG_PREFIX.DONE} ${EMOJI.FAILURE} No checkpoints found for ${id} session.${STRING_LITERALS.NEWLINE}` +
-    `${LOG_PREFIX.DONE} ${CHECKPOINT_GATE_CONFIG.PATH} is set to '${CHECKPOINT_GATE_MODES.BLOCK}'.${STRING_LITERALS.NEWLINE}` +
-    `${LOG_PREFIX.DONE} Create a checkpoint before completing: ${CHECKPOINT_GATE_CONFIG.COMMAND_PREFIX} ${id}${STRING_LITERALS.NEWLINE}`
-  );
-}
-
-function buildCheckpointGateWarnMessages(id: string): string[] {
-  return [
-    `${STRING_LITERALS.NEWLINE}${LOG_PREFIX.DONE} ${EMOJI.INFO} ${CHECKPOINT_GATE_CONFIG.WARN_TAG}: No prior checkpoints recorded for ${id} in this session.`,
-    `${LOG_PREFIX.DONE} A pre-gates checkpoint will be created automatically by wu:done.`,
-    `${LOG_PREFIX.DONE} For earlier crash recovery, run '${CHECKPOINT_GATE_CONFIG.COMMAND_PREFIX} ${id}' after each acceptance criterion, before gates, or every 30 tool calls.${STRING_LITERALS.NEWLINE}`,
-  ];
-}
-
-export function resolveCheckpointGateMode(mode: unknown): CheckpointGateMode {
-  if (mode === CHECKPOINT_GATE_MODES.OFF) {
-    return CHECKPOINT_GATE_MODES.OFF;
-  }
-  if (mode === CHECKPOINT_GATE_MODES.BLOCK) {
-    return CHECKPOINT_GATE_MODES.BLOCK;
-  }
-  return CHECKPOINT_GATE_MODES.WARN;
-}
-
-export async function enforceCheckpointGateForDone({
-  id,
-  workspacePath,
-  mode,
-  queryByWuFn = queryByWu,
-  hasSessionCheckpointsFn = hasSessionCheckpoints,
-  log = console.log,
-  blocker = (message: string) => {
-    die(message);
-  },
-}: EnforceCheckpointGateForDoneOptions): Promise<void> {
-  if (mode === CHECKPOINT_GATE_MODES.OFF) {
-    return;
-  }
-
-  let wuNodes: CheckpointNodes;
-  try {
-    wuNodes = await queryByWuFn(workspacePath, id);
-    if (hasSessionCheckpointsFn(id, wuNodes)) {
-      return;
-    }
-  } catch {
-    // Fail-open: checkpoint discovery issues should not block wu:done.
-    return;
-  }
-
-  if (mode === CHECKPOINT_GATE_MODES.BLOCK) {
-    blocker(buildCheckpointGateBlockMessage(id));
-    return;
-  }
-
-  const warnMessages = buildCheckpointGateWarnMessages(id);
-  for (const message of warnMessages) {
-    log(message);
-  }
-}
+export {
+  CHECKPOINT_GATE_MODES,
+  enforceCheckpointGateForDone,
+  resolveCheckpointGateMode,
+} from './wu-done-memory-telemetry.js';
 
 interface WUDocLike extends Record<string, unknown> {
   id?: string;
@@ -607,111 +518,6 @@ async function _assertWorktreeWUInProgressInStateStore(id: string, worktreePath:
 }
 
 /**
- * WU-1588: Create pre-gates checkpoint for recovery if gates fail.
- * Non-blocking wrapper around mem:checkpoint - failures logged as warnings.
- *
- * @param {string} id - WU ID
- * @param {string|null} worktreePath - Path to worktree
- * @param {string} baseDir - Base directory for memory layer
- * @returns {Promise<void>}
- */
-async function createPreGatesCheckpoint(
-  id: string,
-  worktreePath: string | null,
-  baseDir: string = process.cwd(),
-) {
-  try {
-    const result = await createCheckpoint(baseDir, {
-      note: MEMORY_CHECKPOINT_NOTES.PRE_GATES,
-      wuId: id,
-      progress: `Starting gates execution for ${id}`,
-      nextSteps: worktreePath
-        ? `Gates running in worktree: ${worktreePath}`
-        : 'Gates running in branch-only mode',
-      trigger: 'wu-done-pre-gates',
-    });
-    if (result.success) {
-      console.log(
-        `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Pre-gates checkpoint created (${result.checkpoint.id})`,
-      );
-    }
-  } catch (err) {
-    // Non-blocking: checkpoint failure should not block wu:done
-    console.warn(
-      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Could not create pre-gates checkpoint: ${getErrorMessage(err)}`,
-    );
-  }
-}
-
-/**
- * WU-1588: Broadcast completion signal to parallel agents.
- * Non-blocking wrapper around mem:signal - failures logged as warnings.
- *
- * @param {string} id - WU ID
- * @param {string} title - WU title
- * @param {string} baseDir - Base directory for memory layer
- * @returns {Promise<void>}
- */
-async function broadcastCompletionSignal(
-  id: string,
-  title: string,
-  baseDir: string = process.cwd(),
-) {
-  try {
-    const result = await createSignal(baseDir, {
-      message: `${MEMORY_SIGNAL_TYPES.WU_COMPLETION}: ${id} - ${title}`,
-      wuId: id,
-    });
-    if (result.success) {
-      console.log(
-        `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Completion signal broadcast (${result.signal.id})`,
-      );
-    }
-  } catch (err) {
-    // Non-blocking: signal failure should not block wu:done
-    console.warn(
-      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Could not broadcast completion signal: ${getErrorMessage(err)}`,
-    );
-  }
-}
-
-/**
- * WU-1588: Check inbox for recent signals from parallel agents.
- * Non-blocking wrapper around loadSignals - failures logged as warnings.
- *
- * @param {string} id - Current WU ID (for filtering)
- * @param {string} baseDir - Base directory for memory layer
- * @returns {Promise<void>}
- */
-async function checkInboxForRecentSignals(id: string, baseDir: string = process.cwd()) {
-  try {
-    const since = new Date(Date.now() - MEMORY_SIGNAL_WINDOW_MS);
-    const signals = await loadSignals(baseDir, { since, unreadOnly: true });
-
-    // Filter out signals for current WU
-    const relevantSignals = signals.filter((s) => s.wu_id !== id);
-
-    if (relevantSignals.length > 0) {
-      console.log(`\n${LOG_PREFIX.DONE} ${EMOJI.INFO} Recent signals from parallel agents:`);
-      for (const signal of relevantSignals.slice(0, 5)) {
-        // Show at most 5
-        const timestamp = new Date(signal.created_at).toLocaleTimeString();
-        console.log(`  - [${timestamp}] ${signal.message}`);
-      }
-      if (relevantSignals.length > 5) {
-        console.log(`  ... and ${relevantSignals.length - 5} more`);
-      }
-      console.log(`  Run 'pnpm mem:inbox' for full list\n`);
-    }
-  } catch (err) {
-    // Non-blocking: inbox check failure should not block wu:done
-    console.warn(
-      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Could not check inbox for signals: ${getErrorMessage(err)}`,
-    );
-  }
-}
-
-/**
  * WU-1946: Update spawn registry on WU completion.
  * Non-blocking wrapper - failures logged as warnings.
  *
@@ -786,14 +592,6 @@ function getCommitHeaderLimit() {
 }
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
-
-export function emitTelemetry(event: Record<string, unknown>): void {
-  const logPath = path.join('.lumenflow', 'flow.log');
-  const logDir = path.dirname(logPath);
-  if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
-  const line = JSON.stringify({ timestamp: new Date().toISOString(), ...event });
-  appendFileSync(logPath, `${line}\n`, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
-}
 
 async function auditSkipGates(
   id: string,
