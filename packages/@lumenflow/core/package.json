@@ -57,6 +57,11 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
+    "./lifecycle": "./dist/lifecycle/index.js",
+    "./delegation": "./dist/delegation/index.js",
+    "./validation": "./dist/validation/index.js",
+    "./context": "./dist/context/index.js",
+    "./domain": "./dist/domain/index.js",
     "./active-wu-detector": "./dist/active-wu-detector.js",
     "./arg-parser": "./dist/arg-parser.js",
     "./date-utils": "./dist/date-utils.js",
