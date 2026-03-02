@@ -4,7 +4,7 @@ _Last updated: 2026-03-02_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2169 — Add domain-scoped core barrel exports](wu/WU-2169.yaml)
 
 ## Completed
 

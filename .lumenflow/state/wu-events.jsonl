@@ -2677,3 +2677,4 @@
 {"type":"checkpoint","wuId":"WU-2168","timestamp":"2026-03-02T13:24:59.486Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli"}
 {"type":"complete","wuId":"WU-2168","timestamp":"2026-03-02T13:30:42.754Z"}
 {"type":"checkpoint","wuId":"WU-2169","timestamp":"2026-03-02T13:31:50.619Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2169.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"claim","wuId":"WU-2169","timestamp":"2026-03-02T13:32:12.383Z","lane":"Framework: Core Lifecycle","title":"Add domain-scoped core barrel exports"}
