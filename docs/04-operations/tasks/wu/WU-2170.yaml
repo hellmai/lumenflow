@@ -9,7 +9,12 @@ code_paths:
   - packages/@lumenflow/core/src/index.ts
   - packages/@lumenflow
 tests:
-  manual: []
+  manual:
+    - Build workspace and verify consumers import from @lumenflow/core/{lifecycle
+    - delegation
+    - validation
+    - context
+    - domain} where applicable
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-schema.test.ts
   e2e: []
