@@ -2,7 +2,7 @@ id: WU-2301
 title: Enforce wu:brief prompt hash attestation for delegated WUs
 lane: 'Operations: Tooling'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-03
 code_paths:
@@ -25,7 +25,8 @@ plan: lumenflow://plans/WU-2301-plan.md
 spec_refs:
   - lumenflow://plans/WU-2301-plan.md
 risks: []
-notes: 'Enforce delegated prompt hash attestation across wu:delegate, delegation registry, and wu:done provenance checks. Includes internal + Starlight docs updates for behavior changes.'
+notes: Enforce delegated prompt hash attestation across wu:delegate, delegation registry, and
+  wu:done provenance checks. Includes internal + Starlight docs updates for behavior changes.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -51,3 +52,6 @@ session_id: 36cdd692-cf17-4f41-a519-c481953c5a7b
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-03T12:49:53.507Z
+locked: true
+completed_at: 2026-03-03T13:07:56.030Z
+completed: 2026-03-03
