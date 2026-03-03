@@ -4,7 +4,7 @@ _Last updated: 2026-03-03_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2304 — Use turbo package-only build in publish workflow](wu/WU-2304.yaml)
 
 ## Completed
 
