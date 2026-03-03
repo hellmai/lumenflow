@@ -1,8 +1,8 @@
 id: WU-2307
 title: Audit and align LumenFlow commands/kernel/pack docs
 lane: 'Content: Framework Docs'
-type: documentation
-status: in_progress
+type: refactor
+status: ready
 priority: P2
 created: 2026-03-03
 code_paths:
@@ -32,11 +32,3 @@ acceptance:
   - docs:validate and docs:audit pass
   - releases/changelog/language guides align to published stable
   - generated CLI/config references are synchronized
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2307
-claimed_at: 2026-03-03T19:59:01.318Z
-baseline_main_sha: fef8a6f82a57776b309fec501818286340a0ce95
-session_id: 07cb219e-d4ca-4b08-b076-9851ce134624
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-03T19:59:01.323Z
