@@ -4,7 +4,7 @@ _Last updated: 2026-03-03_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2303 — Fix release workflow failures for tag-driven publish/docs](wu/WU-2303.yaml)
 
 ## Completed
 

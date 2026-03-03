@@ -2,7 +2,7 @@ id: WU-2303
 title: Fix release workflow failures for tag-driven publish/docs
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-03-03
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - .github/workflows/publish.yml
 tests:
   manual:
-    - Push a release tag and verify docs + publish workflows run without workflow-file failure and with successful build stage
+    - Push a release tag and verify docs + publish workflows run without workflow-file failure and
+      with successful build stage
   unit: []
   e2e: []
 artifacts:
@@ -26,8 +27,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Release v3.9.3 exposed two workflow defects: docs.yml fails validation before jobs start, and publish.yml package-only build fails in clean CI due cyclic package build ordering. Update workflows so tag-driven publish+docs run successfully in Actions.'
+description: 'Release v3.9.3 exposed two workflow defects: docs.yml fails validation before jobs
+  start, and publish.yml package-only build fails in clean CI due cyclic package build ordering.
+  Update workflows so tag-driven publish+docs run successfully in Actions.'
 acceptance:
   - docs.yml validates and starts job execution on push tags v*
   - publish.yml build step succeeds on clean GitHub runner before publish
   - Tag-based release flow can create/publish via workflow without manual intervention
+claimed_mode: worktree
+worktree_path: worktrees/operations-tooling-wu-2303
+claimed_at: 2026-03-03T15:08:07.859Z
+baseline_main_sha: 210f87c3564f442d7b77f9f85192828d536f68ac
+session_id: 07b3f2a4-3786-48b2-886d-fc21d5747cd2
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-03T15:08:07.866Z
