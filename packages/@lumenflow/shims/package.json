@@ -1,6 +1,6 @@
 {
   "name": "@lumenflow/shims",
-  "version": "3.9.3",
+  "version": "3.9.4",
   "description": "Git and pnpm safety shims for LumenFlow worktree discipline",
   "keywords": [
     "lumenflow",
