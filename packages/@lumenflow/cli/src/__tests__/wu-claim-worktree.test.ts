@@ -112,3 +112,24 @@ describe('wu-claim worktree dependency setup (WU-1996)', () => {
     expect(symlinkNestedNodeModules).toHaveBeenCalledWith(TEST_WORKTREE_PATH, TEST_MAIN_REPO_PATH);
   });
 });
+
+describe('wu-claim worktree completion guidance (WU-2306)', () => {
+  afterEach(() => {
+    vi.resetModules();
+    vi.restoreAllMocks();
+  });
+
+  it('uses wu:prep-first guidance and removes direct gates -> wu:done flow', async () => {
+    const moduleUnderTest = await import('../wu-claim-worktree.js');
+    const steps = moduleUnderTest.getWorktreeClaimNextSteps(
+      'worktrees/framework-cli-wu-commands-wu-2306',
+      '/repo',
+      'WU-2306',
+    );
+
+    expect(steps).toHaveLength(4);
+    expect(steps[2]).toContain('pnpm wu:prep --id WU-2306');
+    expect(steps[3]).toContain('cd /repo && pnpm wu:done --id WU-2306');
+    expect(steps.join('\n')).not.toContain('Run: pnpm gates');
+  });
+});

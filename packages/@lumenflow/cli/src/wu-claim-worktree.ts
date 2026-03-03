@@ -99,6 +99,26 @@ const WORKTREE_INSTALL_TIMEOUT_MS = 300000;
 const WORKTREE_SETUP_WARNING_PREVIEW_COUNT = 3;
 
 /**
+ * WU-2306: Canonical next-step guidance for worktree claims.
+ *
+ * Two-step completion is mandatory:
+ * 1) wu:prep from worktree
+ * 2) wu:done from main (using wu:prep output)
+ */
+export function getWorktreeClaimNextSteps(
+  worktree: string,
+  originalCwd: string,
+  id: string,
+): string[] {
+  return [
+    `  1. cd ${worktree}  (IMPORTANT: work here, not main)`,
+    '  2. Implement changes per acceptance criteria',
+    `  3. Run: pnpm wu:prep --id ${id}`,
+    `  4. Copy and run the wu:done command printed by wu:prep (from main): cd ${originalCwd} && pnpm wu:done --id ${id}`,
+  ];
+}
+
+/**
  * WU-1213: Handle local-only claim metadata update (noPush mode).
  * Extracted to reduce cognitive complexity of claimWorktreeMode.
  *
@@ -345,10 +365,9 @@ export async function claimWorktreeMode(ctx: ClaimContext) {
 
   // WU-1360: Print next-steps checklist to prevent common mistakes
   console.log(`\n${PREFIX} Next steps:`);
-  console.log(`  1. cd ${worktree}  (IMPORTANT: work here, not main)`);
-  console.log(`  2. Implement changes per acceptance criteria`);
-  console.log(`  3. Run: pnpm gates`);
-  console.log(`  4. cd ${originalCwd} && pnpm wu:done --id ${id}`);
+  for (const step of getWorktreeClaimNextSteps(worktree, originalCwd, id)) {
+    console.log(step);
+  }
   console.log(`\n${PREFIX} Common mistakes to avoid:`);
   console.log(`  - Don't edit files on main branch`);
   console.log(`  - Don't manually edit WU YAML status fields`);

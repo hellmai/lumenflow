@@ -43,6 +43,7 @@ import {
 import { CLAIMED_MODES, WU_STATUS } from '@lumenflow/core/wu-constants';
 import { DELEGATION_REGISTRY_FILE_NAME } from '@lumenflow/core/delegation-registry-store';
 import { resolveBranchClaimExecution } from '../wu-claim-cloud.js';
+import { getBranchClaimNextSteps, getBranchModeDisplayLabel } from '../wu-claim-branch.js';
 
 describe('wu-claim mode resolution (WU-1491)', () => {
   describe('resolveClaimMode', () => {
@@ -211,6 +212,30 @@ describe('wu-claim local-only remote fallback behavior (WU-1655)', () => {
 
     expect(localRef).toBe('main');
     expect(remoteRef).toBe('origin/main');
+  });
+});
+
+describe('wu-claim branch completion guidance (WU-2306)', () => {
+  it('uses wu:prep-first guidance for branch-pr mode', () => {
+    const steps = getBranchClaimNextSteps('WU-2306', CLAIMED_MODES.BRANCH_PR);
+
+    expect(steps).toHaveLength(4);
+    expect(steps[2]).toContain('pnpm wu:prep --id WU-2306');
+    expect(steps[3]).toContain('pnpm wu:done --id WU-2306');
+    expect(steps.join('\n')).not.toContain('Run: pnpm gates');
+  });
+
+  it('keeps branch-only guidance unchanged', () => {
+    const steps = getBranchClaimNextSteps('WU-2306', CLAIMED_MODES.BRANCH_ONLY);
+
+    expect(steps[2]).toContain('Run: pnpm gates');
+    expect(steps[3]).toContain('pnpm wu:done --id WU-2306');
+    expect(steps.join('\n')).not.toContain('wu:prep');
+  });
+
+  it('labels branch-pr mode explicitly in output metadata', () => {
+    expect(getBranchModeDisplayLabel(CLAIMED_MODES.BRANCH_PR)).toBe('Branch-PR (no worktree)');
+    expect(getBranchModeDisplayLabel(CLAIMED_MODES.BRANCH_ONLY)).toBe('Branch-Only (no worktree)');
   });
 });
 

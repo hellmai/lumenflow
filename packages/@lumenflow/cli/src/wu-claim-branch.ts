@@ -18,6 +18,7 @@ import {
   REMOTES,
   LOG_PREFIX,
   COMMIT_FORMATS,
+  CLAIMED_MODES,
   FILE_SYSTEM,
 } from '@lumenflow/core/wu-constants';
 import { shouldSkipRemoteOperations } from '@lumenflow/core/micro-worktree';
@@ -34,6 +35,39 @@ import { surfaceUnreadSignalsForDisplay, printLifecycleNudge } from './wu-claim-
 import type { ClaimContext } from './wu-claim-worktree.js';
 
 const PREFIX = LOG_PREFIX.CLAIM;
+
+/**
+ * WU-2306: Branch claim mode label for operator-facing output.
+ */
+export function getBranchModeDisplayLabel(claimedMode: string): string {
+  return claimedMode === CLAIMED_MODES.BRANCH_PR
+    ? 'Branch-PR (no worktree)'
+    : 'Branch-Only (no worktree)';
+}
+
+/**
+ * WU-2306: Mode-aware next-step guidance for branch claim flows.
+ *
+ * Branch-PR follows wu:prep -> wu:done in the active branch.
+ * Branch-Only keeps legacy gates -> wu:done guidance.
+ */
+export function getBranchClaimNextSteps(id: string, claimedMode: string): string[] {
+  if (claimedMode === CLAIMED_MODES.BRANCH_PR) {
+    return [
+      '  1. Work on this branch in the main checkout',
+      '  2. Implement changes per acceptance criteria',
+      `  3. Run: pnpm wu:prep --id ${id}`,
+      `  4. Run: pnpm wu:done --id ${id}  (creates PR in branch-pr mode)`,
+    ];
+  }
+
+  return [
+    '  1. Work on this branch in the main checkout',
+    '  2. Implement changes per acceptance criteria',
+    '  3. Run: pnpm gates',
+    `  4. pnpm wu:done --id ${id}`,
+  ];
+}
 
 /**
  * Execute branch-only mode claim workflow
@@ -151,20 +185,21 @@ export async function claimBranchOnlyMode(ctx: ClaimContext) {
   const wuDisplay = finalTitle ? `- WU: ${id} — ${finalTitle}` : `- WU: ${id}`;
   console.log(wuDisplay);
   console.log(`- Lane: ${args.lane}`);
-  console.log(`- Mode: Branch-Only (no worktree)`);
+  console.log(`- Mode: ${getBranchModeDisplayLabel(claimedMode)}`);
   const refDisplay = args.noPush ? `- Commit: ${msg}` : `- Branch: ${branch}`;
   console.log(refDisplay);
-  console.log(
-    '\n⚠️  LIMITATION: Branch-Only mode does not support parallel WUs (WIP=1 across ALL lanes)',
-  );
+  if (claimedMode === CLAIMED_MODES.BRANCH_ONLY) {
+    console.log(
+      '\n⚠️  LIMITATION: Branch-Only mode does not support parallel WUs (WIP=1 across ALL lanes)',
+    );
+  }
   console.log('Next: work on this branch in the main checkout.');
 
   // WU-1360: Print next-steps checklist to prevent common mistakes
   console.log(`\n${PREFIX} Next steps:`);
-  console.log(`  1. Work on this branch in the main checkout`);
-  console.log(`  2. Implement changes per acceptance criteria`);
-  console.log(`  3. Run: pnpm gates`);
-  console.log(`  4. pnpm wu:done --id ${id}`);
+  for (const step of getBranchClaimNextSteps(id, claimedMode)) {
+    console.log(step);
+  }
   console.log(`\n${PREFIX} Common mistakes to avoid:`);
   console.log(`  - Don't manually edit WU YAML status fields`);
   console.log(`  - Don't create PRs (trunk-based development)`);
