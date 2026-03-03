@@ -4,7 +4,7 @@ _Last updated: 2026-03-03_
 
 ## In Progress
 
-- [WU-2302 — Split release publish/docs workflows and gate GitHub release on publish success](wu/WU-2302.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1222,3 +1222,4 @@ _Last updated: 2026-03-03_
 - [WU-2299 — Add wildcard export for @lumenflow/packs-sidekick](wu/WU-2299.yaml) — 2026-03-02
 - [WU-2300 — Fix sidekick export map for release validator](wu/WU-2300.yaml) — 2026-03-02
 - [WU-2301 — Enforce wu:brief prompt hash attestation for delegated WUs](wu/WU-2301.yaml) — 2026-03-03
+- [WU-2302 — Split release publish/docs workflows and gate GitHub release on publish success](wu/WU-2302.yaml) — 2026-03-03
