@@ -23,12 +23,21 @@ artifacts:
   - .lumenflow/stamps/WU-2306.done
 dependencies: []
 risks: []
-notes: ''
+notes: Implementation updates wu:claim next-step messaging to enforce wu:prep then wu:done
+  sequencing, adds mode-aware branch-pr guidance, and adds regression tests covering both worktree
+  and branch claim outputs (WU-2306).
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-03T19:26:55.619Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2306
+session_id: 96431407-f705-4f95-b402-eb41d7a5e7fe
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-03T19:26:55.625Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -47,11 +56,3 @@ acceptance:
     references
   - Automated tests fail if wu:claim output regresses to direct wu:done guidance
   - No behavioral change to merge/stamp execution logic beyond messaging and guidance
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2306
-claimed_at: 2026-03-03T19:26:55.619Z
-baseline_main_sha: b89a609edb60207988fc056788786659d132c8b7
-session_id: 96431407-f705-4f95-b402-eb41d7a5e7fe
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-03T19:26:55.625Z
