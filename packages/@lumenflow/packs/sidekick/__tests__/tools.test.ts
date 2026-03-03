@@ -1061,6 +1061,73 @@ describe('routine:create', () => {
     expect(result.success).toBe(false);
     expect(result.error?.code).toBe('INVALID_INPUT');
   });
+
+  it('coerces string step entries to { tool, input: {} }', async () => {
+    const result = await withPort(port, () =>
+      routineTools(
+        { name: 'string-steps', steps: ['task:list'] },
+        ctx('routine:create'),
+      ),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    const routine = data.routine as Record<string, unknown>;
+    const steps = routine.steps as Array<{ tool: string; input: Record<string, unknown> }>;
+    expect(steps).toHaveLength(1);
+    expect(steps[0]?.tool).toBe('task:list');
+    expect(steps[0]?.input).toEqual({});
+  });
+
+  it('handles mixed string and object steps', async () => {
+    const result = await withPort(port, () =>
+      routineTools(
+        {
+          name: 'mixed',
+          steps: ['task:list', { tool: 'memory:store', input: { key: 'k' } }],
+        },
+        ctx('routine:create'),
+      ),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    const routine = data.routine as Record<string, unknown>;
+    const steps = routine.steps as Array<{ tool: string; input: Record<string, unknown> }>;
+    expect(steps).toHaveLength(2);
+    expect(steps[0]?.tool).toBe('task:list');
+    expect(steps[1]?.tool).toBe('memory:store');
+    expect(steps[1]?.input).toEqual({ key: 'k' });
+  });
+
+  it('returns indexed validation errors for invalid entries', async () => {
+    const result = await withPort(port, () =>
+      routineTools(
+        { name: 'invalid-mix', steps: [42, null, { tool: 'task:list' }] },
+        ctx('routine:create'),
+      ),
+    );
+    expect(result.success).toBe(true);
+    const data = result.data as Record<string, unknown>;
+    const routine = data.routine as Record<string, unknown>;
+    const steps = routine.steps as unknown[];
+    expect(steps).toHaveLength(1);
+    const warnings = data.warnings as string[];
+    expect(warnings).toBeDefined();
+    expect(warnings).toHaveLength(2);
+    expect(warnings[0]).toContain('steps[0]');
+    expect(warnings[1]).toContain('steps[1]');
+  });
+
+  it('rejects when all entries are invalid (non-string, non-object)', async () => {
+    const result = await withPort(port, () =>
+      routineTools(
+        { name: 'all-invalid', steps: [42, null, true] },
+        ctx('routine:create'),
+      ),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.code).toBe('INVALID_INPUT');
+    expect(result.error?.message).toContain('steps[0]');
+  });
 });
 
 describe('routine:list', () => {

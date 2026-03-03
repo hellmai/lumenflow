@@ -30,21 +30,45 @@ const TOOL_NAMES = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function normalizeSteps(value: unknown): RoutineStepRecord[] {
+interface NormalizeStepsResult {
+  steps: RoutineStepRecord[];
+  warnings: string[];
+}
+
+function normalizeSteps(value: unknown): NormalizeStepsResult {
   if (!Array.isArray(value)) {
-    return [];
+    return { steps: [], warnings: [] };
   }
 
   const steps: RoutineStepRecord[] = [];
-  for (const candidate of value) {
-    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) {
+  const warnings: string[] = [];
+
+  for (let i = 0; i < value.length; i++) {
+    const candidate = value[i];
+
+    // String shorthand: coerce "tool:name" → { tool: "tool:name", input: {} }
+    if (typeof candidate === 'string') {
+      const tool = asNonEmptyString(candidate);
+      if (tool) {
+        steps.push({ tool, input: {} });
+      } else {
+        warnings.push(`steps[${i}] invalid: expected non-empty string or object with "tool".`);
+      }
       continue;
     }
+
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) {
+      warnings.push(`steps[${i}] invalid: expected object with "tool" or a tool name string.`);
+      continue;
+    }
+
     const record = candidate as Record<string, unknown>;
     const tool = asNonEmptyString(record.tool);
     if (!tool) {
+      warnings.push(`steps[${i}] invalid: missing or empty "tool" property.`);
       continue;
     }
+
     const input =
       record.input && typeof record.input === 'object' && !Array.isArray(record.input)
         ? (record.input as Record<string, unknown>)
@@ -53,7 +77,7 @@ function normalizeSteps(value: unknown): RoutineStepRecord[] {
     steps.push({ tool, input });
   }
 
-  return steps;
+  return { steps, warnings };
 }
 
 // ---------------------------------------------------------------------------
@@ -63,13 +87,17 @@ function normalizeSteps(value: unknown): RoutineStepRecord[] {
 async function routineCreateTool(input: unknown, context?: ToolContextLike): Promise<ToolOutput> {
   const parsed = toRecord(input);
   const name = asNonEmptyString(parsed.name);
-  const steps = normalizeSteps(parsed.steps);
+  const { steps, warnings } = normalizeSteps(parsed.steps);
 
   if (!name) {
     return failure('INVALID_INPUT', 'name is required.');
   }
   if (steps.length === 0) {
-    return failure('INVALID_INPUT', 'steps must include at least one tool step.');
+    const detail =
+      warnings.length > 0
+        ? `steps must include at least one tool step. Issues: ${warnings.join('; ')}`
+        : 'steps must include at least one tool step.';
+    return failure('INVALID_INPUT', detail);
   }
 
   const now = nowIso();
@@ -85,6 +113,7 @@ async function routineCreateTool(input: unknown, context?: ToolContextLike): Pro
     return success({
       dry_run: true,
       routine: routine as unknown as Record<string, unknown>,
+      ...(warnings.length > 0 ? { warnings } : {}),
     });
   }
 
@@ -103,7 +132,10 @@ async function routineCreateTool(input: unknown, context?: ToolContextLike): Pro
     );
   });
 
-  return success({ routine: routine as unknown as Record<string, unknown> });
+  return success({
+    routine: routine as unknown as Record<string, unknown>,
+    ...(warnings.length > 0 ? { warnings } : {}),
+  });
 }
 
 // ---------------------------------------------------------------------------
