@@ -18,8 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2303.done
 dependencies: []
 risks: []
-notes: 'TDD exception: CI workflow configuration change; validated via workflow parse/build behavior
-  in GitHub Actions logs and local formatting checks.'
+notes: 'tdd-exception: CI workflow configuration change; validated via GitHub Actions run failures
+  and local workflow formatting checks. No product/runtime source behavior changed.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
