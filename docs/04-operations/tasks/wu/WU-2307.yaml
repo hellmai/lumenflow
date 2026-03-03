@@ -2,7 +2,7 @@ id: WU-2307
 title: Audit and align LumenFlow commands/kernel/pack docs
 lane: 'Content: Framework Docs'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-03
 code_paths:
@@ -18,8 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2307.done
 dependencies: []
 risks: []
-notes: 'Aligned docs to stable v3.9.6, regenerated CLI/config references, added releases/v3.9.6,
-  and fixed tools/generate-cli-docs.ts table-cell escaping for union types containing pipes.'
+notes: Aligned docs to stable v3.9.6, regenerated CLI/config references, added releases/v3.9.6, and
+  fixed tools/generate-cli-docs.ts table-cell escaping for union types containing pipes.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
