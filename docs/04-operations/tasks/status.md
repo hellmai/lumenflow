@@ -4,7 +4,7 @@ _Last updated: 2026-03-03_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2302 — Split release publish/docs workflows and gate GitHub release on publish success](wu/WU-2302.yaml)
 
 ## Completed
 

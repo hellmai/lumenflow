@@ -2,7 +2,7 @@ id: WU-2302
 title: Split release publish/docs workflows and gate GitHub release on publish success
 lane: 'Operations: Tooling'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-03
 code_paths:
@@ -31,9 +31,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Tag-based Publish workflow repeatedly fails due to docs build requiring D2 in CI, while release publish already succeeds locally. Problem: release automation is noisy/unreliable and does not enforce single CI publishing path. Solution: separate npm publish from docs deployment, add D2-aware docs workflow, and create GitHub release only after successful publish.'
+description: 'Context: Tag-based Publish workflow repeatedly fails due to docs build requiring D2 in
+  CI, while release publish already succeeds locally. Problem: release automation is
+  noisy/unreliable and does not enforce single CI publishing path. Solution: separate npm publish
+  from docs deployment, add D2-aware docs workflow, and create GitHub release only after successful
+  publish.'
 acceptance:
   - Tag workflow publishes npm packages without building apps/docs or apps/web.
   - GitHub release is created automatically only when tag publish job succeeds.
-  - Starlight docs build/deploy runs in separate workflow with D2 installed and does not block npm publish.
+  - Starlight docs build/deploy runs in separate workflow with D2 installed and does not block npm
+    publish.
   - Release process docs recommend using pnpm release --skip-publish for CI-owned publishing.
+claimed_mode: worktree
+worktree_path: worktrees/operations-tooling-wu-2302
+claimed_at: 2026-03-03T14:49:37.785Z
+baseline_main_sha: 2fda7ccb917a95118092d4f4ebe143bf6e4ed1ab
+session_id: 10d66508-92be-4f7d-8afa-4c73034cc0d0
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-03T14:49:37.789Z
