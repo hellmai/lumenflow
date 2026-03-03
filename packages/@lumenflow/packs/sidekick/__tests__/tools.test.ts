@@ -1064,10 +1064,7 @@ describe('routine:create', () => {
 
   it('coerces string step entries to { tool, input: {} }', async () => {
     const result = await withPort(port, () =>
-      routineTools(
-        { name: 'string-steps', steps: ['task:list'] },
-        ctx('routine:create'),
-      ),
+      routineTools({ name: 'string-steps', steps: ['task:list'] }, ctx('routine:create')),
     );
     expect(result.success).toBe(true);
     const data = result.data as Record<string, unknown>;
@@ -1119,10 +1116,7 @@ describe('routine:create', () => {
 
   it('rejects when all entries are invalid (non-string, non-object)', async () => {
     const result = await withPort(port, () =>
-      routineTools(
-        { name: 'all-invalid', steps: [42, null, true] },
-        ctx('routine:create'),
-      ),
+      routineTools({ name: 'all-invalid', steps: [42, null, true] }, ctx('routine:create')),
     );
     expect(result.success).toBe(false);
     expect(result.error?.code).toBe('INVALID_INPUT');
