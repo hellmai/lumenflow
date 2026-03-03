@@ -647,7 +647,10 @@ export function buildMissingSpawnBriefAttestationMessage(id: string, initiativeI
 /**
  * Build actionable remediation guidance for attestation hash mismatch.
  */
-export function buildSpawnBriefAttestationMismatchMessage(id: string, initiativeId: string): string {
+export function buildSpawnBriefAttestationMismatchMessage(
+  id: string,
+  initiativeId: string,
+): string {
   return (
     `Spawn brief attestation mismatch for delegated WU ${id} (${initiativeId}).\n\n` +
     `Stored delegation hash could not be matched to wu:brief evidence for this WU.\n` +

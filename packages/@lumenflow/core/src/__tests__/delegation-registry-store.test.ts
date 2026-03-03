@@ -73,4 +73,3 @@ describe('delegation-registry-store', () => {
     expect(entry?.pickedUpBy).toBe('agent@test.com');
   });
 });
-

@@ -423,9 +423,7 @@ export async function recordWuBriefEvidence(
   const createStore = dependencies.createStore ?? ((dir: string) => new WUStateStore(dir));
   const store = createStore(stateDir);
   const note = `${WU_BRIEF_EVIDENCE_NOTE_PREFIX} generated via ${clientName}`;
-  const nextSteps = promptHash
-    ? `client=${clientName};hash=${promptHash}`
-    : `client=${clientName}`;
+  const nextSteps = promptHash ? `client=${clientName};hash=${promptHash}` : `client=${clientName}`;
 
   await store.checkpoint(wuId, note, {
     progress: BRIEF_EVIDENCE_PROGRESS,
@@ -601,7 +599,9 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
   const clientName = resolveClientName(args, config, effectiveLogPrefix);
   const baseDir = process.cwd();
 
-  const recordEvidenceOrFail = async (options: { promptHash?: string; forceRecord?: boolean } = {}) => {
+  const recordEvidenceOrFail = async (
+    options: { promptHash?: string; forceRecord?: boolean } = {},
+  ) => {
     try {
       await recordWuBriefEvidence({
         wuId: id,
@@ -665,7 +665,9 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
       client: clientContext,
       config,
     });
-    const briefAttestation = explicitDelegation ? buildBriefAttestation(prompt, clientName) : undefined;
+    const briefAttestation = explicitDelegation
+      ? buildBriefAttestation(prompt, clientName)
+      : undefined;
     await emitSpawnOutputWithRegistry({
       id,
       output: prompt,
