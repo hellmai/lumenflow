@@ -4,7 +4,7 @@ _Last updated: 2026-03-03_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2305 — Move channel provider routing into Sidekick pack](wu/WU-2305.yaml)
 
 ## Completed
 

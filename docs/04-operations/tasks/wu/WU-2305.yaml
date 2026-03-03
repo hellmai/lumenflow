@@ -2,7 +2,7 @@ id: WU-2305
 title: Move channel provider routing into Sidekick pack
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-03
 code_paths:
@@ -13,7 +13,8 @@ code_paths:
   - packages/@lumenflow/packs/sidekick/__tests__/**
 tests:
   manual:
-    - Run provider path with registered transport and verify deterministic unregistered-provider error contract
+    - Run provider path with registered transport and verify deterministic unregistered-provider
+      error contract
   unit:
     - packages/@lumenflow/packs/sidekick/__tests__/tools.test.ts
     - packages/@lumenflow/packs/sidekick/__tests__/storage.test.ts
@@ -32,10 +33,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Move provider-aware routing for channel:send/channel:receive into Sidekick pack so cloud no longer intercepts for provider dispatch. Pack keeps local storage behavior when provider is absent and delegates to registered transport when provider is present.
+description: Move provider-aware routing for channel:send/channel:receive into Sidekick pack so
+  cloud no longer intercepts for provider dispatch. Pack keeps local storage behavior when provider
+  is absent and delegates to registered transport when provider is present.
 acceptance:
   - channel:send/channel:receive route via registered transport when provider is present
   - channel:send/channel:receive preserve existing local .sidekick behavior when provider is absent
   - provider present without workspace_id returns WORKSPACE_CONTEXT_REQUIRED
   - provider present without registered transport returns INTEGRATION_PROVIDER_NOT_REGISTERED
   - runtime-scoped registry prevents cross-test global state leakage
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2305
+claimed_at: 2026-03-03T17:24:26.645Z
+baseline_main_sha: 3e5fce52a466cece3fb269d32a1dcf89c0f13ac4
+session_id: a179b86b-f210-4000-bf22-76ac58eecf73
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-03T17:24:26.649Z
