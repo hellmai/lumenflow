@@ -4,7 +4,7 @@ _Last updated: 2026-03-03_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2307 — Audit and align LumenFlow commands/kernel/pack docs](wu/WU-2307.yaml)
 
 ## Completed
 

@@ -2752,3 +2752,4 @@
 {"type":"checkpoint","wuId":"WU-2306","timestamp":"2026-03-03T19:26:56.036Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2306","timestamp":"2026-03-03T19:29:54.990Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2306.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2306","timestamp":"2026-03-03T19:31:48.878Z"}
+{"type":"claim","wuId":"WU-2307","timestamp":"2026-03-03T19:59:01.341Z","lane":"Content: Framework Docs","title":"Audit and align LumenFlow commands/kernel/pack docs"}
