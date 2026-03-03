@@ -26,7 +26,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2304 — Use turbo package-only build in publish workflow](wu/WU-2304.yaml) — Operations: Tooling
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1250,6 +1250,7 @@ sections:
 - [WU-2301 — Enforce wu:brief prompt hash attestation for delegated WUs](wu/WU-2301.yaml)
 - [WU-2302 — Split release publish/docs workflows and gate GitHub release on publish success](wu/WU-2302.yaml)
 - [WU-2303 — Fix release workflow failures for tag-driven publish/docs](wu/WU-2303.yaml)
+- [WU-2304 — Use turbo package-only build in publish workflow](wu/WU-2304.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

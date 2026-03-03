@@ -2743,3 +2743,4 @@
 {"type":"claim","wuId":"WU-2304","timestamp":"2026-03-03T15:15:28.487Z","lane":"Operations: Tooling","title":"Use turbo package-only build in publish workflow"}
 {"type":"checkpoint","wuId":"WU-2304","timestamp":"2026-03-03T15:15:39.106Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2304","timestamp":"2026-03-03T15:17:14.478Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"complete","wuId":"WU-2304","timestamp":"2026-03-03T15:18:00.793Z"}
