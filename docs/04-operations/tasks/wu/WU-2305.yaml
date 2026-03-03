@@ -2,7 +2,7 @@ id: WU-2305
 title: Move channel provider routing into Sidekick pack
 lane: 'Framework: Core Lifecycle'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-03
 code_paths:
@@ -56,3 +56,6 @@ acceptance:
   - provider present without workspace_id returns WORKSPACE_CONTEXT_REQUIRED
   - provider present without registered transport returns INTEGRATION_PROVIDER_NOT_REGISTERED
   - runtime-scoped registry prevents cross-test global state leakage
+locked: true
+completed_at: 2026-03-03T17:38:45.451Z
+completed: 2026-03-03
