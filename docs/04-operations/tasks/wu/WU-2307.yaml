@@ -18,7 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2307.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Aligned docs to stable v3.9.6, regenerated CLI/config references, added releases/v3.9.6,
+  and fixed tools/generate-cli-docs.ts table-cell escaping for union types containing pipes.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation

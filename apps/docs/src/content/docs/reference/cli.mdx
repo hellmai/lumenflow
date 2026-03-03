@@ -1103,34 +1103,11 @@ pnpm wu:block --id <wuId>
 
 ### wu:brief
 
-Generate config-aware handoff prompt and record `wu:brief` evidence.
+Generate handoff prompt for sub-agent WU execution
 
 ```bash
-pnpm wu:brief --id <wuId> --client <client>
+pnpm wu:brief
 ```
-
-**Behavior:**
-
-- Records `wu:brief` evidence for lifecycle policy checks.
-- Does not record delegation lineage intent. Use `wu:delegate --parent-wu <P>` for lineage.
-- `--evidence-only` records evidence without prompt output for self-implementation.
-- In non-claimed checkouts/branches, prompt generation remains available but evidence writes are skipped.
-
-**Options:**
-
-| Flag                       | Description                                                                                       | Required |
-| -------------------------- | ------------------------------------------------------------------------------------------------- | -------- |
-| `-i, --id &lt;wuId&gt;`    | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID.                  | No       |
-| `--client &lt;client&gt;`  | Target client (e.g., `claude-code`, `codex-cli`, `gemini-cli`)                                    | No       |
-| `--evidence-only`          | Record `wu:brief` evidence only (no handoff prompt output)                                        | No       |
-| `--no-context`             | Skip memory context injection in handoff prompts                                                  | No       |
-| `--thinking`               | Enable extended thinking for sub-agent execution                                                  | No       |
-| `--no-thinking`            | Explicitly disable extended thinking (default behavior)                                           | No       |
-| `--budget &lt;tokens&gt;`  | Token budget for extended thinking (requires `--thinking`)                                        | No       |
-| `--strict-sizing`          | Block when `sizing_estimate` metadata is missing or exceeds thresholds without exception metadata | No       |
-| `--parent-wu &lt;wuId&gt;` | Parent WU context hint for orchestration (does not record lineage intent in `wu:brief`)           | No       |
-| `--codex`                  | Deprecated alias for `--client codex-cli`                                                         | No       |
-| `--vendor &lt;vendor&gt;`  | Deprecated alias for `--client`                                                                   | No       |
 
 ### wu:claim
 
@@ -1160,12 +1137,6 @@ pnpm wu:claim --id <wuId> --lane <lane>
 | `--resume`                    | Resume a WU from a crashed/killed agent (handoff) by taking over the existing worktree and updating the lock with new PID. Fails if original PID is still running (safety) or worktree does not exist. | No       |
 | `--skip-setup`                | Skip automatic pnpm install in worktree after creation (faster claims when deps already built)                                                                                                         | No       |
 | `--no-push`                   | Skip pushing claim branch or canonical updates (air-gapped/offline)                                                                                                                                    | No       |
-
-**Claim-time auto-brief policy:**
-
-`wu:claim` can auto-run `wu:brief` evidence recording based on `wu.brief.policyMode` (`off`,
-`manual`, `auto`, `required`). Claim-time auto-brief records evidence only and does not emit a
-handoff prompt.
 
 ### wu:create
 
@@ -1214,21 +1185,11 @@ pnpm wu:create --lane <lane> --title <title>
 
 ### wu:delegate
 
-Generate delegation prompt and record explicit lineage intent plus brief attestation metadata.
+Generate delegation prompt and record explicit lineage intent
 
 ```bash
-pnpm wu:delegate --id WU-100 --parent-wu WU-050 --client claude-code
+pnpm wu:delegate
 ```
-
-`wu:delegate` records:
-
-- Parent and target WU lineage
-- Delegation status/timestamps
-- Brief attestation (`sha256` prompt hash, prompt length, generated timestamp, client)
-
-For initiative-governed and explicitly delegated WUs, `wu:done` validates claim pickup evidence and
-matching attested `wu:brief` hash before completion. Use `--force` only for audited legacy
-overrides.
 
 ### wu:done
 

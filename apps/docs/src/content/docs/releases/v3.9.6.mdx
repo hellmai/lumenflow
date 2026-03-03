@@ -1,0 +1,32 @@
+---
+title: v3.9.6
+description: Published stable alignment across commands, references, and language quickstarts
+---
+
+import { Badge } from '@astrojs/starlight/components';
+
+<Badge text="Latest Stable" variant="success" />
+
+**Release date:** March 2026
+
+## Highlights
+
+- Published stable package line is `v3.9.6` across `@lumenflow/*` packages
+- Pack language quickstarts standardized to `npx @lumenflow/cli@3.9.6`
+- Public CLI/config references regenerated from current command + schema sources
+
+## Upgrade
+
+```bash
+pnpm lumenflow:upgrade --latest
+```
+
+## Notes
+
+- User-facing "latest" claims must track `apps/docs/src/data/version-policy.yaml`
+- Verify docs parity after command/config changes with:
+
+```bash
+pnpm docs:validate
+pnpm docs:audit
+```

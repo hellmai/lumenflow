@@ -754,6 +754,10 @@ export function generateCliMdx(commands: CommandMetadata[]): string {
 // ============================================================================
 
 function generateConfigMdx(sections: ConfigSection[]): string {
+  function escapeMdxTableCell(value: string): string {
+    return value.replace(/\|/g, '\\|');
+  }
+
   const lines: string[] = [
     '---',
     'title: Configuration',
@@ -798,9 +802,11 @@ function generateConfigMdx(sections: ConfigSection[]): string {
       if (defaultVal.length > 30) {
         defaultVal = defaultVal.slice(0, 27) + '...';
       }
-      // Escape pipes in descriptions
-      const desc = field.description.replace(/\|/g, '\\|');
-      lines.push(`| \`${field.name}\` | ${field.type} | \`${defaultVal}\` | ${desc} |`);
+      const name = escapeMdxTableCell(field.name);
+      const type = escapeMdxTableCell(field.type);
+      const def = escapeMdxTableCell(defaultVal);
+      const desc = escapeMdxTableCell(field.description);
+      lines.push(`| \`${name}\` | ${type} | \`${def}\` | ${desc} |`);
     }
     lines.push('');
   }
