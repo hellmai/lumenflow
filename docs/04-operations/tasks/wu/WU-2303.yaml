@@ -2,7 +2,7 @@ id: WU-2303
 title: Fix release workflow failures for tag-driven publish/docs
 lane: 'Operations: Tooling'
 type: bug
-status: in_progress
+status: done
 priority: P0
 created: 2026-03-03
 code_paths:
@@ -43,3 +43,6 @@ session_id: 07b3f2a4-3786-48b2-886d-fc21d5747cd2
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-03T15:08:07.866Z
+locked: true
+completed_at: 2026-03-03T15:12:06.063Z
+completed: 2026-03-03

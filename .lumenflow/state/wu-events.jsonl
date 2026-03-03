@@ -2739,3 +2739,4 @@
 {"type":"complete","wuId":"WU-2302","timestamp":"2026-03-03T15:02:09.558Z"}
 {"type":"claim","wuId":"WU-2303","timestamp":"2026-03-03T15:08:07.895Z","lane":"Operations: Tooling","title":"Fix release workflow failures for tag-driven publish/docs"}
 {"type":"checkpoint","wuId":"WU-2303","timestamp":"2026-03-03T15:11:23.240Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"complete","wuId":"WU-2303","timestamp":"2026-03-03T15:12:10.501Z"}
