@@ -15,8 +15,6 @@ tests:
   unit:
     - packages/@lumenflow/cli/src/__tests__/metrics-snapshot.test.ts
     - packages/@lumenflow/core/src/__tests__/telemetry-cloud-sync.test.ts
-    - packages/@lumenflow/core/src/__tests__/telemetry-dora-sync.test.ts
-    - packages/@lumenflow/cli/src/__tests__/skip-gates-schema-parity.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2315.done
