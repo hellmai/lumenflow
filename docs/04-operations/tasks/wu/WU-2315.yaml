@@ -20,12 +20,21 @@ artifacts:
   - .lumenflow/stamps/WU-2315.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Fix 1: Aligned skip-gates audit writer path (.log -> .ndjson) and added missing gate field
+  to match reader schema. Fix 2: Added DORA telemetry source to cloud sync pipeline. Fix 3: Added
+  emitDoraTelemetry() export and called it from metrics:snapshot after DORA computation.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-04T15:21:49.805Z
+worktree_path: worktrees/framework-metrics-wu-2315
+session_id: 4fb5d676-055c-43cc-8490-c492f4b0f8f0
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-04T15:21:49.811Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +48,3 @@ acceptance:
   - CFR calculation correctly counts skip-gates entries
   - metrics:snapshot emits dora.* telemetry records to NDJSON
   - Existing syncNdjsonTelemetryToCloud picks up DORA records
-claimed_mode: worktree
-worktree_path: worktrees/framework-metrics-wu-2315
-claimed_at: 2026-03-04T15:21:49.805Z
-baseline_main_sha: 5195cfe7a877bf5bf5923a6aaf31e8f9be804a9e
-session_id: 4fb5d676-055c-43cc-8490-c492f4b0f8f0
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-04T15:21:49.811Z
