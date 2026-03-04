@@ -1,0 +1,35 @@
+id: WU-2313
+title: Remove __tests__ exemption from path-literal production scan
+lane: 'Framework: Core Validation'
+type: refactor
+status: ready
+priority: P2
+created: 2026-03-04
+code_paths:
+  - packages/@lumenflow/core/src/__tests__/path-literal-guard.test.ts
+tests:
+  manual:
+    - Run pnpm gates and verify all guards pass
+  unit:
+    - packages/@lumenflow/core/src/__tests__/path-literal-guard.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2313.done
+dependencies: []
+spec_refs:
+  - lumenflow://plans/WU-2313-plan.md
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Split ALWAYS_ALLOWED_PATH_SEGMENTS so path-literal guard no longer exempts __tests__/ directories. Other guards (file-extension, env-var, status-literal) keep their own allowlists.
+acceptance:
+  - ALWAYS_ALLOWED_PATH_SEGMENTS no longer contains __tests__/ for path-literal guard
+  - Other guards (file-extension, env-var, status-literal) still correctly skip test directories
+  - All existing tests pass
