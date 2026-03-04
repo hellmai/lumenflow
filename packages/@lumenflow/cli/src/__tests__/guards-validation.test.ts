@@ -406,14 +406,8 @@ describe('validate-backlog-sync', () => {
       const { validateBacklogSync } = await import('../validate-backlog-sync.js');
 
       // Create WU files
-      writeFileSync(
-        path.join(wuDir, 'WU-001.yaml'),
-        'id: WU-001\ntitle: First WU\nstatus: ready',
-      );
-      writeFileSync(
-        path.join(wuDir, 'WU-002.yaml'),
-        'id: WU-002\ntitle: Second WU\nstatus: done',
-      );
+      writeFileSync(path.join(wuDir, 'WU-001.yaml'), 'id: WU-001\ntitle: First WU\nstatus: ready');
+      writeFileSync(path.join(wuDir, 'WU-002.yaml'), 'id: WU-002\ntitle: Second WU\nstatus: done');
 
       // Create backlog.md that references both
       const backlogContent = `# Backlog

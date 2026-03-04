@@ -334,9 +334,7 @@ pnpm wu:prep --id WU-123
 
       fs.writeFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'content');
 
-      const onboardingDir = path.join(
-        getOnboardingDir(tempDir),
-      );
+      const onboardingDir = path.join(getOnboardingDir(tempDir));
       fs.mkdirSync(onboardingDir, { recursive: true });
       fs.writeFileSync(path.join(onboardingDir, 'first-wu-mistakes.md'), 'content');
 
