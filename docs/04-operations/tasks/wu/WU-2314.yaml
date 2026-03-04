@@ -2,7 +2,7 @@ id: WU-2314
 title: Restore release-blocking test suites to green on main
 lane: 'Framework: Core Validation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-04
 code_paths:
@@ -35,8 +35,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Fix the current pre-existing failures in targeted CLI/MCP regression suites so release readiness no longer depends on skip-gates. Align tests and runtime behavior after recent path/lifecycle changes and restore deterministic parity assertions.
+description: Fix the current pre-existing failures in targeted CLI/MCP regression suites so release
+  readiness no longer depends on skip-gates. Align tests and runtime behavior after recent
+  path/lifecycle changes and restore deterministic parity assertions.
 acceptance:
   - All previously failing suites in the 14-failure set pass on main.
   - pnpm vitest on the targeted 9 test files exits 0.
   - Release readiness checks (pre-release + docs build + release dry-run) still pass.
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2314
+claimed_at: 2026-03-04T13:27:44.247Z
+baseline_main_sha: 0cbff3e8180a29447c1672d7e61cca6caeb1d825
+session_id: 04b1f19a-1f31-4900-9175-a706be0392c1
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-04T13:27:44.256Z

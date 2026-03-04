@@ -4,7 +4,7 @@ _Last updated: 2026-03-04_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2314 — Restore release-blocking test suites to green on main](wu/WU-2314.yaml)
 
 ## Completed
 
