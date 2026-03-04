@@ -403,11 +403,7 @@ export function emitWUFlowEvent(event: WUFlowEventData, logPath = FLOW_LOG) {
  *
  * @param {object} record - Must include metric (e.g. 'dora.deployment_frequency'), value, and optional tier
  */
-export function emitDoraTelemetry(record: {
-  metric: string;
-  value: number;
-  tier?: string;
-}): void {
+export function emitDoraTelemetry(record: { metric: string; value: number; tier?: string }): void {
   ensureTelemetryDir();
   const line = JSON.stringify({
     timestamp: new Date().toISOString(),
@@ -1020,7 +1016,11 @@ export async function syncNdjsonTelemetryToCloud(
   let syncFailed = false;
   let stateChanged = false;
 
-  for (const source of [TELEMETRY_SOURCE.GATES, TELEMETRY_SOURCE.FLOW, TELEMETRY_SOURCE.DORA] as const) {
+  for (const source of [
+    TELEMETRY_SOURCE.GATES,
+    TELEMETRY_SOURCE.FLOW,
+    TELEMETRY_SOURCE.DORA,
+  ] as const) {
     const filePath = resolveTelemetryPath(workspaceRoot, source);
     const sourceLines = readTelemetryLinesFromOffset({
       filePath,

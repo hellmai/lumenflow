@@ -48,11 +48,34 @@ const DEFAULT_OUTPUT = '.lumenflow/snapshots/metrics-latest.json';
 /** WU directory relative to repo root (WU-1301: uses config-based paths) */
 const WU_DIR = WU_PATHS.WU_DIR();
 
+/** Skip-gates audit filename (must match writer in wu-done.ts) */
+export const SKIP_GATES_AUDIT_FILENAME = 'skip-gates-audit.ndjson';
+
 /** Skip-gates audit file path */
-const SKIP_GATES_PATH = '.lumenflow/skip-gates-audit.ndjson';
+const SKIP_GATES_PATH = `.lumenflow/${SKIP_GATES_AUDIT_FILENAME}`;
 
 /** Snapshot type options */
 const SNAPSHOT_TYPES: MetricsSnapshotType[] = ['all', 'dora', 'lanes', 'flow'];
+
+const DORA_METRIC = {
+  DEPLOYMENT_FREQUENCY: 'dora.deployment_frequency',
+  LEAD_TIME_HOURS: 'dora.lead_time_hours',
+  CFR_PERCENT: 'dora.cfr_percent',
+  MTTR_HOURS: 'dora.mttr_hours',
+} as const;
+
+type DoraTelemetryMetricName = (typeof DORA_METRIC)[keyof typeof DORA_METRIC];
+
+export interface DoraTelemetryRecord {
+  metric: DoraTelemetryMetricName;
+  value: number;
+  tier?: string;
+}
+
+interface EmitDoraTelemetryOptions {
+  dryRun?: boolean;
+  emitRecord?: (record: DoraTelemetryRecord) => void;
+}
 
 /**
  * Parse command line arguments
@@ -205,6 +228,28 @@ async function loadGitCommits(weekStart: Date, weekEnd: Date): Promise<GitCommit
 /**
  * Load skip-gates audit entries
  */
+export function parseSkipGatesAuditLine(line: string): SkipGatesEntry | null {
+  try {
+    const raw = JSON.parse(line) as Record<string, unknown>;
+    if (
+      typeof raw.timestamp === 'string' &&
+      typeof raw.wu_id === 'string' &&
+      typeof raw.reason === 'string' &&
+      typeof raw.gate === 'string'
+    ) {
+      return {
+        timestamp: new Date(raw.timestamp),
+        wuId: raw.wu_id,
+        reason: raw.reason,
+        gate: raw.gate,
+      };
+    }
+  } catch {
+    // Invalid JSON or mismatched schema
+  }
+  return null;
+}
+
 async function loadSkipGatesEntries(baseDir: string): Promise<SkipGatesEntry[]> {
   const auditPath = join(baseDir, SKIP_GATES_PATH);
 
@@ -218,18 +263,9 @@ async function loadSkipGatesEntries(baseDir: string): Promise<SkipGatesEntry[]> 
     const entries: SkipGatesEntry[] = [];
 
     for (const line of lines) {
-      try {
-        const raw = JSON.parse(line) as Record<string, unknown>;
-        if (raw.timestamp && raw.wu_id && raw.reason && raw.gate) {
-          entries.push({
-            timestamp: new Date(raw.timestamp as string),
-            wuId: raw.wu_id as string,
-            reason: raw.reason as string,
-            gate: raw.gate as string,
-          });
-        }
-      } catch {
-        // Skip invalid JSON lines
+      const parsed = parseSkipGatesAuditLine(line);
+      if (parsed) {
+        entries.push(parsed);
       }
     }
 
@@ -237,6 +273,54 @@ async function loadSkipGatesEntries(baseDir: string): Promise<SkipGatesEntry[]> 
   } catch {
     return [];
   }
+}
+
+export function buildDoraTelemetryRecords(snapshot: MetricsSnapshot): DoraTelemetryRecord[] {
+  if (!snapshot.dora) {
+    return [];
+  }
+
+  const { dora } = snapshot;
+  return [
+    {
+      metric: DORA_METRIC.DEPLOYMENT_FREQUENCY,
+      value: dora.deploymentFrequency.deploysPerWeek,
+      tier: dora.deploymentFrequency.status,
+    },
+    {
+      metric: DORA_METRIC.LEAD_TIME_HOURS,
+      value: dora.leadTimeForChanges.averageHours,
+      tier: dora.leadTimeForChanges.status,
+    },
+    {
+      metric: DORA_METRIC.CFR_PERCENT,
+      value: dora.changeFailureRate.failurePercentage,
+      tier: dora.changeFailureRate.status,
+    },
+    {
+      metric: DORA_METRIC.MTTR_HOURS,
+      value: dora.meanTimeToRecovery.averageHours,
+      tier: dora.meanTimeToRecovery.status,
+    },
+  ];
+}
+
+export function emitDoraTelemetryRecords(
+  snapshot: MetricsSnapshot,
+  options: EmitDoraTelemetryOptions = {},
+): number {
+  if (options.dryRun) {
+    return 0;
+  }
+
+  const records = buildDoraTelemetryRecords(snapshot);
+  const emitRecord = options.emitRecord ?? emitDoraTelemetry;
+
+  for (const record of records) {
+    emitRecord(record);
+  }
+
+  return records.length;
 }
 
 /**
@@ -348,30 +432,14 @@ export async function main() {
 
   const snapshot = captureMetricsSnapshot(input);
 
-  // Emit DORA telemetry records for cloud sync (WU-2315)
-  if (snapshot.dora) {
-    const { dora } = snapshot;
-    emitDoraTelemetry({
-      metric: 'dora.deployment_frequency',
-      value: dora.deploymentFrequency.deploysPerWeek,
-      tier: dora.deploymentFrequency.status,
-    });
-    emitDoraTelemetry({
-      metric: 'dora.lead_time_hours',
-      value: dora.leadTimeForChanges.averageHours,
-      tier: dora.leadTimeForChanges.status,
-    });
-    emitDoraTelemetry({
-      metric: 'dora.cfr_percent',
-      value: dora.changeFailureRate.failurePercentage,
-      tier: dora.changeFailureRate.status,
-    });
-    emitDoraTelemetry({
-      metric: 'dora.mttr_hours',
-      value: dora.meanTimeToRecovery.averageHours,
-      tier: dora.meanTimeToRecovery.status,
-    });
-    console.log(`${LOG_PREFIX} Emitted 4 DORA telemetry records for cloud sync`);
+  // Emit DORA telemetry records for cloud sync (WU-2315), but never in dry-run mode.
+  const emittedDoraRecords = emitDoraTelemetryRecords(snapshot, {
+    dryRun: Boolean(opts.dryRun),
+  });
+  if (emittedDoraRecords > 0) {
+    console.log(
+      `${LOG_PREFIX} Emitted ${emittedDoraRecords} DORA telemetry records for cloud sync`,
+    );
   }
 
   // Output

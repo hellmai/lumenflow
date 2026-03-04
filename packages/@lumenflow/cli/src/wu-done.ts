@@ -559,6 +559,10 @@ const GIT_CONFIG_USER_EMAIL = 'user.email';
 
 // Default fallback messages
 const DEFAULT_NO_REASON = '(no reason provided)';
+const DEFAULT_NO_FIX_WU = '(no fix WU specified)';
+const DEFAULT_UNKNOWN_WORKTREE = '(unknown)';
+export const SKIP_GATES_AUDIT_FILENAME = 'skip-gates-audit.ndjson';
+const SKIP_GATES_ALL_GATE_NAME = 'all';
 
 // WU-1281: isDocsOnlyByPaths removed - use shouldSkipWebTests from path-classifiers.ts
 // The validators already use shouldSkipWebTests via detectDocsOnlyByPaths wrapper.
@@ -591,30 +595,67 @@ async function auditSkipGates(
   worktreePath: string | null,
 ): Promise<void> {
   const auditBaseDir = worktreePath || process.cwd();
-  const auditPath = path.join(auditBaseDir, '.lumenflow', 'skip-gates-audit.ndjson');
+  const auditPath = path.join(auditBaseDir, '.lumenflow', SKIP_GATES_AUDIT_FILENAME);
   const auditDir = path.dirname(auditPath);
   if (!existsSync(auditDir)) mkdirSync(auditDir, { recursive: true });
   const gitAdapter = getGitForCwd();
   const userName = await gitAdapter.getConfigValue(GIT_CONFIG_USER_NAME);
   const userEmail = await gitAdapter.getConfigValue(GIT_CONFIG_USER_EMAIL);
   const commitHash = await gitAdapter.getCommitHash();
-  const reasonText = typeof reason === 'string' ? reason : undefined;
-  const fixWUText = typeof fixWU === 'string' ? fixWU : undefined;
-  const entry = {
-    timestamp: new Date().toISOString(),
-    wu_id: id,
-    reason: reasonText || DEFAULT_NO_REASON,
-    gate: 'all',
-    fix_wu: fixWUText || '(no fix WU specified)',
-    worktree: worktreePath || '(unknown)',
-    git_user: `${userName.trim()} <${userEmail.trim()}>`,
-    git_commit: commitHash.trim(),
-  };
+  const entry = buildSkipGatesAuditEntry({
+    id,
+    reason,
+    fixWU,
+    worktreePath,
+    userName: userName.trim(),
+    userEmail: userEmail.trim(),
+    commitHash: commitHash.trim(),
+  });
   const line = JSON.stringify(entry);
   appendFileSync(auditPath, `${line}\n`, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
   console.log(
     `${LOG_PREFIX.DONE} ${EMOJI.MEMO} Skip-gates event logged to ${path.relative(process.cwd(), auditPath) || auditPath}`,
   );
+}
+
+interface SkipGatesAuditEntry {
+  timestamp: string;
+  wu_id: string;
+  reason: string;
+  gate: string;
+  fix_wu: string;
+  worktree: string;
+  git_user: string;
+  git_commit: string;
+}
+
+interface BuildSkipGatesAuditEntryInput {
+  id: string;
+  reason: unknown;
+  fixWU: unknown;
+  worktreePath: string | null;
+  userName: string;
+  userEmail: string;
+  commitHash: string;
+  timestamp?: Date;
+}
+
+export function buildSkipGatesAuditEntry(
+  input: BuildSkipGatesAuditEntryInput,
+): SkipGatesAuditEntry {
+  const reasonText = typeof input.reason === 'string' ? input.reason : undefined;
+  const fixWUText = typeof input.fixWU === 'string' ? input.fixWU : undefined;
+
+  return {
+    timestamp: (input.timestamp ?? new Date()).toISOString(),
+    wu_id: input.id,
+    reason: reasonText || DEFAULT_NO_REASON,
+    gate: SKIP_GATES_ALL_GATE_NAME,
+    fix_wu: fixWUText || DEFAULT_NO_FIX_WU,
+    worktree: input.worktreePath || DEFAULT_UNKNOWN_WORKTREE,
+    git_user: `${input.userName} <${input.userEmail}>`,
+    git_commit: input.commitHash,
+  };
 }
 
 /**
