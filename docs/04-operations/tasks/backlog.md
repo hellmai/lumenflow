@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2310 — Fix hardcoded paths in shell hooks and pre-commit, fix allowlist ordering bug](wu/WU-2310.yaml) — Framework: CLI Enforcement
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -28,6 +27,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-2309 — Make wu:brief testing guidance profile-aware and move domain guidance to config/templates](wu/WU-2309.yaml) — Framework: Core Validation
+- [WU-2310 — Fix hardcoded paths in shell hooks and pre-commit, fix allowlist ordering bug](wu/WU-2310.yaml) — Framework: CLI Enforcement
 
 ## ⛔ Blocked
 
