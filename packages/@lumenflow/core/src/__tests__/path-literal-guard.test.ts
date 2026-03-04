@@ -116,8 +116,6 @@ const SCAN_TARGETS: ScanTarget[] = [
 
 const ALWAYS_ALLOWED_PATH_SEGMENTS = [
   '__snapshots__/',
-  '__tests__/',
-  '/e2e/',
   '/dist/',
   '/node_modules/',
   // Canonical path/constants/schema sources
@@ -729,6 +727,43 @@ describe('WU-2093: AST path literal guard foundations', () => {
       : scanSourceTextForBannedPathLiterals(source, allowlistedFile);
 
     expect(violations).toHaveLength(0);
+  });
+
+  it('does NOT exempt __tests__/ or /e2e/ directories from path-literal scanning (WU-2313)', () => {
+    // ALWAYS_ALLOWED_PATH_SEGMENTS must not contain test directory segments.
+    // Test files are excluded via glob ignore in getRuntimeSourceFiles(), not via allowlist.
+    // If test files are allowlisted, violations in test helpers that leak to production go undetected.
+    const testDirSegments = ALWAYS_ALLOWED_PATH_SEGMENTS.filter(
+      (seg) => seg === '__tests__/' || seg === '/e2e/',
+    );
+
+    expect(
+      testDirSegments,
+      `ALWAYS_ALLOWED_PATH_SEGMENTS must not contain test directory exemptions.\n` +
+        `Found: ${JSON.stringify(testDirSegments)}\n` +
+        `Test files are excluded by glob ignore in getRuntimeSourceFiles(), not by allowlist.`,
+    ).toHaveLength(0);
+  });
+
+  it('scanFileForBannedPathLiterals does NOT silently skip test files (WU-2313)', () => {
+    // A test file with a banned literal should produce violations, not be silently exempted
+    const testFilePath = path.join(
+      REPO_ROOT,
+      'packages',
+      '@lumenflow',
+      'core',
+      'src',
+      '__tests__',
+      'fake-test-file.ts',
+    );
+
+    // isAllowlistedFile must return false for test file paths
+    expect(
+      isAllowlistedFile(testFilePath),
+      `isAllowlistedFile() must not exempt test files.\n` +
+        `Path: ${testFilePath}\n` +
+        `The production scan should not have a blanket exemption for __tests__/ directories.`,
+    ).toBe(false);
   });
 
   it('detects banned tokens embedded in multiline template literals', () => {
