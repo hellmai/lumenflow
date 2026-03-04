@@ -1,6 +1,6 @@
 # Work Unit Status
 
-_Last updated: 2026-03-03_
+_Last updated: 2026-03-04_
 
 ## In Progress
 
@@ -8,6 +8,7 @@ _Last updated: 2026-03-03_
 
 ## Completed
 
+- [WU-2309 — Fix wu:brief --evidence-only false 'Recorded' message when evidence is skipped](wu/WU-2309.yaml) — 2026-03-04
 - [WU-1001 — Complete LumenFlow dogfooding setup](wu/WU-1001.yaml) — 2026-01-18
 - [WU-1002 — Publish @lumenflow packages to npm](wu/WU-1002.yaml) — 2026-01-18
 - [WU-1003 — Add rate limiting to Gates Action](wu/WU-1003.yaml) — 2026-01-18
