@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-03_
+_Last updated: 2026-03-04_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2309 — Fix wu:brief --evidence-only false 'Recorded' message when evidence is skipped](wu/WU-2309.yaml)
 
 ## Completed
 
