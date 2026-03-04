@@ -424,9 +424,7 @@ export async function main() {
 
       if (isMainWorktree) {
         const wuDirResolved = getWuDir(projectRoot);
-        const wuPath = wuDirResolved
-          ? join(projectRoot, wuDirResolved, `${wuId}.yaml`)
-          : null;
+        const wuPath = wuDirResolved ? join(projectRoot, wuDirResolved, `${wuId}.yaml`) : null;
 
         if (wuPath && existsSync(wuPath)) {
           try {
