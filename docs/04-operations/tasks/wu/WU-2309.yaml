@@ -2,7 +2,7 @@ id: WU-2309
 title: Make wu:brief testing guidance profile-aware and move domain guidance to config/templates
 lane: 'Framework: Core Validation'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-04
 code_paths:
@@ -34,13 +34,11 @@ artifacts:
 dependencies: []
 risks: []
 notes: >
-  Implementation notes:
-  1) Added structured-content work classification for yaml/json/markdown-only scopes so policy
-  guidance does not force TDD for non-runtime content changes.
-  2) Removed hardcoded Intelligence lane prompt-eval guidance from core and CLI prompt builders,
-  with template-driven lane guidance as the project customization point.
-  3) Updated internal onboarding and Starlight docs to document profile behavior and configuration
-  model for domain-specific guidance.
+  Implementation notes: 1) Added structured-content work classification for yaml/json/markdown-only
+  scopes so policy guidance does not force TDD for non-runtime content changes. 2) Removed hardcoded
+  Intelligence lane prompt-eval guidance from core and CLI prompt builders, with template-driven
+  lane guidance as the project customization point. 3) Updated internal onboarding and Starlight
+  docs to document profile behavior and configuration model for domain-specific guidance.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -74,3 +72,6 @@ session_id: 82cc8efd-7983-4e2b-962a-f26e590076ef
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-04T10:31:27.997Z
+locked: true
+completed_at: 2026-03-04T10:53:26.179Z
+completed: 2026-03-04

@@ -4,7 +4,6 @@ _Last updated: 2026-03-04_
 
 ## In Progress
 
-- [WU-2309 — Make wu:brief testing guidance profile-aware and move domain guidance to config/templates](wu/WU-2309.yaml)
 - [WU-2310 — Fix hardcoded paths in shell hooks and pre-commit, fix allowlist ordering bug](wu/WU-2310.yaml)
 
 ## Completed
@@ -1230,3 +1229,4 @@ _Last updated: 2026-03-04_
 - [WU-2306 — Align wu:claim guidance with wu:prep -> wu:done workflow](wu/WU-2306.yaml) — 2026-03-03
 - [WU-2307 — Audit and align LumenFlow commands/kernel/pack docs](wu/WU-2307.yaml) — 2026-03-03
 - [WU-2308 — Fix normalizeSteps silent drop of string steps in routine:create](wu/WU-2308.yaml) — 2026-03-03
+- [WU-2309 — Make wu:brief testing guidance profile-aware and move domain guidance to config/templates](wu/WU-2309.yaml) — 2026-03-04
