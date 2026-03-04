@@ -591,7 +591,7 @@ async function auditSkipGates(
   worktreePath: string | null,
 ): Promise<void> {
   const auditBaseDir = worktreePath || process.cwd();
-  const auditPath = path.join(auditBaseDir, '.lumenflow', 'skip-gates-audit.log');
+  const auditPath = path.join(auditBaseDir, '.lumenflow', 'skip-gates-audit.ndjson');
   const auditDir = path.dirname(auditPath);
   if (!existsSync(auditDir)) mkdirSync(auditDir, { recursive: true });
   const gitAdapter = getGitForCwd();
@@ -604,6 +604,7 @@ async function auditSkipGates(
     timestamp: new Date().toISOString(),
     wu_id: id,
     reason: reasonText || DEFAULT_NO_REASON,
+    gate: 'all',
     fix_wu: fixWUText || '(no fix WU specified)',
     worktree: worktreePath || '(unknown)',
     git_user: `${userName.trim()} <${userEmail.trim()}>`,

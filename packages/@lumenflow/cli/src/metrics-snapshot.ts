@@ -35,6 +35,7 @@ import {
 } from '@lumenflow/metrics';
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
+import { emitDoraTelemetry } from '@lumenflow/core/telemetry';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { runCLI } from './cli-entry-point.js';
 
@@ -346,6 +347,32 @@ export async function main() {
   };
 
   const snapshot = captureMetricsSnapshot(input);
+
+  // Emit DORA telemetry records for cloud sync (WU-2315)
+  if (snapshot.dora) {
+    const { dora } = snapshot;
+    emitDoraTelemetry({
+      metric: 'dora.deployment_frequency',
+      value: dora.deploymentFrequency.deploysPerWeek,
+      tier: dora.deploymentFrequency.status,
+    });
+    emitDoraTelemetry({
+      metric: 'dora.lead_time_hours',
+      value: dora.leadTimeForChanges.averageHours,
+      tier: dora.leadTimeForChanges.status,
+    });
+    emitDoraTelemetry({
+      metric: 'dora.cfr_percent',
+      value: dora.changeFailureRate.failurePercentage,
+      tier: dora.changeFailureRate.status,
+    });
+    emitDoraTelemetry({
+      metric: 'dora.mttr_hours',
+      value: dora.meanTimeToRecovery.averageHours,
+      tier: dora.meanTimeToRecovery.status,
+    });
+    console.log(`${LOG_PREFIX} Emitted 4 DORA telemetry records for cloud sync`);
+  }
 
   // Output
   console.log('');

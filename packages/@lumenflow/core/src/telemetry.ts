@@ -70,6 +70,7 @@ const TELEMETRY_DIR = LUMENFLOW_PATHS.TELEMETRY;
 const GATES_LOG = `${TELEMETRY_DIR}/gates${FILE_EXTENSIONS.NDJSON}`;
 const LLM_CLASSIFICATION_LOG = `${TELEMETRY_DIR}/llm-classification${FILE_EXTENSIONS.NDJSON}`;
 const FLOW_LOG = LUMENFLOW_PATHS.FLOW_LOG;
+const DORA_LOG = `${TELEMETRY_DIR}/dora${FILE_EXTENSIONS.NDJSON}`;
 const WORKSPACE_FILE = CONFIG_FILES.WORKSPACE_CONFIG;
 const CLOUD_SYNC_STATE_FILE = `${TELEMETRY_DIR}/cloud-sync-state${FILE_EXTENSIONS.JSON}`;
 const CLOUD_SYNC_LOG_PREFIX = '[telemetry:cloud-sync]';
@@ -101,12 +102,15 @@ const CONTROL_PLANE_TOKEN_ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 const METRIC_NAME = {
   GATES_DURATION_MS: 'gates.duration_ms',
   FLOW_EVENT: 'flow.event',
+  DORA_METRIC: 'dora',
   RAW_GATES: 'telemetry.raw.gates',
   RAW_FLOW: 'telemetry.raw.flow',
+  RAW_DORA: 'telemetry.raw.dora',
 } as const;
 const TELEMETRY_SOURCE = {
   GATES: 'gates',
   FLOW: 'flow',
+  DORA: 'dora',
 } as const;
 
 type TelemetrySource = (typeof TELEMETRY_SOURCE)[keyof typeof TELEMETRY_SOURCE];
@@ -149,6 +153,7 @@ interface CloudSyncState {
   files: {
     gates: CloudSyncFileState;
     flow: CloudSyncFileState;
+    dora: CloudSyncFileState;
   };
 }
 
@@ -390,6 +395,34 @@ export function emitWUFlowEvent(event: WUFlowEventData, logPath = FLOW_LOG) {
   }
 }
 
+/**
+ * Emit a DORA metric record to .lumenflow/telemetry/dora.ndjson
+ *
+ * Called by metrics:snapshot after computing DORA values.
+ * The cloud sync pipeline picks these up automatically.
+ *
+ * @param {object} record - Must include metric (e.g. 'dora.deployment_frequency'), value, and optional tier
+ */
+export function emitDoraTelemetry(record: {
+  metric: string;
+  value: number;
+  tier?: string;
+}): void {
+  ensureTelemetryDir();
+  const line = JSON.stringify({
+    timestamp: new Date().toISOString(),
+    metric: record.metric,
+    value: record.value,
+    tier: record.tier,
+  });
+  try {
+    appendFileSync(DORA_LOG, `${line}${STRING_LITERALS.NEWLINE}`, { encoding: 'utf-8' });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`[telemetry] Failed to emit DORA telemetry: ${message}`);
+  }
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
@@ -445,6 +478,9 @@ function createDefaultCloudSyncState(): CloudSyncState {
       flow: {
         offset: 0,
       },
+      dora: {
+        offset: 0,
+      },
     },
   };
 }
@@ -471,10 +507,12 @@ function loadCloudSyncState(statePath: string): CloudSyncState {
     const filesRaw = Reflect.get(parsed, 'files');
     const gatesRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.GATES) : undefined;
     const flowRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.FLOW) : undefined;
+    const doraRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.DORA) : undefined;
     const gatesOffset = isRecord(gatesRaw)
       ? normalizeStateOffset(Reflect.get(gatesRaw, 'offset'))
       : 0;
     const flowOffset = isRecord(flowRaw) ? normalizeStateOffset(Reflect.get(flowRaw, 'offset')) : 0;
+    const doraOffset = isRecord(doraRaw) ? normalizeStateOffset(Reflect.get(doraRaw, 'offset')) : 0;
     const lastSyncAtMs = normalizeStateOffset(Reflect.get(parsed, 'lastSyncAtMs'));
 
     return {
@@ -486,6 +524,9 @@ function loadCloudSyncState(statePath: string): CloudSyncState {
         },
         flow: {
           offset: flowOffset,
+        },
+        dora: {
+          offset: doraOffset,
         },
       },
     };
@@ -505,6 +546,9 @@ function getSourceOffset(state: CloudSyncState, source: TelemetrySource): number
   if (source === TELEMETRY_SOURCE.GATES) {
     return state.files.gates.offset;
   }
+  if (source === TELEMETRY_SOURCE.DORA) {
+    return state.files.dora.offset;
+  }
   return state.files.flow.offset;
 }
 
@@ -513,12 +557,19 @@ function setSourceOffset(state: CloudSyncState, source: TelemetrySource, offset:
     state.files.gates.offset = offset;
     return;
   }
+  if (source === TELEMETRY_SOURCE.DORA) {
+    state.files.dora.offset = offset;
+    return;
+  }
   state.files.flow.offset = offset;
 }
 
 function resolveTelemetryPath(workspaceRoot: string, source: TelemetrySource): string {
   if (source === TELEMETRY_SOURCE.GATES) {
     return path.join(workspaceRoot, GATES_LOG);
+  }
+  if (source === TELEMETRY_SOURCE.DORA) {
+    return path.join(workspaceRoot, DORA_LOG);
   }
   return path.join(workspaceRoot, FLOW_LOG);
 }
@@ -591,6 +642,35 @@ function mapFlowEventToTelemetryRecord(
   };
 }
 
+function mapDoraEventToTelemetryRecord(
+  payload: Record<string, unknown>,
+  fallbackIso: string,
+): CloudTelemetryRecord {
+  const metric = asNonEmptyString(Reflect.get(payload, 'metric')) ?? 'dora.unknown';
+  const value = asFiniteNumber(Reflect.get(payload, 'value')) ?? 0;
+  const tier = asNonEmptyString(Reflect.get(payload, 'tier'));
+  const tags: Record<string, PrimitiveTagValue> = {
+    source: TELEMETRY_SOURCE.DORA,
+  };
+
+  if (tier !== undefined) {
+    tags.tier = tier;
+  }
+
+  return {
+    metric,
+    value,
+    timestamp: normalizeTimestamp(Reflect.get(payload, 'timestamp'), fallbackIso),
+    tags,
+  };
+}
+
+function resolveRawMetricName(source: TelemetrySource): string {
+  if (source === TELEMETRY_SOURCE.GATES) return METRIC_NAME.RAW_GATES;
+  if (source === TELEMETRY_SOURCE.DORA) return METRIC_NAME.RAW_DORA;
+  return METRIC_NAME.RAW_FLOW;
+}
+
 function mapTelemetryLineToRecord(
   source: TelemetrySource,
   payload: unknown,
@@ -598,7 +678,7 @@ function mapTelemetryLineToRecord(
 ): CloudTelemetryRecord {
   if (!isRecord(payload)) {
     return {
-      metric: source === TELEMETRY_SOURCE.GATES ? METRIC_NAME.RAW_GATES : METRIC_NAME.RAW_FLOW,
+      metric: resolveRawMetricName(source),
       value: 1,
       timestamp: fallbackIso,
       tags: {
@@ -609,6 +689,9 @@ function mapTelemetryLineToRecord(
 
   if (source === TELEMETRY_SOURCE.GATES) {
     return mapGatesEventToTelemetryRecord(payload, fallbackIso);
+  }
+  if (source === TELEMETRY_SOURCE.DORA) {
+    return mapDoraEventToTelemetryRecord(payload, fallbackIso);
   }
   return mapFlowEventToTelemetryRecord(payload, fallbackIso);
 }
@@ -925,6 +1008,7 @@ export async function syncNdjsonTelemetryToCloud(
     files: {
       gates: { offset: state.files.gates.offset },
       flow: { offset: state.files.flow.offset },
+      dora: { offset: state.files.dora.offset },
     },
   };
 
@@ -936,7 +1020,7 @@ export async function syncNdjsonTelemetryToCloud(
   let syncFailed = false;
   let stateChanged = false;
 
-  for (const source of [TELEMETRY_SOURCE.GATES, TELEMETRY_SOURCE.FLOW] as const) {
+  for (const source of [TELEMETRY_SOURCE.GATES, TELEMETRY_SOURCE.FLOW, TELEMETRY_SOURCE.DORA] as const) {
     const filePath = resolveTelemetryPath(workspaceRoot, source);
     const sourceLines = readTelemetryLinesFromOffset({
       filePath,
