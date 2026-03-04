@@ -20,10 +20,15 @@ artifacts:
   - .lumenflow/stamps/WU-2310.done
 dependencies: []
 risks: []
-notes: 'Fixed two bugs: (1) allowlist ordering - moved before worktree block so .claude/plans writes
-  work when worktrees exist, (2) hardcoded wuDir - replaced with CLI helper (get-wu-dir.ts) that
-  reads workspace.yaml via getConfig(). Shell hooks fall back to direct workspace.yaml read when CLI
-  not built.'
+notes: >-
+  Fixed two bugs: (1) allowlist ordering - moved before worktree block so .claude/plans writes work
+  when worktrees exist, (2) hardcoded wuDir - replaced with CLI helper (get-wu-dir.ts) that reads
+  workspace.yaml via getConfig(). Shell hooks fall back to direct workspace.yaml read when CLI not
+  built.
+
+
+  tdd-exception: Shell hook tests use .test.sh files (validate-worktree-path.test.sh updated), not
+  .test.ts. All 22 shell tests + 17 pre-commit tests pass.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
