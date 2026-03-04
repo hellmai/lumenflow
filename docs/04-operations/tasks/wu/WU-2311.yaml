@@ -21,12 +21,20 @@ artifacts:
   - .lumenflow/stamps/WU-2311.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: test-only changes. Replaced 136+ hardcoded arc42 path literals across 50+
+  test files with DOCS_LAYOUT_PRESETS constants. Added ratcheting baseline guard.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-04T11:03:25.838Z
+worktree_path: worktrees/framework-core-validation-wu-2311
+session_id: a9b168c7-a479-41bc-8920-2c218b0fccde
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-04T11:03:25.844Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +47,3 @@ acceptance:
   - All test files use DIRECTORIES/LUMENFLOW_PATHS constants instead of hardcoded path strings
   - The __tests__/ entry is removed from ALWAYS_ALLOWED_PATH_SEGMENTS in path-literal-guard.test.ts
   - pnpm gates passes with the guard now covering test files
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2311
-claimed_at: 2026-03-04T11:03:25.838Z
-baseline_main_sha: 1f82765a8545c194db3b81efcf0806303486e800
-session_id: a9b168c7-a479-41bc-8920-2c218b0fccde
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-04T11:03:25.844Z
