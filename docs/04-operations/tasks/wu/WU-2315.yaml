@@ -2,7 +2,7 @@ id: WU-2315
 title: Fix skip-gates CFR bug and emit DORA telemetry to cloud sync pipeline
 lane: 'Framework: Metrics'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-04
 code_paths:
@@ -29,9 +29,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Two related issues: (1) Skip-gates audit writer (wu-done.ts:594) writes to .log without gate field, but reader (metrics-snapshot.ts:51,222) expects .ndjson with gate field — CFR always computes as 0%. (2) DORA metrics computed by metrics:snapshot are never emitted as telemetry records, so the cloud sync pipeline has nothing to pick up — Cloud DORA dashboard shows empty state.'
+description: 'Two related issues: (1) Skip-gates audit writer (wu-done.ts:594) writes to .log
+  without gate field, but reader (metrics-snapshot.ts:51,222) expects .ndjson with gate field — CFR
+  always computes as 0%. (2) DORA metrics computed by metrics:snapshot are never emitted as
+  telemetry records, so the cloud sync pipeline has nothing to pick up — Cloud DORA dashboard shows
+  empty state.'
 acceptance:
   - Skip-gates writer and reader use same file path and schema
   - CFR calculation correctly counts skip-gates entries
   - metrics:snapshot emits dora.* telemetry records to NDJSON
   - Existing syncNdjsonTelemetryToCloud picks up DORA records
+claimed_mode: worktree
+worktree_path: worktrees/framework-metrics-wu-2315
+claimed_at: 2026-03-04T15:21:49.805Z
+baseline_main_sha: 5195cfe7a877bf5bf5923a6aaf31e8f9be804a9e
+session_id: 4fb5d676-055c-43cc-8490-c492f4b0f8f0
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-04T15:21:49.811Z

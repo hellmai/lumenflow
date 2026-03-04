@@ -4,7 +4,7 @@ _Last updated: 2026-03-04_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2315 — Fix skip-gates CFR bug and emit DORA telemetry to cloud sync pipeline](wu/WU-2315.yaml)
 
 ## Completed
 
