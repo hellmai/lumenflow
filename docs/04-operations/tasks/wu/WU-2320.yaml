@@ -2,7 +2,7 @@ id: WU-2320
 title: Import INIT-49 plan file into repo plans directory
 lane: 'Operations: Runtime'
 type: documentation
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-05
 code_paths:
@@ -50,3 +50,6 @@ session_id: 32374f68-dcc2-4148-bbed-3418416efb67
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-05T10:10:14.780Z
+locked: true
+completed_at: 2026-03-05T10:14:04.926Z
+completed: 2026-03-05

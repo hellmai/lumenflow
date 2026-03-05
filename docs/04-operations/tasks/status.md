@@ -4,7 +4,7 @@ _Last updated: 2026-03-05_
 
 ## In Progress
 
-- [WU-2320 — Import INIT-49 plan file into repo plans directory](wu/WU-2320.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1236,3 +1236,4 @@ _Last updated: 2026-03-05_
 - [WU-2312 — Fix pre-existing path-literal zero-tolerance and status-literal-guard test failures](wu/WU-2312.yaml) — 2026-03-04
 - [WU-2314 — Restore release-blocking test suites to green on main](wu/WU-2314.yaml) — 2026-03-04
 - [WU-2315 — Fix skip-gates CFR bug and emit DORA telemetry to cloud sync pipeline](wu/WU-2315.yaml) — 2026-03-04
+- [WU-2320 — Import INIT-49 plan file into repo plans directory](wu/WU-2320.yaml) — 2026-03-05
