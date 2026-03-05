@@ -26,7 +26,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2324 — Fix orphaned doc links and add --from flag to quick-ref](wu/WU-2324.yaml) — Content: Site Comms
 - [WU-2316 — Control-plane cost telemetry contract and local summary](wu/WU-2316.yaml) — Framework: Metrics
 - [WU-2317 — Heartbeat contract extensions for scheduling and liveness](wu/WU-2317.yaml) — Operations: Runtime
 - [WU-2318 — Standardize agent identity metadata in session contracts](wu/WU-2318.yaml) — Framework: Core Lifecycle
@@ -1270,6 +1269,7 @@ sections:
 - [WU-2321 — Improve consumer docs: learning path, gap fills, cross-linking](wu/WU-2321.yaml)
 - [WU-2323 — Add --from flag to plan:create for importing external plan files](wu/WU-2323.yaml)
 - [WU-2322 — Clean up orphaned docs directories and add redirects](wu/WU-2322.yaml)
+- [WU-2324 — Fix orphaned doc links and add --from flag to quick-ref](wu/WU-2324.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
