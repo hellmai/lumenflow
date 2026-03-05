@@ -29,9 +29,14 @@ artifacts:
   - .lumenflow/stamps/WU-2325.done
 dependencies: []
 risks: []
-notes: ''
+notes: Implemented lane taxonomy drift detection in lifecycle validation; added lane-lifecycle drift
+  tests; updated quick-ref lane docs with --name/--output flags and drift remediation commands.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-05T17:27:52.959Z
+worktree_path: worktrees/framework-cli-enforcement-wu-2325
+session_id: f4bd37bf-63a0-496f-81f4-e787825a979b
 exposure: backend-only
 sizing_estimate:
   estimated_files: 18
@@ -39,6 +44,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-05T17:27:52.966Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -55,11 +63,3 @@ acceptance:
   - automated tests cover drift detection for create/edit/validate/lock flows and pass
   - operator-facing docs for lane commands are updated to reflect actual flags and drift remediation
     flow
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-enforcement-wu-2325
-claimed_at: 2026-03-05T17:27:52.959Z
-baseline_main_sha: d814618cc545af28a1fcfaee5f718de246e01964
-session_id: f4bd37bf-63a0-496f-81f4-e787825a979b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-05T17:27:52.966Z
