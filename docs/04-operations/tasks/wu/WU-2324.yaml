@@ -1,7 +1,7 @@
 id: WU-2324
 title: Fix orphaned doc links and add --from flag to quick-ref
 lane: 'Content: Site Comms'
-type: documentation
+type: feature
 status: in_progress
 priority: P2
 created: 2026-03-05
@@ -10,7 +10,8 @@ code_paths:
   - docs/04-operations/
   - docs/04-operations/
 tests:
-  manual: []
+  manual:
+    - Verify no links to /concepts/ or /guides/ remain in mdx files via grep
   unit: []
   e2e: []
 artifacts:
