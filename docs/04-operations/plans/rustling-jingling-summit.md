@@ -34,20 +34,21 @@ and approval workflows with minimal integration friction.
 
 ## Capability map (contract side only)
 
-| Capability | Contract Surface in this repo |
-|---|---|
-| Agent liveness + stall signaling | Extend heartbeat input/result with optional health/scheduling fields |
-| Server-directed dispatch scheduling | Optional heartbeat assignment + next interval fields |
-| Cost visibility + budget telemetry | Cost NDJSON source + typed cost records via existing telemetry push path |
-| Agent identity/lifecycle context | Enrich existing session registration metadata |
-| Business approvals | Optional control-plane approval APIs + CLI wrappers, aligned with WU escalation |
-| Observability surface | No local implementation; cloud consumes events/telemetry already emitted |
+| Capability                          | Contract Surface in this repo                                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------- |
+| Agent liveness + stall signaling    | Extend heartbeat input/result with optional health/scheduling fields            |
+| Server-directed dispatch scheduling | Optional heartbeat assignment + next interval fields                            |
+| Cost visibility + budget telemetry  | Cost NDJSON source + typed cost records via existing telemetry push path        |
+| Agent identity/lifecycle context    | Enrich existing session registration metadata                                   |
+| Business approvals                  | Optional control-plane approval APIs + CLI wrappers, aligned with WU escalation |
+| Observability surface               | No local implementation; cloud consumes events/telemetry already emitted        |
 
 ---
 
 ## WU-1: Cost Telemetry Contract (Minimal)
 
 ### Objective
+
 Add structured cost telemetry without forking the transport surface.
 
 ### Changes
@@ -81,6 +82,7 @@ Add structured cost telemetry without forking the transport surface.
 - `packages/@lumenflow/cli/src/public-manifest.ts`
 
 ### Scope
+
 S (1 WU)
 
 ### Acceptance criteria
@@ -97,6 +99,7 @@ S (1 WU)
 ## WU-2: Heartbeat Scheduling + Liveness Extension
 
 ### Objective
+
 Enable server-directed cadence and assignment with backward-compatible heartbeat fields.
 
 ### Changes
@@ -127,6 +130,7 @@ Enable server-directed cadence and assignment with backward-compatible heartbeat
 - `packages/@lumenflow/agent/src/auto-session-integration.ts`
 
 ### Scope
+
 M (1-2 WUs)
 
 ### Acceptance criteria
@@ -142,6 +146,7 @@ M (1-2 WUs)
 ## WU-3: Agent Identity via Existing Session Contracts
 
 ### Objective
+
 Support lifecycle/state attribution without creating a parallel registry surface in this phase.
 
 ### Changes
@@ -168,6 +173,7 @@ Support lifecycle/state attribution without creating a parallel registry surface
 - `packages/@lumenflow/agent/src/agent-session.ts` (if metadata persistence is needed)
 
 ### Scope
+
 S-M (1 WU)
 
 ### Acceptance criteria
@@ -183,6 +189,7 @@ S-M (1 WU)
 ## WU-4: Business Approval Contract Alignment (No Duplication)
 
 ### Objective
+
 Expose cloud approval workflows without duplicating kernel approval state machines locally.
 
 ### Changes
@@ -215,6 +222,7 @@ Expose cloud approval workflows without duplicating kernel approval state machin
 - `packages/@lumenflow/cli/src/approval-list.ts` (new)
 
 ### Scope
+
 M (1 WU)
 
 ### Acceptance criteria
