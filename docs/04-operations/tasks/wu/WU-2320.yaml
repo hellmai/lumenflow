@@ -39,8 +39,7 @@ acceptance:
     /home/tom/.claude/plans/rustling-jingling-summit.md.
   - docs/04-operations/tasks/initiatives/INIT-49.yaml related_plan points to
     lumenflow://plans/rustling-jingling-summit.md.
-  - Generated placeholder plan docs/04-operations/plans/INIT-49-control-plane-interface-upgrad.md is
-    removed.
+  - Generated placeholder plan file is removed.
   - Documentation artifacts remain internally consistent (initiative status resolves related plan
     URI and no dead plan link remains for INIT-49).
 claimed_mode: worktree
