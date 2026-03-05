@@ -22,6 +22,8 @@ import { DEFAULT_LANE_DEFINITIONS, LANE_INFERENCE_TEMPLATE } from './init-templa
 import {
   extractConfigLanes,
   extractInferenceParents,
+  extractInferenceTaxonomy,
+  detectLaneTaxonomyDrift,
   validateLaneConfigAgainstInference,
   type LaneValidationResult,
 } from './init-lane-validation.js';
@@ -44,6 +46,8 @@ const INIT_PREFIX = '[lumenflow init]';
 const LANE_SETUP_COMMAND = 'pnpm lane:setup';
 const LANE_LOCK_COMMAND = 'pnpm lane:lock';
 const LANE_READY_SENTINEL = 'lanes ready';
+const LANE_SUGGEST_SYNC_COMMAND = `pnpm lane:suggest --interactive --output ${CONFIG_FILES.LANE_INFERENCE}`;
+const LANE_REVALIDATE_COMMAND = 'pnpm lane:validate';
 
 const DEFAULT_FRAMEWORK_LANES_TOKEN = '{{FRAMEWORK_LANES}}';
 const SOFTWARE_DELIVERY_KEY = WORKSPACE_V2_KEYS.SOFTWARE_DELIVERY;
@@ -475,6 +479,7 @@ export function validateLaneArtifacts(projectRoot: string): LaneArtifactsValidat
 
   const configLanes = extractConfigLanes(configPath);
   const inferenceParents = extractInferenceParents(inferencePath);
+  const inferenceTaxonomy = extractInferenceTaxonomy(inferencePath);
 
   const missingDefinitions = configLanes.length === 0;
   const missingInference = inferenceParents.length === 0;
@@ -495,6 +500,24 @@ export function validateLaneArtifacts(projectRoot: string): LaneArtifactsValidat
     const laneValidation = validateLaneConfigAgainstInference(configLanes, inferenceParents);
     warnings.push(...laneValidation.warnings);
     invalidLanes.push(...laneValidation.invalidLanes);
+
+    const drift = detectLaneTaxonomyDrift(configLanes, inferenceTaxonomy);
+    if (drift.hasDrift) {
+      warnings.push(
+        `Lane taxonomy drift detected between ${WORKSPACE_CONFIG_FILE_NAME} lane definitions and ${CONFIG_FILES.LANE_INFERENCE}.`,
+      );
+
+      for (const [parent, subLanes] of Object.entries(drift.missingInInference)) {
+        warnings.push(`Missing in inference [${parent}]: ${subLanes.join(', ')}`);
+      }
+
+      for (const [parent, subLanes] of Object.entries(drift.extraInInference)) {
+        warnings.push(`Extra in inference [${parent}]: ${subLanes.join(', ')}`);
+      }
+
+      warnings.push(`Remediation: ${LANE_SUGGEST_SYNC_COMMAND}`);
+      warnings.push(`Then re-run: ${LANE_REVALIDATE_COMMAND}`);
+    }
   }
 
   return {

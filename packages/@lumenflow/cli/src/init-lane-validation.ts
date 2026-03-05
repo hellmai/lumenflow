@@ -31,12 +31,22 @@ interface LaneDefinition {
   code_paths?: string[];
 }
 
+export interface LaneTaxonomyMap {
+  [parent: string]: string[];
+}
+
 /** Result of lane validation against inference hierarchy */
 export interface LaneValidationResult {
   /** Warning messages for the user */
   warnings: string[];
   /** Lane names with invalid parents */
   invalidLanes: string[];
+}
+
+export interface LaneTaxonomyDriftResult {
+  hasDrift: boolean;
+  missingInInference: LaneTaxonomyMap;
+  extraInInference: LaneTaxonomyMap;
 }
 
 /**
@@ -51,6 +61,24 @@ function extractParentName(laneName: string): string | null {
     return null;
   }
   return laneName.substring(0, separatorIndex);
+}
+
+function extractSubLaneName(laneName: string): string | null {
+  const separatorIndex = laneName.indexOf(LANE_NAME_SEPARATOR);
+  if (separatorIndex === -1) {
+    return null;
+  }
+
+  const subLane = laneName.substring(separatorIndex + LANE_NAME_SEPARATOR.length).trim();
+  return subLane.length > 0 ? subLane : null;
+}
+
+function sortMapValues(map: LaneTaxonomyMap): LaneTaxonomyMap {
+  const sorted: LaneTaxonomyMap = {};
+  for (const [parent, subLanes] of Object.entries(map)) {
+    sorted[parent] = [...subLanes].sort((left, right) => left.localeCompare(right));
+  }
+  return sorted;
 }
 
 /**
@@ -130,6 +158,99 @@ export function extractInferenceParents(laneInferencePath: string): string[] {
   } catch {
     return [];
   }
+}
+
+export function extractInferenceTaxonomy(laneInferencePath: string): LaneTaxonomyMap {
+  if (!fs.existsSync(laneInferencePath)) {
+    return {};
+  }
+
+  try {
+    const content = fs.readFileSync(laneInferencePath, 'utf-8');
+    const parsed = yaml.parse(content) as Record<string, unknown> | null;
+    if (!parsed || typeof parsed !== 'object') {
+      return {};
+    }
+
+    const taxonomy: LaneTaxonomyMap = {};
+    for (const [parent, subLanesRaw] of Object.entries(parsed)) {
+      if (!subLanesRaw || typeof subLanesRaw !== 'object' || Array.isArray(subLanesRaw)) {
+        taxonomy[parent] = [];
+        continue;
+      }
+      taxonomy[parent] = Object.keys(subLanesRaw);
+    }
+
+    return sortMapValues(taxonomy);
+  } catch {
+    return {};
+  }
+}
+
+export function extractConfigTaxonomy(configLanes: LaneDefinition[]): LaneTaxonomyMap {
+  if (configLanes.length === 0) {
+    return {};
+  }
+
+  const byParent = new Map<string, Set<string>>();
+
+  for (const lane of configLanes) {
+    const parent = extractParentName(lane.name);
+    const subLane = extractSubLaneName(lane.name);
+    if (!parent || !subLane) {
+      continue;
+    }
+
+    const existing = byParent.get(parent) ?? new Set<string>();
+    existing.add(subLane);
+    byParent.set(parent, existing);
+  }
+
+  const taxonomy: LaneTaxonomyMap = {};
+  for (const [parent, subLanes] of byParent.entries()) {
+    taxonomy[parent] = [...subLanes].sort((left, right) => left.localeCompare(right));
+  }
+
+  return taxonomy;
+}
+
+export function detectLaneTaxonomyDrift(
+  configLanes: LaneDefinition[],
+  inferenceTaxonomy: LaneTaxonomyMap,
+): LaneTaxonomyDriftResult {
+  const configTaxonomy = extractConfigTaxonomy(configLanes);
+  const allParents = new Set([
+    ...Object.keys(configTaxonomy),
+    ...Object.keys(inferenceTaxonomy),
+  ]);
+
+  const missingInInference: LaneTaxonomyMap = {};
+  const extraInInference: LaneTaxonomyMap = {};
+
+  for (const parent of allParents) {
+    const configSubLanes = new Set(configTaxonomy[parent] ?? []);
+    const inferenceSubLanes = new Set(inferenceTaxonomy[parent] ?? []);
+
+    const missing = [...configSubLanes]
+      .filter((subLane) => !inferenceSubLanes.has(subLane))
+      .sort((left, right) => left.localeCompare(right));
+    const extra = [...inferenceSubLanes]
+      .filter((subLane) => !configSubLanes.has(subLane))
+      .sort((left, right) => left.localeCompare(right));
+
+    if (missing.length > 0) {
+      missingInInference[parent] = missing;
+    }
+    if (extra.length > 0) {
+      extraInInference[parent] = extra;
+    }
+  }
+
+  return {
+    hasDrift: Object.keys(missingInInference).length > 0 || Object.keys(extraInInference).length > 0,
+    missingInInference,
+    extraInInference,
+  };
 }
 
 /**

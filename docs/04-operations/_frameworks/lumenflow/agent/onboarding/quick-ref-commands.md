@@ -170,12 +170,12 @@ files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
 | `pnpm test`                       | Run all tests (Vitest)                          |
 | `pnpm spec:linter`                | Validate WU specs (all) ¹                       |
 | `pnpm lane:health`                | Check lane config health                        |
-| `pnpm lane:suggest --paths "..."` | Suggest lane for code paths                     |
+| `pnpm lane:suggest --output .lumenflow.lane-inference.yaml` | Regenerate lane inference taxonomy from project structure |
 | `pnpm lane:status`                | Show lane lifecycle status                      |
 | `pnpm lane:setup`                 | Create/update draft lane config                 |
 | `pnpm lane:validate`              | Validate lane draft artifacts                   |
 | `pnpm lane:lock`                  | Lock lane lifecycle for WU create               |
-| `pnpm lane:edit --lane <L>`       | Edit lane definition (rename, wip-limit, paths) |
+| `pnpm lane:edit --name <L>`       | Edit lane definition (rename, wip-limit, paths) |
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
@@ -653,6 +653,16 @@ Check current lifecycle state any time:
 
 ```bash
 pnpm lane:status
+```
+
+### Lane Taxonomy Drift (workspace.yaml vs inference)
+
+If lane commands report drift between `workspace.yaml` lane definitions and
+`.lumenflow.lane-inference.yaml`, sync taxonomy first, then re-validate:
+
+```bash
+pnpm lane:suggest --interactive --output .lumenflow.lane-inference.yaml
+pnpm lane:validate
 ```
 
 ---

@@ -19,6 +19,7 @@ import {
   recommendLaneLifecycleNextStep,
   buildWuCreateLaneLifecycleMessage,
   buildInitiativeCreateLaneLifecycleMessage,
+  validateLaneArtifacts,
 } from '../lane-lifecycle-process.js';
 
 const CONFIG_FILE_NAME = WORKSPACE_CONFIG_FILE_NAME;
@@ -111,5 +112,52 @@ describe('lane lifecycle process (WU-1748)', () => {
     expect(message).toContain('Lane lifecycle: unconfigured');
     expect(message).toContain('Initiative creation is allowed before lane setup');
     expect(message).toContain('When ready for delivery WUs, run: pnpm lane:setup');
+  });
+
+  it('reports taxonomy drift when workspace and inference sub-lanes diverge', () => {
+    writeConfig({
+      lanes: {
+        definitions: [
+          { name: 'Framework: Core', wip_limit: 1, code_paths: ['src/core/**'] },
+          { name: 'Framework: CLI Enforcement', wip_limit: 1, code_paths: ['src/cli/**'] },
+        ],
+      },
+    });
+    writeLaneInference(`Framework:\n  Core:\n    code_paths:\n      - src/core/**\n  CLI:\n    code_paths:\n      - src/cli/**\n`);
+
+    const validation = validateLaneArtifacts(tempDir);
+
+    expect(validation.warnings.some((warning) => warning.includes('Lane taxonomy drift detected'))).toBe(
+      true,
+    );
+    expect(validation.warnings.some((warning) => warning.includes('Missing in inference [Framework]'))).toBe(
+      true,
+    );
+    expect(validation.warnings.some((warning) => warning.includes('Extra in inference [Framework]'))).toBe(
+      true,
+    );
+    expect(
+      validation.warnings.some((warning) =>
+        warning.includes('pnpm lane:suggest --interactive --output .lumenflow.lane-inference.yaml'),
+      ),
+    ).toBe(true);
+  });
+
+  it('does not report taxonomy drift when workspace and inference sub-lanes match', () => {
+    writeConfig({
+      lanes: {
+        definitions: [
+          { name: 'Framework: Core', wip_limit: 1, code_paths: ['src/core/**'] },
+          { name: 'Framework: CLI', wip_limit: 1, code_paths: ['src/cli/**'] },
+        ],
+      },
+    });
+    writeLaneInference(`Framework:\n  Core:\n    code_paths:\n      - src/core/**\n  CLI:\n    code_paths:\n      - src/cli/**\n`);
+
+    const validation = validateLaneArtifacts(tempDir);
+
+    expect(validation.warnings.some((warning) => warning.includes('Lane taxonomy drift detected'))).toBe(
+      false,
+    );
   });
 });
