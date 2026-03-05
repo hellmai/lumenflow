@@ -24,6 +24,8 @@ tests:
 artifacts:
   - .lumenflow/stamps/WU-2317.done
 dependencies: []
+initiative: INIT-49
+phase: 1
 spec_refs:
   - lumenflow://plans/control-plane-interface-roadmap.md
 risks: []
@@ -59,4 +61,3 @@ acceptance:
   - Compatibility tests confirm old heartbeat clients remain functional with unchanged required
     fields.
   - Documentation is updated for heartbeat contract fields and behavior in API/reference docs.
-initiative: INIT-49
