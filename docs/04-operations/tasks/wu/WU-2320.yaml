@@ -2,7 +2,7 @@ id: WU-2320
 title: Import INIT-49 plan file into repo plans directory
 lane: 'Operations: Runtime'
 type: documentation
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-05
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - docs/04-operations/plans/INIT-49-control-plane-interface-upgrad.md
 tests:
   manual:
-    - Run pnpm initiative:status --id INIT-49 and verify related_plan resolves to rustling-jingling-summit.md
+    - Run pnpm initiative:status --id INIT-49 and verify related_plan resolves to
+      rustling-jingling-summit.md
   unit: []
   e2e: []
 artifacts:
@@ -29,9 +30,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: INIT-49 was linked to a generated template while the actual plan content lives in /home/tom/.claude/plans/rustling-jingling-summit.md. Problem: repo consumers see an empty placeholder instead of the real initiative plan. Solution: copy the real plan markdown into docs/04-operations/plans, point INIT-49 related_plan to that file URI, and remove the generated placeholder file.'
+description: 'Context: INIT-49 was linked to a generated template while the actual plan content
+  lives in /home/tom/.claude/plans/rustling-jingling-summit.md. Problem: repo consumers see an empty
+  placeholder instead of the real initiative plan. Solution: copy the real plan markdown into
+  docs/04-operations/plans, point INIT-49 related_plan to that file URI, and remove the generated
+  placeholder file.'
 acceptance:
-  - docs/04-operations/plans/rustling-jingling-summit.md exists in-repo with the plan content from /home/tom/.claude/plans/rustling-jingling-summit.md.
-  - docs/04-operations/tasks/initiatives/INIT-49.yaml related_plan points to lumenflow://plans/rustling-jingling-summit.md.
-  - Generated placeholder plan docs/04-operations/plans/INIT-49-control-plane-interface-upgrad.md is removed.
-  - Documentation artifacts remain internally consistent (initiative status resolves related plan URI and no dead plan link remains for INIT-49).
+  - docs/04-operations/plans/rustling-jingling-summit.md exists in-repo with the plan content from
+    /home/tom/.claude/plans/rustling-jingling-summit.md.
+  - docs/04-operations/tasks/initiatives/INIT-49.yaml related_plan points to
+    lumenflow://plans/rustling-jingling-summit.md.
+  - Generated placeholder plan docs/04-operations/plans/INIT-49-control-plane-interface-upgrad.md is
+    removed.
+  - Documentation artifacts remain internally consistent (initiative status resolves related plan
+    URI and no dead plan link remains for INIT-49).
+claimed_mode: worktree
+worktree_path: worktrees/operations-runtime-wu-2320
+claimed_at: 2026-03-05T10:10:14.772Z
+baseline_main_sha: cd837197396af87bbb011afb637482f52369b82d
+session_id: 32374f68-dcc2-4148-bbed-3418416efb67
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-05T10:10:14.780Z

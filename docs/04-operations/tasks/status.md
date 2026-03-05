@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-04_
+_Last updated: 2026-03-05_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2320 — Import INIT-49 plan file into repo plans directory](wu/WU-2320.yaml)
 
 ## Completed
 

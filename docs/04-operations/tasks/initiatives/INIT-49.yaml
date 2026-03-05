@@ -5,7 +5,7 @@ description: 'Objective: deliver additive control-plane interface upgrades for c
   heartbeat scheduling/liveness, agent identity metadata, and approval command adapters. This
   initiative focuses on backward-compatible contracts, thin adapters, and documentation updates for
   OSS consumers.'
-status: open
+status: in_progress
 priority: P1
 owner: tom
 created: 2026-03-05
@@ -27,4 +27,3 @@ wus:
   - WU-2317
   - WU-2318
   - WU-2319
-related_plan: lumenflow://plans/INIT-49-control-plane-interface-upgrad.md
