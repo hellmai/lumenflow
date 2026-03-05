@@ -2,7 +2,7 @@ id: WU-2316
 title: Control-plane cost telemetry contract and local summary
 lane: 'Framework: Metrics'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-05
 code_paths:
@@ -64,4 +64,9 @@ acceptance:
     docs/04-operations/**), not generated output artifacts.
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-03-05T10:30:41.929Z
+approved_at: 2026-03-05T10:36:05.912Z
+claimed_mode: worktree
+worktree_path: worktrees/framework-metrics-wu-2316
+claimed_at: 2026-03-05T10:36:05.902Z
+baseline_main_sha: 96cbfd1cee60bfd5d4aea69914ee67cf65946bc5
+session_id: 387ddb32-5de1-47d4-82d4-5dcd79d983b3

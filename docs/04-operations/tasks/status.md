@@ -5,6 +5,7 @@ _Last updated: 2026-03-05_
 ## In Progress
 
 - [WU-2324 — Fix orphaned doc links and add --from flag to quick-ref](wu/WU-2324.yaml)
+- [WU-2316 — Control-plane cost telemetry contract and local summary](wu/WU-2316.yaml)
 
 ## Completed
 
