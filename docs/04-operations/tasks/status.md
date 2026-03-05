@@ -4,7 +4,6 @@ _Last updated: 2026-03-05_
 
 ## In Progress
 
-- [WU-2316 — Control-plane cost telemetry contract and local summary](wu/WU-2316.yaml)
 - [WU-2317 — Heartbeat contract extensions for scheduling and liveness](wu/WU-2317.yaml)
 
 ## Completed
