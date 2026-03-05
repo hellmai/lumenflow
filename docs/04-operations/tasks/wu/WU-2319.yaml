@@ -22,6 +22,7 @@ tests:
   unit:
     - packages/@lumenflow/control-plane-sdk/__tests__/http-sync-port.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/cli/src/__tests__/commands.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2319.done

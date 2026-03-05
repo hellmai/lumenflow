@@ -3,17 +3,22 @@
 
 import type {
   AcceptedCount,
+  ApprovalRecord,
   AuthenticateInput,
   ControlPlaneIdentity,
   ControlPlanePolicySet,
   ControlPlaneSyncPort,
   HeartbeatInput,
   HeartbeatResult,
+  ListApprovalsInput,
+  ListApprovalsResult,
   PullConfigInput,
   PullPoliciesInput,
   PushEvidenceInput,
   PushKernelEventsInput,
   PushTelemetryInput,
+  RequestApprovalInput,
+  ResolveApprovalInput,
   WorkspaceControlPlaneConfig,
   WorkspaceControlPlaneSpec,
 } from '../sync-port.js';
@@ -21,6 +26,9 @@ import type {
 const API_PATH = {
   AUTHENTICATE: '/api/v1/authenticate',
   HEARTBEAT: '/api/v1/heartbeat',
+  APPROVAL_REQUEST: '/api/v1/approvals/request',
+  APPROVAL_RESOLVE: '/api/v1/approvals/resolve',
+  APPROVAL_LIST: '/api/v1/approvals/list',
   EVENTS: '/api/v1/events',
   EVIDENCE: '/api/v1/evidence',
   TELEMETRY: '/api/v1/telemetry',
@@ -214,6 +222,33 @@ export class HttpControlPlaneSyncPort implements ControlPlaneSyncPort {
       return normalized;
     } catch (error) {
       this.warnFailure('heartbeat', error);
+      throw error;
+    }
+  }
+
+  public async requestApproval(input: RequestApprovalInput): Promise<ApprovalRecord> {
+    try {
+      return await this.postJson<ApprovalRecord>(API_PATH.APPROVAL_REQUEST, input);
+    } catch (error) {
+      this.warnFailure('requestApproval', error);
+      throw error;
+    }
+  }
+
+  public async resolveApproval(input: ResolveApprovalInput): Promise<ApprovalRecord> {
+    try {
+      return await this.postJson<ApprovalRecord>(API_PATH.APPROVAL_RESOLVE, input);
+    } catch (error) {
+      this.warnFailure('resolveApproval', error);
+      throw error;
+    }
+  }
+
+  public async listApprovals(input: ListApprovalsInput): Promise<ListApprovalsResult> {
+    try {
+      return await this.postJson<ListApprovalsResult>(API_PATH.APPROVAL_LIST, input);
+    } catch (error) {
+      this.warnFailure('listApprovals', error);
       throw error;
     }
   }

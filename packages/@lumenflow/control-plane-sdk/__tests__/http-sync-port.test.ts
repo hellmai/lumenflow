@@ -6,7 +6,7 @@ import {
   HttpControlPlaneSyncPort,
   createHttpControlPlaneSyncPort,
 } from '../src/http/http-control-plane-sync-port.js';
-import type { ControlPlaneSyncPort, WorkspaceControlPlaneConfig } from '../src/sync-port.js';
+import type { WorkspaceControlPlaneConfig } from '../src/sync-port.js';
 
 const TEST_TIMEOUT_MS = 5;
 const TOKEN_ENV = 'LUMENFLOW_CLOUD_TOKEN_TEST';
@@ -52,6 +52,28 @@ const REQUEST_INPUTS = {
     agent_id: 'agent-test',
     token_hint: 'hint',
   },
+  requestApproval: {
+    workspace_id: 'workspace-a',
+    type: 'wu_assignment',
+    subject: { wu_id: 'WU-2319' },
+    context: { lane: 'Framework: CLI WU Commands' },
+    requester_id: 'agent-test',
+    requester_type: 'agent',
+  },
+  resolveApproval: {
+    workspace_id: 'workspace-a',
+    approval_id: 'approval-1',
+    decision: 'approved',
+    reason: 'looks good',
+    reviewer_id: 'reviewer-1',
+    reviewer_type: 'user',
+  },
+  listApprovals: {
+    workspace_id: 'workspace-a',
+    status: 'pending',
+    type: 'wu_assignment',
+    limit: 25,
+  },
   heartbeat: {
     workspace_id: 'workspace-a',
     session_id: 'session-a',
@@ -72,6 +94,9 @@ const ENDPOINTS = {
   pushEvidence: '/api/v1/evidence',
   pushKernelEvents: '/api/v1/events',
   authenticate: '/api/v1/authenticate',
+  requestApproval: '/api/v1/approvals/request',
+  resolveApproval: '/api/v1/approvals/resolve',
+  listApprovals: '/api/v1/approvals/list',
   heartbeat: '/api/v1/heartbeat',
 } as const;
 
@@ -86,6 +111,44 @@ const SUCCESS_RESPONSES = {
     org_id: 'org-test',
     agent_id: 'agent-test',
     token: 'server-token',
+  },
+  requestApproval: {
+    approval_id: 'approval-1',
+    workspace_id: 'workspace-a',
+    type: 'wu_assignment',
+    status: 'pending',
+    subject: { wu_id: 'WU-2319' },
+    context: { lane: 'Framework: CLI WU Commands' },
+    requester_id: 'agent-test',
+    requester_type: 'agent',
+    requested_at: '2026-02-25T00:00:00.000Z',
+  },
+  resolveApproval: {
+    approval_id: 'approval-1',
+    workspace_id: 'workspace-a',
+    type: 'wu_assignment',
+    status: 'approved',
+    subject: { wu_id: 'WU-2319' },
+    context: { lane: 'Framework: CLI WU Commands' },
+    requester_id: 'agent-test',
+    requester_type: 'agent',
+    reviewer_id: 'reviewer-1',
+    reviewer_type: 'user',
+    decision_reason: 'looks good',
+    requested_at: '2026-02-25T00:00:00.000Z',
+    decided_at: '2026-02-25T00:01:00.000Z',
+  },
+  listApprovals: {
+    approvals: [
+      {
+        approval_id: 'approval-1',
+        workspace_id: 'workspace-a',
+        type: 'wu_assignment',
+        status: 'pending',
+        subject: { wu_id: 'WU-2319' },
+        requested_at: '2026-02-25T00:00:00.000Z',
+      },
+    ],
   },
   heartbeat: {
     status: 'ok',
@@ -115,7 +178,7 @@ const FALLBACK_RESULTS = {
 
 type MethodCase = {
   methodName: keyof typeof ENDPOINTS;
-  call: (port: ControlPlaneSyncPort) => Promise<unknown>;
+  call: (port: HttpControlPlaneSyncPort) => Promise<unknown>;
   expectsThrow: boolean;
   fallback?: unknown;
 };
@@ -156,6 +219,21 @@ const METHOD_CASES: readonly MethodCase[] = [
     fallback: FALLBACK_RESULTS.authenticate,
   },
   {
+    methodName: 'requestApproval',
+    call: (port) => port.requestApproval(REQUEST_INPUTS.requestApproval),
+    expectsThrow: true,
+  },
+  {
+    methodName: 'resolveApproval',
+    call: (port) => port.resolveApproval(REQUEST_INPUTS.resolveApproval),
+    expectsThrow: true,
+  },
+  {
+    methodName: 'listApprovals',
+    call: (port) => port.listApprovals(REQUEST_INPUTS.listApprovals),
+    expectsThrow: true,
+  },
+  {
     methodName: 'heartbeat',
     call: (port) => port.heartbeat(REQUEST_INPUTS.heartbeat),
     expectsThrow: true,
@@ -175,7 +253,7 @@ function createPort(input: {
   fetchFn: typeof fetch;
   logger?: Pick<Console, 'warn'>;
   timeoutMs?: number;
-}): ControlPlaneSyncPort {
+}): HttpControlPlaneSyncPort {
   return new HttpControlPlaneSyncPort(TEST_CONFIG, {
     fetchFn: input.fetchFn,
     timeoutMs: input.timeoutMs ?? 100,
@@ -187,7 +265,7 @@ function createPort(input: {
 }
 
 describe('HttpControlPlaneSyncPort', () => {
-  it('maps all 7 methods to cloud /api/v1 endpoints with auth and JSON headers', async () => {
+  it('maps all methods to cloud /api/v1 endpoints with auth and JSON headers', async () => {
     const fetchFn = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.pullPolicies))
@@ -196,6 +274,9 @@ describe('HttpControlPlaneSyncPort', () => {
       .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.pushEvidence))
       .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.pushKernelEvents))
       .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.authenticate))
+      .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.requestApproval))
+      .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.resolveApproval))
+      .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.listApprovals))
       .mockResolvedValueOnce(createJsonResponse(SUCCESS_RESPONSES.heartbeat));
 
     const port = createPort({ fetchFn });
@@ -206,9 +287,12 @@ describe('HttpControlPlaneSyncPort', () => {
     await port.pushEvidence(REQUEST_INPUTS.pushEvidence);
     await port.pushKernelEvents(REQUEST_INPUTS.pushKernelEvents);
     await port.authenticate(REQUEST_INPUTS.authenticate);
+    await port.requestApproval(REQUEST_INPUTS.requestApproval);
+    await port.resolveApproval(REQUEST_INPUTS.resolveApproval);
+    await port.listApprovals(REQUEST_INPUTS.listApprovals);
     await port.heartbeat(REQUEST_INPUTS.heartbeat);
 
-    expect(fetchFn).toHaveBeenCalledTimes(7);
+    expect(fetchFn).toHaveBeenCalledTimes(10);
 
     const expectedPaths = [
       ENDPOINTS.pullPolicies,
@@ -217,6 +301,9 @@ describe('HttpControlPlaneSyncPort', () => {
       ENDPOINTS.pushEvidence,
       ENDPOINTS.pushKernelEvents,
       ENDPOINTS.authenticate,
+      ENDPOINTS.requestApproval,
+      ENDPOINTS.resolveApproval,
+      ENDPOINTS.listApprovals,
       ENDPOINTS.heartbeat,
     ];
 

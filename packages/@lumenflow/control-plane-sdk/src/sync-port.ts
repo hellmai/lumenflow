@@ -159,6 +159,58 @@ export interface HeartbeatResult {
   coalesced_signals?: number;
 }
 
+export type ApprovalDecision = 'approved' | 'rejected' | 'expired';
+export type ApprovalStatus = 'pending' | ApprovalDecision;
+export type ApprovalActorType = 'agent' | 'user';
+
+export interface ApprovalRecord {
+  approval_id: string;
+  workspace_id: string;
+  type: string;
+  status: ApprovalStatus;
+  subject: Record<string, unknown>;
+  context?: Record<string, unknown>;
+  requester_id?: string;
+  requester_type?: ApprovalActorType;
+  reviewer_id?: string;
+  reviewer_type?: ApprovalActorType;
+  decision_reason?: string;
+  requested_at: string;
+  decided_at?: string;
+}
+
+export interface RequestApprovalInput {
+  workspace_id: string;
+  type: string;
+  subject: Record<string, unknown>;
+  context?: Record<string, unknown>;
+  requester_id?: string;
+  requester_type?: ApprovalActorType;
+  expires_at?: string;
+}
+
+export interface ResolveApprovalInput {
+  workspace_id: string;
+  approval_id: string;
+  decision: ApprovalDecision;
+  reason?: string;
+  reviewer_id?: string;
+  reviewer_type?: ApprovalActorType;
+}
+
+export interface ListApprovalsInput {
+  workspace_id: string;
+  status?: ApprovalStatus;
+  type?: string;
+  limit?: number;
+  cursor?: string;
+}
+
+export interface ListApprovalsResult {
+  approvals: ApprovalRecord[];
+  next_cursor?: string;
+}
+
 export interface ControlPlaneSyncPort {
   pullPolicies(input: PullPoliciesInput): Promise<ControlPlanePolicySet>;
   pullConfig(input: PullConfigInput): Promise<WorkspaceControlPlaneSpec>;
@@ -167,4 +219,7 @@ export interface ControlPlaneSyncPort {
   pushKernelEvents(input: PushKernelEventsInput): Promise<AcceptedCount>;
   authenticate(input: AuthenticateInput): Promise<ControlPlaneIdentity>;
   heartbeat(input: HeartbeatInput): Promise<HeartbeatResult>;
+  requestApproval?(input: RequestApprovalInput): Promise<ApprovalRecord>;
+  resolveApproval?(input: ResolveApprovalInput): Promise<ApprovalRecord>;
+  listApprovals?(input: ListApprovalsInput): Promise<ListApprovalsResult>;
 }

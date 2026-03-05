@@ -183,6 +183,30 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     description: 'Show or resolve WU escalation status',
     category: COMMAND_CATEGORIES.WU_LIFECYCLE,
   },
+  {
+    name: 'approval:request',
+    binName: 'approval-request',
+    binPath: './dist/approval-request.js',
+    description: 'Request control-plane approval for a workflow action',
+    category: COMMAND_CATEGORIES.WU_LIFECYCLE,
+    audience: 'advanced',
+  },
+  {
+    name: 'approval:review',
+    binName: 'approval-review',
+    binPath: './dist/approval-review.js',
+    description: 'Resolve a control-plane approval decision',
+    category: COMMAND_CATEGORIES.WU_LIFECYCLE,
+    audience: 'advanced',
+  },
+  {
+    name: 'approval:list',
+    binName: 'approval-list',
+    binPath: './dist/approval-list.js',
+    description: 'List control-plane approvals with optional filters',
+    category: COMMAND_CATEGORIES.WU_LIFECYCLE,
+    audience: 'advanced',
+  },
 
   // ============================================================================
   // WU Maintenance - Less frequently used WU commands
