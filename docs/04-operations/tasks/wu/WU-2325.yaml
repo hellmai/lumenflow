@@ -6,14 +6,8 @@ status: in_progress
 priority: P1
 created: 2026-03-05
 code_paths:
-  - packages/@lumenflow/cli/src/lane-create.ts
-  - packages/@lumenflow/cli/src/lane-edit.ts
-  - packages/@lumenflow/cli/src/lane-validate.ts
-  - packages/@lumenflow/cli/src/lane-lock.ts
   - packages/@lumenflow/cli/src/lane-lifecycle-process.ts
   - packages/@lumenflow/cli/src/init-lane-validation.ts
-  - packages/@lumenflow/cli/src/__tests__/lane-create.test.ts
-  - packages/@lumenflow/cli/src/__tests__/lane-edit.test.ts
   - packages/@lumenflow/cli/src/__tests__/lane-lifecycle-process.test.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
 tests:
