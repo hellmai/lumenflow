@@ -159,23 +159,23 @@ files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
 
 ## Gates & Quality
 
-| Command                           | Description                                     |
-| --------------------------------- | ----------------------------------------------- |
-| `pnpm gates`                      | Run all quality gates                           |
-| `pnpm gates --docs-only`          | Run gates for docs changes                      |
-| `pnpm format`                     | Format all files (Prettier)                     |
-| `pnpm format:check`               | Check formatting without changes                |
-| `pnpm lint`                       | Run ESLint                                      |
-| `pnpm typecheck`                  | Run TypeScript type checking                    |
-| `pnpm test`                       | Run all tests (Vitest)                          |
-| `pnpm spec:linter`                | Validate WU specs (all) ¹                       |
-| `pnpm lane:health`                | Check lane config health                        |
+| Command                                                     | Description                                               |
+| ----------------------------------------------------------- | --------------------------------------------------------- |
+| `pnpm gates`                                                | Run all quality gates                                     |
+| `pnpm gates --docs-only`                                    | Run gates for docs changes                                |
+| `pnpm format`                                               | Format all files (Prettier)                               |
+| `pnpm format:check`                                         | Check formatting without changes                          |
+| `pnpm lint`                                                 | Run ESLint                                                |
+| `pnpm typecheck`                                            | Run TypeScript type checking                              |
+| `pnpm test`                                                 | Run all tests (Vitest)                                    |
+| `pnpm spec:linter`                                          | Validate WU specs (all) ¹                                 |
+| `pnpm lane:health`                                          | Check lane config health                                  |
 | `pnpm lane:suggest --output .lumenflow.lane-inference.yaml` | Regenerate lane inference taxonomy from project structure |
-| `pnpm lane:status`                | Show lane lifecycle status                      |
-| `pnpm lane:setup`                 | Create/update draft lane config                 |
-| `pnpm lane:validate`              | Validate lane draft artifacts                   |
-| `pnpm lane:lock`                  | Lock lane lifecycle for WU create               |
-| `pnpm lane:edit --name <L>`       | Edit lane definition (rename, wip-limit, paths) |
+| `pnpm lane:status`                                          | Show lane lifecycle status                                |
+| `pnpm lane:setup`                                           | Create/update draft lane config                           |
+| `pnpm lane:validate`                                        | Validate lane draft artifacts                             |
+| `pnpm lane:lock`                                            | Lock lane lifecycle for WU create                         |
+| `pnpm lane:edit --name <L>`                                 | Edit lane definition (rename, wip-limit, paths)           |
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.

@@ -123,19 +123,21 @@ describe('lane lifecycle process (WU-1748)', () => {
         ],
       },
     });
-    writeLaneInference(`Framework:\n  Core:\n    code_paths:\n      - src/core/**\n  CLI:\n    code_paths:\n      - src/cli/**\n`);
+    writeLaneInference(
+      `Framework:\n  Core:\n    code_paths:\n      - src/core/**\n  CLI:\n    code_paths:\n      - src/cli/**\n`,
+    );
 
     const validation = validateLaneArtifacts(tempDir);
 
-    expect(validation.warnings.some((warning) => warning.includes('Lane taxonomy drift detected'))).toBe(
-      true,
-    );
-    expect(validation.warnings.some((warning) => warning.includes('Missing in inference [Framework]'))).toBe(
-      true,
-    );
-    expect(validation.warnings.some((warning) => warning.includes('Extra in inference [Framework]'))).toBe(
-      true,
-    );
+    expect(
+      validation.warnings.some((warning) => warning.includes('Lane taxonomy drift detected')),
+    ).toBe(true);
+    expect(
+      validation.warnings.some((warning) => warning.includes('Missing in inference [Framework]')),
+    ).toBe(true);
+    expect(
+      validation.warnings.some((warning) => warning.includes('Extra in inference [Framework]')),
+    ).toBe(true);
     expect(
       validation.warnings.some((warning) =>
         warning.includes('pnpm lane:suggest --interactive --output .lumenflow.lane-inference.yaml'),
@@ -152,12 +154,14 @@ describe('lane lifecycle process (WU-1748)', () => {
         ],
       },
     });
-    writeLaneInference(`Framework:\n  Core:\n    code_paths:\n      - src/core/**\n  CLI:\n    code_paths:\n      - src/cli/**\n`);
+    writeLaneInference(
+      `Framework:\n  Core:\n    code_paths:\n      - src/core/**\n  CLI:\n    code_paths:\n      - src/cli/**\n`,
+    );
 
     const validation = validateLaneArtifacts(tempDir);
 
-    expect(validation.warnings.some((warning) => warning.includes('Lane taxonomy drift detected'))).toBe(
-      false,
-    );
+    expect(
+      validation.warnings.some((warning) => warning.includes('Lane taxonomy drift detected')),
+    ).toBe(false);
   });
 });

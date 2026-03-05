@@ -219,10 +219,7 @@ export function detectLaneTaxonomyDrift(
   inferenceTaxonomy: LaneTaxonomyMap,
 ): LaneTaxonomyDriftResult {
   const configTaxonomy = extractConfigTaxonomy(configLanes);
-  const allParents = new Set([
-    ...Object.keys(configTaxonomy),
-    ...Object.keys(inferenceTaxonomy),
-  ]);
+  const allParents = new Set([...Object.keys(configTaxonomy), ...Object.keys(inferenceTaxonomy)]);
 
   const missingInInference: LaneTaxonomyMap = {};
   const extraInInference: LaneTaxonomyMap = {};
@@ -247,7 +244,8 @@ export function detectLaneTaxonomyDrift(
   }
 
   return {
-    hasDrift: Object.keys(missingInInference).length > 0 || Object.keys(extraInInference).length > 0,
+    hasDrift:
+      Object.keys(missingInInference).length > 0 || Object.keys(extraInInference).length > 0,
     missingInInference,
     extraInInference,
   };
