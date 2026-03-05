@@ -2,7 +2,7 @@ id: WU-2321
 title: 'Improve consumer docs: learning path, gap fills, cross-linking'
 lane: 'Content: Site Comms'
 type: documentation
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-05
 code_paths: []
@@ -48,3 +48,6 @@ session_id: 346cda58-690e-4b52-a8c9-16992d8b1a75
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-05T10:15:38.592Z
+locked: true
+completed_at: 2026-03-05T10:22:40.171Z
+completed: 2026-03-05

@@ -4,7 +4,6 @@ _Last updated: 2026-03-05_
 
 ## In Progress
 
-- [WU-2321 — Improve consumer docs: learning path, gap fills, cross-linking](wu/WU-2321.yaml)
 - [WU-2323 — Add --from flag to plan:create for importing external plan files](wu/WU-2323.yaml)
 
 ## Completed
@@ -1238,3 +1237,4 @@ _Last updated: 2026-03-05_
 - [WU-2314 — Restore release-blocking test suites to green on main](wu/WU-2314.yaml) — 2026-03-04
 - [WU-2315 — Fix skip-gates CFR bug and emit DORA telemetry to cloud sync pipeline](wu/WU-2315.yaml) — 2026-03-04
 - [WU-2320 — Import INIT-49 plan file into repo plans directory](wu/WU-2320.yaml) — 2026-03-05
+- [WU-2321 — Improve consumer docs: learning path, gap fills, cross-linking](wu/WU-2321.yaml) — 2026-03-05
