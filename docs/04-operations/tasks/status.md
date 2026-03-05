@@ -5,6 +5,7 @@ _Last updated: 2026-03-05_
 ## In Progress
 
 - [WU-2322 — Clean up orphaned docs directories and add redirects](wu/WU-2322.yaml)
+- [WU-2316 — Control-plane cost telemetry contract and local summary](wu/WU-2316.yaml)
 
 ## Completed
 
