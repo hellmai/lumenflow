@@ -4,7 +4,6 @@ _Last updated: 2026-03-05_
 
 ## In Progress
 
-- [WU-2325 — Detect lane drift between workspace lanes and inference taxonomy](wu/WU-2325.yaml)
 - [WU-2326 — Make workspace.yaml authoritative for lane existence and sub-lane validation](wu/WU-2326.yaml)
 
 ## Completed
@@ -1246,3 +1245,4 @@ _Last updated: 2026-03-05_
 - [WU-2317 — Heartbeat contract extensions for scheduling and liveness](wu/WU-2317.yaml) — 2026-03-05
 - [WU-2318 — Standardize agent identity metadata in session contracts](wu/WU-2318.yaml) — 2026-03-05
 - [WU-2319 — Approval contract adapters and CLI wrappers](wu/WU-2319.yaml) — 2026-03-05
+- [WU-2325 — Detect lane drift between workspace lanes and inference taxonomy](wu/WU-2325.yaml) — 2026-03-05
