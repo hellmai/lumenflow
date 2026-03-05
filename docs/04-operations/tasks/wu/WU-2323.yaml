@@ -2,7 +2,7 @@ id: WU-2323
 title: Add --from flag to plan:create for importing external plan files
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-05
 code_paths:
@@ -49,3 +49,6 @@ acceptance:
   - plan:create without --from still generates blank template (backward compatible)
   - --from validates source file exists and is .md
   - 'Unit tests cover --from path: content copy, missing file error, non-.md rejection'
+locked: true
+completed_at: 2026-03-05T10:25:32.247Z
+completed: 2026-03-05

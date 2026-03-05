@@ -31,7 +31,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2323 — Add --from flag to plan:create for importing external plan files](wu/WU-2323.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1269,6 +1269,7 @@ sections:
 - [WU-2315 — Fix skip-gates CFR bug and emit DORA telemetry to cloud sync pipeline](wu/WU-2315.yaml)
 - [WU-2320 — Import INIT-49 plan file into repo plans directory](wu/WU-2320.yaml)
 - [WU-2321 — Improve consumer docs: learning path, gap fills, cross-linking](wu/WU-2321.yaml)
+- [WU-2323 — Add --from flag to plan:create for importing external plan files](wu/WU-2323.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
