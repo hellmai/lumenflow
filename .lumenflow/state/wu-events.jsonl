@@ -2832,3 +2832,5 @@
 {"type":"claim","wuId":"WU-2319","timestamp":"2026-03-05T10:37:42.063Z","lane":"Framework: CLI WU Commands","title":"Approval contract adapters and CLI wrappers"}
 {"type":"checkpoint","wuId":"WU-2324","timestamp":"2026-03-05T10:37:53.907Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2324.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2324","timestamp":"2026-03-05T10:38:10.064Z"}
+{"type":"checkpoint","wuId":"WU-2316","timestamp":"2026-03-05T10:54:12.215Z","note":"[wu:done] force ownership override claimed_session=387ddb32-5de1-47d4-82d4-5dcd79d983b3 active_session=none","progress":"wu:done ownership override","nextSteps":"orphan recovery: same operator continuing claimed WU after session metadata mismatch"}
+{"type":"complete","wuId":"WU-2316","timestamp":"2026-03-05T10:54:18.004Z"}

@@ -15,7 +15,7 @@ phases:
     status: in_progress
   - id: 2
     title: 'Phase 2: Agent identity metadata + approval wrappers'
-    status: pending
+    status: in_progress
 success_metrics:
   - Cost telemetry schema and costs NDJSON source are live and documented
   - Heartbeat extensions are additive and verified with compatibility tests
