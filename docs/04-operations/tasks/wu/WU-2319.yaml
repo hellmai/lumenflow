@@ -2,7 +2,7 @@ id: WU-2319
 title: Approval contract adapters and CLI wrappers
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-05
 code_paths:
@@ -72,3 +72,6 @@ session_id: 387ddb32-5de1-47d4-82d4-5dcd79d983b3
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-05T10:37:42.042Z
+locked: true
+completed_at: 2026-03-05T11:26:39.629Z
+completed: 2026-03-05
