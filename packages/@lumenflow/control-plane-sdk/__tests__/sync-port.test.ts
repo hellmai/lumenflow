@@ -31,8 +31,18 @@ describe('control-plane sdk sync port', () => {
     const heartbeat = await port.heartbeat({
       workspace_id: 'workspace-a',
       session_id: 'session-1',
+      agent_id: 'agent-1',
+      health: {
+        busy: false,
+      },
     });
     expect(heartbeat.status).toBe('ok');
+    expect(heartbeat.next_heartbeat_ms).toBe(30_000);
+    expect(heartbeat.assignment).toEqual(
+      expect.objectContaining({
+        action: 'claim',
+      }),
+    );
 
     const policies = await port.pullPolicies({ workspace_id: 'workspace-a' });
     expect(policies).toBeDefined();

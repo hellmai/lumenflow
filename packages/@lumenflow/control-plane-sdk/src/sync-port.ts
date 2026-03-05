@@ -122,6 +122,9 @@ export interface AuthenticateInput {
 export interface HeartbeatInput {
   workspace_id: string;
   session_id: string;
+  agent_id?: string;
+  wu_id?: string;
+  health?: HeartbeatHealth;
 }
 
 export interface AcceptedCount {
@@ -135,9 +138,25 @@ export interface ControlPlaneIdentity {
   token: string;
 }
 
+export interface HeartbeatHealth {
+  busy?: boolean;
+  stalled?: boolean;
+  last_progress_at?: string;
+}
+
+export interface HeartbeatAssignment {
+  wu_id: string;
+  action: 'claim' | 'continue' | 'abort';
+  hint?: string;
+}
+
 export interface HeartbeatResult {
   status: 'ok';
   server_time: string;
+  next_heartbeat_ms?: number;
+  assignment?: HeartbeatAssignment;
+  budget_remaining_usd?: number;
+  coalesced_signals?: number;
 }
 
 export interface ControlPlaneSyncPort {

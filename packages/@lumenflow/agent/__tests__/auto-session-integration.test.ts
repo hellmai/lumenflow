@@ -14,7 +14,9 @@ import {
   startSessionForWU,
   endSessionForWU,
   getCurrentSessionForWU,
+  heartbeatSessionForWU,
 } from '../src/auto-session-integration.js';
+import { HeartbeatManager } from '../src/agent-heartbeat.js';
 
 // Test directories
 const TEST_SESSION_DIR = '.lumenflow/sessions-test';
@@ -309,6 +311,151 @@ describe('Auto-Session Integration', () => {
           },
         }),
       ).not.toThrow();
+    });
+  });
+
+  describe('heartbeat session integration (WU-2317)', () => {
+    it('returns no_active_session when no session exists', async () => {
+      const result = await heartbeatSessionForWU({
+        sessionDir: TEST_SESSION_DIR,
+      });
+
+      expect(result).toEqual({
+        sent: false,
+        reason: 'no_active_session',
+      });
+    });
+
+    it('sends heartbeat with extended payload fields when configured', async () => {
+      writeControlPlaneWorkspaceConfig();
+      await startSessionForWU({
+        wuId: 'WU-2317',
+        tier: 2,
+        sessionDir: TEST_SESSION_DIR,
+      });
+
+      const heartbeat = vi.fn().mockResolvedValue({
+        status: 'ok',
+        server_time: '2026-03-05T00:00:00.000Z',
+        next_heartbeat_ms: 15_000,
+        coalesced_signals: 0,
+      });
+
+      const result = await heartbeatSessionForWU({
+        sessionDir: TEST_SESSION_DIR,
+        workspaceRoot: TEST_WORKSPACE_DIR,
+        environment: {
+          [CONTROL_PLANE_TOKEN_ENV]: 'token-value',
+        } as NodeJS.ProcessEnv,
+        controlPlaneSyncPort: {
+          registerSession: vi.fn().mockResolvedValue(undefined),
+          deregisterSession: vi.fn().mockResolvedValue(undefined),
+          heartbeat,
+        },
+        health: {
+          busy: false,
+          stalled: false,
+          last_progress_at: '2026-03-05T00:00:00.000Z',
+        },
+      });
+
+      expect(result.sent).toBe(true);
+      expect(result.heartbeat?.next_heartbeat_ms).toBe(15_000);
+      expect(heartbeat).toHaveBeenCalledTimes(1);
+      expect(heartbeat).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspace_id: 'ws-test',
+          wu_id: 'WU-2317',
+          health: expect.objectContaining({
+            busy: false,
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('heartbeat manager coalescing and backoff (WU-2317)', () => {
+    it('coalesces concurrent heartbeats into one follow-up call', async () => {
+      let resolveFirst: ((value: {
+        status: 'ok';
+        server_time: string;
+      }) => void) | null = null;
+
+      const heartbeat = vi
+        .fn()
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveFirst = resolve;
+            }),
+        )
+        .mockResolvedValueOnce({
+          status: 'ok',
+          server_time: '2026-03-05T00:00:01.000Z',
+        });
+
+      const manager = new HeartbeatManager(
+        {
+          heartbeat,
+        },
+        {
+          sleepFn: async () => undefined,
+        },
+      );
+
+      const first = manager.heartbeat({
+        workspace_id: 'ws-test',
+        session_id: 'session-1',
+      });
+      const second = manager.heartbeat({
+        workspace_id: 'ws-test',
+        session_id: 'session-1',
+        health: { busy: false },
+      });
+
+      resolveFirst?.({
+        status: 'ok',
+        server_time: '2026-03-05T00:00:00.000Z',
+      });
+
+      const firstResult = await first;
+      const secondResult = await second;
+
+      expect(heartbeat).toHaveBeenCalledTimes(2);
+      expect(firstResult.coalesced_signals).toBe(1);
+      expect(secondResult.coalesced_signals).toBe(1);
+    });
+
+    it('retries heartbeat with backoff after transient failures', async () => {
+      const heartbeat = vi
+        .fn()
+        .mockRejectedValueOnce(new Error('network down'))
+        .mockResolvedValueOnce({
+          status: 'ok',
+          server_time: '2026-03-05T00:00:00.000Z',
+          next_heartbeat_ms: 30_000,
+        });
+      const sleepFn = vi.fn(async () => undefined);
+
+      const manager = new HeartbeatManager(
+        {
+          heartbeat,
+        },
+        {
+          baseBackoffMs: 100,
+          maxBackoffMs: 1000,
+          sleepFn,
+        },
+      );
+
+      const result = await manager.heartbeat({
+        workspace_id: 'ws-test',
+        session_id: 'session-1',
+      });
+
+      expect(heartbeat).toHaveBeenCalledTimes(2);
+      expect(sleepFn).toHaveBeenCalledWith(100);
+      expect(result.next_heartbeat_ms).toBe(30_000);
     });
   });
 

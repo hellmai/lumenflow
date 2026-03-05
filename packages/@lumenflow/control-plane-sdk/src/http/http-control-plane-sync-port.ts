@@ -70,6 +70,14 @@ function describeError(error: unknown): string {
   return asError(error).message;
 }
 
+function asFiniteNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function asNonEmptyString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
 function cloneControlPlaneConfig(config: WorkspaceControlPlaneConfig): WorkspaceControlPlaneConfig {
   return {
     ...config,
@@ -178,7 +186,32 @@ export class HttpControlPlaneSyncPort implements ControlPlaneSyncPort {
 
   public async heartbeat(input: HeartbeatInput): Promise<HeartbeatResult> {
     try {
-      return await this.postJson<HeartbeatResult>(API_PATH.HEARTBEAT, input);
+      const response = (await this.postJson<HeartbeatResult>(
+        API_PATH.HEARTBEAT,
+        input,
+      )) as HeartbeatResult;
+      const normalized: HeartbeatResult = {
+        status: response.status ?? 'ok',
+        server_time: asNonEmptyString(response.server_time) ?? new Date().toISOString(),
+      };
+
+      const nextHeartbeatMs = asFiniteNumber(response.next_heartbeat_ms);
+      if (nextHeartbeatMs !== undefined) {
+        normalized.next_heartbeat_ms = nextHeartbeatMs;
+      }
+      if (response.assignment) {
+        normalized.assignment = response.assignment;
+      }
+      const budgetRemainingUsd = asFiniteNumber(response.budget_remaining_usd);
+      if (budgetRemainingUsd !== undefined) {
+        normalized.budget_remaining_usd = budgetRemainingUsd;
+      }
+      const coalescedSignals = asFiniteNumber(response.coalesced_signals);
+      if (coalescedSignals !== undefined) {
+        normalized.coalesced_signals = coalescedSignals;
+      }
+
+      return normalized;
     } catch (error) {
       this.warnFailure('heartbeat', error);
       throw error;

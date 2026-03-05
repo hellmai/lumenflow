@@ -134,6 +134,37 @@ pnpm cost:summary
 pnpm cost:summary --json
 ```
 
+### Control-Plane Heartbeats
+
+```typescript
+import type { HeartbeatInput, HeartbeatResult } from '@lumenflow/control-plane-sdk';
+
+const heartbeatRequest: HeartbeatInput = {
+  workspace_id: 'workspace-a',
+  session_id: 'session-a',
+  agent_id: 'agent-1',
+  wu_id: 'WU-2317',
+  health: {
+    busy: false,
+    stalled: false,
+    last_progress_at: new Date().toISOString(),
+  },
+};
+
+const heartbeatResponse: HeartbeatResult = {
+  status: 'ok',
+  server_time: new Date().toISOString(),
+  next_heartbeat_ms: 30000,
+  assignment: {
+    wu_id: 'WU-2317',
+    action: 'continue',
+    hint: 'server-directed cadence',
+  },
+  budget_remaining_usd: 42.5,
+  coalesced_signals: 2,
+};
+```
+
 ### Context Validation
 
 ```typescript

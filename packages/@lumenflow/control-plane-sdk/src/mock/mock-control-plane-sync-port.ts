@@ -123,10 +123,29 @@ export class MockControlPlaneSyncPort implements ControlPlaneSyncPort {
     };
   }
 
-  public async heartbeat(_input: HeartbeatInput): Promise<HeartbeatResult> {
+  public async heartbeat(input: HeartbeatInput): Promise<HeartbeatResult> {
+    let assignment: HeartbeatResult['assignment'];
+
+    if (input.health?.stalled && input.wu_id) {
+      assignment = {
+        wu_id: input.wu_id,
+        action: 'abort',
+        hint: 'agent reported stalled heartbeat',
+      };
+    } else if (input.health?.busy === false && !input.wu_id) {
+      assignment = {
+        wu_id: 'mock-wu-assignment',
+        action: 'claim',
+        hint: 'mock assignment for idle agent',
+      };
+    }
+
     return {
       status: 'ok',
       server_time: new Date().toISOString(),
+      next_heartbeat_ms: DEFAULT_SYNC_INTERVAL_SECONDS * 1000,
+      ...(assignment ? { assignment } : {}),
+      coalesced_signals: 0,
     };
   }
 

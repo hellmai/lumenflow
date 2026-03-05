@@ -52,7 +52,17 @@ const REQUEST_INPUTS = {
     agent_id: 'agent-test',
     token_hint: 'hint',
   },
-  heartbeat: { workspace_id: 'workspace-a', session_id: 'session-a' },
+  heartbeat: {
+    workspace_id: 'workspace-a',
+    session_id: 'session-a',
+    agent_id: 'agent-test',
+    wu_id: 'WU-2317',
+    health: {
+      busy: false,
+      stalled: false,
+      last_progress_at: '2026-02-25T00:00:00.000Z',
+    },
+  },
 } as const;
 
 const ENDPOINTS = {
@@ -77,7 +87,18 @@ const SUCCESS_RESPONSES = {
     agent_id: 'agent-test',
     token: 'server-token',
   },
-  heartbeat: { status: 'ok', server_time: '2026-02-25T00:00:01.000Z' },
+  heartbeat: {
+    status: 'ok',
+    server_time: '2026-02-25T00:00:01.000Z',
+    next_heartbeat_ms: 30_000,
+    assignment: {
+      wu_id: 'WU-2317',
+      action: 'continue',
+      hint: 'keep processing',
+    },
+    budget_remaining_usd: 42.5,
+    coalesced_signals: 2,
+  },
 } as const;
 
 const FALLBACK_RESULTS = {
@@ -281,6 +302,25 @@ describe('HttpControlPlaneSyncPort', () => {
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining(methodName));
     },
   );
+
+  it('keeps heartbeat backward compatible when server returns only status + server_time', async () => {
+    const fetchFn = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        createJsonResponse({ status: 'ok', server_time: '2026-02-25T00:00:01.000Z' }),
+      );
+
+    const port = createPort({ fetchFn });
+    const result = await port.heartbeat({
+      workspace_id: 'workspace-a',
+      session_id: 'session-a',
+    });
+
+    expect(result).toEqual({
+      status: 'ok',
+      server_time: '2026-02-25T00:00:01.000Z',
+    });
+  });
 
   it('factory creates an HttpControlPlaneSyncPort with logger wiring', async () => {
     const fetchFn = vi

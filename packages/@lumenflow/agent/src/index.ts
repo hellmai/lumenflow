@@ -7,6 +7,7 @@
  */
 
 export * from './agent-incidents.js';
+export * from './agent-heartbeat.js';
 export * from './agent-session.js';
 export * from './agent-verification.js';
 export * from './auto-session-integration.js';

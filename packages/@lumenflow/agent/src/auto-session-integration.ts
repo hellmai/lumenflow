@@ -18,14 +18,21 @@
 import { randomUUID } from 'crypto';
 import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { startSession as startMemorySession } from '@lumenflow/memory/start';
+import { startSession as startMemorySession } from '@lumenflow/memory';
 import { CONFIG_FILES, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
+import {
+  HeartbeatManager,
+  type AgentHeartbeatInput,
+  type AgentHeartbeatResult,
+  type HeartbeatHealth,
+} from './agent-heartbeat.js';
 
 const SESSION_FILENAME = 'current.json';
 const WORKSPACE_CONFIG_FILE = CONFIG_FILES.WORKSPACE_CONFIG;
 const CONTROL_PLANE_REGISTER_PATH = '/api/v1/sessions/register';
 const CONTROL_PLANE_DEREGISTER_PATH = '/api/v1/sessions/deregister';
+const CONTROL_PLANE_HEARTBEAT_PATH = '/api/v1/heartbeat';
 
 // Default context tier for auto-started sessions
 const DEFAULT_TIER: 1 | 2 | 3 = 2;
@@ -76,6 +83,7 @@ interface DeregisterSessionInput {
 interface ControlPlaneSessionSyncPort {
   registerSession(input: RegisterSessionInput): Promise<unknown>;
   deregisterSession(input: DeregisterSessionInput): Promise<unknown>;
+  heartbeat?(input: AgentHeartbeatInput): Promise<AgentHeartbeatResult>;
 }
 
 interface ResolvedControlPlaneSyncConfig {
@@ -167,6 +175,57 @@ async function postControlPlaneSessionHook(
   }
 }
 
+function asFiniteNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function normalizeHeartbeatResult(
+  raw: AgentHeartbeatResult | Record<string, unknown>,
+): AgentHeartbeatResult {
+  return {
+    status: 'ok',
+    server_time:
+      typeof raw.server_time === 'string' && raw.server_time.length > 0
+        ? raw.server_time
+        : new Date().toISOString(),
+    ...(asFiniteNumber(raw.next_heartbeat_ms) !== undefined
+      ? { next_heartbeat_ms: asFiniteNumber(raw.next_heartbeat_ms) }
+      : {}),
+    ...(asFiniteNumber(raw.budget_remaining_usd) !== undefined
+      ? { budget_remaining_usd: asFiniteNumber(raw.budget_remaining_usd) }
+      : {}),
+    ...(asFiniteNumber(raw.coalesced_signals) !== undefined
+      ? { coalesced_signals: asFiniteNumber(raw.coalesced_signals) }
+      : {}),
+    ...(typeof raw.assignment === 'object' && raw.assignment !== null
+      ? { assignment: raw.assignment as AgentHeartbeatResult['assignment'] }
+      : {}),
+  };
+}
+
+async function postControlPlaneHeartbeat(
+  endpoint: string,
+  token: string,
+  payload: AgentHeartbeatInput,
+  fetchFn: typeof fetch,
+): Promise<AgentHeartbeatResult> {
+  const response = await fetchFn(`${endpoint}${CONTROL_PLANE_HEARTBEAT_PATH}`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${token}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const raw = (await response.json().catch(() => ({}))) as AgentHeartbeatResult;
+  return normalizeHeartbeatResult(raw);
+}
+
 /**
  * Get the session file path for a given session directory
  * @param sessionDir - Session directory path
@@ -199,6 +258,22 @@ interface StartSessionResult {
   sessionId: string;
   alreadyActive?: boolean;
   memoryNodeId?: string | null;
+}
+
+interface HeartbeatSessionOptions {
+  sessionDir?: string;
+  workspaceRoot?: string;
+  environment?: NodeJS.ProcessEnv;
+  controlPlaneSyncPort?: ControlPlaneSessionSyncPort;
+  heartbeatManager?: HeartbeatManager;
+  fetchFn?: typeof fetch;
+  health?: HeartbeatHealth;
+}
+
+interface HeartbeatSessionResult {
+  sent: boolean;
+  reason?: 'no_active_session' | 'control_plane_unavailable';
+  heartbeat?: AgentHeartbeatResult;
 }
 
 /**
@@ -310,6 +385,70 @@ export async function startSessionForWU(options: StartSessionOptions): Promise<S
     sessionId,
     alreadyActive: false,
     memoryNodeId,
+  };
+}
+
+/**
+ * Send a control-plane heartbeat for the active WU session.
+ *
+ * This is fail-open for local workflows: if no active session or no control-plane config
+ * is present, no heartbeat is sent and a structured reason is returned.
+ */
+export async function heartbeatSessionForWU(
+  options: HeartbeatSessionOptions = {},
+): Promise<HeartbeatSessionResult> {
+  const {
+    sessionDir,
+    workspaceRoot = process.cwd(),
+    environment = process.env,
+    controlPlaneSyncPort,
+    heartbeatManager,
+    fetchFn = fetch,
+    health,
+  } = options;
+
+  const currentSession = getCurrentSessionForWU({ sessionDir });
+  if (!currentSession) {
+    return {
+      sent: false,
+      reason: 'no_active_session',
+    };
+  }
+
+  const controlPlaneConfig = resolveControlPlaneSessionSyncConfig(workspaceRoot, environment);
+  if (!controlPlaneConfig) {
+    return {
+      sent: false,
+      reason: 'control_plane_unavailable',
+    };
+  }
+
+  const heartbeatPort = controlPlaneSyncPort?.heartbeat
+    ? {
+        heartbeat: controlPlaneSyncPort.heartbeat.bind(controlPlaneSyncPort),
+      }
+    : {
+        heartbeat: async (input: AgentHeartbeatInput): Promise<AgentHeartbeatResult> =>
+          postControlPlaneHeartbeat(
+            controlPlaneConfig.endpoint,
+            controlPlaneConfig.token,
+            input,
+            fetchFn,
+          ),
+      };
+
+  const manager = heartbeatManager ?? new HeartbeatManager(heartbeatPort);
+  const heartbeat = await manager.heartbeat({
+    workspace_id: controlPlaneConfig.workspaceId,
+    session_id: currentSession.session_id,
+    agent_id: currentSession.agent_type,
+    wu_id: currentSession.wu_id,
+    ...(health ? { health } : {}),
+  });
+
+  return {
+    sent: true,
+    heartbeat,
   };
 }
 
