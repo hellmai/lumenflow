@@ -32,7 +32,14 @@ export interface PullSignalsResult {
   next_cursor?: string;
 }
 
-export type SessionMetadataValue = string | number | boolean;
+export type SessionMetadataValue = string | number | boolean | string[];
+
+export interface StandardSessionMetadata {
+  client_type?: string;
+  capabilities?: string[];
+  agent_version?: string;
+  host_id?: string;
+}
 
 export interface RegisterSessionInput {
   workspace_id: string;
@@ -41,6 +48,10 @@ export interface RegisterSessionInput {
   started_at: string;
   lane?: string;
   wu_id?: string;
+  client_type?: string;
+  capabilities?: string[];
+  agent_version?: string;
+  host_id?: string;
   metadata?: Record<string, SessionMetadataValue>;
 }
 
@@ -64,6 +75,10 @@ export interface SessionSummary {
   started_at: string;
   lane?: string;
   wu_id?: string;
+  client_type?: string;
+  capabilities?: string[];
+  agent_version?: string;
+  host_id?: string;
   active: boolean;
   last_heartbeat_at?: string;
   metadata?: Record<string, SessionMetadataValue>;

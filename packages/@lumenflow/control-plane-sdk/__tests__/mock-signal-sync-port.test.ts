@@ -57,6 +57,10 @@ describe('mock signal sync port', () => {
       started_at: '2026-03-01T00:00:00.000Z',
       lane: 'Framework: Core Lifecycle',
       wu_id: 'WU-2151',
+      client_type: 'claude-code',
+      capabilities: ['session_lifecycle', 'heartbeat'],
+      agent_version: '3.10.0',
+      host_id: 'host-a',
     });
     await port.registerSession({
       workspace_id: 'ws-1',
@@ -65,6 +69,12 @@ describe('mock signal sync port', () => {
       started_at: '2026-03-01T00:00:30.000Z',
       lane: 'Framework: Core Lifecycle',
       wu_id: 'WU-2151',
+      metadata: {
+        client_type: 'codex-cli',
+        capabilities: ['session_lifecycle'],
+        agent_version: '3.9.9',
+        host_id: 'host-b',
+      },
     });
 
     const activeOnly = await port.listSessions({
@@ -72,6 +82,30 @@ describe('mock signal sync port', () => {
       lane: 'Framework: Core Lifecycle',
     });
     expect(activeOnly.sessions).toHaveLength(2);
+    expect(activeOnly.sessions[0]).toMatchObject({
+      client_type: 'claude-code',
+      capabilities: ['session_lifecycle', 'heartbeat'],
+      agent_version: '3.10.0',
+      host_id: 'host-a',
+      metadata: {
+        client_type: 'claude-code',
+        capabilities: ['session_lifecycle', 'heartbeat'],
+        agent_version: '3.10.0',
+        host_id: 'host-a',
+      },
+    });
+    expect(activeOnly.sessions[1]).toMatchObject({
+      client_type: 'codex-cli',
+      capabilities: ['session_lifecycle'],
+      agent_version: '3.9.9',
+      host_id: 'host-b',
+      metadata: {
+        client_type: 'codex-cli',
+        capabilities: ['session_lifecycle'],
+        agent_version: '3.9.9',
+        host_id: 'host-b',
+      },
+    });
 
     const result = await port.deregisterSession({
       workspace_id: 'ws-1',

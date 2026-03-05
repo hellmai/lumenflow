@@ -39,6 +39,13 @@ const DEFAULT_TIER: 1 | 2 | 3 = 2;
 
 // Agent type for auto-started sessions
 const DEFAULT_AGENT_TYPE = 'claude-code';
+const DEFAULT_AGENT_VERSION = 'unknown';
+const DEFAULT_HOST_ID = 'unknown';
+const DEFAULT_AGENT_CAPABILITIES = ['session_lifecycle', 'heartbeat'] as const;
+const AGENT_CAPABILITIES_ENV = 'LUMENFLOW_AGENT_CAPABILITIES';
+const AGENT_VERSION_ENV = 'LUMENFLOW_AGENT_VERSION';
+
+type SessionMetadataValue = string | number | boolean | string[];
 
 /**
  * Map numeric tier values to string names for memory layer (WU-1466)
@@ -71,6 +78,11 @@ interface RegisterSessionInput {
   started_at: string;
   lane?: string;
   wu_id?: string;
+  client_type?: string;
+  capabilities?: string[];
+  agent_version?: string;
+  host_id?: string;
+  metadata?: Record<string, SessionMetadataValue>;
 }
 
 interface DeregisterSessionInput {
@@ -100,6 +112,18 @@ interface WorkspaceControlPlaneDocument {
       token_env?: unknown;
     };
   };
+}
+
+function parseCapabilities(rawValue: string | null): string[] {
+  if (!rawValue) {
+    return [...DEFAULT_AGENT_CAPABILITIES];
+  }
+
+  const parsed = rawValue
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+  return parsed.length > 0 ? parsed : [...DEFAULT_AGENT_CAPABILITIES];
 }
 
 function asNonEmptyString(value: unknown): string | null {
@@ -151,6 +175,41 @@ function resolveControlPlaneSessionSyncConfig(
     workspaceId,
     endpoint: normalizeEndpoint(endpoint),
     token,
+  };
+}
+
+function resolveStandardSessionMetadata(input: {
+  agentType: string;
+  environment: NodeJS.ProcessEnv;
+}): {
+  client_type: string;
+  capabilities: string[];
+  agent_version: string;
+  host_id: string;
+  metadata: Record<string, SessionMetadataValue>;
+} {
+  const clientType = input.agentType;
+  const capabilities = parseCapabilities(
+    asNonEmptyString(input.environment[AGENT_CAPABILITIES_ENV]),
+  );
+  const agentVersion =
+    asNonEmptyString(input.environment[AGENT_VERSION_ENV]) ?? DEFAULT_AGENT_VERSION;
+  const hostId =
+    asNonEmptyString(input.environment.HOSTNAME) ??
+    asNonEmptyString(input.environment.COMPUTERNAME) ??
+    DEFAULT_HOST_ID;
+
+  return {
+    client_type: clientType,
+    capabilities,
+    agent_version: agentVersion,
+    host_id: hostId,
+    metadata: {
+      client_type: clientType,
+      capabilities,
+      agent_version: agentVersion,
+      host_id: hostId,
+    },
   };
 }
 
@@ -355,6 +414,10 @@ export async function startSessionForWU(options: StartSessionOptions): Promise<S
   // Fail-open by design: session lifecycle must not be blocked by remote errors.
   const controlPlaneConfig = resolveControlPlaneSessionSyncConfig(workspaceRoot, environment);
   if (controlPlaneConfig) {
+    const standardizedMetadata = resolveStandardSessionMetadata({
+      agentType,
+      environment,
+    });
     const registerInput: RegisterSessionInput = {
       workspace_id: controlPlaneConfig.workspaceId,
       session_id: sessionId,
@@ -362,6 +425,11 @@ export async function startSessionForWU(options: StartSessionOptions): Promise<S
       started_at: session.started,
       lane,
       wu_id: wuId,
+      client_type: standardizedMetadata.client_type,
+      capabilities: standardizedMetadata.capabilities,
+      agent_version: standardizedMetadata.agent_version,
+      host_id: standardizedMetadata.host_id,
+      metadata: standardizedMetadata.metadata,
     };
 
     try {

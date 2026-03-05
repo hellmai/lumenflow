@@ -201,6 +201,51 @@ describe('Auto-Session Integration', () => {
           agent_id: 'claude-code',
           lane: 'Framework: Agent',
           wu_id: 'WU-2153',
+          client_type: 'claude-code',
+          capabilities: expect.arrayContaining(['session_lifecycle', 'heartbeat']),
+          agent_version: 'unknown',
+          host_id: 'unknown',
+          metadata: expect.objectContaining({
+            client_type: 'claude-code',
+            capabilities: expect.arrayContaining(['session_lifecycle', 'heartbeat']),
+            agent_version: 'unknown',
+            host_id: 'unknown',
+          }),
+        }),
+      );
+    });
+
+    it('allows environment overrides for standardized metadata fields', async () => {
+      writeControlPlaneWorkspaceConfig();
+      const registerSession = vi.fn().mockResolvedValue(undefined);
+
+      await startSessionForWU({
+        wuId: 'WU-2153',
+        lane: 'Framework: Agent',
+        sessionDir: TEST_SESSION_DIR,
+        workspaceRoot: TEST_WORKSPACE_DIR,
+        environment: {
+          [CONTROL_PLANE_TOKEN_ENV]: 'token-value',
+          LUMENFLOW_AGENT_CAPABILITIES: 'heartbeat,dispatch',
+          LUMENFLOW_AGENT_VERSION: '3.10.0',
+          HOSTNAME: 'host-01',
+        } as NodeJS.ProcessEnv,
+        controlPlaneSyncPort: {
+          registerSession,
+          deregisterSession: vi.fn().mockResolvedValue(undefined),
+        },
+      });
+
+      expect(registerSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          capabilities: ['heartbeat', 'dispatch'],
+          agent_version: '3.10.0',
+          host_id: 'host-01',
+          metadata: expect.objectContaining({
+            capabilities: ['heartbeat', 'dispatch'],
+            agent_version: '3.10.0',
+            host_id: 'host-01',
+          }),
         }),
       );
     });

@@ -16,7 +16,8 @@ tests:
     - Run existing session lifecycle commands to confirm backward-compatible behavior.
   unit:
     - packages/@lumenflow/control-plane-sdk/__tests__/mock-signal-sync-port.test.ts
-    - packages/@lumenflow/agent/src/__tests__/auto-session-integration.test.ts
+    - packages/@lumenflow/agent/__tests__/auto-session-integration.test.ts
+    - packages/@lumenflow/agent/__tests__/agent-session.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2318.done

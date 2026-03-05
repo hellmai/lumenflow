@@ -11,6 +11,27 @@ import { createError, ErrorCodes } from '@lumenflow/core/error-handler';
 
 const SESSION_DIR = LUMENFLOW_PATHS.SESSIONS;
 const SESSION_FILE = join(SESSION_DIR, 'current.json');
+const DEFAULT_AGENT_VERSION = 'unknown';
+const DEFAULT_HOST_ID = 'unknown';
+const DEFAULT_AGENT_CAPABILITIES = ['session_lifecycle', 'incident_logging'] as const;
+const AGENT_CAPABILITIES_ENV = 'LUMENFLOW_AGENT_CAPABILITIES';
+const AGENT_VERSION_ENV = 'LUMENFLOW_AGENT_VERSION';
+
+function asNonEmptyString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+function parseCapabilities(rawValue: string | undefined): string[] {
+  if (!rawValue) {
+    return [...DEFAULT_AGENT_CAPABILITIES];
+  }
+
+  const parsed = rawValue
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+  return parsed.length > 0 ? parsed : [...DEFAULT_AGENT_CAPABILITIES];
+}
 
 /**
  * Session data structure
@@ -22,9 +43,25 @@ interface SessionData {
   started: string;
   completed?: string;
   agent_type: string;
+  client_type: string;
+  capabilities: string[];
+  agent_version: string;
+  host_id: string;
   context_tier: number;
   incidents_logged: number;
   incidents_major: number;
+}
+
+function normalizeSessionData(session: SessionData): SessionData {
+  return {
+    ...session,
+    client_type: session.client_type ?? session.agent_type,
+    capabilities: Array.isArray(session.capabilities)
+      ? session.capabilities.filter((entry): entry is string => typeof entry === 'string')
+      : [...DEFAULT_AGENT_CAPABILITIES],
+    agent_version: session.agent_version ?? DEFAULT_AGENT_VERSION,
+    host_id: session.host_id ?? DEFAULT_HOST_ID,
+  };
 }
 
 /**
@@ -88,12 +125,22 @@ export async function startSession(
   }
 
   const sessionId = randomUUID();
+  const capabilities = parseCapabilities(asNonEmptyString(process.env[AGENT_CAPABILITIES_ENV]));
+  const agentVersion = asNonEmptyString(process.env[AGENT_VERSION_ENV]) ?? DEFAULT_AGENT_VERSION;
+  const hostId =
+    asNonEmptyString(process.env.HOSTNAME) ??
+    asNonEmptyString(process.env.COMPUTERNAME) ??
+    DEFAULT_HOST_ID;
   const session: SessionData = {
     session_id: sessionId,
     wu_id: wuId,
     lane,
     started: new Date().toISOString(),
     agent_type: agentType,
+    client_type: agentType,
+    capabilities,
+    agent_version: agentVersion,
+    host_id: hostId,
     context_tier: tier,
     incidents_logged: 0,
     incidents_major: 0,
@@ -121,7 +168,7 @@ export async function getCurrentSession(): Promise<SessionData | null> {
     .catch(() => false);
   if (!sessionExists) return null;
   const content = await readFile(SESSION_FILE, { encoding: 'utf-8' });
-  return JSON.parse(content) as SessionData;
+  return normalizeSessionData(JSON.parse(content) as SessionData);
 }
 
 /**
@@ -196,6 +243,10 @@ interface SessionSummary {
   started: string;
   completed: string;
   agent_type: string;
+  client_type: string;
+  capabilities: string[];
+  agent_version: string;
+  host_id: string;
   context_tier: number;
   incidents_logged: number;
   incidents_major: number;
@@ -226,6 +277,10 @@ export async function endSession(): Promise<SessionSummary> {
     started: session.started,
     completed: session.completed,
     agent_type: session.agent_type,
+    client_type: session.client_type,
+    capabilities: [...session.capabilities],
+    agent_version: session.agent_version,
+    host_id: session.host_id,
     context_tier: session.context_tier,
     incidents_logged: session.incidents_logged,
     incidents_major: session.incidents_major,

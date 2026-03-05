@@ -12,6 +12,7 @@ import type {
   PullSignalsResult,
   PushSignalsInput,
   RegisterSessionInput,
+  SessionMetadataValue,
   SessionSummary,
   SignalEntry,
   SignalSyncPort,
@@ -66,6 +67,72 @@ function sortMemoryRecords(records: MemoryRecord[]): MemoryRecord[] {
   });
 }
 
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((entry) => typeof entry === 'string');
+}
+
+function normalizeSessionMetadata(input: RegisterSessionInput): {
+  client_type?: string;
+  capabilities?: string[];
+  agent_version?: string;
+  host_id?: string;
+  metadata?: Record<string, SessionMetadataValue>;
+} {
+  const metadata: Record<string, SessionMetadataValue> = {
+    ...(input.metadata ?? {}),
+  };
+
+  if (typeof input.client_type === 'string') {
+    metadata.client_type = input.client_type;
+  }
+  if (Array.isArray(input.capabilities)) {
+    metadata.capabilities = [...input.capabilities];
+  }
+  if (typeof input.agent_version === 'string') {
+    metadata.agent_version = input.agent_version;
+  }
+  if (typeof input.host_id === 'string') {
+    metadata.host_id = input.host_id;
+  }
+
+  const clientType =
+    typeof metadata.client_type === 'string' && metadata.client_type.length > 0
+      ? metadata.client_type
+      : undefined;
+  const capabilities = isStringArray(metadata.capabilities)
+    ? [...metadata.capabilities]
+    : undefined;
+  const agentVersion =
+    typeof metadata.agent_version === 'string' && metadata.agent_version.length > 0
+      ? metadata.agent_version
+      : undefined;
+  const hostId =
+    typeof metadata.host_id === 'string' && metadata.host_id.length > 0
+      ? metadata.host_id
+      : undefined;
+
+  if (clientType) {
+    metadata.client_type = clientType;
+  }
+  if (capabilities) {
+    metadata.capabilities = capabilities;
+  }
+  if (agentVersion) {
+    metadata.agent_version = agentVersion;
+  }
+  if (hostId) {
+    metadata.host_id = hostId;
+  }
+
+  return {
+    client_type: clientType,
+    capabilities,
+    agent_version: agentVersion,
+    host_id: hostId,
+    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+  };
+}
+
 export class MockSignalSyncPort implements SignalSyncPort, MemorySyncPort {
   private readonly conflictKeys: Set<string>;
   private readonly now: () => string;
@@ -106,6 +173,7 @@ export class MockSignalSyncPort implements SignalSyncPort, MemorySyncPort {
 
   public async registerSession(input: RegisterSessionInput): Promise<SessionSummary> {
     const workspaceSessions = this.sessionsByWorkspace.get(input.workspace_id) ?? new Map();
+    const normalizedMetadata = normalizeSessionMetadata(input);
     const session: SessionSummary = {
       workspace_id: input.workspace_id,
       session_id: input.session_id,
@@ -113,7 +181,11 @@ export class MockSignalSyncPort implements SignalSyncPort, MemorySyncPort {
       started_at: input.started_at,
       lane: input.lane,
       wu_id: input.wu_id,
-      metadata: input.metadata ? { ...input.metadata } : undefined,
+      client_type: normalizedMetadata.client_type,
+      capabilities: normalizedMetadata.capabilities,
+      agent_version: normalizedMetadata.agent_version,
+      host_id: normalizedMetadata.host_id,
+      metadata: normalizedMetadata.metadata,
       active: true,
       last_heartbeat_at: this.now(),
     };
