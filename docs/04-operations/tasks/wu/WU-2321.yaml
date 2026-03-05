@@ -2,7 +2,7 @@ id: WU-2321
 title: 'Improve consumer docs: learning path, gap fills, cross-linking'
 lane: 'Content: Site Comms'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-05
 code_paths: []
@@ -29,7 +29,9 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Add learning path page, fill content gaps in team/solo/troubleshooting/cookbook/sizing/metrics docs, add Coming Soon badges to Wave 2 language guides, run cross-linking pass across pack-scoped docs.
+description: Add learning path page, fill content gaps in
+  team/solo/troubleshooting/cookbook/sizing/metrics docs, add Coming Soon badges to Wave 2 language
+  guides, run cross-linking pass across pack-scoped docs.
 acceptance:
   - Learning path page exists in Getting Started with beginner/intermediate/advanced/agent tracks
   - team-workflow.mdx has AI Agent Coordination section (wu:brief, wu:delegate)
@@ -38,3 +40,11 @@ acceptance:
   - cookbook.mdx has bug triage recipe with P0-P3 classification
   - Wave 2 language guides (Rust, Java, Ruby, PHP) have Coming Soon callouts
   - Cross-links are bidirectional across pack-scoped docs
+claimed_mode: worktree
+worktree_path: worktrees/content-site-comms-wu-2321
+claimed_at: 2026-03-05T10:15:38.585Z
+baseline_main_sha: 1a84099a5c93f2af1c8caa95f32d63809648c421
+session_id: 346cda58-690e-4b52-a8c9-16992d8b1a75
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-05T10:15:38.592Z
