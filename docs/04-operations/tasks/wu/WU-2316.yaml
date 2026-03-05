@@ -62,10 +62,6 @@ acceptance:
     quick-ref.
   - Documentation changes are made in source docs files (apps/docs/src/content/docs/** and
     docs/04-operations/**), not generated output artifacts.
-worktree_path: worktrees/framework-metrics-wu-2316
-claimed_at: 2026-03-05T10:30:41.923Z
-baseline_main_sha: 32c1cd7be54df99d9d8f0716d265b98196f3edf0
-session_id: e31f88c5-6bd4-4a45-8b72-d269ade05f1c
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-05T10:30:41.929Z
