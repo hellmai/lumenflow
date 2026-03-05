@@ -403,6 +403,7 @@ For the complete orchestration workflow (delegation, memory coordination, failur
 | `pnpm flow:report`      | Generate flow metrics report                           |
 | `pnpm flow:bottlenecks` | Identify flow bottlenecks                              |
 | `pnpm metrics:snapshot` | Capture metrics snapshot                               |
+| `pnpm cost:summary`     | Summarize local cost telemetry by model, agent, and WU |
 | `pnpm metrics`          | View workflow metrics                                  |
 | `pnpm strict:progress`  | Report strict TypeScript backlog and guard regressions |
 

@@ -16,10 +16,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   detectMisnestedControlPlane,
+  emitCostEvent,
   syncNdjsonTelemetryToCloud,
   type MisnestedControlPlaneWarning,
 } from '../telemetry.js';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -247,5 +248,127 @@ describe('WU-2184: Runtime diagnostics for misplaced config keys', () => {
 
       rmSync(testDir, { recursive: true, force: true });
     });
+  });
+});
+
+describe('WU-2316: Cost telemetry emission and sync', () => {
+  it('writes structured cost events to costs.ndjson', () => {
+    const previousCwd = process.cwd();
+    const testDir = path.join(tmpdir(), `telemetry-cost-emit-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      process.chdir(testDir);
+      emitCostEvent({
+        operation: 'llm.classification',
+        model: 'gpt-4o-mini',
+        input_tokens: 123,
+        output_tokens: 45,
+        cost_usd: 0.0123,
+        agent_id: 'agent-1',
+        session_id: 'session-1',
+        wu_id: 'WU-2316',
+      });
+
+      const costsPath = path.join(testDir, '.lumenflow', 'telemetry', 'costs.ndjson');
+      expect(existsSync(costsPath)).toBe(true);
+
+      const line = readFileSync(costsPath, 'utf-8').trim();
+      const parsed = JSON.parse(line) as Record<string, unknown>;
+      expect(parsed.source_type).toBe('cost');
+      expect(parsed.model).toBe('gpt-4o-mini');
+      expect(parsed.cost_usd).toBe(0.0123);
+      expect(parsed.input_tokens).toBe(123);
+      expect(parsed.output_tokens).toBe(45);
+      expect(parsed.wu_id).toBe('WU-2316');
+      expect(parsed.agent_id).toBe('agent-1');
+      expect(parsed.session_id).toBe('session-1');
+    } finally {
+      process.chdir(previousCwd);
+      rmSync(testDir, { recursive: true, force: true });
+    }
+  });
+
+  it('syncs cost telemetry source and tracks costs cursor offset', async () => {
+    const root = path.join(tmpdir(), `telemetry-cost-sync-${Date.now()}`);
+    mkdirSync(path.join(root, '.lumenflow', 'telemetry'), { recursive: true });
+
+    try {
+      writeFileSync(
+        path.join(root, 'workspace.yaml'),
+        [
+          'id: workspace-test',
+          'control_plane:',
+          '  endpoint: https://cloud.example.com',
+          '  sync_interval: 1',
+          '  auth:',
+          '    token_env: LUMENFLOW_CLOUD_TOKEN',
+        ].join('\n'),
+        'utf-8',
+      );
+
+      writeFileSync(path.join(root, '.lumenflow', 'telemetry', 'gates.ndjson'), '\n', 'utf-8');
+      writeFileSync(path.join(root, '.lumenflow', 'flow.log'), '\n', 'utf-8');
+      writeFileSync(path.join(root, '.lumenflow', 'telemetry', 'dora.ndjson'), '\n', 'utf-8');
+      writeFileSync(
+        path.join(root, '.lumenflow', 'telemetry', 'costs.ndjson'),
+        `${JSON.stringify({
+          timestamp: '2026-03-05T00:00:00.000Z',
+          source_type: 'cost',
+          operation: 'llm.classification',
+          model: 'gpt-4o-mini',
+          input_tokens: 100,
+          output_tokens: 50,
+          cost_usd: 0.02,
+          wu_id: 'WU-2316',
+          agent_id: 'agent-1',
+        })}\n`,
+        'utf-8',
+      );
+
+      const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(
+        new Response(JSON.stringify({ accepted: 1 }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+      );
+
+      const result = await syncNdjsonTelemetryToCloud({
+        workspaceRoot: root,
+        fetchFn,
+        now: () => 42_000,
+        environment: {
+          LUMENFLOW_CLOUD_TOKEN: 'test-token',
+        },
+      });
+
+      expect(result.recordsSent).toBe(1);
+      expect(fetchFn).toHaveBeenCalledTimes(1);
+
+      const body = JSON.parse(String(fetchFn.mock.calls[0]?.[1]?.body)) as {
+        records: Array<{ metric: string; value: number; tags?: Record<string, unknown> }>;
+      };
+      expect(body.records[0]?.metric).toBe('cost.usd');
+      expect(body.records[0]?.value).toBe(0.02);
+      expect(body.records[0]?.tags?.source).toBe('costs');
+      expect(body.records[0]?.tags?.source_type).toBe('cost');
+
+      const state = JSON.parse(
+        readFileSync(path.join(root, '.lumenflow', 'telemetry', 'cloud-sync-state.json'), 'utf-8'),
+      ) as {
+        files: {
+          costs: {
+            offset: number;
+          };
+        };
+      };
+      const costsSize = Buffer.byteLength(
+        readFileSync(path.join(root, '.lumenflow', 'telemetry', 'costs.ndjson'), 'utf-8'),
+        'utf8',
+      );
+      expect(state.files.costs.offset).toBe(costsSize);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

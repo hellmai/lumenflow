@@ -192,6 +192,46 @@ export interface LLMMetrics {
 }
 
 /**
+ * Cost telemetry event emitted for control-plane cost aggregation.
+ */
+export interface CostEvent {
+  timestamp: string;
+  sourceType: 'cost';
+  operation: string;
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: number;
+  wuId?: string;
+  agentId?: string;
+  sessionId?: string;
+}
+
+/**
+ * Grouped cost summary row.
+ */
+export interface CostSummaryRow {
+  key: string;
+  costUsd: number;
+  inputTokens: number;
+  outputTokens: number;
+  eventCount: number;
+}
+
+/**
+ * Aggregated cost summary.
+ */
+export interface CostSummary {
+  totalCostUsd: number;
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  eventCount: number;
+  byModel: CostSummaryRow[];
+  byAgent: CostSummaryRow[];
+  byWu: CostSummaryRow[];
+}
+
+/**
  * Flow report data structure
  */
 export interface FlowReportData {

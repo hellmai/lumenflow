@@ -92,6 +92,48 @@ if (issues.length > 0) {
 }
 ```
 
+### Cost Telemetry
+
+```typescript
+import { emitCostEvent, syncNdjsonTelemetryToCloud } from '@lumenflow/core/telemetry';
+import type { CostEvent, CostSummary } from '@lumenflow/metrics';
+
+const event: CostEvent = {
+  timestamp: new Date().toISOString(),
+  sourceType: 'cost',
+  operation: 'llm.classification',
+  model: 'gpt-4o-mini',
+  inputTokens: 1200,
+  outputTokens: 320,
+  costUsd: 0.0421,
+  wuId: 'WU-2316',
+  agentId: 'agent-1',
+  sessionId: 'session-abc',
+};
+
+emitCostEvent({
+  timestamp: event.timestamp,
+  operation: event.operation,
+  model: event.model,
+  input_tokens: event.inputTokens,
+  output_tokens: event.outputTokens,
+  cost_usd: event.costUsd,
+  wu_id: event.wuId,
+  agent_id: event.agentId,
+  session_id: event.sessionId,
+});
+
+// Later: include costs.ndjson alongside other telemetry sources in cloud sync
+await syncNdjsonTelemetryToCloud();
+```
+
+Local operator summary command:
+
+```bash
+pnpm cost:summary
+pnpm cost:summary --json
+```
+
 ### Context Validation
 
 ```typescript

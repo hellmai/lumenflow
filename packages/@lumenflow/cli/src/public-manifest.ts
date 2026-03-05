@@ -813,6 +813,13 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     category: COMMAND_CATEGORIES.METRICS_FLOW,
   },
   {
+    name: 'cost:summary',
+    binName: 'cost-summary',
+    binPath: './dist/cost-summary.js',
+    description: 'Summarize local cost telemetry',
+    category: COMMAND_CATEGORIES.METRICS_FLOW,
+  },
+  {
     name: 'metrics',
     binName: 'metrics',
     binPath: './dist/metrics-cli.js',

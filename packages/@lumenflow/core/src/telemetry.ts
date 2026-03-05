@@ -66,9 +66,23 @@ interface WUFlowEventData {
   [key: string]: unknown;
 }
 
+/** Cost event data */
+interface CostEventData {
+  timestamp?: string;
+  operation: string;
+  model: string;
+  input_tokens: number;
+  output_tokens: number;
+  cost_usd: number;
+  wu_id?: string;
+  agent_id?: string;
+  session_id?: string;
+}
+
 const TELEMETRY_DIR = LUMENFLOW_PATHS.TELEMETRY;
 const GATES_LOG = `${TELEMETRY_DIR}/gates${FILE_EXTENSIONS.NDJSON}`;
 const LLM_CLASSIFICATION_LOG = `${TELEMETRY_DIR}/llm-classification${FILE_EXTENSIONS.NDJSON}`;
+const COSTS_LOG = `${TELEMETRY_DIR}/costs${FILE_EXTENSIONS.NDJSON}`;
 const FLOW_LOG = LUMENFLOW_PATHS.FLOW_LOG;
 const DORA_LOG = `${TELEMETRY_DIR}/dora${FILE_EXTENSIONS.NDJSON}`;
 const WORKSPACE_FILE = CONFIG_FILES.WORKSPACE_CONFIG;
@@ -103,14 +117,17 @@ const METRIC_NAME = {
   GATES_DURATION_MS: 'gates.duration_ms',
   FLOW_EVENT: 'flow.event',
   DORA_METRIC: 'dora',
+  COST_USD: 'cost.usd',
   RAW_GATES: 'telemetry.raw.gates',
   RAW_FLOW: 'telemetry.raw.flow',
   RAW_DORA: 'telemetry.raw.dora',
+  RAW_COSTS: 'telemetry.raw.costs',
 } as const;
 const TELEMETRY_SOURCE = {
   GATES: 'gates',
   FLOW: 'flow',
   DORA: 'dora',
+  COSTS: 'costs',
 } as const;
 
 type TelemetrySource = (typeof TELEMETRY_SOURCE)[keyof typeof TELEMETRY_SOURCE];
@@ -154,6 +171,7 @@ interface CloudSyncState {
     gates: CloudSyncFileState;
     flow: CloudSyncFileState;
     dora: CloudSyncFileState;
+    costs: CloudSyncFileState;
   };
 }
 
@@ -419,6 +437,37 @@ export function emitDoraTelemetry(record: { metric: string; value: number; tier?
   }
 }
 
+/**
+ * Emit a structured cost event to .lumenflow/telemetry/costs.ndjson.
+ *
+ * The cloud sync pipeline includes this source for control-plane cost aggregation.
+ */
+export function emitCostEvent(data: CostEventData): void {
+  ensureTelemetryDir();
+  const event: Record<string, PrimitiveTagValue> = {
+    timestamp: data.timestamp ?? new Date().toISOString(),
+    source_type: 'cost',
+    operation: data.operation,
+    model: data.model,
+    input_tokens: data.input_tokens,
+    output_tokens: data.output_tokens,
+    cost_usd: data.cost_usd,
+  };
+
+  const wuId = data.wu_id ?? getCurrentWU();
+  if (wuId) {
+    event.wu_id = wuId;
+  }
+  if (data.agent_id) {
+    event.agent_id = data.agent_id;
+  }
+  if (data.session_id) {
+    event.session_id = data.session_id;
+  }
+
+  emit(COSTS_LOG, event);
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
@@ -477,6 +526,9 @@ function createDefaultCloudSyncState(): CloudSyncState {
       dora: {
         offset: 0,
       },
+      costs: {
+        offset: 0,
+      },
     },
   };
 }
@@ -504,11 +556,15 @@ function loadCloudSyncState(statePath: string): CloudSyncState {
     const gatesRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.GATES) : undefined;
     const flowRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.FLOW) : undefined;
     const doraRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.DORA) : undefined;
+    const costsRaw = isRecord(filesRaw) ? Reflect.get(filesRaw, TELEMETRY_SOURCE.COSTS) : undefined;
     const gatesOffset = isRecord(gatesRaw)
       ? normalizeStateOffset(Reflect.get(gatesRaw, 'offset'))
       : 0;
     const flowOffset = isRecord(flowRaw) ? normalizeStateOffset(Reflect.get(flowRaw, 'offset')) : 0;
     const doraOffset = isRecord(doraRaw) ? normalizeStateOffset(Reflect.get(doraRaw, 'offset')) : 0;
+    const costsOffset = isRecord(costsRaw)
+      ? normalizeStateOffset(Reflect.get(costsRaw, 'offset'))
+      : 0;
     const lastSyncAtMs = normalizeStateOffset(Reflect.get(parsed, 'lastSyncAtMs'));
 
     return {
@@ -523,6 +579,9 @@ function loadCloudSyncState(statePath: string): CloudSyncState {
         },
         dora: {
           offset: doraOffset,
+        },
+        costs: {
+          offset: costsOffset,
         },
       },
     };
@@ -545,6 +604,9 @@ function getSourceOffset(state: CloudSyncState, source: TelemetrySource): number
   if (source === TELEMETRY_SOURCE.DORA) {
     return state.files.dora.offset;
   }
+  if (source === TELEMETRY_SOURCE.COSTS) {
+    return state.files.costs.offset;
+  }
   return state.files.flow.offset;
 }
 
@@ -557,6 +619,10 @@ function setSourceOffset(state: CloudSyncState, source: TelemetrySource, offset:
     state.files.dora.offset = offset;
     return;
   }
+  if (source === TELEMETRY_SOURCE.COSTS) {
+    state.files.costs.offset = offset;
+    return;
+  }
   state.files.flow.offset = offset;
 }
 
@@ -566,6 +632,9 @@ function resolveTelemetryPath(workspaceRoot: string, source: TelemetrySource): s
   }
   if (source === TELEMETRY_SOURCE.DORA) {
     return path.join(workspaceRoot, DORA_LOG);
+  }
+  if (source === TELEMETRY_SOURCE.COSTS) {
+    return path.join(workspaceRoot, COSTS_LOG);
   }
   return path.join(workspaceRoot, FLOW_LOG);
 }
@@ -661,9 +730,57 @@ function mapDoraEventToTelemetryRecord(
   };
 }
 
+function mapCostEventToTelemetryRecord(
+  payload: Record<string, unknown>,
+  fallbackIso: string,
+): CloudTelemetryRecord {
+  const costUsd = asFiniteNumber(Reflect.get(payload, 'cost_usd')) ?? 0;
+  const inputTokens = asFiniteNumber(Reflect.get(payload, 'input_tokens'));
+  const outputTokens = asFiniteNumber(Reflect.get(payload, 'output_tokens'));
+  const operation = asPrimitiveTagValue(Reflect.get(payload, 'operation'));
+  const model = asPrimitiveTagValue(Reflect.get(payload, 'model'));
+  const wuId = asPrimitiveTagValue(Reflect.get(payload, 'wu_id'));
+  const agentId = asPrimitiveTagValue(Reflect.get(payload, 'agent_id'));
+  const sessionId = asPrimitiveTagValue(Reflect.get(payload, 'session_id'));
+  const tags: Record<string, PrimitiveTagValue> = {
+    source: TELEMETRY_SOURCE.COSTS,
+    source_type: 'cost',
+  };
+
+  if (operation !== undefined) {
+    tags.operation = operation;
+  }
+  if (model !== undefined) {
+    tags.model = model;
+  }
+  if (wuId !== undefined) {
+    tags.wu_id = wuId;
+  }
+  if (agentId !== undefined) {
+    tags.agent_id = agentId;
+  }
+  if (sessionId !== undefined) {
+    tags.session_id = sessionId;
+  }
+  if (inputTokens !== undefined) {
+    tags.input_tokens = inputTokens;
+  }
+  if (outputTokens !== undefined) {
+    tags.output_tokens = outputTokens;
+  }
+
+  return {
+    metric: METRIC_NAME.COST_USD,
+    value: costUsd,
+    timestamp: normalizeTimestamp(Reflect.get(payload, 'timestamp'), fallbackIso),
+    tags,
+  };
+}
+
 function resolveRawMetricName(source: TelemetrySource): string {
   if (source === TELEMETRY_SOURCE.GATES) return METRIC_NAME.RAW_GATES;
   if (source === TELEMETRY_SOURCE.DORA) return METRIC_NAME.RAW_DORA;
+  if (source === TELEMETRY_SOURCE.COSTS) return METRIC_NAME.RAW_COSTS;
   return METRIC_NAME.RAW_FLOW;
 }
 
@@ -688,6 +805,9 @@ function mapTelemetryLineToRecord(
   }
   if (source === TELEMETRY_SOURCE.DORA) {
     return mapDoraEventToTelemetryRecord(payload, fallbackIso);
+  }
+  if (source === TELEMETRY_SOURCE.COSTS) {
+    return mapCostEventToTelemetryRecord(payload, fallbackIso);
   }
   return mapFlowEventToTelemetryRecord(payload, fallbackIso);
 }
@@ -1005,6 +1125,7 @@ export async function syncNdjsonTelemetryToCloud(
       gates: { offset: state.files.gates.offset },
       flow: { offset: state.files.flow.offset },
       dora: { offset: state.files.dora.offset },
+      costs: { offset: state.files.costs.offset },
     },
   };
 
@@ -1020,6 +1141,7 @@ export async function syncNdjsonTelemetryToCloud(
     TELEMETRY_SOURCE.GATES,
     TELEMETRY_SOURCE.FLOW,
     TELEMETRY_SOURCE.DORA,
+    TELEMETRY_SOURCE.COSTS,
   ] as const) {
     const filePath = resolveTelemetryPath(workspaceRoot, source);
     const sourceLines = readTelemetryLinesFromOffset({
