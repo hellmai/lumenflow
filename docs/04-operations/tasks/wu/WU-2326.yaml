@@ -2,7 +2,7 @@ id: WU-2326
 title: Make workspace.yaml authoritative for lane existence and sub-lane validation
 lane: 'Framework: Core Validation'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-05
 code_paths:
@@ -18,7 +18,9 @@ code_paths:
   - apps/docs/src/content/docs/reference/config.mdx
 tests:
   manual:
-    - Create a workspace with new sub-lanes in workspace.yaml and stale .lumenflow.lane-inference.yaml; verify lane validation/claim guidance uses workspace-defined lanes and provides non-blocking inference regeneration guidance.
+    - Create a workspace with new sub-lanes in workspace.yaml and stale
+      .lumenflow.lane-inference.yaml; verify lane validation/claim guidance uses workspace-defined
+      lanes and provides non-blocking inference regeneration guidance.
   unit:
     - packages/@lumenflow/core/src/__tests__/lane-checker.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-lane-validation.test.ts
@@ -40,9 +42,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: lane existence and sub-lane guidance currently depend on both workspace.yaml and .lumenflow.lane-inference.yaml, which drifts in active projects. Problem: valid lanes in workspace definitions can be rejected when inference taxonomy is stale, blocking agents and creating contradictory guidance. Solution: move lane existence/validation truth to workspace.yaml, treat inference taxonomy as derived metadata for suggestion workflows, and preserve deterministic validation behavior with explicit sync/regen guidance.'
+description: 'Context: lane existence and sub-lane guidance currently depend on both workspace.yaml
+  and .lumenflow.lane-inference.yaml, which drifts in active projects. Problem: valid lanes in
+  workspace definitions can be rejected when inference taxonomy is stale, blocking agents and
+  creating contradictory guidance. Solution: move lane existence/validation truth to workspace.yaml,
+  treat inference taxonomy as derived metadata for suggestion workflows, and preserve deterministic
+  validation behavior with explicit sync/regen guidance.'
 acceptance:
-  - lane validation and claim-time lane checks accept lanes that are valid in workspace.yaml even when inference metadata is stale
-  - inference taxonomy is treated as derived data for lane suggestion/classification and no longer blocks valid workspace-defined lanes
+  - lane validation and claim-time lane checks accept lanes that are valid in workspace.yaml even
+    when inference metadata is stale
+  - inference taxonomy is treated as derived data for lane suggestion/classification and no longer
+    blocks valid workspace-defined lanes
   - automated tests cover workspace-authoritative validation paths and stale-taxonomy regressions
-  - internal onboarding docs and Starlight reference docs explain source-of-truth rules and regeneration workflow
+  - internal onboarding docs and Starlight reference docs explain source-of-truth rules and
+    regeneration workflow
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2326
+claimed_at: 2026-03-05T17:28:08.862Z
+baseline_main_sha: 89da491efed29d0adb1a83c6e569afb3a72acd11
+session_id: f4bd37bf-63a0-496f-81f4-e787825a979b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-05T17:28:08.868Z
