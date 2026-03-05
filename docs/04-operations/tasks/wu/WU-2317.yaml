@@ -2,7 +2,7 @@ id: WU-2317
 title: Heartbeat contract extensions for scheduling and liveness
 lane: 'Operations: Runtime'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-05
 code_paths:
@@ -67,4 +67,9 @@ acceptance:
     docs/04-operations/**), not generated output artifacts.
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-03-05T10:31:41.257Z
+approved_at: 2026-03-05T10:36:33.415Z
+claimed_mode: worktree
+worktree_path: worktrees/operations-runtime-wu-2317
+claimed_at: 2026-03-05T10:36:33.408Z
+baseline_main_sha: 5da7c3eccb8f67477b1fe8fd4e022e52d70ca4eb
+session_id: 387ddb32-5de1-47d4-82d4-5dcd79d983b3
