@@ -2,7 +2,7 @@ id: WU-2327
 title: Eliminate onboarding docs/init/docs-sync drift
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -21,7 +21,8 @@ code_paths:
   - LUMENFLOW.md
 tests:
   manual:
-    - Run focused CLI tests for init/docs-sync/template parity, then run sync:templates --check-drift and docs:validate to confirm generated docs stay aligned.
+    - Run focused CLI tests for init/docs-sync/template parity, then run sync:templates
+      --check-drift and docs:validate to confirm generated docs stay aligned.
   unit:
     - packages/@lumenflow/cli/src/__tests__/init.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-onboarding-docs.test.ts
@@ -42,9 +43,27 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: agent-facing onboarding guidance has drifted across repo docs, bundled templates, init scaffolding, and docs:sync. Problem: new projects and upgraded projects receive contradictory instructions around wu:prep vs wu:done, cloud activation, config nesting, and command discovery; init still emits stale hardcoded markdown in places. Solution: make the repo docs the canonical source, sync bundled templates from them, update init/docs-sync to consume the bundled templates consistently, and add tests that catch guidance drift.'
+description: 'Context: agent-facing onboarding guidance has drifted across repo docs, bundled
+  templates, init scaffolding, and docs:sync. Problem: new projects and upgraded projects receive
+  contradictory instructions around wu:prep vs wu:done, cloud activation, config nesting, and
+  command discovery; init still emits stale hardcoded markdown in places. Solution: make the repo
+  docs the canonical source, sync bundled templates from them, update init/docs-sync to consume the
+  bundled templates consistently, and add tests that catch guidance drift.'
 acceptance:
-  - Starting-prompt, agent-safety-card, quick-ref, and LUMENFLOW guidance consistently reflect wu:prep then wu:done, explicit-only cloud activation, correct requireRemote nesting, and public CLI vs repo-only script discovery.
-  - Init scaffolding sources LUMENFLOW and scaffolded onboarding docs from bundled templates instead of stale hardcoded markdown where applicable.
-  - Bundled onboarding templates cover the docs that init and docs:sync are responsible for, and docs:sync refreshes the full supported onboarding set with accurate skip/force messaging.
-  - CLI tests cover init/template parity, docs-sync coverage, and content contracts for the corrected onboarding guidance.
+  - Starting-prompt, agent-safety-card, quick-ref, and LUMENFLOW guidance consistently reflect
+    wu:prep then wu:done, explicit-only cloud activation, correct requireRemote nesting, and public
+    CLI vs repo-only script discovery.
+  - Init scaffolding sources LUMENFLOW and scaffolded onboarding docs from bundled templates instead
+    of stale hardcoded markdown where applicable.
+  - Bundled onboarding templates cover the docs that init and docs:sync are responsible for, and
+    docs:sync refreshes the full supported onboarding set with accurate skip/force messaging.
+  - CLI tests cover init/template parity, docs-sync coverage, and content contracts for the
+    corrected onboarding guidance.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-2327
+claimed_at: 2026-03-05T23:29:38.564Z
+baseline_main_sha: 5c65e290e8cf27ca3bb66d6fa12e79b947e274bd
+session_id: 99fa54fd-c938-44c2-9617-7fe3630a5032
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-05T23:29:38.570Z

@@ -2848,3 +2848,4 @@
 {"type":"checkpoint","wuId":"WU-2326","timestamp":"2026-03-05T17:51:41.914Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2326.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2326","timestamp":"2026-03-05T17:53:00.190Z","note":"[wu:done] force ownership override claimed_session=f4bd37bf-63a0-496f-81f4-e787825a979b active_session=none","progress":"wu:done ownership override","nextSteps":"orphan recovery: same operator session expired"}
 {"type":"complete","wuId":"WU-2326","timestamp":"2026-03-05T17:53:06.107Z"}
+{"type":"claim","wuId":"WU-2327","timestamp":"2026-03-05T23:29:38.591Z","lane":"Framework: CLI","title":"Eliminate onboarding docs/init/docs-sync drift"}

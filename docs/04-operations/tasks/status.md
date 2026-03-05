@@ -4,7 +4,7 @@ _Last updated: 2026-03-05_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2327 — Eliminate onboarding docs/init/docs-sync drift](wu/WU-2327.yaml)
 
 ## Completed
 
