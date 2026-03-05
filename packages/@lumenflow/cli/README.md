@@ -51,32 +51,35 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ### Work Unit Management
 
-| Command          | Description                                                   |
-| ---------------- | ------------------------------------------------------------- |
-| `wu-block`       | Block WU with reason                                          |
-| `wu-brief`       | Generate handoff prompt for sub-agent WU execution            |
-| `wu-claim`       | Claim WU and create worktree                                  |
-| `wu-cleanup`     | Cleanup after PR merge                                        |
-| `wu-create`      | Create new WU spec                                            |
-| `wu-delegate`    | Generate delegation prompt and record explicit lineage intent |
-| `wu-delete`      | Delete WU spec and cleanup                                    |
-| `wu-deps`        | Show WU dependencies                                          |
-| `wu-done`        | Complete WU (merge, stamp, cleanup) from main                 |
-| `wu-edit`        | Edit WU spec fields                                           |
-| `wu-escalate`    | Show or resolve WU escalation status                          |
-| `wu-infer-lane`  | Infer lane from code paths/description                        |
-| `wu-preflight`   | Pre-flight checks before wu:done                              |
-| `wu-prep`        | Run gates in worktree, prep for wu:done                       |
-| `wu-proto`       | Create WU prototype                                           |
-| `wu-prune`       | Clean stale worktrees                                         |
-| `wu-recover`     | Analyze and fix WU state inconsistencies                      |
-| `wu-release`     | Release orphaned WU (in_progress to ready)                    |
-| `wu-repair`      | Repair WU state issues                                        |
-| `wu-sandbox`     | Run command through hardened WU sandbox backend               |
-| `wu-status`      | Show WU status, location, valid commands                      |
-| `wu-unblock`     | Unblock WU                                                    |
-| `wu-unlock-lane` | Unlock stuck lane                                             |
-| `wu-validate`    | Validate WU spec                                              |
+| Command            | Description                                                   |
+| ------------------ | ------------------------------------------------------------- |
+| `approval-list`    | List control-plane approvals with optional filters            |
+| `approval-request` | Request control-plane approval for a workflow action          |
+| `approval-review`  | Resolve a control-plane approval decision                     |
+| `wu-block`         | Block WU with reason                                          |
+| `wu-brief`         | Generate handoff prompt for sub-agent WU execution            |
+| `wu-claim`         | Claim WU and create worktree                                  |
+| `wu-cleanup`       | Cleanup after PR merge                                        |
+| `wu-create`        | Create new WU spec                                            |
+| `wu-delegate`      | Generate delegation prompt and record explicit lineage intent |
+| `wu-delete`        | Delete WU spec and cleanup                                    |
+| `wu-deps`          | Show WU dependencies                                          |
+| `wu-done`          | Complete WU (merge, stamp, cleanup) from main                 |
+| `wu-edit`          | Edit WU spec fields                                           |
+| `wu-escalate`      | Show or resolve WU escalation status                          |
+| `wu-infer-lane`    | Infer lane from code paths/description                        |
+| `wu-preflight`     | Pre-flight checks before wu:done                              |
+| `wu-prep`          | Run gates in worktree, prep for wu:done                       |
+| `wu-proto`         | Create WU prototype                                           |
+| `wu-prune`         | Clean stale worktrees                                         |
+| `wu-recover`       | Analyze and fix WU state inconsistencies                      |
+| `wu-release`       | Release orphaned WU (in_progress to ready)                    |
+| `wu-repair`        | Repair WU state issues                                        |
+| `wu-sandbox`       | Run command through hardened WU sandbox backend               |
+| `wu-status`        | Show WU status, location, valid commands                      |
+| `wu-unblock`       | Unblock WU                                                    |
+| `wu-unlock-lane`   | Unlock stuck lane                                             |
+| `wu-validate`      | Validate WU spec                                              |
 
 ### Memory & Session
 
@@ -122,13 +125,14 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ### Metrics & Analytics
 
-| Command             | Description                   |
-| ------------------- | ----------------------------- |
-| `flow-bottlenecks`  | Identify flow bottlenecks     |
-| `flow-report`       | Generate flow metrics report  |
-| `lumenflow-metrics` | View workflow metrics (alias) |
-| `metrics`           | View workflow metrics         |
-| `metrics-snapshot`  | Capture metrics snapshot      |
+| Command             | Description                    |
+| ------------------- | ------------------------------ |
+| `cost-summary`      | Summarize local cost telemetry |
+| `flow-bottlenecks`  | Identify flow bottlenecks      |
+| `flow-report`       | Generate flow metrics report   |
+| `lumenflow-metrics` | View workflow metrics (alias)  |
+| `metrics`           | View workflow metrics          |
+| `metrics-snapshot`  | Capture metrics snapshot       |
 
 ### Lane Tooling
 
@@ -155,42 +159,42 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ### System & Setup
 
-| Command                    | Description                                                         |
-| -------------------------- | ------------------------------------------------------------------- |
-| `backlog-prune`            | Clean stale backlog entries                                         |
-| `cloud-connect`            | Connect workspace.yaml to cloud control plane                       |
-| `config-get`               | Read and display a value from workspace.yaml software_delivery      |
-| `config-set`               | Safely update workspace.yaml software_delivery via micro-worktree   |
-| `init-plan`                | Link plan to initiative (alias)                                     |
-| `lumenflow`                | Initialize LumenFlow in a project                                   |
-| `lumenflow-commands`       | List all available CLI commands                                     |
-| `lumenflow-docs-sync`      | Sync agent docs (for upgrades) (alias)                              |
-| `lumenflow-doctor`         | Diagnose LumenFlow configuration                                    |
-| `lumenflow-init`           | Initialize LumenFlow in a project (alias)                           |
-| `lumenflow-integrate`      | Generate enforcement hooks for client                               |
-| `lumenflow-onboard`        | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding |
-| `lumenflow-release`        | Run release workflow                                                |
-| `lumenflow-sync-templates` | Sync templates to project                                           |
-| `lumenflow-upgrade`        | Upgrade LumenFlow packages                                          |
-| `onboard`                  | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding |
-| `pack-author`              | Author a secure domain pack from templates                          |
-| `pack-hash`                | Compute integrity hash for a domain pack                            |
-| `pack-install`             | Install a domain pack into workspace                                |
-| `pack-publish`             | Publish a domain pack to a registry                                 |
-| `pack-scaffold`            | Scaffold a new domain pack                                          |
-| `pack-search`              | Search for domain packs in a registry                               |
-| `pack-validate`            | Validate a domain pack for integrity                                |
-| `plan-create`              | Create a new plan                                                   |
-| `plan-edit`                | Edit plan content                                                   |
-| `plan-link`                | Link plan to WU or initiative                                       |
-| `plan-promote`             | Promote plan to WU                                                  |
-| `state-bootstrap`          | Bootstrap state store                                               |
-| `state-cleanup`            | Clean up stale state data                                           |
-| `state-doctor`             | Diagnose state store issues                                         |
-| `state-emit`               | Emit corrective event to state store (WU-2241)                      |
-| `sync-templates`           | Sync templates to project (alias)                                   |
-| `templates-sync`           | Sync templates to project (alias)                                   |
-| `workspace-init`           | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding |
+| Command                    | Description                                                            |
+| -------------------------- | ---------------------------------------------------------------------- |
+| `backlog-prune`            | Clean stale backlog entries                                            |
+| `cloud-connect`            | Connect workspace.yaml to cloud control plane                          |
+| `config-get`               | Read and display a value from workspace.yaml software_delivery         |
+| `config-set`               | Safely update workspace.yaml software_delivery via micro-worktree      |
+| `init-plan`                | Link plan to initiative (alias)                                        |
+| `lumenflow`                | Initialize LumenFlow in a project                                      |
+| `lumenflow-commands`       | List all available CLI commands                                        |
+| `lumenflow-docs-sync`      | Refresh scaffolded onboarding docs and supported vendor assets (alias) |
+| `lumenflow-doctor`         | Diagnose LumenFlow configuration                                       |
+| `lumenflow-init`           | Initialize LumenFlow in a project (alias)                              |
+| `lumenflow-integrate`      | Generate enforcement hooks for client                                  |
+| `lumenflow-onboard`        | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding    |
+| `lumenflow-release`        | Run release workflow                                                   |
+| `lumenflow-sync-templates` | Sync templates to project                                              |
+| `lumenflow-upgrade`        | Upgrade LumenFlow packages                                             |
+| `onboard`                  | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding    |
+| `pack-author`              | Author a secure domain pack from templates                             |
+| `pack-hash`                | Compute integrity hash for a domain pack                               |
+| `pack-install`             | Install a domain pack into workspace                                   |
+| `pack-publish`             | Publish a domain pack to a registry                                    |
+| `pack-scaffold`            | Scaffold a new domain pack                                             |
+| `pack-search`              | Search for domain packs in a registry                                  |
+| `pack-validate`            | Validate a domain pack for integrity                                   |
+| `plan-create`              | Create a new plan                                                      |
+| `plan-edit`                | Edit plan content                                                      |
+| `plan-link`                | Link plan to WU or initiative                                          |
+| `plan-promote`             | Promote plan to WU                                                     |
+| `state-bootstrap`          | Bootstrap state store                                                  |
+| `state-cleanup`            | Clean up stale state data                                              |
+| `state-doctor`             | Diagnose state store issues                                            |
+| `state-emit`               | Emit corrective event to state store (WU-2241)                         |
+| `sync-templates`           | Sync templates to project (alias)                                      |
+| `templates-sync`           | Sync templates to project (alias)                                      |
+| `workspace-init`           | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding    |
 
 ### File & Git Operations
 
@@ -294,14 +298,14 @@ To upgrade LumenFlow packages:
 # Check for available updates
 pnpm outdated @lumenflow/*
 
-# Update all LumenFlow packages
-pnpm update @lumenflow/cli @lumenflow/core @lumenflow/memory @lumenflow/agent @lumenflow/initiatives
+# Update all LumenFlow packages atomically
+pnpm lumenflow:upgrade --latest
 
-# Sync documentation and templates
-pnpm exec lumenflow docs:sync
+# Refresh scaffolded onboarding docs and vendor assets
+pnpm docs:sync --force
 ```
 
-**Important**: Always run `docs:sync` after package changes to update agent onboarding documentation, workflow rules, and vendor-specific configurations.
+**Important**: Always run `docs:sync --force` after package changes to refresh scaffolded onboarding docs and supported vendor assets.
 
 For current setup guidance and troubleshooting, see [LUMENFLOW.md](https://lumenflow.dev).
 

@@ -1213,17 +1213,15 @@ function generateReadmeMd(commands: CommandMetadata[]): string {
   lines.push('# Check for available updates');
   lines.push('pnpm outdated @lumenflow/*');
   lines.push('');
-  lines.push('# Update all LumenFlow packages');
-  lines.push(
-    'pnpm update @lumenflow/cli @lumenflow/core @lumenflow/memory @lumenflow/agent @lumenflow/initiatives',
-  );
+  lines.push('# Update all LumenFlow packages atomically');
+  lines.push('pnpm lumenflow:upgrade --latest');
   lines.push('');
-  lines.push('# Sync documentation and templates');
-  lines.push('pnpm exec lumenflow docs:sync');
+  lines.push('# Refresh scaffolded onboarding docs and vendor assets');
+  lines.push('pnpm docs:sync --force');
   lines.push('```');
   lines.push('');
   lines.push(
-    '**Important**: Always run `docs:sync` after package changes to update agent onboarding documentation, workflow rules, and vendor-specific configurations.',
+    '**Important**: Always run `docs:sync --force` after package changes to refresh scaffolded onboarding docs and supported vendor assets.',
   );
   lines.push('');
   lines.push(

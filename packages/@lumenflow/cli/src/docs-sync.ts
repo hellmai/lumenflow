@@ -19,9 +19,11 @@ import {
   createError,
   ErrorCodes,
 } from '@lumenflow/core';
+import { createWuPaths } from '@lumenflow/core/wu-paths';
 import { GIT_DIRECTORY_NAME, getConfig } from '@lumenflow/core/config';
 // WU-1362: Import worktree guard utilities for branch checking
 import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard';
+import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
 
 export type VendorType = 'claude' | 'cursor' | 'aider' | 'all' | 'none';
 
@@ -49,7 +51,7 @@ export function parseDocsSyncOptions(): {
   const opts = createWUParser({
     name: 'lumenflow-docs-sync',
     description:
-      'Sync agent onboarding docs to existing projects (skips existing files by default)',
+      'Sync scaffolded onboarding docs and supported vendor assets (skips existing files by default)',
     options: Object.values(DOCS_SYNC_OPTIONS),
   });
 
@@ -197,18 +199,6 @@ async function createFile(
   result.created.push(relativePath);
 }
 
-/**
- * WU-1124: Template paths for agent onboarding docs
- * Maps output file names to template paths
- */
-const ONBOARDING_TEMPLATE_PATHS: Record<string, string> = {
-  'quick-ref-commands.md': 'core/ai/onboarding/quick-ref-commands.md.template',
-  'first-wu-mistakes.md': 'core/ai/onboarding/first-wu-mistakes.md.template',
-  'troubleshooting-wu-done.md': 'core/ai/onboarding/troubleshooting-wu-done.md.template',
-  'agent-safety-card.md': 'core/ai/onboarding/agent-safety-card.md.template',
-  'wu-create-checklist.md': 'core/ai/onboarding/wu-create-checklist.md.template',
-};
-
 const CLAUDE_VENDOR_TEMPLATE_ROOT = ['vendors', 'claude', '.claude'].join('/');
 const CLAUDE_SKILLS_TEMPLATE_ROOT = `${CLAUDE_VENDOR_TEMPLATE_ROOT}/skills`;
 
@@ -232,8 +222,26 @@ export async function syncAgentDocs(targetDir: string, options: SyncOptions): Pr
     skipped: [],
   };
 
+  const wuPaths = createWuPaths({ projectRoot: targetDir });
+  const wuDir = wuPaths.WU_DIR().split(path.sep).join('/');
+  const tasksDir = path.posix.dirname(wuDir);
+  const onboardingPath = wuPaths.ONBOARDING_DIR().split(path.sep).join('/');
+  const quickRefPath = wuPaths.QUICK_REF_PATH().split(path.sep).join('/');
+  const operationsPath = path.posix.dirname(tasksDir);
+  const backlogPath = wuPaths.BACKLOG().split(path.sep).join('/');
+  const statusPath = wuPaths.STATUS().split(path.sep).join('/');
+
   const tokens = {
     DATE: getCurrentDate(),
+    PROJECT_ROOT: '<project-root>',
+    QUICK_REF_LINK: quickRefPath,
+    DOCS_OPERATIONS_PATH: operationsPath,
+    DOCS_TASKS_PATH: tasksDir,
+    DOCS_ONBOARDING_PATH: onboardingPath,
+    DOCS_WU_DIR_PATH: wuDir,
+    DOCS_TEMPLATES_DIR_PATH: `${tasksDir}/templates`,
+    DOCS_BACKLOG_PATH: backlogPath,
+    DOCS_STATUS_PATH: statusPath,
   };
 
   const { onboardingDir } = resolveDocsSyncDirectories(targetDir);
@@ -241,7 +249,7 @@ export async function syncAgentDocs(targetDir: string, options: SyncOptions): Pr
   await createDirectory(onboardingDir, result, targetDir);
 
   // WU-1124: Load and process templates from bundled files
-  for (const [outputFile, templatePath] of Object.entries(ONBOARDING_TEMPLATE_PATHS)) {
+  for (const [outputFile, templatePath] of Object.entries(SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS)) {
     const templateContent = loadTemplate(templatePath);
     const processedContent = processTemplate(templateContent, tokens);
 
@@ -348,7 +356,7 @@ export async function main(): Promise<void> {
   const opts = parseDocsSyncOptions();
   const targetDir = process.cwd();
 
-  console.log('[lumenflow docs:sync] Syncing agent documentation...');
+  console.log('[lumenflow docs:sync] Syncing scaffolded onboarding docs and vendor assets...');
   console.log(`  Vendor: ${opts.vendor}`);
   console.log(`  Force: ${opts.force}`);
 

@@ -27,6 +27,10 @@ function getQuickRefRelativePath(): string {
     .join('/');
 }
 
+function getOnboardingRelativePath(fileName: string): string {
+  return path.join(getDefaultConfig().directories.onboardingDir, fileName).split(path.sep).join('/');
+}
+
 describe('lumenflow docs:sync command (WU-1083)', () => {
   let tempDir: string;
 
@@ -51,7 +55,12 @@ describe('lumenflow docs:sync command (WU-1083)', () => {
       const onboardingDir = getOnboardingDir(tempDir);
 
       expect(fs.existsSync(path.join(onboardingDir, 'quick-ref-commands.md'))).toBe(true);
+      expect(fs.existsSync(path.join(onboardingDir, 'starting-prompt.md'))).toBe(true);
+      expect(fs.existsSync(path.join(onboardingDir, 'first-15-mins.md'))).toBe(true);
+      expect(fs.existsSync(path.join(onboardingDir, 'local-only.md'))).toBe(true);
+      expect(fs.existsSync(path.join(onboardingDir, 'lane-inference.md'))).toBe(true);
       expect(fs.existsSync(path.join(onboardingDir, 'wu-create-checklist.md'))).toBe(true);
+      expect(fs.existsSync(path.join(onboardingDir, 'wu-sizing-guide.md'))).toBe(true);
       expect(result.created.length).toBeGreaterThan(0);
     });
 
@@ -98,6 +107,35 @@ describe('lumenflow docs:sync command (WU-1083)', () => {
 
       expect(result.skipped).toContain(getQuickRefRelativePath());
       expect(result.created.length).toBeGreaterThan(0);
+    });
+
+    it('should skip newly supported onboarding docs without --force when they already exist', async () => {
+      const { syncAgentDocs } = await import('../src/docs-sync.js');
+
+      const onboardingDir = getOnboardingDir(tempDir);
+      fs.mkdirSync(onboardingDir, { recursive: true });
+      fs.writeFileSync(path.join(onboardingDir, 'starting-prompt.md'), '# Custom Starting Prompt');
+
+      const result = await syncAgentDocs(tempDir, { force: false });
+
+      expect(result.skipped).toContain(getOnboardingRelativePath('starting-prompt.md'));
+      expect(fs.readFileSync(path.join(onboardingDir, 'starting-prompt.md'), 'utf-8')).toBe(
+        '# Custom Starting Prompt',
+      );
+    });
+
+    it('should overwrite newly supported onboarding docs with --force', async () => {
+      const { syncAgentDocs } = await import('../src/docs-sync.js');
+
+      const onboardingDir = getOnboardingDir(tempDir);
+      fs.mkdirSync(onboardingDir, { recursive: true });
+      fs.writeFileSync(path.join(onboardingDir, 'starting-prompt.md'), '# Custom Starting Prompt');
+
+      await syncAgentDocs(tempDir, { force: true });
+
+      const content = fs.readFileSync(path.join(onboardingDir, 'starting-prompt.md'), 'utf-8');
+      expect(content).not.toBe('# Custom Starting Prompt');
+      expect(content).toContain('Starting Prompt');
     });
   });
 

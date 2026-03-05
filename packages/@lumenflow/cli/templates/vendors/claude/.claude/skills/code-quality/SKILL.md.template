@@ -2,7 +2,7 @@
 name: code-quality
 description: Shared patterns for SOLID/DRY code review, hexagonal architecture compliance, TypeScript best practices, and performance anti-patterns. Use when reviewing code quality, checking architecture boundaries, or validating TypeScript patterns.
 version: 1.1.0
-source: docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: Core Principles, Hexagonal Architecture
 last_updated: {{DATE}}
 allowed-tools: Read, Grep, Glob
@@ -10,7 +10,7 @@ allowed-tools: Read, Grep, Glob
 
 # Code Quality Skill
 
-**Source**: `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
+**Source**: `{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
 
 ## When to Use
 

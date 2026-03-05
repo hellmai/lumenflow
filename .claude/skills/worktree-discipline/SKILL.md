@@ -25,7 +25,7 @@ allowed-tools: Read, Bash, Grep
 
 // WRONG - Absolute path bypasses worktree
 Write({
-  file_path: '/home/user/source/project/apps/web/src/validator.ts',
+  file_path: '<absolute-path>/apps/web/src/validator.ts',
   content: '...',
 });
 // Result: Written to MAIN checkout, not worktree!
@@ -51,13 +51,13 @@ Write({
 
 2. **Check file path format**:
 
-   | Pattern                           | Safe? | Example                  |
-   | --------------------------------- | ----- | ------------------------ |
-   | Starts with `/home/` or `/Users/` | NO    | `/home/user/.../file.ts` |
-   | Contains full repo path           | NO    | `/source/project/...`    |
-   | Starts with package name          | YES   | `apps/web/src/...`       |
-   | Starts with `./` or `../`         | YES   | `./src/lib/...`          |
-   | Just filename                     | YES   | `README.md`              |
+   | Pattern                             | Safe? | Example                          |
+   | ----------------------------------- | ----- | -------------------------------- |
+   | Starts with an absolute-root prefix | NO    | `<absolute-path>/.../file.ts`    |
+   | Contains full repo path             | NO    | `<repo-root>/apps/.../file.ts`   |
+   | Starts with package name            | YES   | `apps/web/src/...`               |
+   | Starts with `./` or `../`           | YES   | `./src/lib/...`                  |
+   | Just filename                       | YES   | `README.md`                      |
 
 3. **Use relative paths for ALL file operations**
 
@@ -69,7 +69,7 @@ Write({
 
 **Red flags** (you're about to fall into the trap):
 
-- Path starts with `/home/` or `/Users/`
+- Path starts with an absolute-root prefix
 - Path contains organisation/project name
 - Path length > 50 characters (suspiciously long)
 

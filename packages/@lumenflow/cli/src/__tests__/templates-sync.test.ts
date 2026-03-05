@@ -17,6 +17,7 @@ import {
   convertToTemplate,
   checkTemplateDrift,
 } from '../sync-templates.js';
+import { DOCS_LAYOUT_PRESETS } from '@lumenflow/core';
 import { createWuPaths } from '@lumenflow/core/wu-paths';
 
 // Constants for frequently used path segments (sonarjs/no-duplicate-string)
@@ -28,6 +29,7 @@ const CORE_DIR = 'core';
 const LUMENFLOW_DOT_DIR = '.lumenflow';
 const CONSTRAINTS_FILE = 'constraints.md';
 const CONSTRAINTS_TEMPLATE = 'constraints.md.template';
+const ARC42 = DOCS_LAYOUT_PRESETS.arc42;
 
 function getOnboardingDir(projectRoot: string): string {
   return path.join(projectRoot, createWuPaths({ projectRoot }).ONBOARDING_DIR());
@@ -57,6 +59,23 @@ describe('templates-sync', () => {
       const content = '# Title\n\nSome content without dates.';
       const result = convertToTemplate(content, '/home/test/project');
       expect(result).toBe(content);
+    });
+
+    it('should replace canonical docs paths with init tokens', () => {
+      const content = `Read ${ARC42.quickRefLink}
+See ${ARC42.onboarding}
+Inspect ${ARC42.tasks}/wu/WU-123.yaml
+Sizing ${ARC42.sizingGuidePath}`;
+
+      const result = convertToTemplate(content, '/home/test/project');
+
+      expect(result).toContain('{{QUICK_REF_LINK}}');
+      expect(result).toContain('{{DOCS_ONBOARDING_PATH}}');
+      expect(result).toContain('{{DOCS_TASKS_PATH}}/wu/WU-123.yaml');
+      expect(result).toContain('{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/wu-sizing-guide.md');
+      expect(result).not.toContain(ARC42.quickRefLink);
+      expect(result).not.toContain(ARC42.onboarding);
+      expect(result).not.toContain(ARC42.tasks);
     });
   });
 

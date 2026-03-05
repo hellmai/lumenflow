@@ -187,31 +187,25 @@ pnpm wu:claim --id WU-XXX --lane "<Lane>" --cloud
 LUMENFLOW_CLOUD=1 pnpm wu:claim --id WU-XXX --lane "<Lane>"
 ```
 
-Explicit activation (`--cloud` or `LUMENFLOW_CLOUD=1`) always takes precedence over
-auto-detection.
+Cloud activation is explicit-only. `--cloud` and `LUMENFLOW_CLOUD=1` are the only
+runtime activation paths.
 
-### Config-Driven Auto-Detection (Opt-In)
+### Cloud Config Compatibility Fields
 
-For environments where agents should automatically enter cloud mode, enable
-auto-detection in `workspace.yaml`:
+The workspace schema still carries `cloud.auto_detect` and `env_signals`, but they do
+not activate cloud mode at runtime:
 
 ```yaml
 cloud:
-  auto_detect: true # default: false
-  env_signals:
-    - name: CI # presence check (any non-empty value)
-    - name: CODEX
-    - name: GITHUB_ACTIONS
-      equals: 'true' # exact match required
+  auto_detect: false
+  env_signals: []
 ```
 
 **Key design decisions:**
 
-- `auto_detect` defaults to `false` (opt-in, not opt-out)
-- No vendor-specific signals are hardcoded; all signals are user-configured
-- Each signal supports either presence checks (`name` only) or exact-value
-  matches (`name` + `equals`)
-- Explicit activation always wins over auto-detection
+- Runtime identity signals are intentionally ignored for activation
+- Explicit activation always wins because it is the only activation path
+- Config fields remain for compatibility, migration, and future policy metadata
 
 ### Cloud Lifecycle
 
@@ -225,10 +219,10 @@ cloud:
 
 ### Vendor-Specific Notes
 
-- **Codex**: Set `LUMENFLOW_CLOUD=1` in the environment or configure auto-detection with `name: CODEX`
-- **Claude web**: Use `--cloud` flag explicitly or configure `name: CLAUDE_CODE` in env_signals
-- **GitHub Actions**: Configure `name: GITHUB_ACTIONS, equals: 'true'` in env_signals
-- **Antigravity**: Expected to work with explicit `--cloud` flag; auto-detection signals TBD
+- **Codex**: Set `LUMENFLOW_CLOUD=1` or pass `--cloud`
+- **Claude web**: Use `--cloud` explicitly
+- **GitHub Actions**: Set `LUMENFLOW_CLOUD=1` in the job environment
+- **Antigravity**: Use explicit `--cloud` activation
 
 ---
 

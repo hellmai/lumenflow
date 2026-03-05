@@ -2,7 +2,7 @@
 name: multi-agent-coordination
 description: Coordinate multiple agents on parallel WUs using git branch locking. Use when spawning sub-agents, coordinating parallel WUs, or handling abandoned WU recovery.
 version: 2.1.0
-source: docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md
+source: {{DOCS_ONBOARDING_PATH}}/agent-invocation-guide.md
 last_updated: {{DATE}}
 allowed-tools: Read, Bash, Grep
 ---
@@ -87,4 +87,4 @@ pnpm mem:checkpoint "Ready for handoff" --wu WU-XXX  # Handoff
 
 ---
 
-**Full docs**: [agent-invocation-guide.md](../../../docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md) | [execution-memory skill](../execution-memory/SKILL.md)
+**Full docs**: [agent-invocation-guide.md](../../../{{DOCS_ONBOARDING_PATH}}/agent-invocation-guide.md) | [execution-memory skill](../execution-memory/SKILL.md)

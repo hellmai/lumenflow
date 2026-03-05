@@ -18,7 +18,7 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { createWUParser, withMicroWorktree } from '@lumenflow/core';
+import { createWUParser, DOCS_LAYOUT_PRESETS, withMicroWorktree } from '@lumenflow/core';
 import { ENV_VARS } from '@lumenflow/core/wu-constants';
 import { createWuPaths } from '@lumenflow/core/wu-paths';
 
@@ -29,6 +29,14 @@ const SKILLS_DIR = 'skills';
 
 // Template variable patterns
 const DATE_PATTERN = /\d{4}-\d{2}-\d{2}/g;
+const ARC42_DOCS = DOCS_LAYOUT_PRESETS.arc42;
+const DOCS_TOKEN_REPLACEMENTS = [
+  [ARC42_DOCS.quickRefLink, '{{QUICK_REF_LINK}}'],
+  [ARC42_DOCS.sizingGuidePath, '{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/wu-sizing-guide.md'],
+  [ARC42_DOCS.onboarding, '{{DOCS_ONBOARDING_PATH}}'],
+  [ARC42_DOCS.tasks, '{{DOCS_TASKS_PATH}}'],
+  [ARC42_DOCS.operations, '{{DOCS_OPERATIONS_PATH}}'],
+] as const;
 
 // Log prefix for console output
 const LOG_PREFIX = '[sync-templates]';
@@ -120,6 +128,10 @@ export function convertToTemplate(content: string, projectRoot: string): string 
   // eslint-disable-next-line security/detect-non-literal-regexp -- path is escaped for regex; not user input
   const pathPattern = new RegExp(escapedPath, 'g');
   output = output.replace(pathPattern, '{{PROJECT_ROOT}}');
+
+  for (const [sourcePath, token] of DOCS_TOKEN_REPLACEMENTS) {
+    output = output.replaceAll(sourcePath, token);
+  }
 
   return output;
 }

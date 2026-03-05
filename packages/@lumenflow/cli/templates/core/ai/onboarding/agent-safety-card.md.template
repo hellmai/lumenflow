@@ -27,7 +27,7 @@ Quick reference for AI agents working in LumenFlow projects.
 | `git stash` (on main)    | Hides work       |
 | `git clean -fd`          | Deletes files    |
 | Work in main after claim | Breaks isolation |
-| Skip wu:done             | Incomplete WU    |
+| Skip wu:prep or wu:done | Incomplete WU    |
 
 ---
 
@@ -38,8 +38,8 @@ Quick reference for AI agents working in LumenFlow projects.
 | Read WU spec first         | Understand scope |
 | cd to worktree after claim | Isolation        |
 | Write tests before code    | TDD              |
-| Run gates before wu:done   | Quality          |
-| Run wu:done                | Complete WU      |
+| Run wu:prep in the claimed workspace | Quality and lifecycle correctness |
+| Run wu:done from main               | Complete WU      |
 | Stay within code_paths     | Scope discipline |
 
 ---
@@ -96,7 +96,7 @@ If same error happens 3 times:
 
 ```bash
 # Check lane availability
-cat docs/04-operations/tasks/status.md
+cat {{DOCS_TASKS_PATH}}/status.md
 
 # Claim a WU
 pnpm wu:claim --id WU-XXX --lane <Lane>
@@ -104,13 +104,11 @@ pnpm wu:claim --id WU-XXX --lane <Lane>
 # Work in worktree
 cd worktrees/<lane>-wu-xxx
 
-# Run gates
-pnpm gates          # Code changes
-pnpm gates --docs-only  # Docs changes
+# Prep in the claimed workspace
+pnpm wu:prep --id WU-XXX
 
-# Complete WU
-cd /path/to/main
-pnpm wu:done --id WU-XXX
+# Complete from main
+cd /path/to/main && pnpm wu:done --id WU-XXX
 ```
 
 ---
@@ -118,6 +116,7 @@ pnpm wu:done --id WU-XXX
 ## Completion Checklist
 
 - [ ] Gates pass
+- [ ] Run wu:prep in the claimed workspace
 - [ ] cd to main
 - [ ] Run wu:done
 - [ ] Verify success output

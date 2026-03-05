@@ -8,11 +8,11 @@ This guide covers upgrading LumenFlow packages in your project.
 # Check for available updates
 pnpm outdated @lumenflow/*
 
-# Update all LumenFlow packages
-pnpm update @lumenflow/cli @lumenflow/core @lumenflow/memory @lumenflow/agent @lumenflow/initiatives
+# Update all LumenFlow packages atomically
+pnpm lumenflow:upgrade --latest
 
-# Sync documentation and templates
-pnpm exec lumenflow docs:sync
+# Refresh scaffolded onboarding docs and vendor assets
+pnpm docs:sync --force
 ```
 
 ## Version Compatibility
@@ -44,10 +44,10 @@ Before upgrading, review the changelog for breaking changes:
 
 ```bash
 # Update to latest versions
-pnpm update @lumenflow/cli @lumenflow/core @lumenflow/memory @lumenflow/agent @lumenflow/initiatives
+pnpm lumenflow:upgrade --latest
 
 # Or update to a specific version
-pnpm add @lumenflow/cli@^1.2.0 @lumenflow/core@^1.2.0
+pnpm lumenflow:upgrade --version 1.2.0
 ```
 
 ### 4. Sync Documentation
@@ -55,15 +55,13 @@ pnpm add @lumenflow/cli@^1.2.0 @lumenflow/core@^1.2.0
 After upgrading, sync agent onboarding documentation:
 
 ```bash
-pnpm exec lumenflow docs:sync
+pnpm docs:sync --force
 ```
 
 This updates:
 
-- `.lumenflow/` - Workflow rules and constraints
-- `.claude/` - Claude Code skills and settings (if used)
-- `.cursor/` - Cursor rules (if used)
-- Agent onboarding documentation
+- Scaffolded onboarding documentation
+- Supported vendor assets such as Claude skills
 
 ### 5. Verify Installation
 

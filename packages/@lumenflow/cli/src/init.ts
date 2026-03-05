@@ -47,8 +47,6 @@ import { buildInitLaneLifecycleMessage, LANE_LIFECYCLE_STATUS } from './lane-lif
 // WU-1643: Import template constants from dedicated data module
 import {
   AGENTS_MD_TEMPLATE,
-  LUMENFLOW_MD_TEMPLATE,
-  CONSTRAINTS_MD_TEMPLATE,
   CLAUDE_MD_TEMPLATE,
   CLAUDE_SETTINGS_TEMPLATE,
   CURSOR_RULES_TEMPLATE,
@@ -61,16 +59,6 @@ import {
   WU_TEMPLATE_YAML,
   FRAMEWORK_HINT_TEMPLATE,
   FRAMEWORK_OVERLAY_TEMPLATE,
-  QUICK_REF_COMMANDS_TEMPLATE,
-  FIRST_WU_MISTAKES_TEMPLATE,
-  TROUBLESHOOTING_WU_DONE_TEMPLATE,
-  AGENT_SAFETY_CARD_TEMPLATE,
-  STARTING_PROMPT_TEMPLATE,
-  WU_CREATE_CHECKLIST_TEMPLATE,
-  FIRST_15_MINS_TEMPLATE,
-  LOCAL_ONLY_TEMPLATE,
-  LANE_INFERENCE_DOC_TEMPLATE,
-  WU_SIZING_GUIDE_TEMPLATE,
   WU_LIFECYCLE_SKILL_TEMPLATE,
   WORKTREE_DISCIPLINE_SKILL_TEMPLATE,
   LUMENFLOW_GATES_SKILL_TEMPLATE,
@@ -83,6 +71,7 @@ import {
   SCRIPT_ARG_OVERRIDES,
   DEFAULT_LANE_DEFINITIONS,
 } from './init-templates.js';
+import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
 // WU-1644: Import detection helpers from dedicated module
 import {
   getDocsPath,
@@ -938,7 +927,7 @@ export async function scaffoldProject(
   // Create LUMENFLOW.md (main entry point)
   await createFile(
     path.join(targetDir, 'LUMENFLOW.md'),
-    processTemplate(LUMENFLOW_MD_TEMPLATE, tokenDefaults),
+    processTemplate(loadTemplate('core/LUMENFLOW.md.template'), tokenDefaults),
     fileMode,
     result,
     targetDir,
@@ -947,7 +936,7 @@ export async function scaffoldProject(
   // Create .lumenflow/constraints.md
   await createFile(
     path.join(targetDir, LUMENFLOW_DIR, 'constraints.md'),
-    processTemplate(CONSTRAINTS_MD_TEMPLATE, tokenDefaults),
+    processTemplate(loadTemplate('core/.lumenflow/constraints.md.template'), tokenDefaults),
     fileMode,
     result,
     targetDir,
@@ -1408,90 +1397,15 @@ async function scaffoldAgentOnboardingDocs(
 
   await createDirectory(onboardingDir, result, targetDir);
 
-  // WU-1300: Add starting-prompt.md as first file
-  await createFile(
-    path.join(onboardingDir, 'starting-prompt.md'),
-    processTemplate(STARTING_PROMPT_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  // WU-1309: Add first-15-mins.md
-  await createFile(
-    path.join(onboardingDir, 'first-15-mins.md'),
-    processTemplate(FIRST_15_MINS_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  // WU-1309: Add local-only.md
-  await createFile(
-    path.join(onboardingDir, 'local-only.md'),
-    processTemplate(LOCAL_ONLY_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  // WU-1309: Add lane-inference.md
-  await createFile(
-    path.join(onboardingDir, 'lane-inference.md'),
-    processTemplate(LANE_INFERENCE_DOC_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(onboardingDir, 'quick-ref-commands.md'),
-    processTemplate(QUICK_REF_COMMANDS_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(onboardingDir, 'first-wu-mistakes.md'),
-    processTemplate(FIRST_WU_MISTAKES_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(onboardingDir, 'troubleshooting-wu-done.md'),
-    processTemplate(TROUBLESHOOTING_WU_DONE_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(onboardingDir, 'agent-safety-card.md'),
-    processTemplate(AGENT_SAFETY_CARD_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(onboardingDir, 'wu-create-checklist.md'),
-    processTemplate(WU_CREATE_CHECKLIST_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  // WU-1385: Add wu-sizing-guide.md to onboarding docs
-  await createFile(
-    path.join(onboardingDir, 'wu-sizing-guide.md'),
-    processTemplate(WU_SIZING_GUIDE_TEMPLATE, tokens),
-    options.force,
-    result,
-    targetDir,
-  );
+  for (const [outputFile, templatePath] of Object.entries(SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS)) {
+    await createFile(
+      path.join(onboardingDir, outputFile),
+      processTemplate(loadTemplate(templatePath), tokens),
+      options.force,
+      result,
+      targetDir,
+    );
+  }
 }
 
 /**

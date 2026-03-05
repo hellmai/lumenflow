@@ -2,7 +2,7 @@
 name: bug-classification
 description: Classify bugs (P0-P3) and determine fix-in-place vs separate Bug WU. Use when bug discovered mid-WU, deciding bug priority, or handling production issues.
 version: 1.0.0
-source: docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: §8 (Bug Handling Mid-WU)
 last_updated: {{DATE}}
 allowed-tools: Read, Grep
@@ -189,4 +189,4 @@ blocking: []
 
 ## Reference
 
-See [LumenFlow Agent Capsule](../../../docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md) for complete bug handling guide.
+See [LumenFlow Agent Capsule](../../../{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md) for complete bug handling guide.

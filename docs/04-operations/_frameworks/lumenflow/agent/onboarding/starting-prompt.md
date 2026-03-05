@@ -13,10 +13,12 @@ This is the complete onboarding document for AI agents working with LumenFlow. R
 Before concluding a command doesn't exist, **always check what's available**:
 
 ```bash
-pnpm lumenflow:commands    # List ALL available CLI commands (100+)
+pnpm lumenflow:commands    # List public CLI commands, aliases, and legacy surfaces
 ```
 
 LumenFlow has commands for WU lifecycle, maintenance, memory, initiatives, orchestration, metrics, packs, and more. Never guess or assume — run `pnpm lumenflow:commands` first.
+Repo-only scripts such as `pnpm docs:validate` and `pnpm pre-release:check` are monorepo scripts,
+not part of that public command list.
 
 ### Help-First Rule
 
@@ -127,13 +129,12 @@ pnpm bootstrap
 
 # 4. Do your work here (not in main!)
 
-# 5. Run gates before completion
-pnpm gates              # For code changes
-pnpm gates --docs-only  # For documentation changes
+# 5. Prep from the worktree (runs the correct gates)
+pnpm wu:prep --id WU-XXXX
+# This prints the copy-paste completion command
 
 # 6. Return to main and complete
-cd /path/to/main/checkout
-pnpm wu:done --id WU-XXXX
+cd /path/to/main/checkout && pnpm wu:done --id WU-XXXX
 ```
 
 ## Quick Start -- Cloud / Branch-PR (Copy This)
@@ -160,28 +161,28 @@ pnpm wu:done --id WU-XXXX
 pnpm wu:cleanup --id WU-XXXX
 ```
 
-**Cloud activation methods (in precedence order):**
+**Activation is explicit-only:**
 
 1. `--cloud` flag on `wu:claim` (explicit, always wins)
 2. `LUMENFLOW_CLOUD=1` environment variable (explicit, always wins)
-3. Config-driven auto-detection when `cloud.auto_detect: true` in `workspace.yaml`
 
-**Auto-detection configuration:**
+Runtime identity env vars such as `CLAUDECODE`, `CODEX`, or `CI` do not activate cloud mode.
+The `cloud.auto_detect` and `env_signals` config keys remain schema-supported metadata,
+but they do not change runtime activation behavior.
 
 ```yaml
 # workspace.yaml
 cloud:
-  auto_detect: true # default: false (opt-in)
-  env_signals: # checked only when auto_detect is true
-    - name: CI # presence check (any non-empty value)
-    - name: CODEX
-    - name: GITHUB_ACTIONS
-      equals: 'true' # exact match required
+  auto_detect: false
+  env_signals: []
 ```
 
-When `auto_detect` is enabled, `wu:claim` checks the listed environment signals
-and activates cloud mode if any match. No vendor-specific signals are hardcoded;
-all signals are user-configured.
+Use explicit activation instead:
+
+```bash
+pnpm wu:claim --id WU-XXXX --lane "Lane Name" --cloud
+LUMENFLOW_CLOUD=1 pnpm wu:claim --id WU-XXXX --lane "Lane Name"
+```
 
 ---
 
@@ -239,21 +240,26 @@ pnpm wu:claim --id WU-123 --lane "Framework: CLI" --cloud
 
 **Why:** Worktrees isolate your changes. Main checkout is protected by git hooks. Branch-PR mode is the valid exception for cloud agents that cannot create local worktrees.
 
-### Rule 2: ALWAYS Run wu:done
+### Rule 2: Use wu:prep Then wu:done
 
-After gates pass, you MUST run `pnpm wu:done --id WU-XXXX` from the main checkout. Do not just write "To complete: run wu:done" - actually run it.
+Completion is a two-step flow:
+
+1. From the worktree, run `pnpm wu:prep --id WU-XXXX`
+2. From main, copy-paste the printed `pnpm wu:done --id WU-XXXX` command
+
+Do not just write "to complete: run wu:done" and stop.
 
 ```bash
 # WRONG
 "Work complete. Next step: run pnpm wu:done --id WU-123"
 
 # RIGHT
-cd /path/to/main
-pnpm wu:done --id WU-123
+pnpm wu:prep --id WU-123
+cd /path/to/main && pnpm wu:done --id WU-123
 # Then report: "WU-123 completed. Changes merged to main."
 ```
 
-**Why:** wu:done merges your changes, creates the completion stamp, and releases the lane lock.
+**Why:** `wu:prep` runs the correct gates in the claimed workspace. `wu:done` then merges or opens the PR, writes the completion metadata, and releases the lane lock.
 
 ### Rule 3: Use Relative Paths Only
 
@@ -536,8 +542,7 @@ Domain-specific commands must come from local configuration, not core framework 
 | `pnpm wu:brief --id WU-XXX --client X`         | Generate handoff prompt + evidence       | Complex WUs                 |
 | `pnpm wu:brief --id WU-XXX --evidence-only`    | Record evidence only (no prompt output)  | Self-implementation path    |
 | `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation      | Auditable delegation flows  |
-| `pnpm gates`                                   | Run quality gates                        | Before wu:done              |
-| `pnpm gates --docs-only`                       | Run docs-only gates                      | For documentation WUs       |
+| `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion | Before wu:done        |
 | `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)       | After gates pass            |
 | `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)           | After PR merge (cloud only) |
 | `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status        | Escalation-triggered WUs    |
@@ -570,7 +575,7 @@ Domain-specific commands must come from local configuration, not core framework 
 Before reporting a WU complete, verify:
 
 - [ ] All acceptance criteria in WU YAML are satisfied
-- [ ] Gates pass (`pnpm gates` or `pnpm gates --docs-only`)
+- [ ] `pnpm wu:prep --id WU-XXX` ran successfully in the claimed workspace
 - [ ] `pnpm wu:done --id WU-XXX` ran successfully
 - [ ] Output shows "Marked done, pushed, and cleaned up"
 - [ ] Worktree was removed (check `ls worktrees/`)
@@ -711,4 +716,5 @@ rm -rf /tmp/nextjs-scaffold
 - [troubleshooting-wu-done.md](troubleshooting-wu-done.md) - Why agents forget wu:done
 - [first-wu-mistakes.md](first-wu-mistakes.md) - Common mistakes to avoid
 - [quick-ref-commands.md](quick-ref-commands.md) - Command reference
+- [wu-sizing-guide.md](wu-sizing-guide.md) - Context safety and WU sizing
 - [initiative-orchestration.md](initiative-orchestration.md) - Initiative orchestration, delegation, recovery

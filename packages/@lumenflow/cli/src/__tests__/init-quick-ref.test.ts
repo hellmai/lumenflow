@@ -190,6 +190,37 @@ describe('quick-ref commands', () => {
       expect(content).toContain('pnpm gates');
       expect(content).toContain('--docs-only');
     });
+
+    it('should show the raw local-only YAML under software_delivery.git', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const content = fs.readFileSync(getQuickRefPath(), 'utf-8');
+
+      expect(content).toContain('software_delivery:');
+      expect(content).toContain('  git:');
+      expect(content).toContain('    requireRemote: false');
+      expect(content).not.toContain('\ngit:\n  requireRemote: false');
+    });
+
+    it('should distinguish public CLI commands from repo-only scripts', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const content = fs.readFileSync(getQuickRefPath(), 'utf-8');
+
+      expect(content).toContain('public CLI surface');
+      expect(content).toContain('repo-only scripts');
+      expect(content).not.toContain('pnpm deps:add --help');
+      expect(content).not.toContain('pnpm deps:add --pkg zod');
+    });
+
+    it('should document docs:sync as a forceable onboarding refresh path', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const content = fs.readFileSync(getQuickRefPath(), 'utf-8');
+
+      expect(content).toContain('pnpm docs:sync --force');
+      expect(content).toContain('supported vendor assets');
+    });
   });
 
   describe('workflow sequence', () => {

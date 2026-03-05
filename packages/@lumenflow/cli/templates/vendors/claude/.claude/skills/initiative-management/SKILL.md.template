@@ -94,7 +94,7 @@ Edits initiative YAML fields atomically using micro-worktree isolation:
 
 ## Initiative Structure
 
-Initiatives are defined in `docs/04-operations/tasks/initiatives/INIT-001.yaml`:
+Initiatives are defined in `{{DOCS_TASKS_PATH}}/initiatives/INIT-001.yaml`:
 
 ```yaml
 id: INIT-001
@@ -157,7 +157,7 @@ pnpm wu:brief --id WU-1504 --evidence-only         # Evidence only, no prompt ou
 - Validation agents checking orchestrator's work
 - Explore agents for codebase research
 
-See [agent-invocation-guide.md](../../../docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md) for decision tree.
+See [agent-invocation-guide.md](../../../{{DOCS_ONBOARDING_PATH}}/agent-invocation-guide.md) for decision tree.
 
 ## Best Practices
 

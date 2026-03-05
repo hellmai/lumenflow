@@ -55,6 +55,12 @@ describe('onboarding docs scaffold', () => {
     };
   }
 
+  function getSection(content: string, heading: string, nextHeading: string): string {
+    const start = content.indexOf(heading);
+    const end = content.indexOf(nextHeading);
+    return content.slice(start, end === -1 ? undefined : end);
+  }
+
   describe('required onboarding docs', () => {
     it('should scaffold starting-prompt.md', async () => {
       await scaffoldProject(tempDir, getArc42Options());
@@ -65,6 +71,41 @@ describe('onboarding docs scaffold', () => {
       const content = fs.readFileSync(docPath, 'utf-8');
       expect(content).toContain('Starting Prompt');
       expect(content).toContain('LUMENFLOW.md');
+    });
+
+    it('should teach two-step completion in the local quick start', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const content = fs.readFileSync(
+        path.join(getOnboardingDir(), STARTING_PROMPT_FILE),
+        'utf-8',
+      );
+      const localQuickStart = getSection(
+        content,
+        '## Quick Start -- Local',
+        '## Quick Start -- Cloud / Branch-PR',
+      );
+
+      expect(localQuickStart).toContain('pnpm wu:prep --id WU-XXXX');
+      expect(localQuickStart).toContain('pnpm wu:done --id WU-XXXX');
+      expect(localQuickStart.indexOf('pnpm wu:prep --id WU-XXXX')).toBeLessThan(
+        localQuickStart.indexOf('pnpm wu:done --id WU-XXXX'),
+      );
+      expect(localQuickStart).not.toContain('pnpm gates --docs-only');
+      expect(localQuickStart).not.toContain('pnpm gates              # For code changes');
+    });
+
+    it('should describe cloud mode as explicit-only', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const content = fs.readFileSync(
+        path.join(getOnboardingDir(), STARTING_PROMPT_FILE),
+        'utf-8',
+      );
+
+      expect(content).toContain('Activation is explicit-only');
+      expect(content).toContain('Runtime identity env vars such as `CLAUDECODE`, `CODEX`, or `CI` do not activate cloud mode.');
+      expect(content).not.toContain('Config-driven auto-detection when `cloud.auto_detect: true`');
     });
 
     it('should scaffold first-15-mins.md', async () => {
@@ -173,6 +214,20 @@ describe('onboarding docs scaffold', () => {
         expect(content).toMatch(/\d{4}-\d{2}-\d{2}/);
         expect(content).not.toContain('{{DATE}}');
       }
+    });
+
+    it('should keep the safety card aligned with wu:prep then wu:done', async () => {
+      await scaffoldProject(tempDir, getArc42Options());
+
+      const content = fs.readFileSync(
+        path.join(getOnboardingDir(), 'agent-safety-card.md'),
+        'utf-8',
+      );
+
+      expect(content).toContain('pnpm wu:prep --id WU-XXX');
+      expect(content).toContain('pnpm wu:done --id WU-XXX');
+      expect(content).not.toContain('pnpm gates          # Code changes');
+      expect(content).not.toContain('Skip wu:done');
     });
   });
 

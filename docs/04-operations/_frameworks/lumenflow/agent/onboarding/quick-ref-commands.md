@@ -5,10 +5,10 @@
 Reference for CLI commands. Organized by category for quick discovery.
 
 > **Rule (WU-1358, WU-1530, WU-2228):** This document is a quick reference, not the complete list.
-> LumenFlow has 100+ commands. To see ALL available commands:
+> Use `pnpm lumenflow:commands` for the public CLI surface:
 >
 > ```bash
-> pnpm lumenflow:commands    # List ALL CLI commands — the authoritative source
+> pnpm lumenflow:commands    # List public commands, aliases, and legacy surfaces
 > ```
 >
 > Before using any unfamiliar command, run `--help` first:
@@ -20,6 +20,9 @@ Reference for CLI commands. Organized by category for quick discovery.
 > ```
 >
 > **Never conclude a command doesn't exist without running `pnpm lumenflow:commands` first.**
+>
+> Repo-only scripts such as `pnpm docs:validate`, `pnpm docs:generate`, and
+> `pnpm pre-release:check` are maintainer scripts, not part of the public CLI manifest.
 >
 > Maintainer reference for validation ownership: [validator-boundaries.md](../../validator-boundaries.md).
 
@@ -36,7 +39,7 @@ Run `--help` first, then run the real command with explicit flags.
 | Gates & Quality     | `pnpm gates --help`                   | `pnpm gates --docs-only`                                                 |
 | Memory & Sessions   | `pnpm mem:checkpoint --help`          | `pnpm mem:checkpoint --wu WU-1561`                                       |
 | State Management    | `pnpm state:doctor --help`            | `pnpm state:doctor --json`                                               |
-| Dependencies        | `pnpm deps:add --help`                | `pnpm deps:add --pkg zod`                                                |
+| Repo-Only Scripts   | `pnpm docs:validate --help`           | `pnpm docs:validate`                                                     |
 | Plans               | `pnpm plan:link --help`               | `pnpm plan:link --id INIT-021 --plan lumenflow://plans/INIT-021-plan.md` |
 | Initiatives         | `pnpm initiative:status --help`       | `pnpm initiative:status --id INIT-021`                                   |
 | Orchestration       | `pnpm orchestrate:init-status --help` | `pnpm orchestrate:init-status --id INIT-021`                             |
@@ -62,9 +65,11 @@ Run `--help` first, then run the real command with explicit flags.
 | `pnpm dev`                 | Start development mode                            |
 | `pnpm clean`               | Clean build artifacts and caches                  |
 | `pnpm pack:all`            | Pack all packages for distribution                |
-| `pnpm lumenflow:init`      | Scaffold LumenFlow in a project                   |
-| `pnpm docs:sync`           | Sync agent docs (for upgrades)                    |
-| `pnpm sync:templates`      | Sync templates to project                         |
+| `pnpm exec lumenflow init` | Scaffold LumenFlow in a project                   |
+| `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`) |
+| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/04-operations`) |
+| `pnpm docs:sync --force`   | Refresh scaffolded onboarding docs and supported vendor assets |
+| `pnpm sync:templates`      | Sync repo docs into bundled templates             |
 | `pnpm lumenflow:upgrade`   | Upgrade LumenFlow packages                        |
 | `pnpm lumenflow:doctor`    | Diagnose LumenFlow configuration                  |
 | `pnpm lumenflow:integrate` | Generate enforcement hooks for client             |
@@ -78,12 +83,12 @@ Run `--help` first, then run the real command with explicit flags.
 pnpm add -D @lumenflow/cli  # or: npm install -D @lumenflow/cli
 
 # Initialize LumenFlow
-pnpm exec lumenflow
+pnpm exec lumenflow init
 
 # With client-specific overlays
-pnpm exec lumenflow --client claude   # Claude Code
-pnpm exec lumenflow --client cursor   # Cursor IDE
-pnpm exec lumenflow --client all      # All clients
+pnpm exec lumenflow init --client claude   # Claude Code
+pnpm exec lumenflow init --client cursor   # Cursor IDE
+pnpm exec lumenflow init --client all      # All clients
 ```
 
 ---
@@ -101,12 +106,15 @@ commit and push atomically. Do NOT wrap them in a WU or use raw `pnpm update`/`g
 | `pnpm config:set --key <dotpath> --value <value>` | Set workspace.yaml config (Zod-validated) |
 | `pnpm config:get --key <dotpath>`                 | Read workspace.yaml config                |
 | `pnpm cloud:connect`                              | Configure cloud control-plane access      |
-| `pnpm docs:sync`                                  | Sync agent docs after upgrade             |
-| `pnpm sync:templates`                             | Sync templates to project                 |
+| `pnpm docs:sync --force`                          | Refresh scaffolded onboarding docs after upgrade |
+| `pnpm sync:templates`                             | Sync repo docs into bundled templates     |
 
 **Key principle:** If a LumenFlow CLI command exists for the operation, use it instead of
 raw pnpm/git. These tooling commands commit directly to main via micro-worktree — no dirty
 files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
+
+`docs:sync` refreshes the scaffolded onboarding set plus supported vendor assets. Existing
+tracked docs are skipped by default; use `--force` when you intentionally want the refresh.
 
 > **Anti-pattern:** Do NOT use `pnpm update @lumenflow/*` to upgrade packages.
 > This leaves dirty `package.json` and `pnpm-lock.yaml` on main.
@@ -284,12 +292,17 @@ and [YAML editing policy](../../../../../.lumenflow/rules/yaml-editing-policy.md
 
 ---
 
-## Dependencies
+## Repo-Only Scripts
 
-| Command                         | Description                    |
-| ------------------------------- | ------------------------------ |
-| `pnpm deps:add --pkg <name>`    | Add dependency to package      |
-| `pnpm deps:remove --pkg <name>` | Remove dependency from package |
+These scripts are useful in this monorepo, but they are **repo-only scripts** rather than part of
+the public CLI surface shown by `pnpm lumenflow:commands`.
+
+| Command                     | Description                            |
+| --------------------------- | -------------------------------------- |
+| `pnpm docs:validate`        | Validate generated docs against source |
+| `pnpm docs:generate`        | Regenerate docs outputs                |
+| `pnpm pre-release:check`    | Run pre-release verification           |
+| `pnpm release:changeset`    | Create or update release changesets    |
 
 ---
 
@@ -674,8 +687,9 @@ By default, `wu:create` and `wu:claim` expect an `origin` remote and will fetch 
 For local-only or offline development, add this to `workspace.yaml`:
 
 ```yaml
-git:
-  requireRemote: false
+software_delivery:
+  git:
+    requireRemote: false
 ```
 
 When `requireRemote: false`:
@@ -758,18 +772,11 @@ pnpm wu:cleanup --id WU-XXX
 - Regenerates backlog.md and status.md
 - Deletes the lane branch (local and remote)
 
-**Cloud auto-detection (opt-in):**
+**Cloud activation is explicit-only:**
 
-```yaml
-# workspace.yaml
-cloud:
-  auto_detect: true # default: false
-  env_signals:
-    - name: CI
-    - name: CODEX
-    - name: GITHUB_ACTIONS
-      equals: 'true'
-```
+Branch-PR mode activates only through `--cloud` or `LUMENFLOW_CLOUD=1`.
+Runtime identity env vars such as `CLAUDECODE`, `CODEX`, `CI`, and configured
+`cloud.auto_detect` / `env_signals` values do not activate cloud mode.
 
 ### Enforcement Hooks (WU-1367)
 
@@ -808,4 +815,4 @@ For a complete picture of how all WU commands, memory tools, and orchestration t
 - **[Failure-Mode Runbook](../../lumenflow-agent-capsule.md)** -- Concrete remediation for main-behind-origin, partial-claim state, spawn-provenance enforcement, and wu:recover usage
 - **[Troubleshooting wu:done](./troubleshooting-wu-done.md)** -- Most common agent mistake (two-step wu:prep + wu:done workflow)
 - **[First WU Mistakes](./first-wu-mistakes.md)** -- Common first-time pitfalls and how to avoid them
-- **[WU Sizing Guide](../../wu-sizing-guide.md)** -- Context safety triggers, complexity assessment, and session strategies
+- **[WU Sizing Guide](./wu-sizing-guide.md)** -- Context safety triggers, complexity assessment, and session strategies

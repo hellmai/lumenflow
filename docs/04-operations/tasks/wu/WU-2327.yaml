@@ -7,17 +7,24 @@ priority: P1
 created: 2026-03-06
 code_paths:
   - packages/@lumenflow/cli/src/init.ts
-  - packages/@lumenflow/cli/src/init-templates.ts
   - packages/@lumenflow/cli/src/docs-sync.ts
+  - packages/@lumenflow/cli/src/sync-templates.ts
+  - packages/@lumenflow/cli/src/public-manifest.ts
+  - packages/@lumenflow/cli/src/onboarding-template-paths.ts
   - packages/@lumenflow/cli/src/__tests__/init.test.ts
   - packages/@lumenflow/cli/src/__tests__/init-onboarding-docs.test.ts
   - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
   - packages/@lumenflow/cli/src/__tests__/templates-sync.test.ts
-  - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
-  - packages/@lumenflow/cli/templates/core/UPGRADING.md.template
-  - packages/@lumenflow/cli/templates/core/.lumenflow/constraints.md.template
+  - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
+  - packages/@lumenflow/cli/templates/core/**
+  - packages/@lumenflow/cli/templates/vendors/claude/.claude/skills/**
   - packages/@lumenflow/cli/templates/core/ai/onboarding/**
+  - packages/@lumenflow/cli/README.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/**
+  - docs/04-operations/tasks/wu/WU-2327.yaml
+  - apps/docs/src/content/docs/reference/**
+  - tools/generate-cli-docs.ts
+  - .claude/skills/worktree-discipline/SKILL.md
   - LUMENFLOW.md
 tests:
   manual:
@@ -34,7 +41,10 @@ artifacts:
   - .lumenflow/stamps/WU-2327.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Repo docs are the canonical onboarding source in this WU. Init now reads bundled templates
+  for core/onboarding docs, docs:sync covers the same scaffolded onboarding set, bundled templates
+  were regenerated from the repo docs, and focused init/docs-sync/template parity plus docs drift
+  validation were rerun.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation

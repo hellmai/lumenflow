@@ -194,8 +194,8 @@ If you see something broken on main (failing gates, format issues, typos, lint e
 
 - `Write(workspace.yaml, ...)` -- use `pnpm config:set` instead
 - `Edit(workspace.yaml, ...)` -- use `pnpm config:set` instead
-- `Write(docs/04-operations/tasks/wu/WU-XXX.yaml, ...)` -- use `pnpm wu:edit` instead
-- `Edit(docs/04-operations/tasks/wu/WU-XXX.yaml, ...)` -- use `pnpm wu:edit` instead
+- `Write({{DOCS_TASKS_PATH}}/wu/WU-XXX.yaml, ...)` -- use `pnpm wu:edit` instead
+- `Edit({{DOCS_TASKS_PATH}}/wu/WU-XXX.yaml, ...)` -- use `pnpm wu:edit` instead
 
 **Exception:** Reading YAML files with the Read tool is acceptable for inspection purposes.
 
@@ -288,7 +288,7 @@ git worktree prune
 
 **When approaching context limits, spawn a fresh agent instead of continuing after compaction.**
 
-Context compaction causes agents to lose critical rules. See [wu-sizing-guide.md](../docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md) for mandatory thresholds and the spawn-fresh protocol.
+Context compaction causes agents to lose critical rules. See [wu-sizing-guide.md](../{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/wu-sizing-guide.md) for mandatory thresholds and the spawn-fresh protocol.
 
 ---
 

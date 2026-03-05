@@ -1,6 +1,6 @@
 # WU Creation Checklist
 
-**Last updated:** {{DATE}}
+**Last updated:** 2026-03-06
 
 Use this checklist before running `pnpm wu:create`.
 
@@ -61,6 +61,6 @@ Let validation tell you which fields are still missing before you create the rea
 
 ## After Creation
 
-1. Review `{{DOCS_TASKS_PATH}}/wu/WU-XXX.yaml`.
+1. Review `docs/04-operations/tasks/wu/WU-XXX.yaml`.
 2. Claim it with `pnpm wu:claim --id WU-XXX --lane "<Lane>"`.
 3. Move into the worktree immediately.
