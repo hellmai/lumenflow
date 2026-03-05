@@ -48,7 +48,7 @@ function parseJsonRecord(value: string, label: string): Record<string, unknown> 
     return asRecord(JSON.parse(value));
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
-    throw new Error(`Invalid ${label}: ${reason}`);
+    throw new Error(`Invalid ${label}: ${reason}`, { cause: error });
   }
 }
 
