@@ -2,7 +2,7 @@ id: WU-2327
 title: Eliminate onboarding docs/init/docs-sync drift
 lane: 'Framework: CLI'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -45,12 +45,12 @@ artifacts:
   - .lumenflow/stamps/WU-2327.done
 dependencies: []
 risks: []
-notes: 'Repo docs are the canonical onboarding source in this WU. Init now reads bundled templates
+notes: Repo docs are the canonical onboarding source in this WU. Init now reads bundled templates
   for core/onboarding docs, docs:sync covers the same scaffolded onboarding set, bundled templates
   were regenerated from the repo docs, focused init/docs-sync/template parity plus docs drift
   validation were rerun, and wu:done now checks current-session wu:brief evidence before restoring
   tracked wu-events state while allowlisting wu-events-only dirtiness during the initial worktree
-  cleanliness guard.'
+  cleanliness guard.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
@@ -83,3 +83,6 @@ session_id: 99fa54fd-c938-44c2-9617-7fe3630a5032
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-05T23:29:38.570Z
+locked: true
+completed_at: 2026-03-06T00:19:27.476Z
+completed: 2026-03-06

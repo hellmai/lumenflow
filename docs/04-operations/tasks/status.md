@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-05_
+_Last updated: 2026-03-06_
 
 ## In Progress
 
-- [WU-2327 — Eliminate onboarding docs/init/docs-sync drift](wu/WU-2327.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1247,3 +1247,4 @@ _Last updated: 2026-03-05_
 - [WU-2319 — Approval contract adapters and CLI wrappers](wu/WU-2319.yaml) — 2026-03-05
 - [WU-2325 — Detect lane drift between workspace lanes and inference taxonomy](wu/WU-2325.yaml) — 2026-03-05
 - [WU-2326 — Make workspace.yaml authoritative for lane existence and sub-lane validation](wu/WU-2326.yaml) — 2026-03-05
+- [WU-2327 — Eliminate onboarding docs/init/docs-sync drift](wu/WU-2327.yaml) — 2026-03-06
