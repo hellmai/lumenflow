@@ -2,7 +2,7 @@ id: WU-2329
 title: Make wu:brief verification guidance template-driven and lane-aware
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -18,8 +18,11 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
 tests:
   manual:
-    - Run pnpm wu:brief --id <WU-ID> --client codex-cli for a UI-classified feature WU and verify the brief shows recommended UI verification guidance plus explicit required test paths from the WU spec.
-    - Run pnpm wu:brief --id <WU-ID> --client codex-cli for a structured-content/docs WU and verify consumer-overridable verification guidance renders without TDD-only wording.
+    - Run pnpm wu:brief --id <WU-ID> --client codex-cli for a UI-classified feature WU and verify
+      the brief shows recommended UI verification guidance plus explicit required test paths from
+      the WU spec.
+    - Run pnpm wu:brief --id <WU-ID> --client codex-cli for a structured-content/docs WU and verify
+      consumer-overridable verification guidance renders without TDD-only wording.
   unit:
     - packages/@lumenflow/core/src/__tests__/wu-spawn.test.ts
     - packages/@lumenflow/core/src/__tests__/template-loader.test.ts
@@ -38,10 +41,32 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: wu:brief still hardcodes testing and design-process guidance in TypeScript, which makes consumer repos inherit LumenFlow's default engineering workflow even when they need lane-specific or domain-specific verification guidance. Problem: the existing template manifest and client overrides do not control the canonical verification/process copy, UI feature work still falls through to backend-style TDD wording, and the brief does not clearly separate WU-required verification paths from recommended strategy guidance. Solution: expose richer resolved lane/work/policy context to template composition, move verification/process guidance selection onto manifest-driven templates with safe code fallbacks, and render WU-declared verification requirements explicitly so consumers can configure their own flow without forking the command."
+description: "Context: wu:brief still hardcodes testing and design-process guidance in TypeScript,
+  which makes consumer repos inherit LumenFlow's default engineering workflow even when they need
+  lane-specific or domain-specific verification guidance. Problem: the existing template manifest
+  and client overrides do not control the canonical verification/process copy, UI feature work still
+  falls through to backend-style TDD wording, and the brief does not clearly separate WU-required
+  verification paths from recommended strategy guidance. Solution: expose richer resolved
+  lane/work/policy context to template composition, move verification/process guidance selection
+  onto manifest-driven templates with safe code fallbacks, and render WU-declared verification
+  requirements explicitly so consumers can configure their own flow without forking the command."
 acceptance:
-  - wu:brief prompt assembly supports template-driven verification/process sections using resolved policy, lane, and work-classification context instead of treating hardcoded TypeScript prose as canonical.
-  - Template conditions can target lane/work/policy context needed for consumer overrides, including lane parent and UI/structured-content style classification.
-  - Generated briefs separate WU-declared required verification from recommended verification strategy so required unit/e2e/manual paths are explicit in the output.
-  - Default brief output no longer forces backend-style TDD wording for UI-classified feature work; the rendered verification guidance is lane/domain-aware and overridable via templates.
-  - Core and CLI tests cover the new context, template composition behavior, and regression cases for default fallback output.
+  - wu:brief prompt assembly supports template-driven verification/process sections using resolved
+    policy, lane, and work-classification context instead of treating hardcoded TypeScript prose as
+    canonical.
+  - Template conditions can target lane/work/policy context needed for consumer overrides, including
+    lane parent and UI/structured-content style classification.
+  - Generated briefs separate WU-declared required verification from recommended verification
+    strategy so required unit/e2e/manual paths are explicit in the output.
+  - Default brief output no longer forces backend-style TDD wording for UI-classified feature work;
+    the rendered verification guidance is lane/domain-aware and overridable via templates.
+  - Core and CLI tests cover the new context, template composition behavior, and regression cases
+    for default fallback output.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2329
+claimed_at: 2026-03-06T09:50:21.040Z
+baseline_main_sha: 25510e675c4b270ae77d12fb36374abc96f39fe6
+session_id: 6dba1f60-fc2b-46c7-802f-65b27a3bbe5c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-06T09:50:21.047Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2329 — Make wu:brief verification guidance template-driven and lane-aware](wu/WU-2329.yaml)
 
 ## Completed
 

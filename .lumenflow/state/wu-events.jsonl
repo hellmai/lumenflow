@@ -2852,3 +2852,4 @@
 {"type":"complete","wuId":"WU-2327","timestamp":"2026-03-06T00:19:31.814Z"}
 {"type":"claim","wuId":"WU-2328","timestamp":"2026-03-06T09:21:39.927Z","lane":"Framework: CLI","title":"Make worktree template lookup ignore main dist symlinks"}
 {"type":"complete","wuId":"WU-2328","timestamp":"2026-03-06T09:34:31.268Z"}
+{"type":"claim","wuId":"WU-2329","timestamp":"2026-03-06T09:50:21.071Z","lane":"Framework: CLI WU Commands","title":"Make wu:brief verification guidance template-driven and lane-aware"}
