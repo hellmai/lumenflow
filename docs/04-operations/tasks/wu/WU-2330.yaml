@@ -2,7 +2,7 @@ id: WU-2330
 title: Document wu:brief template defaults and consumer upgrade path
 lane: 'Content: Framework Docs'
 type: tooling
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-06
 code_paths:
@@ -70,3 +70,6 @@ session_id: 9ba7ab57-89d5-482d-8c72-be35c36f4179
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-06T10:21:26.056Z
+locked: true
+completed_at: 2026-03-06T10:39:55.760Z
+completed: 2026-03-06
