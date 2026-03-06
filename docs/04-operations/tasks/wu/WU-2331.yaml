@@ -18,7 +18,7 @@ artifacts:
   - .lumenflow/stamps/WU-2331.done
 dependencies: []
 risks: []
-notes: 'Fix both mirrored upgrade pages, validate the Starlight build locally, then cut a patch release so the docs tag workflow can succeed.'
+notes: 'Fix both mirrored upgrade pages, validate the Starlight build locally, then cut a patch release so the docs tag workflow can succeed. tdd-exception: Docs-only MDX repair validated by the Starlight build; no automated test file changes are expected.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
