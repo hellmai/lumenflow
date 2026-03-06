@@ -11,10 +11,10 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { createError, ErrorCodes } from '@lumenflow/core';
 // WU-1171: Import merge block utilities
 import { updateMergeBlock } from './merge-block.js';
+import { resolveCliTemplatesDir } from './template-directory-resolver.js';
 
 /**
  * WU-1171: File creation mode
@@ -54,16 +54,7 @@ export function getRelativePath(targetDir: string, filePath: string): string {
  * WU-1171: Get templates directory path
  */
 export function getTemplatesDir(): string {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  // Check for dist/templates (production) or ../templates (development)
-  const distTemplates = path.join(__dirname, '..', 'templates');
-  if (fs.existsSync(distTemplates)) {
-    return distTemplates;
-  }
-
-  throw createError(ErrorCodes.FILE_NOT_FOUND, `Templates directory not found at ${distTemplates}`);
+  return resolveCliTemplatesDir();
 }
 
 /**

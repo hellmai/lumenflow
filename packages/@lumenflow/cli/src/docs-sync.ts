@@ -11,7 +11,6 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import {
   createWUParser,
   WU_OPTIONS,
@@ -24,6 +23,7 @@ import { GIT_DIRECTORY_NAME, getConfig } from '@lumenflow/core/config';
 // WU-1362: Import worktree guard utilities for branch checking
 import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard';
 import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
+import { resolveCliTemplatesDir } from './template-directory-resolver.js';
 
 export type VendorType = 'claude' | 'cursor' | 'aider' | 'all' | 'none';
 
@@ -98,23 +98,7 @@ function resolveDocsSyncDirectories(targetDir: string): {
  * Falls back to src/templates/ for development
  */
 export function getTemplatesDir(): string {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  // In production: dist/docs-sync.js -> templates/
-  // In development: src/docs-sync.ts -> ../templates/
-  const distTemplates = path.join(__dirname, '..', 'templates');
-  if (fs.existsSync(distTemplates)) {
-    return distTemplates;
-  }
-
-  // Fallback for tests running from src
-  const srcTemplates = path.join(__dirname, '..', 'templates');
-  if (fs.existsSync(srcTemplates)) {
-    return srcTemplates;
-  }
-
-  throw createError(ErrorCodes.FILE_NOT_FOUND, `Templates directory not found at ${distTemplates}`);
+  return resolveCliTemplatesDir();
 }
 
 /**
