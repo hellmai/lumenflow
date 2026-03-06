@@ -2,7 +2,7 @@ id: WU-2329
 title: Make wu:brief verification guidance template-driven and lane-aware
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -35,9 +35,9 @@ artifacts:
   - .lumenflow/stamps/WU-2329.done
 dependencies: []
 risks: []
-notes: 'Implemented template-driven verification/design prompt composition, exposed work
-  classification and required verification into template conditions/tokens, and verified branch-local
-  prompt output for both UI and structured-content WU shapes before wu:prep.'
+notes: Implemented template-driven verification/design prompt composition, exposed work
+  classification and required verification into template conditions/tokens, and verified
+  branch-local prompt output for both UI and structured-content WU shapes before wu:prep.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -75,3 +75,6 @@ session_id: 6dba1f60-fc2b-46c7-802f-65b27a3bbe5c
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-06T09:50:21.047Z
+locked: true
+completed_at: 2026-03-06T10:09:21.616Z
+completed: 2026-03-06

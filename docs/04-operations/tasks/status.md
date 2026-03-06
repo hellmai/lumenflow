@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-- [WU-2329 — Make wu:brief verification guidance template-driven and lane-aware](wu/WU-2329.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1249,3 +1249,4 @@ _Last updated: 2026-03-06_
 - [WU-2326 — Make workspace.yaml authoritative for lane existence and sub-lane validation](wu/WU-2326.yaml) — 2026-03-05
 - [WU-2327 — Eliminate onboarding docs/init/docs-sync drift](wu/WU-2327.yaml) — 2026-03-06
 - [WU-2328 — Make worktree template lookup ignore main dist symlinks](wu/WU-2328.yaml) — 2026-03-06
+- [WU-2329 — Make wu:brief verification guidance template-driven and lane-aware](wu/WU-2329.yaml) — 2026-03-06
