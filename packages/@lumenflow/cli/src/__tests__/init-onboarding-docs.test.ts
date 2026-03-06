@@ -58,7 +58,7 @@ describe('onboarding docs scaffold', () => {
   function getSection(content: string, heading: string, nextHeading: string): string {
     const start = content.indexOf(heading);
     const end = content.indexOf(nextHeading);
-    return content.slice(start, end === -1 ? undefined : end);
+    return content.slice(start, end === -1 ? content.length : end);
   }
 
   describe('required onboarding docs', () => {
