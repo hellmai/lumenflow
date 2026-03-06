@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2336 — Make Cloud prompt policy summaries UI-aware](wu/WU-2336.yaml)
 
 ## Completed
 

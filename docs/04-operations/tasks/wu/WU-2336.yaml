@@ -2,7 +2,7 @@ id: WU-2336
 title: Make Cloud prompt policy summaries UI-aware
 lane: 'Framework: Core'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-06
 code_paths:
@@ -30,9 +30,26 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: WU-2335 fixed UI-specific verification guidance ordering in wu:brief, but Cloud prompts still emit later blanket policy summaries for UI-classified WUs. Problem: UI work can correctly say 'Prefer user-outcome verification over brittle DOM assertions' and then later still say 'TDD: Failing test first' and 'Testing: tdd', which pushes agents back toward brittle UI component TDD. Solution: make the core prompt policy summary sections domain-aware so UI-classified work does not restate runtime-style TDD mandates in Mandatory Standards or You will be judged by, while preserving strong TDD guidance for runtime/backend work."
+description: "Context: WU-2335 fixed UI-specific verification guidance ordering in wu:brief, but
+  Cloud prompts still emit later blanket policy summaries for UI-classified WUs. Problem: UI work
+  can correctly say 'Prefer user-outcome verification over brittle DOM assertions' and then later
+  still say 'TDD: Failing test first' and 'Testing: tdd', which pushes agents back toward brittle UI
+  component TDD. Solution: make the core prompt policy summary sections domain-aware so
+  UI-classified work does not restate runtime-style TDD mandates in Mandatory Standards or You will
+  be judged by, while preserving strong TDD guidance for runtime/backend work."
 acceptance:
-  - UI-classified feature/bug WUs generated via wu:brief do not restate blanket TDD mandates in Mandatory Standards when the effective guidance is behavior-focused UI verification
-  - "UI-classified feature/bug WUs generated via wu:brief do not show 'Testing: tdd' in You will be judged by when the work should be validated via fit-for-surface UI verification"
+  - UI-classified feature/bug WUs generated via wu:brief do not restate blanket TDD mandates in
+    Mandatory Standards when the effective guidance is behavior-focused UI verification
+  - "UI-classified feature/bug WUs generated via wu:brief do not show 'Testing: tdd' in You will be
+    judged by when the work should be validated via fit-for-surface UI verification"
   - Runtime/backend feature WUs still show strong TDD-oriented policy summaries where appropriate
-  - Automated regression coverage proves the core prompt generator behavior for both UI-classified and runtime/backend WUs
+  - Automated regression coverage proves the core prompt generator behavior for both UI-classified
+    and runtime/backend WUs
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-wu-2336
+claimed_at: 2026-03-06T16:55:18.201Z
+baseline_main_sha: 6aaed369a661d5f3b0b53e2b6dec099f96e0cc0f
+session_id: fbeefd98-cc6a-4ad4-9ce8-6380ee68c9c1
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-06T16:55:18.208Z
