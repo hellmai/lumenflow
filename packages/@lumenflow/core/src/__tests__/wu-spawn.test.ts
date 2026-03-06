@@ -912,9 +912,8 @@ describe('WU-1900: Wire work classifier into wu:brief generation', () => {
         testMethodologyHint: 'smoke-test',
       });
 
-      // Should contain visual/smoke test guidance
-      expect(result).toContain('Visual');
-      expect(result).toContain('Smoke');
+      expect(result).toContain('UI/Visual Verification Strategy');
+      expect(result).toContain('integration or E2E');
       // Should NOT contain full TDD directive
       expect(result).not.toContain('IF YOU WRITE IMPLEMENTATION CODE BEFORE A FAILING TEST');
     });
@@ -926,14 +925,14 @@ describe('WU-1900: Wire work classifier into wu:brief generation', () => {
       expect(result).toContain('TDD');
     });
 
-    it('returns full TDD for feature WU even with smoke-test hint', () => {
+    it('returns smoke-test guidance for feature WU when hint is smoke-test', () => {
       const policy = resolvePolicy(parseConfig({ methodology: { testing: 'tdd' } }));
-      // smoke-test hint only applies to bug type
       const result = generatePolicyBasedTestGuidance('feature', policy, {
         testMethodologyHint: 'smoke-test',
       });
 
-      expect(result).toContain('TDD');
+      expect(result).toContain('UI/Visual Verification Strategy');
+      expect(result).not.toContain('IF YOU WRITE IMPLEMENTATION CODE BEFORE A FAILING TEST');
     });
 
     it('returns docs guidance for documentation type regardless of hint', () => {
@@ -1227,7 +1226,7 @@ describe('WU-1900: Wire work classifier into wu:brief generation', () => {
         testMethodologyHint: classification.testMethodologyHint,
       });
 
-      expect(testGuidance).toContain('Visual');
+      expect(testGuidance).toContain('UI/Visual Verification Strategy');
       expect(testGuidance).not.toContain('IF YOU WRITE IMPLEMENTATION CODE BEFORE A FAILING TEST');
 
       // Step 3: Design context section present

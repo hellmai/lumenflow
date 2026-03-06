@@ -7,12 +7,15 @@ priority: P1
 created: 2026-03-06
 code_paths:
   - packages/@lumenflow/core/src/spawn-guidance-generators.ts
-  - packages/@lumenflow/core/src/template-loader.ts
-  - packages/@lumenflow/core/src/resolve-policy.ts
-  - packages/@lumenflow/core/src/schemas/agents-config.ts
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
   - .lumenflow/templates/manifest.yaml
-  - .lumenflow/templates/spawn-prompt
+  - .lumenflow/templates/spawn-prompt/structured-content-directive.md
+  - .lumenflow/templates/spawn-prompt/verification-requirements.md
+  - .lumenflow/templates/spawn-prompt/design-context-ui.md
+  - .lumenflow/templates/spawn-prompt/visual-directive.md
+  - .lumenflow/templates/spawn-prompt/methodology/tdd-directive.md
+  - .lumenflow/templates/spawn-prompt/methodology/test-after-directive.md
+  - .lumenflow/templates/spawn-prompt/methodology/none-directive.md
   - packages/@lumenflow/core/src/__tests__/wu-spawn.test.ts
   - packages/@lumenflow/core/src/__tests__/template-loader.test.ts
   - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
@@ -32,7 +35,9 @@ artifacts:
   - .lumenflow/stamps/WU-2329.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Implemented template-driven verification/design prompt composition, exposed work
+  classification and required verification into template conditions/tokens, and verified branch-local
+  prompt output for both UI and structured-content WU shapes before wu:prep.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

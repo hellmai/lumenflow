@@ -816,6 +816,26 @@ Test content.
       expect(evaluateCondition(noneCondition, layeredContext)).toBe(false);
       expect(evaluateCondition(noneCondition, noneContext)).toBe(true);
     });
+
+    it('should evaluate work classification and verification context conditions', () => {
+      const uiContext = {
+        type: 'feature',
+        'work.domain': 'ui',
+        'work.testMethodologyHint': 'smoke-test',
+        hasRequiredVerification: 'true',
+      };
+      const docsContext = {
+        type: 'documentation',
+        'work.domain': 'docs',
+        'work.testMethodologyHint': 'structured-content',
+      };
+
+      expect(evaluateCondition("work.domain === 'ui'", uiContext)).toBe(true);
+      expect(evaluateCondition("work.testMethodologyHint === 'smoke-test'", uiContext)).toBe(true);
+      expect(evaluateCondition('hasRequiredVerification', uiContext)).toBe(true);
+      expect(evaluateCondition("work.domain === 'ui'", docsContext)).toBe(false);
+      expect(evaluateCondition('hasRequiredVerification', docsContext)).toBe(false);
+    });
   });
 
   describe('methodology templates (WU-1260)', () => {

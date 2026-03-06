@@ -4,10 +4,12 @@ name: TDD Methodology Directive
 required: false
 order: 5
 tokens: []
-condition: "policy.testing === 'tdd'"
+condition: "policy.testing === 'tdd' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 ---
 
 ## TDD DIRECTIVE - READ BEFORE CODING
+
+This repository is currently configured for TDD on runtime code paths.
 
 **IF YOU WRITE IMPLEMENTATION CODE BEFORE A FAILING TEST, YOU HAVE FAILED THIS WU.**
 

@@ -127,17 +127,17 @@ function generateDocsGuidance(): string {
  * WU-1900: Generate smoke-test guidance (extracted from inline)
  */
 function generateSmokeTestGuidance(): string {
-  return `## Visual/Design Testing
+  return `## UI/Visual Verification Strategy
 
-**Smoke test + manual QA** - Visual WUs require different verification.
+**Prefer user-outcome verification over brittle DOM assertions** for UI-classified work.
 
-### Requirements
+### Recommended Order
 
-1. Create smoke test for component rendering (if applicable)
-2. Verify visual appearance manually
-3. Test responsive behavior across breakpoints
-4. Check accessibility (keyboard navigation, screen reader)
-5. Document manual QA results in completion notes`;
+1. Cover critical user flows with integration or E2E tests when behavior crosses component boundaries
+2. Add smoke/render coverage for crash-prone states, loading states, and empty states
+3. Use unit tests for pure logic only (formatters, reducers, validators, accessibility helpers, slug builders)
+4. Verify responsive behavior and accessibility manually or with automation
+5. Avoid tests that only snapshot CSS classes or markup shape unless that contract is intentional`;
 }
 
 /** Generate refactor testing guidance */
@@ -345,8 +345,8 @@ export function generateMandatoryStandards(policy: ResolvedPolicy): string {
 
 /**
  * WU-1261, WU-1900: Generate test guidance based on resolved policy and classifier hint.
- * Type overrides take precedence (docs, visual, refactor). WU-1900: classifier-driven
- * smoke-test for bug WUs with UI code_paths.
+ * Type overrides take precedence (docs, visual, refactor). Classifier hints can redirect
+ * code WUs to smoke-test or structured-content guidance when runtime TDD is not the best fit.
  */
 export function generatePolicyBasedTestGuidance(
   wuType: string,
@@ -370,9 +370,8 @@ export function generatePolicyBasedTestGuidance(
     return generateStructuredContentGuidance();
   }
 
-  // WU-1900: Classifier-driven smoke-test for bug WUs with UI code_paths
-  // This makes SMOKE_TEST_TYPES reachable through classifier signals
-  if (type === 'bug' && options?.testMethodologyHint === TEST_METHODOLOGY_HINTS.SMOKE_TEST) {
+  // WU-2329: UI-classified work can use smoke-test guidance regardless of WU type.
+  if (options?.testMethodologyHint === TEST_METHODOLOGY_HINTS.SMOKE_TEST) {
     return generateSmokeTestGuidance();
   }
 

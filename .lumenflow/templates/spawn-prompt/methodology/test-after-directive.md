@@ -4,10 +4,12 @@ name: Test-After Methodology Directive
 required: false
 order: 5
 tokens: []
-condition: "policy.testing === 'test-after'"
+condition: "policy.testing === 'test-after' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 ---
 
 ## TEST-AFTER DIRECTIVE
+
+This repository is currently configured for test-after on runtime code paths.
 
 **Implementation-first is acceptable, but tests must be written before marking the WU as done.**
 

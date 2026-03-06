@@ -66,7 +66,11 @@ import {
 } from '@lumenflow/core/wu-spawn';
 
 // WU-1900: Import work classifier for domain-aware prompt generation
-import { classifyWork, TEST_METHODOLOGY_HINTS } from '@lumenflow/core/work-classifier';
+import {
+  classifyWork,
+  TEST_METHODOLOGY_HINTS,
+  type WorkClassification,
+} from '@lumenflow/core/work-classifier';
 
 // WU-1288: Import resolvePolicy for methodology policy resolution
 import { resolvePolicy } from '@lumenflow/core/resolve-policy';
@@ -112,6 +116,14 @@ const DEFAULT_TEMPLATE_BASE_DIR = findProjectRoot(SPAWN_PROMPT_BUILDERS_DIR);
 const DEFAULT_WORKTREES_DIR_SEGMENT = DIRECTORIES.WORKTREES.replace(/\/+$/g, '');
 const PRIMARY_MAIN_REF = `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
 const LANE_GUIDANCE_TEMPLATE_ID_PREFIX = 'lane-guidance-';
+const DESIGN_CONTEXT_TEMPLATE_ID_PREFIX = 'design-context-';
+const VERIFICATION_TEMPLATE_ID_PREFIX = 'verification-';
+const VERIFICATION_TEMPLATE_IDS = new Set([
+  'documentation-directive',
+  'visual-directive',
+  'refactor-directive',
+  'structured-content-directive',
+]);
 
 function normalizeDirectorySegment(value: string, fallback: string): string {
   const normalized = value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
@@ -161,16 +173,59 @@ function resolveLaneGuidanceSection(
   templates: Map<string, string>,
   lane: string | undefined,
 ): string {
-  const templateSections = Array.from(templates.entries())
-    .filter(([id]) => id.startsWith(LANE_GUIDANCE_TEMPLATE_ID_PREFIX))
-    .map(([, content]) => content.trim())
-    .filter((content) => content.length > 0);
+  const templateSections = collectTemplateSections(templates, (id) =>
+    id.startsWith(LANE_GUIDANCE_TEMPLATE_ID_PREFIX),
+  );
 
   if (templateSections.length > 0) {
     return templateSections.join('\n\n---\n\n');
   }
 
   return generateLaneGuidance(lane);
+}
+
+function collectTemplateSections(
+  templates: Map<string, string>,
+  matcher: (id: string) => boolean,
+): string[] {
+  return Array.from(templates.entries())
+    .filter(([id]) => matcher(id))
+    .map(([, content]) => content.trim())
+    .filter((content) => content.length > 0);
+}
+
+function resolveVerificationGuidanceSection(
+  templates: Map<string, string>,
+  fallback: string,
+): string {
+  const templateSections = collectTemplateSections(
+    templates,
+    (id) =>
+      id.startsWith('methodology-') ||
+      id.startsWith(VERIFICATION_TEMPLATE_ID_PREFIX) ||
+      VERIFICATION_TEMPLATE_IDS.has(id),
+  );
+
+  if (templateSections.length > 0) {
+    return templateSections.join('\n\n---\n\n');
+  }
+
+  return fallback;
+}
+
+function resolveDesignContextSection(
+  templates: Map<string, string>,
+  classification: WorkClassification,
+): string {
+  const templateSections = collectTemplateSections(templates, (id) =>
+    id.startsWith(DESIGN_CONTEXT_TEMPLATE_ID_PREFIX),
+  );
+
+  if (templateSections.length > 0) {
+    return templateSections.join('\n\n---\n\n');
+  }
+
+  return generateDesignContextSection(classification);
 }
 
 // ─── Mandatory Agent Detection ───
@@ -227,7 +282,11 @@ export interface WUDocument {
   spec_refs?: string[];
   notes?: string;
   risks?: string[];
-  tests?: { manual?: string[] };
+  tests?: {
+    manual?: string[];
+    unit?: string[];
+    e2e?: string[];
+  };
   claimed_at?: string;
   claimed_mode?: string;
   claimed_branch?: string;
@@ -329,12 +388,49 @@ function formatManualTests(manualTests: string[] | undefined): string {
   return manualTests.map((test) => `- [ ] ${test}`).join('\n');
 }
 
+function formatTestPaths(testPaths: string[] | undefined): string {
+  if (!testPaths || testPaths.length === 0) {
+    return '';
+  }
+  return testPaths.map((testPath) => `- \`${testPath}\``).join('\n');
+}
+
+function formatRequiredVerification(doc: WUDocument): string {
+  const sections: string[] = [];
+
+  const unitTests = formatTestPaths(doc.tests?.unit);
+  if (unitTests) {
+    sections.push(`### Unit Test Paths\n\n${unitTests}`);
+  }
+
+  const e2eTests = formatTestPaths(doc.tests?.e2e);
+  if (e2eTests) {
+    sections.push(`### E2E Test Paths\n\n${e2eTests}`);
+  }
+
+  const manualTests = formatManualTests(doc.tests?.manual);
+  if (manualTests) {
+    sections.push(`### Manual Verification\n\n${manualTests}`);
+  }
+
+  return sections.join('\n\n');
+}
+
+function generateRequiredVerificationSection(doc: WUDocument): string {
+  const requiredVerification = formatRequiredVerification(doc);
+  if (!requiredVerification) {
+    return '';
+  }
+
+  return `## Required Verification From WU Spec\n\n${requiredVerification}`;
+}
+
 // ─── Implementation Context ───
 
 /**
  * Generate implementation context section (WU-1833)
  *
- * Includes spec_refs, notes, risks, and tests.manual if present.
+ * Includes spec_refs, notes, and risks.
  * Sections with no content are omitted to keep prompts lean.
  *
  * @param {object} doc - WU YAML document
@@ -358,12 +454,6 @@ export function generateImplementationContext(doc: WUDocument): string {
   const risks = formatRisks(doc.risks);
   if (risks) {
     sections.push(`## Risks\n\n${risks}`);
-  }
-
-  // Manual Verification (tests.manual)
-  const manualTests = formatManualTests(doc.tests?.manual);
-  if (manualTests) {
-    sections.push(`## Manual Verification\n\n${manualTests}`);
   }
 
   if (sections.length === 0) {
@@ -1147,10 +1237,14 @@ export function buildSpawnTemplateContext(
   doc: WUDocument,
   id: string,
   policy?: ResolvedPolicy,
+  classification?: WorkClassification,
 ): TemplateContext {
   const lane = doc.lane || '';
   const laneParent = lane.split(':')[0]?.trim() || '';
   const type = (doc.type || 'feature').toLowerCase();
+  const requiredVerification = formatRequiredVerification(doc);
+  const workDomain = classification?.domain || '';
+  const workTestMethodologyHint = classification?.testMethodologyHint || '';
 
   const context: TemplateContext = {
     WU_ID: id,
@@ -1160,10 +1254,19 @@ export function buildSpawnTemplateContext(
     DESCRIPTION: doc.description || '',
     WORKTREE_PATH: doc.worktree_path || '',
     laneParent,
+    WORK_DOMAIN: workDomain,
+    WORK_TEST_METHODOLOGY_HINT: workTestMethodologyHint,
+    REQUIRED_VERIFICATION: requiredVerification,
     // Lowercase aliases for condition evaluation
     type,
     lane,
     worktreePath: doc.worktree_path || '',
+    'work.domain': workDomain,
+    'work.testMethodologyHint': workTestMethodologyHint,
+    hasRequiredVerification: requiredVerification ? 'true' : undefined,
+    'tests.hasUnit': doc.tests?.unit?.length ? 'true' : undefined,
+    'tests.hasE2E': doc.tests?.e2e?.length ? 'true' : undefined,
+    'tests.hasManual': doc.tests?.manual?.length ? 'true' : undefined,
   };
 
   // WU-1898: Add policy fields for methodology template condition evaluation
@@ -1222,15 +1325,19 @@ export function generateTaskInvocation(
   // WU-1681: Use resolved client from caller; fall back for template loading only
   // WU-1898: Pass policy to context for methodology template condition evaluation
   const clientName = options.client?.name || 'claude-code';
-  const templateContext = buildSpawnTemplateContext(doc, id, policy);
+  const templateContext = buildSpawnTemplateContext(doc, id, policy, classification);
   const templateBaseDir = options.baseDir || DEFAULT_TEMPLATE_BASE_DIR;
   const templates = tryLoadTemplates(clientName, templateContext, templateBaseDir);
 
-  // WU-2046: Keep policy/type guidance canonical for spawn output.
-  // Template availability must never override resolved methodology behavior.
-  const testGuidance = generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
-    testMethodologyHint: classification.testMethodologyHint,
-  });
+  const testGuidanceFallback = [
+    generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
+      testMethodologyHint: classification.testMethodologyHint,
+    }),
+    generateRequiredVerificationSection(doc),
+  ]
+    .filter((section) => section.length > 0)
+    .join('\n\n---\n\n');
+  const testGuidance = resolveVerificationGuidanceSection(templates, testGuidanceFallback);
 
   // WU-1288: Generate enforcement summary from resolved policy
   const enforcementSummary = generateEnforcementSummary(policy);
@@ -1264,7 +1371,7 @@ export function generateTaskInvocation(
   const implementationContext = generateImplementationContext(doc);
 
   // WU-1900: Generate design context section for UI-classified work
-  const designContextSection = generateDesignContextSection(classification);
+  const designContextSection = resolveDesignContextSection(templates, classification);
 
   // WU-2252: Generate invariants/prior-art section for code_paths
   const invariantsPriorArt = generateInvariantsPriorArtSection(codePaths);
@@ -1482,9 +1589,6 @@ export function generateCodexPrompt(
   );
 
   const preamble = generatePreamble(id, strategy);
-  const testGuidance = generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
-    testMethodologyHint: classification.testMethodologyHint,
-  });
   const mandatoryStandards = generateMandatoryStandards(policy);
   const enforcementSummary = generateEnforcementSummary(policy);
   const mandatorySection = generateMandatoryAgentSection(mandatoryAgents, id);
@@ -1496,12 +1600,20 @@ export function generateCodexPrompt(
     includeTddCheckpoint: shouldIncludeTddCheckpoint,
   });
   const worktreePathHint = resolveWorktreePathHint(doc, id, config);
-  const designContextSection = generateDesignContextSection(classification);
 
   const clientName = options.client?.name || 'claude-code';
-  const templateContext = buildSpawnTemplateContext(doc, id, policy);
+  const templateContext = buildSpawnTemplateContext(doc, id, policy, classification);
   const templateBaseDir = options.baseDir || DEFAULT_TEMPLATE_BASE_DIR;
   const templates = tryLoadTemplates(clientName, templateContext, templateBaseDir);
+  const testGuidanceFallback = [
+    generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
+      testMethodologyHint: classification.testMethodologyHint,
+    }),
+    generateRequiredVerificationSection(doc),
+  ]
+    .filter((section) => section.length > 0)
+    .join('\n\n---\n\n');
+  const testGuidance = resolveVerificationGuidanceSection(templates, testGuidanceFallback);
 
   const codeCraftGuidance = templates.get('code-craft') || generateCodeCraftGuidance();
   const readBeforeWrite = templates.get('read-before-write') || generateReadBeforeWriteDiscipline();
@@ -1518,6 +1630,7 @@ export function generateCodexPrompt(
     skillsBaseContent + (clientSkillsGuidance ? `\n${clientSkillsGuidance}` : '');
   const clientBlocks = generateClientBlocksSection(clientContext);
   const laneGuidance = resolveLaneGuidanceSection(templates, doc.lane);
+  const designContextSection = resolveDesignContextSection(templates, classification);
 
   const executionModeSection = generateExecutionModeSection(options);
   const thinkToolGuidance = generateThinkToolGuidance(options);

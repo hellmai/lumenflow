@@ -26,19 +26,19 @@ templates:
     path: spawn-prompt/methodology/tdd-directive.md
     required: false
     order: 5
-    condition: "policy.testing === 'tdd'"
+    condition: "policy.testing === 'tdd' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 
   - id: methodology-test-after
     path: spawn-prompt/methodology/test-after-directive.md
     required: false
     order: 5
-    condition: "policy.testing === 'test-after'"
+    condition: "policy.testing === 'test-after' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 
   - id: methodology-none
     path: spawn-prompt/methodology/none-directive.md
     required: false
     order: 5
-    condition: "policy.testing === 'none'"
+    condition: "policy.testing === 'none' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 
   # ─────────────────────────────────────────────────────────────────────
   # Phase 0.5: Architecture directives (order 6)
@@ -82,13 +82,25 @@ templates:
     path: spawn-prompt/visual-directive.md
     required: false
     order: 15
-    condition: "type === 'visual' || type === 'design' || type === 'ui'"
+    condition: "type === 'visual' || type === 'design' || type === 'ui' || work.testMethodologyHint === 'smoke-test'"
 
   - id: refactor-directive
     path: spawn-prompt/refactor-directive.md
     required: false
     order: 15
     condition: "type === 'refactor'"
+
+  - id: structured-content-directive
+    path: spawn-prompt/structured-content-directive.md
+    required: false
+    order: 15
+    condition: "work.testMethodologyHint === 'structured-content' && type !== 'documentation' && type !== 'docs' && type !== 'config'"
+
+  - id: verification-requirements
+    path: spawn-prompt/verification-requirements.md
+    required: false
+    order: 18
+    condition: 'hasRequiredVerification'
 
   # ─────────────────────────────────────────────────────────────────────
   # Skills selection (order 50) - client-specific overrides available
@@ -107,6 +119,12 @@ templates:
     path: spawn-prompt/read-before-write.md
     required: true
     order: 60
+
+  - id: design-context-ui
+    path: spawn-prompt/design-context-ui.md
+    required: false
+    order: 65
+    condition: "work.domain === 'ui'"
 
   # ─────────────────────────────────────────────────────────────────────
   # Phase 2: Agent guidance (order 100-200)

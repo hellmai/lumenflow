@@ -4,12 +4,12 @@ name: No Testing Methodology Directive
 required: false
 order: 5
 tokens: []
-condition: "policy.testing === 'none'"
+condition: "policy.testing === 'none' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 ---
 
 ## TESTING GUIDANCE
 
-No specific testing methodology is enforced for this project.
+No specific testing methodology is enforced for this repository on runtime code paths.
 
 ### Recommendations
 
