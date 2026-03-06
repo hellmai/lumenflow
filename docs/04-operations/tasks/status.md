@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2331 — Fix release-breaking upgrade guide MDX](wu/WU-2331.yaml)
 
 ## Completed
 
