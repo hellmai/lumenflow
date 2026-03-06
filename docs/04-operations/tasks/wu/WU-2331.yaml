@@ -1,7 +1,7 @@
 id: WU-2331
 title: Fix release-breaking upgrade guide MDX
 lane: 'Content: Documentation'
-type: documentation
+type: bug
 status: in_progress
 priority: P1
 created: 2026-03-06
