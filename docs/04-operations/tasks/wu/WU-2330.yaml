@@ -2,7 +2,7 @@ id: WU-2330
 title: Document wu:brief template defaults and consumer upgrade path
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-06
 code_paths:
@@ -16,7 +16,8 @@ code_paths:
 tests:
   manual:
     - Run pnpm docs:validate and verify the updated docs build cleanly.
-    - Read the upgrade/customization sections and verify they explicitly cover defaults, new installs, upgraded installs, and override-only customization for wu:brief.
+    - Read the upgrade/customization sections and verify they explicitly cover defaults, new
+      installs, upgraded installs, and override-only customization for wu:brief.
   unit: []
   e2e: []
 artifacts:
@@ -36,9 +37,28 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: WU-2329 made wu:brief verification guidance template-driven and lane-aware, but the consumer-facing docs still describe the older override surface and do not clearly explain defaults, upgrade behavior, or what new installs get automatically. Problem: users can benefit from the new defaults immediately, but they cannot discover the new built-in sections, condition variables, tokens, or the recommended upgrade path from the docs alone. Solution: update the public customization/reference/upgrade docs and the framework onboarding docs so consumers understand default behavior, when .lumenflow/templates is optional, how to upgrade existing repos, and how to override the new verification/design sections.'
+description: 'Context: WU-2329 made wu:brief verification guidance template-driven and lane-aware,
+  but the consumer-facing docs still describe the older override surface and do not clearly explain
+  defaults, upgrade behavior, or what new installs get automatically. Problem: users can benefit
+  from the new defaults immediately, but they cannot discover the new built-in sections, condition
+  variables, tokens, or the recommended upgrade path from the docs alone. Solution: update the
+  public customization/reference/upgrade docs and the framework onboarding docs so consumers
+  understand default behavior, when .lumenflow/templates is optional, how to upgrade existing repos,
+  and how to override the new verification/design sections.'
 acceptance:
-  - Upgrade docs explain what existing installs should run after upgrading and clarify that default behavior works without project-local template overrides.
-  - Customization/reference docs list the new built-in verification/design template IDs plus the new template condition variables and tokens introduced for wu:brief composition.
-  - Onboarding/framework docs explain how new installs, upgraded installs, and custom template overrides relate to each other without implying consumers must scaffold .lumenflow/templates just to use the defaults.
+  - Upgrade docs explain what existing installs should run after upgrading and clarify that default
+    behavior works without project-local template overrides.
+  - Customization/reference docs list the new built-in verification/design template IDs plus the new
+    template condition variables and tokens introduced for wu:brief composition.
+  - Onboarding/framework docs explain how new installs, upgraded installs, and custom template
+    overrides relate to each other without implying consumers must scaffold .lumenflow/templates
+    just to use the defaults.
   - Examples and wording stay consistent across public docs and internal onboarding docs.
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2330
+claimed_at: 2026-03-06T10:21:26.049Z
+baseline_main_sha: c0431e42dd65c2fcc94cccc4a23559126a7551ca
+session_id: 9ba7ab57-89d5-482d-8c72-be35c36f4179
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-06T10:21:26.056Z

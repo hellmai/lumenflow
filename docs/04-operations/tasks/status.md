@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2330 — Document wu:brief template defaults and consumer upgrade path](wu/WU-2330.yaml)
 
 ## Completed
 
