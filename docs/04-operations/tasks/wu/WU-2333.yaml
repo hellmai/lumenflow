@@ -10,6 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
   - apps/docs/src/content/docs/getting-started/upgrade.mdx
   - apps/docs/src/content/docs/packs/software-delivery/setup/upgrading.mdx
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
 tests:
   manual:
     - pnpm sync:templates --check-drift
@@ -20,12 +22,20 @@ artifacts:
   - .lumenflow/stamps/WU-2333.done
 dependencies: []
 risks: []
-notes: ''
+notes: Expanded scope to resync a pre-existing quick-ref template drift so sync:templates
+  --check-drift passes before release.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-06T12:27:03.228Z
+worktree_path: worktrees/content-specs-governance-wu-2333
+session_id: 317c8eaf-3bb8-4dee-a084-29befba61e3d
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-06T12:27:03.237Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +49,3 @@ acceptance:
   - Upgrade pages explicitly state that .lumenflow.lane-inference.yaml is no longer used and that
     workspace.yaml > software_delivery.lanes.definitions is the sole source of truth.
   - Docs/template validation passes so the release can proceed from a clean main.
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2333
-claimed_at: 2026-03-06T12:27:03.228Z
-baseline_main_sha: 8f168603a26e8005147c256463dd0a6a1b5af46a
-session_id: 317c8eaf-3bb8-4dee-a084-29befba61e3d
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-06T12:27:03.237Z
