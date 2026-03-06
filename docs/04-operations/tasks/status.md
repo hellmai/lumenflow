@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2337 — Fix wu:infer-lane zero-signal first-lane fallback](wu/WU-2337.yaml)
 
 ## Completed
 
