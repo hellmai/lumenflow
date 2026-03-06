@@ -2,7 +2,7 @@ id: WU-2333
 title: Clarify workspace-only lane docs before release
 lane: 'Content: Specs Governance'
 type: tooling
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -48,3 +48,6 @@ acceptance:
   - Upgrade pages explicitly state that .lumenflow.lane-inference.yaml is no longer used and that
     workspace.yaml > software_delivery.lanes.definitions is the sole source of truth.
   - Docs/template validation passes so the release can proceed from a clean main.
+locked: true
+completed_at: 2026-03-06T12:36:19.335Z
+completed: 2026-03-06

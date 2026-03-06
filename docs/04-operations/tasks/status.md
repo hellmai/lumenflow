@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-- [WU-2333 — Clarify workspace-only lane docs before release](wu/WU-2333.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1253,3 +1253,4 @@ _Last updated: 2026-03-06_
 - [WU-2330 — Document wu:brief template defaults and consumer upgrade path](wu/WU-2330.yaml) — 2026-03-06
 - [WU-2331 — Fix release-breaking upgrade guide MDX](wu/WU-2331.yaml) — 2026-03-06
 - [WU-2332 — Repair lane taxonomy drift with deterministic reconciliation](wu/WU-2332.yaml) — 2026-03-06
+- [WU-2333 — Clarify workspace-only lane docs before release](wu/WU-2333.yaml) — 2026-03-06
