@@ -40,6 +40,14 @@ Use this flow when a repository already has LumenFlow installed and you want the
 - `pnpm docs:sync --force` refreshes scaffolded onboarding docs and supported vendor assets.
 - Project-local `.lumenflow/templates/` files are optional. Only create or edit them when you
   want to override the built-in prompt composition.
+- Lane lifecycle commands now read lane definitions from `workspace.yaml >
+  software_delivery.lanes.definitions` only.
+
+<Aside type="note" title="Lane source of truth">
+  `.lumenflow.lane-inference.yaml` is no longer used by the active lane lifecycle. Do not recreate
+  or maintain it on upgrade. Use `workspace.yaml > software_delivery.lanes.definitions` as the sole
+  source of truth, and use `pnpm lane:suggest` only to generate workspace lane-definition snippets.
+</Aside>
 
 <Aside type="note" title="Defaults vs overrides">
   The installed CLI ships the default `wu:brief` composition. Consumers do not need a local

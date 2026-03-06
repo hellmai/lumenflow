@@ -104,9 +104,10 @@ If work spans multiple WUs or multiple days, create an initiative first.
 When creating WUs or scoping initiatives, always evaluate whether the assigned lane fits the actual work:
 
 - **Check code_paths alignment**: Compare the WU's `code_paths` against lane definitions in `workspace.yaml`. If the majority of paths belong to a different lane, propose a lane change.
-- **Use lane inference tooling correctly**:
+- **Use workspace-backed lane helpers correctly**:
   - For a WU lane recommendation, run `pnpm wu:infer-lane --id WU-XXXX`.
   - To generate suggested lane definitions from project structure, run `pnpm lane:suggest --output workspace.lanes.yaml`.
+  - `.lumenflow.lane-inference.yaml` is no longer part of the active lane lifecycle; keep lane definitions in `workspace.yaml`.
 - **Propose changes proactively**: If scope expansion during implementation pushes a WU beyond its lane's boundaries, flag the mismatch to the user and suggest either a lane change or a WU split.
 - **Initiative-level review**: When planning an initiative with multiple WUs, ensure each WU is assigned to the lane whose `code_paths` best cover the work. Systematic mismatches signal that `workspace.yaml` lane definitions may need updating.
 
