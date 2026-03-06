@@ -11,10 +11,13 @@ code_paths:
   - packages/@lumenflow/cli/src/sync-templates.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/cli/src/onboarding-template-paths.ts
+  - packages/@lumenflow/cli/src/wu-done.ts
+  - packages/@lumenflow/cli/src/wu-done-check.ts
   - packages/@lumenflow/cli/src/__tests__/init.test.ts
   - packages/@lumenflow/cli/src/__tests__/init-onboarding-docs.test.ts
   - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
   - packages/@lumenflow/cli/src/__tests__/templates-sync.test.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
   - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
   - packages/@lumenflow/cli/templates/core
   - packages/@lumenflow/cli/templates/vendors/claude/.claude/skills
@@ -35,6 +38,7 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/init-onboarding-docs.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
     - packages/@lumenflow/cli/src/__tests__/templates-sync.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
     - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
   e2e: []
 artifacts:
@@ -43,8 +47,10 @@ dependencies: []
 risks: []
 notes: 'Repo docs are the canonical onboarding source in this WU. Init now reads bundled templates
   for core/onboarding docs, docs:sync covers the same scaffolded onboarding set, bundled templates
-  were regenerated from the repo docs, and focused init/docs-sync/template parity plus docs drift
-  validation were rerun.'
+  were regenerated from the repo docs, focused init/docs-sync/template parity plus docs drift
+  validation were rerun, and wu:done now checks current-session wu:brief evidence before restoring
+  tracked wu-events state while allowlisting wu-events-only dirtiness during the initial worktree
+  cleanliness guard.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation

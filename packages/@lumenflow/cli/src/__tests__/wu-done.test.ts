@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { ensureCleanWorktree } from '../wu-done-check.js';
+import { ensureCleanWorktree, getBlockingWorktreeStatusLines } from '../wu-done-check.js';
 import {
   CHECKPOINT_GATE_MODES,
   computeBranchOnlyFallback,
@@ -305,6 +305,17 @@ status: done
   });
 
   describe('WU-2132: wu:brief evidence enforcement', () => {
+    it('checks wu:brief evidence before preflight restores the worktree event log', async () => {
+      const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+      const mainBody = source.slice(source.indexOf('export async function main()'));
+      const evidenceCheckIndex = mainBody.indexOf('await enforceWuBriefEvidenceForDone');
+      const preflightIndex = mainBody.indexOf('preFlightResult = await executePreFlightChecks');
+
+      expect(evidenceCheckIndex).toBeGreaterThan(-1);
+      expect(preflightIndex).toBeGreaterThan(-1);
+      expect(evidenceCheckIndex).toBeLessThan(preflightIndex);
+    });
+
     it('enforces only feature and bug WU types', () => {
       expect(shouldEnforceWuBriefEvidence({ type: 'feature' })).toBe(true);
       expect(shouldEnforceWuBriefEvidence({ type: 'bug' })).toBe(true);
@@ -771,6 +782,34 @@ status: done
       expect(errorHandler.die).toHaveBeenCalledWith(
         expect.stringContaining('Worktree has uncommitted changes'),
       );
+    });
+
+    it('ignores wu-events evidence writes when checking worktree cleanliness', async () => {
+      mockGit.getStatus.mockResolvedValue('M  .lumenflow/state/wu-events.jsonl');
+
+      await ensureCleanWorktree('/path/to/worktree');
+
+      expect(errorHandler.die).not.toHaveBeenCalled();
+    });
+
+    it('blocks only non-allowlisted worktree changes', async () => {
+      mockGit.getStatus.mockResolvedValue(
+        'M  .lumenflow/state/wu-events.jsonl\nM  packages/@lumenflow/cli/src/wu-done.ts',
+      );
+
+      await ensureCleanWorktree('/path/to/worktree');
+
+      expect(errorHandler.die).toHaveBeenCalledWith(
+        expect.stringContaining('packages/@lumenflow/cli/src/wu-done.ts'),
+      );
+    });
+
+    it('filters allowlisted wu-events status lines out of blocking changes', () => {
+      expect(
+        getBlockingWorktreeStatusLines(
+          'M  .lumenflow/state/wu-events.jsonl\n?? packages/@lumenflow/cli/src/wu-done.ts',
+        ),
+      ).toEqual(['?? packages/@lumenflow/cli/src/wu-done.ts']);
     });
 
     it('should use the correct worktree path', async () => {

@@ -1599,6 +1599,13 @@ export async function main() {
     die(mainMutationGuard.message ?? 'wu:done blocked by dirty-main guard.');
   }
 
+  // WU-2327: Verify current-session wu:brief evidence before pre-flight restores
+  // the tracked worktree wu-events log used to keep auto-rebase safe.
+  await enforceWuBriefEvidenceForDone(id, docMain, {
+    baseDir: effectiveWorktreePath || mainCheckoutPath,
+    force: Boolean(args.force),
+  });
+
   // WU-1169: Ensure worktree is clean before proceeding
   // This prevents WU-1943 rollback loops if rebase fails due to dirty state
   if (effectiveWorktreePath && existsSync(effectiveWorktreePath)) {
@@ -1632,12 +1639,6 @@ export async function main() {
 
   // WU-1663: Pre-flight checks passed - transition to preparing state
   pipelineActor.send({ type: WU_DONE_EVENTS.VALIDATION_PASSED });
-
-  // WU-2132: Enforce auditable wu:brief evidence for feature/bug WUs.
-  await enforceWuBriefEvidenceForDone(id, docMain, {
-    baseDir: effectiveWorktreePath || mainCheckoutPath,
-    force: Boolean(args.force),
-  });
 
   // WU-1599: Enforce auditable spawn provenance for initiative-governed WUs.
   await enforceSpawnProvenanceForDone(id, docMain, {
