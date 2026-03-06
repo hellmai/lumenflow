@@ -2,7 +2,7 @@ id: WU-2332
 title: Repair lane taxonomy drift with deterministic reconciliation
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -13,8 +13,10 @@ code_paths:
   - apps/docs/src/content/docs/reference/cli.mdx
 tests:
   manual:
-    - pnpm lane:setup && pnpm lane:validate on a drifted repo no longer points users at heuristic-only recovery
-    - "pnpm lane:create --name 'Intelligence: Orchestrator' succeeds after deterministic reconciliation on a repo upgraded from older lane artifacts"
+    - pnpm lane:setup && pnpm lane:validate on a drifted repo no longer points users at
+      heuristic-only recovery
+    - "pnpm lane:create --name 'Intelligence: Orchestrator' succeeds after deterministic
+      reconciliation on a repo upgraded from older lane artifacts"
   unit:
     - packages/@lumenflow/cli/src/__tests__/lane-lifecycle-process.test.ts
     - packages/@lumenflow/cli/src/__tests__/lane-create.test.ts
@@ -33,9 +35,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Upgraded consumer repos can end up with workspace.yaml as the authoritative lane source while .lumenflow.lane-inference.yaml still contains older taxonomy. Problem: lane:create/lane:edit/lane:validate surface drift but only point users at lane:suggest, which is still heuristic-only and cannot reliably restore existing lane taxonomy. Solution: add a deterministic workspace-to-inference reconciliation path, use it in lane tooling, and update docs/tests so upgrade recovery no longer depends on lane:suggest heuristics.'
+description: 'Context: Upgraded consumer repos can end up with workspace.yaml as the authoritative
+  lane source while .lumenflow.lane-inference.yaml still contains older taxonomy. Problem:
+  lane:create/lane:edit/lane:validate surface drift but only point users at lane:suggest, which is
+  still heuristic-only and cannot reliably restore existing lane taxonomy. Solution: add a
+  deterministic workspace-to-inference reconciliation path, use it in lane tooling, and update
+  docs/tests so upgrade recovery no longer depends on lane:suggest heuristics.'
 acceptance:
-  - There is a deterministic command or workflow to regenerate .lumenflow.lane-inference.yaml from workspace.yaml lane definitions.
-  - lane:create and lane:edit keep workspace.yaml and .lumenflow.lane-inference.yaml aligned instead of failing on recoverable drift.
-  - Drift remediation guidance points to deterministic reconciliation rather than lane:suggest heuristics.
+  - There is a deterministic command or workflow to regenerate .lumenflow.lane-inference.yaml from
+    workspace.yaml lane definitions.
+  - lane:create and lane:edit keep workspace.yaml and .lumenflow.lane-inference.yaml aligned instead
+    of failing on recoverable drift.
+  - Drift remediation guidance points to deterministic reconciliation rather than lane:suggest
+    heuristics.
   - CLI tests cover drift reconciliation and upgrade-recovery behavior.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-2332
+claimed_at: 2026-03-06T11:36:50.166Z
+baseline_main_sha: 1e94557622b09ff1ef6051ba6b6abb2004ee9049
+session_id: 16efb233-4542-4f11-a4c3-0b4455762832
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-06T11:36:50.171Z

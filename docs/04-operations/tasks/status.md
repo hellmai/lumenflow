@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2332 — Repair lane taxonomy drift with deterministic reconciliation](wu/WU-2332.yaml)
 
 ## Completed
 
