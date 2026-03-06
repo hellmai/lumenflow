@@ -108,7 +108,7 @@ For detailed troubleshooting, see [troubleshooting-wu-done.md](docs/04-operation
 
 ## Core Principles
 
-1. **TDD**: Write tests first, then implementation
+1. **Fit-For-Surface Verification**: Choose the least brittle verification that gives strong confidence. Prefer TDD for runtime logic when policy requires it; avoid brittle UI implementation-detail tests.
 2. **Worktree Discipline**: After `wu:claim`, work ONLY in the worktree
 3. **Gates Before Done**: Run `pnpm gates` before `wu:done`
 4. **Never Bypass Hooks**: No `--no-verify`

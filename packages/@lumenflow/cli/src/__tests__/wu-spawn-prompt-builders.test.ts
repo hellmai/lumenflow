@@ -246,6 +246,28 @@ describe('WU-1898: tryLoadTemplates condition evaluation', () => {
 
       expect(result.has('methodology-test-after')).toBe(true);
     });
+
+    it('excludes default methodology-tdd template for UI-domain work when real templates load', async () => {
+      const templateLoader = await import('@lumenflow/core/template-loader');
+      const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+      const actualTemplateLoader = await vi.importActual<
+        typeof import('@lumenflow/core/template-loader')
+      >('@lumenflow/core/template-loader');
+
+      mockLoad.mockImplementation((baseDir: string, clientName: string) =>
+        actualTemplateLoader.loadTemplatesWithOverrides(baseDir, clientName),
+      );
+
+      const { tryLoadTemplates } = await import('../wu-spawn-prompt-builders.js');
+      const context = makeContext('feature', {
+        'policy.testing': 'tdd',
+        'work.domain': 'ui',
+        'work.testMethodologyHint': '',
+      });
+      const result = tryLoadTemplates(TEST_CLIENT, context);
+
+      expect(result.has('methodology-tdd')).toBe(false);
+    });
   });
 
   describe('AC4: Regression - feature type WU still gets TDD directive', () => {
@@ -600,6 +622,20 @@ describe('WU-2329: verification guidance composition', () => {
       agentsDir: '.claude/agents',
     },
   });
+  const backendDoc = {
+    title: 'Runtime verification profile',
+    lane: 'Framework: CLI',
+    type: 'feature',
+    status: 'ready',
+    code_paths: ['packages/@lumenflow/cli/src/wu-brief.ts'],
+    acceptance: ['CLI prompt renders expected sections'],
+    description: 'Exercise runtime prompt guidance',
+    tests: {
+      unit: ['packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts'],
+      e2e: [],
+      manual: ['Run pnpm wu:brief and verify runtime methodology guidance remains present'],
+    },
+  };
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -655,6 +691,50 @@ describe('WU-2329: verification guidance composition', () => {
     expect(prompt).toContain('Required Verification From WU Spec');
     expect(prompt).toContain('src/__tests__/mcp-server-cards.test.tsx');
     expect(prompt).not.toContain('IF YOU WRITE IMPLEMENTATION CODE BEFORE A FAILING TEST');
+  });
+
+  it('renders required verification before default UI strategy guidance when real templates load', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    const actualTemplateLoader = await vi.importActual<
+      typeof import('@lumenflow/core/template-loader')
+    >('@lumenflow/core/template-loader');
+
+    mockLoad.mockImplementation((baseDir: string, clientName: string) =>
+      actualTemplateLoader.loadTemplatesWithOverrides(baseDir, clientName),
+    );
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(uiDoc, id, strategy, { config });
+    const requiredIndex = prompt.indexOf('## Required Verification From WU Spec');
+    const strategyIndex = prompt.indexOf('## UI/Visual Verification Strategy');
+
+    expect(requiredIndex).toBeGreaterThan(-1);
+    expect(strategyIndex).toBeGreaterThan(-1);
+    expect(requiredIndex).toBeLessThan(strategyIndex);
+    expect(prompt).not.toContain('## TDD DIRECTIVE - READ BEFORE CODING');
+    expect(prompt).not.toContain('## TEST-AFTER DIRECTIVE');
+  });
+
+  it('renders required verification before runtime methodology guidance when real templates load', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    const actualTemplateLoader = await vi.importActual<
+      typeof import('@lumenflow/core/template-loader')
+    >('@lumenflow/core/template-loader');
+
+    mockLoad.mockImplementation((baseDir: string, clientName: string) =>
+      actualTemplateLoader.loadTemplatesWithOverrides(baseDir, clientName),
+    );
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(backendDoc, id, strategy, { config });
+    const requiredIndex = prompt.indexOf('## Required Verification From WU Spec');
+    const methodologyIndex = prompt.indexOf('## TDD DIRECTIVE - READ BEFORE CODING');
+
+    expect(requiredIndex).toBeGreaterThan(-1);
+    expect(methodologyIndex).toBeGreaterThan(-1);
+    expect(requiredIndex).toBeLessThan(methodologyIndex);
   });
 });
 

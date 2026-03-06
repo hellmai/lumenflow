@@ -118,6 +118,7 @@ const PRIMARY_MAIN_REF = `${REMOTES.ORIGIN}/${BRANCHES.MAIN}`;
 const LANE_GUIDANCE_TEMPLATE_ID_PREFIX = 'lane-guidance-';
 const DESIGN_CONTEXT_TEMPLATE_ID_PREFIX = 'design-context-';
 const VERIFICATION_TEMPLATE_ID_PREFIX = 'verification-';
+const REQUIRED_VERIFICATION_TEMPLATE_ID = 'verification-requirements';
 const VERIFICATION_TEMPLATE_IDS = new Set([
   'documentation-directive',
   'visual-directive',
@@ -198,13 +199,19 @@ function resolveVerificationGuidanceSection(
   templates: Map<string, string>,
   fallback: string,
 ): string {
-  const templateSections = collectTemplateSections(
+  const requiredVerificationSections = collectTemplateSections(
+    templates,
+    (id) => id === REQUIRED_VERIFICATION_TEMPLATE_ID,
+  );
+  const strategySections = collectTemplateSections(
     templates,
     (id) =>
-      id.startsWith('methodology-') ||
-      id.startsWith(VERIFICATION_TEMPLATE_ID_PREFIX) ||
-      VERIFICATION_TEMPLATE_IDS.has(id),
+      id !== REQUIRED_VERIFICATION_TEMPLATE_ID &&
+      (id.startsWith('methodology-') ||
+        id.startsWith(VERIFICATION_TEMPLATE_ID_PREFIX) ||
+        VERIFICATION_TEMPLATE_IDS.has(id)),
   );
+  const templateSections = [...requiredVerificationSections, ...strategySections];
 
   if (templateSections.length > 0) {
     return templateSections.join('\n\n---\n\n');
@@ -1330,10 +1337,10 @@ export function generateTaskInvocation(
   const templates = tryLoadTemplates(clientName, templateContext, templateBaseDir);
 
   const testGuidanceFallback = [
+    generateRequiredVerificationSection(doc),
     generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
       testMethodologyHint: classification.testMethodologyHint,
     }),
-    generateRequiredVerificationSection(doc),
   ]
     .filter((section) => section.length > 0)
     .join('\n\n---\n\n');
@@ -1606,10 +1613,10 @@ export function generateCodexPrompt(
   const templateBaseDir = options.baseDir || DEFAULT_TEMPLATE_BASE_DIR;
   const templates = tryLoadTemplates(clientName, templateContext, templateBaseDir);
   const testGuidanceFallback = [
+    generateRequiredVerificationSection(doc),
     generatePolicyBasedTestGuidance(doc.type || 'feature', policy, {
       testMethodologyHint: classification.testMethodologyHint,
     }),
-    generateRequiredVerificationSection(doc),
   ]
     .filter((section) => section.length > 0)
     .join('\n\n---\n\n');

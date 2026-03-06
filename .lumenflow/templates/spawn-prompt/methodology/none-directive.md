@@ -4,7 +4,7 @@ name: No Testing Methodology Directive
 required: false
 order: 5
 tokens: []
-condition: "policy.testing === 'none' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
+condition: "policy.testing === 'none' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.domain !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 ---
 
 ## TESTING GUIDANCE

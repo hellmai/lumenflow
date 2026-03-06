@@ -7,9 +7,11 @@ priority: P1
 created: 2026-03-06
 code_paths:
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
+  - .lumenflow/templates/spawn-prompt/methodology/none-directive.md
   - .lumenflow/templates/spawn-prompt/methodology/tdd-directive.md
   - .lumenflow/templates/spawn-prompt/methodology/test-after-directive.md
   - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
+  - packages/@lumenflow/cli/src/init-templates.ts
   - LUMENFLOW.md
   - AGENTS.md
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
@@ -28,8 +30,12 @@ artifacts:
   - .lumenflow/stamps/WU-2335.done
 dependencies: []
 risks: []
-notes: Keep the core generic and configuration-first; do not hardcode Playwright or vendor-specific
-  tooling into default guidance.
+notes: 'Implementation notes: 1) wu-spawn prompt builders now render required verification ahead
+  of generic strategy guidance in both template-driven and fallback paths. 2) Default methodology
+  templates explicitly exclude UI-domain work, so UI classification cannot accidentally pick up
+  TDD/test-after/none directives unless consumers override templates. 3) Repo defaults, generated
+  core templates, and init-time bootstrap docs now describe fit-for-surface verification instead of
+  blanket UI TDD language.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

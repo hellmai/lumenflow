@@ -4,7 +4,7 @@ name: TDD Methodology Directive
 required: false
 order: 5
 tokens: []
-condition: "policy.testing === 'tdd' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
+condition: "policy.testing === 'tdd' && type !== 'documentation' && type !== 'docs' && type !== 'config' && type !== 'refactor' && type !== 'visual' && type !== 'design' && type !== 'ui' && work.domain !== 'ui' && work.testMethodologyHint !== 'smoke-test' && work.testMethodologyHint !== 'structured-content'"
 ---
 
 ## TDD DIRECTIVE - READ BEFORE CODING
