@@ -12,7 +12,13 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { WU_OPTIONS, WU_CREATE_OPTIONS, createWUParser, parseWUArgs } from '../arg-parser.js';
+import {
+  INITIATIVE_CREATE_OPTIONS,
+  WU_OPTIONS,
+  WU_CREATE_OPTIONS,
+  createWUParser,
+  parseWUArgs,
+} from '../arg-parser.js';
 import { ProcessExitError } from '../error-handler.js';
 
 // Test fixture constants (WU-1173: avoid duplicate string lint errors)
@@ -603,6 +609,34 @@ describe('arg-parser', () => {
       });
 
       expect(opts.acceptance).toEqual([]);
+    });
+
+    it('should expose explicit option names when they differ from the long flag', () => {
+      process.argv = [
+        ...TEST_ARGV_PREFIX,
+        '--description',
+        'Initiative description',
+        '--phase',
+        'Phase 1: Foundation',
+        '--phase',
+        'Phase 2: Launch',
+        '--success-metric',
+        'Managed tools run end-to-end',
+      ];
+
+      const opts = createWUParser({
+        name: 'initiative-create',
+        description: 'Create initiative',
+        options: [
+          INITIATIVE_CREATE_OPTIONS.initDescription,
+          INITIATIVE_CREATE_OPTIONS.initPhase,
+          INITIATIVE_CREATE_OPTIONS.successMetric,
+        ],
+      });
+
+      expect(opts.initDescription).toBe('Initiative description');
+      expect(opts.initPhase).toEqual(['Phase 1: Foundation', 'Phase 2: Launch']);
+      expect(opts.successMetric).toEqual(['Managed tools run end-to-end']);
     });
 
     // WU-1173: All array flags should support both repeatable and comma-separated patterns

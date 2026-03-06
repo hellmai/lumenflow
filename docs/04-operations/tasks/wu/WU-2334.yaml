@@ -26,7 +26,10 @@ artifacts:
   - .lumenflow/stamps/WU-2334.done
 dependencies: []
 risks: []
-notes: ''
+notes: >-
+  Parser normalization now preserves explicit WUOption names alongside Commander-derived keys so
+  initiative:create can consume canonical initDescription/initPhase values without regressing
+  existing long-flag access patterns.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

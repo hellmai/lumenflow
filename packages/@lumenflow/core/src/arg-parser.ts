@@ -669,6 +669,43 @@ function processNegatedOptions(opts: Record<string, unknown>): Record<string, un
   return { ...result, ...keysToAdd };
 }
 
+function getCommanderOptionKey(flags: string): string | null {
+  const flagTokens = flags
+    .split(',')
+    .map((token) => token.trim().split(/\s+/)[0] || '')
+    .filter((token) => token.length > 0);
+  const longFlag = flagTokens.find((token) => token.startsWith('--') && !token.startsWith('--no-'));
+  if (!longFlag) {
+    return null;
+  }
+
+  return longFlag.slice(2).replace(/-([a-z])/g, (_, char: string) => char.toUpperCase());
+}
+
+function normalizeExplicitOptionNames(
+  opts: Record<string, unknown>,
+  options: WUOption[],
+): Record<string, unknown> {
+  const result = { ...opts };
+
+  for (const option of options) {
+    if (option.isNegated) {
+      continue;
+    }
+
+    const commanderKey = getCommanderOptionKey(option.flags);
+    if (!commanderKey || commanderKey === option.name) {
+      continue;
+    }
+
+    if (result[option.name] === undefined && result[commanderKey] !== undefined) {
+      result[option.name] = result[commanderKey];
+    }
+  }
+
+  return result;
+}
+
 function hasCustomVersionOption(options: WUOption[]): boolean {
   return options.some((option) => {
     const flagTokens = option.flags.split(',').map((token) => token.trim().split(/\s+/)[0]);
@@ -781,6 +818,8 @@ export function createWUParser(config: {
   if (allowPositionalId && program.args.length > 0 && !opts.id) {
     opts.id = program.args[0];
   }
+
+  opts = normalizeExplicitOptionNames(opts, options);
 
   // WU-1300: Merge CLI aliases into their canonical options
   opts = mergeAliasOptions(opts);

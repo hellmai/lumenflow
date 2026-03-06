@@ -5,12 +5,11 @@
  * WU-2246: initiative:create --description flag must populate the description
  * field in the created YAML.
  *
- * The bug: Commander.js maps `--description <text>` to `opts.description`,
- * but the code reads `args.initDescription` (from the WUOption.name field,
- * which Commander ignores). The value is therefore always undefined.
+ * The parser now normalizes custom option names, so initiative:create should
+ * read the canonical `args.initDescription` key exposed by INITIATIVE_CREATE_OPTIONS.
  *
  * Tests:
- * 1. main() passes args.description (not args.initDescription) to createInitiativeYamlInWorktree
+ * 1. main() passes args.initDescription to createInitiativeYamlInWorktree
  * 2. createInitiativeYamlInWorktree populates description from options.initDescription
  */
 
@@ -21,29 +20,24 @@ import path from 'node:path';
 const SRC_PATH = path.join(__dirname, '..', 'src', 'initiative-create.ts');
 
 describe('WU-2246: initiative:create --description flag populates YAML', () => {
-  it('main() passes args.description (Commander key) to createInitiativeYamlInWorktree', () => {
+  it('main() passes args.initDescription to createInitiativeYamlInWorktree', () => {
     const content = fs.readFileSync(SRC_PATH, 'utf-8');
 
     // Find the call to createInitiativeYamlInWorktree in main()
-    // The options object should use args.description, not args.initDescription
-    // because Commander maps --description to opts.description
     const callBlock = extractCreateCallOptionsBlock(content);
     expect(callBlock).toBeTruthy();
 
-    // The initDescription property should be set from args.description
-    // NOT from args.initDescription (which Commander never sets)
-    expect(callBlock).toMatch(/initDescription:\s*args\.description/);
+    expect(callBlock).toMatch(/initDescription:\s*args\.initDescription/);
   });
 
-  it('completeness validation uses args.description for description field', () => {
+  it('completeness validation uses args.initDescription for description field', () => {
     const content = fs.readFileSync(SRC_PATH, 'utf-8');
 
     // Find the completeness validation block
     const completenessBlock = extractCompletenessBlock(content);
     expect(completenessBlock).toBeTruthy();
 
-    // The description field should use args.description, not args.initDescription
-    expect(completenessBlock).toMatch(/description:\s*args\.description/);
+    expect(completenessBlock).toMatch(/description:\s*args\.initDescription/);
   });
 });
 
