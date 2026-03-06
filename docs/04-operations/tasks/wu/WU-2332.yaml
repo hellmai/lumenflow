@@ -12,14 +12,13 @@ code_paths:
   - packages/@lumenflow/core/src/wu-create-validators.ts
   - packages/@lumenflow/core/src/spawn-agent-guidance.ts
   - packages/@lumenflow/cli/src/lane-lifecycle-process.ts
-  - packages/@lumenflow/cli/src/lane-create.ts
-  - packages/@lumenflow/cli/src/lane-edit.ts
   - packages/@lumenflow/cli/src/lane-setup.ts
-  - packages/@lumenflow/cli/src/wu-create.ts
-  - packages/@lumenflow/cli/src/wu-infer-lane.ts
+  - packages/@lumenflow/cli/src/lane-suggest.ts
+  - packages/@lumenflow/cli/src/lane-validate.ts
   - packages/@lumenflow/cli/src/onboarding-smoke-test.ts
   - packages/@lumenflow/cli/src/onboarding-template-paths.ts
   - packages/@lumenflow/cli/src/init-templates.ts
+  - packages/@lumenflow/cli/src/init.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/cli/README.md
   - apps/docs/src/content/docs/reference/cli.mdx
