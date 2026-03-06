@@ -4,7 +4,7 @@ _Last updated: 2026-03-06_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2328 — Make worktree template lookup ignore main dist symlinks](wu/WU-2328.yaml)
 
 ## Completed
 

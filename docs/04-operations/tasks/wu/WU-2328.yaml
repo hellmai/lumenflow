@@ -2,7 +2,7 @@ id: WU-2328
 title: Make worktree template lookup ignore main dist symlinks
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-06
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/onboarding-smoke-test.test.ts
 tests:
   manual:
-    - Run pnpm --filter @lumenflow/cli exec vitest run src/__tests__/onboarding-smoke-test.test.ts and verify onboarding smoke passes from a worktree with branch-local templates.
+    - Run pnpm --filter @lumenflow/cli exec vitest run src/__tests__/onboarding-smoke-test.test.ts
+      and verify onboarding smoke passes from a worktree with branch-local templates.
   unit:
     - packages/@lumenflow/cli/src/__tests__/onboarding-smoke-test.test.ts
   e2e: []
@@ -28,8 +29,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: CLI worktrees can run against a dist layout that resolves template lookup through the main checkout. Problem: when a branch adds or changes bundled onboarding templates, init scaffolding and the onboarding smoke test can fail in the worktree with template-not-found errors even though the branch templates exist. Solution: make template resolution branch-local and worktree-safe, then add regression coverage for symlinked dist/template lookup so worktree gates do not depend on main checkout templates.'
+description: 'Context: CLI worktrees can run against a dist layout that resolves template lookup
+  through the main checkout. Problem: when a branch adds or changes bundled onboarding templates,
+  init scaffolding and the onboarding smoke test can fail in the worktree with template-not-found
+  errors even though the branch templates exist. Solution: make template resolution branch-local and
+  worktree-safe, then add regression coverage for symlinked dist/template lookup so worktree gates
+  do not depend on main checkout templates.'
 acceptance:
-  - Init scaffolding resolves bundled templates from the active branch package when dist is symlinked or otherwise shared from main.
-  - Onboarding smoke tests pass in a worktree when branch-only onboarding templates exist without copying those templates into main.
-  - Regression tests cover symlinked dist/template lookup and prevent silent fallback to main checkout templates.
+  - Init scaffolding resolves bundled templates from the active branch package when dist is
+    symlinked or otherwise shared from main.
+  - Onboarding smoke tests pass in a worktree when branch-only onboarding templates exist without
+    copying those templates into main.
+  - Regression tests cover symlinked dist/template lookup and prevent silent fallback to main
+    checkout templates.
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-2328
+claimed_at: 2026-03-06T09:21:39.898Z
+baseline_main_sha: b6dcd97d1c9d1c2803195e35145bf9fdb9043573
+session_id: 50408616-7836-4b14-adbc-e3c9b467aa38
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-06T09:21:39.905Z
