@@ -2,7 +2,7 @@ id: WU-2340
 title: wu:edit misclassifies claimed WUs when local main is stale
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-07
 code_paths:
@@ -58,3 +58,6 @@ session_id: f105bfbc-9e05-409a-9be9-38c66c3ca22a
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-07T10:34:14.499Z
+locked: true
+completed_at: 2026-03-07T10:43:57.801Z
+completed: 2026-03-07

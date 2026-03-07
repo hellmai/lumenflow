@@ -2893,15 +2893,6 @@
 {"type":"checkpoint","wuId":"WU-2338","timestamp":"2026-03-07T08:46:39.420Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2338.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2338","timestamp":"2026-03-07T08:48:13.131Z"}
 {"type":"claim","wuId":"WU-2339","timestamp":"2026-03-07T09:47:05.708Z","lane":"Framework: CLI WU Commands","title":"Remove unsafe agent fallback guidance and misleading claimed-WU prompts"}
-{"type":"claim","wuId":"WU-2341","timestamp":"2026-03-07T09:53:33.071Z","lane":"Framework: CLI WU Commands","title":"wu:done rejects normal wu:prep handoff as session mismatch and lane:edit causes predictable JSONL merge conflicts"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T09:53:44.348Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T09:53:51.163Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:06:01.554Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:11:00.208Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:11:20.902Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2341.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:13:32.558Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2341.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:14:03.106Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2341.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"complete","wuId":"WU-2341","timestamp":"2026-03-07T10:15:43.568Z"}
 {"type":"checkpoint","wuId":"WU-2339","timestamp":"2026-03-07T09:47:18.262Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2339","timestamp":"2026-03-07T09:47:26.775Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"claim","wuId":"WU-2341","timestamp":"2026-03-07T09:53:33.071Z","lane":"Framework: CLI WU Commands","title":"wu:done rejects normal wu:prep handoff as session mismatch and lane:edit causes predictable JSONL merge conflicts"}
@@ -2920,3 +2911,4 @@
 {"type":"claim","wuId":"WU-2340","timestamp":"2026-03-07T10:34:14.522Z","lane":"Framework: CLI WU Commands","title":"wu:edit misclassifies claimed WUs when local main is stale"}
 {"type":"checkpoint","wuId":"WU-2340","timestamp":"2026-03-07T10:34:25.750Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2340","timestamp":"2026-03-07T10:34:40.604Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"complete","wuId":"WU-2340","timestamp":"2026-03-07T10:44:02.432Z"}
