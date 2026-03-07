@@ -2905,3 +2905,4 @@
 {"type":"checkpoint","wuId":"WU-2339","timestamp":"2026-03-07T09:47:18.262Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
 {"type":"checkpoint","wuId":"WU-2339","timestamp":"2026-03-07T09:47:26.775Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
 {"type":"checkpoint","wuId":"WU-2339","timestamp":"2026-03-07T09:59:37.303Z","note":"Implemented WU-2339; validating gates and prep"}
+{"type":"checkpoint","wuId":"WU-2339","timestamp":"2026-03-07T10:22:47.268Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2339.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}

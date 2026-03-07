@@ -9,10 +9,21 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-edit-operations.ts
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
   - packages/@lumenflow/cli/src/init-templates.ts
+  - packages/@lumenflow/cli/src/wu-claim.ts
+  - packages/@lumenflow/core/src/spawn-agent-guidance.ts
+  - packages/@lumenflow/core/src/spawn-constraints-generator.ts
+  - .lumenflow/templates/spawn-prompt/constraints.md
+  - .lumenflow/templates/spawn-prompt/quick-fix-commands.md
+  - LUMENFLOW.md
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
-  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md
+  - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
   - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
   - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
+  - packages/@lumenflow/cli/src/__tests__/init-template-portability.test.ts
+  - packages/@lumenflow/cli/__tests__/wu-spawn.test.ts
 tests:
   manual:
     - Generate onboarding/brief guidance and verify no git stash main-checkout advice remains
@@ -23,6 +34,9 @@ tests:
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
+    - packages/@lumenflow/cli/src/__tests__/init-template-portability.test.ts
+    - packages/@lumenflow/cli/src/__tests__/templates-sync.test.ts
+    - packages/@lumenflow/cli/__tests__/wu-spawn.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2339.done
@@ -32,10 +46,17 @@ notes: 'Captured from March 7, 2026 agent transcripts. Primary prevention target
   starting-prompt/init-templates quick-fix guidance, wu-spawn prompt builders, and wu-edit readiness
   summary.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-07T09:47:05.676Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2339
+session_id: ee95aded-ab4e-4a7a-8ebb-35e8f6fc03f5
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-07T09:47:05.687Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -59,11 +80,3 @@ acceptance:
   - wu:edit readiness/output is lifecycle-aware and never tells an already in_progress WU to run
     pnpm wu:claim
   - Regression tests cover prompt/template guidance and wu:edit readiness output for claimed WUs
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2339
-claimed_at: 2026-03-07T09:47:05.676Z
-baseline_main_sha: 0684835ef027a6b326726af2ae3cd87717c1a020
-session_id: ee95aded-ab4e-4a7a-8ebb-35e8f6fc03f5
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-07T09:47:05.687Z
