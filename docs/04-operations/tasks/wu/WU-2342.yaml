@@ -8,10 +8,8 @@ created: 2026-03-07
 code_paths:
   - packages/@lumenflow/cli/src/wu-done.ts
   - packages/@lumenflow/cli/src/wu-done-gates.ts
-  - packages/@lumenflow/cli/src/wu-done-ownership.ts
   - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
-  - packages/@lumenflow/cli/src/__tests__/wu-done-gates-extraction.test.ts
-  - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-done-gates.test.ts
 tests:
   manual:
     - Run wu:prep in a claimed worktree, add a new commit after prep, then run wu:done from main in
@@ -22,6 +20,7 @@ tests:
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done-gates.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2342.done
@@ -30,10 +29,17 @@ risks: []
 notes: 'Follow-up to WU-2341 review: prep checkpoint handoff must stay tied to current worktree
   HEAD, not just checkpoint freshness.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-07T10:51:38.715Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2342
+session_id: 20497b58-c480-4b2b-accd-bbfc9823e655
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-07T10:51:38.721Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -51,11 +57,3 @@ acceptance:
   - normal wu:prep in session A then wu:done in session B still succeeds when the worktree HEAD is
     unchanged
   - regression tests cover both the ownership path and the executeGates checkpoint-skip path
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2342
-claimed_at: 2026-03-07T10:51:38.715Z
-baseline_main_sha: 392ff7e2b684067a9b91399049b99ef163b0291d
-session_id: 20497b58-c480-4b2b-accd-bbfc9823e655
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-07T10:51:38.721Z
