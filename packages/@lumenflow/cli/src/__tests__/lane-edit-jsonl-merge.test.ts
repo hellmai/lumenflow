@@ -8,10 +8,7 @@ import { resolve } from 'node:path';
 describe('WU-2341: JSONL merge strategy prevents conflicts', () => {
   it('.gitattributes configures merge=union for wu-events.jsonl', () => {
     const projectRoot = resolve(import.meta.dirname, '../../../../..');
-    const gitattributes = readFileSync(
-      resolve(projectRoot, '.gitattributes'),
-      'utf-8',
-    );
+    const gitattributes = readFileSync(resolve(projectRoot, '.gitattributes'), 'utf-8');
     expect(gitattributes).toContain('wu-events.jsonl');
     expect(gitattributes).toContain('merge=union');
   });

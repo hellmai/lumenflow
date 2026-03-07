@@ -20,6 +20,7 @@ apps/web/next-env.d.ts
 *.template
 
 # Config files that shouldn't be formatted
+.gitattributes
 .gitignore
 .clinerules
 .cursorrules
