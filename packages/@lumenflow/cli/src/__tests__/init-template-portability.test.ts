@@ -120,6 +120,35 @@ describe('template portability', () => {
         expect(content).toMatch(/\[.*?\]\([./]+.*?\.md\)/);
       }
     });
+
+    it('should scaffold starting-prompt with worktree-safe completion guidance', async () => {
+      const options: ScaffoldOptions = {
+        force: false,
+        full: true,
+        docsStructure: ARC42_DOCS_STRUCTURE,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const startingPromptPath = path.join(
+        tempDir,
+        'docs',
+        '04-operations',
+        '_frameworks',
+        'lumenflow',
+        'agent',
+        'onboarding',
+        'starting-prompt.md',
+      );
+
+      if (fs.existsSync(startingPromptPath)) {
+        const content = fs.readFileSync(startingPromptPath, 'utf-8');
+        expect(content).toContain('pnpm wu:prep --id WU-XXX');
+        expect(content).toContain(PROJECT_ROOT_PLACEHOLDER);
+        expect(content).not.toContain('git stash\npnpm gates');
+        expect(content).not.toContain('git stash pop');
+      }
+    });
   });
 
   describe('PROJECT_ROOT token replacement', () => {

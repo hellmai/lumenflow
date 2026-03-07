@@ -255,8 +255,8 @@ describe('wu-spawn type-aware test guidance (WU-1142)', () => {
     it('omits TDD directive for type=design', () => {
       const guidance = generateTestGuidance('design');
       expect(guidance).not.toContain('TDD DIRECTIVE');
-      expect(guidance).toContain('Smoke test');
-      expect(guidance).toContain('manual QA');
+      expect(guidance).toContain('UI/Visual Verification Strategy');
+      expect(guidance).toContain('smoke/render coverage');
     });
 
     it('returns existing tests guidance for type=refactor', () => {
@@ -267,8 +267,8 @@ describe('wu-spawn type-aware test guidance (WU-1142)', () => {
 
     it('returns smoke test guidance for UI component WUs (type=visual)', () => {
       const guidance = generateTestGuidance('visual');
-      expect(guidance).toContain('Smoke test');
-      expect(guidance).toContain('manual QA');
+      expect(guidance).toContain('UI/Visual Verification Strategy');
+      expect(guidance).toContain('smoke/render coverage');
     });
   });
 
@@ -296,7 +296,7 @@ describe('wu-spawn type-aware test guidance (WU-1142)', () => {
       const output = generateTaskInvocation(doc, id, strategy, { config });
 
       expect(output).not.toContain('IF YOU WRITE IMPLEMENTATION CODE BEFORE A FAILING TEST');
-      expect(output).toContain('Smoke test');
+      expect(output).toContain('UI/Visual Verification Strategy');
     });
 
     it('includes appropriate guidance for refactor WU', () => {
@@ -427,6 +427,8 @@ describe('wu-spawn skip-gates guidance (WU-1142)', () => {
     expect(output).toContain('--skip-gates');
     expect(output).toContain('--fix-wu');
     expect(output).toContain('pre-existing');
+    expect(output).toContain(`pnpm wu:prep --id ${id}`);
+    expect(output).not.toContain('git checkout main &amp;&amp; pnpm gates');
   });
 
   it('includes skip-gates autonomy guidance in codex prompt', () => {
@@ -434,6 +436,14 @@ describe('wu-spawn skip-gates guidance (WU-1142)', () => {
     const output = generateCodexPrompt(baseDoc, id, strategy, { config });
 
     expect(output).toContain('--skip-gates');
+  });
+
+  it('prefers targeted formatter guidance in task invocation', () => {
+    const strategy = new GenericStrategy();
+    const output = generateTaskInvocation(baseDoc, id, strategy, { config });
+
+    expect(output).toContain('pnpm prettier --write path/to/file.ts');
+    expect(output).not.toContain('pnpm format      # Auto-fix formatting issues');
   });
 });
 
@@ -769,8 +779,7 @@ ${customDirective}
       const strategy = new GenericStrategy();
       const output = generateTaskInvocation(baseDoc, id, strategy, { config });
 
-      // Should show tests optional guidance
-      expect(output).toContain('Testing Optional');
+      expect(output).toContain('No specific testing methodology is enforced');
       expect(output).not.toContain('TDD DIRECTIVE');
       expect(output).not.toContain(TEST_AFTER_LABEL);
     });

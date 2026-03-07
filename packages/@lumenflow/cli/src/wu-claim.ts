@@ -445,11 +445,11 @@ export async function main() {
     const status = await getGitForCwd().getStatus();
     if (status.trim()) {
       die(
-        `Working tree is not clean. Commit or stash changes before claiming.\n\n` +
+        `Working tree is not clean. Commit or clean these changes before claiming.\n\n` +
           `Uncommitted changes:\n${status}\n\n` +
           `Options:\n` +
           `  1. git add . && git commit -m "..."\n` +
-          `  2. git stash\n` +
+          `  2. If they are disposable, clean them up manually (do not git stash on main)\n` +
           `  3. Use --no-auto if you already staged claim edits manually`,
       );
     }

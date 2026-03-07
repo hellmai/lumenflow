@@ -560,7 +560,7 @@ git add . && git commit -m "feat: description"
 pnpm wu:prep --id WU-1990
 
 # 6. Complete (from main - copy from wu:prep output)
-cd /path/to/main && pnpm wu:done --id WU-1990
+cd <project-root> && pnpm wu:done --id WU-1990
 ```
 
 ---
@@ -730,10 +730,10 @@ When `requireRemote: true` (default):
 ```bash
 # From worktree: run gates, get instruction
 pnpm wu:prep --id WU-XXX
-# Output: cd /path/to/main && pnpm wu:done --id WU-XXX
+# Output: cd <project-root> && pnpm wu:done --id WU-XXX
 
 # From main: merge, stamp, cleanup
-cd /path/to/main && pnpm wu:done --id WU-XXX
+cd <project-root> && pnpm wu:done --id WU-XXX
 ```
 
 ### Memory Checkpoint (Progress Safety)

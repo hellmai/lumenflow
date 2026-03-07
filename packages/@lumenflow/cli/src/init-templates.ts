@@ -550,7 +550,7 @@ cd worktrees/core-wu-123
 vim src/feature.ts
 git commit -m "feat: add feature"
 git push origin lane/core/wu-123
-cd /path/to/main
+cd <project-root>
 pnpm wu:done --id WU-123
 \`\`\`
 
@@ -683,7 +683,7 @@ Agents complete their work, write "To Complete: pnpm wu:done --id WU-XXX" in the
 After gates pass, you MUST run:
 
 \`\`\`bash
-cd /path/to/main
+cd <project-root>
 pnpm wu:done --id WU-XXX
 \`\`\`
 
@@ -703,7 +703,7 @@ Do NOT:
 pnpm gates
 
 # 2. If gates pass, return to main
-cd /path/to/main
+cd <project-root>
 
 # 3. IMMEDIATELY run wu:done
 pnpm wu:done --id WU-XXX
@@ -847,7 +847,7 @@ pnpm gates          # Code changes
 pnpm gates --docs-only  # Docs changes
 
 # Complete WU
-cd /path/to/main
+cd <project-root>
 pnpm wu:done --id WU-XXX
 \`\`\`
 
@@ -1515,7 +1515,7 @@ pnpm gates = format:check -> lint -> typecheck -> spec:linter -> tests
 
 | Gate      | Auto-fix        | Manual                              |
 | --------- | --------------- | ----------------------------------- |
-| Format    | \`pnpm format\`   | -                                   |
+| Format    | \`pnpm prettier --write path/to/file.ts\` | Use only the files named by gates |
 | Lint      | \`pnpm lint:fix\` | Fix reported issues                 |
 | Typecheck | -               | Fix type errors (first error first) |
 | Tests     | -               | Debug, fix mocks, update snapshots  |
@@ -1525,9 +1525,9 @@ pnpm gates = format:check -> lint -> typecheck -> spec:linter -> tests
 **Gate failed. Is it from YOUR changes?**
 
 \`\`\`bash
-git checkout main && pnpm gates  # Check main
-# Pass on main -> Your change caused it -> Fix it
-# Fail on main -> Pre-existing -> Consider --skip-gates
+pnpm wu:prep --id WU-XXX  # Safely checks main and prints skip-gates guidance
+# If wu:prep says failures are pre-existing on main -> Consider --skip-gates
+# Otherwise -> Your change caused it -> Fix it
 \`\`\`
 
 **Can you fix it?**
@@ -1557,7 +1557,7 @@ exhaustive-deps -> Add missing dependencies
 \`\`\`bash
 pnpm gates                # All gates
 pnpm gates -- --docs-only # Docs WUs
-pnpm format               # Fix formatting
+pnpm prettier --write path/to/file.ts # Fix only the files named by gates
 pnpm lint:fix             # Fix lint issues
 pnpm typecheck            # Check types
 \`\`\`

@@ -47,7 +47,7 @@ pnpm wu:prep --id WU-XXXX
 # This prints a copy-paste instruction for the next step
 
 # 7. Complete (from main checkout - copy-paste from wu:prep output)
-cd /path/to/main && pnpm wu:done --id WU-XXXX
+cd <project-root> && pnpm wu:done --id WU-XXXX
 ```
 
 ---

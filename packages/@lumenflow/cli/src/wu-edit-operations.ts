@@ -42,6 +42,13 @@ import {
 
 const PREFIX = LOG_PREFIX.EDIT;
 
+interface ReadinessSummaryContent {
+  headline: string;
+  details?: string[];
+  command: string;
+  errors?: string[];
+}
+
 /**
  * WU-1039: Apply exposure edit to WU object
  *
@@ -214,6 +221,71 @@ export async function regenerateBacklogFromState(backlogPath: string): Promise<v
   await store.load();
   const content = await generateBacklog(store);
   writeFileSync(backlogPath, content, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
+}
+
+function truncateReadinessLine(text: string, boxWidth: number, truncationSuffix: string): string {
+  const maxContentLength = Math.max(0, boxWidth - 1);
+  if (text.length <= maxContentLength) {
+    return text;
+  }
+
+  const sliceLength = Math.max(0, maxContentLength - truncationSuffix.length);
+  return `${text.slice(0, sliceLength)}${truncationSuffix}`;
+}
+
+export function buildReadinessSummaryContent(
+  wuDoc: Record<string, unknown>,
+  id: string,
+): ReadinessSummaryContent {
+  const { valid, errors } = validateSpecCompleteness(wuDoc, id);
+  const status = typeof wuDoc.status === 'string' ? wuDoc.status : 'ready';
+
+  if (status === 'ready') {
+    if (valid) {
+      return {
+        headline: READINESS_UI.MESSAGES.READY_YES,
+        command: `Run: pnpm wu:claim --id ${id}`,
+      };
+    }
+
+    return {
+      headline: READINESS_UI.MESSAGES.READY_NO,
+      details: [READINESS_UI.MESSAGES.MISSING_HEADER],
+      command: `Run: pnpm wu:edit --id ${id} --help`,
+      errors,
+    };
+  }
+
+  if (status === 'in_progress') {
+    return {
+      headline: '✅ Already claimed: YES',
+      details: ['Current status: in_progress'],
+      command: `Next: pnpm wu:prep --id ${id}`,
+    };
+  }
+
+  return {
+    headline: `ℹ️  WU status: ${status}`,
+    details: [valid ? 'Spec complete: YES' : 'Spec complete: NO'],
+    command: `Run: pnpm wu:status --id ${id}`,
+    errors: valid ? [] : errors,
+  };
+}
+
+function printReadinessSummaryLine(
+  text: string,
+  boxWidth: number,
+  box: typeof READINESS_UI.BOX,
+  truncationSuffix: string,
+): void {
+  const content = truncateReadinessLine(text, boxWidth, truncationSuffix);
+  console.log(
+    `${box.VERTICAL} ${content}${''.padEnd(Math.max(0, boxWidth - content.length - 1))}${box.VERTICAL}`,
+  );
+}
+
+function printReadinessSummaryEmptyLine(boxWidth: number, box: typeof READINESS_UI.BOX): void {
+  console.log(`${box.VERTICAL}${''.padEnd(boxWidth)}${box.VERTICAL}`);
 }
 
 /**
@@ -554,53 +626,38 @@ export function displayReadinessSummary(id: string) {
   try {
     const wuPath = WU_PATHS.WU(id);
     const wuDoc = readWU(wuPath, id);
+    const summary = buildReadinessSummaryContent(wuDoc, id);
 
-    const { valid, errors } = validateSpecCompleteness(wuDoc, id);
-
-    const {
-      BOX,
-      BOX_WIDTH,
-      MESSAGES,
-      ERROR_MAX_LENGTH,
-      ERROR_TRUNCATE_LENGTH,
-      TRUNCATION_SUFFIX,
-      PADDING,
-    } = READINESS_UI;
+    const { BOX, BOX_WIDTH, ERROR_MAX_LENGTH, ERROR_TRUNCATE_LENGTH, TRUNCATION_SUFFIX } =
+      READINESS_UI;
 
     console.log(`\n${BOX.TOP_LEFT}${BOX.HORIZONTAL.repeat(BOX_WIDTH)}${BOX.TOP_RIGHT}`);
-    if (valid) {
-      console.log(
-        `${BOX.VERTICAL} ${MESSAGES.READY_YES}${''.padEnd(PADDING.READY_YES)}${BOX.VERTICAL}`,
-      );
-      console.log(`${BOX.VERTICAL}${''.padEnd(BOX_WIDTH)}${BOX.VERTICAL}`);
-      const claimCmd = `Run: pnpm wu:claim --id ${id}`;
-      console.log(
-        `${BOX.VERTICAL} ${claimCmd}${''.padEnd(BOX_WIDTH - claimCmd.length - 1)}${BOX.VERTICAL}`,
-      );
-    } else {
-      console.log(
-        `${BOX.VERTICAL} ${MESSAGES.READY_NO}${''.padEnd(PADDING.READY_NO)}${BOX.VERTICAL}`,
-      );
-      console.log(`${BOX.VERTICAL}${''.padEnd(BOX_WIDTH)}${BOX.VERTICAL}`);
-      console.log(
-        `${BOX.VERTICAL} ${MESSAGES.MISSING_HEADER}${''.padEnd(PADDING.MISSING_HEADER)}${BOX.VERTICAL}`,
-      );
-      for (const error of errors) {
-        // Truncate long error messages to fit box
+
+    printReadinessSummaryLine(summary.headline, BOX_WIDTH, BOX, TRUNCATION_SUFFIX);
+
+    if (summary.details && summary.details.length > 0) {
+      for (const detail of summary.details) {
+        printReadinessSummaryLine(detail, BOX_WIDTH, BOX, TRUNCATION_SUFFIX);
+      }
+    }
+
+    if (summary.errors && summary.errors.length > 0) {
+      for (const error of summary.errors) {
         const truncated =
           error.length > ERROR_MAX_LENGTH
             ? `${error.substring(0, ERROR_TRUNCATE_LENGTH)}${TRUNCATION_SUFFIX}`
             : error;
-        console.log(
-          `${BOX.VERTICAL}   ${MESSAGES.BULLET} ${truncated}${''.padEnd(Math.max(0, PADDING.ERROR_BULLET - truncated.length))}${BOX.VERTICAL}`,
+        printReadinessSummaryLine(
+          `${READINESS_UI.MESSAGES.BULLET} ${truncated}`,
+          BOX_WIDTH,
+          BOX,
+          TRUNCATION_SUFFIX,
         );
       }
-      console.log(`${BOX.VERTICAL}${''.padEnd(BOX_WIDTH)}${BOX.VERTICAL}`);
-      const editCmd = `Run: pnpm wu:edit --id ${id} --help`;
-      console.log(
-        `${BOX.VERTICAL} ${editCmd}${''.padEnd(BOX_WIDTH - editCmd.length - 1)}${BOX.VERTICAL}`,
-      );
     }
+
+    printReadinessSummaryEmptyLine(BOX_WIDTH, BOX);
+    printReadinessSummaryLine(summary.command, BOX_WIDTH, BOX, TRUNCATION_SUFFIX);
     console.log(`${BOX.BOTTOM_LEFT}${BOX.HORIZONTAL.repeat(BOX_WIDTH)}${BOX.BOTTOM_RIGHT}`);
   } catch (err: unknown) {
     // Non-blocking - if validation fails, just warn

@@ -8,12 +8,12 @@ tokens: []
 
 ## Quick Fix Commands
 
-If gates fail, try these before investigating:
+If gates fail, start with the exact files or commands named by the gate output:
 
 ```bash
-pnpm format      # Auto-fix formatting issues
-pnpm lint        # Check linting (use --fix for auto-fix)
-pnpm typecheck   # Check TypeScript types
+pnpm prettier --write path/to/file.ts  # Format only the files named by gates
+pnpm lint                              # Re-check linting after edits
+pnpm typecheck                         # Re-check TypeScript types
 ```
 
-**Use before gates** to catch simple issues early. These are faster than full `pnpm gates`.
+**Prefer targeted formatter commands from gate output over repo-wide `pnpm format`.** These are faster than full `pnpm gates`.

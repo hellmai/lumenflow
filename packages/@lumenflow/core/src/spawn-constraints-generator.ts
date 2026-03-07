@@ -114,8 +114,9 @@ ${memNum}. MEMORY LAYER COORDINATION (INIT-007)
    - Checkpoint triggers (WU-1943): checkpoint after each acceptance criterion completed, checkpoint before gates, checkpoint every 30 tool calls
 
 ${skipGatesNum}. SKIP-GATES AUTONOMY (WU-1142)
-   - If gates fail, first check if failure is pre-existing on main: \`git checkout main && pnpm gates\`
-   - If failure exists on main (not your change), use: \`pnpm wu:done --id ${id} --skip-gates --reason "pre-existing on main" --fix-wu WU-XXXX\`
+   - If gates fail, rerun \`pnpm wu:prep --id ${id}\` from the worktree; it checks main safely and prints skip-gates guidance when appropriate
+   - If \`wu:prep\` reports the failure is pre-existing on main, use: \`pnpm wu:done --id ${id} --skip-gates --reason "pre-existing on main" --fix-wu WU-XXXX\`
+   - Do NOT use \`git stash\` or mutate local main just to prove a pre-existing failure
    - Do NOT ask for approval - autonomous skip-gates for pre-existing failures is correct
    - This prevents getting stuck on infrastructure debt
 

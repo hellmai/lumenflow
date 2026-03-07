@@ -22,6 +22,7 @@ import {
   validateDoneWUEdits,
   validateWorktreeExecutionContext,
 } from '../wu-edit.js';
+import { buildReadinessSummaryContent } from '../wu-edit-operations.js';
 
 const ARC42 = DOCS_LAYOUT_PRESETS.arc42;
 const WU_DIR = `${ARC42.tasks}/wu`;
@@ -290,5 +291,71 @@ describe('WU-2290: wu:edit worktree execution context guard', () => {
     expect(errorMessage).toContain(`Claimed worktree: ${TARGET_WORKTREE}`);
     expect(errorMessage).toContain(`cd ${TARGET_WORKTREE}`);
     expect(errorMessage).toContain(RETRY_COMMAND);
+  });
+});
+
+describe('WU-2339: wu:edit readiness summary', () => {
+  it('keeps ready WUs claimable when spec is complete', () => {
+    const result = buildReadinessSummaryContent(
+      {
+        id: 'WU-2339',
+        status: 'ready',
+        title: 'Test WU',
+        lane: 'Framework: CLI',
+        type: 'feature',
+        description:
+          'This ready WU has enough implementation detail to satisfy strict completeness checks.',
+        acceptance: ['one'],
+        code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+        notes: 'context',
+        tests: {
+          unit: ['packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts'],
+        },
+      },
+      'WU-2339',
+    );
+
+    expect(result.headline).toBe('✅ Ready to claim: YES');
+    expect(result.command).toBe('Run: pnpm wu:claim --id WU-2339');
+  });
+
+  it('does not tell claimed WUs to re-claim', () => {
+    const result = buildReadinessSummaryContent(
+      {
+        id: 'WU-2339',
+        status: 'in_progress',
+        title: 'Test WU',
+        lane: 'Framework: CLI',
+        type: 'feature',
+        description: 'desc',
+        acceptance: ['one'],
+        code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+        notes: 'context',
+      },
+      'WU-2339',
+    );
+
+    expect(result.headline).toBe('✅ Already claimed: YES');
+    expect(result.command).toBe('Next: pnpm wu:prep --id WU-2339');
+  });
+
+  it('uses status-aware guidance for non-claimable WUs', () => {
+    const result = buildReadinessSummaryContent(
+      {
+        id: 'WU-2339',
+        status: 'done',
+        title: 'Test WU',
+        lane: 'Framework: CLI',
+        type: 'feature',
+        description: 'desc',
+        acceptance: ['one'],
+        code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+        notes: 'context',
+      },
+      'WU-2339',
+    );
+
+    expect(result.headline).toBe('ℹ️  WU status: done');
+    expect(result.command).toBe('Run: pnpm wu:status --id WU-2339');
   });
 });

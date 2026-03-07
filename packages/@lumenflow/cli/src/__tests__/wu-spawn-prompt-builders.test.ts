@@ -370,6 +370,17 @@ describe('WU-1898: tryLoadTemplates condition evaluation', () => {
   });
 });
 
+describe('WU-2339: prompt recovery guidance', () => {
+  it('generateQuickFixCommands prefers targeted prettier commands', async () => {
+    const { generateQuickFixCommands } = await import('../wu-spawn-prompt-builders.js');
+
+    const result = generateQuickFixCommands();
+
+    expect(result).toContain('pnpm prettier --write path/to/file.ts');
+    expect(result).not.toContain('pnpm format      # Auto-fix formatting issues');
+  });
+});
+
 describe('WU-1898: buildSpawnTemplateContext policy enrichment', () => {
   it('should include policy.testing in context when policy is provided', async () => {
     const { buildSpawnTemplateContext } = await import('../wu-spawn-prompt-builders.js');

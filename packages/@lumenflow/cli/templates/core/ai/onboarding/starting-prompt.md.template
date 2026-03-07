@@ -135,7 +135,7 @@ pnpm wu:prep --id WU-XXXX
 # This prints the copy-paste completion command
 
 # 6. Return to main and complete
-cd /path/to/main/checkout && pnpm wu:done --id WU-XXXX
+cd <project-root> && pnpm wu:done --id WU-XXXX
 ```
 
 ## Quick Start -- Cloud / Branch-PR (Copy This)
@@ -256,7 +256,7 @@ Do not just write "to complete: run wu:done" and stop.
 
 # RIGHT
 pnpm wu:prep --id WU-123
-cd /path/to/main && pnpm wu:done --id WU-123
+cd <project-root> && pnpm wu:done --id WU-123
 # Then report: "WU-123 completed. Changes merged to main."
 ```
 
@@ -417,7 +417,7 @@ git add . && git commit -m "your message"
 cd worktrees/<lane>-wu-xxx
 git status  # See what's uncommitted
 git add . && git commit -m "wip: complete changes"
-cd /path/to/main
+cd <project-root>
 pnpm wu:done --id WU-XXX
 ```
 
@@ -428,7 +428,7 @@ pnpm wu:done --id WU-XXX
 **Fix:**
 
 ```bash
-cd /path/to/main
+cd <project-root>
 git status  # Check what's uncommitted
 # If your changes: commit them
 # If another agent's changes: DO NOT DELETE - coordinate with user
@@ -442,16 +442,16 @@ git restore <file>  # Only if safe to discard
 **Fix:**
 
 ```bash
-# Verify the failure exists on main before your changes
-git stash
-pnpm gates  # If still fails, it's pre-existing
-git stash pop
+# Re-run prep from the worktree. It checks main safely and prints the right skip-gates command.
+pnpm wu:prep --id WU-XXX
 
-# Complete with skip-gates
-pnpm wu:done --id WU-XXX --skip-gates \
-  --reason "Pre-existing failure in X" \
+# If wu:prep reports the failure is pre-existing on main, copy the printed command:
+cd <project-root> && pnpm wu:done --id WU-XXX --skip-gates \
+  --reason "pre-existing on main" \
   --fix-wu WU-XXX
 ```
+
+Do not use `git stash`, switch local main, or otherwise mutate main just to prove a pre-existing failure.
 
 ### Scenario 6: wu:done fails with non-fast-forward error
 

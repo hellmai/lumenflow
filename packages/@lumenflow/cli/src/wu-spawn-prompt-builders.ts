@@ -715,8 +715,9 @@ ${memNum}. MEMORY LAYER COORDINATION (INIT-007)
    - Checkpoint triggers (WU-1943): checkpoint after each acceptance criterion completed, checkpoint before gates, checkpoint every 30 tool calls
 
 ${skipGatesNum}. SKIP-GATES AUTONOMY (WU-1142)
-   - If gates fail, first check if failure is pre-existing on main: \`git checkout main && pnpm gates\`
-   - If failure exists on main (not your change), use: \`pnpm wu:done --id ${id} --skip-gates --reason "pre-existing on main" --fix-wu WU-XXXX\`
+   - If gates fail, rerun \`pnpm wu:prep --id ${id}\` from the worktree; it checks main safely and prints skip-gates guidance when appropriate
+   - If \`wu:prep\` reports the failure is pre-existing on main, use: \`pnpm wu:done --id ${id} --skip-gates --reason "pre-existing on main" --fix-wu WU-XXXX\`
+   - Do NOT use \`git stash\` or mutate local main just to prove a pre-existing failure
    - Do NOT ask for approval - autonomous skip-gates for pre-existing failures is correct
    - This prevents getting stuck on infrastructure debt
 </constraints>`;
@@ -902,15 +903,15 @@ This format enables orchestrator to track progress across waves.`;
 export function generateQuickFixCommands(): string {
   return `## Quick Fix Commands
 
-If gates fail, try these before investigating:
+If gates fail, start with the exact files or commands named by the gate output:
 
 \`\`\`bash
-pnpm format      # Auto-fix formatting issues
-pnpm lint        # Check linting (use --fix for auto-fix)
-pnpm typecheck   # Check TypeScript types
+pnpm prettier --write path/to/file.ts  # Format only the files named by gates
+pnpm lint                              # Re-check linting after edits
+pnpm typecheck                         # Re-check TypeScript types
 \`\`\`
 
-**Use before gates** to catch simple issues early. These are faster than full \`pnpm gates\`.`;
+**Prefer targeted formatter commands from gate output over repo-wide \`pnpm format\`.** These are faster than full \`pnpm gates\`.`;
 }
 
 /**
