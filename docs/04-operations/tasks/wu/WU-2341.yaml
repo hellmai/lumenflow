@@ -24,12 +24,22 @@ artifacts:
   - .lumenflow/stamps/WU-2341.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Session handoff: added hasValidPrepCheckpoint to validateClaimSessionOwnership. wu:done
+  calls canSkipGates before ownership check - if wu:prep left a valid checkpoint, session mismatch
+  is accepted without --force. JSONL merge: added .gitattributes with merge=union for
+  wu-events.jsonl so append-only JSONL files auto-merge without conflicts.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-07T09:53:33.030Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2341
+session_id: ee95aded-ab4e-4a7a-8ebb-35e8f6fc03f5
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-07T09:53:33.042Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -45,11 +55,3 @@ acceptance:
     auto-resolved
   - Regression tests cover wu:prep session A then wu:done session B scenario
   - Regression tests cover lane:edit push followed by worktree merge of origin/main
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2341
-claimed_at: 2026-03-07T09:53:33.030Z
-baseline_main_sha: ece5f64cc0a7ae73f1bbfd014b3f0b0d99a80f9b
-session_id: ee95aded-ab4e-4a7a-8ebb-35e8f6fc03f5
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-07T09:53:33.042Z
