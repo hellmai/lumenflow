@@ -4,7 +4,7 @@ _Last updated: 2026-03-07_
 
 ## In Progress
 
-- [WU-2343 — Distinguish wu:claim auto-brief evidence from full wu:brief prompts](wu/WU-2343.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1263,3 +1263,4 @@ _Last updated: 2026-03-07_
 - [WU-2339 — Remove unsafe agent fallback guidance and misleading claimed-WU prompts](wu/WU-2339.yaml) — 2026-03-07
 - [WU-2340 — wu:edit misclassifies claimed WUs when local main is stale](wu/WU-2340.yaml) — 2026-03-07
 - [WU-2342 — Bind wu:done prep-checkpoint handoff to current worktree HEAD](wu/WU-2342.yaml) — 2026-03-07
+- [WU-2343 — Distinguish wu:claim auto-brief evidence from full wu:brief prompts](wu/WU-2343.yaml) — 2026-03-07
