@@ -1211,12 +1211,18 @@ async function executePreFlightChecks({
   // Ownership check (skip in branch-only mode)
   if (!isBranchOnly) {
     const activeSession = getCurrentSessionForWU();
+    // WU-2341: Check if wu:prep created a valid checkpoint — proves authorized session handoff.
+    const prepCheckpointResult = canSkipGates(id, {
+      currentHeadSha: undefined,
+      baseDir: derivedWorktree || undefined,
+    });
     const sessionOwnership = validateClaimSessionOwnership({
       wuId: id,
       claimedSessionId:
         typeof docForValidation.session_id === 'string' ? docForValidation.session_id : null,
       activeSessionId: activeSession?.session_id ?? null,
       force: Boolean(args.force),
+      hasValidPrepCheckpoint: prepCheckpointResult.canSkip,
     });
 
     if (!sessionOwnership.valid) {

@@ -1,0 +1,4 @@
+# WU-2341: JSONL state files are append-only. Use union merge to avoid
+# conflicts when multiple branches (worktrees, micro-worktrees) append
+# events concurrently.
+.lumenflow/state/wu-events.jsonl merge=union

@@ -6,6 +6,8 @@ export interface ClaimSessionOwnershipInput {
   claimedSessionId?: string | null;
   activeSessionId?: string | null;
   force: boolean;
+  /** WU-2341: If true, a valid wu:prep checkpoint exists, authorizing session handoff. */
+  hasValidPrepCheckpoint?: boolean;
 }
 
 export interface ClaimSessionOwnershipResult {
@@ -19,6 +21,7 @@ export function validateClaimSessionOwnership({
   claimedSessionId,
   activeSessionId,
   force,
+  hasValidPrepCheckpoint,
 }: ClaimSessionOwnershipInput): ClaimSessionOwnershipResult {
   // Legacy WUs without claim-session metadata remain supported.
   if (!claimedSessionId) {
@@ -26,6 +29,12 @@ export function validateClaimSessionOwnership({
   }
 
   if (claimedSessionId === activeSessionId) {
+    return { valid: true, auditRequired: false, error: null };
+  }
+
+  // WU-2341: wu:prep checkpoint proves authorized handoff between sessions.
+  // This is the normal wu:prep (worktree session) -> wu:done (main session) flow.
+  if (hasValidPrepCheckpoint) {
     return { valid: true, auditRequired: false, error: null };
   }
 
