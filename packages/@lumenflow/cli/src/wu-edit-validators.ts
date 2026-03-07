@@ -10,6 +10,7 @@
 
 import { die } from '@lumenflow/core/error-handler';
 import { existsSync, readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
 import { defaultWorktreeFrom, WU_PATHS } from '@lumenflow/core/wu-paths';
 import { resolve, join, relative, isAbsolute } from 'node:path';
@@ -36,6 +37,142 @@ export const EDIT_MODE = {
   /** In-progress branch-pr WUs: apply edits directly on the claimed branch */
   BRANCH_PR: BRANCH_PR_EDIT_MODE,
 };
+
+const AUTHORITATIVE_MAIN_REF = 'origin/main';
+
+function isWuDocument(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function getWuStatus(wu: Record<string, unknown>): string | null {
+  return typeof wu.status === 'string' ? wu.status : null;
+}
+
+function resolveClaimedWorktreePath(doc: Record<string, unknown>, id: string): string | null {
+  if (typeof doc.worktree_path === 'string' && doc.worktree_path.trim().length > 0) {
+    return resolve(doc.worktree_path);
+  }
+
+  const fallbackPath = defaultWorktreeFrom({
+    id: typeof doc.id === 'string' ? doc.id : id,
+    lane: typeof doc.lane === 'string' ? doc.lane : undefined,
+  });
+
+  return fallbackPath ? resolve(fallbackPath) : null;
+}
+
+function readWuDocumentFromPath(filePath: string): Record<string, unknown> | null {
+  if (!existsSync(filePath)) {
+    return null;
+  }
+
+  const content = readFileSync(filePath, 'utf8');
+  const wu = parseYAML(content);
+  return isWuDocument(wu) ? wu : null;
+}
+
+function readWuDocumentFromWorktree(
+  id: string,
+  doc: Record<string, unknown>,
+): Record<string, unknown> | null {
+  const worktreePath = resolveClaimedWorktreePath(doc, id);
+  if (!worktreePath) {
+    return null;
+  }
+
+  return readWuDocumentFromPath(join(worktreePath, WU_PATHS.WU(id)));
+}
+
+function readWuDocumentFromRef(
+  id: string,
+  ref: string,
+  repoRoot: string,
+): Record<string, unknown> | null {
+  try {
+    const content = execFileSync('git', ['show', `${ref}:${WU_PATHS.WU(id)}`], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    const wu = parseYAML(content);
+    return isWuDocument(wu) ? wu : null;
+  } catch {
+    return null;
+  }
+}
+
+export function buildAuthoritativeStateMismatchMessage(
+  id: string,
+  localStatus: string,
+  authoritativeStatus: string,
+  sourceLabel: string,
+): string {
+  return (
+    `Cannot edit WU ${id}: local checkout is stale relative to authoritative WU state.\n\n` +
+    `Local status: ${localStatus}\n` +
+    `${sourceLabel} status: ${authoritativeStatus}\n\n` +
+    `wu:edit refuses to continue from the stale local copy because that can clobber claim metadata.\n` +
+    `Run pnpm wu:status --id ${id} to inspect the active lifecycle state.\n` +
+    `If the WU is claimed, retry from the claimed worktree or branch.\n` +
+    `If the mismatch persists, run pnpm wu:recover --id ${id}.`
+  );
+}
+
+function resolveInProgressEditableWu(
+  id: string,
+  wu: Record<string, unknown>,
+): {
+  wu: Record<string, unknown>;
+  editMode: string;
+  isDone: boolean;
+} {
+  const editMode = resolveInProgressEditMode(
+    typeof wu.claimed_mode === 'string' ? wu.claimed_mode : undefined,
+  );
+
+  if (editMode === BLOCKED_EDIT_MODE) {
+    die(
+      `Cannot edit branch-only WU ${id} via wu:edit.\n\n` +
+        `WUs claimed with claimed_mode='branch-only' cannot be edited via wu:edit.\n` +
+        `To modify the spec, edit the file directly on the lane branch and commit.`,
+    );
+  }
+
+  if (editMode === EDIT_MODE.BRANCH_PR) {
+    return { wu, editMode: EDIT_MODE.BRANCH_PR, isDone: false };
+  }
+
+  const worktreeWu = readWuDocumentFromWorktree(id, wu);
+  if (worktreeWu && getWuStatus(worktreeWu) === WU_STATUS.IN_PROGRESS) {
+    return { wu: worktreeWu, editMode: EDIT_MODE.WORKTREE, isDone: false };
+  }
+
+  return { wu, editMode: EDIT_MODE.WORKTREE, isDone: false };
+}
+
+function resolveAuthoritativeDisagreement(
+  id: string,
+  localWu: Record<string, unknown>,
+): { wu: Record<string, unknown>; sourceLabel: string } | null {
+  const localStatus = getWuStatus(localWu);
+  if (localStatus !== WU_STATUS.READY) {
+    return null;
+  }
+
+  const worktreeWu = readWuDocumentFromWorktree(id, localWu);
+  const worktreeStatus = worktreeWu ? getWuStatus(worktreeWu) : null;
+  if (worktreeWu && worktreeStatus && worktreeStatus !== localStatus) {
+    return { wu: worktreeWu, sourceLabel: 'claimed worktree' };
+  }
+
+  const originMainWu = readWuDocumentFromRef(id, AUTHORITATIVE_MAIN_REF, process.cwd());
+  const originMainStatus = originMainWu ? getWuStatus(originMainWu) : null;
+  if (originMainWu && originMainStatus && originMainStatus !== localStatus) {
+    return { wu: originMainWu, sourceLabel: AUTHORITATIVE_MAIN_REF };
+  }
+
+  return null;
+}
 
 /**
  * WU-1039: Validate which edits are allowed on done WUs
@@ -156,8 +293,10 @@ export function validateWUEditable(id: string): {
     die(`WU ${id} not found at ${wuPath}\n\nEnsure the WU exists and you're in the repo root.`);
   }
 
-  const content = readFileSync(wuPath, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
-  const wu = parseYAML(content);
+  const wu = readWuDocumentFromPath(wuPath);
+  if (!wu) {
+    die(`WU ${id} YAML is invalid at ${wuPath}\n\nFix the YAML syntax and retry.`);
+  }
 
   // WU-1929: Done WUs allow initiative/phase edits only (metadata reassignment)
   // WU-1365: Other fields on done WUs are immutable
@@ -168,43 +307,28 @@ export function validateWUEditable(id: string): {
 
   // Handle in_progress WUs based on claimed_mode (WU-1365)
   if (wu.status === WU_STATUS.IN_PROGRESS) {
-    const editMode = resolveInProgressEditMode(
-      typeof wu.claimed_mode === 'string' ? wu.claimed_mode : undefined,
-    );
-
-    if (editMode === BLOCKED_EDIT_MODE) {
-      die(
-        `Cannot edit branch-only WU ${id} via wu:edit.\n\n` +
-          `WUs claimed with claimed_mode='branch-only' cannot be edited via wu:edit.\n` +
-          `To modify the spec, edit the file directly on the lane branch and commit.`,
-      );
-    }
-
-    if (editMode === EDIT_MODE.BRANCH_PR) {
-      return { wu, editMode: EDIT_MODE.BRANCH_PR, isDone: false };
-    }
-
-    // WU-1677: For worktree-mode WUs, re-read YAML from the worktree.
-    // The worktree copy is authoritative (it may have prior wu:edit commits
-    // that haven't been merged to main yet). Reading from main causes
-    // sequential wu:edit calls to silently overwrite each other.
-    const worktreeRelPath = defaultWorktreeFrom(wu as { lane?: string; id?: string });
-    if (worktreeRelPath) {
-      const worktreeWuPath = join(resolve(worktreeRelPath), WU_PATHS.WU(id));
-      if (existsSync(worktreeWuPath)) {
-        const worktreeContent = readFileSync(worktreeWuPath, {
-          encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
-        });
-        const worktreeWu = parseYAML(worktreeContent);
-        return { wu: worktreeWu, editMode: EDIT_MODE.WORKTREE, isDone: false };
-      }
-    }
-
-    return { wu, editMode: EDIT_MODE.WORKTREE, isDone: false };
+    return resolveInProgressEditableWu(id, wu);
   }
 
   // Ready WUs use micro-worktree (existing behavior)
   if (wu.status === WU_STATUS.READY) {
+    const authoritativeWu = resolveAuthoritativeDisagreement(id, wu);
+    if (authoritativeWu) {
+      const authoritativeStatus = getWuStatus(authoritativeWu.wu);
+      if (authoritativeStatus === WU_STATUS.IN_PROGRESS) {
+        return resolveInProgressEditableWu(id, authoritativeWu.wu);
+      }
+
+      die(
+        buildAuthoritativeStateMismatchMessage(
+          id,
+          WU_STATUS.READY,
+          authoritativeStatus ?? 'unknown',
+          authoritativeWu.sourceLabel,
+        ),
+      );
+    }
+
     return { wu, editMode: EDIT_MODE.MICRO_WORKTREE, isDone: false };
   }
 

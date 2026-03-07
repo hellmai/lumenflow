@@ -12,9 +12,10 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
-import { stringifyYAML, parseYAML } from '@lumenflow/core/wu-yaml';
+import { stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { DOCS_LAYOUT_PRESETS } from '@lumenflow/core';
 
 const ARC42 = DOCS_LAYOUT_PRESETS.arc42;
@@ -38,6 +39,20 @@ function writeWUYaml(dir: string, id: string, data: Record<string, unknown>) {
   const wuDir = path.join(dir, WU_DIR);
   mkdirSync(wuDir, { recursive: true });
   writeFileSync(path.join(wuDir, `${id}.yaml`), stringifyYAML(data));
+}
+
+function runGit(dir: string, args: string[]): string {
+  return execFileSync('git', args, {
+    cwd: dir,
+    encoding: 'utf8',
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
+}
+
+function initGitRepo(dir: string) {
+  runGit(dir, ['init', '-b', 'main']);
+  runGit(dir, ['config', 'user.name', 'Test User']);
+  runGit(dir, ['config', 'user.email', 'test@example.com']);
 }
 
 describe('validateWUEditable worktree read (WU-1677)', () => {
@@ -119,6 +134,95 @@ describe('validateWUEditable worktree read (WU-1677)', () => {
 
       expect(result.editMode).toBe('micro_worktree');
       expect(result.wu.code_paths).toEqual(['main/path.ts']);
+    } finally {
+      process.chdir(origCwd);
+    }
+  });
+
+  it('treats a stale ready copy on main as a claimed worktree WU', async () => {
+    writeWUYaml(mainDir, WU_ID, {
+      id: WU_ID,
+      title: 'Test WU',
+      lane: 'Framework: CLI WU Commands',
+      type: 'bug',
+      status: 'ready',
+      code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+      notes: 'stale local copy',
+    });
+
+    writeWUYaml(worktreeDir, WU_ID, {
+      id: WU_ID,
+      title: 'Test WU',
+      lane: 'Framework: CLI WU Commands',
+      type: 'bug',
+      status: 'in_progress',
+      claimed_mode: 'worktree',
+      claimed_at: '2026-03-07T10:00:00.000Z',
+      session_id: 'session-2340',
+      worktree_path: worktreeDir,
+      code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+      notes: 'authoritative claimed copy',
+    });
+
+    const origCwd = process.cwd();
+    try {
+      process.chdir(mainDir);
+
+      const { validateWUEditable } = await import('../wu-edit-validators.js');
+      const result = validateWUEditable(WU_ID);
+
+      expect(result.editMode).toBe('worktree');
+      expect(result.isDone).toBe(false);
+      expect(result.wu.status).toBe('in_progress');
+      expect(result.wu.claimed_mode).toBe('worktree');
+      expect(result.wu.claimed_at).toBe('2026-03-07T10:00:00.000Z');
+      expect(result.wu.session_id).toBe('session-2340');
+      expect(result.wu.worktree_path).toBe(worktreeDir);
+      expect(result.wu.notes).toBe('authoritative claimed copy');
+    } finally {
+      process.chdir(origCwd);
+    }
+  });
+
+  it('fails safely when origin/main disagrees with a stale ready local copy', async () => {
+    initGitRepo(mainDir);
+
+    writeWUYaml(mainDir, WU_ID, {
+      id: WU_ID,
+      title: 'Test WU',
+      lane: 'Framework: CLI WU Commands',
+      type: 'bug',
+      status: 'ready',
+      code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+    });
+    runGit(mainDir, ['add', '.']);
+    runGit(mainDir, ['commit', '-m', 'ready local copy']);
+
+    runGit(mainDir, ['checkout', '-b', 'authoritative-main']);
+    writeWUYaml(mainDir, WU_ID, {
+      id: WU_ID,
+      title: 'Test WU',
+      lane: 'Framework: CLI WU Commands',
+      type: 'bug',
+      status: 'done',
+      code_paths: ['packages/@lumenflow/cli/src/wu-edit.ts'],
+    });
+    runGit(mainDir, ['add', '.']);
+    runGit(mainDir, ['commit', '-m', 'authoritative done copy']);
+
+    const originMainSha = runGit(mainDir, ['rev-parse', 'HEAD']).trim();
+    runGit(mainDir, ['update-ref', 'refs/remotes/origin/main', originMainSha]);
+    runGit(mainDir, ['checkout', 'main']);
+
+    const origCwd = process.cwd();
+    try {
+      process.chdir(mainDir);
+
+      const { validateWUEditable } = await import('../wu-edit-validators.js');
+      expect(() => validateWUEditable(WU_ID)).toThrowError(
+        /local checkout is stale relative to authoritative WU state/i,
+      );
+      expect(() => validateWUEditable(WU_ID)).toThrowError(/origin\/main status: done/i);
     } finally {
       process.chdir(origCwd);
     }

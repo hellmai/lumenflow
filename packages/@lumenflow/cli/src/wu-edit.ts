@@ -90,6 +90,7 @@ export {
   validateWorktreeExecutionContext,
   normalizeReplaceCodePathsArgv,
   hasScopeRelevantBranchChanges,
+  buildAuthoritativeStateMismatchMessage,
 } from './wu-edit-validators.js';
 
 export {

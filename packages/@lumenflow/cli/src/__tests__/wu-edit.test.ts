@@ -14,6 +14,7 @@ import { getConfig } from '@lumenflow/core/config';
 import { LUMENFLOW_PATHS, DOCS_LAYOUT_PRESETS } from '@lumenflow/core';
 import {
   applyEdits,
+  buildAuthoritativeStateMismatchMessage,
   buildWuEditStampNote,
   getWuEditCommitFiles,
   hasScopeRelevantBranchChanges,
@@ -357,5 +358,22 @@ describe('WU-2339: wu:edit readiness summary', () => {
 
     expect(result.headline).toBe('ℹ️  WU status: done');
     expect(result.command).toBe('Run: pnpm wu:status --id WU-2339');
+  });
+});
+
+describe('WU-2340: authoritative state mismatch guidance', () => {
+  it('tells callers how to recover from stale local WU state', () => {
+    const message = buildAuthoritativeStateMismatchMessage(
+      'WU-2340',
+      'ready',
+      'done',
+      'origin/main',
+    );
+
+    expect(message).toContain('local checkout is stale relative to authoritative WU state');
+    expect(message).toContain('Local status: ready');
+    expect(message).toContain('origin/main status: done');
+    expect(message).toContain('pnpm wu:status --id WU-2340');
+    expect(message).toContain('pnpm wu:recover --id WU-2340');
   });
 });
