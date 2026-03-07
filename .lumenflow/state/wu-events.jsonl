@@ -2894,3 +2894,7 @@
 {"type":"complete","wuId":"WU-2338","timestamp":"2026-03-07T08:48:13.131Z"}
 {"type":"claim","wuId":"WU-2339","timestamp":"2026-03-07T09:47:05.708Z","lane":"Framework: CLI WU Commands","title":"Remove unsafe agent fallback guidance and misleading claimed-WU prompts"}
 {"type":"claim","wuId":"WU-2341","timestamp":"2026-03-07T09:53:33.071Z","lane":"Framework: CLI WU Commands","title":"wu:done rejects normal wu:prep handoff as session mismatch and lane:edit causes predictable JSONL merge conflicts"}
+{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T09:53:44.348Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto"}
+{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T09:53:51.163Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:06:01.554Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
+{"type":"checkpoint","wuId":"WU-2341","timestamp":"2026-03-07T10:11:00.208Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code"}
