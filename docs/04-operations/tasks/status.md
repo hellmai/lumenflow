@@ -4,7 +4,7 @@ _Last updated: 2026-03-07_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2342 — Bind wu:done prep-checkpoint handoff to current worktree HEAD](wu/WU-2342.yaml)
 
 ## Completed
 
