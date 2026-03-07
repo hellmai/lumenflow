@@ -16,6 +16,7 @@
  * and write stamp/events/backlog/status via a micro-worktree atomic commit.
  */
 
+import path from 'node:path';
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { LOG_PREFIX, EMOJI, STRING_LITERALS, GIT_REFS } from '@lumenflow/core/wu-constants';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
@@ -164,10 +165,13 @@ export async function executeAlreadyMergedFinalize(
       async execute({ worktreePath }) {
         const transaction = new WUTransaction(id);
 
-        const wuPath = WU_PATHS.WU(id);
-        const statusPath = WU_PATHS.STATUS();
-        const backlogPath = WU_PATHS.BACKLOG();
-        const stampPath = WU_PATHS.STAMP(id);
+        // WU-2338: Use absolute paths so WUTransaction.commit() writes into the
+        // micro-worktree, not process.cwd() (main checkout). Same pattern as
+        // resolveWorktreeMetadataPaths (WU-1563).
+        const wuPath = path.join(worktreePath, WU_PATHS.WU(id));
+        const statusPath = path.join(worktreePath, WU_PATHS.STATUS());
+        const backlogPath = path.join(worktreePath, WU_PATHS.BACKLOG());
+        const stampPath = path.join(worktreePath, WU_PATHS.STAMP(id));
 
         await collectMetadataToTransaction({
           id,
@@ -182,7 +186,10 @@ export async function executeAlreadyMergedFinalize(
         });
 
         // Write transaction files in the micro-worktree
-        const files = transaction.getPendingWrites().map((w) => w.path);
+        // Return relative paths for git staging (withMicroWorktree stages relative to worktreePath)
+        const files = transaction
+          .getPendingWrites()
+          .map((w) => path.relative(worktreePath, w.path));
         transaction.commit();
 
         const commitMessage = `wu(${id.toLowerCase()}): done - ${title} [already-merged]`;

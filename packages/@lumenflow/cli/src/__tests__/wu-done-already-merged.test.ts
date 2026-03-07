@@ -248,6 +248,25 @@ describe('WU-2211: executeAlreadyMergedFinalize', () => {
     );
   });
 
+  it('WU-2338: passes absolute micro-worktree paths to collectMetadataToTransaction', async () => {
+    await executeAlreadyMergedFinalize({
+      id: 'WU-100',
+      title: 'Test WU',
+      lane: 'Framework: Core',
+      doc: { id: 'WU-100', status: 'in_progress' },
+    });
+
+    const callArgs = mockCollectMetadataToTransaction.mock.calls[0][0];
+    const microWorktreePath = '/tmp/micro-worktree';
+
+    // All file paths must be absolute, prefixed with the micro-worktree path.
+    // This prevents WUTransaction.commit() from writing to process.cwd() (main checkout).
+    expect(callArgs.wuPath).toBe(`${microWorktreePath}/docs/04-operations/tasks/wu/WU-100.yaml`);
+    expect(callArgs.statusPath).toBe(`${microWorktreePath}/docs/04-operations/tasks/status.md`);
+    expect(callArgs.backlogPath).toBe(`${microWorktreePath}/docs/04-operations/tasks/backlog.md`);
+    expect(callArgs.stampPath).toBe(`${microWorktreePath}/.lumenflow/stamps/WU-100.done`);
+  });
+
   it('returns success result when micro-worktree succeeds', async () => {
     const result = await executeAlreadyMergedFinalize({
       id: 'WU-100',
