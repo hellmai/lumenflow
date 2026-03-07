@@ -16,7 +16,7 @@ import { defaultWorktreeFrom, WU_PATHS } from '@lumenflow/core/wu-paths';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import { createGitForPath } from '@lumenflow/core/git-adapter';
 import { getConfig } from '@lumenflow/core/config';
-import { FILE_SYSTEM, WU_STATUS, WU_EXPOSURE_VALUES } from '@lumenflow/core/wu-constants';
+import { WU_STATUS, WU_EXPOSURE_VALUES } from '@lumenflow/core/wu-constants';
 import { INIT_PATTERNS } from '@lumenflow/initiatives/constants';
 import { INIT_PATHS } from '@lumenflow/initiatives/paths';
 import {
@@ -89,6 +89,7 @@ function readWuDocumentFromRef(
   repoRoot: string,
 ): Record<string, unknown> | null {
   try {
+    // eslint-disable-next-line sonarjs/no-os-command-from-path -- git is required workflow infrastructure and runs inside the active repo checkout
     const content = execFileSync('git', ['show', `${ref}:${WU_PATHS.WU(id)}`], {
       cwd: repoRoot,
       encoding: 'utf8',
