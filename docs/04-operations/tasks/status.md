@@ -4,7 +4,7 @@ _Last updated: 2026-03-08_
 
 ## In Progress
 
-- [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1265,3 +1265,4 @@ _Last updated: 2026-03-08_
 - [WU-2342 — Bind wu:done prep-checkpoint handoff to current worktree HEAD](wu/WU-2342.yaml) — 2026-03-07
 - [WU-2343 — Distinguish wu:claim auto-brief evidence from full wu:brief prompts](wu/WU-2343.yaml) — 2026-03-07
 - [WU-2344 — Initiative phase loader silently drops initiative on invalid phase status enum](wu/WU-2344.yaml) — 2026-03-08
+- [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml) — 2026-03-08

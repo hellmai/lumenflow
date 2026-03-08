@@ -26,7 +26,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1291,6 +1291,7 @@ sections:
 - [WU-2342 — Bind wu:done prep-checkpoint handoff to current worktree HEAD](wu/WU-2342.yaml)
 - [WU-2343 — Distinguish wu:claim auto-brief evidence from full wu:brief prompts](wu/WU-2343.yaml)
 - [WU-2344 — Initiative phase loader silently drops initiative on invalid phase status enum](wu/WU-2344.yaml)
+- [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
