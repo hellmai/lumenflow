@@ -114,13 +114,8 @@ describe('lane-health gitignore integration (WU-2346)', () => {
     it('collects patterns from root .gitignore plus baseline', async () => {
       const { collectGitignoreExcludePatterns } = await import('../dist/lane-health.js');
 
-      projectRoot = createProjectFixture([
-        'packages/core/src/index.ts',
-      ]);
-      writeFileSync(
-        path.join(projectRoot, '.gitignore'),
-        'dist/\n.next/\ncoverage/\n',
-      );
+      projectRoot = createProjectFixture(['packages/core/src/index.ts']);
+      writeFileSync(path.join(projectRoot, '.gitignore'), 'dist/\n.next/\ncoverage/\n');
 
       const patterns = collectGitignoreExcludePatterns(projectRoot);
 
@@ -137,13 +132,8 @@ describe('lane-health gitignore integration (WU-2346)', () => {
     it('deduplicates patterns', async () => {
       const { collectGitignoreExcludePatterns } = await import('../dist/lane-health.js');
 
-      projectRoot = createProjectFixture([
-        'packages/core/src/index.ts',
-      ]);
-      writeFileSync(
-        path.join(projectRoot, '.gitignore'),
-        'node_modules/\ndist/\n',
-      );
+      projectRoot = createProjectFixture(['packages/core/src/index.ts']);
+      writeFileSync(path.join(projectRoot, '.gitignore'), 'node_modules/\ndist/\n');
 
       const patterns = collectGitignoreExcludePatterns(projectRoot);
 
@@ -155,9 +145,8 @@ describe('lane-health gitignore integration (WU-2346)', () => {
 
   describe('detectCoverageGaps with gitignore', () => {
     it('excludes gitignored files from coverage gap detection', async () => {
-      const { detectCoverageGaps, collectGitignoreExcludePatterns } = await import(
-        '../dist/lane-health.js'
-      );
+      const { detectCoverageGaps, collectGitignoreExcludePatterns } =
+        await import('../dist/lane-health.js');
 
       projectRoot = createProjectFixture([
         'packages/core/src/index.ts',
@@ -165,10 +154,7 @@ describe('lane-health gitignore integration (WU-2346)', () => {
         'dist/bundle.js',
         '.next/server.js',
       ]);
-      writeFileSync(
-        path.join(projectRoot, '.gitignore'),
-        'dist/\n.next/\n',
-      );
+      writeFileSync(path.join(projectRoot, '.gitignore'), 'dist/\n.next/\n');
 
       const lanes = [
         { name: 'Core', code_paths: ['packages/core/**'] },

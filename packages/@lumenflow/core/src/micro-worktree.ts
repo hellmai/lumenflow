@@ -753,7 +753,9 @@ async function withMicroWorktreeInWorktree(
 ): Promise<WithMicroWorktreeResult> {
   const { operation, logPrefix = `[${operation}]`, execute } = options;
 
-  console.log(`${logPrefix} Worktree detected — committing locally instead of pushing to main (WU-2346)`);
+  console.log(
+    `${logPrefix} Worktree detected — committing locally instead of pushing to main (WU-2346)`,
+  );
 
   // Use cwd as the "worktree" path — the execute callback writes files there
   const cwd = process.cwd();
