@@ -7,11 +7,13 @@ priority: P2
 created: 2026-03-08
 code_paths:
   - packages/@lumenflow/cli/src
+  - packages/@lumenflow/cli/src/config-set.ts
 tests:
   manual:
     - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
       files.'
-  unit: []
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/config-set-worktree.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2345.done
@@ -22,10 +24,17 @@ spec_refs:
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-08T11:20:14.352Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2345
+session_id: 1b2ef7da-10f3-4f73-a1c5-5644eef00e22
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T11:20:14.359Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +50,3 @@ acceptance:
   - When run from a worktree, config:set commits the change to the worktree branch
   - When run from main checkout, config:set uses existing micro-worktree-to-main behaviour unchanged
   - Existing worktree detection patterns in the codebase are reused (no new detection logic)
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2345
-claimed_at: 2026-03-08T11:20:14.352Z
-baseline_main_sha: 064ec3d2102d9b621dc6db5a24affe9aef80a433
-session_id: 1b2ef7da-10f3-4f73-a1c5-5644eef00e22
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-08T11:20:14.359Z
