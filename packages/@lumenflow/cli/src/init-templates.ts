@@ -1758,8 +1758,9 @@ export const GATE_STUB_SCRIPTS: Record<string, string> = {
   // WU-1747: format and format:check stubs that auto-detect prettier availability.
   // When prettier is installed (after pnpm install), they run prettier directly.
   // When prettier is not installed, they exit 0 with guidance -- matching other gate stubs.
+  // WU-2348: Block unscoped format. Require file args to prevent repo-wide reformat.
   format:
-    'if command -v prettier >/dev/null 2>&1; then prettier --write .; else echo "[lumenflow] format stub -- install prettier to enable formatting (pnpm install)"; fi',
+    'if [ $# -eq 0 ]; then echo "ERROR: Unscoped pnpm format is blocked. Use: pnpm prettier --write <files>" >&2; exit 1; fi; if command -v prettier >/dev/null 2>&1; then prettier --write "$@"; else echo "[lumenflow] format stub -- install prettier to enable formatting (pnpm install)"; fi',
   'format:check':
     'if command -v prettier >/dev/null 2>&1; then prettier --check .; else echo "[lumenflow] format:check stub -- install prettier to enable this gate (pnpm install)"; fi',
   // WU-1852: cos:gates no-op stub so fresh projects can complete wu:done without manual setup.

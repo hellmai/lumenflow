@@ -191,6 +191,42 @@ describe('WU-1747: format:check stub when prettier not installed', () => {
     });
   });
 
+  describe('WU-2348: format script blocks unscoped runs', () => {
+    it('format script should block when no file args are provided', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const packageJson = readPackageJson();
+      const formatScript = packageJson.scripts?.[FORMAT_SCRIPT];
+
+      // The script must check $# to block unscoped runs
+      expect(formatScript).toContain('$#');
+      expect(formatScript).toContain('exit 1');
+      // Must NOT contain unscoped 'prettier --write .' (the dangerous pattern)
+      expect(formatScript).not.toMatch(/prettier --write \.\s*[;"']/);
+      expect(formatScript).not.toMatch(/prettier --write \.$/);
+    });
+
+    it('format script should pass file args through to prettier', async () => {
+      const options: ScaffoldOptions = {
+        force: true,
+        full: true,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const packageJson = readPackageJson();
+      const formatScript = packageJson.scripts?.[FORMAT_SCRIPT];
+
+      // When args are provided, should pass them to prettier
+      expect(formatScript).toContain('"$@"');
+    });
+  });
+
   describe('preserves existing custom format scripts', () => {
     it('should not overwrite existing format:check script unless --force', async () => {
       const existingPackageJson = {

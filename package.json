@@ -15,7 +15,7 @@
     "verify:workspace-scripts": "node tools/verify-workspace-scripts.mjs",
     "lint": "pnpm verify:workspace-scripts && turbo lint",
     "typecheck": "pnpm verify:workspace-scripts && turbo typecheck",
-    "format": "prettier --write .",
+    "format": "bash tools/format-guard.sh",
     "format:check": "prettier --check .",
     "pack:all": "turbo pack:dist",
     "clean": "turbo clean && rm -rf node_modules/.cache",
