@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-07_
+_Last updated: 2026-03-08_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2344 — Initiative phase loader silently drops initiative on invalid phase status enum](wu/WU-2344.yaml)
 
 ## Completed
 

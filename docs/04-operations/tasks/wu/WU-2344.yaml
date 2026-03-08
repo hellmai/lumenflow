@@ -2,14 +2,15 @@ id: WU-2344
 title: Initiative phase loader silently drops initiative on invalid phase status enum
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-08
 code_paths:
   - packages/@lumenflow/cli/src/initiative
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -25,7 +26,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Setting an initiative phase status to an invalid enum value (e.g. 'ready') causes the CLI initiative loader to silently drop the entire initiative from initiative:list and initiative:status. No error or warning is shown. The loader should reject invalid phase statuses with an error or warning instead of silently omitting the initiative.
+description: Setting an initiative phase status to an invalid enum value (e.g. 'ready') causes the
+  CLI initiative loader to silently drop the entire initiative from initiative:list and
+  initiative:status. No error or warning is shown. The loader should reject invalid phase statuses
+  with an error or warning instead of silently omitting the initiative.
 acceptance:
   - Invalid phase status values produce a clear error or warning message
   - Initiative with one invalid phase status is not silently dropped from initiative:list
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-2344
+claimed_at: 2026-03-08T08:52:49.841Z
+baseline_main_sha: 0d44eabf5b6d9ee7401a92b9d38575df68eef5ef
+session_id: 031a7a01-bdb3-4f55-a22b-b4b9e48e4687
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T08:52:49.846Z
