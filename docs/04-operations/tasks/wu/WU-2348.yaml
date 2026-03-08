@@ -18,12 +18,20 @@ artifacts:
   - .lumenflow/stamps/WU-2348.done
 dependencies: []
 risks: []
-notes: ''
+notes: Replaced package.json format script with tools/format-guard.sh. Updated init-templates.ts for
+  new projects. All agents blocked from unscoped prettier.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-08T23:42:03.719Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2348
+session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T23:42:03.726Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +43,3 @@ acceptance:
   - pnpm format without file args exits non-zero with guidance
   - pnpm format with specific files still works
   - pnpm format:check read-only still works unscoped
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2348
-claimed_at: 2026-03-08T23:42:03.719Z
-baseline_main_sha: 59a032beb55c54cff5baec13d7adecdfd1cdd7a6
-session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-08T23:42:03.726Z
