@@ -22,7 +22,6 @@
  */
 
 import path from 'node:path';
-import { execSync } from 'node:child_process';
 import { createError, ErrorCodes } from '@lumenflow/core';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import YAML from 'yaml';
@@ -36,26 +35,6 @@ import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { LumenFlowConfigSchema } from '@lumenflow/core/config-schema';
-/**
- * WU-2345: Detect git worktree using git rev-parse (not path string matching).
- *
- * In the main checkout, `git rev-parse --git-dir` returns ".git".
- * In a worktree, it returns a path containing "/worktrees/" (e.g., ".git/worktrees/<name>").
- *
- * Pattern sourced from @lumenflow/shims/worktree (isInWorktree).
- */
-function isInGitWorktree(): boolean {
-  try {
-    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
-    const gitDir = execSync('git rev-parse --git-dir', {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      encoding: 'utf8',
-    }).trim();
-    return gitDir.includes('/worktrees/');
-  } catch {
-    return false;
-  }
-}
 import { WorkspaceControlPlaneConfigSchema } from '@lumenflow/kernel/schemas';
 import { normalizeConfigKeys } from '@lumenflow/core/normalize-config-keys';
 import { WRITABLE_ROOT_KEYS, MANAGED_ROOT_KEYS, WORKSPACE_ROOT_KEYS } from '@lumenflow/core/config';
@@ -969,94 +948,55 @@ export async function main(): Promise<void> {
     );
   }
 
-  // WU-2345: Detect worktree using git (not path string matching).
-  // If in a worktree, commit directly to the worktree branch.
-  // If on main, use micro-worktree isolation as before.
-  const inWorktree = isInGitWorktree();
+  console.log(
+    `${LOG_PREFIX} Setting ${options.key}=${options.value} in ${WORKSPACE_FILE_NAME} via micro-worktree isolation`,
+  );
 
-  if (inWorktree) {
-    console.log(
-      `${LOG_PREFIX} Setting ${options.key}=${options.value} in ${WORKSPACE_FILE_NAME} (worktree-local commit)`,
-    );
+  // WU-2346: withMicroWorktree is now worktree-aware at the core level.
+  // If in a worktree, it commits locally; if on main, it pushes atomically.
+  await withMicroWorktree({
+    operation: OPERATION_NAME,
+    id: `config-set-${Date.now()}`,
+    logPrefix: LOG_PREFIX,
+    pushOnly: true,
+    async execute({ worktreePath }) {
+      const workspaceRelPath = WORKSPACE_FILE_NAME;
+      const mwWorkspacePath = path.join(worktreePath, workspaceRelPath);
 
-    // Apply config change directly in the worktree
-    const workspace = readRawWorkspace(workspacePath);
-    const packSchemaOpts = loadPackSchemaOpts(projectRoot, workspace);
+      if (!existsSync(mwWorkspacePath)) {
+        die(`${LOG_PREFIX} Config file not found in micro-worktree: ${workspaceRelPath}`);
+      }
 
-    const result = applyConfigSet(
-      workspace,
-      options.key,
-      options.value,
-      packConfigKeys,
-      packSchemaOpts,
-    );
-    if (!result.ok) {
-      die(`${LOG_PREFIX} ${result.error}`);
-    }
+      // Read full workspace
+      const workspace = readRawWorkspace(mwWorkspacePath);
 
-    writeRawWorkspace(workspacePath, result.config!);
-    console.log(`${LOG_PREFIX} Config validated and written successfully.`);
+      // Re-load pack config keys and schema opts from micro-worktree workspace
+      const mwPackConfigKeys = loadPackConfigKeys(worktreePath, workspace);
+      const mwPackSchemaOpts = loadPackSchemaOpts(worktreePath, workspace);
 
-    // Commit to the worktree branch
-    const commitMessage = `${COMMIT_PREFIX} ${options.key}=${options.value}`;
-    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
-    execSync(`git add ${WORKSPACE_FILE_NAME}`, { cwd: projectRoot, stdio: 'pipe' });
-    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
-    execSync(`git commit -m ${JSON.stringify(commitMessage)}`, {
-      cwd: projectRoot,
-      stdio: 'pipe',
-    });
-    console.log(`${LOG_PREFIX} Committed to worktree branch.`);
-  } else {
-    console.log(
-      `${LOG_PREFIX} Setting ${options.key}=${options.value} in ${WORKSPACE_FILE_NAME} via micro-worktree isolation`,
-    );
+      // Apply set with workspace-aware routing and pack-specific validation
+      const result = applyConfigSet(
+        workspace,
+        options.key,
+        options.value,
+        mwPackConfigKeys,
+        mwPackSchemaOpts,
+      );
+      if (!result.ok) {
+        die(`${LOG_PREFIX} ${result.error}`);
+      }
 
-    // Use micro-worktree to make atomic changes on main
-    await withMicroWorktree({
-      operation: OPERATION_NAME,
-      id: `config-set-${Date.now()}`,
-      logPrefix: LOG_PREFIX,
-      pushOnly: true,
-      async execute({ worktreePath }) {
-        const workspaceRelPath = WORKSPACE_FILE_NAME;
-        const mwWorkspacePath = path.join(worktreePath, workspaceRelPath);
+      // Write updated workspace
+      writeRawWorkspace(mwWorkspacePath, result.config!);
 
-        if (!existsSync(mwWorkspacePath)) {
-          die(`${LOG_PREFIX} Config file not found in micro-worktree: ${workspaceRelPath}`);
-        }
+      console.log(`${LOG_PREFIX} Config validated and written successfully.`);
 
-        // Read full workspace
-        const workspace = readRawWorkspace(mwWorkspacePath);
-
-        // Re-load pack config keys and schema opts from micro-worktree workspace
-        const mwPackConfigKeys = loadPackConfigKeys(worktreePath, workspace);
-        const mwPackSchemaOpts = loadPackSchemaOpts(worktreePath, workspace);
-
-        // Apply set with workspace-aware routing and pack-specific validation
-        const result = applyConfigSet(
-          workspace,
-          options.key,
-          options.value,
-          mwPackConfigKeys,
-          mwPackSchemaOpts,
-        );
-        if (!result.ok) {
-          die(`${LOG_PREFIX} ${result.error}`);
-        }
-
-        // Write updated workspace
-        writeRawWorkspace(mwWorkspacePath, result.config!);
-
-        console.log(`${LOG_PREFIX} Config validated and written successfully.`);
-
-        return {
-          commitMessage: `${COMMIT_PREFIX} ${options.key}=${options.value}`,
-          files: [workspaceRelPath],
-        };
-      },
-    });
-  }
+      return {
+        commitMessage: `${COMMIT_PREFIX} ${options.key}=${options.value}`,
+        files: [workspaceRelPath],
+      };
+    },
+  });
 
   // WU-2126: Invalidate config cache so subsequent commands in the same process
   // read fresh values from disk after config mutation.

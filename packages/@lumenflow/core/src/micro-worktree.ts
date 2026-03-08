@@ -150,6 +150,34 @@ export {
 };
 export type { FormatRetryExhaustionOptions };
 
+/**
+ * WU-2346: Detect if the current process is running inside a git worktree.
+ *
+ * Uses `git rev-parse --git-dir`:
+ * - Main checkout returns ".git"
+ * - Worktree returns a path containing "/worktrees/" (e.g., ".git/worktrees/<name>")
+ *
+ * Pattern sourced from @lumenflow/shims/worktree (isInWorktree).
+ *
+ * @returns True if running in a git worktree, false if on main or not in a git repo
+ */
+export function isInGitWorktree(): boolean {
+  // Allow tests/tooling to override via env var
+  if (process.env.LUMENFLOW_FORCE_MAIN === '1') {
+    return false;
+  }
+  try {
+    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
+    const gitDir = execSync('git rev-parse --git-dir', {
+      stdio: [STDIO_MODES.PIPE, STDIO_MODES.PIPE, STDIO_MODES.PIPE],
+      encoding: 'utf8',
+    }).trim();
+    return gitDir.includes('/worktrees/');
+  } catch {
+    return false;
+  }
+}
+
 export async function stageChangesWithDeletions(
   gitWorktree: GitAdapter,
   files: string[] | undefined,
@@ -592,6 +620,13 @@ export async function withMicroWorktree(
     pushRetryOverride,
   } = options;
 
+  // WU-2346: If running from a git worktree, commit directly to the worktree
+  // branch instead of pushing to main. This prevents changes from leaking
+  // to main before wu:done merges the worktree.
+  if (isInGitWorktree()) {
+    return withMicroWorktreeInWorktree(options);
+  }
+
   const mainGit = getGitForCwd();
 
   // WU-1308: Check if remote operations should be skipped (local-only mode)
@@ -700,4 +735,43 @@ export async function withMicroWorktree(
     // Cleanup (always runs)
     await cleanupMicroWorktree(microWorktreePath, tempBranchName, logPrefix);
   }
+}
+
+/**
+ * WU-2346: Worktree-local path for withMicroWorktree.
+ *
+ * When running inside a git worktree, instead of creating a micro-worktree
+ * that pushes to main, this executes the operation in a temporary directory,
+ * then copies the resulting files back to the worktree and commits locally
+ * to the worktree branch.
+ *
+ * This prevents config/lane/initiative changes from leaking to main before
+ * wu:done merges the worktree.
+ */
+async function withMicroWorktreeInWorktree(
+  options: WithMicroWorktreeOptions,
+): Promise<WithMicroWorktreeResult> {
+  const { operation, logPrefix = `[${operation}]`, execute } = options;
+
+  console.log(`${logPrefix} Worktree detected — committing locally instead of pushing to main (WU-2346)`);
+
+  // Use cwd as the "worktree" path — the execute callback writes files there
+  const cwd = process.cwd();
+  const gitWorktree = getGitForCwd();
+
+  // Execute the operation directly in cwd (the worktree)
+  const result = await execute({ worktreePath: cwd, gitWorktree });
+
+  // Format files before committing
+  await formatFiles(result.files, cwd, logPrefix);
+
+  // Stage and commit to the worktree branch
+  console.log(`${logPrefix} Staging changes (including deletions)...`);
+  await stageChangesWithDeletions(gitWorktree, result.files);
+  console.log(`${logPrefix} Committing in worktree...`);
+  await gitWorktree.commit(result.commitMessage);
+  console.log(`${logPrefix} ✅ Committed to worktree branch: ${result.commitMessage}`);
+
+  // Return current branch as ref
+  return { ...result, ref: BRANCHES.MAIN };
 }

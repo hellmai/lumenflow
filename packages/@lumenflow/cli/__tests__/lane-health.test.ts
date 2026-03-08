@@ -341,6 +341,16 @@ describe('lane:health CLI (WU-1188)', () => {
     });
   });
 
+  describe('parseGitignorePatterns (WU-2346)', () => {
+    it('is exported from lane-health module', async () => {
+      // Full gitignore tests are in lane-health-gitignore.test.ts
+      // (this file mocks fs.readFileSync which conflicts with real file reads)
+      const mod = await import('../dist/lane-health.js');
+      expect(typeof mod.parseGitignorePatterns).toBe('function');
+      expect(typeof mod.collectGitignoreExcludePatterns).toBe('function');
+    });
+  });
+
   describe('loadLaneDefinitions', () => {
     it('loads lane definitions from config file', async () => {
       const coreConfig = await import('@lumenflow/core/config');

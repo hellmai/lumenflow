@@ -373,10 +373,14 @@ describe('micro-worktree', () => {
   describe('withMicroWorktree fetch origin/main before start (WU-1179)', () => {
     beforeEach(() => {
       vi.resetModules();
+      // WU-2346: Force main-checkout behavior so withMicroWorktree uses the
+      // standard micro-worktree path (not the worktree-local shortcut)
+      process.env.LUMENFLOW_FORCE_MAIN = '1';
     });
 
     afterEach(() => {
       vi.restoreAllMocks();
+      delete process.env.LUMENFLOW_FORCE_MAIN;
     });
 
     it('should fetch origin/main before starting non-pushOnly operations', async () => {
@@ -1644,6 +1648,8 @@ describe('micro-worktree', () => {
 
     beforeEach(() => {
       vi.resetModules();
+      // WU-2346: Force main-checkout behavior for cleanup tests
+      process.env.LUMENFLOW_FORCE_MAIN = '1';
     });
 
     afterEach(() => {
@@ -1940,6 +1946,26 @@ describe('micro-worktree', () => {
       });
 
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('isInGitWorktree (WU-2346)', () => {
+    it('should be exported from micro-worktree module', async () => {
+      const { isInGitWorktree } = await import('../micro-worktree.js');
+      expect(typeof isInGitWorktree).toBe('function');
+    });
+
+    it('should detect worktree context when running in a worktree', async () => {
+      const { isInGitWorktree } = await import('../micro-worktree.js');
+
+      // This test file runs in a worktree (framework-core-wu-2346)
+      const result = isInGitWorktree();
+      expect(result).toBe(true);
+    });
+
+    it('should return boolean', async () => {
+      const { isInGitWorktree } = await import('../micro-worktree.js');
+      expect(typeof isInGitWorktree()).toBe('boolean');
     });
   });
 });

@@ -18,6 +18,8 @@
 import fg from 'fast-glob';
 import { minimatch } from 'minimatch';
 import chalk from 'chalk';
+import { readFileSync } from 'node:fs';
+import { join, dirname, relative } from 'node:path';
 import { createWUParser } from '@lumenflow/core/arg-parser';
 import {
   findProjectRoot,
@@ -36,21 +38,91 @@ const MAX_DISPLAY_GAPS = 10;
 const GIT_DIR_GLOB = `${GIT_DIRECTORY_NAME}/**`;
 const RECURSIVE_GIT_DIR_GLOB = `**/${GIT_DIRECTORY_NAME}/**`;
 
-/** Default exclude patterns for coverage gap detection */
-const DEFAULT_EXCLUDE_PATTERNS = [
+/**
+ * Minimal exclude patterns that are always applied regardless of .gitignore.
+ * These cover infrastructure that .gitignore typically doesn't list.
+ */
+const BASELINE_EXCLUDE_PATTERNS = [
   'node_modules/**',
   GIT_DIR_GLOB,
-  'dist/**',
-  'build/**',
-  'coverage/**',
-  '.turbo/**',
-  '*.lock',
-  'pnpm-lock.yaml',
-  'package-lock.json',
-  'yarn.lock',
   '.lumenflow/**',
   'worktrees/**',
 ];
+
+/**
+ * WU-2346: Parse a .gitignore file and return glob patterns suitable for fast-glob ignore.
+ *
+ * Handles:
+ * - Comments (lines starting with #)
+ * - Empty lines
+ * - Directory patterns (trailing /) converted to glob patterns
+ * - Patterns scoped to the .gitignore file's directory (for nested .gitignore files)
+ *
+ * Does NOT handle:
+ * - Negation patterns (!) — these are skipped as fast-glob ignore doesn't support them
+ *
+ * @param filePath - Absolute path to the .gitignore file
+ * @param projectRoot - Absolute path to the project root
+ * @returns Array of glob patterns
+ */
+export function parseGitignorePatterns(filePath: string, projectRoot: string): string[] {
+  try {
+    const content = readFileSync(filePath, 'utf8');
+    const dir = dirname(filePath);
+    const relDir = relative(projectRoot, dir);
+    const prefix = relDir ? `${relDir}/` : '';
+
+    return content
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#') && !line.startsWith('!'))
+      .map((pattern) => {
+        // Remove trailing slash and add glob suffix for directory patterns
+        const cleanPattern = pattern.endsWith('/') ? `${pattern}**` : pattern;
+        // Scope to the .gitignore file's directory
+        if (prefix && !cleanPattern.startsWith('/') && !cleanPattern.startsWith('*')) {
+          return `${prefix}${cleanPattern}`;
+        }
+        // Root-anchored patterns (starting with /) are relative to the .gitignore's dir
+        if (cleanPattern.startsWith('/')) {
+          return `${prefix}${cleanPattern.slice(1)}`;
+        }
+        return cleanPattern;
+      });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * WU-2346: Collect exclude patterns from all .gitignore files in the project.
+ *
+ * Scans for .gitignore files recursively and merges their patterns with
+ * the baseline exclusions. This is framework-agnostic — any project's
+ * .gitignore patterns are automatically respected.
+ *
+ * @param projectRoot - Absolute path to the project root
+ * @returns Array of glob patterns for fast-glob ignore
+ */
+export function collectGitignoreExcludePatterns(projectRoot: string): string[] {
+  const gitignoreFiles = fg.sync('**/.gitignore', {
+    cwd: projectRoot,
+    dot: true,
+    ignore: ['node_modules/**', GIT_DIR_GLOB, 'worktrees/**'],
+    onlyFiles: true,
+    followSymbolicLinks: false,
+    suppressErrors: true,
+  });
+
+  const patterns = [...BASELINE_EXCLUDE_PATTERNS];
+
+  for (const gitignoreRelPath of gitignoreFiles) {
+    const absPath = join(projectRoot, gitignoreRelPath);
+    patterns.push(...parseGitignorePatterns(absPath, projectRoot));
+  }
+
+  return [...new Set(patterns)];
+}
 
 /** File extensions to check for coverage (code files only) */
 const CODE_FILE_EXTENSIONS = [
@@ -180,10 +252,14 @@ function patternsCanOverlap(patternA: string, patternB: string): boolean {
 /**
  * Find concrete file intersection between two glob patterns
  */
-function findOverlappingFiles(patternA: string, patternB: string): string[] {
+function findOverlappingFiles(
+  patternA: string,
+  patternB: string,
+  excludePatterns?: string[],
+): string[] {
   const globOptions = {
     dot: true,
-    ignore: ['**/node_modules/**', RECURSIVE_GIT_DIR_GLOB, '**/worktrees/**'],
+    ignore: excludePatterns ?? ['**/node_modules/**', RECURSIVE_GIT_DIR_GLOB, '**/worktrees/**'],
     followSymbolicLinks: false,
     suppressErrors: true,
   };
@@ -197,7 +273,11 @@ function findOverlappingFiles(patternA: string, patternB: string): string[] {
 /**
  * Check overlap between two lanes' code paths
  */
-function checkLanePairOverlap(laneA: LaneDefinition, laneB: LaneDefinition): LaneOverlap[] {
+function checkLanePairOverlap(
+  laneA: LaneDefinition,
+  laneB: LaneDefinition,
+  excludePatterns?: string[],
+): LaneOverlap[] {
   const overlaps: LaneOverlap[] = [];
 
   for (const pathA of laneA.code_paths) {
@@ -205,7 +285,7 @@ function checkLanePairOverlap(laneA: LaneDefinition, laneB: LaneDefinition): Lan
       if (patternsCanOverlap(pathA, pathB)) {
         let files: string[] = [];
         try {
-          files = findOverlappingFiles(pathA, pathB);
+          files = findOverlappingFiles(pathA, pathB, excludePatterns);
         } catch {
           // Ignore filesystem errors
         }
@@ -225,12 +305,15 @@ function checkLanePairOverlap(laneA: LaneDefinition, laneB: LaneDefinition): Lan
 /**
  * Detect overlapping code_paths between lane definitions
  */
-export function detectLaneOverlaps(lanes: LaneDefinition[]): OverlapDetectionResult {
+export function detectLaneOverlaps(
+  lanes: LaneDefinition[],
+  excludePatterns?: string[],
+): OverlapDetectionResult {
   const overlaps: LaneOverlap[] = [];
 
   for (let i = 0; i < lanes.length; i++) {
     for (let j = i + 1; j < lanes.length; j++) {
-      const pairOverlaps = checkLanePairOverlap(lanes[i], lanes[j]);
+      const pairOverlaps = checkLanePairOverlap(lanes[i], lanes[j], excludePatterns);
       overlaps.push(...pairOverlaps);
     }
   }
@@ -260,7 +343,11 @@ export function detectCoverageGaps(
   lanes: LaneDefinition[],
   options: CoverageGapOptions,
 ): CoverageGapResult {
-  const { projectRoot, excludePatterns = DEFAULT_EXCLUDE_PATTERNS, codeOnly = true } = options;
+  const {
+    projectRoot,
+    excludePatterns = collectGitignoreExcludePatterns(projectRoot),
+    codeOnly = true,
+  } = options;
 
   const allFilesPattern = codeOnly ? buildCodeFilesPattern() : '**/*';
 
@@ -413,11 +500,13 @@ export function runLaneHealthCheck(options: {
     };
   }
 
-  const overlaps = detectLaneOverlaps(lanes);
+  // WU-2346: Collect gitignore-based exclude patterns for both overlap and coverage detection
+  const effectiveExcludePatterns = excludePatterns ?? collectGitignoreExcludePatterns(projectRoot);
+  const overlaps = detectLaneOverlaps(lanes, effectiveExcludePatterns);
   let gaps: CoverageGapResult = { hasGaps: false, uncoveredFiles: [] };
 
   if (checkCoverage) {
-    gaps = detectCoverageGaps(lanes, { projectRoot, excludePatterns });
+    gaps = detectCoverageGaps(lanes, { projectRoot, excludePatterns: effectiveExcludePatterns });
   }
 
   return {

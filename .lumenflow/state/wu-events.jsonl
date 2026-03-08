@@ -2937,3 +2937,5 @@
 {"type":"complete","wuId":"WU-2345","timestamp":"2026-03-08T11:31:38.922Z"}
 {"type":"claim","wuId":"WU-2346","timestamp":"2026-03-08T12:19:01.358Z","lane":"Framework: Core","title":"Make withMicroWorktree worktree-aware and lane-health use gitignore exclusions"}
 {"type":"claim","wuId":"WU-2347","timestamp":"2026-03-08T12:47:09.640Z","lane":"Framework: CLI WU Commands","title":"wu:done skip-gates-audit.ndjson creates dirty-state loop"}
+{"type":"checkpoint","wuId":"WU-2346","timestamp":"2026-03-08T12:19:13.014Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2346","timestamp":"2026-03-08T12:19:21.163Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
