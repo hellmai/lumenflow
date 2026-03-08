@@ -171,8 +171,24 @@ export function listInitiatives(): InitiativeEntry[] {
       try {
         const doc = readInitiative(filePath, id);
         return { id, doc, path: filePath };
-      } catch {
-        // Skip invalid files
+      } catch (err) {
+        // WU-2344: If the error is a schema validation failure, warn and return
+        // the raw document instead of silently dropping the initiative.
+        if (err instanceof Error && 'code' in err && err.code === ErrorCodes.VALIDATION_ERROR) {
+          try {
+            const text = readFileSync(filePath, { encoding: 'utf-8' });
+            const rawDoc = parseYAML(text) as InitiativeDoc;
+            if (rawDoc && rawDoc.id === id) {
+              process.stderr.write(
+                `[initiative:list] WARNING: ${id} has validation issues: ${err.message}\n`,
+              );
+              return { id, doc: rawDoc, path: filePath };
+            }
+          } catch {
+            // If re-parsing also fails, fall through to skip
+          }
+        }
+        // Skip truly broken files (unparseable YAML, ID mismatch, etc.)
         return null;
       }
     })

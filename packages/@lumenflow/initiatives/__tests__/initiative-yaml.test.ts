@@ -6,7 +6,7 @@
  * @see {@link tools/lib/initiative-yaml.mjs} - Implementation
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -255,6 +255,47 @@ describe('initiative-yaml', () => {
 
       const result = listInitiatives();
       expect(result.length).toBe(1);
+    });
+
+    it('should not drop initiative with invalid phase status (WU-2344)', async () => {
+      // Create initiative with an invalid phase status ('ready' is not a valid phase status)
+      createInitiative('INIT-001', {
+        slug: 'phase-bug',
+        phases: [{ id: 0, title: 'Phase 0', status: 'ready' }],
+      });
+      createInitiative('INIT-002', { slug: 'valid-init' });
+
+      const mod = await import('../src/initiative-yaml.js');
+      const { listInitiatives } = mod;
+
+      const result = listInitiatives();
+      const ids = result.map((r) => r.id);
+
+      // INIT-001 must NOT be silently dropped
+      expect(ids).toContain('INIT-001');
+      expect(ids).toContain('INIT-002');
+      expect(result.length).toBe(2);
+    });
+
+    it('should warn to stderr about invalid phase status values (WU-2344)', async () => {
+      createInitiative('INIT-001', {
+        slug: 'phase-warn',
+        phases: [{ id: 0, title: 'Phase 0', status: 'ready' }],
+      });
+
+      const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+      const mod = await import('../src/initiative-yaml.js');
+      const { listInitiatives } = mod;
+
+      listInitiatives();
+
+      const stderrOutput = stderrSpy.mock.calls.map((c) => String(c[0])).join('');
+      expect(stderrOutput).toMatch(/INIT-001/);
+      expect(stderrOutput).toMatch(/phases\.0\.status/);
+      expect(stderrOutput).toMatch(/WARNING/i);
+
+      stderrSpy.mockRestore();
     });
   });
 
