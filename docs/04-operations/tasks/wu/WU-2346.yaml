@@ -16,6 +16,10 @@ tests:
   unit:
     - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
     - packages/@lumenflow/cli/src/__tests__/lane-health.test.ts
+    - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
+    - packages/@lumenflow/cli/__tests__/lane-health.test.ts
+    - packages/@lumenflow/cli/__tests__/lane-health-gitignore.test.ts
+    - packages/@lumenflow/cli/src/__tests__/config-set-worktree.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2346.done
