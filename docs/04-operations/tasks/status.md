@@ -4,7 +4,7 @@ _Last updated: 2026-03-08_
 
 ## In Progress
 
-- [WU-2347 — wu:done skip-gates-audit.ndjson creates dirty-state loop](wu/WU-2347.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1267,3 +1267,4 @@ _Last updated: 2026-03-08_
 - [WU-2344 — Initiative phase loader silently drops initiative on invalid phase status enum](wu/WU-2344.yaml) — 2026-03-08
 - [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml) — 2026-03-08
 - [WU-2346 — Make withMicroWorktree worktree-aware and lane-health use gitignore exclusions](wu/WU-2346.yaml) — 2026-03-08
+- [WU-2347 — wu:done skip-gates-audit.ndjson creates dirty-state loop](wu/WU-2347.yaml) — 2026-03-08

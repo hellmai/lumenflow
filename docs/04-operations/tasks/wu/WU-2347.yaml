@@ -2,7 +2,7 @@ id: WU-2347
 title: wu:done skip-gates-audit.ndjson creates dirty-state loop
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-08
 code_paths:
@@ -47,3 +47,6 @@ acceptance:
   - wu:done --skip-gates does not leave uncommitted skip-gates-audit.ndjson blocking retries
   - format:check does not fail on .ndjson files (prettierignore covers them)
   - 'Retry loop: wu:done fails then retry succeeds without manual git add/commit'
+locked: true
+completed_at: 2026-03-08T12:53:42.601Z
+completed: 2026-03-08
