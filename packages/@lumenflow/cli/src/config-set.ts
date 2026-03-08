@@ -46,6 +46,7 @@ import { LumenFlowConfigSchema } from '@lumenflow/core/config-schema';
  */
 function isInGitWorktree(): boolean {
   try {
+    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
     const gitDir = execSync('git rev-parse --git-dir', {
       stdio: ['pipe', 'pipe', 'pipe'],
       encoding: 'utf8',
@@ -998,7 +999,9 @@ export async function main(): Promise<void> {
 
     // Commit to the worktree branch
     const commitMessage = `${COMMIT_PREFIX} ${options.key}=${options.value}`;
+    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
     execSync(`git add ${WORKSPACE_FILE_NAME}`, { cwd: projectRoot, stdio: 'pipe' });
+    // eslint-disable-next-line sonarjs/no-os-command-from-path -- Git is a required local tool in the CLI runtime.
     execSync(`git commit -m ${JSON.stringify(commitMessage)}`, {
       cwd: projectRoot,
       stdio: 'pipe',
