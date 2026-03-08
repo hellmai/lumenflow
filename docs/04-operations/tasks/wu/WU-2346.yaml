@@ -15,12 +15,6 @@ tests:
     - Run pnpm config:set from a worktree and verify it commits locally, not to main
   unit:
     - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
-    - packages/@lumenflow/cli/src/__tests__/lane-health.test.ts
-    - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
-    - packages/@lumenflow/cli/__tests__/lane-health.test.ts
-    - packages/@lumenflow/cli/__tests__/lane-health-gitignore.test.ts
-    - packages/@lumenflow/cli/src/__tests__/config-set-worktree.test.ts
-    - packages/@lumenflow/core/src/__tests__/micro-worktree.test.ts
     - packages/@lumenflow/cli/__tests__/lane-health.test.ts
     - packages/@lumenflow/cli/__tests__/lane-health-gitignore.test.ts
     - packages/@lumenflow/cli/src/__tests__/config-set-worktree.test.ts
