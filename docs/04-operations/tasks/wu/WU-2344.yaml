@@ -2,7 +2,7 @@ id: WU-2344
 title: Initiative phase loader silently drops initiative on invalid phase status enum
 lane: 'Framework: CLI'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-08
 code_paths:
@@ -47,3 +47,6 @@ description: Setting an initiative phase status to an invalid enum value (e.g. '
 acceptance:
   - Invalid phase status values produce a clear error or warning message
   - Initiative with one invalid phase status is not silently dropped from initiative:list
+locked: true
+completed_at: 2026-03-08T09:16:33.238Z
+completed: 2026-03-08
