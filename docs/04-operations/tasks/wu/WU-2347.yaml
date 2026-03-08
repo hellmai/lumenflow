@@ -6,7 +6,7 @@ status: in_progress
 priority: P2
 created: 2026-03-08
 code_paths:
-  - packages/@lumenflow/cli/src/wu-done.ts
+  - packages/@lumenflow/cli/src/wu-done-check.ts
   - packages/@lumenflow/cli/src/init-templates.ts
 tests:
   manual:
@@ -22,10 +22,17 @@ notes: Discovered during WU-371 completion on lumenflow-cloud. Audit write at wu
   (auditSkipGates). Prettierignore template at init-templates.ts:1639. Spawn-provenance override
   writes may have similar dirty-state issues.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-08T12:47:09.602Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2347
+session_id: 8d78f79d-c55b-4df0-9ebd-b8beee202891
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T12:47:09.611Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +47,3 @@ acceptance:
   - wu:done --skip-gates does not leave uncommitted skip-gates-audit.ndjson blocking retries
   - format:check does not fail on .ndjson files (prettierignore covers them)
   - 'Retry loop: wu:done fails then retry succeeds without manual git add/commit'
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2347
-claimed_at: 2026-03-08T12:47:09.602Z
-baseline_main_sha: 02c788cecdd0d630fe7920ce79854e945870a724
-session_id: 8d78f79d-c55b-4df0-9ebd-b8beee202891
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-08T12:47:09.611Z
