@@ -1652,6 +1652,9 @@ coverage/
 # LumenFlow state (local only)
 ${DEFAULT_STATE_DIR_IGNORE}
 
+# LumenFlow audit logs (no prettier parser for ndjson)
+*.ndjson
+
 # Worktrees
 ${DEFAULT_WORKTREES_DIR}
 

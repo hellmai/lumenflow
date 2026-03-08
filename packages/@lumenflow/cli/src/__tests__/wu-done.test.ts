@@ -820,6 +820,22 @@ status: done
       ).toEqual(['M packages/@lumenflow/cli/src/wu-done.ts']);
     });
 
+    it('filters allowlisted skip-gates-audit.ndjson out of blocking changes (WU-2347)', () => {
+      expect(
+        getBlockingWorktreeStatusLines(
+          'M .lumenflow/skip-gates-audit.ndjson\nM packages/@lumenflow/cli/src/wu-done.ts',
+        ),
+      ).toEqual(['M packages/@lumenflow/cli/src/wu-done.ts']);
+    });
+
+    it('allows both wu-events and skip-gates-audit dirty simultaneously (WU-2347)', () => {
+      expect(
+        getBlockingWorktreeStatusLines(
+          'M .lumenflow/state/wu-events.jsonl\nM .lumenflow/skip-gates-audit.ndjson',
+        ),
+      ).toEqual([]);
+    });
+
     it('should use the correct worktree path', async () => {
       mockGit.getStatus.mockResolvedValue('');
 

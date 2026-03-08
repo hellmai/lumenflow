@@ -193,8 +193,10 @@ automatically, and `.lumenflow/templates/` remains optional unless you want cust
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
 
-Before rerunning `wu:prep` after docs-heavy edits, format touched docs first:
-`pnpm prettier --write <changed-doc-paths...>`.
+**Formatting: always scope to changed files only.**
+Use `pnpm prettier --write <changed-files...>` — never unscoped `pnpm format`.
+Running `pnpm format` reformats every file in the repo, creating hundreds of
+dirty YAML/initiative changes that pollute the worktree and block `wu:done`.
 
 ---
 

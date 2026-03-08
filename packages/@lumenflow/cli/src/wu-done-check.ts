@@ -4,8 +4,17 @@
 import { createGitForPath } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { LOG_PREFIX, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
+import { SKIP_GATES_AUDIT_FILENAME } from './wu-done.js';
 
-const WU_DONE_ALLOWLISTED_STATUS_PATHS = new Set([LUMENFLOW_PATHS.WU_EVENTS]);
+// WU-2347: skip-gates-audit.ndjson must be allowlisted to prevent dirty-state
+// loops where each wu:done --skip-gates attempt writes the audit file, then
+// the next attempt fails because the file is uncommitted.
+const SKIP_GATES_AUDIT_PATH = `.lumenflow/${SKIP_GATES_AUDIT_FILENAME}`;
+
+const WU_DONE_ALLOWLISTED_STATUS_PATHS = new Set([
+  LUMENFLOW_PATHS.WU_EVENTS,
+  SKIP_GATES_AUDIT_PATH,
+]);
 
 function extractStatusPath(statusLine: string): string {
   const match = statusLine.match(/^\s*[A-Z?!]{1,2}\s+(.*)$/);

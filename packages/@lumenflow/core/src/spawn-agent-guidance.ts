@@ -268,7 +268,7 @@ pnpm lint                              # Re-check linting after edits
 pnpm typecheck                         # Re-check TypeScript types
 \`\`\`
 
-**Prefer targeted formatter commands from gate output over repo-wide \`pnpm format\`.** These are faster than full \`pnpm gates\`.`;
+**NEVER run \`pnpm format\` (unscoped)** — it reformats every file in the repo, polluting your worktree with hundreds of dirty changes. Always use \`pnpm prettier --write <specific-files>\`.`;
 }
 
 /** Generate Lane Selection section (WU-2107) */

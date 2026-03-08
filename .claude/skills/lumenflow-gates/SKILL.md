@@ -33,12 +33,17 @@ pnpm gates = format:check → lint → typecheck → spec:linter → tests
 
 ## Fix Patterns
 
-| Gate      | Auto-fix        | Manual                              |
-| --------- | --------------- | ----------------------------------- |
-| Format    | `pnpm format`   | -                                   |
-| Lint      | `pnpm lint:fix` | Fix reported issues                 |
-| Typecheck | -               | Fix type errors (first error first) |
-| Tests     | -               | Debug, fix mocks, update snapshots  |
+| Gate      | Auto-fix                                   | Manual                              |
+| --------- | ------------------------------------------ | ----------------------------------- |
+| Format    | `pnpm prettier --write <changed-files...>` | -                                   |
+| Lint      | `pnpm lint:fix`                            | Fix reported issues                 |
+| Typecheck | -                                          | Fix type errors (first error first) |
+| Tests     | -                                          | Debug, fix mocks, update snapshots  |
+
+> **NEVER run `pnpm format` (unscoped).** It reformats every file in the repo,
+> creating hundreds of dirty changes that pollute your worktree. Always scope
+> formatting to your changed files only:
+> `pnpm prettier --write src/my-file.ts src/other-file.ts`
 
 ## Decision Tree
 
