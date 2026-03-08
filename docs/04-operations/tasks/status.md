@@ -4,7 +4,7 @@ _Last updated: 2026-03-08_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2346 — Make withMicroWorktree worktree-aware and lane-health use gitignore exclusions](wu/WU-2346.yaml)
 
 ## Completed
 

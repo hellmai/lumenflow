@@ -2,7 +2,7 @@ id: WU-2346
 title: Make withMicroWorktree worktree-aware and lane-health use gitignore exclusions
 lane: 'Framework: Core'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-08
 code_paths:
@@ -33,11 +33,28 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: withMicroWorktree pushes to main atomically via a temp worktree. 11 CLI commands use it. When run from a WU worktree, changes leak to main before wu:done merges. WU-2345 fixed config:set by inlining detection, but the proper fix is in withMicroWorktree itself. Additionally, lane-health hardcodes build artifact exclusions (.next, dist, etc.) which is not framework-agnostic — it should read .gitignore patterns instead. Problem: (1) 11 commands leak to main when run from worktrees. (2) lane-health fails on projects with non-hardcoded build artifacts. Solution: (1) Add git-based worktree detection to withMicroWorktree core — when in a worktree, commit locally instead of pushing to main. All 11 callers inherit the fix. (2) lane-health reads .gitignore patterns recursively for exclusions instead of hardcoded list.'
+description: 'Context: withMicroWorktree pushes to main atomically via a temp worktree. 11 CLI
+  commands use it. When run from a WU worktree, changes leak to main before wu:done merges. WU-2345
+  fixed config:set by inlining detection, but the proper fix is in withMicroWorktree itself.
+  Additionally, lane-health hardcodes build artifact exclusions (.next, dist, etc.) which is not
+  framework-agnostic — it should read .gitignore patterns instead. Problem: (1) 11 commands leak to
+  main when run from worktrees. (2) lane-health fails on projects with non-hardcoded build
+  artifacts. Solution: (1) Add git-based worktree detection to withMicroWorktree core — when in a
+  worktree, commit locally instead of pushing to main. All 11 callers inherit the fix. (2)
+  lane-health reads .gitignore patterns recursively for exclusions instead of hardcoded list.'
 acceptance:
-  - withMicroWorktree detects worktree via git rev-parse --git-dir and commits locally when in a worktree
+  - withMicroWorktree detects worktree via git rev-parse --git-dir and commits locally when in a
+    worktree
   - All 11 previously leaking commands inherit worktree-awareness without per-command patches
   - config-set.ts inlined worktree detection (WU-2345) is replaced by the core fix
   - lane-health reads .gitignore files recursively for exclusion patterns
   - lane-health no longer reports false positives for .next or other gitignored build artifacts
   - Existing tests pass; new tests cover worktree detection in micro-worktree.ts
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-wu-2346
+claimed_at: 2026-03-08T12:19:01.328Z
+baseline_main_sha: b97f7b32ffc8dbbf1a15652793b81409b2447fb8
+session_id: 8d78f79d-c55b-4df0-9ebd-b8beee202891
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T12:19:01.335Z
