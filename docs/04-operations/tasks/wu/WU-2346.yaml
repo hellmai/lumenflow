@@ -24,12 +24,21 @@ plan: lumenflow://plans/WU-2346-plan.md
 spec_refs:
   - lumenflow://plans/WU-2346-plan.md
 risks: []
-notes: ''
+notes: 'tdd-exception: tests written alongside implementation due to core+cli cross-package changes.
+  Moves worktree detection from config-set inline to withMicroWorktree core. Replaces hardcoded
+  exclude patterns with gitignore parsing.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-08T12:19:01.328Z
+worktree_path: worktrees/framework-core-wu-2346
+session_id: 8d78f79d-c55b-4df0-9ebd-b8beee202891
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T12:19:01.335Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -50,11 +59,3 @@ acceptance:
   - lane-health reads .gitignore files recursively for exclusion patterns
   - lane-health no longer reports false positives for .next or other gitignored build artifacts
   - Existing tests pass; new tests cover worktree detection in micro-worktree.ts
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-wu-2346
-claimed_at: 2026-03-08T12:19:01.328Z
-baseline_main_sha: b97f7b32ffc8dbbf1a15652793b81409b2447fb8
-session_id: 8d78f79d-c55b-4df0-9ebd-b8beee202891
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-08T12:19:01.335Z
