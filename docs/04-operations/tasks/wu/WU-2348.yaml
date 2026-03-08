@@ -2,7 +2,7 @@ id: WU-2348
 title: Block unscoped pnpm format at CLI level for all agents
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - tools/format-guard.sh
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -26,8 +27,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Agents repeatedly run unscoped pnpm format which reformats every YAML/file in the repo, creating dirty-state that blocks wu:done. Enforcement exists only in Claude Code hooks (client-specific). Need CLI-level guard so ALL agents (Claude, Cursor, Windsurf) are blocked from unscoped format.
+description: Agents repeatedly run unscoped pnpm format which reformats every YAML/file in the repo,
+  creating dirty-state that blocks wu:done. Enforcement exists only in Claude Code hooks
+  (client-specific). Need CLI-level guard so ALL agents (Claude, Cursor, Windsurf) are blocked from
+  unscoped format.
 acceptance:
   - pnpm format without file args exits non-zero with guidance
   - pnpm format with specific files still works
   - pnpm format:check read-only still works unscoped
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2348
+claimed_at: 2026-03-08T23:42:03.719Z
+baseline_main_sha: 59a032beb55c54cff5baec13d7adecdfd1cdd7a6
+session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-08T23:42:03.726Z

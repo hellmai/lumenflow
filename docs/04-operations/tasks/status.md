@@ -4,7 +4,7 @@ _Last updated: 2026-03-08_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
 
 ## Completed
 

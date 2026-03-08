@@ -2956,3 +2956,4 @@
 {"type":"complete","wuId":"WU-2346","timestamp":"2026-03-08T12:50:09.682Z"}
 {"type":"checkpoint","wuId":"WU-2347","timestamp":"2026-03-08T12:52:31.157Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2347.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2347","timestamp":"2026-03-08T12:53:47.109Z"}
+{"type":"claim","wuId":"WU-2348","timestamp":"2026-03-08T23:42:03.748Z","lane":"Framework: CLI WU Commands","title":"Block unscoped pnpm format at CLI level for all agents"}
