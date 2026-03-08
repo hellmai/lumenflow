@@ -22,7 +22,8 @@ plan: lumenflow://plans/WU-2345-plan.md
 spec_refs:
   - lumenflow://plans/WU-2345-plan.md
 risks: []
-notes: ''
+notes: Uses git rev-parse --git-dir for worktree detection (same pattern as
+  @lumenflow/shims/worktree). No new dependencies added.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
