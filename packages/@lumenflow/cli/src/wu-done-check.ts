@@ -4,12 +4,12 @@
 import { createGitForPath } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { LOG_PREFIX, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
-import { SKIP_GATES_AUDIT_FILENAME } from './wu-done.js';
+// WU-2348: Inlined to break circular dependency (wu-done-check <-> wu-done TDZ crash).
 
 // WU-2347: skip-gates-audit.ndjson must be allowlisted to prevent dirty-state
 // loops where each wu:done --skip-gates attempt writes the audit file, then
 // the next attempt fails because the file is uncommitted.
-const SKIP_GATES_AUDIT_PATH = `.lumenflow/${SKIP_GATES_AUDIT_FILENAME}`;
+const SKIP_GATES_AUDIT_PATH = '.lumenflow/skip-gates-audit.ndjson';
 
 const WU_DONE_ALLOWLISTED_STATUS_PATHS = new Set([
   LUMENFLOW_PATHS.WU_EVENTS,
