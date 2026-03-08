@@ -2,7 +2,7 @@ id: WU-2346
 title: Make withMicroWorktree worktree-aware and lane-health use gitignore exclusions
 lane: 'Framework: Core'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-08
 code_paths:
@@ -61,3 +61,6 @@ acceptance:
   - lane-health reads .gitignore files recursively for exclusion patterns
   - lane-health no longer reports false positives for .next or other gitignored build artifacts
   - Existing tests pass; new tests cover worktree detection in micro-worktree.ts
+locked: true
+completed_at: 2026-03-08T12:50:04.986Z
+completed: 2026-03-08
