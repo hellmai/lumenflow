@@ -15,6 +15,7 @@
  */
 
 import { PROGRESSABLE_WU_STATUSES } from '@lumenflow/core/wu-constants';
+import { INIT_STATUS } from './initiative-constants.js';
 
 /**
  * Result of initiative completeness validation
@@ -71,7 +72,7 @@ interface WUDoc {
 }
 
 /** Initiative statuses that can transition to in_progress */
-const PROGRESSABLE_STATUSES = ['draft', 'open'];
+const PROGRESSABLE_STATUSES: readonly string[] = [INIT_STATUS.DRAFT, INIT_STATUS.OPEN];
 
 /**
  * Validates initiative completeness and returns warnings for missing fields.
@@ -170,7 +171,7 @@ export function shouldProgressInitiativeStatus(
   initiative: InitiativeDoc,
   wus: WUDoc[],
 ): InitiativeProgressCheck {
-  const currentStatus = initiative.status || 'draft';
+  const currentStatus = initiative.status || INIT_STATUS.DRAFT;
   const initiativeId = initiative.id;
 
   // Terminal statuses cannot progress
@@ -192,7 +193,7 @@ export function shouldProgressInitiativeStatus(
   if (hasActiveWU) {
     return {
       shouldProgress: true,
-      newStatus: 'in_progress',
+      newStatus: INIT_STATUS.IN_PROGRESS,
     };
   }
 

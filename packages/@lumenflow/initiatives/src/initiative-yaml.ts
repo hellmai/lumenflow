@@ -6,12 +6,12 @@ import path from 'node:path';
 import { parseYAML, stringifyYAML } from '@lumenflow/core/wu-yaml';
 import { createError, ErrorCodes } from '@lumenflow/core/error-handler';
 import type { WUDocBase } from '@lumenflow/core/wu-doc-types';
+import { FILE_EXTENSIONS, FILE_SYSTEM, WU_STATUS } from '@lumenflow/core/wu-constants';
 import { validateInitiative } from './initiative-schema.js';
 import { INIT_PATHS } from './initiative-paths.js';
 import { INIT_PATTERNS } from './initiative-constants.js';
 import { readWU } from '@lumenflow/core/wu-yaml';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
-// FILE_SYSTEM removed - not used in this module
 
 /**
  * WU document interface (WU-2048: uses canonical WUDocBase from @lumenflow/core)
@@ -92,7 +92,7 @@ export function readInitiative(initPath: string, expectedId: string): Initiative
     });
   }
 
-  const text = readFileSync(initPath, { encoding: 'utf-8' });
+  const text = readFileSync(initPath, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
   let rawDoc: unknown;
 
   try {
@@ -144,7 +144,7 @@ export function readInitiative(initPath: string, expectedId: string): Initiative
  */
 export function writeInitiative(initPath: string, doc: InitiativeDoc): void {
   const out = stringifyYAML(doc);
-  writeFileSync(initPath, out, { encoding: 'utf-8' });
+  writeFileSync(initPath, out, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
 }
 
 /**
@@ -160,13 +160,15 @@ export function listInitiatives(): InitiativeEntry[] {
   }
 
   const files = readdirSync(dir).filter(
-    (f) => f.endsWith('.yaml') && INIT_PATTERNS.INIT_ID.test(f.replace('.yaml', '')),
+    (f) =>
+      f.endsWith(FILE_EXTENSIONS.YAML) &&
+      INIT_PATTERNS.INIT_ID.test(f.replace(FILE_EXTENSIONS.YAML, '')),
   );
 
   return files
     .map((f) => {
       const filePath = path.join(dir, f);
-      const id = f.replace('.yaml', '');
+      const id = f.replace(FILE_EXTENSIONS.YAML, '');
 
       try {
         const doc = readInitiative(filePath, id);
@@ -176,7 +178,9 @@ export function listInitiatives(): InitiativeEntry[] {
         // the raw document instead of silently dropping the initiative.
         if (err instanceof Error && 'code' in err && err.code === ErrorCodes.VALIDATION_ERROR) {
           try {
-            const text = readFileSync(filePath, { encoding: 'utf-8' });
+            const text = readFileSync(filePath, {
+              encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+            });
             const rawDoc = parseYAML(text) as InitiativeDoc;
             if (rawDoc && rawDoc.id === id) {
               process.stderr.write(
@@ -226,7 +230,9 @@ export function getInitiativeWUs(initRef: string): WUEntry[] {
     return [];
   }
 
-  const files = readdirSync(wuDir).filter((f) => f.endsWith('.yaml') && f.startsWith('WU-'));
+  const files = readdirSync(wuDir).filter(
+    (f) => f.endsWith(FILE_EXTENSIONS.YAML) && f.startsWith('WU-'),
+  );
 
   // Find initiative to get both ID and slug for matching
   const initiative = findInitiative(initRef);
@@ -235,7 +241,7 @@ export function getInitiativeWUs(initRef: string): WUEntry[] {
   return files
     .map((f) => {
       const filePath = path.join(wuDir, f);
-      const id = f.replace('.yaml', '');
+      const id = f.replace(FILE_EXTENSIONS.YAML, '');
 
       try {
         const doc = readWU(filePath, id);
@@ -279,16 +285,16 @@ export function getInitiativeProgress(initRef: string): {
 
   for (const { doc } of wus) {
     switch (doc.status) {
-      case 'done':
+      case WU_STATUS.DONE:
         counts.done++;
         break;
-      case 'in_progress':
+      case WU_STATUS.IN_PROGRESS:
         counts.inProgress++;
         break;
-      case 'blocked':
+      case WU_STATUS.BLOCKED:
         counts.blocked++;
         break;
-      case 'ready':
+      case WU_STATUS.READY:
         counts.ready++;
         break;
       default:

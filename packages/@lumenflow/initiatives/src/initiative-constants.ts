@@ -14,14 +14,46 @@
  */
 
 /**
+ * Individual initiative status values (WU-2344: avoid magic strings)
+ */
+export const INIT_STATUS = {
+  DRAFT: 'draft',
+  OPEN: 'open',
+  IN_PROGRESS: 'in_progress',
+  DONE: 'done',
+  ARCHIVED: 'archived',
+} as const;
+
+/**
  * Initiative lifecycle statuses (matches InitiativeSchema)
  */
-export const INIT_STATUSES = ['draft', 'open', 'in_progress', 'done', 'archived'] as const;
+export const INIT_STATUSES = [
+  INIT_STATUS.DRAFT,
+  INIT_STATUS.OPEN,
+  INIT_STATUS.IN_PROGRESS,
+  INIT_STATUS.DONE,
+  INIT_STATUS.ARCHIVED,
+] as const;
+
+/**
+ * Individual phase status values (WU-2344: avoid magic strings)
+ */
+export const PHASE_STATUS = {
+  PENDING: 'pending',
+  IN_PROGRESS: 'in_progress',
+  DONE: 'done',
+  BLOCKED: 'blocked',
+} as const;
 
 /**
  * Phase statuses (matches InitiativePhaseSchema)
  */
-export const PHASE_STATUSES = ['pending', 'in_progress', 'done', 'blocked'] as const;
+export const PHASE_STATUSES = [
+  PHASE_STATUS.PENDING,
+  PHASE_STATUS.IN_PROGRESS,
+  PHASE_STATUS.DONE,
+  PHASE_STATUS.BLOCKED,
+] as const;
 
 /**
  * Priority levels (matches WU priority)
@@ -119,7 +151,7 @@ export const INIT_LOG_PREFIX = {
  * Default values for initiative creation
  */
 export const INIT_DEFAULTS = {
-  STATUS: 'draft',
+  STATUS: INIT_STATUS.DRAFT,
   PRIORITY: 'P2',
 };
 
