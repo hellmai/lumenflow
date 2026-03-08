@@ -2930,3 +2930,4 @@
 {"type":"checkpoint","wuId":"WU-2344","timestamp":"2026-03-08T09:05:03.551Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2344.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2344","timestamp":"2026-03-08T09:15:33.269Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2344.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2344","timestamp":"2026-03-08T09:16:37.959Z"}
+{"type":"claim","wuId":"WU-2345","timestamp":"2026-03-08T11:20:14.388Z","lane":"Framework: CLI WU Commands","title":"Make config:set worktree-aware: commit to worktree branch when inside one"}

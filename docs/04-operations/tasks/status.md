@@ -4,7 +4,7 @@ _Last updated: 2026-03-08_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml)
 
 ## Completed
 
