@@ -2973,3 +2973,4 @@
 {"type":"claim","wuId":"WU-2351","timestamp":"2026-03-09T11:40:39.445Z","lane":"Framework: CLI Enforcement","title":"Fix no-argument gap in destructive git command deny lists"}
 {"type":"checkpoint","wuId":"WU-2351","timestamp":"2026-03-09T11:40:50.737Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2351","timestamp":"2026-03-09T11:42:45.506Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2351.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"checkpoint","wuId":"WU-2351","timestamp":"2026-03-09T11:43:09.213Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2351.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}

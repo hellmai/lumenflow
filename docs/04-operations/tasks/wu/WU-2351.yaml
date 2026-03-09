@@ -20,8 +20,8 @@ artifacts:
   - .lumenflow/stamps/WU-2351.done
 dependencies: []
 risks: []
-notes: Also fixed init-templates.ts programmatic deny list and added missing /usr/bin/git variants
-  there. Template cleaned to remove absolute paths (hook blocks them).
+notes: 'tdd-exception: config-only change to JSON deny lists, no testable runtime logic. Also fixed
+  init-templates.ts and cleaned template absolute paths.'
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
