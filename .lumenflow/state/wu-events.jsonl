@@ -2977,3 +2977,4 @@
 {"type":"checkpoint","wuId":"WU-2352","timestamp":"2026-03-09T13:03:56.149Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2352.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2352","timestamp":"2026-03-09T13:06:24.816Z"}
 {"type":"claim","wuId":"WU-2353","timestamp":"2026-03-09T13:19:09.151Z","lane":"Framework: CLI WU Commands","title":"Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory patterns"}
+{"type":"checkpoint","wuId":"WU-2353","timestamp":"2026-03-09T13:19:20.666Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
