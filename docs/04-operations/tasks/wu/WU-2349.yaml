@@ -21,12 +21,21 @@ plan: lumenflow://plans/WU-2349-plan.md
 spec_refs:
   - lumenflow://plans/WU-2349-plan.md
 risks: []
-notes: ''
+notes: Adds isExternalPlanPath(), importExternalPlan() and fromPath param to createPlanTemplate().
+  External files detected by comparing against project plansDir config. --create --plan uses file
+  content instead of blank template.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-09T09:28:07.229Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2349
+session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T09:28:07.236Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +49,3 @@ acceptance:
   - --create with --plan uses file content instead of blank template
   - Existing lumenflow:// URI behaviour preserved when no local file given
   - Internal docs and Starlight docs updated for new behaviour
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2349
-claimed_at: 2026-03-09T09:28:07.229Z
-baseline_main_sha: b0d8b4280a4362cf2878a88bc6fa374f1036e504
-session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-09T09:28:07.236Z

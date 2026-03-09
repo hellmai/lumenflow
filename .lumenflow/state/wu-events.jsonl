@@ -2963,3 +2963,4 @@
 {"type":"claim","wuId":"WU-2350","timestamp":"2026-03-09T09:33:50.771Z","lane":"Framework: CLI WU Commands","title":"Fix agent-verification path in spawn prompts for consumer repos"}
 {"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:28:18.334Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:28:48.450Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:36:54.795Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2349.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
