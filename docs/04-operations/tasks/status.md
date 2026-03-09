@@ -1,10 +1,11 @@
 # Work Unit Status
 
-_Last updated: 2026-03-08_
+_Last updated: 2026-03-09_
 
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2349 — initiative:plan should import external plan files into repo plansDir](wu/WU-2349.yaml)
 
 ## Completed
 
