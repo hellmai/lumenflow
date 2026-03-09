@@ -13,7 +13,7 @@ tests:
     - Run pnpm lane:health on a project with nested node_modules/ using only root .gitignore -
       should report zero false positives
   unit:
-    - packages/@lumenflow/cli/src/__tests__/lane-health.test.ts
+    - packages/@lumenflow/cli/__tests__/lane-health-gitignore.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2353.done
