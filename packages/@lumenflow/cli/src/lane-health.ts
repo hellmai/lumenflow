@@ -77,15 +77,25 @@ export function parseGitignorePatterns(filePath: string, projectRoot: string): s
       .map((line) => line.trim())
       .filter((line) => line && !line.startsWith('#') && !line.startsWith('!'))
       .map((pattern) => {
-        // Remove trailing slash and add glob suffix for directory patterns
-        const cleanPattern = pattern.endsWith('/') ? `${pattern}**` : pattern;
-        // Scope to the .gitignore file's directory
-        if (prefix && !cleanPattern.startsWith('/') && !cleanPattern.startsWith('*')) {
-          return `${prefix}${cleanPattern}`;
-        }
+        const isDirectoryPattern = pattern.endsWith('/');
+        // WU-2353: For directory patterns, append ** to match contents
+        let cleanPattern = isDirectoryPattern ? `${pattern}**` : pattern;
+
         // Root-anchored patterns (starting with /) are relative to the .gitignore's dir
         if (cleanPattern.startsWith('/')) {
           return `${prefix}${cleanPattern.slice(1)}`;
+        }
+
+        // WU-2353: Unanchored directory patterns match recursively in git.
+        // e.g. `node_modules/` means `**/node_modules/` — matches at any depth.
+        // Prepend **/ unless already prefixed with **/.
+        if (isDirectoryPattern && !cleanPattern.startsWith('**/')) {
+          cleanPattern = `**/${cleanPattern}`;
+        }
+
+        // Scope to the .gitignore file's directory (for non-directory, non-glob patterns)
+        if (prefix && !cleanPattern.startsWith('*')) {
+          return `${prefix}${cleanPattern}`;
         }
         return cleanPattern;
       });

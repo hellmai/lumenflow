@@ -52,10 +52,11 @@ describe('lane-health gitignore integration (WU-2346)', () => {
 
       const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
 
-      expect(patterns).toContain('node_modules/**');
-      expect(patterns).toContain('dist/**');
-      expect(patterns).toContain('.next/**');
-      expect(patterns).toContain('coverage/**');
+      // WU-2353: Unanchored dir patterns get **/ prefix for recursive matching
+      expect(patterns).toContain('**/node_modules/**');
+      expect(patterns).toContain('**/dist/**');
+      expect(patterns).toContain('**/.next/**');
+      expect(patterns).toContain('**/coverage/**');
       expect(patterns).toContain('*.log');
     });
 
@@ -68,7 +69,8 @@ describe('lane-health gitignore integration (WU-2346)', () => {
 
       const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
 
-      expect(patterns).toEqual(['node_modules/**', 'dist/**']);
+      // WU-2353: Unanchored dir patterns get **/ prefix
+      expect(patterns).toEqual(['**/node_modules/**', '**/dist/**']);
     });
 
     it('skips negation patterns', async () => {
@@ -80,7 +82,8 @@ describe('lane-health gitignore integration (WU-2346)', () => {
 
       const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
 
-      expect(patterns).toContain('dist/**');
+      // WU-2353: Unanchored dir patterns get **/ prefix
+      expect(patterns).toContain('**/dist/**');
       expect(patterns).toContain('*.log');
       expect(patterns).not.toContain('!dist/important.js');
     });
@@ -96,9 +99,53 @@ describe('lane-health gitignore integration (WU-2346)', () => {
 
       const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
 
-      expect(patterns).toContain('packages/app/build/**');
+      // WU-2353: Unanchored dir pattern in nested gitignore gets **/ prefix
+      expect(patterns).toContain('**/build/**');
       // *.tmp starts with * so it's not scoped — glob patterns with leading * match anywhere
       expect(patterns).toContain('*.tmp');
+    });
+
+    it('handles anchored directory patterns without recursive prefix (WU-2353)', async () => {
+      const { parseGitignorePatterns } = await import('../dist/lane-health.js');
+
+      projectRoot = mkdtempSync(path.join(tmpdir(), TEMP_PROJECT_PREFIX));
+      const gitignorePath = path.join(projectRoot, '.gitignore');
+      writeFileSync(gitignorePath, '/build/\n/tmp/\n');
+
+      const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
+
+      // Anchored patterns (leading /) should NOT get **/ prefix
+      expect(patterns).toContain('build/**');
+      expect(patterns).toContain('tmp/**');
+      expect(patterns).not.toContain('**/build/**');
+      expect(patterns).not.toContain('**/tmp/**');
+    });
+
+    it('does not double-prefix already-globbed patterns (WU-2353)', async () => {
+      const { parseGitignorePatterns } = await import('../dist/lane-health.js');
+
+      projectRoot = mkdtempSync(path.join(tmpdir(), TEMP_PROJECT_PREFIX));
+      const gitignorePath = path.join(projectRoot, '.gitignore');
+      writeFileSync(gitignorePath, '**/dist/\n');
+
+      const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
+
+      expect(patterns).toContain('**/dist/**');
+      // Should NOT have ****/dist/**
+      expect(patterns.every((p: string) => !p.includes('****'))).toBe(true);
+    });
+
+    it('handles unanchored directory patterns recursively (WU-2353)', async () => {
+      const { parseGitignorePatterns } = await import('../dist/lane-health.js');
+
+      projectRoot = mkdtempSync(path.join(tmpdir(), TEMP_PROJECT_PREFIX));
+      const gitignorePath = path.join(projectRoot, '.gitignore');
+      writeFileSync(gitignorePath, 'vendor/\n__pycache__/\n');
+
+      const patterns = parseGitignorePatterns(gitignorePath, projectRoot);
+
+      expect(patterns).toContain('**/vendor/**');
+      expect(patterns).toContain('**/__pycache__/**');
     });
 
     it('returns empty array for missing file', async () => {
@@ -123,10 +170,10 @@ describe('lane-health gitignore integration (WU-2346)', () => {
       expect(patterns).toContain('node_modules/**');
       expect(patterns).toContain('.lumenflow/**');
       expect(patterns).toContain('worktrees/**');
-      // From .gitignore
-      expect(patterns).toContain('dist/**');
-      expect(patterns).toContain('.next/**');
-      expect(patterns).toContain('coverage/**');
+      // From .gitignore — WU-2353: unanchored dir patterns get **/ prefix
+      expect(patterns).toContain('**/dist/**');
+      expect(patterns).toContain('**/.next/**');
+      expect(patterns).toContain('**/coverage/**');
     });
 
     it('deduplicates patterns', async () => {
@@ -137,9 +184,15 @@ describe('lane-health gitignore integration (WU-2346)', () => {
 
       const patterns = collectGitignoreExcludePatterns(projectRoot);
 
-      // node_modules/** should appear only once (baseline + .gitignore)
-      const nodeModulesCount = patterns.filter((p: string) => p === 'node_modules/**').length;
-      expect(nodeModulesCount).toBe(1);
+      // WU-2353: .gitignore produces **/node_modules/** while baseline has node_modules/**
+      // Both should be present (different patterns) but each only once
+      const baselineCount = patterns.filter((p: string) => p === 'node_modules/**').length;
+      expect(baselineCount).toBe(1);
+      const gitignoreCount = patterns.filter((p: string) => p === '**/node_modules/**').length;
+      expect(gitignoreCount).toBe(1);
+      // **/dist/** from .gitignore should appear once
+      const distCount = patterns.filter((p: string) => p === '**/dist/**').length;
+      expect(distCount).toBe(1);
     });
   });
 
