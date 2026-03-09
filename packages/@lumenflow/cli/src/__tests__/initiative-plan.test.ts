@@ -412,6 +412,8 @@ describe('init:plan CLI integration', () => {
     expect(typeof initPlan.getCommitMessage).toBe('function');
     expect(typeof initPlan.isRetryExhaustionError).toBe('function');
     expect(typeof initPlan.formatRetryExhaustionError).toBe('function');
+    expect(typeof initPlan.isExternalPlanPath).toBe('function');
+    expect(typeof initPlan.importExternalPlan).toBe('function');
     expect(initPlan.INITIATIVE_PLAN_PUSH_RETRY_OVERRIDE).toEqual({
       retries: 8,
       min_delay_ms: 300,
@@ -472,6 +474,199 @@ describe('createPlanTemplate edge cases', () => {
     expect(existsSync(planPath)).toBe(true);
     // Filename should only have kebab-case characters
     expect(planPath).toMatch(/INIT-001-[a-z0-9-]+\.md$/);
+  });
+});
+
+describe('isExternalPlanPath', () => {
+  let tempDir: string;
+  let originalCwd: string;
+
+  beforeEach(() => {
+    tempDir = join(tmpdir(), `init-plan-ext-test-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    originalCwd = process.cwd();
+  });
+
+  afterEach(() => {
+    process.chdir(originalCwd);
+    if (existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+    vi.clearAllMocks();
+  });
+
+  it('should detect external paths outside the repo plansDir', async () => {
+    const { isExternalPlanPath } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    // Absolute path outside the repo
+    expect(isExternalPlanPath('/home/user/.claude/plans/my-plan.md', tempDir)).toBe(true);
+    expect(isExternalPlanPath('/tmp/some-plan.md', tempDir)).toBe(true);
+  });
+
+  it('should detect repo-internal plan paths as not external', async () => {
+    const { isExternalPlanPath } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    const plansDir = resolvePlansDir(tempDir);
+    const internalPath = join(plansDir, 'my-plan.md');
+    expect(isExternalPlanPath(internalPath, tempDir)).toBe(false);
+  });
+
+  it('should detect relative paths within plansDir as not external', async () => {
+    const { isExternalPlanPath } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    const plansDirSegment = createWuPaths({ projectRoot: tempDir }).PLANS_DIR();
+    expect(isExternalPlanPath(join(plansDirSegment, 'my-plan.md'), tempDir)).toBe(false);
+  });
+
+  it('should detect lumenflow:// URIs as not external (already a URI)', async () => {
+    const { isExternalPlanPath } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    expect(isExternalPlanPath('lumenflow://plans/my-plan.md', tempDir)).toBe(false);
+  });
+});
+
+describe('importExternalPlan', () => {
+  let tempDir: string;
+  let externalDir: string;
+  let originalCwd: string;
+
+  beforeEach(() => {
+    tempDir = join(tmpdir(), `init-plan-import-test-${Date.now()}`);
+    externalDir = join(tmpdir(), `init-plan-external-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    mkdirSync(externalDir, { recursive: true });
+    originalCwd = process.cwd();
+  });
+
+  afterEach(() => {
+    process.chdir(originalCwd);
+    if (existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+    if (existsSync(externalDir)) {
+      rmSync(externalDir, { recursive: true, force: true });
+    }
+    vi.clearAllMocks();
+  });
+
+  it('should copy external file into plansDir with initiative-prefixed name', async () => {
+    const { importExternalPlan } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    // Create external plan file
+    const externalPlan = join(externalDir, 'jaunty-orbiting-candy.md');
+    const planContent = '# My External Plan\n\nSome content here.';
+    writeFileSync(externalPlan, planContent);
+
+    const result = importExternalPlan(tempDir, 'INIT-026', externalPlan, 'Mobile App');
+    const plansDir = resolvePlansDir(tempDir);
+
+    // File should exist in plansDir
+    expect(existsSync(result)).toBe(true);
+    expect(result.startsWith(plansDir)).toBe(true);
+
+    // Content should match the original
+    expect(readFileSync(result, 'utf-8')).toBe(planContent);
+  });
+
+  it('should use initiative ID in the destination filename', async () => {
+    const { importExternalPlan } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    const externalPlan = join(externalDir, 'my-plan.md');
+    writeFileSync(externalPlan, '# Plan');
+
+    const result = importExternalPlan(tempDir, 'INIT-026', externalPlan, 'Mobile App');
+
+    // Filename should start with INIT-026
+    const filename = result.split('/').pop() || '';
+    expect(filename).toMatch(/^INIT-026-/);
+    expect(filename).toMatch(/\.md$/);
+  });
+
+  it('should create plansDir if it does not exist', async () => {
+    const { importExternalPlan } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    const externalPlan = join(externalDir, 'test.md');
+    writeFileSync(externalPlan, '# Plan');
+
+    const plansDir = resolvePlansDir(tempDir);
+    expect(existsSync(plansDir)).toBe(false);
+
+    importExternalPlan(tempDir, 'INIT-001', externalPlan, 'Test');
+
+    expect(existsSync(plansDir)).toBe(true);
+  });
+
+  it('should fail if destination already exists', async () => {
+    const { importExternalPlan } = await import('../initiative-plan.js');
+    process.chdir(tempDir);
+
+    const externalPlan = join(externalDir, 'test.md');
+    writeFileSync(externalPlan, '# Plan');
+
+    // First import
+    importExternalPlan(tempDir, 'INIT-001', externalPlan, 'Test');
+
+    // Second import should fail
+    expect(() => importExternalPlan(tempDir, 'INIT-001', externalPlan, 'Test')).toThrow();
+  });
+});
+
+describe('createPlanTemplate with fromPath', () => {
+  let tempDir: string;
+  let externalDir: string;
+  let originalCwd: string;
+
+  beforeEach(() => {
+    tempDir = join(tmpdir(), `init-plan-from-test-${Date.now()}`);
+    externalDir = join(tmpdir(), `init-plan-from-ext-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    mkdirSync(externalDir, { recursive: true });
+    originalCwd = process.cwd();
+  });
+
+  afterEach(() => {
+    process.chdir(originalCwd);
+    if (existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+    if (existsSync(externalDir)) {
+      rmSync(externalDir, { recursive: true, force: true });
+    }
+    vi.clearAllMocks();
+  });
+
+  it('should use file content from fromPath instead of blank template', async () => {
+    const { createPlanTemplate } = await import('../initiative-plan.js');
+
+    const externalPlan = join(externalDir, 'my-real-plan.md');
+    const planContent = '# Real Plan\n\n## Architecture\n\nActual content here.';
+    writeFileSync(externalPlan, planContent);
+
+    const planPath = createPlanTemplate(tempDir, 'INIT-001', 'Test Initiative', externalPlan);
+
+    expect(existsSync(planPath)).toBe(true);
+    const content = readFileSync(planPath, 'utf-8');
+    expect(content).toBe(planContent);
+    // Should NOT contain the template markers
+    expect(content).not.toContain('<!-- What is the primary objective');
+  });
+
+  it('should still use template when no fromPath given', async () => {
+    const { createPlanTemplate } = await import('../initiative-plan.js');
+
+    const planPath = createPlanTemplate(tempDir, 'INIT-001', 'Test Initiative');
+
+    expect(existsSync(planPath)).toBe(true);
+    const content = readFileSync(planPath, 'utf-8');
+    expect(content).toContain('## Goal');
+    expect(content).toContain('<!-- What is the primary objective');
   });
 });
 

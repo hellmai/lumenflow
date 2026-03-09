@@ -192,6 +192,88 @@ export function validatePlanPath(planPath: string): void {
 }
 
 /**
+ * Determine whether a plan path points outside the repo's configured plansDir.
+ *
+ * External paths (e.g. ~/.claude/plans/foo.md or /tmp/plan.md) need to be
+ * imported into the repo before linking. Paths already inside plansDir or
+ * lumenflow:// URIs are considered internal.
+ *
+ * @param planPath - Path to plan file
+ * @param projectRoot - Project root directory
+ * @returns true if the path is external and needs importing
+ */
+export function isExternalPlanPath(planPath: string, projectRoot: string): boolean {
+  // lumenflow:// URIs are already resolved references, not external files
+  if (planPath.startsWith(PLAN_URI_SCHEME)) {
+    return false;
+  }
+
+  const normalizedPath = normalizeToPosix(planPath);
+  const plansDirSegment = resolvePlansDirSegment(projectRoot);
+  const absolutePlansDir = normalizeToPosix(join(projectRoot, plansDirSegment));
+
+  // Check if the path is inside the repo's plansDir (absolute or relative)
+  if (normalizedPath.startsWith(absolutePlansDir + '/')) {
+    return false;
+  }
+
+  // Check relative path match (e.g. "docs/04-operations/plans/foo.md")
+  const relativePlansPrefix = trimOuterSlashes(plansDirSegment) + '/';
+  if (normalizedPath.startsWith(relativePlansPrefix)) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Import an external plan file into the repo's configured plansDir.
+ *
+ * Copies the file content into plansDir with an initiative-prefixed filename.
+ * The original external file is not modified or deleted.
+ *
+ * @param worktreePath - Path to repo root or worktree
+ * @param initId - Initiative ID (used as filename prefix)
+ * @param externalPath - Absolute path to the external plan file
+ * @param title - Initiative title (used for slug in filename)
+ * @returns Absolute path to the imported file in plansDir
+ * @throws Error if destination file already exists
+ */
+export function importExternalPlan(
+  worktreePath: string,
+  initId: string,
+  externalPath: string,
+  title: string,
+): string {
+  const slug = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 30);
+
+  const filename = `${initId}-${slug}.md`;
+  const plansDir = join(worktreePath, resolvePlansDirSegment(worktreePath));
+  const destPath = join(plansDir, filename);
+
+  if (existsSync(destPath)) {
+    die(
+      `Plan file already exists: ${destPath}\n\n` +
+        `Use --plan ${destPath} to link the existing file, or delete it first.`,
+    );
+  }
+
+  if (!existsSync(plansDir)) {
+    mkdirSync(plansDir, { recursive: true });
+  }
+
+  const content = readFileSync(externalPath, { encoding: 'utf-8' });
+  writeFileSync(destPath, content, { encoding: 'utf-8' });
+  console.log(`${LOG_PREFIX} Imported external plan: ${externalPath} -> ${destPath}`);
+
+  return destPath;
+}
+
+/**
  * Format plan path as lumenflow:// URI
  *
  * Extracts the filename (and optional subdirectory) relative to configured
@@ -273,15 +355,25 @@ export function updateInitiativeWithPlan(
 }
 
 /**
- * Create a plan template file
+ * Create a plan template file, optionally importing content from an external file.
+ *
+ * When `fromPath` is provided, the external file's content is used instead of
+ * generating a blank template. This supports the `--create --plan <path>` workflow
+ * where users want to import an existing plan into the repo. (WU-2349)
  *
  * @param worktreePath - Path to repo root or worktree
  * @param initId - Initiative ID
  * @param title - Initiative title
+ * @param fromPath - Optional path to external file whose content replaces the template
  * @returns Path to created file
  * @throws Error if file already exists
  */
-export function createPlanTemplate(worktreePath: string, initId: string, title: string): string {
+export function createPlanTemplate(
+  worktreePath: string,
+  initId: string,
+  title: string,
+  fromPath?: string,
+): string {
   const slug = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -301,7 +393,12 @@ export function createPlanTemplate(worktreePath: string, initId: string, title: 
     mkdirSync(plansDir, { recursive: true });
   }
 
-  const template = `# ${initId} Plan - ${title}
+  let content: string;
+  if (fromPath) {
+    content = readFileSync(fromPath, { encoding: 'utf-8' });
+    console.log(`${LOG_PREFIX} Imported content from: ${fromPath}`);
+  } else {
+    content = `# ${initId} Plan - ${title}
 
 ## Goal
 
@@ -328,8 +425,9 @@ export function createPlanTemplate(worktreePath: string, initId: string, title: 
 - Initiative: ${initId}
 - Created: ${new Date().toISOString().split('T')[0]}
 `;
+  }
 
-  writeFileSync(planPath, template, { encoding: 'utf-8' });
+  writeFileSync(planPath, content, { encoding: 'utf-8' });
   console.log(`${LOG_PREFIX} Created plan template: ${planPath}`);
 
   return planPath;
@@ -369,7 +467,14 @@ export async function main(): Promise<void> {
 
   if (shouldCreate) {
     // Create mode - will create template and link it
-    console.log(`${LOG_PREFIX} Creating plan template for ${initId}...`);
+    // When --plan is also provided, use its content instead of a blank template (WU-2349)
+    const fromPath = planPath;
+    if (fromPath) {
+      validatePlanPath(fromPath);
+      console.log(`${LOG_PREFIX} Creating plan for ${initId} from ${fromPath}...`);
+    } else {
+      console.log(`${LOG_PREFIX} Creating plan template for ${initId}...`);
+    }
 
     // Ensure on main for micro-worktree operations
     await ensureOnMain(getGitForCwd());
@@ -382,8 +487,8 @@ export async function main(): Promise<void> {
         pushOnly: true,
         pushRetryOverride: INITIATIVE_PLAN_PUSH_RETRY_OVERRIDE,
         execute: async ({ worktreePath }) => {
-          // Create plan template
-          targetPlanPath = createPlanTemplate(worktreePath, initId, initTitle);
+          // Create plan template (with optional imported content from --plan)
+          targetPlanPath = createPlanTemplate(worktreePath, initId, initTitle, fromPath);
           planUri = formatPlanUri(targetPlanPath);
 
           // Update initiative with plan link
@@ -419,17 +524,30 @@ export async function main(): Promise<void> {
   } else if (planPath) {
     // Link existing file mode
     validatePlanPath(planPath);
-    planUri = formatPlanUri(planPath);
+
+    // WU-2349: If the plan is external (outside repo plansDir), import it first
+    const external = isExternalPlanPath(planPath, process.cwd());
+    if (external) {
+      console.log(`${LOG_PREFIX} External plan detected, importing into repo...`);
+    }
+
+    // For external files, we'll compute planUri after import (inside micro-worktree)
+    // For internal files, compute it now for idempotency check
+    if (!external) {
+      planUri = formatPlanUri(planPath);
+
+      // Check for idempotent case before micro-worktree
+      const existingPlan = (initDoc as Record<string, unknown>).related_plan as
+        | string
+        | undefined;
+      if (existingPlan === planUri) {
+        console.log(`${LOG_PREFIX} Plan already linked (idempotent - no changes needed)`);
+        console.log(`\n${LOG_PREFIX} ${initId} already has related_plan: ${planUri}`);
+        return;
+      }
+    }
 
     console.log(`${LOG_PREFIX} Linking plan to ${initId}...`);
-
-    // Check for idempotent case before micro-worktree
-    const existingPlan = (initDoc as Record<string, unknown>).related_plan as string | undefined;
-    if (existingPlan === planUri) {
-      console.log(`${LOG_PREFIX} Plan already linked (idempotent - no changes needed)`);
-      console.log(`\n${LOG_PREFIX} ${initId} already has related_plan: ${planUri}`);
-      return;
-    }
 
     // Ensure on main for micro-worktree operations
     await ensureOnMain(getGitForCwd());
@@ -442,6 +560,18 @@ export async function main(): Promise<void> {
         pushOnly: true,
         pushRetryOverride: INITIATIVE_PLAN_PUSH_RETRY_OVERRIDE,
         execute: async ({ worktreePath }) => {
+          const filesToCommit = [INIT_PATHS.INITIATIVE(initId)];
+
+          if (external) {
+            // Import external file into plansDir within the micro-worktree
+            const importedPath = importExternalPlan(worktreePath, initId, planPath, initTitle);
+            planUri = formatPlanUri(importedPath);
+            const importedRelPath = importedPath.replace(worktreePath + '/', '');
+            filesToCommit.push(importedRelPath);
+          } else {
+            planUri = formatPlanUri(planPath);
+          }
+
           // Update initiative with plan link
           const changed = updateInitiativeWithPlan(worktreePath, initId, planUri);
 
@@ -451,7 +581,7 @@ export async function main(): Promise<void> {
 
           return {
             commitMessage: getCommitMessage(initId, planUri),
-            files: [INIT_PATHS.INITIATIVE(initId)],
+            files: filesToCommit,
           };
         },
       });
@@ -459,8 +589,12 @@ export async function main(): Promise<void> {
       console.log(`\n${LOG_PREFIX} Transaction complete!`);
       console.log(`\nPlan Linked:`);
       console.log(`  Initiative: ${initId}`);
-      console.log(`  Plan URI:   ${planUri}`);
-      console.log(`  File:       ${planPath}`);
+      console.log(`  Plan URI:   ${planUri!}`);
+      if (external) {
+        console.log(`  Imported:   ${planPath} -> repo plansDir`);
+      } else {
+        console.log(`  File:       ${planPath}`);
+      }
       console.log(`\nNext steps:`);
       console.log(`  - View initiative: pnpm initiative:status ${initId}`);
     } catch (error) {
