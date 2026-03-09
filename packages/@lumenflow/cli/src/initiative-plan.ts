@@ -537,9 +537,7 @@ export async function main(): Promise<void> {
       planUri = formatPlanUri(planPath);
 
       // Check for idempotent case before micro-worktree
-      const existingPlan = (initDoc as Record<string, unknown>).related_plan as
-        | string
-        | undefined;
+      const existingPlan = (initDoc as Record<string, unknown>).related_plan as string | undefined;
       if (existingPlan === planUri) {
         console.log(`${LOG_PREFIX} Plan already linked (idempotent - no changes needed)`);
         console.log(`\n${LOG_PREFIX} ${initId} already has related_plan: ${planUri}`);
