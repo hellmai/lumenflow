@@ -218,17 +218,31 @@ pnpm initiative:list
 
 ### initiative:plan
 
-Link plan to initiative
+Link a plan file to an initiative. When `--plan` points to an external file
+(outside the repo's configured `plansDir`), the file is automatically imported
+into the repo and linked with a repo-relative URI.
 
 ```bash
-pnpm initiative:plan --initiative <ref>
+# Import external plan and link to initiative
+pnpm initiative:plan --initiative INIT-001 --plan ~/.claude/plans/my-plan.md
+
+# Link an existing repo plan
+pnpm initiative:plan --initiative INIT-001 --plan docs/plans/my-plan.md
+
+# Create blank template and link
+pnpm initiative:plan --initiative INIT-001 --create
+
+# Import external plan content into a new template file
+pnpm initiative:plan --initiative INIT-001 --create --plan ~/.claude/plans/my-plan.md
 ```
 
 **Options:**
 
-| Flag                       | Description                          | Required |
-| -------------------------- | ------------------------------------ | -------- |
-| `--initiative &lt;ref&gt;` | Parent initiative (INIT-XXX or slug) | Yes      |
+| Flag                       | Description                                                          | Required |
+| -------------------------- | -------------------------------------------------------------------- | -------- |
+| `--initiative &lt;ref&gt;` | Parent initiative (INIT-XXX or slug)                                 | Yes      |
+| `--plan &lt;path&gt;`      | Path to plan file (external paths are auto-imported into repo)       | No       |
+| `--create`                 | Create a new plan file (uses `--plan` content if both are specified) | No       |
 
 ### initiative:remove-wu
 

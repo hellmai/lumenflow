@@ -332,8 +332,9 @@ stub in `$LUMENFLOW_HOME/plans/` and automatically set the WU's `plan` field to 
 | `pnpm plan:edit --id INIT-XXX --section Goal --content "..."`            | Edit a section in a plan file                                       |
 | `pnpm plan:link --id INIT-XXX --plan lumenflow://plans/INIT-XXX-plan.md` | Link plan URI to initiative or WU                                   |
 | `pnpm plan:promote --id INIT-XXX`                                        | Promote plan status to approved                                     |
-| `pnpm initiative:plan --initiative INIT-XXX --plan <path>`               | Legacy-compatible initiative linking command                        |
-| `pnpm initiative:plan --initiative INIT-XXX --create`                    | Legacy-compatible create-and-link flow                              |
+| `pnpm initiative:plan --initiative INIT-XXX --plan <path>`               | Link plan to initiative (auto-imports external files into repo)     |
+| `pnpm initiative:plan --initiative INIT-XXX --create`                    | Create blank plan template and link to initiative                   |
+| `pnpm initiative:plan --initiative INIT-XXX --create --plan <path>`      | Import external plan content into new template and link             |
 
 ### Linking Plans
 
@@ -350,14 +351,21 @@ pnpm plan:create --id INIT-001 --title "Auth System Rollout" --from ~/.claude/pl
 pnpm plan:link --id INIT-001 --plan lumenflow://plans/INIT-001-plan.md
 ```
 
-**Legacy-compatible initiative command:**
+**initiative:plan command (supports external import):**
 
 ```bash
-# Create a new plan template
+# Import an external plan (e.g. from ~/.claude/plans/) and link to initiative
+# The file is copied into the repo's configured plansDir automatically
+pnpm initiative:plan --initiative INIT-001 --plan ~/.claude/plans/my-plan.md
+
+# Link an existing repo plan file
+pnpm initiative:plan --initiative INIT-001 --plan docs/plans/my-plan.md
+
+# Create a blank plan template and link
 pnpm initiative:plan --initiative INIT-001 --create
 
-# Link an existing plan file
-pnpm initiative:plan --initiative INIT-001 --plan docs/plans/my-plan.md
+# Import external file content into a new initiative plan file
+pnpm initiative:plan --initiative INIT-001 --create --plan ~/.claude/plans/my-plan.md
 ```
 
 **To a WU (via `plan` field, WU-1683):**
