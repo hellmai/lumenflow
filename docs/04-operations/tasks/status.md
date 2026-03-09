@@ -6,6 +6,7 @@ _Last updated: 2026-03-09_
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
 - [WU-2349 — initiative:plan should import external plan files into repo plansDir](wu/WU-2349.yaml)
+- [WU-2350 — Fix agent-verification path in spawn prompts for consumer repos](wu/WU-2350.yaml)
 
 ## Completed
 

@@ -2,14 +2,15 @@ id: WU-2350
 title: Fix agent-verification path in spawn prompts for consumer repos
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-09
 code_paths:
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts,.lumenflow/templates/spawn-prompt/constraints.md
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -25,9 +26,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Spawn prompts (wu:brief, wu:delegate) hardcode node packages/@lumenflow/agent/dist/agent-verification.js - a path only in lumenflow-dev. Consumer repos get MODULE_NOT_FOUND, causing agents to report a persistent caveat on every task.
+description: Spawn prompts (wu:brief, wu:delegate) hardcode node
+  packages/@lumenflow/agent/dist/agent-verification.js - a path only in lumenflow-dev. Consumer
+  repos get MODULE_NOT_FOUND, causing agents to report a persistent caveat on every task.
 acceptance:
   - Add pnpm wu:verify --id WU-XXXX command as stable alias
   - Spawn prompt templates use pnpm wu:verify instead of hardcoded path
   - wu-spawn-prompt-builders.ts uses pnpm wu:verify instead of hardcoded path
   - 'Fallback: if direct path is ever emitted, gate it on file existence check'
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2350
+claimed_at: 2026-03-09T09:33:50.743Z
+baseline_main_sha: 2fe4c6962ab792618e06349b0c20ca2dbad99e4f
+session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T09:33:50.750Z
