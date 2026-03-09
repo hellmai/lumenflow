@@ -19,12 +19,20 @@ artifacts:
   - .lumenflow/stamps/WU-2353.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: bug fix with updated existing tests. Fix: prepend **/ to unanchored directory
+  patterns in parseGitignorePatterns to match git semantics.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-09T13:19:09.125Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2353
+session_id: 405bfe50-5cd4-4807-bc7d-5eb6931bc78d
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T13:19:09.131Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +48,3 @@ acceptance:
   - Anchored patterns (starting with /) remain scoped to their .gitignore location
   - Patterns already prefixed with **/ are not double-prefixed
   - Unit tests cover unanchored, anchored, and already-prefixed patterns
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2353
-claimed_at: 2026-03-09T13:19:09.125Z
-baseline_main_sha: fb05e71e42a9c7610557f97200465b5e0dd8fa47
-session_id: 405bfe50-5cd4-4807-bc7d-5eb6931bc78d
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-09T13:19:09.131Z
