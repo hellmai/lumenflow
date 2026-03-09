@@ -5,7 +5,6 @@ _Last updated: 2026-03-09_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
-- [WU-2353 — Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory patterns](wu/WU-2353.yaml)
 
 ## Completed
 
@@ -1273,3 +1272,4 @@ _Last updated: 2026-03-09_
 - [WU-2350 — Fix agent-verification path in spawn prompts for consumer repos](wu/WU-2350.yaml) — 2026-03-09
 - [WU-2351 — Fix no-argument gap in destructive git command deny lists](wu/WU-2351.yaml) — 2026-03-09
 - [WU-2352 — Fix session ownership violation when wu:done --skip-gates used after wu:prep pre-existing failure](wu/WU-2352.yaml) — 2026-03-09
+- [WU-2353 — Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory patterns](wu/WU-2353.yaml) — 2026-03-09

@@ -3,7 +3,7 @@ title: Fix lane-health gitignore parsing to match git recursive semantics for un
   patterns
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -48,3 +48,6 @@ acceptance:
   - Anchored patterns (starting with /) remain scoped to their .gitignore location
   - Patterns already prefixed with **/ are not double-prefixed
   - Unit tests cover unanchored, anchored, and already-prefixed patterns
+locked: true
+completed_at: 2026-03-09T13:25:22.462Z
+completed: 2026-03-09
