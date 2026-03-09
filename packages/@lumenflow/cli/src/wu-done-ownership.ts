@@ -8,6 +8,8 @@ export interface ClaimSessionOwnershipInput {
   force: boolean;
   /** WU-2341: If true, a valid wu:prep checkpoint exists, authorizing session handoff. */
   hasValidPrepCheckpoint?: boolean;
+  /** WU-2352: If true, --skip-gates was passed, authorizing session handoff when prep checkpoint is missing. */
+  skipGates?: boolean;
 }
 
 export interface ClaimSessionOwnershipResult {
@@ -22,6 +24,7 @@ export function validateClaimSessionOwnership({
   activeSessionId,
   force,
   hasValidPrepCheckpoint,
+  skipGates,
 }: ClaimSessionOwnershipInput): ClaimSessionOwnershipResult {
   // Legacy WUs without claim-session metadata remain supported.
   if (!claimedSessionId) {
@@ -36,6 +39,12 @@ export function validateClaimSessionOwnership({
   // This is the normal wu:prep (worktree session) -> wu:done (main session) flow.
   if (hasValidPrepCheckpoint) {
     return { valid: true, auditRequired: false, error: null };
+  }
+
+  // WU-2352: --skip-gates implies intentional override (requires --reason + --fix-wu),
+  // so it authorizes session handoff when prep checkpoint is missing due to pre-existing failures.
+  if (skipGates) {
+    return { valid: true, auditRequired: true, error: null };
   }
 
   if (force) {

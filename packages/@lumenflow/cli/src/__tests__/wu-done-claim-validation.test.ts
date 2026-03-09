@@ -66,6 +66,47 @@ describe('WU-2341: wu:prep checkpoint authorizes session handoff', () => {
     expect(result.auditRequired).toBe(true);
   });
 
+  it('accepts session mismatch when skipGates is true (no prep checkpoint)', () => {
+    const result = validateClaimSessionOwnership({
+      wuId: 'WU-2352',
+      claimedSessionId: 'session-worktree',
+      activeSessionId: 'session-main',
+      force: false,
+      hasValidPrepCheckpoint: false,
+      skipGates: true,
+    });
+    expect(result.valid).toBe(true);
+    expect(result.auditRequired).toBe(true);
+    expect(result.error).toBeNull();
+  });
+
+  it('still blocks session mismatch when skipGates is false and no checkpoint', () => {
+    const result = validateClaimSessionOwnership({
+      wuId: 'WU-2352',
+      claimedSessionId: 'session-worktree',
+      activeSessionId: 'session-main',
+      force: false,
+      hasValidPrepCheckpoint: false,
+      skipGates: false,
+    });
+    expect(result.valid).toBe(false);
+    expect(result.error).toContain('claimed by a different session');
+  });
+
+  it('skipGates authorizes even without force', () => {
+    const result = validateClaimSessionOwnership({
+      wuId: 'WU-2352',
+      claimedSessionId: 'session-worktree',
+      activeSessionId: 'session-main',
+      force: false,
+      hasValidPrepCheckpoint: false,
+      skipGates: true,
+    });
+    expect(result.valid).toBe(true);
+    // auditRequired because this is an override path
+    expect(result.auditRequired).toBe(true);
+  });
+
   it('wires ownership handoff through HEAD-aware checkpoint validation', async () => {
     const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
 
@@ -77,5 +118,10 @@ describe('WU-2341: wu:prep checkpoint authorizes session handoff', () => {
       'const earlySkipResult = await resolveCheckpointSkipResult(id, derivedWorktree || null);',
     );
     expect(source).not.toContain('currentHeadSha: undefined');
+  });
+
+  it('wires skipGates through to ownership validation call site', async () => {
+    const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
+    expect(source).toContain("skipGates: Boolean(args['skip-gates'])");
   });
 });

@@ -1220,6 +1220,7 @@ async function executePreFlightChecks({
       activeSessionId: activeSession?.session_id ?? null,
       force: Boolean(args.force),
       hasValidPrepCheckpoint: prepCheckpointResult.canSkip,
+      skipGates: Boolean(args['skip-gates']),
     });
 
     if (!sessionOwnership.valid) {
