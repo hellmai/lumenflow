@@ -2970,3 +2970,4 @@
 {"type":"checkpoint","wuId":"WU-2351","timestamp":"2026-03-09T11:42:45.506Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2351.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2351","timestamp":"2026-03-09T11:43:09.213Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2351.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2351","timestamp":"2026-03-09T11:46:11.437Z"}
+{"type":"claim","wuId":"WU-2352","timestamp":"2026-03-09T13:00:28.479Z","lane":"Framework: CLI WU Commands","title":"Fix session ownership violation when wu:done --skip-gates used after wu:prep pre-existing failure"}

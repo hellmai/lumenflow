@@ -2,7 +2,7 @@ id: WU-2352
 title: Fix session ownership violation when wu:done --skip-gates used after wu:prep pre-existing failure
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
 tests:
   manual:
-    - Run wu:prep on a WU with pre-existing gate failures, then wu:done --skip-gates - should not hit ownership violation
+    - Run wu:prep on a WU with pre-existing gate failures, then wu:done --skip-gates - should not
+      hit ownership violation
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
   e2e: []
@@ -28,8 +29,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: When wu:prep fails due to pre-existing gate failures, it exits before writing the checkpoint. wu:done --skip-gates then cannot authorize the session handoff because hasValidPrepCheckpoint is false, causing a spurious CLAIM OWNERSHIP VIOLATION. The --skip-gates flag should implicitly authorize the session handoff.
+description: When wu:prep fails due to pre-existing gate failures, it exits before writing the
+  checkpoint. wu:done --skip-gates then cannot authorize the session handoff because
+  hasValidPrepCheckpoint is false, causing a spurious CLAIM OWNERSHIP VIOLATION. The --skip-gates
+  flag should implicitly authorize the session handoff.
 acceptance:
-  - wu:done --skip-gates does not throw CLAIM OWNERSHIP VIOLATION when checkpoint is missing due to pre-existing wu:prep failure
-  - Existing ownership protection still blocks unauthorized cross-session completions when --skip-gates is not used
+  - wu:done --skip-gates does not throw CLAIM OWNERSHIP VIOLATION when checkpoint is missing due to
+    pre-existing wu:prep failure
+  - Existing ownership protection still blocks unauthorized cross-session completions when
+    --skip-gates is not used
   - Unit tests cover the skip-gates session handoff path
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2352
+claimed_at: 2026-03-09T13:00:28.443Z
+baseline_main_sha: 68c349ae6446655ba4b0a903c4441cec1b2a97a3
+session_id: 03c0f52d-da3e-4997-ac55-32fd048d90ad
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T13:00:28.451Z
