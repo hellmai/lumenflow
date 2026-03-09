@@ -225,17 +225,25 @@ export const CLAUDE_SETTINGS_TEMPLATE = `{
       "Read(./.env)",
       "Read(./.env.*)",
       "Write(./.env*)",
+      "Bash(git reset --hard)",
       "Bash(git reset --hard *)",
       "Bash(git stash *)",
+      "Bash(git clean -fd)",
       "Bash(git clean -fd *)",
       "Bash(git push --force *)",
       "Bash(git push -f *)",
       "Bash(git commit --no-verify *)",
+      "Bash(/usr/bin/git reset --hard)",
+      "Bash(/usr/bin/git reset --hard *)",
+      "Bash(/usr/bin/git clean -fd)",
+      "Bash(/usr/bin/git clean -fd *)",
       "Bash(HUSKY=0 *)",
       "Bash(rm -rf /*)",
       "Bash(sudo *)",
       "Bash(git worktree remove *)",
-      "Bash(git worktree prune *)"
+      "Bash(/usr/bin/git worktree remove *)",
+      "Bash(git worktree prune *)",
+      "Bash(/usr/bin/git worktree prune *)"
     ]
   }
 }
