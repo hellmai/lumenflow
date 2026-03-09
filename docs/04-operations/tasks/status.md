@@ -5,6 +5,7 @@ _Last updated: 2026-03-09_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2351 — Fix no-argument gap in destructive git command deny lists](wu/WU-2351.yaml)
 
 ## Completed
 

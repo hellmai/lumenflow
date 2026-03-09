@@ -2970,3 +2970,4 @@
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:59:51.173Z","note":"[wu:done] force ownership override claimed_session=526c3bbe-5f63-48e1-8386-cf1c12c9ade9 active_session=none","progress":"wu:done ownership override","nextSteps":"pre-existing: 9 @lumenflow/core test failures + 2 worktree template inode-sharing failures; completing orphaned WU"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T10:00:20.713Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2350.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2350","timestamp":"2026-03-09T10:00:49.753Z"}
+{"type":"claim","wuId":"WU-2351","timestamp":"2026-03-09T11:40:39.445Z","lane":"Framework: CLI Enforcement","title":"Fix no-argument gap in destructive git command deny lists"}
