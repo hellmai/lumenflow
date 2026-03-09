@@ -28,7 +28,7 @@ CRITICAL RULES - ENFORCE BEFORE EVERY ACTION:
    - For ordinary errors: fix and retry autonomously (up to 3 attempts)
 
 4. VERIFY COMPLETION before reporting success
-   - Run: node packages/@lumenflow/agent/dist/agent-verification.js {WU_ID} (from shared checkout)
+   - Run: pnpm wu:verify --id {WU_ID} (from shared checkout)
    - Exit 0 = passed, Exit 1 = INCOMPLETE
    - Never report "done" if verification fails
 

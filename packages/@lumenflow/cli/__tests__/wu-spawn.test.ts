@@ -540,29 +540,29 @@ describe('wu-spawn worktree block recovery guidance (WU-1134)', () => {
       },
     });
 
-    it('includes correct agent verification command in constraints', () => {
+    it('includes pnpm wu:verify command in constraints (WU-2350)', () => {
       const strategy = new GenericStrategy();
       const output = generateTaskInvocation(mockDoc, id, strategy, { config });
 
-      expect(output).toContain('node packages/@lumenflow/agent/dist/agent-verification.js WU-1155');
+      expect(output).toContain('pnpm wu:verify --id WU-1155');
+      expect(output).not.toContain('node packages/@lumenflow/agent/dist/agent-verification.js');
       expect(output).not.toContain('tools/lib/agent-verification.mjs');
-      expect(output).not.toContain('tools/lib/agent-verification.ts');
     });
 
-    it('includes correct agent verification command in verification section', () => {
+    it('includes pnpm wu:verify command in verification section (WU-2350)', () => {
       const strategy = new GenericStrategy();
       const output = generateTaskInvocation(mockDoc, id, strategy, { config });
 
-      expect(output).toContain('packages/@lumenflow/agent/dist/agent-verification.js WU-1155');
-      expect(output).not.toContain('tools/lib/agent-verification');
+      expect(output).toContain('pnpm wu:verify --id WU-1155');
+      expect(output).not.toContain('packages/@lumenflow/agent/dist/agent-verification.js');
     });
 
-    it('includes correct agent verification command in codex constraints', () => {
+    it('includes pnpm wu:verify command in codex constraints (WU-2350)', () => {
       const strategy = new GenericStrategy();
       const output = generateCodexPrompt(mockDoc, id, strategy, { config });
 
-      expect(output).toContain('node packages/@lumenflow/agent/dist/agent-verification.js WU-1155');
-      expect(output).not.toContain('tools/lib/agent-verification');
+      expect(output).toContain('pnpm wu:verify --id WU-1155');
+      expect(output).not.toContain('node packages/@lumenflow/agent/dist/agent-verification.js');
     });
   });
 });

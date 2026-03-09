@@ -177,6 +177,13 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     category: COMMAND_CATEGORIES.WU_LIFECYCLE,
   },
   {
+    name: 'wu:verify',
+    binName: 'wu-verify',
+    binPath: './dist/wu-verify.js',
+    description: 'Verify WU completion (stamp, commit, clean tree)',
+    category: COMMAND_CATEGORIES.WU_LIFECYCLE,
+  },
+  {
     name: 'wu:escalate',
     binName: 'wu-escalate',
     binPath: './dist/wu-escalate.js',

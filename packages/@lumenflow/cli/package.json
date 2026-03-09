@@ -59,6 +59,7 @@
     "wu-status": "./dist/wu-status.js",
     "task-claim": "./dist/task-claim.js",
     "wu-recover": "./dist/wu-recover.js",
+    "wu-verify": "./dist/wu-verify.js",
     "mem-init": "./dist/mem-init.js",
     "mem-checkpoint": "./dist/mem-checkpoint.js",
     "mem-start": "./dist/mem-start.js",

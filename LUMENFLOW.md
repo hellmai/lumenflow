@@ -244,6 +244,7 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 | `pnpm wu:brief`           | Generate handoff prompt + record evidence                 |
 | `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation |
 | `pnpm wu:escalate`        | Show or resolve WU escalation status                      |
+| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)          |
 | `pnpm wu:delete`          | Delete WU spec and cleanup                                |
 | `pnpm gates`              | Run quality gates (`--docs-only` for docs WUs)            |
 | `pnpm lumenflow:commands` | List all public commands (primary + alias + legacy)       |

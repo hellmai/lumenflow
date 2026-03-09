@@ -1301,6 +1301,20 @@ pnpm wu:escalate --id <wuId>
 | `--resolve`                | Resolve the escalation (set resolved_by and resolved_at)                         | No       |
 | `--resolver &lt;email&gt;` | Override resolver email (defaults to git user.email)                             | No       |
 
+### wu:verify
+
+Verify WU completion (stamp, commit, clean tree)
+
+```bash
+pnpm wu:verify --id <wuId>
+```
+
+**Options:**
+
+| Flag                       | Description                                                                      | Required |
+| -------------------------- | -------------------------------------------------------------------------------- | -------- |
+| `-i, --id <wuId>`    | Work Unit ID (e.g., WU-123) | Yes      |
+
 ### wu:prep
 
 Run gates in worktree, prep for wu:done

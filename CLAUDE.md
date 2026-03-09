@@ -90,6 +90,7 @@ pnpm wu:infer-lane --paths "packages/@lumenflow/cli/src/init.ts" --desc "Fix ini
 | `pnpm wu:delegate`        | Generate prompt + record delegation lineage         |
 | `pnpm wu:recover`         | Analyze and fix WU state inconsistencies            |
 | `pnpm wu:escalate`        | Show or resolve WU escalation status                |
+| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)    |
 | `pnpm wu:delete`          | Delete WU spec and cleanup                          |
 | `pnpm gates`              | Run quality gates                                   |
 | `pnpm lumenflow:commands` | List all public commands (primary + alias + legacy) |

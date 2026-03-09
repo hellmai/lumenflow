@@ -39,6 +39,7 @@
     "wu:release": "node packages/@lumenflow/cli/dist/wu-release.js",
     "wu:status": "node packages/@lumenflow/cli/dist/wu-status.js",
     "wu:recover": "node packages/@lumenflow/cli/dist/wu-recover.js",
+    "wu:verify": "node packages/@lumenflow/cli/dist/wu-verify.js",
     "wu:validate": "node tools/cli-entry.mjs wu-validate",
     "wu:brief": "node tools/cli-entry.mjs wu-brief",
     "wu:delegate": "node packages/@lumenflow/cli/dist/wu-delegate.js",

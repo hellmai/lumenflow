@@ -561,6 +561,7 @@ Domain-specific commands must come from local configuration, not core framework 
 | `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)                  | After PR merge (cloud only) |
 | `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status               | Escalation-triggered WUs    |
 | `pnpm wu:escalate --resolve --id WU-XXX`       | Resolve human escalation                        | Before wu:done (escalation) |
+| `pnpm wu:verify --id WU-XXX`                   | Verify WU completion (stamp, commit, clean tree) | After wu:done               |
 | `pnpm wu:delete --id WU-XXX`                   | Delete WU spec and cleanup                      | Cancel stale/throwaway WUs  |
 | `pnpm wu:recover --id WU-XXX`                  | Fix inconsistent WU state                       | When state is broken        |
 

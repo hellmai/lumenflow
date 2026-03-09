@@ -158,6 +158,7 @@ automatically, and `.lumenflow/templates/` remains optional unless you want cust
 | -------------------------------- | ---------------------------------------- |
 | `pnpm wu:validate --id WU-XXX`   | Validate WU spec                         |
 | `pnpm wu:preflight --id WU-XXX`  | Pre-flight checks before wu:done         |
+| `pnpm wu:verify --id WU-XXX`    | Verify WU completion (stamp, commit, clean tree) |
 | `pnpm wu:recover --id WU-XXX`    | Analyze and fix WU state inconsistencies |
 | `pnpm wu:repair --id WU-XXX`     | Repair WU state issues                   |
 | `pnpm wu:prune`                  | Clean stale worktrees                    |

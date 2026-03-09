@@ -89,6 +89,7 @@ For complete CLI command documentation (100+ commands), see [quick-ref-commands.
 | `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation |
 | `pnpm wu:recover`         | Analyze and fix WU state inconsistencies                  |
 | `pnpm wu:escalate`        | Show or resolve WU escalation status                      |
+| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)          |
 | `pnpm wu:delete`          | Delete WU spec and cleanup                                |
 | `pnpm gates`              | Run all quality gates (`--docs-only` for docs)            |
 | `pnpm lumenflow:commands` | List all public commands (primary + aliases + legacy)     |
