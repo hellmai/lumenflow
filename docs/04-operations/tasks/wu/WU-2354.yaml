@@ -2,7 +2,7 @@ id: WU-2354
 title: Add phase_execution_order and dependency_model flags to initiative:edit
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/initiative-edit.test.ts
 tests:
   manual:
-    - Run initiative:edit --id INIT-35 --phase-execution-order sequential and verify field persists on origin/main
+    - Run initiative:edit --id INIT-35 --phase-execution-order sequential and verify field persists
+      on origin/main
   unit:
     - packages/@lumenflow/cli/src/__tests__/initiative-edit.test.ts
   e2e: []
@@ -29,10 +30,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: initiative:edit does not support phase_execution_order or dependency_model fields. Agents attempting to update these fields must use raw file edits which don't persist through micro-worktree isolation. Add --phase-execution-order and --dependency-model flags to initiative:edit so these fields can be updated via the safe push-only micro-worktree path.
+description: initiative:edit does not support phase_execution_order or dependency_model fields.
+  Agents attempting to update these fields must use raw file edits which don't persist through
+  micro-worktree isolation. Add --phase-execution-order and --dependency-model flags to
+  initiative:edit so these fields can be updated via the safe push-only micro-worktree path.
 acceptance:
-  - initiative:edit --id INIT-XXX --phase-execution-order sequential updates the field and persists to origin/main
-  - initiative:edit --id INIT-XXX --dependency-model value updates the field and persists to origin/main
+  - initiative:edit --id INIT-XXX --phase-execution-order sequential updates the field and persists
+    to origin/main
+  - initiative:edit --id INIT-XXX --dependency-model value updates the field and persists to
+    origin/main
   - Invalid values are rejected with helpful error messages
   - CLI reference docs and Starlight docs updated to reflect new flags
   - Unit tests cover both new flags
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2354
+claimed_at: 2026-03-09T14:51:52.371Z
+baseline_main_sha: b5bd4879819476be47f583941ae8eb6c3b026362
+session_id: ddd1bab6-3bbf-4d40-93b5-5cd693687e4b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T14:51:52.378Z

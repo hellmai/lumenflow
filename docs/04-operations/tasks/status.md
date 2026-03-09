@@ -5,6 +5,7 @@ _Last updated: 2026-03-09_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2354 — Add phase_execution_order and dependency_model flags to initiative:edit](wu/WU-2354.yaml)
 
 ## Completed
 
