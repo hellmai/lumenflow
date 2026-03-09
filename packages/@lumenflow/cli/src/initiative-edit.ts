@@ -80,6 +80,9 @@ interface InitiativeDoc extends Record<string, unknown> {
   phases?: InitiativePhase[];
   success_metrics?: string[];
   created?: string;
+  // WU-2354: Phase execution order and dependency model
+  phase_execution_order?: string;
+  dependency_model?: string;
 }
 
 interface InitiativeEditOpts extends Record<string, unknown> {
@@ -99,6 +102,9 @@ interface InitiativeEditOpts extends Record<string, unknown> {
   phaseStatus?: string;
   phaseTitle?: string;
   created?: string;
+  // WU-2354: Phase execution order and dependency model
+  phaseExecutionOrder?: string;
+  dependencyModel?: string;
 }
 
 /**
@@ -221,6 +227,17 @@ const EDIT_OPTIONS = {
     flags: '--created <date>',
     description: 'Set created date (YYYY-MM-DD format)',
   },
+  // WU-2354: Phase execution order and dependency model
+  phaseExecutionOrder: {
+    name: 'phaseExecutionOrder',
+    flags: '--phase-execution-order <order>',
+    description: 'Phase execution order (sequential, parallel)',
+  },
+  dependencyModel: {
+    name: 'dependencyModel',
+    flags: '--dependency-model <model>',
+    description: 'Dependency model for the initiative',
+  },
 };
 
 /**
@@ -250,6 +267,9 @@ function parseArgs(): InitiativeEditOpts {
       EDIT_OPTIONS.phaseTitle,
       // WU-2547: Created date field
       EDIT_OPTIONS.created,
+      // WU-2354: Phase execution order and dependency model
+      EDIT_OPTIONS.phaseExecutionOrder,
+      EDIT_OPTIONS.dependencyModel,
     ],
     required: [], // Don't mark id as required - we handle it manually to support positional args
     allowPositionalId: true,
@@ -323,6 +343,23 @@ function validatePhaseExists(initiative: InitiativeDoc, phaseId: string | number
     );
   }
   return numericId;
+}
+
+/**
+ * Valid phase execution order values (WU-2354)
+ */
+const PHASE_EXECUTION_ORDERS = ['sequential', 'parallel'] as const;
+
+/**
+ * Validate phase_execution_order is a valid enum value (WU-2354)
+ */
+function validatePhaseExecutionOrder(order: string): void {
+  if (!(PHASE_EXECUTION_ORDERS as readonly string[]).includes(order)) {
+    die(
+      `Invalid phase execution order: "${order}"\n\n` +
+        `Valid values: ${PHASE_EXECUTION_ORDERS.join(', ')}`,
+    );
+  }
 }
 
 /**
@@ -540,6 +577,15 @@ export function applyEdits(initiative: InitiativeDoc, opts: InitiativeEditOpts):
     updated.created = opts.created;
   }
 
+  // WU-2354: Phase execution order and dependency model
+  if (opts.phaseExecutionOrder) {
+    validatePhaseExecutionOrder(opts.phaseExecutionOrder);
+    updated.phase_execution_order = opts.phaseExecutionOrder;
+  }
+  if (opts.dependencyModel) {
+    updated.dependency_model = opts.dependencyModel;
+  }
+
   return updated;
 }
 
@@ -560,7 +606,9 @@ export function hasAnyEdits(opts: InitiativeEditOpts): boolean {
     (opts.removeSuccessMetric && opts.removeSuccessMetric.length > 0) ||
     Boolean(opts.phaseTitle) ||
     (opts.phaseId && opts.phaseStatus) ||
-    opts.created,
+    opts.created ||
+    opts.phaseExecutionOrder ||
+    opts.dependencyModel,
   );
 }
 
@@ -583,7 +631,9 @@ export function buildNoEditsMessage() {
     '  --remove-success-metric <text> Remove success metric (repeatable, exact match)\n' +
     '  --phase-id <id> --phase-title <title>  Update specific phase title\n' +
     '  --phase-id <id> --phase-status <status>  Update specific phase status\n' +
-    '  --created <YYYY-MM-DD>      Set created date'
+    '  --created <YYYY-MM-DD>      Set created date\n' +
+    '  --phase-execution-order <order>  Phase execution order (sequential, parallel)\n' +
+    '  --dependency-model <model>  Dependency model for the initiative'
   );
 }
 

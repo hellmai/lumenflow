@@ -96,6 +96,12 @@ export const initiativeEditSchema = z.object({
   phase_status: phaseStatusEnum.optional().describe('New phase status'),
   phase_title: z.string().optional().describe('New phase title'),
   created: z.string().optional().describe('Set created date (YYYY-MM-DD format)'),
+  // WU-2354: Phase execution order and dependency model
+  phase_execution_order: z
+    .enum(['sequential', 'parallel'])
+    .optional()
+    .describe('Phase execution order (sequential or parallel)'),
+  dependency_model: z.string().optional().describe('Dependency model for the initiative'),
 });
 
 export type InitiativeEditInput = z.infer<typeof initiativeEditSchema>;

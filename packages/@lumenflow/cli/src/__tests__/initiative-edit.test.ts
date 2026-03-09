@@ -156,6 +156,116 @@ describe('initiative:edit phase title updates', () => {
   });
 });
 
+describe('initiative:edit phase_execution_order flag (WU-2354)', () => {
+  it('applies phase_execution_order to initiative', () => {
+    const original = {
+      id: 'INIT-015',
+      status: 'in_progress',
+    };
+
+    const updated = applyEdits(original, {
+      id: 'INIT-015',
+      phaseExecutionOrder: 'sequential',
+    });
+
+    expect(updated.phase_execution_order).toBe('sequential');
+  });
+
+  it('accepts parallel as valid phase_execution_order', () => {
+    const original = {
+      id: 'INIT-015',
+      phase_execution_order: 'sequential',
+    };
+
+    const updated = applyEdits(original, {
+      id: 'INIT-015',
+      phaseExecutionOrder: 'parallel',
+    });
+
+    expect(updated.phase_execution_order).toBe('parallel');
+  });
+
+  it('treats phase_execution_order as an edit for no-op detection', () => {
+    expect(hasAnyEdits({ id: 'INIT-015', phaseExecutionOrder: 'sequential' })).toBe(true);
+  });
+
+  it('documents --phase-execution-order in no-edits help output', () => {
+    expect(buildNoEditsMessage()).toContain('--phase-execution-order');
+  });
+
+  it('validates phase_execution_order via shared schema validator', () => {
+    const result = validateEditArgs({
+      id: 'INIT-015',
+      phaseExecutionOrder: 'sequential',
+    });
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('rejects invalid phase_execution_order via shared schema validator', () => {
+    const result = validateEditArgs({
+      id: 'INIT-015',
+      phaseExecutionOrder: 'invalid-order',
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('phase_execution_order'))).toBe(true);
+  });
+
+  it('rejects invalid phase_execution_order via applyEdits validation', () => {
+    const original = { id: 'INIT-015' };
+    expect(() =>
+      applyEdits(original, { id: 'INIT-015', phaseExecutionOrder: 'bad-value' }),
+    ).toThrow();
+  });
+});
+
+describe('initiative:edit dependency_model flag (WU-2354)', () => {
+  it('applies dependency_model to initiative', () => {
+    const original = {
+      id: 'INIT-015',
+      status: 'in_progress',
+    };
+
+    const updated = applyEdits(original, {
+      id: 'INIT-015',
+      dependencyModel: 'strict-phase-gate',
+    });
+
+    expect(updated.dependency_model).toBe('strict-phase-gate');
+  });
+
+  it('accepts any string value for dependency_model', () => {
+    const original = {
+      id: 'INIT-015',
+    };
+
+    const updated = applyEdits(original, {
+      id: 'INIT-015',
+      dependencyModel: 'custom-model-name',
+    });
+
+    expect(updated.dependency_model).toBe('custom-model-name');
+  });
+
+  it('treats dependency_model as an edit for no-op detection', () => {
+    expect(hasAnyEdits({ id: 'INIT-015', dependencyModel: 'strict-phase-gate' })).toBe(true);
+  });
+
+  it('documents --dependency-model in no-edits help output', () => {
+    expect(buildNoEditsMessage()).toContain('--dependency-model');
+  });
+
+  it('validates dependency_model via shared schema validator', () => {
+    const result = validateEditArgs({
+      id: 'INIT-015',
+      dependencyModel: 'any-value',
+    });
+
+    expect(result.valid).toBe(true);
+  });
+});
+
 describe('initiative:edit retry handling (WU-1621)', () => {
   it('exports operation-level push retry override', () => {
     expect(INITIATIVE_EDIT_PUSH_RETRY_OVERRIDE).toEqual({

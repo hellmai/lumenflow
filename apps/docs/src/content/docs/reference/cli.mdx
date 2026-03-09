@@ -29,7 +29,7 @@ LumenFlow provides a curated public CLI surface for everyday workflows.
 | Plans               | [`plan:create`](#plancreate), [`plan:edit`](#planedit), [`plan:link`](#planlink), [`plan:promote`](#planpromote)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | Setup & Development | [`backlog:prune`](#backlogprune), [`cloud:connect`](#cloudconnect), [`config:get`](#configget), [`config:set`](#configset), [`file:delete`](#filedelete), [`file:edit`](#fileedit), [`file:read`](#fileread), [`file:write`](#filewrite), [`git:branch`](#gitbranch), [`git:diff`](#gitdiff), [`git:log`](#gitlog), [`git:status`](#gitstatus), [`lumenflow`](#lumenflow), [`lumenflow:commands`](#lumenflowcommands), [`lumenflow:docs-sync`](#lumenflowdocs-sync), [`lumenflow:doctor`](#lumenflowdoctor), [`lumenflow:integrate`](#lumenflowintegrate), [`lumenflow:release`](#lumenflowrelease), [`lumenflow:sync-templates`](#lumenflowsync-templates), [`lumenflow:upgrade`](#lumenflowupgrade) |
 | State Management    | [`state:bootstrap`](#statebootstrap), [`state:cleanup`](#statecleanup), [`state:doctor`](#statedoctor), [`state:emit`](#stateemit)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| WU Lifecycle        | [`approval:list`](#approvallist), [`approval:request`](#approvalrequest), [`approval:review`](#approvalreview), [`wu:block`](#wublock), [`wu:brief`](#wubrief), [`wu:claim`](#wuclaim), [`wu:create`](#wucreate), [`wu:delegate`](#wudelegate), [`wu:done`](#wudone), [`wu:edit`](#wuedit), [`wu:escalate`](#wuescalate), [`wu:prep`](#wuprep), [`wu:recover`](#wurecover), [`wu:release`](#wurelease), [`wu:sandbox`](#wusandbox), [`wu:status`](#wustatus), [`wu:unblock`](#wuunblock), [`wu:validate`](#wuvalidate)                                                                                                                                                                                |
+| WU Lifecycle        | [`approval:list`](#approvallist), [`approval:request`](#approvalrequest), [`approval:review`](#approvalreview), [`wu:block`](#wublock), [`wu:brief`](#wubrief), [`wu:claim`](#wuclaim), [`wu:create`](#wucreate), [`wu:delegate`](#wudelegate), [`wu:done`](#wudone), [`wu:edit`](#wuedit), [`wu:escalate`](#wuescalate), [`wu:prep`](#wuprep), [`wu:recover`](#wurecover), [`wu:release`](#wurelease), [`wu:sandbox`](#wusandbox), [`wu:status`](#wustatus), [`wu:unblock`](#wuunblock), [`wu:validate`](#wuvalidate), [`wu:verify`](#wuverify)                                                                                                                                                      |
 | WU Maintenance      | [`wu:cleanup`](#wucleanup), [`wu:delete`](#wudelete), [`wu:deps`](#wudeps), [`wu:infer-lane`](#wuinfer-lane), [`wu:preflight`](#wupreflight), [`wu:proto`](#wuproto), [`wu:prune`](#wuprune), [`wu:repair`](#wurepair), [`wu:unlock-lane`](#wuunlock-lane)                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## Gates & Quality
@@ -183,22 +183,24 @@ pnpm initiative:edit
 
 **Options:**
 
-| Flag                                   | Description                                                                 | Required |
-| -------------------------------------- | --------------------------------------------------------------------------- | -------- |
-| `-i, --id &lt;initId&gt;`              | Initiative ID (e.g., INIT-001)                                              | No       |
-| `--blocked-by &lt;initId&gt;`          | Initiative ID that blocks this initiative                                   | No       |
-| `--blocked-reason &lt;text&gt;`        | Reason for blocking (required with --blocked-by)                            | No       |
-| `--unblock`                            | Remove blocked_by and blocked_reason fields                                 | No       |
-| `--add-lane &lt;lane&gt;`              | Lane to add (repeatable)                                                    | No       |
-| `--remove-lane &lt;lane&gt;`           | Lane to remove (repeatable)                                                 | No       |
-| `--notes &lt;text&gt;`                 | Note to append to notes array                                               | No       |
-| `--description &lt;text&gt;`           | Replace the initiative description field                                    | No       |
-| `--add-phase &lt;title&gt;`            | Append a new phase with auto-incremented id and pending status (repeatable) | No       |
-| `--add-success-metric &lt;text&gt;`    | Append to success_metrics array, avoiding duplicates (repeatable)           | No       |
-| `--remove-success-metric &lt;text&gt;` | Remove exact match from success_metrics array (repeatable)                  | No       |
-| `--phase-id &lt;id&gt;`                | Phase ID to update (use with --phase-status)                                | No       |
-| `--phase-title &lt;title&gt;`          | Update phase title (use with --phase-id)                                    | No       |
-| `--created &lt;date&gt;`               | Set created date (YYYY-MM-DD format)                                        | No       |
+| Flag                                    | Description                                                                 | Required |
+| --------------------------------------- | --------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;initId&gt;`               | Initiative ID (e.g., INIT-001)                                              | No       |
+| `--blocked-by &lt;initId&gt;`           | Initiative ID that blocks this initiative                                   | No       |
+| `--blocked-reason &lt;text&gt;`         | Reason for blocking (required with --blocked-by)                            | No       |
+| `--unblock`                             | Remove blocked_by and blocked_reason fields                                 | No       |
+| `--add-lane &lt;lane&gt;`               | Lane to add (repeatable)                                                    | No       |
+| `--remove-lane &lt;lane&gt;`            | Lane to remove (repeatable)                                                 | No       |
+| `--notes &lt;text&gt;`                  | Note to append to notes array                                               | No       |
+| `--description &lt;text&gt;`            | Replace the initiative description field                                    | No       |
+| `--add-phase &lt;title&gt;`             | Append a new phase with auto-incremented id and pending status (repeatable) | No       |
+| `--add-success-metric &lt;text&gt;`     | Append to success_metrics array, avoiding duplicates (repeatable)           | No       |
+| `--remove-success-metric &lt;text&gt;`  | Remove exact match from success_metrics array (repeatable)                  | No       |
+| `--phase-id &lt;id&gt;`                 | Phase ID to update (use with --phase-status)                                | No       |
+| `--phase-title &lt;title&gt;`           | Update phase title (use with --phase-id)                                    | No       |
+| `--created &lt;date&gt;`                | Set created date (YYYY-MM-DD format)                                        | No       |
+| `--phase-execution-order &lt;order&gt;` | Phase execution order (sequential, parallel)                                | No       |
+| `--dependency-model &lt;model&gt;`      | Dependency model for the initiative                                         | No       |
 
 ### initiative:list
 
@@ -218,31 +220,17 @@ pnpm initiative:list
 
 ### initiative:plan
 
-Link a plan file to an initiative. When `--plan` points to an external file
-(outside the repo's configured `plansDir`), the file is automatically imported
-into the repo and linked with a repo-relative URI.
+Link plan to initiative
 
 ```bash
-# Import external plan and link to initiative
-pnpm initiative:plan --initiative INIT-001 --plan ~/.claude/plans/my-plan.md
-
-# Link an existing repo plan
-pnpm initiative:plan --initiative INIT-001 --plan docs/plans/my-plan.md
-
-# Create blank template and link
-pnpm initiative:plan --initiative INIT-001 --create
-
-# Import external plan content into a new template file
-pnpm initiative:plan --initiative INIT-001 --create --plan ~/.claude/plans/my-plan.md
+pnpm initiative:plan --initiative <ref>
 ```
 
 **Options:**
 
-| Flag                       | Description                                                          | Required |
-| -------------------------- | -------------------------------------------------------------------- | -------- |
-| `--initiative &lt;ref&gt;` | Parent initiative (INIT-XXX or slug)                                 | Yes      |
-| `--plan &lt;path&gt;`      | Path to plan file (external paths are auto-imported into repo)       | No       |
-| `--create`                 | Create a new plan file (uses `--plan` content if both are specified) | No       |
+| Flag                       | Description                          | Required |
+| -------------------------- | ------------------------------------ | -------- |
+| `--initiative &lt;ref&gt;` | Parent initiative (INIT-XXX or slug) | Yes      |
 
 ### initiative:remove-wu
 
@@ -1301,20 +1289,6 @@ pnpm wu:escalate --id <wuId>
 | `--resolve`                | Resolve the escalation (set resolved_by and resolved_at)                         | No       |
 | `--resolver &lt;email&gt;` | Override resolver email (defaults to git user.email)                             | No       |
 
-### wu:verify
-
-Verify WU completion (stamp, commit, clean tree)
-
-```bash
-pnpm wu:verify --id <wuId>
-```
-
-**Options:**
-
-| Flag              | Description                 | Required |
-| ----------------- | --------------------------- | -------- |
-| `-i, --id <wuId>` | Work Unit ID (e.g., WU-123) | Yes      |
-
 ### wu:prep
 
 Run gates in worktree, prep for wu:done
@@ -1417,6 +1391,20 @@ pnpm wu:validate
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
 | `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID.                                      | No       |
 | `--no-strict`           | Bypass strict validation (skip code_paths/test_paths existence checks, treat warnings as advisory). Logged when used. | No       |
+
+### wu:verify
+
+Verify WU completion (stamp, commit, clean tree)
+
+```bash
+pnpm wu:verify --id <wuId>
+```
+
+**Options:**
+
+| Flag                    | Description                                                                      | Required |
+| ----------------------- | -------------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
 
 ## WU Maintenance
 

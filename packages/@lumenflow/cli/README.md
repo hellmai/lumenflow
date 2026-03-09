@@ -80,6 +80,7 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 | `wu-unblock`       | Unblock WU                                                         |
 | `wu-unlock-lane`   | Unlock stuck lane                                                  |
 | `wu-validate`      | Validate WU spec                                                   |
+| `wu-verify`        | Verify WU completion (stamp, commit, clean tree)                   |
 
 ### Memory & Session
 

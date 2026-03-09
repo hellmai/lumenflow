@@ -87,6 +87,9 @@ type InitiativeEditCliArgs = {
   phaseStatus?: string;
   phaseTitle?: string;
   created?: string;
+  // WU-2354: Phase execution order and dependency model
+  phaseExecutionOrder?: string;
+  dependencyModel?: string;
 };
 
 type WuValidateCliArgs = {
@@ -132,6 +135,9 @@ export function normalizeInitiativeEditCliArgs(
     phase_status: args.phaseStatus,
     phase_title: args.phaseTitle,
     created: args.created,
+    // WU-2354: Phase execution order and dependency model
+    phase_execution_order: args.phaseExecutionOrder,
+    dependency_model: args.dependencyModel,
   };
 }
 

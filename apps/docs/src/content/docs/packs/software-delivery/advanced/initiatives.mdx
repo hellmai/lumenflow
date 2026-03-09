@@ -523,6 +523,19 @@ pnpm initiative:edit --id INIT-001 --add-phase "Phase 4: Documentation"
 pnpm initiative:edit --id INIT-001 --phase-id 1 --phase-status done
 ```
 
+### Set Phase Execution Order
+
+```bash
+pnpm initiative:edit --id INIT-001 --phase-execution-order sequential
+pnpm initiative:edit --id INIT-001 --phase-execution-order parallel
+```
+
+### Set Dependency Model
+
+```bash
+pnpm initiative:edit --id INIT-001 --dependency-model strict-phase-gate
+```
+
 ### Block Initiative
 
 ```bash
