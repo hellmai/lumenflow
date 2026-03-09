@@ -2952,6 +2952,8 @@
 {"type":"checkpoint","wuId":"WU-2348","timestamp":"2026-03-08T23:42:14.887Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2348","timestamp":"2026-03-08T23:47:54.762Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2348.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2349","timestamp":"2026-03-09T09:28:07.262Z","lane":"Framework: CLI WU Commands","title":"initiative:plan should import external plan files into repo plansDir"}
+{"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:28:18.334Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:28:48.450Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"claim","wuId":"WU-2350","timestamp":"2026-03-09T09:33:50.771Z","lane":"Framework: CLI WU Commands","title":"Fix agent-verification path in spawn prompts for consumer repos"}
 {"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:28:18.334Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:28:48.450Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
@@ -2960,8 +2962,11 @@
 {"type":"complete","wuId":"WU-2349","timestamp":"2026-03-09T09:38:45.191Z"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:34:02.411Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:34:26.407Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2349","timestamp":"2026-03-09T09:36:54.795Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2349.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2349","timestamp":"2026-03-09T09:38:45.191Z"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:55:45.570Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2350.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:56:15.655Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2350.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:57:11.460Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2350.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T09:59:51.173Z","note":"[wu:done] force ownership override claimed_session=526c3bbe-5f63-48e1-8386-cf1c12c9ade9 active_session=none","progress":"wu:done ownership override","nextSteps":"pre-existing: 9 @lumenflow/core test failures + 2 worktree template inode-sharing failures; completing orphaned WU"}
 {"type":"checkpoint","wuId":"WU-2350","timestamp":"2026-03-09T10:00:20.713Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2350.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2350","timestamp":"2026-03-09T10:00:49.753Z"}

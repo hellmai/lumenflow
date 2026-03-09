@@ -2,7 +2,7 @@ id: WU-2350
 title: Fix agent-verification path in spawn prompts for consumer repos
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -47,3 +47,6 @@ acceptance:
   - Spawn prompt templates use pnpm wu:verify instead of hardcoded path
   - wu-spawn-prompt-builders.ts uses pnpm wu:verify instead of hardcoded path
   - 'Fallback: if direct path is ever emitted, gate it on file existence check'
+locked: true
+completed_at: 2026-03-09T10:00:45.131Z
+completed: 2026-03-09
