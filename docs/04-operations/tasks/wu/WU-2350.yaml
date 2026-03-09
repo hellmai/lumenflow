@@ -17,12 +17,21 @@ artifacts:
   - .lumenflow/stamps/WU-2350.done
 dependencies: []
 risks: []
-notes: ''
+notes: Replaces hardcoded agent-verification.js path with stable pnpm wu:verify CLI command. 2
+  wu-spawn test failures are pre-existing worktree inode-sharing issue (template loaded from main
+  checkout); pass after merge.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-09T09:33:50.743Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2350
+session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T09:33:50.750Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -34,11 +43,3 @@ acceptance:
   - Spawn prompt templates use pnpm wu:verify instead of hardcoded path
   - wu-spawn-prompt-builders.ts uses pnpm wu:verify instead of hardcoded path
   - 'Fallback: if direct path is ever emitted, gate it on file existence check'
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2350
-claimed_at: 2026-03-09T09:33:50.743Z
-baseline_main_sha: 2fe4c6962ab792618e06349b0c20ca2dbad99e4f
-session_id: 526c3bbe-5f63-48e1-8386-cf1c12c9ade9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-09T09:33:50.750Z
