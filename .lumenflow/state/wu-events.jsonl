@@ -2985,3 +2985,4 @@
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:52:04.210Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:52:12.939Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:59:27.094Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=evidence-only"}
+{"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:59:48.856Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2354.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}

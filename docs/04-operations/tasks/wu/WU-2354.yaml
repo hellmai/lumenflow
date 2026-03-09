@@ -21,12 +21,21 @@ dependencies: []
 spec_refs:
   - lumenflow://inline/extend-existing-initiative-edit-pattern
 risks: []
-notes: ''
+notes: 'Added --phase-execution-order (enum: sequential, parallel) and --dependency-model (free-form
+  string) flags to initiative:edit. Updated Zod schema, shared validators, CLI options, help text,
+  and Starlight docs.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-09T14:51:52.371Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2354
+session_id: ddd1bab6-3bbf-4d40-93b5-5cd693687e4b
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T14:51:52.378Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -42,11 +51,3 @@ acceptance:
   - Invalid values are rejected with helpful error messages
   - CLI reference docs and Starlight docs updated to reflect new flags
   - Unit tests cover both new flags
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2354
-claimed_at: 2026-03-09T14:51:52.371Z
-baseline_main_sha: b5bd4879819476be47f583941ae8eb6c3b026362
-session_id: ddd1bab6-3bbf-4d40-93b5-5cd693687e4b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-09T14:51:52.378Z
