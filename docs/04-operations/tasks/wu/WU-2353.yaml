@@ -1,15 +1,17 @@
 id: WU-2353
-title: Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory patterns
+title: Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory
+  patterns
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-09
 code_paths:
   - packages/@lumenflow/cli/src/lane-health.ts
 tests:
   manual:
-    - Run pnpm lane:health on a project with nested node_modules/ using only root .gitignore - should report zero false positives
+    - Run pnpm lane:health on a project with nested node_modules/ using only root .gitignore -
+      should report zero false positives
   unit:
     - packages/@lumenflow/cli/src/__tests__/lane-health.test.ts
   e2e: []
@@ -26,9 +28,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Lane-health uses fast-glob to enumerate files but does not replicate git's gitignore semantics for unanchored directory patterns. Git treats 'node_modules/' as '**/node_modules/' (recursive match), but fast-glob only matches at the level where the .gitignore lives. This causes false-positive 'uncovered files' for any nested ignored directory (node_modules, vendor, build, dist, __pycache__, .gradle, etc). The fix should normalize unanchored directory patterns by prepending **/ before passing them to fast-glob.
+description: Lane-health uses fast-glob to enumerate files but does not replicate git's gitignore
+  semantics for unanchored directory patterns. Git treats 'node_modules/' as '**/node_modules/'
+  (recursive match), but fast-glob only matches at the level where the .gitignore lives. This causes
+  false-positive 'uncovered files' for any nested ignored directory (node_modules, vendor, build,
+  dist, __pycache__, .gradle, etc). The fix should normalize unanchored directory patterns by
+  prepending **/ before passing them to fast-glob.
 acceptance:
-  - Unanchored directory patterns in .gitignore (e.g. node_modules/, vendor/, __pycache__/) are treated as recursive by lane-health, matching git behavior
+  - Unanchored directory patterns in .gitignore (e.g. node_modules/, vendor/, __pycache__/) are
+    treated as recursive by lane-health, matching git behavior
   - Anchored patterns (starting with /) remain scoped to their .gitignore location
   - Patterns already prefixed with **/ are not double-prefixed
   - Unit tests cover unanchored, anchored, and already-prefixed patterns
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2353
+claimed_at: 2026-03-09T13:19:09.125Z
+baseline_main_sha: fb05e71e42a9c7610557f97200465b5e0dd8fa47
+session_id: 405bfe50-5cd4-4807-bc7d-5eb6931bc78d
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T13:19:09.131Z

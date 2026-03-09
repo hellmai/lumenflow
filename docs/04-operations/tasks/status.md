@@ -5,6 +5,7 @@ _Last updated: 2026-03-09_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2353 — Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory patterns](wu/WU-2353.yaml)
 
 ## Completed
 
