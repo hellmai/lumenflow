@@ -5,7 +5,6 @@ _Last updated: 2026-03-09_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
-- [WU-2349 — initiative:plan should import external plan files into repo plansDir](wu/WU-2349.yaml)
 - [WU-2350 — Fix agent-verification path in spawn prompts for consumer repos](wu/WU-2350.yaml)
 
 ## Completed
@@ -1270,3 +1269,4 @@ _Last updated: 2026-03-09_
 - [WU-2345 — Make config:set worktree-aware: commit to worktree branch when inside one](wu/WU-2345.yaml) — 2026-03-08
 - [WU-2346 — Make withMicroWorktree worktree-aware and lane-health use gitignore exclusions](wu/WU-2346.yaml) — 2026-03-08
 - [WU-2347 — wu:done skip-gates-audit.ndjson creates dirty-state loop](wu/WU-2347.yaml) — 2026-03-08
+- [WU-2349 — initiative:plan should import external plan files into repo plansDir](wu/WU-2349.yaml) — 2026-03-09

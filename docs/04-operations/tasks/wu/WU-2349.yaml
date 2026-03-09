@@ -2,7 +2,7 @@ id: WU-2349
 title: initiative:plan should import external plan files into repo plansDir
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -49,3 +49,6 @@ acceptance:
   - --create with --plan uses file content instead of blank template
   - Existing lumenflow:// URI behaviour preserved when no local file given
   - Internal docs and Starlight docs updated for new behaviour
+locked: true
+completed_at: 2026-03-09T09:38:40.312Z
+completed: 2026-03-09
