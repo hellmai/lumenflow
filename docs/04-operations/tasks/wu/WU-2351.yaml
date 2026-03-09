@@ -2,7 +2,7 @@ id: WU-2351
 title: Fix no-argument gap in destructive git command deny lists
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-09
 code_paths:
@@ -44,3 +44,6 @@ acceptance:
   - No-argument variants added to .claude/settings.json deny list
   - No-argument variants added to settings.json.template
   - lumenflow-cloud .claude/settings.json patched
+locked: true
+completed_at: 2026-03-09T11:46:06.611Z
+completed: 2026-03-09
