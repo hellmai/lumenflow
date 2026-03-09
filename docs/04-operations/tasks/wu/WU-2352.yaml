@@ -20,12 +20,20 @@ artifacts:
   - .lumenflow/stamps/WU-2352.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Added skipGates field to ClaimSessionOwnershipInput; wired through from wu-done.ts args.
+  TDD: 4 new tests covering the skip-gates authorization path.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-09T13:00:28.443Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2352
+session_id: 03c0f52d-da3e-4997-ac55-32fd048d90ad
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-09T13:00:28.451Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +47,3 @@ acceptance:
   - Existing ownership protection still blocks unauthorized cross-session completions when
     --skip-gates is not used
   - Unit tests cover the skip-gates session handoff path
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2352
-claimed_at: 2026-03-09T13:00:28.443Z
-baseline_main_sha: 68c349ae6446655ba4b0a903c4441cec1b2a97a3
-session_id: 03c0f52d-da3e-4997-ac55-32fd048d90ad
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-09T13:00:28.451Z
