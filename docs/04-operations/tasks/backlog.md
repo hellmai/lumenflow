@@ -27,7 +27,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml) — Framework: CLI WU Commands
-- [WU-2352 — Fix session ownership violation when wu:done --skip-gates used after wu:prep pre-existing failure](wu/WU-2352.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1298,6 +1297,7 @@ sections:
 - [WU-2349 — initiative:plan should import external plan files into repo plansDir](wu/WU-2349.yaml)
 - [WU-2350 — Fix agent-verification path in spawn prompts for consumer repos](wu/WU-2350.yaml)
 - [WU-2351 — Fix no-argument gap in destructive git command deny lists](wu/WU-2351.yaml)
+- [WU-2352 — Fix session ownership violation when wu:done --skip-gates used after wu:prep pre-existing failure](wu/WU-2352.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
