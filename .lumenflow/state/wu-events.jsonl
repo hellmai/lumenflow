@@ -2984,3 +2984,4 @@
 {"type":"claim","wuId":"WU-2354","timestamp":"2026-03-09T14:51:52.399Z","lane":"Framework: CLI WU Commands","title":"Add phase_execution_order and dependency_model flags to initiative:edit"}
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:52:04.210Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:52:12.939Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:59:27.094Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=evidence-only"}
