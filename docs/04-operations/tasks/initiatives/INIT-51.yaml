@@ -13,7 +13,7 @@ created: 2026-03-10
 phases:
   - id: 1
     title: 'Phase 1: Runtime and command portability baseline'
-    status: pending
+    status: done
   - id: 2
     title: 'Phase 2: Repo-shape and gate-planning portability'
     status: pending
