@@ -6,10 +6,9 @@ status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
-  - packages/@lumenflow/core/src/docs-layout-presets.ts
   - packages/@lumenflow/core/src/spawn-constraints-generator.ts
   - packages/@lumenflow/core/src/spawn-task-builder.ts
-  - packages/@lumenflow/cli/src/init-templates.ts
+  - packages/@lumenflow/core/src/spawn-strategy.ts
 tests:
   manual:
     - Run pnpm wu:brief --id WU-001 --client claude-code in lumenflow-cloud and verify preamble
