@@ -1,12 +1,12 @@
 id: WU-2372
 title: Enforce command discovery and block CLI output truncation in spawned agents
-lane: 'Framework: CLI Enforcement'
-type: feature
+lane: 'Content: Specs Governance'
+type: documentation
 status: ready
 priority: P2
 created: 2026-03-10
 code_paths:
-  - .claude/hooks/block-bash-file-commands.sh
+  - AGENTS.md
   - .claude/agents/general-purpose.md
   - .claude/agents/test-engineer.md
   - .claude/agents/lumenflow-enforcer.md
@@ -14,13 +14,13 @@ code_paths:
   - .claude/agents/code-reviewer.md
   - .claude/agents/bug-triage.md
   - .claude/agents/lumenflow-doc-sync.md
+  - .windsurf/rules/lumenflow.md
+  - .cursor/rules/lumenflow.md
 tests:
   manual:
-    - Spawn a general-purpose sub-agent on a trivial task and verify it runs pnpm lumenflow:commands
-      before attempting any CLI operation
-    - Verify 'pnpm wu:status --id WU-XXX | head -3' is blocked by the hook with corrective guidance
-    - Verify 'git log | head -5' is still allowed (non-pnpm pipe)
-    - Verify hook suggests 'wu:status' when agent attempts 'wu:show'
+    - Spawn a general-purpose sub-agent and verify it reads AGENTS.md before attempting CLI commands
+    - Review all agent prompts confirm AGENTS.md is in the context loading list
+    - Review .windsurf and .cursor rules confirm command discovery rules are referenced
   unit:
     - .claude/hooks/block-bash-file-commands.test.sh
   e2e: []
@@ -31,14 +31,12 @@ plan: lumenflow://plans/WU-2372-plan.md
 spec_refs:
   - lumenflow://plans/WU-2372-plan.md
 risks: []
-notes: "Root cause analysis from WU-2366 review: spawned agents exhibit three failure modes that
-  hooks and prompts don't prevent. The block-bash-file-commands.sh hook whitelists all piped
-  head/tail (line 246: pipe check exits 0), which means CLI output truncation passes silently. Agent
-  prompts load LUMENFLOW.md context but never enforce running lumenflow:commands as a discovery
-  step. Consider adding a known-commands registry to the hook for typo detection."
+notes: Docs-only WU. AGENTS.md is the vendor-agnostic source of truth and already has the right
+  rules. The gap is that spawned agent prompts skip it. The fix is adding AGENTS.md to every agent's
+  mandatory reading list and inlining the three rules as a reminder.
 requires_review: false
 assigned_to: tom@hellm.ai
-exposure: backend-only
+exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
 requires_cso_approval: false
@@ -46,23 +44,19 @@ requires_cto_approval: false
 requires_design_approval: false
 description: "Context: Spawned sub-agents routinely fail to discover canonical LumenFlow commands
   before attempting them. Observed failures include: (1) using nonexistent commands like 'pnpm
-  wu:show', (2) using blocked shell commands like 'find' despite hook enforcement, (3) truncating
-  authoritative CLI output with 'head'/'tail' pipes (e.g., 'pnpm lumenflow:commands | head -5'),
-  losing critical information. Problem: AGENTS.md already has the three mandatory rules (command
-  discovery, help-first, no truncation) but spawned agent prompts don't reference AGENTS.md or
-  enforce these rules. The block-bash-file-commands.sh hook correctly blocks 'head file' and 'tail
-  file' but allows 'pnpm some-command | head' because piped usage is whitelisted. Solution: (1)
-  Update all vendor-specific agent prompts (.claude/agents/, .windsurf/rules/, .cursor/rules/) to
-  mandate AGENTS.md reading and command discovery before first CLI usage. (2) Add hook enforcement
-  for pnpm pipe truncation in Claude Code hooks (vendor-specific enforcement layer). (3) Add hook
-  detection for common nonexistent command patterns. This follows the existing architecture:
-  AGENTS.md is the vendor-agnostic source of truth, vendor-specific configs reference it, hooks
-  enforce at the tool level."
+  wu:show', (2) truncating authoritative CLI output with 'head'/'tail' pipes, losing critical
+  information. Problem: AGENTS.md already has the three mandatory rules (command discovery,
+  help-first, no truncation) but spawned agent prompts don't reference AGENTS.md or enforce these
+  rules. The general-purpose.md agent reads LUMENFLOW.md and constraints.md but skips AGENTS.md
+  where the command discovery rules live. Solution: Update all vendor-specific agent prompts and
+  rules to (1) mandate reading AGENTS.md as part of automatic context loading, (2) include the three
+  command discovery rules inline or by reference, (3) warn against guessing commands or truncating
+  CLI output. No hook changes — guidance only."
 acceptance:
-  - block-bash-file-commands.sh blocks 'pnpm <cmd> | head' and 'pnpm <cmd> | tail' patterns with
-    guidance to read full output
-  - general-purpose.md agent prompt includes mandatory command discovery step before first CLI usage
-  - All agent prompts in .claude/agents/ include warning against truncating CLI output
-  - Hook provides corrective suggestion when agent attempts known-nonexistent commands (wu:show,
-    wu:list, etc.)
-  - Existing piped head/tail for non-pnpm commands remains allowed
+  - All agent prompts in .claude/agents/ include AGENTS.md in their automatic context loading
+    sequence
+  - All agent prompts include the three command discovery rules (lumenflow:commands first, --help
+    before use, never truncate)
+  - .windsurf/rules/lumenflow.md and .cursor/rules/lumenflow.md reference AGENTS.md command
+    discovery rules
+  - No hook changes - enforcement is guidance-only across all vendor configs
