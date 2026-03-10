@@ -1,0 +1,41 @@
+id: WU-2382
+title: Fix wu:edit comma splitting for free-text repeatable fields
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/cli/src/wu-edit-operations.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-edit-strict.test.ts
+tests:
+  manual:
+    - Run wu:edit with a manual test description containing commas and confirm the YAML stores one intact entry instead of multiple fragments
+    - Run wu:edit with comma-separated code paths or blocked_by input and confirm supported shorthand still expands correctly
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-edit-strict.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2382.done
+dependencies: []
+risks: []
+notes: 'Keep this WU tight per wu-sizing-guide.md: one CLI authoring bug, one implementation file cluster, and regression tests. Do not broaden into general WU authoring refactors.'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 3
+  estimated_tool_calls: 30
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: wu:edit supports repeatable flags for paths, IDs, risks, manual tests, and other WU fields. Problem: applyEdits() currently splits all repeatable field values on commas, which fragments free-text entries like manual test descriptions and risks into multiple YAML items whenever prose contains commas. Solution: limit comma-splitting to path and ID style fields, preserve free-text repeatable fields as literal strings, and add regression coverage so manual test descriptions, risks, and similar prose remain intact while shorthand comma-separated path or dependency input still works.'
+acceptance:
+  - wu:edit preserves free-text repeatable fields such as manual test descriptions and risks as single entries even when the text contains commas
+  - Path and ID style repeatable fields that intentionally support comma-separated shorthand continue to work as before
+  - Regression tests cover both preserved prose fields and supported comma-split path or WU-ID fields
