@@ -66,16 +66,16 @@ sections or client-specific overrides.
 
 ## File Ownership Model
 
-| File | Owner | On Upgrade | User Overrides |
-| --- | --- | --- | --- |
-| `LUMENFLOW.md` | LumenFlow (fully managed) | Force-synced from template | Use `LUMENFLOW.local.md` |
-| `.lumenflow/constraints.md` | LumenFlow (fully managed) | Force-synced from template | — |
-| `AGENTS.md` | Shared (merge-block) | Content between `LUMENFLOW:START`/`END` updated; rest preserved | Edit outside markers |
-| `CLAUDE.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
-| `.cursor/rules/lumenflow.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
-| `.windsurf/rules/lumenflow.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
-| `LUMENFLOW.local.md` | User (never touched) | Skipped entirely | Full ownership |
-| `.lumenflow/templates/` | User (never touched) | Skipped entirely | Full ownership |
+| File                           | Owner                     | On Upgrade                                                      | User Overrides           |
+| ------------------------------ | ------------------------- | --------------------------------------------------------------- | ------------------------ |
+| `LUMENFLOW.md`                 | LumenFlow (fully managed) | Force-synced from template                                      | Use `LUMENFLOW.local.md` |
+| `.lumenflow/constraints.md`    | LumenFlow (fully managed) | Force-synced from template                                      | —                        |
+| `AGENTS.md`                    | Shared (merge-block)      | Content between `LUMENFLOW:START`/`END` updated; rest preserved | Edit outside markers     |
+| `CLAUDE.md`                    | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `.cursor/rules/lumenflow.md`   | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `.windsurf/rules/lumenflow.md` | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `LUMENFLOW.local.md`           | User (never touched)      | Skipped entirely                                                | Full ownership           |
+| `.lumenflow/templates/`        | User (never touched)      | Skipped entirely                                                | Full ownership           |
 
 <Aside type="note" title="LUMENFLOW.local.md">
   Create `LUMENFLOW.local.md` for project-specific workflow additions. Agents read it after
@@ -91,9 +91,9 @@ sections or client-specific overrides.
 - Onboarding documentation and vendor assets (skills, hooks)
 
 <Aside type="caution" title="Standalone docs:sync">
-  Running `pnpm docs:sync` standalone is only needed when you want to refresh docs
-  without upgrading packages (e.g., after manually editing templates). For normal upgrades,
-  `pnpm lumenflow:upgrade --latest` handles everything.
+  Running `pnpm docs:sync` standalone is only needed when you want to refresh docs without upgrading
+  packages (e.g., after manually editing templates). For normal upgrades, `pnpm lumenflow:upgrade
+  --latest` handles everything.
 </Aside>
 
 ## Config Contract

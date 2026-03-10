@@ -222,16 +222,16 @@ The `--merge` flag uses bounded markers (`LUMENFLOW:START`/`END`) to safely inse
 
 ### File Ownership Model
 
-| File | Owner | On Upgrade | User Overrides |
-| --- | --- | --- | --- |
-| `LUMENFLOW.md` | LumenFlow (fully managed) | Force-synced from template | Use `LUMENFLOW.local.md` |
-| `.lumenflow/constraints.md` | LumenFlow (fully managed) | Force-synced from template | — |
-| `AGENTS.md` | Shared (merge-block) | Content between `LUMENFLOW:START`/`END` updated; rest preserved | Edit outside markers |
-| `CLAUDE.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
-| `.cursor/rules/lumenflow.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
-| `.windsurf/rules/lumenflow.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
-| `LUMENFLOW.local.md` | User (never touched) | Skipped entirely | Full ownership |
-| `.lumenflow/templates/` | User (never touched) | Skipped entirely | Full ownership |
+| File                           | Owner                     | On Upgrade                                                      | User Overrides           |
+| ------------------------------ | ------------------------- | --------------------------------------------------------------- | ------------------------ |
+| `LUMENFLOW.md`                 | LumenFlow (fully managed) | Force-synced from template                                      | Use `LUMENFLOW.local.md` |
+| `.lumenflow/constraints.md`    | LumenFlow (fully managed) | Force-synced from template                                      | —                        |
+| `AGENTS.md`                    | Shared (merge-block)      | Content between `LUMENFLOW:START`/`END` updated; rest preserved | Edit outside markers     |
+| `CLAUDE.md`                    | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `.cursor/rules/lumenflow.md`   | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `.windsurf/rules/lumenflow.md` | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `LUMENFLOW.local.md`           | User (never touched)      | Skipped entirely                                                | Full ownership           |
+| `.lumenflow/templates/`        | User (never touched)      | Skipped entirely                                                | Full ownership           |
 
 > For project-specific workflow additions, create `LUMENFLOW.local.md` (never overwritten).
 > If `LUMENFLOW.local.md` exists, agents should read it after this file.

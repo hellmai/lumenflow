@@ -56,25 +56,25 @@ Run `--help` first, then run the real command with explicit flags.
 
 **For this monorepo (development):**
 
-| Command                                            | Description                                                    |
-| -------------------------------------------------- | -------------------------------------------------------------- |
-| `pnpm setup`                                       | Install deps and build CLI (first time)                        |
-| `pnpm bootstrap`                                   | Build CLI with dependency closure (worktree-safe)              |
-| `pnpm build`                                       | Build all packages                                             |
-| `pnpm build:dist`                                  | Build distribution packages                                    |
-| `pnpm dev`                                         | Start development mode                                         |
-| `pnpm clean`                                       | Clean build artifacts and caches                               |
-| `pnpm pack:all`                                    | Pack all packages for distribution                             |
-| `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                |
-| `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                       |
-| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/04-operations`)                |
+| Command                                            | Description                                                                             |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm setup`                                       | Install deps and build CLI (first time)                                                 |
+| `pnpm bootstrap`                                   | Build CLI with dependency closure (worktree-safe)                                       |
+| `pnpm build`                                       | Build all packages                                                                      |
+| `pnpm build:dist`                                  | Build distribution packages                                                             |
+| `pnpm dev`                                         | Start development mode                                                                  |
+| `pnpm clean`                                       | Clean build artifacts and caches                                                        |
+| `pnpm pack:all`                                    | Pack all packages for distribution                                                      |
+| `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                                         |
+| `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
+| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/04-operations`)                                         |
 | `pnpm docs:sync`                                   | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
-| `pnpm sync:templates`                              | Sync repo docs into bundled templates                          |
-| `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                     |
-| `pnpm lumenflow:doctor`                            | Diagnose LumenFlow configuration                               |
-| `pnpm lumenflow:integrate`                         | Generate enforcement hooks for client                          |
-| `pnpm cloud:connect`                               | Configure cloud control-plane access                           |
-| `npx lumenflow commands`                           | List all available CLI commands                                |
+| `pnpm sync:templates`                              | Sync repo docs into bundled templates                                                   |
+| `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                                              |
+| `pnpm lumenflow:doctor`                            | Diagnose LumenFlow configuration                                                        |
+| `pnpm lumenflow:integrate`                         | Generate enforcement hooks for client                                                   |
+| `pnpm cloud:connect`                               | Configure cloud control-plane access                                                    |
+| `npx lumenflow commands`                           | List all available CLI commands                                                         |
 
 **For external projects (end users):**
 
@@ -98,16 +98,16 @@ pnpm exec lumenflow init --client all      # All clients
 These commands use **micro-worktree isolation** internally — they handle their own
 commit and push atomically. Do NOT wrap them in a WU or use raw `pnpm update`/`git commit`.
 
-| Command                                           | Description                                      |
-| ------------------------------------------------- | ------------------------------------------------ |
-| `pnpm lumenflow:upgrade --version 3.5.0`          | Upgrade all 7 @lumenflow/\* packages             |
-| `pnpm lumenflow:upgrade --latest`                 | Upgrade to latest version                        |
-| `pnpm lumenflow:upgrade --latest --dry-run`       | Preview upgrade without executing                |
-| `pnpm config:set --key <dotpath> --value <value>` | Set workspace.yaml config (Zod-validated)        |
-| `pnpm config:get --key <dotpath>`                 | Read workspace.yaml config                       |
-| `pnpm cloud:connect`                              | Configure cloud control-plane access             |
+| Command                                           | Description                                                           |
+| ------------------------------------------------- | --------------------------------------------------------------------- |
+| `pnpm lumenflow:upgrade --version 3.5.0`          | Upgrade all 7 @lumenflow/\* packages                                  |
+| `pnpm lumenflow:upgrade --latest`                 | Upgrade to latest version                                             |
+| `pnpm lumenflow:upgrade --latest --dry-run`       | Preview upgrade without executing                                     |
+| `pnpm config:set --key <dotpath> --value <value>` | Set workspace.yaml config (Zod-validated)                             |
+| `pnpm config:get --key <dotpath>`                 | Read workspace.yaml config                                            |
+| `pnpm cloud:connect`                              | Configure cloud control-plane access                                  |
 | `pnpm docs:sync`                                  | Refresh managed docs, onboarding docs, and vendor assets (standalone) |
-| `pnpm sync:templates`                             | Sync repo docs into bundled templates            |
+| `pnpm sync:templates`                             | Sync repo docs into bundled templates                                 |
 
 **Key principle:** If a LumenFlow CLI command exists for the operation, use it instead of
 raw pnpm/git. These tooling commands commit directly to main via micro-worktree — no dirty
@@ -118,6 +118,7 @@ need to run `docs:sync` separately after upgrading. Standalone `docs:sync` is on
 you want to refresh docs without upgrading packages (e.g., after manually editing templates).
 
 `docs:sync` handles two categories of files:
+
 - **Managed docs** (`LUMENFLOW.md`, `.lumenflow/constraints.md`) — always force-synced from templates
 - **Bootstrap docs** (`AGENTS.md`, vendor files) — merge-block update only (user content outside `LUMENFLOW:START`/`END` markers is preserved)
 
