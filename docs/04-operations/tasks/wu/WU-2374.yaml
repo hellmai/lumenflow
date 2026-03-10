@@ -1,6 +1,6 @@
 id: WU-2374
 title: 'Fix spawn prompt parity: stale guide path and verification drift'
-lane: 'Framework: CLI WU Commands'
+lane: 'Framework: Core'
 type: bug
 status: ready
 priority: P1
