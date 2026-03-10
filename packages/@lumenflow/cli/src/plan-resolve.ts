@@ -87,29 +87,20 @@ export interface ResolvePlanOptions {
  */
 export function resolvePlanFile(opts: ResolvePlanOptions): string {
   const { id, file, baseDir } = opts;
-  const plansDir = baseDir
-    ? join(baseDir, WU_PATHS.PLANS_DIR())
-    : WU_PATHS.PLANS_DIR();
+  const plansDir = baseDir ? join(baseDir, WU_PATHS.PLANS_DIR()) : WU_PATHS.PLANS_DIR();
 
   // 1. Explicit --file flag
   if (file) {
-    const filePath = file.startsWith('/')
-      ? file
-      : join(plansDir, file);
+    const filePath = file.startsWith('/') ? file : join(plansDir, file);
     if (!existsSync(filePath)) {
-      die(
-        `Plan file not found: ${filePath}\n\n` +
-          `Check the --file path and try again.`,
-      );
+      die(`Plan file not found: ${filePath}\n\n` + `Check the --file path and try again.`);
     }
     return filePath;
   }
 
   // 2. Initiative related_plan (for INIT-XX IDs)
   if (INIT_ID_PATTERN.test(id)) {
-    const initPath = baseDir
-      ? join(baseDir, WU_PATHS.INITIATIVE(id))
-      : WU_PATHS.INITIATIVE(id);
+    const initPath = baseDir ? join(baseDir, WU_PATHS.INITIATIVE(id)) : WU_PATHS.INITIATIVE(id);
     const relatedPlan = readInitiativeRelatedPlan(initPath);
     if (relatedPlan) {
       const filename = parseRelatedPlanUri(relatedPlan) ?? relatedPlan;
