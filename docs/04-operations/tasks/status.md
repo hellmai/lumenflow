@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2385 — Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review](wu/WU-2385.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1305,3 +1305,4 @@ _Last updated: 2026-03-10_
 - [WU-2383 — upgrade force-overwrites user docs; init skip leaves LumenFlow content uninjected](wu/WU-2383.yaml) — 2026-03-10
 - [WU-2384 — Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs lifecycle](wu/WU-2384.yaml) — 2026-03-10
 - [WU-2386 — wu:edit blocks metadata-only edits on dirty worktrees](wu/WU-2386.yaml) — 2026-03-10
+- [WU-2385 — Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review](wu/WU-2385.yaml) — 2026-03-10

@@ -2,7 +2,7 @@ id: WU-2385
 title: Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -80,3 +80,6 @@ acceptance:
     run docs:sync --force after a normal upgrade when upgrade already syncs docs internally
   - 'tests cover the reviewed regressions: existing-repo init for managed docs, reserved-skill
     behavior on init/upgrade, vendor bootstrap refresh on upgrade, and non-Claude upgrade behavior'
+locked: true
+completed_at: 2026-03-10T21:27:37.931Z
+completed: 2026-03-10
