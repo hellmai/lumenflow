@@ -12,6 +12,7 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 
 import { scaffoldProject, type ScaffoldOptions } from '../init.js';
+import { DEFAULT_LANE_DEFINITIONS } from '../init-templates.js';
 
 // Constants to avoid duplicate strings (sonarjs/no-duplicate-string)
 const ARC42_DOCS_STRUCTURE = 'arc42' as const;
@@ -167,6 +168,22 @@ describe('template portability', () => {
 
       // Should have the portable placeholder
       expect(lumenflowContent).toContain('<project-root>');
+    });
+  });
+
+  describe('repo-shape guidance defaults', () => {
+    it('uses a generic UI lane instead of a web-only default lane', () => {
+      const laneNames = DEFAULT_LANE_DEFINITIONS.map((lane) => lane.name);
+
+      expect(laneNames).toContain('Experience: UI');
+      expect(laneNames).not.toContain('Experience: Web');
+    });
+
+    it('does not assume apps/web in default lane code paths', () => {
+      const uiLane = DEFAULT_LANE_DEFINITIONS.find((lane) => lane.name === 'Experience: UI');
+
+      expect(uiLane).toBeDefined();
+      expect(uiLane?.code_paths).not.toContain('apps/web/**');
     });
   });
 });

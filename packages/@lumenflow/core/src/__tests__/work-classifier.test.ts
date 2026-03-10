@@ -98,6 +98,19 @@ describe('classifyWork', () => {
       const doc: MinimalWuDoc = { code_paths: ['app/dashboard/page.tsx'] };
       const result = classifyWork(doc);
 
+      expect(result.domain).toBe(WORK_DOMAINS.BACKEND);
+      expect(result.confidence).toBe(0);
+    });
+
+    it('detects app page files as ui only when config adds app-router patterns', () => {
+      const doc: MinimalWuDoc = { code_paths: ['app/dashboard/page.tsx'] };
+      const config: WorkClassificationConfig = {
+        ui: {
+          code_path_patterns: ['**/app/**/page.tsx'],
+        },
+      };
+      const result = classifyWork(doc, config);
+
       expect(result.domain).toBe(WORK_DOMAINS.UI);
     });
 
@@ -105,7 +118,8 @@ describe('classifyWork', () => {
       const doc: MinimalWuDoc = { code_paths: ['app/layout.tsx'] };
       const result = classifyWork(doc);
 
-      expect(result.domain).toBe(WORK_DOMAINS.UI);
+      expect(result.domain).toBe(WORK_DOMAINS.BACKEND);
+      expect(result.confidence).toBe(0);
     });
 
     it('detects module CSS files as ui domain', () => {

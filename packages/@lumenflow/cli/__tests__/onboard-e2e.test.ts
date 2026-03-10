@@ -366,6 +366,26 @@ describe('lumenflow onboard (WU-1927)', () => {
       expect(typeof result.instruction).toBe('string');
       expect(result.instruction.length).toBeGreaterThan(0);
     });
+
+    it('does not mention apps/web startup when no dashboard is present', async () => {
+      const { launchDashboard } = await import('../src/onboard.js');
+
+      const result = await launchDashboard(tempDir, { dryRun: true });
+
+      expect(result.instruction).not.toContain('apps/web');
+      expect(result.instruction).not.toContain('pnpm dev');
+      expect(result.instruction).toContain('No dashboard detected');
+    });
+
+    it('mentions apps/web startup only when a dashboard is present', async () => {
+      const { launchDashboard } = await import('../src/onboard.js');
+      fs.mkdirSync(path.join(tempDir, 'apps', 'web'), { recursive: true });
+
+      const result = await launchDashboard(tempDir, { dryRun: true });
+
+      expect(result.instruction).toContain('apps/web');
+      expect(result.instruction).toContain('pnpm dev');
+    });
   });
 
   describe('runOnboard (full orchestration)', () => {

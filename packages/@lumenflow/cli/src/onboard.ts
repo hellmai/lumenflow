@@ -7,7 +7,7 @@
  *
  * Target: produces a working workspace in 60 seconds.
  * Detects env, chooses domain, generates workspace.yaml,
- * installs pack, launches dashboard, first task walkthrough.
+ * installs pack, checks optional dashboard guidance, first task walkthrough.
  *
  * Uses @clack/prompts for interactive UI.
  *
@@ -688,11 +688,16 @@ export interface LaunchDashboardResult {
   instruction: string;
 }
 
+const DASHBOARD_WORKTREE_PATH = path.join('apps', 'web');
+const DASHBOARD_START_COMMAND = 'Run "pnpm dev" in apps/web/ to start the dashboard at http://localhost:3000';
+const NO_DASHBOARD_GUIDANCE =
+  'No dashboard detected in this workspace. Continue with the CLI workflow until a dashboard surface is added.';
+
 /**
- * AC5: Launch the web dashboard.
+ * AC5: Return dashboard guidance when a dashboard surface exists.
  *
- * The dashboard (apps/web/) may not be available yet.
- * Returns instructions for how to start it.
+ * The dashboard is optional. Only mention startup instructions when the
+ * workspace shape indicates a dashboard surface is present.
  *
  * @param targetDir - Workspace root directory
  * @param options - Launch options
@@ -702,23 +707,19 @@ export async function launchDashboard(
   targetDir: string,
   options: LaunchDashboardOptions = {},
 ): Promise<LaunchDashboardResult> {
-  // Check if apps/web exists (indicates dashboard is available)
-  const dashboardDir = path.join(targetDir, 'apps', 'web');
+  const dashboardDir = path.join(targetDir, DASHBOARD_WORKTREE_PATH);
   const hasDashboard = fs.existsSync(dashboardDir);
 
-  if (options.dryRun || !hasDashboard) {
+  if (!hasDashboard) {
     return {
       launched: false,
-      instruction: hasDashboard
-        ? 'Run "pnpm dev" in apps/web/ to start the dashboard at http://localhost:3000'
-        : 'Dashboard not yet installed. Run "pnpm add @lumenflow/dashboard" to add it, then "pnpm dev" to start.',
+      instruction: NO_DASHBOARD_GUIDANCE,
     };
   }
 
-  // In production, would start the dev server
   return {
     launched: false,
-    instruction: 'Run "pnpm dev" in apps/web/ to start the dashboard at http://localhost:3000',
+    instruction: DASHBOARD_START_COMMAND,
   };
 }
 
@@ -753,7 +754,7 @@ export interface OnboardResult {
  * 2. Choose domain (interactive or --domain flag)
  * 3. Generate workspace.yaml
  * 4. Install domain pack
- * 5. Launch dashboard
+ * 5. Return optional dashboard guidance
  *
  * @param options - Onboard options
  * @returns Onboard result
@@ -826,7 +827,7 @@ export async function runOnboard(options: OnboardOptions): Promise<OnboardResult
     result.packInstalled = false;
   }
 
-  // Step 5: Launch dashboard (AC5)
+  // Step 5: Return optional dashboard guidance (AC5)
   if (!skipDashboard) {
     const dashResult = await launchDashboard(targetDir, { dryRun: true });
     result.dashboardLaunched = dashResult.launched;
@@ -932,7 +933,7 @@ async function _runInteractiveOnboard(targetDir: string, force: boolean): Promis
     }
   }
 
-  // Step 6: Dashboard (AC5)
+  // Step 6: Optional dashboard guidance (AC5)
   const dashResult = await launchDashboard(targetDir);
 
   // Final summary

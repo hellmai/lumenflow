@@ -21,7 +21,7 @@ import {
   validateInitScripts,
   validateWorkspaceLaneScaffold,
 } from '../onboarding-smoke-test.js';
-import { connectWorkspaceToCloud } from '../onboard.js';
+import { connectWorkspaceToCloud, launchDashboard } from '../onboard.js';
 import {
   WorkspaceControlPlaneConfigSchema as KernelSchema,
   WorkspaceControlPlaneAuthConfigSchema as KernelAuthSchema,
@@ -366,6 +366,16 @@ describe('onboarding smoke-test gate (WU-1315)', () => {
 
       expect(kernelResult.success).toBe(false);
       expect(coreResult.success).toBe(false);
+    });
+  });
+
+  describe('dashboard portability guidance', () => {
+    it('does not advertise dashboard startup for CLI-only repos', async () => {
+      const result = await launchDashboard(tempDir, { dryRun: true });
+
+      expect(result.instruction).toContain('No dashboard detected');
+      expect(result.instruction).not.toContain('apps/web');
+      expect(result.instruction).not.toContain('pnpm dev');
     });
   });
 });

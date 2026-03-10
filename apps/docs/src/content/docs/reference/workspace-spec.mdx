@@ -13,6 +13,28 @@ The workspace spec (`workspace.yaml`) is the kernel-level configuration file tha
   software-delivery tooling reads the `software_delivery` block.
 </Aside>
 
+## Portability Baseline
+
+LumenFlow is designed to work across multiple consumer repo shapes, but the portability contract is explicit:
+
+- LumenFlow remains a Node-distributed CLI.
+- Consumer repos do not need to be Next.js apps or pnpm monorepos.
+- Framework-specific surfaces such as `apps/web` dashboards are optional and should only be referenced when present or configured.
+
+Current baseline archetypes for generic lifecycle support:
+
+| Archetype | Expected shape | Generic lifecycle expectation |
+| --------- | -------------- | ----------------------------- |
+| Single-package service repo | `src/**`, no `apps/` or `packages/` | `init`, `wu:create`, `wu:brief`, `wu:prep`, and `wu:done` work without monorepo-specific guidance |
+| Monorepo without web app | multiple packages or services, no `apps/web` | gate planning and onboarding do not instruct the user to start a dashboard |
+| Backend/docs-oriented repo | service code plus docs/content paths | work classification does not infer UI-only guidance from framework-like filenames alone |
+
+Smoke verification for this baseline should confirm:
+
+1. onboarding does not advertise dashboard startup when no dashboard surface exists
+2. classifier defaults stay backend/docs/infra-oriented unless generic UI signals or workspace config justify UI guidance
+3. docs and generated workflow guidance describe these boundaries explicitly
+
 ## Full Schema
 
 ```yaml

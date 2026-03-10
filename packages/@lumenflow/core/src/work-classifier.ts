@@ -95,26 +95,13 @@ export const DEFAULT_UI_CODE_PATH_PATTERNS: readonly string[] = Object.freeze([
   '**/*.module.css',
   '**/*.module.scss',
   // Styled components
-  '**/*.styled.ts',
-  '**/*.styled.tsx',
-  '**/*.styled.js',
-  '**/*.styled.jsx',
+ '**/*.styled.ts',
+ '**/*.styled.tsx',
+ '**/*.styled.js',
+ '**/*.styled.jsx',
   // Component / page directories
   '**/components/**',
   '**/pages/**',
-  // Next.js / app router conventions
-  '**/app/**/page.tsx',
-  '**/app/**/page.ts',
-  '**/app/**/page.jsx',
-  '**/app/**/page.js',
-  '**/app/**/layout.tsx',
-  '**/app/**/layout.ts',
-  '**/app/**/layout.jsx',
-  '**/app/**/layout.js',
-  '**/app/page.tsx',
-  '**/app/page.ts',
-  '**/app/layout.tsx',
-  '**/app/layout.ts',
 ]);
 
 /**

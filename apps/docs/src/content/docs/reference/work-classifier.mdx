@@ -1,9 +1,11 @@
 ---
 title: Work Classifier
-description: Signal-based work domain detection for code-path-aware UI/backend/docs classification.
+description: Signal-based work domain detection for portability-aware UI/backend/docs classification.
 ---
 
 The work classifier determines the domain of a Work Unit using weighted signals from code paths, lane names, WU type, and description keywords. It returns abstract capability tags and test methodology hints for vendor-agnostic integration.
+
+Framework-specific file conventions are treated as optional signals, not baseline truth. LumenFlow ships generic UI patterns such as stylesheets, `components/`, and `pages/`; if your repo relies on framework-specific directories such as Next.js app-router files, declare them through `methodology.work_classification.ui.code_path_patterns`.
 
 ## API
 
@@ -102,7 +104,8 @@ Built-in glob patterns for detecting UI work via code paths:
 - `**/*.module.css`, `**/*.module.scss`
 - `**/*.styled.ts`, `**/*.styled.tsx`
 - `**/components/**`, `**/pages/**`
-- `**/app/**/page.tsx`, `**/app/**/layout.tsx` (and variants)
+
+Next.js app-router patterns are intentionally not built into the default list. Add them via config when a workspace actually uses them.
 
 ### `DEFAULT_UI_LANE_HINTS`
 
@@ -132,6 +135,8 @@ methodology:
       code_path_patterns:
         - 'src/widgets/*.tsx'
         - 'src/views/**'
+        - 'app/**/page.tsx'
+        - 'app/**/layout.tsx'
       lane_hints:
         - 'Design'
         - 'Visual'
@@ -203,6 +208,15 @@ The classifier also feeds prompt-template conditions such as `work.domain` and
 The constraints block's TDD CHECKPOINT is omitted when work is classified as UI domain or methodology is `none`.
 
 ## Examples
+
+### Backend-only repo with Next-style filenames but no configured UI signals
+
+```typescript
+classifyWork({
+  code_paths: ['app/dashboard/page.tsx'],
+});
+// domain: 'backend', confidence: 0
+```
 
 ### CSS in a non-Experience lane
 

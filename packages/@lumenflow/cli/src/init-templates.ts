@@ -33,9 +33,9 @@ export const DEFAULT_LANE_DEFINITIONS = [
     code_paths: ['packages/**/cli/**', 'src/cli/**', 'bin/**'],
   },
   {
-    name: 'Experience: Web',
+    name: 'Experience: UI',
     wip_limit: 1,
-    code_paths: ['apps/web/**', 'web/**', 'src/components/**', 'src/pages/**', 'src/app/**'],
+    code_paths: ['ui/**', 'frontend/**', 'web/**', 'src/components/**', 'src/pages/**'],
   },
   {
     name: 'Operations: Infrastructure',
