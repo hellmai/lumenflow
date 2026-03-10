@@ -2,7 +2,7 @@ id: WU-2371
 title: Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -89,3 +89,6 @@ acceptance:
   - checkDocsStaleness returns false for docs synced yesterday (date-invariant comparison)
   - pnpm docs:sync --help output matches public-manifest.ts description
   - All relative links in .claude/CLAUDE.md resolve correctly from the .claude/ directory
+locked: true
+completed_at: 2026-03-10T13:03:09.085Z
+completed: 2026-03-10
