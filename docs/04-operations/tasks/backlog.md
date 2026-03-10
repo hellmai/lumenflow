@@ -27,7 +27,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2372 — Enforce command discovery and block CLI output truncation in spawned agents](wu/WU-2372.yaml) — Content: Specs Governance
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1318,6 +1318,7 @@ sections:
 - [WU-2369 — Add --replace-test-paths flags to wu:edit](wu/WU-2369.yaml)
 - [WU-2371 — Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links](wu/WU-2371.yaml)
 - [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml)
+- [WU-2372 — Enforce command discovery and block CLI output truncation in spawned agents](wu/WU-2372.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

@@ -2,7 +2,7 @@ id: WU-2372
 title: Enforce command discovery and block CLI output truncation in spawned agents
 lane: 'Content: Specs Governance'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -68,3 +68,6 @@ acceptance:
   - .windsurf/rules/lumenflow.md and .cursor/rules/lumenflow.md reference AGENTS.md command
     discovery rules
   - No hook changes - enforcement is guidance-only across all vendor configs
+locked: true
+completed_at: 2026-03-10T13:13:28.047Z
+completed: 2026-03-10
