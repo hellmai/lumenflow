@@ -1,0 +1,32 @@
+id: INIT-50
+slug: spawn-portability-baseline
+title: Spawn Pipeline Portability Baseline
+description: 'Establish a portable spawn/orchestration baseline for LumenFlow by eliminating
+  consumer-broken prompt references, unifying verification instructions, and making initiative
+  orchestration emit client-capability-appropriate output instead of Claude-only XML. Keep scope
+  intentionally tight: land spawn/orchestration vendor portability first, then make a single
+  explicit go/no-go decision on broader tech-stack portability instead of scattering ad hoc WUs.'
+status: draft
+priority: P1
+owner: 'Framework: CLI'
+created: 2026-03-10
+phases:
+  - id: 1
+    title: 'Phase 1: Spawn prompt parity and portable references'
+    status: pending
+  - id: 2
+    title: 'Phase 2: Client-capability-aware orchestration output'
+    status: pending
+  - id: 3
+    title: 'Phase 3: Decide broader tech-stack portability cut-line'
+    status: pending
+success_metrics:
+  - Consumer-project spawn prompts reference only docs that exist after init/docs:sync and use pnpm
+    wu:verify.
+  - orchestrate:initiative emits usable client-specific output for Claude, Codex, and Gemini instead
+    of unconditional Claude XML.
+  - No remaining hardcoded monorepo verification path or unconditional claude-code orchestration
+    strategy exists in the spawn pipeline.
+  - Broader pnpm/monorepo/web portability debt is captured as one explicit next initiative or
+    cut-line, not fragmented one-off WUs.
+labels: []
