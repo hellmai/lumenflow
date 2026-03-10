@@ -12,12 +12,12 @@
 
 Before claiming a WU, estimate its "weight" using these heuristics.
 
-| Complexity    | Files | Tool Calls | Context Budget | Strategy                                     |
-| :------------ | :---- | :--------- | :------------- | :------------------------------------------- |
-| **Simple**    | <20   | <50        | <30%           | **Single Session** (Tier 2 Context)          |
-| **Medium**    | 20-50 | 50-100     | 30-50%         | **Checkpoint-Resume** (Standard Handoff)     |
-| **Complex**   | 50+   | 100+       | >50%           | **Orchestrator-Worker** OR **Decomposition** |
-| **Oversized** | 100+  | 200+       | —              | **MUST Split** (See Patterns below)          |
+| Complexity    | Files | Tool Calls | Context Budget | Strategy                                                                                                    |
+| :------------ | :---- | :--------- | :------------- | :---------------------------------------------------------------------------------------------------------- |
+| **Simple**    | <20   | <50        | <30%           | **Single Session** (Tier 2 Context)                                                                         |
+| **Medium**    | 20-50 | 50-100     | 30-50%         | **Checkpoint-Resume** (Standard Handoff)                                                                    |
+| **Complex**   | 50+   | 100+       | >50%           | **Orchestrator-Worker** or **Checkpoint-Resume**; split only if non-atomic                                  |
+| **Oversized** | 100+  | 200+       | —              | **Re-check cohesion**; split only when the work cannot land as one coherent outcome or no exception applies |
 
 **These thresholds are mandatory strategy triggers.** They exist to prevent context exhaustion and rule loss (WU-1215 failure: 80k tokens consumed on analysis alone, zero implementation). They do **not** mean every Medium or Complex WU should be broken into multiple smaller WUs. Agents operate in context windows and tool calls, not clock time.
 
@@ -46,11 +46,19 @@ Split a WU only when one of these is true:
 - A risk-reduction pattern is needed, such as tracer bullet or feature flag
 - The work no longer has a clean stopping point and keeps widening during execution
 
+**Required question before splitting:** Can these parts ship, review, and roll back independently? If no, keep one WU and choose a better execution strategy.
+
 **Examples that should usually stay one WU:**
 
 - Add one API endpoint plus its tests and docs
 - Implement one dashboard card plus the backend query it depends on in the same lane
 - Mechanical import or config rewrites across many files when every change is uniform
+
+**Anti-patterns that should usually stay one WU:**
+
+- "Endpoint first, tests second, docs third" for one API change
+- "Backend WU" and "frontend WU" when neither is independently shippable
+- "Refactor step 1", "refactor step 2", and "refactor step 3" for one atomic fix
 
 ### 1.1 Documentation-Only Exception
 
@@ -254,7 +262,7 @@ Strict mode is intended for teams that want to enforce sizing discipline before 
 
 ## 2. Strategy Decision Tree
 
-Use this logic to select your approach. If `git status` ever shows >20 modified files, STOP and re-evaluate cohesion and strategy. Do not auto-split without checking the exceptions and cohesion rule first.
+Use this logic to select your approach. If `git status` ever shows >20 modified files, STOP and re-evaluate cohesion and strategy. Do not auto-split on file count alone. First check the cohesion rule, the required ship/review/rollback question, and the documented exceptions.
 
 ```
 ┌─────────────────────────┐
@@ -304,7 +312,7 @@ Use this logic to select your approach. If `git status` ever shows >20 modified 
 
 ## 3. Splitting Patterns (Decomposition)
 
-When a WU is Oversized or Complex (Non-Atomic), split it using one of these approved patterns.
+Only use these patterns after you have confirmed the work is no longer one coherent, independently reviewable outcome. Complex does not mean "automatically decompose."
 
 ### Pattern A: The Tracer Bullet (Risk Reduction)
 
@@ -400,12 +408,12 @@ If you hit ANY of these triggers during a session, you MUST perform a Standard S
 
 **When triggers fire:**
 
-1. Update WU YAML `notes` field with progress, decisions, next steps
-2. Commit work to lane branch (in worktree)
-3. Push lane branch to origin
-4. Use `/clear` command
-5. Load Tier-1 context only (~500 tokens)
-6. Resume from documented checkpoint
+1. Update WU YAML `notes` field with progress, decisions, and next steps
+2. Run `pnpm mem:checkpoint --wu WU-XXX`
+3. Commit work to the lane branch (in the worktree)
+4. Push the lane branch to origin
+5. Generate a fresh handoff with `pnpm wu:brief --id WU-XXX --client <client>`
+6. Resume fresh from the documented checkpoint
 
 **Deviation protocol:** If a trigger fires but you believe an exception applies, check section 1.1 (Documentation-Only Exception) or section 1.2 (Shallow Multi-File Exception). If your WU qualifies:
 
@@ -502,6 +510,8 @@ pnpm wu:brief --id WU-XXX --client <client>
 - WU-2: Extract orchestration logic + tests (~40 tool calls)
 - WU-3: Final integration + cleanup (~30 tool calls)
 
+This is a case study in genuinely non-atomic work. Do not generalize it into "multi-step work should be split." Most endpoint + tests + docs changes remain one WU.
+
 ---
 
 ## 8. Related Documentation
@@ -516,13 +526,14 @@ pnpm wu:brief --id WU-XXX --client <client>
 
 ---
 
-**Version:** 1.3 (2026-02-25)
-**Last Updated:** 2026-02-25
+**Version:** 1.4 (2026-03-10)
+**Last Updated:** 2026-03-10
 **Contributors:** Claude (research), Codex (pragmatic framing), Gemini (trigger enforcement)
 
 **Changelog:**
 
 - v1.3 (2026-02-25): Added sizing contract section (1.4) documenting tooling-backed enforcement via `sizing_estimate` metadata, advisory warnings in `wu:create`, and `--strict-sizing` mode in `wu:brief` (WU-2141, WU-2143).
+- v1.4 (2026-03-10): Tightened anti-fragmentation guidance. Complex and oversized heuristics now force a cohesion re-check before decomposition, added explicit anti-patterns for backend/tests/docs micro-splitting, and replaced `/clear`-centric recovery advice with checkpoint + `wu:brief` handoff guidance.
 - v1.2 (2026-02-01): Added documentation-only exception (section 1.1), shallow multi-file exception with single-session override criteria (section 1.2), and examples summary table (section 1.3). Updated deviation protocol to reference exceptions.
 - v1.1 (2026-01-17): Removed time-based estimates (hours); replaced with tool-call and context-budget heuristics. Agents operate in context windows, not clock time.
 - v1.0 (2025-11-24): Initial version based on WU-1215 post-mortem.

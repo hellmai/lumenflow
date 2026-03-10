@@ -1,6 +1,6 @@
 # First WU Mistakes
 
-**Last updated:** 2026-02-25
+**Last updated:** 2026-03-10
 
 Common mistakes agents make on their first WU, and how to avoid them.
 
@@ -147,6 +147,16 @@ The WU says "Add user profile endpoint" but you also:
 ### Right
 
 Implement exactly what the acceptance criteria specify. If you discover other needed changes, create new WUs for them.
+
+Do not over-correct by splitting one coherent change into tiny WUs. One endpoint plus its tests and docs is still one WU if it lands as one outcome.
+
+Before splitting, ask:
+
+1. Can these parts ship independently?
+2. Can they be reviewed independently?
+3. Can they be rolled back independently?
+
+If any answer is "no", keep one WU and use checkpoint-resume or orchestrator-worker instead.
 
 ---
 

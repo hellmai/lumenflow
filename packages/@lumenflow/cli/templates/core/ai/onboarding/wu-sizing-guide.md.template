@@ -12,11 +12,14 @@ Bias toward **one coherent outcome = one WU**.
 
 Do not split a WU just because it has multiple implementation steps, tests, or docs, or because it may need another session. Split only when the work is no longer one coherent deliverable.
 
+Before splitting, ask: **Can these parts ship, review, and roll back independently?** If no, keep one WU and choose a better execution strategy.
+
 Keep one WU when:
 
 - The acceptance criteria describe one user-visible or operator-visible outcome
 - One agent can still complete it with `single-session`, `checkpoint-resume`, or `orchestrator-worker`
 - The touched files support the same change, even if there are several of them
+- Code, tests, and docs all support the same change
 
 Split when:
 
@@ -24,6 +27,12 @@ Split when:
 - Different lanes or owners should deliver different parts
 - Risk isolation matters, such as tracer-bullet, feature-flag, or adapter-first rollout
 - The work keeps widening and no longer has a clean stopping point
+
+Anti-patterns that should usually stay one WU:
+
+- One API endpoint split into backend, tests, and docs WUs
+- One shippable feature split into backend and frontend WUs even though neither stands alone
+- One refactor split into "step 1", "step 2", and "cleanup" WUs with no independent ship point
 
 ---
 
@@ -33,8 +42,8 @@ Split when:
 | ---------- | ----- | ---------- | ------------------------------------------------------- |
 | Simple     | <20   | <50        | Single session                                          |
 | Medium     | 20-50 | 50-100     | Checkpoint and resume                                   |
-| Complex    | 50+   | 100+       | Orchestrate or split only if the WU is non-atomic       |
-| Oversized  | 100+  | 200+       | Split before implementation unless an exception applies |
+| Complex    | 50+   | 100+       | Orchestrate or checkpoint first; split only if the WU is non-atomic |
+| Oversized  | 100+  | 200+       | Re-check cohesion; split only if no exception applies and the work cannot land coherently |
 
 These are guardrails for session strategy, not a license to multiply WUs that still belong together.
 

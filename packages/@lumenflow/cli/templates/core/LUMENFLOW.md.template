@@ -81,7 +81,7 @@ Typical no-initiative cases:
 - Isolated refactors that land as one atomic change
 - One feature WU that needs checkpoint-resume but does not need decomposition
 
-Create an initiative when you genuinely need multiple independently completable WUs, multiple lane owners, or staged rollout across phases. File count alone is not the split signal.
+Create an initiative when you genuinely need multiple independently completable WUs, multiple lane owners, or staged rollout across phases. File count alone is not the split signal. Do not split one coherent outcome into separate backend, tests, docs, or cleanup WUs just to satisfy heuristics.
 
 ---
 
@@ -136,6 +136,7 @@ When `requireRemote: true` (default):
 8. **Gates Before Done**: All gates must pass before `wu:done`
 9. **Do Not Bypass Hooks**: No `--no-verify`, fix issues properly
 10. **Finish the two-step flow**: Run `pnpm wu:prep`, then run `pnpm wu:done`
+11. **Cohesion Before Decomposition**: One coherent outcome stays one WU. Split only when parts can ship, review, and roll back independently.
 
 ---
 
@@ -343,6 +344,6 @@ Supported clients: `claude-code`, `codex-cli`, `cursor`, `gemini-cli`, `windsurf
 - [Quick Reference: Commands]({{QUICK_REF_LINK}}) -- Complete CLI reference (100+ commands)
 - [Troubleshooting wu:done]({{DOCS_ONBOARDING_PATH}}/troubleshooting-wu-done.md) -- Most common completion mistakes
 - [.lumenflow/constraints.md](.lumenflow/constraints.md) -- Non-negotiable rules and forbidden commands
-- [WU Sizing Guide]({{DOCS_ONBOARDING_PATH}}/wu-sizing-guide.md) -- Scoping work and context safety
+- [WU Sizing Guide]({{DOCS_ONBOARDING_PATH}}/wu-sizing-guide.md) -- Scoping work without needless fragmentation
 - [Skills Index](.claude/skills/INDEX.md)
 - [Agents README](.claude/agents/README.md)

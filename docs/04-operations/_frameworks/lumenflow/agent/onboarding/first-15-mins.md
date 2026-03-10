@@ -1,6 +1,6 @@
 # First 15 Minutes with LumenFlow
 
-**Last updated:** 2026-03-06
+**Last updated:** 2026-03-10
 
 A fast start for agents entering an existing LumenFlow project.
 
@@ -77,4 +77,4 @@ cd <project-root> && pnpm wu:done --id WU-XXX
 - Stay in the claimed worktree.
 - Run `pnpm lumenflow:commands` for public CLI discovery, then `--help` before first use.
 - Use `pnpm wu:prep` before `pnpm wu:done`; do not jump straight to `wu:done`.
-- If context starts getting heavy, read `./wu-sizing-guide.md` before pushing further.
+- If context starts getting heavy, ask whether the WU is still one coherent outcome. If yes, checkpoint and hand off. If no, split it.
