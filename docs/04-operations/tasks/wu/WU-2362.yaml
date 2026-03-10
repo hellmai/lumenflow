@@ -1,0 +1,42 @@
+id: WU-2362
+title: 'Durable delegation intent: distinguish non-orchestrated from lost-provenance WUs'
+lane: 'Framework: CLI WU Commands'
+type: feature
+status: ready
+priority: P2
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/cli/src/wu-done-policies.ts
+  - packages/@lumenflow/cli/src/wu-spawn-helpers.ts
+  - packages/@lumenflow/cli/src/wu-delegate.ts
+tests:
+  manual:
+    - Verify wu:delegate writes event and fails on write error
+    - Verify wu:done correctly distinguishes non-orchestrated vs lost-provenance
+  unit:
+    - packages/@lumenflow/cli/__tests__/wu-brief-evidence.test.ts
+    - packages/@lumenflow/cli/src/__tests__/agent-spawn-coordination.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2362.done
+dependencies: []
+plan: lumenflow://plans/WU-2362-plan.md
+spec_refs:
+  - lumenflow://plans/WU-2362-plan.md
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'WU-2359 softened spawn provenance to warn-only when no delegation registry entry exists. But delegation recording is best-effort (wu-spawn-helpers.ts:283) and state is checkout-rooted, so a legitimately delegated WU can arrive at wu:done with no registry entry through normal workflow. Fix: (1) wu:delegate writes a durable delegation-intent marker (e.g. wu-events.jsonl lifecycle event, not ad-hoc YAML field), (2) wu:delegate fails if it cannot record that marker, (3) wu:done interprets: no marker = non-orchestrated (warn), marker present but registry/pickup missing = hard-block, full chain = pass.'
+acceptance:
+  - wu:delegate writes a durable delegation-intent lifecycle event to wu-events.jsonl
+  - wu:delegate fails (non-zero exit) if it cannot write the delegation-intent event
+  - wu:done warns-only when no delegation marker AND no registry entry (non-orchestrated)
+  - wu:done hard-blocks when delegation-intent event exists but registry pickup/attestation is missing
+  - wu:done passes when full delegation chain is present (intent + registry + pickup + attestation)
