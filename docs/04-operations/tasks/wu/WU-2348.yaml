@@ -2,7 +2,7 @@ id: WU-2348
 title: Block unscoped pnpm format at CLI level for all agents
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-09
 code_paths:
@@ -43,3 +43,6 @@ acceptance:
   - pnpm format without file args exits non-zero with guidance
   - pnpm format with specific files still works
   - pnpm format:check read-only still works unscoped
+locked: true
+completed_at: 2026-03-10T07:55:07.586Z
+completed: 2026-03-10
