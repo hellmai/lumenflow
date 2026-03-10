@@ -2,7 +2,7 @@ id: WU-2370
 title: Fix wu:brief evidence path mismatch between worktree and main
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -29,8 +29,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'wu:done reports Missing wu:brief evidence even after wu:brief was run from a claimed worktree. Root cause: wu:brief writes evidence to worktree state dir but wu:done looks in main state dir when effectiveWorktreePath resolution fails.'
+description: 'wu:done reports Missing wu:brief evidence even after wu:brief was run from a claimed
+  worktree. Root cause: wu:brief writes evidence to worktree state dir but wu:done looks in main
+  state dir when effectiveWorktreePath resolution fails.'
 acceptance:
   - wu:done finds wu:brief evidence recorded in worktree state dir
   - Existing tests pass
   - New test covers worktree-to-main evidence path resolution
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2370
+claimed_at: 2026-03-10T12:48:27.479Z
+baseline_main_sha: 059607e841080655ccf01734cbe2f8b2ede3ac58
+session_id: 41248690-b4c6-4164-8455-5af154605058
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T12:48:27.487Z

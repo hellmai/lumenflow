@@ -5,6 +5,7 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2369 — Add --replace-test-paths flags to wu:edit](wu/WU-2369.yaml)
+- [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml)
 
 ## Completed
 
