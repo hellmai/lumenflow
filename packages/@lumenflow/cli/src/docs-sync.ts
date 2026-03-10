@@ -22,6 +22,8 @@ import { createWuPaths } from '@lumenflow/core/wu-paths';
 import { GIT_DIRECTORY_NAME, getConfig } from '@lumenflow/core/config';
 // WU-1362: Import worktree guard utilities for branch checking
 import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard';
+// WU-2373: Import micro-worktree for isolation on main branch
+import { withMicroWorktree, isInGitWorktree } from '@lumenflow/core/micro-worktree';
 import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
 import { resolveCliTemplatesDir } from './template-directory-resolver.js';
 
@@ -336,88 +338,149 @@ export async function syncCoreDocs(targetDir: string, options: SyncOptions): Pro
   return result;
 }
 
+/** Log prefix for console output */
+const LOG_PREFIX = '[lumenflow docs:sync]';
+
+/** Operation name for micro-worktree */
+const OPERATION_NAME = 'docs-sync';
+
 /**
- * WU-1362: Check branch guard before writing tracked files
+ * WU-2373: Determine whether docs:sync should use micro-worktree isolation.
  *
- * Warns (but does not block) if:
- * - On main branch AND
- * - Not in a worktree directory AND
- * - Git repository exists (has .git)
- *
- * @param targetDir - Directory where files will be written
- * @returns Array of warning messages
+ * Returns true when on main branch AND not in a worktree.
+ * Returns false when in a worktree, on a non-main branch, or not in git.
  */
-async function checkBranchGuard(targetDir: string): Promise<string[]> {
-  const warnings: string[] = [];
+async function shouldUseMicroWorktree(targetDir: string): Promise<boolean> {
+  // If running inside a git worktree, write directly (existing behavior)
+  if (isInGitWorktree()) {
+    return false;
+  }
+
+  // Check if we're in a worktree via path-based detection
+  if (isInWorktree({ cwd: targetDir })) {
+    return false;
+  }
 
   // Only check if target is a git repository
   const gitDir = path.join(targetDir, GIT_DIRECTORY_NAME);
   if (!fs.existsSync(gitDir)) {
-    return warnings;
-  }
-
-  // Check if we're in a worktree (always allow)
-  if (isInWorktree({ cwd: targetDir })) {
-    return warnings;
+    return false;
   }
 
   // Check if on main branch
   try {
-    const onMain = await isMainBranch();
-    if (onMain) {
-      warnings.push(
-        'Running docs:sync on main branch in main checkout. ' +
-          'Consider using a worktree for changes to tracked files.',
-      );
-    }
+    return await isMainBranch();
   } catch {
-    // Git error - silently allow
+    return false;
   }
+}
 
-  return warnings;
+/**
+ * WU-2373: Execute all docs sync operations in a given directory.
+ * Shared logic used by both direct-write and micro-worktree paths.
+ *
+ * @returns Object with created files list and commit message
+ */
+export async function executeDocsSyncInDir(
+  targetDir: string,
+  options: SyncOptions & { vendor?: VendorType },
+): Promise<{ created: string[]; skipped: string[]; allFiles: string[] }> {
+  const coreResult = await syncCoreDocs(targetDir, { force: options.force });
+  const docsResult = await syncAgentDocs(targetDir, { force: options.force });
+  const skillsResult = await syncSkills(targetDir, {
+    force: options.force,
+    vendor: options.vendor,
+  });
+
+  const created = [...coreResult.created, ...docsResult.created, ...skillsResult.created];
+  const skipped = [...coreResult.skipped, ...docsResult.skipped, ...skillsResult.skipped];
+  const allFiles = [...created];
+
+  return { created, skipped, allFiles };
+}
+
+/**
+ * WU-2373: Run docs:sync with micro-worktree isolation when on main branch.
+ *
+ * When on main branch and not in a worktree, uses withMicroWorktree to:
+ * 1. Create a temporary worktree
+ * 2. Write synced docs there
+ * 3. Commit and push atomically
+ *
+ * When in a worktree or on a non-main branch, writes directly to cwd (preserving
+ * existing behavior).
+ *
+ * @param options - Sync options (force, vendor)
+ */
+export async function runDocsSyncWithIsolation(
+  options: SyncOptions & { vendor?: VendorType },
+): Promise<void> {
+  const targetDir = process.cwd();
+
+  const useMicroWorktree = await shouldUseMicroWorktree(targetDir);
+
+  if (useMicroWorktree) {
+    console.log(`${LOG_PREFIX} Using micro-worktree isolation (WU-2373)`);
+
+    const syncId = `sync-${Date.now()}`;
+
+    await withMicroWorktree({
+      operation: OPERATION_NAME,
+      id: syncId,
+      logPrefix: LOG_PREFIX,
+      execute: async ({ worktreePath }) => {
+        const { created, skipped, allFiles } = await executeDocsSyncInDir(worktreePath, options);
+
+        if (created.length > 0) {
+          console.log('\nCreated:');
+          created.forEach((f) => console.log(`  + ${f}`));
+        }
+
+        if (skipped.length > 0) {
+          console.log('\nSkipped (already exists, use --force to overwrite):');
+          skipped.forEach((f) => console.log(`  - ${f}`));
+        }
+
+        return {
+          commitMessage: 'chore: docs:sync core docs, onboarding, and vendor assets',
+          files: allFiles,
+        };
+      },
+    });
+
+    console.log(`\n${LOG_PREFIX} Done!`);
+  } else {
+    // Direct write path (in worktree or non-main branch)
+    const { created, skipped } = await executeDocsSyncInDir(targetDir, options);
+
+    if (created.length > 0) {
+      console.log('\nCreated:');
+      created.forEach((f) => console.log(`  + ${f}`));
+    }
+
+    if (skipped.length > 0) {
+      console.log('\nSkipped (already exists, use --force to overwrite):');
+      skipped.forEach((f) => console.log(`  - ${f}`));
+    }
+
+    console.log(`\n${LOG_PREFIX} Done!`);
+  }
 }
 
 /**
  * CLI entry point for docs:sync command
  * WU-1085: Updated to use parseDocsSyncOptions for proper --help support
  * WU-1362: Added branch guard check
+ * WU-2373: Uses micro-worktree isolation on main branch
  */
 export async function main(): Promise<void> {
   const opts = parseDocsSyncOptions();
-  const targetDir = process.cwd();
 
-  console.log('[lumenflow docs:sync] Syncing core docs, onboarding docs, and vendor assets...');
+  console.log(`${LOG_PREFIX} Syncing core docs, onboarding docs, and vendor assets...`);
   console.log(`  Vendor: ${opts.vendor}`);
   console.log(`  Force: ${opts.force}`);
 
-  // WU-1362: Check branch guard before writing files
-  const branchWarnings = await checkBranchGuard(targetDir);
-
-  // WU-2366: Sync core docs (LUMENFLOW.md, AGENTS.md, constraints.md)
-  const coreResult = await syncCoreDocs(targetDir, { force: opts.force });
-  const docsResult = await syncAgentDocs(targetDir, { force: opts.force });
-  const skillsResult = await syncSkills(targetDir, { force: opts.force, vendor: opts.vendor });
-
-  const created = [...coreResult.created, ...docsResult.created, ...skillsResult.created];
-  const skipped = [...coreResult.skipped, ...docsResult.skipped, ...skillsResult.skipped];
-  const warnings = [...branchWarnings];
-
-  if (created.length > 0) {
-    console.log('\nCreated:');
-    created.forEach((f) => console.log(`  + ${f}`));
-  }
-
-  if (skipped.length > 0) {
-    console.log('\nSkipped (already exists, use --force to overwrite):');
-    skipped.forEach((f) => console.log(`  - ${f}`));
-  }
-
-  if (warnings.length > 0) {
-    console.log('\nWarnings:');
-    warnings.forEach((w) => console.log(`  ! ${w}`));
-  }
-
-  console.log('\n[lumenflow docs:sync] Done!');
+  await runDocsSyncWithIsolation({ force: opts.force, vendor: opts.vendor });
 }
 
 // CLI entry point (WU-1071 pattern: import.meta.main)

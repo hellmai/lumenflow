@@ -47,6 +47,7 @@ import {
   processTemplate,
   CORE_DOC_TEMPLATE_PATHS,
   buildCoreDocTokens,
+  executeDocsSyncInDir,
 } from './docs-sync.js';
 
 /** Log prefix for console output */
@@ -549,10 +550,26 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
       // Write marker consumed by lumenflow:pre-commit-check when @lumenflow versions change.
       writeUpgradeMarker(worktreePath, versionSpec);
 
+      // WU-2373: Sync core docs inside the upgrade transaction instead of
+      // advising users to run docs:sync separately after upgrade.
+      console.log(`${LOG_PREFIX} Syncing core docs...`);
+      const docsSyncResult = await executeDocsSyncInDir(worktreePath, {
+        force: true,
+        vendor: 'claude',
+      });
+      if (docsSyncResult.created.length > 0) {
+        console.log(`${LOG_PREFIX} Synced ${docsSyncResult.created.length} doc file(s)`);
+      }
+
       // Return files to stage and commit message
       return {
         commitMessage: `chore: upgrade @lumenflow packages to ${versionSpec}`,
-        files: ['package.json', 'pnpm-lock.yaml', UPGRADE_MARKER_RELATIVE_PATH],
+        files: [
+          'package.json',
+          'pnpm-lock.yaml',
+          UPGRADE_MARKER_RELATIVE_PATH,
+          ...docsSyncResult.allFiles,
+        ],
       };
     },
   });
@@ -737,16 +754,8 @@ export async function main(): Promise<void> {
     process.exit(EXIT_CODES.ERROR);
   }
 
-  // WU-2366: Check if core docs are stale after upgrade
-  try {
-    const staleness = checkDocsStaleness(process.cwd());
-    if (staleness.stale) {
-      console.log(`\n${LOG_PREFIX} Core docs may be out of date after upgrade.`);
-      console.log(`${LOG_PREFIX}   Run: pnpm docs:sync --force`);
-    }
-  } catch {
-    // Staleness check is advisory — never block the upgrade
-  }
+  // WU-2373: Core docs are now synced inside the upgrade transaction.
+  // No need to advise running docs:sync separately.
 }
 
 // Run main if executed directly

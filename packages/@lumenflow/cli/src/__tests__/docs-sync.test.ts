@@ -6,12 +6,27 @@
  *
  * WU-2371: Verify syncCoreDocs renders all template tokens, not just DATE.
  * Also verifies help text matches public manifest.
+ * WU-2373: Verify docs:sync uses micro-worktree isolation on main branch.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtempSync, rmSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
+
+// Mock micro-worktree module before importing docs-sync
+vi.mock('@lumenflow/core/micro-worktree', () => ({
+  withMicroWorktree: vi.fn(),
+  isInGitWorktree: vi.fn().mockReturnValue(false),
+}));
+
+vi.mock('@lumenflow/core/core/worktree-guard', () => ({
+  isMainBranch: vi.fn().mockResolvedValue(false),
+  isInWorktree: vi.fn().mockReturnValue(false),
+}));
+
+import { withMicroWorktree, isInGitWorktree } from '@lumenflow/core/micro-worktree';
+import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard';
 
 import {
   syncCoreDocs,
@@ -19,7 +34,13 @@ import {
   CORE_DOC_TEMPLATE_PATHS,
   loadTemplate,
   parseDocsSyncOptions,
+  runDocsSyncWithIsolation,
 } from '../docs-sync.js';
+
+const mockWithMicroWorktree = withMicroWorktree as ReturnType<typeof vi.fn>;
+const mockIsInGitWorktree = isInGitWorktree as ReturnType<typeof vi.fn>;
+const mockIsMainBranch = isMainBranch as ReturnType<typeof vi.fn>;
+const mockIsInWorktree = isInWorktree as ReturnType<typeof vi.fn>;
 
 describe('docs-sync', () => {
   describe('WU-2371: syncCoreDocs renders all template tokens', () => {
@@ -112,6 +133,106 @@ describe('docs-sync', () => {
       const content = '{{A}} and {{UNKNOWN}}';
       const result = processTemplate(content, { A: 'alpha' });
       expect(result).toBe('alpha and {{UNKNOWN}}');
+    });
+  });
+
+  // WU-2373: Micro-worktree isolation tests
+  describe('WU-2373: runDocsSyncWithIsolation', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should use micro-worktree when on main branch and not in a worktree', async () => {
+      mockIsInGitWorktree.mockReturnValue(false);
+      mockIsMainBranch.mockResolvedValue(true);
+      mockIsInWorktree.mockReturnValue(false);
+      mockWithMicroWorktree.mockResolvedValue({
+        commitMessage: 'chore: sync docs',
+        files: [],
+        ref: 'main',
+      });
+
+      await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+
+      expect(mockWithMicroWorktree).toHaveBeenCalledTimes(1);
+      expect(mockWithMicroWorktree).toHaveBeenCalledWith(
+        expect.objectContaining({
+          operation: 'docs-sync',
+        }),
+      );
+    });
+
+    it('should NOT use micro-worktree when in a worktree (writes directly)', async () => {
+      mockIsInGitWorktree.mockReturnValue(true);
+      mockIsInWorktree.mockReturnValue(true);
+
+      // When in a worktree, it should write directly (not call withMicroWorktree)
+      // We need a temp dir to write to
+      const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-docs-sync-wt-'));
+      mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+      const originalCwd = process.cwd;
+      process.cwd = vi.fn().mockReturnValue(tempDir) as typeof process.cwd;
+
+      try {
+        await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+        expect(mockWithMicroWorktree).not.toHaveBeenCalled();
+      } finally {
+        process.cwd = originalCwd;
+        rmSync(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should NOT use micro-worktree when not on main branch', async () => {
+      mockIsInGitWorktree.mockReturnValue(false);
+      mockIsMainBranch.mockResolvedValue(false);
+      mockIsInWorktree.mockReturnValue(false);
+
+      const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-docs-sync-feat-'));
+      mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+      const originalCwd = process.cwd;
+      process.cwd = vi.fn().mockReturnValue(tempDir) as typeof process.cwd;
+
+      try {
+        await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+        expect(mockWithMicroWorktree).not.toHaveBeenCalled();
+      } finally {
+        process.cwd = originalCwd;
+        rmSync(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should pass correct files to micro-worktree commit', async () => {
+      mockIsInGitWorktree.mockReturnValue(false);
+      mockIsMainBranch.mockResolvedValue(true);
+      mockIsInWorktree.mockReturnValue(false);
+
+      interface ExecuteParams {
+        worktreePath: string;
+      }
+      interface ExecuteResult {
+        commitMessage: string;
+        files: string[];
+      }
+      let executeResult: ExecuteResult | undefined;
+
+      mockWithMicroWorktree.mockImplementation(
+        async (options: { execute: (params: ExecuteParams) => Promise<ExecuteResult> }) => {
+          const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-docs-sync-mw-'));
+          mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+          try {
+            executeResult = await options.execute({ worktreePath: tempDir });
+          } finally {
+            rmSync(tempDir, { recursive: true, force: true });
+          }
+          return executeResult;
+        },
+      );
+
+      await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+
+      expect(executeResult).toBeDefined();
+      expect(executeResult!.commitMessage).toContain('docs:sync');
+      expect(executeResult!.files.length).toBeGreaterThan(0);
     });
   });
 });

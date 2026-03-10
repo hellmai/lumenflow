@@ -523,6 +523,63 @@ describe('lumenflow-upgrade', () => {
     });
   });
 
+  // WU-2373: docs:sync integration into upgrade transaction
+  describe('WU-2373: executeUpgradeInMicroWorktree includes docs sync', () => {
+    it('should sync core docs inside the micro-worktree transaction', async () => {
+      interface ExecuteParams {
+        worktreePath: string;
+      }
+      interface ExecuteResult {
+        commitMessage: string;
+        files: string[];
+      }
+      let executeResult: ExecuteResult | undefined;
+
+      mockWithMicroWorktree.mockImplementation(
+        async (options: { execute: (params: ExecuteParams) => Promise<ExecuteResult> }) => {
+          const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-upgrade-docs-'));
+          mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+          // Create a package.json so syncScriptsToPackageJson works
+          writeFileSync(
+            path.join(tempDir, 'package.json'),
+            JSON.stringify({ name: 'test', scripts: {} }, null, 2),
+          );
+          try {
+            executeResult = await options.execute({ worktreePath: tempDir });
+          } finally {
+            rmSync(tempDir, { recursive: true, force: true });
+          }
+          return executeResult;
+        },
+      );
+
+      const args: UpgradeArgs = { version: '2.1.0' };
+      await executeUpgradeInMicroWorktree(args);
+
+      // The commit should include core doc files
+      expect(executeResult).toBeDefined();
+      expect(executeResult!.files).toEqual(
+        expect.arrayContaining([expect.stringContaining('LUMENFLOW.md')]),
+      );
+    });
+
+    it('should not print "run docs:sync" advice after upgrade', async () => {
+      mockWithMicroWorktree.mockResolvedValue({});
+      mockExecSync.mockReturnValue('');
+
+      const consoleSpy = vi.spyOn(console, 'log');
+
+      const args: UpgradeArgs = { version: '2.1.0' };
+      await executeUpgradeInMicroWorktree(args);
+
+      // Should NOT advise running docs:sync separately
+      const logCalls = consoleSpy.mock.calls.map((c) => c.join(' ')).join('\n');
+      expect(logCalls).not.toContain('pnpm docs:sync');
+
+      consoleSpy.mockRestore();
+    });
+  });
+
   // WU-2371: Staleness checker tests
   describe('checkDocsStaleness', () => {
     let tempDir: string;
