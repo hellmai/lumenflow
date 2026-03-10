@@ -3179,3 +3179,4 @@
 {"type":"complete","wuId":"WU-2386","timestamp":"2026-03-10T21:23:21.817Z"}
 {"type":"checkpoint","wuId":"WU-2385","timestamp":"2026-03-10T21:26:02.362Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2385.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2385","timestamp":"2026-03-10T21:27:42.545Z"}
+{"type":"claim","wuId":"WU-2388","timestamp":"2026-03-10T22:56:26.433Z","lane":"Framework: CLI WU Commands","title":"Fix misleading wu:claim auto-brief log message that causes agents to skip wu:brief"}

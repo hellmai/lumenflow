@@ -2,7 +2,7 @@ id: WU-2388
 title: Fix misleading wu:claim auto-brief log message that causes agents to skip wu:brief
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -27,8 +27,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:claim outputs '✅ wu:brief evidence auto-recorded (policy=auto; no handoff prompt generated)' which agents interpret as wu:brief being satisfied. The ✅ emoji and 'evidence auto-recorded' phrasing causes agents to skip running wu:brief explicitly, bypassing lane occupation checks, sizing validation, and handoff prompt generation.
+description: wu:claim outputs '✅ wu:brief evidence auto-recorded (policy=auto; no handoff prompt
+  generated)' which agents interpret as wu:brief being satisfied. The ✅ emoji and 'evidence
+  auto-recorded' phrasing causes agents to skip running wu:brief explicitly, bypassing lane
+  occupation checks, sizing validation, and handoff prompt generation.
 acceptance:
   - wu:claim log message clearly communicates that wu:brief must still be run
   - Message uses warning emoji instead of success emoji
   - Test expectations updated
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2388
+claimed_at: 2026-03-10T22:56:26.402Z
+baseline_main_sha: 0f490291fec81c90a91156ceed07849a15e84b0b
+session_id: 65709817-117d-4f35-a4b5-4f5ad4597498
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T22:56:26.407Z

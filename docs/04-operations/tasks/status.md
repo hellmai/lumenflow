@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2388 — Fix misleading wu:claim auto-brief log message that causes agents to skip wu:brief](wu/WU-2388.yaml)
 
 ## Completed
 
