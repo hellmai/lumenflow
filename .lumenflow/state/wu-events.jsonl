@@ -3134,3 +3134,4 @@
 {"type":"checkpoint","wuId":"WU-2381","timestamp":"2026-03-10T18:50:40.434Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2381","timestamp":"2026-03-10T18:52:47.792Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2381.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2381","timestamp":"2026-03-10T18:54:21.151Z"}
+{"type":"claim","wuId":"WU-2382","timestamp":"2026-03-10T18:54:50.464Z","lane":"Framework: CLI WU Commands","title":"Fix wu:edit comma splitting for free-text repeatable fields"}
