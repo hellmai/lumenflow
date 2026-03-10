@@ -1,0 +1,50 @@
+id: WU-2383
+title: upgrade force-overwrites user docs; init skip leaves LumenFlow content uninjected
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/cli/src/lumenflow-upgrade.ts
+  - packages/@lumenflow/cli/src/docs-sync.ts
+  - packages/@lumenflow/cli/src/init.ts
+  - packages/@lumenflow/cli/src/init-scaffolding.ts
+  - packages/@lumenflow/cli/src/merge-block.ts
+tests:
+  manual:
+    - Run lumenflow init in project with existing CLAUDE.md — verify user content preserved, LumenFlow block injected
+    - Run lumenflow:upgrade after user edits outside markers — verify user content preserved
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/merge-block.test.ts
+    - packages/@lumenflow/cli/src/__tests__/docs-sync.test.ts
+    - packages/@lumenflow/cli/src/__tests__/init.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2383.done
+dependencies: []
+risks: []
+notes: merge-block.ts already implements bounded marker pattern for .gitignore. Extend to all synced docs. The one-line fix for upgrade is changing force:true to force:false at lumenflow-upgrade.ts:557, but the proper fix is merge-block everywhere so upgrade CAN safely update LumenFlow-managed content while preserving user content.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: |-
+  Two related bugs in docs lifecycle:
+
+  1. **upgrade blitzes user content**: lumenflow-upgrade.ts calls executeDocsSyncInDir with force:true (line 557), which unconditionally overwrites LUMENFLOW.md, AGENTS.md, .lumenflow/constraints.md, onboarding docs, and .claude/skills/*/SKILL.md via raw writeFileSync. Any user customizations to these files are destroyed.
+
+  2. **init skip leaves gap**: When a project already has CLAUDE.md, AGENTS.md, etc., init defaults to skip mode — preserving user files but never injecting LumenFlow-managed content. The user gets no LumenFlow instructions in their existing files.
+
+  Both problems affect all vendor surfaces: Claude, Cursor, Windsurf, Cline, Codex. AGENTS.md is the universal entry point read by all agents.
+acceptance:
+  - upgrade never overwrites user content outside bounded markers
+  - init into existing project injects LumenFlow block into existing vendor files
+  - merge-block pattern (LUMENFLOW:START/END markers) used for all synced docs
+  - existing merge-block.ts logic extended to cover LUMENFLOW.md, AGENTS.md, constraints.md, skills, and all vendor rule files
+  - upgrade replaces only content between markers, preserving user content
+  - 'round-trip test: init -> user edits outside markers -> upgrade -> user edits preserved'
