@@ -13,7 +13,8 @@ import { validateSpecCompleteness } from '../wu-done-validation.js';
 
 describe('WU-2367: validateSpecCompleteness fit-for-surface', () => {
   const BASE_DOC = {
-    description: 'A sufficiently long description that meets the minimum length requirement for validation.',
+    description:
+      'A sufficiently long description that meets the minimum length requirement for validation.',
     acceptance: ['AC1: something concrete'],
     code_paths: ['packages/@lumenflow/cli/src/wu-claim-validation.ts'],
     type: 'bug',
