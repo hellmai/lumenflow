@@ -21,6 +21,8 @@ tests:
 artifacts:
   - .lumenflow/stamps/WU-2374.done
 dependencies: []
+initiative: INIT-50
+phase: 1
 risks: []
 notes: ''
 requires_review: false
@@ -48,4 +50,3 @@ acceptance:
     wu:verify, matching wu:brief
   - Existing tests in spawn-strategy.test.ts and initiative-orchestrator.test.ts updated to match
     new paths
-initiative: INIT-50
