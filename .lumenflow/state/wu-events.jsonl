@@ -3020,3 +3020,4 @@
 {"type":"claim","wuId":"WU-2362","timestamp":"2026-03-10T10:02:49.785Z","lane":"Framework: CLI WU Commands","title":"Durable delegation intent: distinguish non-orchestrated from lost-provenance WUs"}
 {"type":"checkpoint","wuId":"WU-2362","timestamp":"2026-03-10T10:03:00.906Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2362","timestamp":"2026-03-10T10:03:10.894Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2362","timestamp":"2026-03-10T10:21:59.826Z"}

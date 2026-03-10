@@ -2,7 +2,7 @@ id: WU-2362
 title: 'Durable delegation intent: distinguish non-orchestrated from lost-provenance WUs'
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -27,7 +27,8 @@ plan: lumenflow://plans/WU-2362-plan.md
 spec_refs:
   - lumenflow://plans/WU-2362-plan.md
 risks: []
-notes: 'Implementation will use a durable wu-events delegation marker to distinguish non-orchestrated initiative WUs from delegated WUs whose registry provenance is missing.'
+notes: Implementation will use a durable wu-events delegation marker to distinguish non-orchestrated
+  initiative WUs from delegated WUs whose registry provenance is missing.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -58,3 +59,6 @@ session_id: 7e336b9a-809b-4e44-8c5e-3cdda4d4d202
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-10T10:02:49.758Z
+locked: true
+completed_at: 2026-03-10T10:21:55.197Z
+completed: 2026-03-10
