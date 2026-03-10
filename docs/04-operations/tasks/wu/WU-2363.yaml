@@ -8,14 +8,10 @@ created: 2026-03-10
 code_paths:
   - docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/wu-sizing-guide.md
-  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
-  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/first-15-mins.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md
   - LUMENFLOW.md
   - packages/@lumenflow/cli/templates/core/ai/onboarding/wu-sizing-guide.md.template
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
   - packages/@lumenflow/cli/templates/core/ai/onboarding/first-15-mins.md.template
   - packages/@lumenflow/cli/templates/core/ai/onboarding/first-wu-mistakes.md.template
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
@@ -28,6 +24,9 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/init.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
     - packages/@lumenflow/cli/src/__tests__/docs-sync.test.ts
+    - packages/@lumenflow/cli/src/__tests__/init.test.ts
+    - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
+    - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2363.done
@@ -35,10 +34,17 @@ dependencies: []
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T10:37:44.369Z
+worktree_path: worktrees/content-specs-governance-wu-2363
+session_id: 8362d0eb-b470-4611-8fb7-06b0cd5244f3
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T10:37:44.375Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -54,11 +60,3 @@ acceptance:
     receive the same guidance
   - Legacy inline WU sizing template is removed so only the maintained template path remains
   - Tests updated as needed for scaffolded onboarding docs after removing the legacy inline template
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2363
-claimed_at: 2026-03-10T10:37:44.369Z
-baseline_main_sha: ea9ab4f832089a188e050702b9ab3c7a713340b4
-session_id: 8362d0eb-b470-4611-8fb7-06b0cd5244f3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T10:37:44.375Z
