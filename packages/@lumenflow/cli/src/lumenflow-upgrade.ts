@@ -42,7 +42,12 @@ import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { runCLI } from './cli-entry-point.js';
 import { generateScriptsFromManifest } from './public-manifest.js';
-import { loadTemplate, processTemplate, CORE_DOC_TEMPLATE_PATHS, buildCoreDocTokens } from './docs-sync.js';
+import {
+  loadTemplate,
+  processTemplate,
+  CORE_DOC_TEMPLATE_PATHS,
+  buildCoreDocTokens,
+} from './docs-sync.js';
 
 /** Log prefix for console output */
 const LOG_PREFIX = '[lumenflow:upgrade]';
