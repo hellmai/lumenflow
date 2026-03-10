@@ -10,19 +10,12 @@ code_paths:
   - packages/@lumenflow/cli/src/docs-sync.ts
   - packages/@lumenflow/cli/src/init.ts
   - packages/@lumenflow/cli/src/init-scaffolding.ts
-  - packages/@lumenflow/cli/src/merge-block.ts
-  - packages/@lumenflow/cli/src/lumenflow-upgrade.ts
-  - packages/@lumenflow/cli/src/docs-sync.ts
-  - packages/@lumenflow/cli/src/init.ts
-  - packages/@lumenflow/cli/src/init-scaffolding.ts
-  - packages/@lumenflow/cli/src/merge-block.ts
+  - packages/@lumenflow/cli/src/init-templates.ts
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
   - packages/@lumenflow/cli/templates/core/AGENTS.md.template
   - packages/@lumenflow/cli/templates/core/UPGRADING.md.template
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
-  - apps/docs/src/content/docs/getting-started/upgrade.mdx
-  - apps/docs/src/content/docs/packs/software-delivery/setup/upgrading.mdx
+  - packages/@lumenflow/cli/templates/vendors/cursor/.cursor/rules/lumenflow.md.template
+  - packages/@lumenflow/cli/templates/vendors/windsurf/.windsurf/rules/lumenflow.md.template
 tests:
   manual:
     - Run lumenflow init in project with existing CLAUDE.md — verify user content preserved,
@@ -59,10 +52,17 @@ notes: >-
   - Codex constraint: managed block must contain real bootstrap, not just a link. Dumb agents
   (Codex) wont follow references.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T20:04:12.189Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2383
+session_id: a092d60c-086e-471c-b9d5-425495c39d3d
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T20:04:12.194Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -137,11 +137,3 @@ acceptance:
     present
   - 'CLI-emitted templates updated: LUMENFLOW.md.template, AGENTS.md.template,
     UPGRADING.md.template, quick-ref-commands.md.template, starting-prompt.md.template'
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2383
-claimed_at: 2026-03-10T20:04:12.189Z
-baseline_main_sha: b4881c3c08c3b877c0c0eaab6217f94ef7c8ee08
-session_id: a092d60c-086e-471c-b9d5-425495c39d3d
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T20:04:12.194Z
