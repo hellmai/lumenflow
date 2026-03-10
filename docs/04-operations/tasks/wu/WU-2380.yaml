@@ -18,18 +18,16 @@ code_paths:
   - docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
 tests:
   manual:
-    - Configure the migration-state verification hook with a failing fixture command
-    - run a schema-affecting WU through wu:prep
-    - and confirm the lifecycle fails with actionable guidance
-    - Configure the hook with a passing fixture command
-    - run the same schema-affecting WU through gates/wu:prep
-    - and confirm the lifecycle passes
-    - Run gates for a non-DB WU with the hook configured and confirm no migration-state verification
-      command is invoked
-    - Review the internal agent-facing docs and Starlight docs and confirm both explain
-      migration-state verification usage
+    - Configure the migration-state verification hook with a failing fixture command. Run a
+      schema-affecting WU through wu:prep. Confirm the lifecycle fails with actionable guidance.
+    - Configure the hook with a passing fixture command. Run the same schema-affecting WU through
+      gates and wu:prep. Confirm the lifecycle passes.
+    - Run gates for a non-DB WU with the hook configured. Confirm no migration-state verification
+      command is invoked.
+    - Review the internal agent-facing docs and Starlight docs. Confirm both explain migration-state
+      verification usage
     - limits
-    - and the expected agent/operator response
+    - and the expected agent or operator response.
   unit:
     - packages/@lumenflow/cli/src/__tests__/gates-config.test.ts
     - packages/@lumenflow/cli/src/__tests__/gates-integration-tests.test.ts
