@@ -1,0 +1,38 @@
+id: WU-2381
+title: wu:edit splits free-text field values on commas
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P2
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/cli/src/wu-edit-operations.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
+tests:
+  manual:
+    - Run wu:edit --test-paths-manual with a value containing commas and verify the full string is preserved as one entry
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2381.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 2
+  estimated_tool_calls: 25
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: "Context: wu:edit uses .flatMap(p => p.split(',')) on all repeatable fields including free-text ones like --test-paths-manual and --risks. Problem: manual test descriptions containing natural commas get split into broken fragments. Root cause: WU-1870 added comma-splitting for path shorthand but applied it indiscriminately to free-text fields. Solution: stop splitting on commas for free-text fields while keeping comma-splitting for path/ID fields."
+acceptance:
+  - Free-text fields (test-paths-manual and risks) passed to wu:edit preserve commas in their values instead of splitting on them
+  - Path/ID fields (code-paths and test-paths-unit and test-paths-e2e and blocked-by and add-dep) continue to support comma-separated shorthand
+  - Existing tests pass and new tests cover comma-containing free-text values
