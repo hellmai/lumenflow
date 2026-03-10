@@ -28,7 +28,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2380 — Add optional migration-state verification for schema-affecting WUs](wu/WU-2380.yaml) — Framework: Core Validation
-- [WU-2382 — Fix wu:edit comma splitting for free-text repeatable fields](wu/WU-2382.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1328,6 +1327,7 @@ sections:
 - [WU-2378 — Demote web-framework assumptions and publish portability matrix](wu/WU-2378.yaml)
 - [WU-2379 — wu:done must reject claim-auto as sufficient wu:brief evidence](wu/WU-2379.yaml)
 - [WU-2381 — wu:edit splits free-text field values on commas](wu/WU-2381.yaml)
+- [WU-2382 — Fix wu:edit comma splitting for free-text repeatable fields](wu/WU-2382.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
