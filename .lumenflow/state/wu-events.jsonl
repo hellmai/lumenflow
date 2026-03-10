@@ -2987,3 +2987,4 @@
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:59:27.094Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=evidence-only"}
 {"type":"checkpoint","wuId":"WU-2354","timestamp":"2026-03-09T14:59:48.856Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2354.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2354","timestamp":"2026-03-09T15:01:12.665Z"}
+{"type":"claim","wuId":"WU-2355","timestamp":"2026-03-10T00:28:50.586Z","lane":"Content: Specs Governance","title":"Tighten sizing guidance and remove elapsed-time decomposition cues"}

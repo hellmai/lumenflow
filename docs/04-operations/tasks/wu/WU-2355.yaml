@@ -2,7 +2,7 @@ id: WU-2355
 title: Tighten sizing guidance and remove elapsed-time decomposition cues
 lane: 'Content: Specs Governance'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -34,9 +34,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Align the LumenFlow sizing guidance under docs/04-operations so it biases toward one coherent WU per outcome, distinguishes session handoff from true decomposition, and removes elapsed-time phrasing from initiative guidance.
+description: Align the LumenFlow sizing guidance under docs/04-operations so it biases toward one
+  coherent WU per outcome, distinguishes session handoff from true decomposition, and removes
+  elapsed-time phrasing from initiative guidance.
 acceptance:
-  - The short onboarding sizing guide says one coherent outcome should stay one WU unless independent delivery or lane boundaries require a split.
-  - The full sizing guide distinguishes checkpoint-resume/orchestrator-worker from true WU decomposition.
-  - The related onboarding docs no longer use elapsed-time language such as multi-day work as a reason to create an initiative or split a WU.
+  - The short onboarding sizing guide says one coherent outcome should stay one WU unless
+    independent delivery or lane boundaries require a split.
+  - The full sizing guide distinguishes checkpoint-resume/orchestrator-worker from true WU
+    decomposition.
+  - The related onboarding docs no longer use elapsed-time language such as multi-day work as a
+    reason to create an initiative or split a WU.
   - Sizing-warning remediation shows keep-as-one-WU strategies before split-only guidance.
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2355
+claimed_at: 2026-03-10T00:28:50.563Z
+baseline_main_sha: d20dae7a6af728a1c1459c461ed23266b0139e8a
+session_id: ec2bdbf5-f203-4934-95ab-db8a77edad40
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T00:28:50.568Z

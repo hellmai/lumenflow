@@ -1,10 +1,11 @@
 # Work Unit Status
 
-_Last updated: 2026-03-09_
+_Last updated: 2026-03-10_
 
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2355 — Tighten sizing guidance and remove elapsed-time decomposition cues](wu/WU-2355.yaml)
 
 ## Completed
 
