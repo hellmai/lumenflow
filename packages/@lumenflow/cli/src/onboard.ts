@@ -689,7 +689,8 @@ export interface LaunchDashboardResult {
 }
 
 const DASHBOARD_WORKTREE_PATH = path.join('apps', 'web');
-const DASHBOARD_START_COMMAND = 'Run "pnpm dev" in apps/web/ to start the dashboard at http://localhost:3000';
+const DASHBOARD_START_COMMAND =
+  'Run "pnpm dev" in apps/web/ to start the dashboard at http://localhost:3000';
 const NO_DASHBOARD_GUIDANCE =
   'No dashboard detected in this workspace. Continue with the CLI workflow until a dashboard surface is added.';
 

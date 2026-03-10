@@ -95,10 +95,10 @@ export const DEFAULT_UI_CODE_PATH_PATTERNS: readonly string[] = Object.freeze([
   '**/*.module.css',
   '**/*.module.scss',
   // Styled components
- '**/*.styled.ts',
- '**/*.styled.tsx',
- '**/*.styled.js',
- '**/*.styled.jsx',
+  '**/*.styled.ts',
+  '**/*.styled.tsx',
+  '**/*.styled.js',
+  '**/*.styled.jsx',
   // Component / page directories
   '**/components/**',
   '**/pages/**',
