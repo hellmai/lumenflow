@@ -437,9 +437,7 @@ export async function recordWuBriefEvidence(
   const note = `${WU_BRIEF_EVIDENCE_NOTE_PREFIX} generated via ${clientName}`;
   const resolvedEvidenceMode =
     evidenceMode ??
-    (clientName === 'wu:claim:auto'
-      ? BRIEF_EVIDENCE_MODE_CLAIM_AUTO
-      : BRIEF_EVIDENCE_MODE_FULL);
+    (clientName === 'wu:claim:auto' ? BRIEF_EVIDENCE_MODE_CLAIM_AUTO : BRIEF_EVIDENCE_MODE_FULL);
   const nextStepsParts = [`client=${clientName}`, `mode=${resolvedEvidenceMode}`];
   if (promptHash) {
     nextStepsParts.push(`hash=${promptHash}`);

@@ -74,12 +74,12 @@ describe('WU-2359: evidence and spawn provenance policy', () => {
     it('keeps the deprecated flag parseable without showing it in help output', () => {
       const originalArgv = [...process.argv];
       const writes: string[] = [];
-      const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(
-        ((chunk: string | Uint8Array) => {
-          writes.push(typeof chunk === 'string' ? chunk : chunk.toString());
-          return true;
-        }) as typeof process.stdout.write,
-      );
+      const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(((
+        chunk: string | Uint8Array,
+      ) => {
+        writes.push(typeof chunk === 'string' ? chunk : chunk.toString());
+        return true;
+      }) as typeof process.stdout.write);
 
       process.argv = ['node', BRIEF_COMMAND_NAME, '--help'];
 
