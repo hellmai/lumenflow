@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml)
 
 ## Completed
 

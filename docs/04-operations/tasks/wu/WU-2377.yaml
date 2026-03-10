@@ -2,7 +2,7 @@ id: WU-2377
 title: Make repo-shape defaults and gate planning config-driven
 lane: 'Framework: Core'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -15,8 +15,10 @@ code_paths:
   - packages/@lumenflow/cli/__tests__/gates.test.ts
 tests:
   manual:
-    - Run incremental gates in a fixture repo without apps/ or packages/ directories and verify lint/format planning still targets changed files correctly
-    - Run docs-only planning against a repo with code_paths outside apps/web and verify package filtering remains correct
+    - Run incremental gates in a fixture repo without apps/ or packages/ directories and verify
+      lint/format planning still targets changed files correctly
+    - Run docs-only planning against a repo with code_paths outside apps/web and verify package
+      filtering remains correct
   unit:
     - packages/@lumenflow/core/src/__tests__/lumenflow-config-schema.test.ts
     - packages/@lumenflow/core/src/__tests__/path-centralization.test.ts
@@ -33,7 +35,9 @@ blocked_by:
 spec_refs:
   - docs/04-operations/plans/INIT-51-tech-stack-portability-baselin.md
 risks: []
-notes: 'Sized per wu-sizing-guide.md as one coherent outcome: repo-shape-aware defaults and gate planning. Keep together because defaults and planning need to land and regress together, even though the change spans core and CLI.'
+notes: 'Sized per wu-sizing-guide.md as one coherent outcome: repo-shape-aware defaults and gate
+  planning. Keep together because defaults and planning need to land and regress together, even
+  though the change spans core and CLI.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -46,8 +50,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: generic defaults and incremental gate planning still assume monorepo root prefixes such as apps/, packages/, tools/, plus a default apps/web working directory. Problem: repos that do not match the monorepo-web layout can get skipped or misclassified in format, lint, or docs-only planning, even when the underlying workflow should remain generic. Solution: make directory defaults and gate-planning heuristics derive from configured directories or detected repo shape instead of fixed root-prefix assumptions.'
+description: 'Context: generic defaults and incremental gate planning still assume monorepo root
+  prefixes such as apps/, packages/, tools/, plus a default apps/web working directory. Problem:
+  repos that do not match the monorepo-web layout can get skipped or misclassified in format, lint,
+  or docs-only planning, even when the underlying workflow should remain generic. Solution: make
+  directory defaults and gate-planning heuristics derive from configured directories or detected
+  repo shape instead of fixed root-prefix assumptions.'
 acceptance:
-  - Generic directory defaults no longer require apps/web as the implicit working-directory assumption for non-web consumer repos
-  - Incremental format/lint/docs-only planning no longer depends solely on apps/, packages/, or tools/ prefixes and works for non-monorepo repo shapes
+  - Generic directory defaults no longer require apps/web as the implicit working-directory
+    assumption for non-web consumer repos
+  - Incremental format/lint/docs-only planning no longer depends solely on apps/, packages/, or
+    tools/ prefixes and works for non-monorepo repo shapes
   - Automated tests cover at least one single-package layout and one non-web monorepo layout
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-wu-2377
+claimed_at: 2026-03-10T16:38:31.212Z
+baseline_main_sha: 1416e59c5483ce0868aca6064296fcbadaaecf8a
+session_id: 99138742-83f7-42c0-8c30-a41ec3747034
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T16:38:31.218Z
