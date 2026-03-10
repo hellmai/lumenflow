@@ -2,7 +2,7 @@ id: WU-2388
 title: Fix misleading wu:claim auto-brief log message that causes agents to skip wu:brief
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -44,3 +44,6 @@ acceptance:
   - wu:claim log message clearly communicates that wu:brief must still be run
   - Message uses warning emoji instead of success emoji
   - Test expectations updated
+locked: true
+completed_at: 2026-03-10T23:00:15.792Z
+completed: 2026-03-11

@@ -3160,13 +3160,6 @@
 {"type":"checkpoint","wuId":"WU-2384","timestamp":"2026-03-10T20:40:51.712Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2384.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2384","timestamp":"2026-03-10T20:43:05.492Z"}
 {"type":"claim","wuId":"WU-2385","timestamp":"2026-03-10T20:58:55.032Z","lane":"Framework: CLI WU Commands","title":"Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review"}
-{"type":"claim","wuId":"WU-2386","timestamp":"2026-03-10T21:16:34.175Z","lane":"Framework: CLI WU Commands","title":"wu:edit blocks metadata-only edits on dirty worktrees"}
-{"type":"release","wuId":"WU-2386","timestamp":"2026-03-10T21:17:44.714Z","reason":"Reset via wu:recover --action reset"}
-{"type":"claim","wuId":"WU-2386","timestamp":"2026-03-10T21:18:06.934Z","lane":"Framework: CLI WU Commands","title":"wu:edit blocks metadata-only edits on dirty worktrees"}
-{"type":"checkpoint","wuId":"WU-2386","timestamp":"2026-03-10T21:18:18.377Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2386","timestamp":"2026-03-10T21:18:24.810Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
-{"type":"checkpoint","wuId":"WU-2386","timestamp":"2026-03-10T21:21:17.471Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2386.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"complete","wuId":"WU-2386","timestamp":"2026-03-10T21:23:21.817Z"}
 {"type":"checkpoint","wuId":"WU-2385","timestamp":"2026-03-10T20:59:06.488Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2385","timestamp":"2026-03-10T20:59:31.601Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"claim","wuId":"WU-2386","timestamp":"2026-03-10T21:16:34.175Z","lane":"Framework: CLI WU Commands","title":"wu:edit blocks metadata-only edits on dirty worktrees"}
@@ -3183,3 +3176,4 @@
 {"type":"checkpoint","wuId":"WU-2388","timestamp":"2026-03-10T22:56:37.595Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2388","timestamp":"2026-03-10T22:56:48.061Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2388","timestamp":"2026-03-10T22:58:37.606Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2388.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2388","timestamp":"2026-03-10T23:00:20.591Z"}
