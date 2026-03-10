@@ -1,0 +1,47 @@
+id: WU-2368
+title: Add stronger default co-change safeguards for database-affecting WUs
+lane: 'Framework: Core Validation'
+type: bug
+status: ready
+priority: P2
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/cli/src/gates.ts
+  - packages/@lumenflow/cli/src/gates-runners.ts
+  - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
+  - packages/@lumenflow/core/src/schemas/gates-section-config.ts
+  - .lumenflow/templates/manifest.yaml
+tests:
+  manual:
+    - Change a database schema fixture without a migration and confirm the gate fails with actionable co-change guidance
+    - Add the matching migration and confirm the co-change gate passes and DB-risk verification guidance remains visible
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/gates-co-change.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-config.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-integration-tests.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
+    - packages/@lumenflow/core/src/__tests__/invariants-runner-strategy.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2368.done
+dependencies: []
+risks: []
+notes: Triggered by repeated cases where DB work lands without migrations or companion verification and the gap is only discovered later in the lifecycle.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: |-
+  Context: LumenFlow already has high-risk gate routing and configurable co-change rules, including schema-to-migration enforcement examples.
+  Problem: database and schema work still slips through without required migrations or companion verification, and the omission is often discovered later rather than during the WU lifecycle.
+  Solution: Add stronger default safeguards for database-affecting WUs so schema changes require migration companions, missing co-changes fail with actionable guidance, and the workflow surfaces the correct verification expectations for DB-risk work before completion.
+acceptance:
+  - Default co-change or equivalent gate enforcement fails when database schema changes land without required migration companions
+  - Gate output for missing database co-changes is actionable and points the agent toward the required companion artifacts
+  - Database-affecting and migration-risk work surface the correct verification expectations instead of relying on ad hoc unit tests
+  - Existing configurable co-change support remains backwards compatible for repos with custom patterns
+  - Regression tests cover trigger and require pattern enforcement plus DB-risk verification routing
