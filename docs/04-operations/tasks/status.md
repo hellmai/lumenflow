@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2358 — Fix SPDX header mismatches and stale private-package docs](wu/WU-2358.yaml)
 
 ## Completed
 
