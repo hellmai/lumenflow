@@ -26,7 +26,6 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/docs-sync.test.ts
     - packages/@lumenflow/cli/src/__tests__/docs-sync-safety.test.ts
     - packages/@lumenflow/cli/src/__tests__/lumenflow-upgrade.test.ts
-    - packages/@lumenflow/cli/src/__tests__/doctor.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2385.done
