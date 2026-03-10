@@ -2,7 +2,7 @@ id: WU-2380
 title: Add optional migration-state verification for schema-affecting WUs
 lane: 'Framework: Core Validation'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -87,3 +87,6 @@ acceptance:
     project-defined verification, not an automatic production migration runner'
   - Internal agent docs and Starlight docs explain when migration-state verification runs, what it
     checks, and how agents should respond when it fails
+locked: true
+completed_at: 2026-03-10T19:07:51.520Z
+completed: 2026-03-10

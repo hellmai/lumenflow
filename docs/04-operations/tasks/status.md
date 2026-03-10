@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2380 — Add optional migration-state verification for schema-affecting WUs](wu/WU-2380.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1301,3 +1301,4 @@ _Last updated: 2026-03-10_
 - [WU-2379 — wu:done must reject claim-auto as sufficient wu:brief evidence](wu/WU-2379.yaml) — 2026-03-10
 - [WU-2381 — wu:edit splits free-text field values on commas](wu/WU-2381.yaml) — 2026-03-10
 - [WU-2382 — Fix wu:edit comma splitting for free-text repeatable fields](wu/WU-2382.yaml) — 2026-03-10
+- [WU-2380 — Add optional migration-state verification for schema-affecting WUs](wu/WU-2380.yaml) — 2026-03-10
