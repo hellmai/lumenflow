@@ -2,7 +2,7 @@ id: WU-2379
 title: wu:done must reject claim-auto as sufficient wu:brief evidence
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -30,10 +30,30 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: wu:claim with policyMode=auto (the default) auto-records claim-auto evidence in wu-events.jsonl. Problem: wu:done-policies.ts checks whether wu:brief evidence EXISTS but never checks the evidence mode. claim-auto evidence satisfies the gate, so agents can complete WUs without ever running wu:brief. This bypasses the entire purpose of wu:brief — lane occupation checks, sizing validation, memory context, and the structured handoff prompt with context-loading instructions. Agents (including Codex) have been observed skipping wu:brief entirely because the gate is pre-satisfied. Solution: 1) wu:done-policies.ts must reject claim-auto evidence and require full/prompt mode evidence. 2) Document this behavior clearly in Starlight docs and agent onboarding so all agents understand wu:brief is mandatory. 3) Update AGENTS.md/LUMENFLOW.md to make wu:brief requirement explicit.'
+description: 'Context: wu:claim with policyMode=auto (the default) auto-records claim-auto evidence
+  in wu-events.jsonl. Problem: wu:done-policies.ts checks whether wu:brief evidence EXISTS but never
+  checks the evidence mode. claim-auto evidence satisfies the gate, so agents can complete WUs
+  without ever running wu:brief. This bypasses the entire purpose of wu:brief — lane occupation
+  checks, sizing validation, memory context, and the structured handoff prompt with context-loading
+  instructions. Agents (including Codex) have been observed skipping wu:brief entirely because the
+  gate is pre-satisfied. Solution: 1) wu:done-policies.ts must reject claim-auto evidence and
+  require full/prompt mode evidence. 2) Document this behavior clearly in Starlight docs and agent
+  onboarding so all agents understand wu:brief is mandatory. 3) Update AGENTS.md/LUMENFLOW.md to
+  make wu:brief requirement explicit.'
 acceptance:
-  - wu:done rejects claim-auto evidence mode and requires full or prompt mode evidence from explicit wu:brief run
+  - wu:done rejects claim-auto evidence mode and requires full or prompt mode evidence from explicit
+    wu:brief run
   - wu:prep warns when only claim-auto evidence exists with actionable remediation
-  - Agent onboarding docs (starting-prompt.md, quick-ref-commands.md) clearly state wu:brief is mandatory after wu:claim
-  - Starlight docs (wu-brief concept page or lifecycle page) document the evidence modes and why claim-auto is insufficient
+  - Agent onboarding docs (starting-prompt.md, quick-ref-commands.md) clearly state wu:brief is
+    mandatory after wu:claim
+  - Starlight docs (wu-brief concept page or lifecycle page) document the evidence modes and why
+    claim-auto is insufficient
   - AGENTS.md and/or LUMENFLOW.md updated to make wu:brief requirement unambiguous
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2379
+claimed_at: 2026-03-10T18:01:57.473Z
+baseline_main_sha: 952fc68f48aefcc6e718dbd999851309f38cf8e7
+session_id: e7ae3ede-0106-48ca-878d-d42ac57f6dcf
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T18:01:57.480Z

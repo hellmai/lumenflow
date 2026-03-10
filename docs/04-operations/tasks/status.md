@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2379 — wu:done must reject claim-auto as sufficient wu:brief evidence](wu/WU-2379.yaml)
 
 ## Completed
 
