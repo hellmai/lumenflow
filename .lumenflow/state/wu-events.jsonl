@@ -3070,3 +3070,6 @@
 {"type":"claim","wuId":"WU-2369","timestamp":"2026-03-10T12:46:53.877Z","lane":"Framework: CLI WU Commands","title":"Add --replace-test-paths flags to wu:edit"}
 {"type":"claim","wuId":"WU-2370","timestamp":"2026-03-10T12:48:27.515Z","lane":"Framework: CLI WU Commands","title":"Fix wu:brief evidence path mismatch between worktree and main"}
 {"type":"claim","wuId":"WU-2371","timestamp":"2026-03-10T12:51:31.203Z","lane":"Framework: CLI WU Commands","title":"Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links"}
+{"type":"checkpoint","wuId":"WU-2369","timestamp":"2026-03-10T12:47:05.917Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2369","timestamp":"2026-03-10T12:47:25.694Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2369","timestamp":"2026-03-10T12:48:24.597Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
