@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2360 — Redact internal product and competitor strategy references from public repo](wu/WU-2360.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1279,3 +1279,4 @@ _Last updated: 2026-03-10_
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml) — 2026-03-10
 - [WU-2358 — Fix SPDX header mismatches and stale private-package docs](wu/WU-2358.yaml) — 2026-03-10
 - [WU-2359 — Remove --evidence-only, soften spawn provenance to warn-only for non-orchestrated WUs](wu/WU-2359.yaml) — 2026-03-10
+- [WU-2360 — Redact internal product and competitor strategy references from public repo](wu/WU-2360.yaml) — 2026-03-10

@@ -2,7 +2,7 @@ id: WU-2360
 title: Redact internal product and competitor strategy references from public repo
 lane: 'Operations: Tooling'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -45,3 +45,6 @@ acceptance:
   - No internal product names or domains in WU specs
   - No private downstream project names in WU specs or initiative YAMLs
   - Email typo fixed in privacy.mdx
+locked: true
+completed_at: 2026-03-10T09:38:07.967Z
+completed: 2026-03-10
