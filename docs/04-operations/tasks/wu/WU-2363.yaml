@@ -23,9 +23,6 @@ tests:
   unit:
     - packages/@lumenflow/cli/src/__tests__/init.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
-    - packages/@lumenflow/cli/src/__tests__/docs-sync.test.ts
-    - packages/@lumenflow/cli/src/__tests__/init.test.ts
-    - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
     - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
   e2e: []
 artifacts:
