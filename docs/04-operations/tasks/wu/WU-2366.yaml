@@ -9,12 +9,17 @@ code_paths:
   - packages/@lumenflow/cli/src/docs-sync.ts
   - packages/@lumenflow/cli/src/lumenflow-upgrade.ts
   - packages/@lumenflow/cli/src/onboarding-template-paths.ts
+  - packages/@lumenflow/cli/src/public-manifest.ts
+  - packages/@lumenflow/cli/src/sync-templates.ts
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
 tests:
   manual:
     - Run lumenflow:upgrade --latest and verify staleness warning appears when docs are outdated
     - Run docs:sync --force and verify LUMENFLOW.md and AGENTS.md are refreshed from templates
   unit:
     - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
+    - packages/@lumenflow/cli/__tests__/sync-templates.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2366.done
@@ -48,3 +53,6 @@ acceptance:
     date
   - 'Warning includes copy-paste command: pnpm docs:sync --force'
   - Existing onboarding and skills sync behavior unchanged
+  - Doc surfaces describing docs:sync scope updated (public-manifest.ts, quick-ref-commands,
+    starting-prompt, UPGRADING template)
+  - sync-templates.ts core docs drift check updated to include AGENTS.md
