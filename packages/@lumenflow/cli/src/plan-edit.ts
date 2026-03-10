@@ -11,20 +11,22 @@
  * Usage:
  *   pnpm plan:edit --id WU-1313 --section Goal --content "New goal content"
  *   pnpm plan:edit --id WU-1313 --section Risks --append "- New risk"
+ *   pnpm plan:edit --id INIT-040 --section Goal --content "Updated goal"
+ *   pnpm plan:edit --id WU-100 --file my-plan.md --section Goal --content "..."
  *
  * Features:
  * - Updates specific sections by name
  * - Supports append mode for list sections (Risks, etc.)
  * - Uses micro-worktree isolation for atomic commits
  * - Validates section exists before editing
+ * - Resolves plan file from initiative metadata or --file flag (WU-2364)
  *
- * Context: WU-1313 (INIT-013 Plan Tooling)
+ * Context: WU-1313 (INIT-013 Plan Tooling), WU-2364
  */
 
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { ensureOnMain } from '@lumenflow/core/wu-helpers';
 import {
@@ -32,8 +34,8 @@ import {
   isRetryExhaustionError as coreIsRetryExhaustionError,
   formatRetryExhaustionError as coreFormatRetryExhaustionError,
 } from '@lumenflow/core/micro-worktree';
-import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { LOG_PREFIX as CORE_LOG_PREFIX } from '@lumenflow/core/wu-constants';
+import { resolvePlanFile } from './plan-resolve.js';
 
 /** Log prefix for console output */
 export const LOG_PREFIX = CORE_LOG_PREFIX.PLAN_EDIT ?? '[plan:edit]';
@@ -73,25 +75,13 @@ export function formatRetryExhaustionError(error: Error, id: string, section: st
 }
 
 /**
- * Get the path to a plan file from its ID
+ * Get the path to a plan file from its ID.
  *
- * @param id - WU or Initiative ID
- * @returns Path to plan file
- * @throws Error if plan not found
+ * @deprecated Use resolvePlanFile() instead (WU-2364).
+ * Kept for backward compatibility with existing callers.
  */
-export function getPlanPath(id: string): string {
-  const plansDir = WU_PATHS.PLANS_DIR();
-  const planPath = join(plansDir, `${id}-plan.md`);
-
-  if (!existsSync(planPath)) {
-    die(
-      `Plan not found for ${id}\n\n` +
-        `Expected path: ${planPath}\n\n` +
-        `Create it first with: pnpm plan:create --id ${id} --title "Title"`,
-    );
-  }
-
-  return planPath;
+export function getPlanPath(id: string, file?: string): string {
+  return resolvePlanFile({ id, file });
 }
 
 /**
@@ -224,10 +214,16 @@ export async function main(): Promise<void> {
     description: 'Content to append to the section (instead of replace)',
   };
 
+  const FILE_OPTION = {
+    name: 'file',
+    flags: '--file <path>',
+    description: 'Plan filename or path (resolves relative to plansDir)',
+  };
+
   const args = createWUParser({
     name: 'plan-edit',
     description: 'Edit a section in a plan file',
-    options: [WU_OPTIONS.id, SECTION_OPTION, CONTENT_OPTION, APPEND_OPTION],
+    options: [WU_OPTIONS.id, SECTION_OPTION, CONTENT_OPTION, APPEND_OPTION, FILE_OPTION],
     required: ['id', 'section'],
     allowPositionalId: true,
   });
@@ -236,6 +232,7 @@ export async function main(): Promise<void> {
   const section = args.section as string;
   const content = args.content as string | undefined;
   const appendContent = args.append as string | undefined;
+  const file = args.file as string | undefined;
 
   // Validate we have either content or append
   if (!content && !appendContent) {
@@ -260,16 +257,8 @@ export async function main(): Promise<void> {
       pushOnly: true,
       pushRetryOverride: PLAN_EDIT_PUSH_RETRY_OVERRIDE,
       execute: async ({ worktreePath }) => {
-        const planRelPath = join(WU_PATHS.PLANS_DIR(), `${id}-plan.md`);
-        const planAbsPath = join(worktreePath, planRelPath);
-
-        if (!existsSync(planAbsPath)) {
-          die(
-            `Plan not found for ${id}\n\n` +
-              `Expected path: ${planRelPath}\n\n` +
-              `Create it first with: pnpm plan:create --id ${id} --title "Title"`,
-          );
-        }
+        const planAbsPath = resolvePlanFile({ id, file, baseDir: worktreePath });
+        const planRelPath = planAbsPath.replace(worktreePath + '/', '');
 
         let changed: boolean;
         if (appendContent) {

@@ -24,13 +24,12 @@
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { die } from '@lumenflow/core/error-handler';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { ensureOnMain } from '@lumenflow/core/wu-helpers';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
-import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { todayISO } from '@lumenflow/core/date-utils';
 import { LOG_PREFIX as CORE_LOG_PREFIX } from '@lumenflow/core/wu-constants';
+import { resolvePlanFile } from './plan-resolve.js';
 
 /** Log prefix for console output */
 export const LOG_PREFIX = CORE_LOG_PREFIX.PLAN_PROMOTE ?? '[plan:promote]';
@@ -51,25 +50,13 @@ const REQUIRED_SECTIONS = ['Goal', 'Scope', 'Approach'];
 const STATUS_APPROVED_PATTERN = /^Status:\s*approved/im;
 
 /**
- * Get the path to a plan file from its ID
+ * Get the path to a plan file from its ID.
  *
- * @param id - WU or Initiative ID
- * @returns Path to plan file
- * @throws Error if plan not found
+ * @deprecated Use resolvePlanFile() instead (WU-2364).
+ * Kept for backward compatibility with existing callers.
  */
-export function getPlanPath(id: string): string {
-  const plansDir = WU_PATHS.PLANS_DIR();
-  const planPath = join(plansDir, `${id}-plan.md`);
-
-  if (!existsSync(planPath)) {
-    die(
-      `Plan not found for ${id}\n\n` +
-        `Expected path: ${planPath}\n\n` +
-        `Create it first with: pnpm plan:create --id ${id} --title "Title"`,
-    );
-  }
-
-  return planPath;
+export function getPlanPath(id: string, file?: string): string {
+  return resolvePlanFile({ id, file });
 }
 
 /**
@@ -190,16 +177,23 @@ export async function main(): Promise<void> {
     description: 'Skip validation and promote anyway',
   };
 
+  const FILE_OPTION = {
+    name: 'file',
+    flags: '--file <path>',
+    description: 'Plan filename or path (resolves relative to plansDir)',
+  };
+
   const args = createWUParser({
     name: 'plan-promote',
     description: 'Promote a plan to approved status',
-    options: [WU_OPTIONS.id, FORCE_OPTION],
+    options: [WU_OPTIONS.id, FORCE_OPTION, FILE_OPTION],
     required: ['id'],
     allowPositionalId: true,
   });
 
   const id = args.id as string;
   const force = args.force as boolean | undefined;
+  const file = args.file as string | undefined;
 
   // Validate ID format
   if (!WU_ID_PATTERN.test(id) && !INIT_ID_PATTERN.test(id)) {
@@ -218,16 +212,8 @@ export async function main(): Promise<void> {
       logPrefix: LOG_PREFIX,
       pushOnly: true,
       execute: async ({ worktreePath }) => {
-        const planRelPath = join(WU_PATHS.PLANS_DIR(), `${id}-plan.md`);
-        const planAbsPath = join(worktreePath, planRelPath);
-
-        if (!existsSync(planAbsPath)) {
-          die(
-            `Plan not found for ${id}\n\n` +
-              `Expected path: ${planRelPath}\n\n` +
-              `Create it first with: pnpm plan:create --id ${id} --title "Title"`,
-          );
-        }
+        const planAbsPath = resolvePlanFile({ id, file, baseDir: worktreePath });
+        const planRelPath = planAbsPath.replace(worktreePath + '/', '');
 
         // Validate plan completeness (unless force)
         if (!force) {
