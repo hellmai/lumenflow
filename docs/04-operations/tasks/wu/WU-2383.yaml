@@ -16,6 +16,13 @@ code_paths:
   - packages/@lumenflow/cli/src/init.ts
   - packages/@lumenflow/cli/src/init-scaffolding.ts
   - packages/@lumenflow/cli/src/merge-block.ts
+  - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
+  - packages/@lumenflow/cli/templates/core/AGENTS.md.template
+  - packages/@lumenflow/cli/templates/core/UPGRADING.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
+  - apps/docs/src/content/docs/getting-started/upgrade.mdx
+  - apps/docs/src/content/docs/packs/software-delivery/setup/upgrading.mdx
 tests:
   manual:
     - Run lumenflow init in project with existing CLAUDE.md — verify user content preserved,
@@ -45,6 +52,62 @@ notes: >-
   hand-edited LUMENFLOW.md before this change need drift detection + forced migration to .local.md
   before we start force-syncing. Without this, the first upgrade under the new design still causes
   data loss.
+
+
+  Doc scope (mandatory, same WU — changes user contract):
+
+
+  TEMPLATES (become generated files in consumer repos):
+
+  - LUMENFLOW.md.template
+
+  - AGENTS.md.template
+
+  - UPGRADING.md.template
+
+  - quick-ref-commands.md.template
+
+  - vendor-support.md.template (if exists)
+
+  - starting-prompt.md.template
+
+  - release-process.md.template
+
+
+  STARLIGHT DOCS (user-facing):
+
+  - upgrade.mdx
+
+  - agent-onboarding.mdx
+
+  - ai-integrations-setup.mdx
+
+  - ai-agent-integration.mdx
+
+  - reference/templates.mdx (LUMENFLOW.local.md override story)
+
+
+  DOGFOOD DOCS (this repo):
+
+  - AGENTS.md, LUMENFLOW.md, CLAUDE.md
+
+  - START-HERE.md, README.md if they reference old behavior
+
+
+  STALE REFERENCES (30+ hits for docs:sync --force):
+
+  - quick-ref-commands.md line 109: still says docs:sync --force refreshes after upgrade
+
+  - upgrade.mdx line 26: still tells users to run docs:sync --force
+
+  - UPGRADING.md.template line 15: same old flow
+
+  - Plus 27 more references across templates, Starlight, onboarding, tests, CLI README
+
+
+  Only touch docs that describe: (1) who owns LUMENFLOW.md vs .local, (2) what init does when files
+  exist, (3) what upgrade/docs:sync may rewrite, (4) what bootstrap content must remain inline for
+  dumb agents.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -126,3 +189,11 @@ acceptance:
   - Reserved skills are an exact allowlist; never recurse/overwrite arbitrary SKILL.md files
   - 'Migration guard: detect LUMENFLOW.md drift from template before first force-sync; require user
     to move local content to LUMENFLOW.local.md before overwriting'
+  - Canonical ownership table added to LUMENFLOW.md template (who owns what, what init/upgrade may
+    touch)
+  - Same ownership table mirrored in Starlight upgrade and setup docs
+  - All docs:sync --force references updated to reflect new safe behavior
+  - All scaffold templates updated to match new ownership model
+  - 'Starlight docs updated: upgrade.mdx, agent-onboarding.mdx, ai-integrations-setup.mdx,
+    ai-agent-integration.mdx'
+  - 'Dogfood docs in this repo updated: AGENTS.md, LUMENFLOW.md, CLAUDE.md'
