@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2362 — Durable delegation intent: distinguish non-orchestrated from lost-provenance WUs](wu/WU-2362.yaml)
 
 ## Completed
 
