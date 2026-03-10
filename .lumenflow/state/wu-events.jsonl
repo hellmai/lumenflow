@@ -3085,3 +3085,4 @@
 {"type":"checkpoint","wuId":"WU-2372","timestamp":"2026-03-10T13:11:23.151Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2372.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2372","timestamp":"2026-03-10T13:12:20.036Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2372.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2372","timestamp":"2026-03-10T13:13:33.156Z"}
+{"type":"claim","wuId":"WU-2373","timestamp":"2026-03-10T13:36:27.821Z","lane":"Framework: CLI WU Commands","title":"docs:sync should use micro-worktree isolation"}

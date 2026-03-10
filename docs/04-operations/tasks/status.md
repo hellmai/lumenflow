@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2373 — docs:sync should use micro-worktree isolation](wu/WU-2373.yaml)
 
 ## Completed
 

@@ -2,7 +2,7 @@ id: WU-2373
 title: docs:sync should use micro-worktree isolation
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -27,9 +27,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: docs:sync writes files directly to cwd on main branch. The branch guard (WU-1362) only warns but doesn't block. Should use micro-worktree isolation like wu:create, wu:claim, and release do. Additionally, lumenflow:upgrade should run docs:sync as part of its own micro-worktree transaction instead of telling the user to run it separately.
+description: docs:sync writes files directly to cwd on main branch. The branch guard (WU-1362) only
+  warns but doesn't block. Should use micro-worktree isolation like wu:create, wu:claim, and release
+  do. Additionally, lumenflow:upgrade should run docs:sync as part of its own micro-worktree
+  transaction instead of telling the user to run it separately.
 acceptance:
   - docs:sync uses micro-worktree isolation when run on main branch
   - docs:sync commits and pushes atomically like other micro-worktree commands
-  - lumenflow:upgrade integrates docs:sync into its own transaction instead of requiring a separate manual step
+  - lumenflow:upgrade integrates docs:sync into its own transaction instead of requiring a separate
+    manual step
   - Existing worktree behavior preserved (docs:sync in a worktree writes directly as before)
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2373
+claimed_at: 2026-03-10T13:36:27.782Z
+baseline_main_sha: c1337cf0a0ab66c1c732866b730152d70c6b6d7d
+session_id: e48a7038-f06e-4855-a7c7-d8a8350130b8
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T13:36:27.792Z
