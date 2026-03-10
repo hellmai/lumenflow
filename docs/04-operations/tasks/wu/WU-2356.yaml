@@ -2,7 +2,7 @@ id: WU-2356
 title: Align sizing and initiative guidance across root and template docs
 lane: 'Content: Specs Governance'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -64,3 +64,6 @@ acceptance:
     one-coherent-outcome guidance.
   - first-wu-mistakes template advises stronger single-WU strategies before splitting oversized work.
   - Docs/template validation passes so release proceeds from aligned guidance.
+locked: true
+completed_at: 2026-03-10T01:03:07.456Z
+completed: 2026-03-10

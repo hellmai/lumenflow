@@ -2994,3 +2994,4 @@
 {"type":"checkpoint","wuId":"WU-2356","timestamp":"2026-03-10T00:39:50.254Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2356","timestamp":"2026-03-10T00:44:51.476Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2356.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2356","timestamp":"2026-03-10T01:02:51.484Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2356.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2356","timestamp":"2026-03-10T01:03:12.109Z"}

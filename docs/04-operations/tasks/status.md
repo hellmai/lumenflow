@@ -5,7 +5,6 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
-- [WU-2356 — Align sizing and initiative guidance across root and template docs](wu/WU-2356.yaml)
 
 ## Completed
 
@@ -1276,3 +1275,4 @@ _Last updated: 2026-03-10_
 - [WU-2353 — Fix lane-health gitignore parsing to match git recursive semantics for unanchored directory patterns](wu/WU-2353.yaml) — 2026-03-09
 - [WU-2354 — Add phase_execution_order and dependency_model flags to initiative:edit](wu/WU-2354.yaml) — 2026-03-09
 - [WU-2355 — Tighten sizing guidance and remove elapsed-time decomposition cues](wu/WU-2355.yaml) — 2026-03-10
+- [WU-2356 — Align sizing and initiative guidance across root and template docs](wu/WU-2356.yaml) — 2026-03-10
