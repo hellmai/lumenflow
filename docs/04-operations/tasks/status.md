@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2368 — Add stronger default co-change safeguards for database-affecting WUs](wu/WU-2368.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1287,3 +1287,4 @@ _Last updated: 2026-03-10_
 - [WU-2365 — Centralize agent startup guidance in LUMENFLOW.md and deduplicate vendor overlays](wu/WU-2365.yaml) — 2026-03-10
 - [WU-2366 — Expand docs:sync to refresh core docs and add post-upgrade staleness warning](wu/WU-2366.yaml) — 2026-03-10
 - [WU-2367 — Align claim/readiness test enforcement with fit-for-surface verification](wu/WU-2367.yaml) — 2026-03-10
+- [WU-2368 — Add stronger default co-change safeguards for database-affecting WUs](wu/WU-2368.yaml) — 2026-03-10
