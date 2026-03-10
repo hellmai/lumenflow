@@ -1,8 +1,9 @@
 id: WU-2384
-title: 'Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs lifecycle'
+title: 'Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs
+  lifecycle'
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -30,7 +31,11 @@ dependencies: []
 blocked_by:
   - WU-2383
 risks: []
-notes: 'Full grep of stale references captured in WU-2383 notes. Key files: quick-ref-commands.md:109, upgrade.mdx:26, UPGRADING.md.template:15, starting-prompt.md:522, CLI README:306, v2.3.2.mdx:21, changelog.mdx:179, customizing-spawn-prompts.mdx:17. Also update generate-cli-docs.ts:1220 which hardcodes docs:sync --force in generated output. tdd-exception: documentation-only WU, all changes are .md/.mdx files.'
+notes: 'Full grep of stale references captured in WU-2383 notes. Key files:
+  quick-ref-commands.md:109, upgrade.mdx:26, UPGRADING.md.template:15, starting-prompt.md:522, CLI
+  README:306, v2.3.2.mdx:21, changelog.mdx:179, customizing-spawn-prompts.mdx:17. Also update
+  generate-cli-docs.ts:1220 which hardcodes docs:sync --force in generated output. tdd-exception:
+  documentation-only WU, all changes are .md/.mdx files.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
@@ -39,22 +44,40 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: |-
-  Follow-up to WU-2383 (safe docs lifecycle). WU-2383 ships the code fix + scaffold contract. This WU sweeps all narrative docs to match the new ownership model.
+description: >-
+  Follow-up to WU-2383 (safe docs lifecycle). WU-2383 ships the code fix + scaffold contract. This
+  WU sweeps all narrative docs to match the new ownership model.
+
 
   ## Scope
 
-  1. **Starlight pages**: upgrade.mdx, upgrading.mdx, agent-onboarding.mdx, ai-integrations-setup.mdx, ai-agent-integration.mdx, templates.mdx
+
+  1. **Starlight pages**: upgrade.mdx, upgrading.mdx, agent-onboarding.mdx,
+  ai-integrations-setup.mdx, ai-agent-integration.mdx, templates.mdx
+
   2. **Dogfood/root docs**: AGENTS.md, LUMENFLOW.md, CLAUDE.md, START-HERE.md, README.md
-  3. **Stale docs:sync --force references**: 30+ hits across templates, Starlight, onboarding, CLI README, release notes (see WU-2383 notes for full grep)
-  4. **Ownership table**: canonical table in LUMENFLOW.md (who owns what, what init/upgrade may touch), mirrored in Starlight upgrade and setup docs
-  5. **LUMENFLOW.local.md documentation**: reference in Starlight and onboarding for the override story
+
+  3. **Stale docs:sync --force references**: 30+ hits across templates, Starlight, onboarding, CLI
+  README, release notes (see WU-2383 notes for full grep)
+
+  4. **Ownership table**: canonical table in LUMENFLOW.md (who owns what, what init/upgrade may
+  touch), mirrored in Starlight upgrade and setup docs
+
+  5. **LUMENFLOW.local.md documentation**: reference in Starlight and onboarding for the override
+  story
+
 
   ## Out of scope (stays in WU-2383)
+
   - Code changes to init, docs-sync, upgrade, merge-block
+
   - Migration guard implementation
+
   - Reserved skills allowlist
-  - Templates the CLI directly emits (LUMENFLOW.md.template, AGENTS.md.template, UPGRADING.md.template, quick-ref-commands.md.template, starting-prompt.md.template)
+
+  - Templates the CLI directly emits (LUMENFLOW.md.template, AGENTS.md.template,
+  UPGRADING.md.template, quick-ref-commands.md.template, starting-prompt.md.template)
+
   - Tests
 acceptance:
   - Starlight upgrade.mdx and upgrading.mdx updated to reflect new safe upgrade behavior
@@ -63,4 +86,13 @@ acceptance:
   - Dogfood docs (AGENTS.md, LUMENFLOW.md, CLAUDE.md) match new ownership model
   - All 30+ stale docs:sync --force references updated or removed
   - Canonical ownership table present in LUMENFLOW.md and mirrored in Starlight upgrade docs
-  - No narrative doc still tells users to run docs:sync --force to refresh vendor assets after upgrade
+  - No narrative doc still tells users to run docs:sync --force to refresh vendor assets after
+    upgrade
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2384
+claimed_at: 2026-03-10T20:27:45.013Z
+baseline_main_sha: 95a57fbc4e30cab85361b83f380591c4ebcefa02
+session_id: 8af2e7f1-4a66-493a-a227-ba2c3d53f959
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T20:27:45.021Z

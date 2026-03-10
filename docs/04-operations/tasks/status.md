@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2384 — Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs lifecycle](wu/WU-2384.yaml)
 
 ## Completed
 
