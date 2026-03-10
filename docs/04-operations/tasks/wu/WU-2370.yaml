@@ -7,9 +7,7 @@ priority: P2
 created: 2026-03-10
 code_paths:
   - packages/@lumenflow/cli/src/wu-done.ts
-  - packages/@lumenflow/core/src/wu-event-sourcer.ts
-  - packages/@lumenflow/cli/src/wu-spawn-strategy-resolver.ts
-  - packages/@lumenflow/core/src/wu-done-worktree.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-done-evidence-path.test.ts
 tests:
   manual:
     - Run wu:brief in worktree then wu:done and verify evidence is found
