@@ -1898,10 +1898,7 @@ describe('WU-2375: Client-capability-aware orchestration', () => {
   describe('AC2: formatCheckpointOutput client-aware output', () => {
     const TEST_WU_DIR = `${DOCS_LAYOUT_PRESETS.arc42.tasks}/wu`;
 
-    function createTestWUFile(
-      wuId: string,
-      options: { lane?: string; status?: string } = {},
-    ) {
+    function createTestWUFile(wuId: string, options: { lane?: string; status?: string } = {}) {
       const { lane = 'Test Lane', status = 'ready' } = options;
       if (!existsSync(TEST_WU_DIR)) {
         mkdirSync(TEST_WU_DIR, { recursive: true });

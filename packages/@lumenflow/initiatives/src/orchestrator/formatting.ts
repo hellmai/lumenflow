@@ -609,11 +609,7 @@ function formatPlanWavesXml(plan: ExecutionPlan, lines: string[], clientName?: s
 /**
  * WU-2375: Format execution plan waves as markdown prompts (Codex/Gemini/generic).
  */
-function formatPlanWavesMarkdown(
-  plan: ExecutionPlan,
-  lines: string[],
-  clientName?: string,
-): void {
+function formatPlanWavesMarkdown(plan: ExecutionPlan, lines: string[], clientName?: string): void {
   for (let waveIndex = 0; waveIndex < plan.waves.length; waveIndex++) {
     const wave = plan.waves[waveIndex]!;
     lines.push(

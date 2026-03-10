@@ -50,10 +50,7 @@ const program = new Command()
   .option('-p, --progress', 'Show current progress only')
   .option('-c, --checkpoint-per-wave', 'Spawn next wave then exit (no polling)')
   .option('--no-checkpoint', 'Force polling mode')
-  .option(
-    '--client <name>',
-    'Agent client (claude-code, codex-cli, gemini-cli, cursor, windsurf)',
-  )
+  .option('--client <name>', 'Agent client (claude-code, codex-cli, gemini-cli, cursor, windsurf)')
   .action(async (options) => {
     const {
       initiative: initIds,
@@ -75,8 +72,7 @@ const program = new Command()
 
     // WU-2375: Resolve client name
     const config = getConfig();
-    const clientName: string | undefined =
-      clientArg || config.agents?.defaultClient || undefined;
+    const clientName: string | undefined = clientArg || config.agents?.defaultClient || undefined;
 
     if (clientArg && !VALID_CLIENTS.includes(clientArg)) {
       console.warn(
