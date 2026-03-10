@@ -22,6 +22,14 @@ Before starting work, load and audit against `.lumenflow/constraints.md`:
 
 Verify compliance before reporting completion.
 
+## Command Discovery (MANDATORY)
+
+Before using ANY CLI command:
+
+1. Run `pnpm lumenflow:commands` to discover all available commands
+2. Run `<command> --help` before first use of any command — do not guess flags or subcommands
+3. **Never truncate** CLI output (`| head`, `| tail`, `| head -n`) — read the full output
+
 ## Mandatory Pre-Write Check
 
 Before ANY Write/Edit/Read operation:

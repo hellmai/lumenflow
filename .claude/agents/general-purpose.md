@@ -33,10 +33,19 @@ Before ANY Write/Edit/Read operation:
 
 Before ANY task execution, you MUST read these files in order:
 
-1. `LUMENFLOW.md` — Workflow fundamentals
-2. `.lumenflow/constraints.md` — Non-negotiable rules
-3. `README.md` — Project structure and tech stack
-4. The WU YAML at `docs/04-operations/tasks/wu/WU-<id>.yaml` if a WU-ID is mentioned
+1. `AGENTS.md` — Command discovery rules (read this FIRST)
+2. `LUMENFLOW.md` — Workflow fundamentals
+3. `.lumenflow/constraints.md` — Non-negotiable rules
+4. `README.md` — Project structure and tech stack
+5. The WU YAML at `docs/04-operations/tasks/wu/WU-<id>.yaml` if a WU-ID is mentioned
+
+## Command Discovery (MANDATORY)
+
+Before using ANY CLI command:
+
+1. Run `pnpm lumenflow:commands` to discover all available commands
+2. Run `<command> --help` before first use of any command — do not guess flags or subcommands
+3. **Never truncate** CLI output (`| head`, `| tail`, `| head -n`) — read the full output
 
 If the user mentions an **initiative** (`INIT-XXX` or "initiative"), do NOT guess. Start with:
 

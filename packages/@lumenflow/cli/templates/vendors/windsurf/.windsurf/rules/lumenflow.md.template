@@ -1,6 +1,14 @@
 # Windsurf LumenFlow Rules
 
-This project uses LumenFlow workflow. See [LUMENFLOW.md](../../LUMENFLOW.md) for complete documentation.
+**Read first:** [AGENTS.md](../../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../../LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
+
+This file contains Windsurf-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
+
+## Command Discovery (MANDATORY)
+
+1. Run `pnpm lumenflow:commands` to discover all available commands
+2. Run `<command> --help` before first use of any command — do not guess flags or subcommands
+3. **Never truncate** CLI output (`| head`, `| tail`, `| head -n`) — read the full output
 
 ## Critical Rules
 
