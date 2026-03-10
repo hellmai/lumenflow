@@ -3129,3 +3129,4 @@
 {"type":"complete","wuId":"WU-2379","timestamp":"2026-03-10T18:14:12.675Z"}
 {"type":"checkpoint","wuId":"WU-2380","timestamp":"2026-03-10T18:19:30.809Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2380.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2380","timestamp":"2026-03-10T18:19:56.668Z","lane":"Framework: Core Validation","title":"Add optional migration-state verification for schema-affecting WUs"}
+{"type":"claim","wuId":"WU-2381","timestamp":"2026-03-10T18:50:04.149Z","lane":"Framework: CLI WU Commands","title":"wu:edit splits free-text field values on commas"}

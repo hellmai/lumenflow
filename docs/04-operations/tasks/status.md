@@ -5,6 +5,7 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2380 — Add optional migration-state verification for schema-affecting WUs](wu/WU-2380.yaml)
+- [WU-2381 — wu:edit splits free-text field values on commas](wu/WU-2381.yaml)
 
 ## Completed
 

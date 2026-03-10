@@ -2,7 +2,7 @@ id: WU-2381
 title: wu:edit splits free-text field values on commas
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
 tests:
   manual:
-    - Run wu:edit --test-paths-manual with a value containing commas and verify the full string is preserved as one entry
+    - Run wu:edit --test-paths-manual with a value containing commas and verify the full string is
+      preserved as one entry
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
   e2e: []
@@ -31,8 +32,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: wu:edit uses .flatMap(p => p.split(',')) on all repeatable fields including free-text ones like --test-paths-manual and --risks. Problem: manual test descriptions containing natural commas get split into broken fragments. Root cause: WU-1870 added comma-splitting for path shorthand but applied it indiscriminately to free-text fields. Solution: stop splitting on commas for free-text fields while keeping comma-splitting for path/ID fields."
+description: "Context: wu:edit uses .flatMap(p => p.split(',')) on all repeatable fields including
+  free-text ones like --test-paths-manual and --risks. Problem: manual test descriptions containing
+  natural commas get split into broken fragments. Root cause: WU-1870 added comma-splitting for path
+  shorthand but applied it indiscriminately to free-text fields. Solution: stop splitting on commas
+  for free-text fields while keeping comma-splitting for path/ID fields."
 acceptance:
-  - Free-text fields (test-paths-manual and risks) passed to wu:edit preserve commas in their values instead of splitting on them
-  - Path/ID fields (code-paths and test-paths-unit and test-paths-e2e and blocked-by and add-dep) continue to support comma-separated shorthand
+  - Free-text fields (test-paths-manual and risks) passed to wu:edit preserve commas in their values
+    instead of splitting on them
+  - Path/ID fields (code-paths and test-paths-unit and test-paths-e2e and blocked-by and add-dep)
+    continue to support comma-separated shorthand
   - Existing tests pass and new tests cover comma-containing free-text values
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2381
+claimed_at: 2026-03-10T18:50:04.123Z
+baseline_main_sha: 2e2be34e094ba227522f099e48574f92e159d6c1
+session_id: 36dcca29-b2cd-41e1-9960-588de55dd7e4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T18:50:04.129Z
