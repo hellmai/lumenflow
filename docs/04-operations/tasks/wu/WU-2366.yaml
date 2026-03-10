@@ -8,11 +8,11 @@ created: 2026-03-10
 code_paths:
   - packages/@lumenflow/cli/src/docs-sync.ts
   - packages/@lumenflow/cli/src/lumenflow-upgrade.ts
-  - packages/@lumenflow/cli/src/onboarding-template-paths.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
   - packages/@lumenflow/cli/src/sync-templates.ts
   - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
   - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
+  - packages/@lumenflow/cli/templates/core/UPGRADING.md.template
 tests:
   manual:
     - Run lumenflow:upgrade --latest and verify staleness warning appears when docs are outdated
@@ -32,10 +32,17 @@ notes: Depends on WU-2365 (centralized startup guidance) to establish the templa
   syncing. Vendor overlay files (CLAUDE.md, .cursor, .windsurf) are deliberately excluded from
   auto-sync since consumers customize them — only canon docs that LumenFlow fully owns.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T11:47:54.806Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2366
+session_id: c6e01991-1f21-4aa6-8902-bff3614340ab
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T11:47:54.813Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -56,11 +63,3 @@ acceptance:
   - Doc surfaces describing docs:sync scope updated (public-manifest.ts, quick-ref-commands,
     starting-prompt, UPGRADING template)
   - sync-templates.ts core docs drift check updated to include AGENTS.md
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2366
-claimed_at: 2026-03-10T11:47:54.806Z
-baseline_main_sha: 533d79ed5ca6ba0a2316641a1556065bb26e081f
-session_id: c6e01991-1f21-4aa6-8902-bff3614340ab
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T11:47:54.813Z
