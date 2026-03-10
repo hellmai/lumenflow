@@ -8,12 +8,7 @@ created: 2026-03-10
 code_paths:
   - packages/@lumenflow/cli/src/wu-claim-validation.ts
   - packages/@lumenflow/core/src/wu-done-validation.ts
-  - packages/@lumenflow/cli/src/wu-create-readiness.ts
-  - packages/@lumenflow/cli/src/wu-edit-operations.ts
-  - packages/@lumenflow/cli/src/wu-prep.ts
-  - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
-  - .lumenflow/templates/manifest.yaml
-  - .lumenflow/templates/spawn-prompt/visual-directive.md
+  - packages/@lumenflow/core/src/manual-test-validator.ts
 tests:
   manual:
     - Claim a fixture UI or documentation WU with documented tdd-exception and confirm
@@ -34,10 +29,17 @@ risks: []
 notes: Triggered by repeated cases where agents add bogus tests.unit paths just to satisfy
   claim-time enforcement, especially on UI and docs-adjacent work.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T12:19:42.026Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2367
+session_id: a6a8e7d2-01bb-48cf-bdb7-a64a0b334c4b
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T12:19:42.034Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -65,11 +67,3 @@ acceptance:
     fake tests.unit entries
   - Regression tests cover claim validation, spec completeness, and prompt/constraint generation for
     UI and documented-exception cases
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2367
-claimed_at: 2026-03-10T12:19:42.026Z
-baseline_main_sha: cb3d19fd5db731c968b2830eec7ad00c27979717
-session_id: a6a8e7d2-01bb-48cf-bdb7-a64a0b334c4b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T12:19:42.034Z
