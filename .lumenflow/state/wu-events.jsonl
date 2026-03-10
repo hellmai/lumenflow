@@ -3046,3 +3046,5 @@
 {"type":"checkpoint","wuId":"WU-2365","timestamp":"2026-03-10T11:40:05.176Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2365.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2365","timestamp":"2026-03-10T11:43:21.934Z"}
 {"type":"claim","wuId":"WU-2366","timestamp":"2026-03-10T11:47:54.835Z","lane":"Framework: CLI WU Commands","title":"Expand docs:sync to refresh core docs and add post-upgrade staleness warning"}
+{"type":"checkpoint","wuId":"WU-2366","timestamp":"2026-03-10T11:48:06.070Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2366","timestamp":"2026-03-10T11:48:12.750Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
