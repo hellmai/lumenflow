@@ -2,7 +2,7 @@ id: WU-2381
 title: wu:edit splits free-text field values on commas
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -52,3 +52,6 @@ acceptance:
   - Path/ID fields (code-paths and test-paths-unit and test-paths-e2e and blocked-by and add-dep)
     continue to support comma-separated shorthand
   - Existing tests pass and new tests cover comma-containing free-text values
+locked: true
+completed_at: 2026-03-10T18:54:16.366Z
+completed: 2026-03-10
