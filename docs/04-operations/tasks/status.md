@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2369 — Add --replace-test-paths flags to wu:edit](wu/WU-2369.yaml)
 
 ## Completed
 

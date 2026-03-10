@@ -3067,3 +3067,4 @@
 {"type":"complete","wuId":"WU-2367","timestamp":"2026-03-10T12:27:51.796Z"}
 {"type":"checkpoint","wuId":"WU-2368","timestamp":"2026-03-10T12:32:04.821Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2368.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2368","timestamp":"2026-03-10T12:35:23.106Z"}
+{"type":"claim","wuId":"WU-2369","timestamp":"2026-03-10T12:46:53.877Z","lane":"Framework: CLI WU Commands","title":"Add --replace-test-paths flags to wu:edit"}
