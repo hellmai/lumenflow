@@ -30,3 +30,4 @@ success_metrics:
   - A documented archetype matrix defines what tech-stack portability means for LumenFlow and is
     backed by smoke validation.
 labels: []
+related_plan: lumenflow://plans/INIT-51-tech-stack-portability-baselin.md
