@@ -1216,12 +1216,10 @@ function generateReadmeMd(commands: CommandMetadata[]): string {
   lines.push('# Update all LumenFlow packages atomically');
   lines.push('pnpm lumenflow:upgrade --latest');
   lines.push('');
-  lines.push('# Refresh scaffolded onboarding docs and vendor assets');
-  lines.push('pnpm docs:sync --force');
   lines.push('```');
   lines.push('');
   lines.push(
-    '**Important**: Always run `docs:sync --force` after package changes to refresh scaffolded onboarding docs and supported vendor assets.',
+    '> **Note:** `lumenflow:upgrade` syncs docs automatically as part of the upgrade transaction. A separate `docs:sync` step is no longer needed.',
   );
   lines.push('');
   lines.push(

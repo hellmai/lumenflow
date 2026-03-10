@@ -20,13 +20,7 @@ Use this flow when a repository already has LumenFlow installed and you want the
    pnpm lumenflow:upgrade --latest
    ```
 
-2. **Refresh scaffolded onboarding docs and supported vendor assets**
-
-   ```bash
-   pnpm docs:sync --force
-   ```
-
-3. **Verify the upgrade**
+2. **Verify the upgrade**
 
    ```bash
    pnpm gates --docs-only
@@ -36,12 +30,21 @@ Use this flow when a repository already has LumenFlow installed and you want the
 
 ## What Changes Automatically
 
-- Upgrading the packages changes the runtime `wu:brief` defaults immediately.
-- `pnpm docs:sync --force` refreshes scaffolded onboarding docs and supported vendor assets.
+`lumenflow:upgrade` handles everything in a single atomic transaction:
+
+- Runtime `wu:brief` defaults update immediately.
+- **LUMENFLOW.md** and `.lumenflow/constraints.md` are force-synced from the installed CLI templates (these files are fully LumenFlow-managed).
+- **AGENTS.md** and vendor bootstrap files (CLAUDE.md, `.cursor/rules/lumenflow.md`, `.windsurf/rules/lumenflow.md`) are updated via merge-block markers — user content outside the `LUMENFLOW:START`/`END` markers is preserved.
+- Onboarding docs and vendor assets (skills, hooks) are refreshed.
 - Project-local `.lumenflow/templates/` files are optional. Only create or edit them when you
   want to override the built-in prompt composition.
 - Lane lifecycle commands now read lane definitions from `workspace.yaml >
 software_delivery.lanes.definitions` only.
+
+<Aside type="tip" title="No separate docs:sync step needed">
+  Prior to v3.16, upgrade instructions advised running `pnpm docs:sync --force` as a separate
+  post-upgrade step. This is no longer needed — `lumenflow:upgrade` runs doc sync internally.
+</Aside>
 
 <Aside type="note" title="Lane source of truth">
   `.lumenflow.lane-inference.yaml` is no longer used by the active lane lifecycle. Do not recreate
@@ -61,13 +64,37 @@ Fresh installs already get the current defaults. Run `npx lumenflow` or
 `pnpm exec lumenflow init`, then create project-local templates only when you want custom prompt
 sections or client-specific overrides.
 
+## File Ownership Model
+
+| File | Owner | On Upgrade | User Overrides |
+| --- | --- | --- | --- |
+| `LUMENFLOW.md` | LumenFlow (fully managed) | Force-synced from template | Use `LUMENFLOW.local.md` |
+| `.lumenflow/constraints.md` | LumenFlow (fully managed) | Force-synced from template | — |
+| `AGENTS.md` | Shared (merge-block) | Content between `LUMENFLOW:START`/`END` updated; rest preserved | Edit outside markers |
+| `CLAUDE.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
+| `.cursor/rules/lumenflow.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
+| `.windsurf/rules/lumenflow.md` | Shared (merge-block) | Content between markers updated; rest preserved | Edit outside markers |
+| `LUMENFLOW.local.md` | User (never touched) | Skipped entirely | Full ownership |
+| `.lumenflow/templates/` | User (never touched) | Skipped entirely | Full ownership |
+
+<Aside type="note" title="LUMENFLOW.local.md">
+  Create `LUMENFLOW.local.md` for project-specific workflow additions. Agents read it after
+  `LUMENFLOW.md` when present. It is never overwritten by `init` or `upgrade`.
+</Aside>
+
 ## What `docs:sync` Refreshes
 
-- Scaffolded onboarding documentation
-- Supported vendor assets such as Claude skills
-- Existing tracked docs only when you intentionally pass `--force`
+`docs:sync` is now run automatically by `lumenflow:upgrade`. You can also run it standalone:
 
-It does not rewrite root workflow files such as `LUMENFLOW.md` or `.lumenflow/constraints.md`.
+- **Managed docs** (`LUMENFLOW.md`, `.lumenflow/constraints.md`) — always force-synced from templates
+- **Bootstrap docs** (`AGENTS.md`, vendor files) — merge-block update only (user content preserved)
+- Onboarding documentation and vendor assets (skills, hooks)
+
+<Aside type="caution" title="Standalone docs:sync">
+  Running `pnpm docs:sync` standalone is only needed when you want to refresh docs
+  without upgrading packages (e.g., after manually editing templates). For normal upgrades,
+  `pnpm lumenflow:upgrade --latest` handles everything.
+</Aside>
 
 ## Config Contract
 

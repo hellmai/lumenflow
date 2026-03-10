@@ -302,11 +302,9 @@ pnpm outdated @lumenflow/*
 # Update all LumenFlow packages atomically
 pnpm lumenflow:upgrade --latest
 
-# Refresh scaffolded onboarding docs and vendor assets
-pnpm docs:sync --force
 ```
 
-**Important**: Always run `docs:sync --force` after package changes to refresh scaffolded onboarding docs and supported vendor assets.
+> **Note:** `lumenflow:upgrade` syncs docs automatically as part of the upgrade transaction. A separate `docs:sync` step is no longer needed.
 
 For current setup guidance and troubleshooting, see [LUMENFLOW.md](https://lumenflow.dev).
 

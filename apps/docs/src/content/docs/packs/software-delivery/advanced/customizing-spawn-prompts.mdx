@@ -14,8 +14,7 @@ only when they need different wording or extra domain-specific instructions.
 
 - New installs get the current prompt composition automatically.
 - Existing installs get the runtime defaults after `pnpm lumenflow:upgrade --latest`.
-- Run `pnpm docs:sync --force` when you also want refreshed scaffolded onboarding docs and
-  supported vendor assets.
+- `lumenflow:upgrade` automatically syncs onboarding docs and vendor assets (no separate `docs:sync` step needed).
 - Create `.lumenflow/templates/` only when you want to override or extend the shipped defaults.
 
 <Aside type="note" title="Project-local templates are optional">

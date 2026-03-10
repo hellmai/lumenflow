@@ -1,10 +1,11 @@
 # Universal Agent Instructions
 
-**Last updated:** 2026-02-27
+**Last updated:** 2026-03-10
 
 > **Works with any AI coding assistant.** This file provides instructions that work regardless of which AI tool you're using -- Claude Code, Cursor, Windsurf, Cline, Codex, Aider, or any other. Just read this file and follow the workflow.
 
 This project uses LumenFlow workflow. For complete documentation, see [LUMENFLOW.md](LUMENFLOW.md).
+If `LUMENFLOW.local.md` exists, read it after LUMENFLOW.md for project-specific additions.
 
 ---
 

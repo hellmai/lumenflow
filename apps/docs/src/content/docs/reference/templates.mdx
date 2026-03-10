@@ -433,8 +433,23 @@ Error: manifest.yaml: Template entry 'my-template' is missing required fields: o
   order: 1000
 ```
 
+## LUMENFLOW.local.md Override
+
+`LUMENFLOW.md` is fully managed by LumenFlow and force-synced on every upgrade. To add
+project-specific workflow additions without losing them on upgrade, create `LUMENFLOW.local.md`
+in the project root.
+
+- Agents read `LUMENFLOW.local.md` after `LUMENFLOW.md` when present.
+- `init` and `upgrade` never touch `LUMENFLOW.local.md`.
+- If a user-modified `LUMENFLOW.md` is detected on the first force-sync, the CLI backs up
+  the custom content to `LUMENFLOW.local.md` automatically.
+
+This is separate from the template system above — templates customize `wu:brief` prompts,
+while `LUMENFLOW.local.md` customizes the workflow documentation that agents read at startup.
+
 ## Next Steps
 
 - [Manifest Schema](/reference/spawn-manifest) - Configure template assembly
 - [Customizing Spawn Prompts](/packs/software-delivery/advanced/customizing-spawn-prompts) - Create custom templates
 - [CLI Reference](/reference/cli) - `wu:brief` and `wu:delegate` command options
+- [Upgrade Guide](/getting-started/upgrade) - File ownership model and upgrade behavior

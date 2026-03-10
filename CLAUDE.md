@@ -73,10 +73,12 @@ operations are allowed to prevent blocking legitimate work.
 
 ## Documentation Structure
 
-This repo follows the vendor-agnostic LumenFlow documentation structure:
+This repo follows the vendor-agnostic LumenFlow documentation structure.
+See the **File Ownership Model** table in LUMENFLOW.md for which files are fully managed vs shared (merge-block) vs user-owned.
 
-- **LUMENFLOW.md** - Main workflow entry point
-- **.lumenflow/constraints.md** - Non-negotiable rules
+- **LUMENFLOW.md** - Main workflow entry point (fully managed — force-synced on upgrade)
+- **LUMENFLOW.local.md** - Project-specific additions (user-owned, never overwritten)
+- **.lumenflow/constraints.md** - Non-negotiable rules (fully managed)
 - **.lumenflow/rules/** - Workflow rules
 - **docs/04-operations/\_frameworks/lumenflow/agent/onboarding/** - Agent onboarding docs
 - **apps/docs/src/content/docs/kernel/** - Kernel docs source

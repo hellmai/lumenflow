@@ -68,7 +68,7 @@ Run `--help` first, then run the real command with explicit flags.
 | `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                |
 | `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                       |
 | `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/04-operations`)                |
-| `pnpm docs:sync --force`                           | Refresh scaffolded onboarding docs and supported vendor assets |
+| `pnpm docs:sync`                                   | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
 | `pnpm sync:templates`                              | Sync repo docs into bundled templates                          |
 | `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                     |
 | `pnpm lumenflow:doctor`                            | Diagnose LumenFlow configuration                               |
@@ -106,20 +106,20 @@ commit and push atomically. Do NOT wrap them in a WU or use raw `pnpm update`/`g
 | `pnpm config:set --key <dotpath> --value <value>` | Set workspace.yaml config (Zod-validated)        |
 | `pnpm config:get --key <dotpath>`                 | Read workspace.yaml config                       |
 | `pnpm cloud:connect`                              | Configure cloud control-plane access             |
-| `pnpm docs:sync --force`                          | Refresh scaffolded onboarding docs after upgrade |
+| `pnpm docs:sync`                                  | Refresh managed docs, onboarding docs, and vendor assets (standalone) |
 | `pnpm sync:templates`                             | Sync repo docs into bundled templates            |
 
 **Key principle:** If a LumenFlow CLI command exists for the operation, use it instead of
 raw pnpm/git. These tooling commands commit directly to main via micro-worktree — no dirty
 files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
 
-`docs:sync` refreshes the scaffolded onboarding set plus supported vendor assets. Existing
-tracked docs are skipped by default; use `--force` when you intentionally want the refresh.
+`lumenflow:upgrade` runs `docs:sync` internally as part of the upgrade transaction. You do not
+need to run `docs:sync` separately after upgrading. Standalone `docs:sync` is only needed when
+you want to refresh docs without upgrading packages (e.g., after manually editing templates).
 
-For existing installs, upgrade packages first with `pnpm lumenflow:upgrade --latest`, then run
-`pnpm docs:sync --force` if you want refreshed onboarding docs and vendor assets. The improved
-default `wu:brief` behavior comes from the package upgrade itself. New installs get those defaults
-automatically, and `.lumenflow/templates/` remains optional unless you want custom overrides.
+`docs:sync` handles two categories of files:
+- **Managed docs** (`LUMENFLOW.md`, `.lumenflow/constraints.md`) — always force-synced from templates
+- **Bootstrap docs** (`AGENTS.md`, vendor files) — merge-block update only (user content outside `LUMENFLOW:START`/`END` markers is preserved)
 
 > **Anti-pattern:** Do NOT use `pnpm update @lumenflow/*` to upgrade packages.
 > This leaves dirty `package.json` and `pnpm-lock.yaml` on main.
