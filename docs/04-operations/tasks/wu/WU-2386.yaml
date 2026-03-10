@@ -2,7 +2,7 @@ id: WU-2386
 title: wu:edit blocks metadata-only edits on dirty worktrees
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-edit.ts
 tests:
   manual:
-    - Claim a WU, make source changes without committing, then run wu:edit --notes to fill metadata and verify it succeeds
+    - Claim a WU, make source changes without committing, then run wu:edit --notes to fill metadata
+      and verify it succeeds
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
   e2e: []
@@ -27,8 +28,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: wu:edit calls validateWorktreeClean unconditionally (WU-1365), which blocks all edits when the worktree has uncommitted changes. Problem: agents need to fill metadata fields (notes, acceptance criteria) mid-implementation to satisfy wu:validate and pnpm gates, but cannot because their implementation changes make the worktree dirty. This forces agents to either commit incomplete work or raw-edit WU YAML directly, violating Constraint 9 (safe YAML modification). Solution: skip the dirty-worktree check for metadata-only fields (notes, acceptance, risks, escalation_triggers) that do not conflict with source file changes.'
+description: 'Context: wu:edit calls validateWorktreeClean unconditionally (WU-1365), which blocks
+  all edits when the worktree has uncommitted changes. Problem: agents need to fill metadata fields
+  (notes, acceptance criteria) mid-implementation to satisfy wu:validate and pnpm gates, but cannot
+  because their implementation changes make the worktree dirty. This forces agents to either commit
+  incomplete work or raw-edit WU YAML directly, violating Constraint 9 (safe YAML modification).
+  Solution: skip the dirty-worktree check for metadata-only fields (notes, acceptance, risks,
+  escalation_triggers) that do not conflict with source file changes.'
 acceptance:
-  - wu:edit --notes and wu:edit --acceptance succeed on dirty worktrees without requiring a prior commit
-  - wu:edit for fields that touch code_paths or structural WU fields still enforces the clean-worktree check
+  - wu:edit --notes and wu:edit --acceptance succeed on dirty worktrees without requiring a prior
+    commit
+  - wu:edit for fields that touch code_paths or structural WU fields still enforces the
+    clean-worktree check
   - Regression test covers the metadata-only bypass path
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2386
+claimed_at: 2026-03-10T21:16:34.149Z
+baseline_main_sha: 538aa1cecd4c8cdb38dd29a28fac8ca2a1b455f0
+session_id: 1b722b62-f4e8-4c4d-a9e8-50ce23c7f320
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T21:16:34.155Z
