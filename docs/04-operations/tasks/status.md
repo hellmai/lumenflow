@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2378 — Demote web-framework assumptions and publish portability matrix](wu/WU-2378.yaml)
 
 ## Completed
 

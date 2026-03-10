@@ -2,7 +2,7 @@ id: WU-2378
 title: Demote web-framework assumptions and publish portability matrix
 lane: 'Framework: Core'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -17,9 +17,11 @@ code_paths:
   - apps/docs/src/content/docs/reference/workspace-spec.mdx
 tests:
   manual:
-    - Run onboarding in a repo without apps/web and verify next-step guidance does not instruct the user to run the dashboard
+    - Run onboarding in a repo without apps/web and verify next-step guidance does not instruct the
+      user to run the dashboard
     - Classify a backend-only WU and verify framework-specific UI guidance is not emitted by default
-    - Review the published docs matrix and verify the three baseline archetypes and portability boundary are explicit
+    - Review the published docs matrix and verify the three baseline archetypes and portability
+      boundary are explicit
   unit:
     - packages/@lumenflow/core/src/__tests__/work-classifier.test.ts
     - packages/@lumenflow/cli/__tests__/onboard-e2e.test.ts
@@ -36,7 +38,9 @@ blocked_by:
 spec_refs:
   - docs/04-operations/plans/INIT-51-tech-stack-portability-baselin.md
 risks: []
-notes: 'Sized per wu-sizing-guide.md as one coherent deliverable: framework-neutral guidance plus explicit portability contract. Keep docs in the same WU because the contract must land with the behavior change, not later.'
+notes: 'Sized per wu-sizing-guide.md as one coherent deliverable: framework-neutral guidance plus
+  explicit portability contract. Keep docs in the same WU because the contract must land with the
+  behavior change, not later.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -49,8 +53,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: LumenFlow still carries implicit Next.js and apps/web assumptions in work classification and onboarding guidance, while the broader portability contract remains undocumented. Problem: non-web or non-Next.js consumer repos can receive misleading UI/domain hints and dashboard instructions, and there is no explicit baseline matrix describing what tech-stack portability currently means. Solution: narrow framework-specific heuristics to optional signals, make onboarding guidance conditional on detected/configured dashboard support, and publish the explicit portability boundary plus supported archetype matrix.'
+description: 'Context: LumenFlow still carries implicit Next.js and apps/web assumptions in work
+  classification and onboarding guidance, while the broader portability contract remains
+  undocumented. Problem: non-web or non-Next.js consumer repos can receive misleading UI/domain
+  hints and dashboard instructions, and there is no explicit baseline matrix describing what
+  tech-stack portability currently means. Solution: narrow framework-specific heuristics to optional
+  signals, make onboarding guidance conditional on detected/configured dashboard support, and
+  publish the explicit portability boundary plus supported archetype matrix.'
 acceptance:
-  - work-classifier no longer treats Next.js/app-router conventions as the default truth for UI guidance without corroborating signals or configuration
-  - Onboarding and generated guidance mention apps/web or dashboard startup only when the workspace shape or config indicates a dashboard is present
-  - Documentation publishes the portability boundary and supported archetype matrix, with smoke verification guidance for the baseline archetypes
+  - work-classifier no longer treats Next.js/app-router conventions as the default truth for UI
+    guidance without corroborating signals or configuration
+  - Onboarding and generated guidance mention apps/web or dashboard startup only when the workspace
+    shape or config indicates a dashboard is present
+  - Documentation publishes the portability boundary and supported archetype matrix, with smoke
+    verification guidance for the baseline archetypes
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-wu-2378
+claimed_at: 2026-03-10T17:53:22.503Z
+baseline_main_sha: 37e936ea4e92111daf0e4e5f8c971d37b5faa95d
+session_id: 0e59dc04-dc7d-48cb-90d9-aab95fb198fe
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T17:53:22.508Z

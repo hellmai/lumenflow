@@ -3116,3 +3116,4 @@
 {"type":"checkpoint","wuId":"WU-2377","timestamp":"2026-03-10T16:38:53.124Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2377","timestamp":"2026-03-10T17:50:16.732Z","note":"WU-2377"}
 {"type":"complete","wuId":"WU-2377","timestamp":"2026-03-10T17:52:34.508Z"}
+{"type":"claim","wuId":"WU-2378","timestamp":"2026-03-10T17:53:22.533Z","lane":"Framework: Core","title":"Demote web-framework assumptions and publish portability matrix"}
