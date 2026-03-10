@@ -36,12 +36,12 @@ approved_at: 2026-03-10T09:30:53.361Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Public repo contains internal strategy language (OpenClaw competitive positioning in
-  INIT plans), internal product names (PatientPath domain in WU specs), and lumenflow-cloud
-  references in WU notes. Redact from current tree going forward.
+description: Public repo contains internal strategy language referencing specific competitors in
+  initiative plans, internal product names and domains in WU specs, and references to private
+  downstream projects in WU notes. Redact from current tree going forward.
 acceptance:
-  - No OpenClaw competitive strategy language in initiative plans (technical comparison in public
-    docs is fine)
-  - No PatientPath product name or domain in WU specs
-  - No lumenflow-cloud references in WU specs or initiative YAMLs
-  - Email typo tom@helllm.ai fixed in privacy.mdx
+  - No competitor names in initiative strategy language (technical comparisons in public docs are
+    fine)
+  - No internal product names or domains in WU specs
+  - No private downstream project names in WU specs or initiative YAMLs
+  - Email typo fixed in privacy.mdx
