@@ -8,6 +8,25 @@ This project uses LumenFlow workflow. For complete documentation, see [LUMENFLOW
 
 ---
 
+## First Session
+
+Before doing any work, run these commands:
+
+```bash
+pnpm lumenflow:commands              # Discover all available CLI commands
+<command> --help                      # Before first use of ANY command
+```
+
+**Three mandatory rules:**
+
+1. Run `pnpm lumenflow:commands` before concluding a command doesn't exist
+2. Run `<command> --help` before first use of any command -- do not guess
+3. Never truncate `lumenflow:commands`, `--help`, or error/fix output (no `| head`, `| tail`)
+
+For the full workflow, principles, and setup instructions, read [LUMENFLOW.md](LUMENFLOW.md).
+
+---
+
 ## Quick Start (Local Worktree -- Default)
 
 First-time lane setup (once per project, after plan/context is known):

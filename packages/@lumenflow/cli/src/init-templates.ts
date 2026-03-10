@@ -137,62 +137,14 @@ export const CONSTRAINTS_MD_TEMPLATE = `# LumenFlow Constraints Capsule\n\n**Ver
 // Template for root CLAUDE.md
 // WU-1309: Use <project-root> placeholder for portability
 // WU-1382: Expanded with CLI commands table and warning about manual YAML editing
+// WU-2365: Stripped duplicated workflow — Claude-specific deltas only, pointer to LUMENFLOW.md
 export const CLAUDE_MD_TEMPLATE = `# Claude Code Instructions
 
 **Last updated:** {{DATE}}
 
-This project uses LumenFlow workflow. For workflow documentation, see [LUMENFLOW.md](LUMENFLOW.md).
+**Read first:** [AGENTS.md](AGENTS.md) for universal startup rules, then [LUMENFLOW.md](LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
 
----
-
-## Quick Start
-
-\`\`\`bash
-# 1. Claim a WU
-pnpm wu:claim --id WU-XXXX --lane <Lane>
-cd worktrees/<lane>-wu-xxxx
-
-# 2. Work in worktree, run gates
-pnpm gates
-
-# 3. Complete (ALWAYS run this!)
-cd <project-root>
-pnpm wu:done --id WU-XXXX
-\`\`\`
-
----
-
-## CLI Commands Reference
-
-### WU Lifecycle
-
-| Command                                   | Description                              |
-| ----------------------------------------- | ---------------------------------------- |
-| \`pnpm wu:status --id WU-XXX\`              | Show WU status, location, valid commands |
-| \`pnpm wu:claim --id WU-XXX --lane <Lane>\` | Claim WU and create worktree             |
-| \`pnpm wu:prep --id WU-XXX\`                | Run gates in worktree, prep for wu:done  |
-| \`pnpm wu:done --id WU-XXX\`                | Complete WU (from main checkout)         |
-| \`pnpm wu:block --id WU-XXX --reason "..."\`| Block WU with reason                     |
-| \`pnpm wu:unblock --id WU-XXX\`             | Unblock WU                               |
-
-### Gates & Quality
-
-| Command                  | Description                |
-| ------------------------ | -------------------------- |
-| \`pnpm gates\`             | Run all quality gates      |
-| \`pnpm gates --docs-only\` | Run gates for docs changes |
-| \`pnpm format\`            | Format all files           |
-| \`pnpm lint\`              | Run linter                 |
-| \`pnpm typecheck\`         | Run TypeScript check       |
-| \`pnpm test\`              | Run tests                  |
-
----
-
-## Critical: Always wu:done
-
-After completing work, ALWAYS run \`pnpm wu:done --id WU-XXXX\` from the main checkout.
-
-See [LUMENFLOW.md](LUMENFLOW.md) for full workflow documentation.
+This file contains Claude Code-specific configuration only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
 ---
 
@@ -251,110 +203,55 @@ export const CLAUDE_SETTINGS_TEMPLATE = `{
 
 // WU-1171: Template for .cursor/rules/lumenflow.md (updated path)
 // WU-1309: Use <project-root> placeholder for portability
+// WU-2365: Stripped duplicated workflow — pointer to LUMENFLOW.md only
 export const CURSOR_RULES_TEMPLATE = `# Cursor LumenFlow Rules
 
-This project uses LumenFlow workflow. See [LUMENFLOW.md](../../LUMENFLOW.md).
+**Read first:** [AGENTS.md](../../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../../LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
 
-## Critical Rules
+This file contains Cursor-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
-1. **Always run wu:done** - After gates pass, run \`pnpm wu:done --id WU-XXX\`
-2. **Work in worktrees** - After \`wu:claim\`, work only in the worktree
-3. **Never bypass hooks** - No \`--no-verify\`
-4. **TDD** - Write tests first
+---
 
-## Forbidden Commands
+## Cursor-Specific Notes
 
-- \`git reset --hard\`
-- \`git push --force\`
-- \`git stash\` (on main)
-- \`--no-verify\`
-
-## Quick Reference
-
-\`\`\`bash
-# Claim WU
-pnpm wu:claim --id WU-XXX --lane <Lane>
-cd worktrees/<lane>-wu-xxx
-
-# Run gates
-pnpm gates
-
-# Complete (from main)
-cd <project-root>
-pnpm wu:done --id WU-XXX
-\`\`\`
+- Cursor does not have hook enforcement -- follow workflow rules voluntarily
+- Use \`pnpm lumenflow:commands\` to discover all CLI commands
+- Run \`<command> --help\` before first use of any command
 `;
 
 // WU-1171: Template for .windsurf/rules/lumenflow.md
 // WU-1309: Use <project-root> placeholder for portability
+// WU-2365: Stripped duplicated workflow — pointer to LUMENFLOW.md only
 export const WINDSURF_RULES_TEMPLATE = `# Windsurf LumenFlow Rules
 
-This project uses LumenFlow workflow. See [LUMENFLOW.md](../../LUMENFLOW.md).
+**Read first:** [AGENTS.md](../../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../../LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
 
-## Critical Rules
+This file contains Windsurf-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
-1. **Always run wu:done** - After gates pass, run \`pnpm wu:done --id WU-XXX\`
-2. **Work in worktrees** - After \`wu:claim\`, work only in the worktree
-3. **Never bypass hooks** - No \`--no-verify\`
-4. **TDD** - Write tests first
+---
 
-## Forbidden Commands
+## Windsurf-Specific Notes
 
-- \`git reset --hard\`
-- \`git push --force\`
-- \`git stash\` (on main)
-- \`--no-verify\`
-
-## Quick Reference
-
-\`\`\`bash
-# Claim WU
-pnpm wu:claim --id WU-XXX --lane <Lane>
-cd worktrees/<lane>-wu-xxx
-
-# Run gates
-pnpm gates
-
-# Complete (from main)
-cd <project-root>
-pnpm wu:done --id WU-XXX
-\`\`\`
+- Windsurf does not have hook enforcement -- follow workflow rules voluntarily
+- Use \`pnpm lumenflow:commands\` to discover all CLI commands
+- Run \`<command> --help\` before first use of any command
 `;
 
 // WU-1177: Template for .clinerules (Cline AI assistant)
 // WU-1309: Use <project-root> placeholder for portability
+// WU-2365: Stripped duplicated workflow — pointer to LUMENFLOW.md only
 export const CLINE_RULES_TEMPLATE = `# Cline LumenFlow Rules
 
-This project uses LumenFlow workflow. See [LUMENFLOW.md](LUMENFLOW.md).
+**Read first:** [AGENTS.md](AGENTS.md) for universal startup rules, then [LUMENFLOW.md](LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
 
-## Critical Rules
+This file contains Cline-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
-1. **Always run wu:done** - After gates pass, run \`pnpm wu:done --id WU-XXX\`
-2. **Work in worktrees** - After \`wu:claim\`, work only in the worktree
-3. **Never bypass hooks** - No \`--no-verify\`
-4. **TDD** - Write tests first
+---
 
-## Forbidden Commands
+## Cline-Specific Notes
 
-- \`git reset --hard\`
-- \`git push --force\`
-- \`git stash\` (on main)
-- \`--no-verify\`
-
-## Quick Reference
-
-\`\`\`bash
-# Claim WU
-pnpm wu:claim --id WU-XXX --lane <Lane>
-cd worktrees/<lane>-wu-xxx
-
-# Run gates
-pnpm gates
-
-# Complete (from main)
-cd <project-root>
-pnpm wu:done --id WU-XXX
-\`\`\`
+- Use \`pnpm lumenflow:commands\` to discover all CLI commands
+- Run \`<command> --help\` before first use of any command
 `;
 
 // Template for .aider.conf.yml

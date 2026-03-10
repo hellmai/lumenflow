@@ -16,6 +16,16 @@ For detailed troubleshooting, common mistakes, and recovery steps, see [troubles
 
 ---
 
+## Before You Begin
+
+Every agent session starts here, regardless of vendor or client:
+
+1. **Discover commands**: Run `pnpm lumenflow:commands` to see all available CLI commands. Never assume a command doesn't exist without checking first.
+2. **Help first**: Run `<command> --help` before first use of any command. Do not guess options or behavior.
+3. **Read full output**: Never truncate `lumenflow:commands`, `--help`, or CLI error/fix output (no `| head`, `| tail`). Truncating authoritative CLI output causes missed options and incorrect usage. General command output like `git log --oneline | head -20` is fine.
+
+---
+
 ## Quick Start
 
 ```bash

@@ -1,37 +1,14 @@
 # Claude Code Entry Point
 
-**Start here:** Read [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/starting-prompt.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md) for complete onboarding.
+**Start here:** Read [AGENTS.md](../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../LUMENFLOW.md) for the canonical workflow.
 
-Then read `LUMENFLOW.md` for workflow details.
+For complete onboarding: [starting-prompt.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md).
 
-## CLI Commands
+This file contains **Claude Code-specific** configuration only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
-### WU Lifecycle
+---
 
-| Command                                        | Description                                               |
-| ---------------------------------------------- | --------------------------------------------------------- |
-| `pnpm wu:status --id WU-XXX`                   | Show WU status, location, valid commands                  |
-| `pnpm wu:claim --id WU-XXX --lane <Lane>`      | Claim WU and create worktree                              |
-| `pnpm wu:prep --id WU-XXX`                     | Run gates in worktree                                     |
-| `pnpm wu:done --id WU-XXX`                     | Complete WU (from main)                                   |
-| `pnpm wu:brief --id WU-XXX --client <client>`  | Generate handoff prompt + record evidence (worktree only) |
-| `pnpm wu:delegate --id WU-XXX --parent-wu <P>` | Generate prompt + record delegation lineage               |
-| `pnpm wu:recover --id WU-XXX`                  | Fix WU state inconsistencies                              |
-| `pnpm wu:escalate --id WU-XXX`                 | Show or resolve WU escalation status                      |
-| `pnpm wu:verify --id WU-XXX`                   | Verify WU completion (stamp, commit, clean tree)          |
-
-### Gates & Orchestration
-
-| Command                                    | Description                  |
-| ------------------------------------------ | ---------------------------- |
-| `pnpm gates`                               | Run all quality gates        |
-| `pnpm orchestrate:init-status -i INIT-XXX` | Initiative progress view     |
-| `pnpm orchestrate:monitor`                 | Monitor spawn/agent activity |
-| `pnpm mem:inbox --since 30m`               | Check coordination signals   |
-| `pnpm mem:checkpoint --wu WU-XXX`          | Save progress checkpoint     |
-| `pnpm mem:recover --wu WU-XXX`             | Generate recovery context    |
-
-### Context Recovery (WU-1394)
+## Context Recovery (WU-1394)
 
 Recovery hooks automatically preserve context across compaction:
 
@@ -68,19 +45,19 @@ Use `wu:brief` when you want a context-loaded prompt for another agent.
 Use `wu:delegate` when you also need auditable lineage tracking (initiative work).
 
 **Important:** When run from a worktree, `wu:brief` records a checkpoint event
-to `.lumenflow/state/wu-events.jsonl`. This evidence is **required** — `wu:done`
+to `.lumenflow/state/wu-events.jsonl`. This evidence is **required** -- `wu:done`
 blocks feature/bug WUs that are missing it. Do not delete or revert `wu-events.jsonl`
 entries written by lifecycle commands.
 
 Available agents in `.claude/agents/`:
 
-- `general-purpose` — Standard WU implementation
-- `lumenflow-pm` — Backlog & lifecycle management
-- `test-engineer` — TDD, coverage enforcement
-- `code-reviewer` — Quality checks
-- `bug-triage` — Bug classification and triage
-- `lumenflow-enforcer` — Workflow compliance enforcement
-- `lumenflow-doc-sync` — Documentation synchronization
+- `general-purpose` -- Standard WU implementation
+- `lumenflow-pm` -- Backlog & lifecycle management
+- `test-engineer` -- TDD, coverage enforcement
+- `code-reviewer` -- Quality checks
+- `bug-triage` -- Bug classification and triage
+- `lumenflow-enforcer` -- Workflow compliance enforcement
+- `lumenflow-doc-sync` -- Documentation synchronization
 
 ## Safe YAML Modification (Constraint 9)
 
@@ -99,25 +76,9 @@ Claude Code has tool-level hooks (PreToolUse) that validate worktree paths, but 
 
 For details, see the [YAML editing policy](.lumenflow/rules/yaml-editing-policy.md) and [agent safety architecture](docs/04-operations/_frameworks/lumenflow/agent-safety-architecture.md).
 
-### Tooling Operations (No WU Required)
-
-These commands use micro-worktree isolation — they commit and push atomically.
-Do NOT wrap them in a WU or use raw `pnpm update`/`git commit`.
-
-| Command                                  | Use Instead Of              |
-| ---------------------------------------- | --------------------------- |
-| `pnpm lumenflow:upgrade --version X.Y.Z` | `pnpm update @lumenflow/*`  |
-| `pnpm config:set --key <k> --value <v>`  | Manual YAML editing         |
-| `pnpm cloud:connect`                     | Manual control_plane config |
-| `pnpm docs:sync`                         | Manual doc copying          |
-
 ## Quick Reminders
 
-- **Run `<command> --help` before first use of any unfamiliar CLI command.**
 - **Use `pnpm lumenflow:upgrade` for upgrades** -- never raw `pnpm update @lumenflow/*`.
 - Load `/skill design-first` before implementing features (question, delete, simplify).
-- Always claim WUs with `pnpm wu:claim` and work in the worktree.
-- Run `pnpm gates` before `pnpm wu:done`.
-- Complete work with `pnpm wu:done --id WU-XXX` from the main checkout.
 - Load relevant skills before starting complex work.
 - **Never raw-edit YAML files** -- use `pnpm config:set` and `pnpm wu:edit` instead.

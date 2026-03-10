@@ -117,9 +117,20 @@ pnpm build 2>&1 | grep -i error
 # (Glob finds files, but find can execute commands)
 # Note: Still prefer dedicated tools when possible
 
-# Processing command output, not files
+# Processing general command output, not files
 git log --oneline | head -20
 ```
+
+### Never Truncate Authoritative CLI Output
+
+Even where `head`/`tail` on command output is generally allowed, **never** truncate these:
+
+- `pnpm lumenflow:commands` -- you will miss available commands
+- Any `<command> --help` output -- you will miss options and miss required flags
+- CLI error/fix output -- you will miss the fix command
+
+Truncating authoritative CLI output defeats the help-first rule and causes incorrect usage.
+This is not hypothetical -- it happens regularly in practice.
 
 ### NOT Legitimate Exceptions
 
