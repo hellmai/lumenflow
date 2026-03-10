@@ -490,7 +490,12 @@ export function applyEdits(
     field: string;
     freeText: boolean;
   }> = [
-    { optKey: 'testPathsManual', replaceKey: 'replaceTestPathsManual', field: 'manual', freeText: true },
+    {
+      optKey: 'testPathsManual',
+      replaceKey: 'replaceTestPathsManual',
+      field: 'manual',
+      freeText: true,
+    },
     { optKey: 'testPathsUnit', replaceKey: 'replaceTestPathsUnit', field: 'unit', freeText: false },
     { optKey: 'testPathsE2e', replaceKey: 'replaceTestPathsE2e', field: 'e2e', freeText: false },
   ];
