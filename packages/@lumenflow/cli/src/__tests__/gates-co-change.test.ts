@@ -9,10 +9,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-  evaluateCoChangeRules,
-  DEFAULT_DB_CO_CHANGE_RULES,
-} from '../gates-runners.js';
+import { evaluateCoChangeRules, DEFAULT_DB_CO_CHANGE_RULES } from '../gates-runners.js';
 import type { CoChangeRuleConfig } from '@lumenflow/core/config-schema';
 
 // ---------------------------------------------------------------------------
@@ -121,10 +118,7 @@ describe('WU-2368: evaluateCoChangeRules with DB defaults', () => {
   });
 
   it('should pass when schema file changes with migration companion', () => {
-    const changedFiles = [
-      'supabase/schema.sql',
-      'supabase/migrations/20260310_add_table.sql',
-    ];
+    const changedFiles = ['supabase/schema.sql', 'supabase/migrations/20260310_add_table.sql'];
     const result = evaluateCoChangeRules({
       changedFiles,
       rules: DEFAULT_DB_CO_CHANGE_RULES,
@@ -207,9 +201,10 @@ describe('WU-2368: Backwards compatibility with custom co-change patterns', () =
   });
 
   it('should allow disabling a default rule via severity off', () => {
-    const overriddenRules: CoChangeRuleConfig[] = DEFAULT_DB_CO_CHANGE_RULES.map(
-      (rule) => ({ ...rule, severity: 'off' as const }),
-    );
+    const overriddenRules: CoChangeRuleConfig[] = DEFAULT_DB_CO_CHANGE_RULES.map((rule) => ({
+      ...rule,
+      severity: 'off' as const,
+    }));
 
     const changedFiles = ['supabase/schema.sql'];
     const result = evaluateCoChangeRules({
@@ -232,8 +227,7 @@ describe('WU-2368: evaluateCoChangeRules guidance field', () => {
         trigger_patterns: ['src/**/*.ts'],
         require_patterns: ['tests/**/*.test.ts'],
         severity: 'error',
-        guidance:
-          'Add a companion test file. Run `pnpm test:generate` to scaffold.',
+        guidance: 'Add a companion test file. Run `pnpm test:generate` to scaffold.',
       },
     ];
 

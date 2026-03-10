@@ -794,10 +794,7 @@ describe('WU-2368: DB-risk verification guidance in spawn prompts', () => {
       lane: 'Framework: Core',
       type: 'feature',
       status: 'ready',
-      code_paths: [
-        'supabase/migrations/20260310_add_users.sql',
-        'supabase/schema.sql',
-      ],
+      code_paths: ['supabase/migrations/20260310_add_users.sql', 'supabase/schema.sql'],
       acceptance: ['Migration runs cleanly'],
       description: 'Add users table with RLS',
     };

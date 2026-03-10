@@ -138,9 +138,8 @@ describe('WU-1415: Gates infrastructure fixes', () => {
 
 describe('WU-2368: runCoChangeGate merges built-in defaults', () => {
   it('should include default DB co-change rules when config has no user rules', async () => {
-    const { DEFAULT_DB_CO_CHANGE_RULES, evaluateCoChangeRules } = await import(
-      '../gates-runners.js'
-    );
+    const { DEFAULT_DB_CO_CHANGE_RULES, evaluateCoChangeRules } =
+      await import('../gates-runners.js');
 
     // Simulates what runCoChangeGate does: merge defaults with user rules
     const userRules: unknown[] = [];
@@ -155,9 +154,8 @@ describe('WU-2368: runCoChangeGate merges built-in defaults', () => {
   });
 
   it('should merge user rules with defaults', async () => {
-    const { DEFAULT_DB_CO_CHANGE_RULES, evaluateCoChangeRules } = await import(
-      '../gates-runners.js'
-    );
+    const { DEFAULT_DB_CO_CHANGE_RULES, evaluateCoChangeRules } =
+      await import('../gates-runners.js');
 
     const userRules = [
       {
