@@ -244,8 +244,10 @@ export const BOOTSTRAP_DOC_PATHS: Record<string, string> = {
   'AGENTS.md': 'core/AGENTS.md.template',
 };
 
+type SupportedBootstrapVendor = Exclude<VendorType, 'all' | 'none' | 'aider'>;
+
 export const VENDOR_BOOTSTRAP_TEMPLATE_PATHS: Record<
-  Exclude<VendorType, 'all' | 'none' | 'aider'>,
+  SupportedBootstrapVendor,
   Record<string, string>
 > = {
   claude: {
@@ -338,7 +340,7 @@ export function inferConfiguredVendors(targetDir: string): VendorType[] {
   const workspacePath = path.join(targetDir, 'workspace.yaml');
 
   for (const [vendor, files] of Object.entries(VENDOR_BOOTSTRAP_TEMPLATE_PATHS) as [
-    Exclude<VendorType, 'all' | 'none' | 'aider'>,
+    SupportedBootstrapVendor,
     Record<string, string>,
   ][]) {
     if (Object.keys(files).some((relPath) => fs.existsSync(path.join(targetDir, relPath)))) {
@@ -478,8 +480,7 @@ export async function syncVendorBootstraps(
   const selectedVendors = resolveSelectedVendors(options.vendor, options.vendors);
 
   for (const vendor of selectedVendors) {
-    const templateMap =
-      VENDOR_BOOTSTRAP_TEMPLATE_PATHS[vendor as Exclude<VendorType, 'all' | 'none' | 'aider'>];
+    const templateMap = VENDOR_BOOTSTRAP_TEMPLATE_PATHS[vendor as SupportedBootstrapVendor];
     if (!templateMap) {
       continue;
     }

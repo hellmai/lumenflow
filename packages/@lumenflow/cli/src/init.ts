@@ -863,7 +863,6 @@ export async function scaffoldProject(
   // WU-1171: Use resolveClientType with both client and vendor (vendor is deprecated but kept for backwards compat)
 
   const client = resolveClientType(options.client, options.vendor, defaultClient);
-  const fileMode = getFileMode(options);
 
   // Ensure target directory exists
   if (!fs.existsSync(targetDir)) {
