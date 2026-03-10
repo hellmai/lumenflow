@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2378 — Demote web-framework assumptions and publish portability matrix](wu/WU-2378.yaml) — Framework: Core
 - [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml) — Framework: Core
 - [WU-2376 — Resolve generic lifecycle commands from config instead of pnpm/turbo literals](wu/WU-2376.yaml) — Framework: Core
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
