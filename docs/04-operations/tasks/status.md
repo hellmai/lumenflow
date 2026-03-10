@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2385 — Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review](wu/WU-2385.yaml)
 
 ## Completed
 
