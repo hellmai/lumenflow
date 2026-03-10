@@ -2,7 +2,7 @@ id: WU-2377
 title: Make repo-shape defaults and gate planning config-driven
 lane: 'Framework: Core'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -70,3 +70,6 @@ session_id: 99138742-83f7-42c0-8c30-a41ec3747034
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-10T16:38:31.218Z
+locked: true
+completed_at: 2026-03-10T17:52:29.741Z
+completed: 2026-03-10

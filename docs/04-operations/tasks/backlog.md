@@ -28,7 +28,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml) — Framework: Core
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1324,6 +1324,7 @@ sections:
 - [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml)
 - [WU-2375 — Make orchestration client-capability-aware instead of Claude-only](wu/WU-2375.yaml)
 - [WU-2376 — Resolve generic lifecycle commands from config instead of pnpm/turbo literals](wu/WU-2376.yaml)
+- [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

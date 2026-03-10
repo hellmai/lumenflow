@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1296,3 +1296,4 @@ _Last updated: 2026-03-10_
 - [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml) — 2026-03-10
 - [WU-2375 — Make orchestration client-capability-aware instead of Claude-only](wu/WU-2375.yaml) — 2026-03-10
 - [WU-2376 — Resolve generic lifecycle commands from config instead of pnpm/turbo literals](wu/WU-2376.yaml) — 2026-03-10
+- [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml) — 2026-03-10
