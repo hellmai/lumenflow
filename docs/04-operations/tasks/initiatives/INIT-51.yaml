@@ -1,0 +1,32 @@
+id: INIT-51
+slug: tech-stack-portability-baseline
+title: Tech Stack Portability Baseline
+description: 'Remove the remaining repo-shape, package-manager, and web-framework assumptions from
+  core LumenFlow lifecycle paths so consumer projects are not forced into pnpm, apps/web, packages/,
+  or Next.js-style defaults. Scope is deliberately bounded: keep LumenFlow as a Node-distributed
+  CLI, but make the workflow operate correctly across a defined matrix of consumer stack archetypes
+  instead of monorepo-web defaults.'
+status: draft
+priority: P2
+owner: 'Framework: Core'
+created: 2026-03-10
+phases:
+  - id: 1
+    title: 'Phase 1: Runtime and command portability baseline'
+    status: pending
+  - id: 2
+    title: 'Phase 2: Repo-shape and gate-planning portability'
+    status: pending
+  - id: 3
+    title: 'Phase 3: Framework heuristics and validation matrix'
+    status: pending
+success_metrics:
+  - Generic lifecycle code paths do not hardcode pnpm workspace-init or pnpm turbo docs:generate
+    when equivalent configured/runtime-resolved commands exist.
+  - Incremental gates and path planning work for repos without apps/, packages/, tools/, or apps/web
+    assumptions.
+  - Classification, onboarding, and generated guidance do not assume Next.js/web unless config or
+    code paths indicate it.
+  - A documented archetype matrix defines what tech-stack portability means for LumenFlow and is
+    backed by smoke validation.
+labels: []
