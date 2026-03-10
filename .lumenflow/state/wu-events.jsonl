@@ -3016,3 +3016,4 @@
 {"type":"checkpoint","wuId":"WU-2361","timestamp":"2026-03-10T09:39:59.395Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2361","timestamp":"2026-03-10T09:40:26.034Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2361","timestamp":"2026-03-10T09:53:29.883Z","note":"WU-2361: scoped tests green, expanding to manual help check and wu:prep"}
+{"type":"complete","wuId":"WU-2361","timestamp":"2026-03-10T10:01:34.857Z"}

@@ -2,7 +2,7 @@ id: WU-2361
 title: Clean up evidence-only remnants and fix misleading warn message
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -21,7 +21,9 @@ artifacts:
   - .lumenflow/stamps/WU-2361.done
 dependencies: []
 risks: []
-notes: Updates parser help visibility for deprecated brief flags, records new brief evidence as mode=full while preserving legacy evidence-only parsing, and removes misleading retroactive delegation guidance from warn-only provenance messaging.
+notes: Updates parser help visibility for deprecated brief flags, records new brief evidence as
+  mode=full while preserving legacy evidence-only parsing, and removes misleading retroactive
+  delegation guidance from warn-only provenance messaging.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -47,3 +49,6 @@ session_id: dc84db6a-7477-4946-8264-181eebd3beeb
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-10T09:39:48.068Z
+locked: true
+completed_at: 2026-03-10T10:01:30.079Z
+completed: 2026-03-10
