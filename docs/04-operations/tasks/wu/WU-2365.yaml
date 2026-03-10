@@ -2,7 +2,7 @@ id: WU-2365
 title: Centralize agent startup guidance in LUMENFLOW.md and deduplicate vendor overlays
 lane: 'Content: Specs Governance'
 type: tooling
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -78,3 +78,6 @@ acceptance:
   - No net-new workflow guidance — all shared rules consolidated into LUMENFLOW.md
   - 'tool-usage.md updated: head/tail exception for command output explicitly excludes
     lumenflow:commands, --help output, and CLI error/fix output'
+locked: true
+completed_at: 2026-03-10T11:43:17.129Z
+completed: 2026-03-10
