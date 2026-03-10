@@ -25,6 +25,8 @@ import {
   clearConfigCache,
   findProjectRoot,
   getProjectRoot,
+  getWorkspaceInitCommand,
+  getDocsGenerateCommand,
 } from '../lumenflow-config.js';
 
 /** Config file name used by config loader */
@@ -63,6 +65,18 @@ describe('WU-2126: clearConfigCache()', () => {
       },
     };
     await writeFile(path.join(tempDir, WORKSPACE_CONFIG_FILE), yaml.stringify(config), 'utf8');
+  }
+
+  async function writeWorkspaceSoftwareDeliveryConfig(
+    softwareDelivery: Record<string, unknown>,
+  ): Promise<void> {
+    await writeFile(
+      path.join(tempDir, WORKSPACE_CONFIG_FILE),
+      yaml.stringify({
+        software_delivery: softwareDelivery,
+      }),
+      'utf8',
+    );
   }
 
   it('should read config from disk with projectRoot override (no caching)', async () => {
@@ -141,5 +155,21 @@ describe('WU-2126: clearConfigCache()', () => {
     } finally {
       await rm(emptyDir, { recursive: true, force: true });
     }
+  });
+
+  it('should resolve workspace:init guidance using the configured package manager', async () => {
+    await writeWorkspaceSoftwareDeliveryConfig({ package_manager: 'npm' });
+
+    expect(getWorkspaceInitCommand(tempDir)).toBe('npm run workspace:init -- --yes');
+  });
+
+  it('should default workspace:init guidance to pnpm when package_manager is not configured', () => {
+    expect(getWorkspaceInitCommand(tempDir)).toBe('pnpm workspace:init --yes');
+  });
+
+  it('should resolve docs:generate command using the configured package manager', async () => {
+    await writeWorkspaceSoftwareDeliveryConfig({ package_manager: 'yarn' });
+
+    expect(getDocsGenerateCommand(tempDir)).toBe('yarn docs:generate');
   });
 });

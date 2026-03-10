@@ -52,6 +52,7 @@ import {
   getConfig,
   getResolvedPaths,
   getConfigFilePresence,
+  getWorkspaceInitCommand,
   WORKSPACE_CONFIG_FILE_NAME,
 } from '@lumenflow/core/config';
 import { existsSync } from 'node:fs';
@@ -68,7 +69,6 @@ import { resolveStateDir } from './state-path-resolvers.js';
  * Log prefix for state:doctor output
  */
 const LOG_PREFIX = '[state:doctor]';
-const WORKSPACE_INIT_COMMAND = 'pnpm workspace-init --yes';
 const INITIATIVE_FILE_GLOB = 'INIT-*.yaml';
 const WU_FILE_GLOB = 'WU-*.yaml';
 const STATUS_RECONCILIATION_OPERATION = 'state-doctor';
@@ -755,7 +755,7 @@ function assertCanonicalWorkspace(baseDir: string): void {
 
   throw createError(
     ErrorCodes.WORKSPACE_NOT_FOUND,
-    `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}. Run \`${WORKSPACE_INIT_COMMAND}\`.`,
+    `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}. Run \`${getWorkspaceInitCommand(baseDir)}\`.`,
   );
 }
 
@@ -936,7 +936,7 @@ function warnMissingPaths(baseDir: string, quiet: boolean): void {
       console.warn(`  - ${p}`);
     }
     console.warn(
-      `  Tip: Run \`${WORKSPACE_INIT_COMMAND}\` and verify ${WORKSPACE_CONFIG_FILE_NAME}`,
+      `  Tip: Run \`${getWorkspaceInitCommand(baseDir)}\` and verify ${WORKSPACE_CONFIG_FILE_NAME}`,
     );
   }
 }

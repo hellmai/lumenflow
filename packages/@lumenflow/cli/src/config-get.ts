@@ -19,7 +19,7 @@
 import path from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import YAML from 'yaml';
-import { findProjectRoot, WRITABLE_ROOT_KEYS } from '@lumenflow/core/config';
+import { findProjectRoot, getWorkspaceInitCommand, WRITABLE_ROOT_KEYS } from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
 import { runCLI } from './cli-entry-point.js';
@@ -36,8 +36,6 @@ import {
 // ---------------------------------------------------------------------------
 
 const LOG_PREFIX = '[config:get]';
-const WORKSPACE_INIT_COMMAND = 'pnpm workspace-init --yes';
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -110,9 +108,10 @@ export async function main(): Promise<void> {
 
   const projectRoot = findProjectRoot();
   const workspacePath = path.join(projectRoot, WORKSPACE_FILE_NAME);
+  const workspaceInitCommand = getWorkspaceInitCommand(projectRoot);
 
   if (!existsSync(workspacePath)) {
-    die(`${LOG_PREFIX} Missing ${WORKSPACE_FILE_NAME}. Run \`${WORKSPACE_INIT_COMMAND}\` first.`);
+    die(`${LOG_PREFIX} Missing ${WORKSPACE_FILE_NAME}. Run \`${workspaceInitCommand}\` first.`);
   }
 
   // Read raw workspace (preserving YAML structure, not Zod-parsed defaults)

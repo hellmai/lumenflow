@@ -25,6 +25,7 @@ import { GIT_DIRECTORY_NAME, WORKSPACE_CONFIG_FILE_NAME } from './config-contrac
 import { normalizeConfigKeys } from './normalize-config-keys.js';
 import { asRecord } from './object-guards.js';
 import { createError, ErrorCodes } from './error-handler.js';
+import { resolvePackageManager } from './package-manager-resolver.js';
 
 /** Canonical workspace config file name (workspace-first architecture) */
 export {
@@ -47,8 +48,9 @@ const UTF8_ENCODING = 'utf8';
 /** Warning prefix for config-loading diagnostics */
 const WARNING_PREFIX = '[lumenflow-config]';
 
-/** Actionable command to scaffold canonical workspace config */
-const WORKSPACE_INIT_COMMAND = 'pnpm workspace-init --yes';
+const WORKSPACE_INIT_SCRIPT = 'workspace:init';
+const DOCS_GENERATE_SCRIPT = 'docs:generate';
+const WORKSPACE_INIT_ARGS = ['--yes'] as const;
 
 /** Canonical workspace section that stores software-delivery config */
 const WORKSPACE_CONFIG_SECTION = WORKSPACE_V2_KEYS.SOFTWARE_DELIVERY;
@@ -196,7 +198,7 @@ export function getConfig(
     throw createError(
       ErrorCodes.CONFIG_ERROR,
       `${WARNING_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}. ` +
-        `Run \`${WORKSPACE_INIT_COMMAND}\` to scaffold workspace config.`,
+        `Run \`${getWorkspaceInitCommand(projectRoot)}\` to scaffold workspace config.`,
     );
   }
 
@@ -250,6 +252,34 @@ export function getProjectRoot(): string {
 export function clearConfigCache(): void {
   cachedConfig = null;
   cachedProjectRoot = null;
+}
+
+function formatScriptCommand(packageManager: string, scriptName: string, args: string[] = []): string {
+  switch (packageManager) {
+    case 'npm':
+      return args.length > 0
+        ? `npm run ${scriptName} -- ${args.join(' ')}`
+        : `npm run ${scriptName}`;
+    case 'yarn':
+      return args.length > 0 ? `yarn ${scriptName} ${args.join(' ')}` : `yarn ${scriptName}`;
+    case 'bun':
+      return args.length > 0
+        ? `bun run ${scriptName} ${args.join(' ')}`
+        : `bun run ${scriptName}`;
+    case 'pnpm':
+    default:
+      return args.length > 0 ? `pnpm ${scriptName} ${args.join(' ')}` : `pnpm ${scriptName}`;
+  }
+}
+
+export function getWorkspaceInitCommand(projectRoot: string = getProjectRoot()): string {
+  return formatScriptCommand(resolvePackageManager(projectRoot), WORKSPACE_INIT_SCRIPT, [
+    ...WORKSPACE_INIT_ARGS,
+  ]);
+}
+
+export function getDocsGenerateCommand(projectRoot: string = getProjectRoot()): string {
+  return formatScriptCommand(resolvePackageManager(projectRoot), DOCS_GENERATE_SCRIPT);
 }
 
 /**

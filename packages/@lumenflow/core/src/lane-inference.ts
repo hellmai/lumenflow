@@ -15,7 +15,12 @@ import micromatch from 'micromatch';
 import YAML from 'yaml';
 import { WORKSPACE_V2_KEYS } from './config-contract.js';
 import { createError, ErrorCodes } from './error-handler.js';
-import { getConfig, findProjectRoot, WORKSPACE_CONFIG_FILE_NAME } from './lumenflow-config.js';
+import {
+  getConfig,
+  findProjectRoot,
+  getWorkspaceInitCommand,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from './lumenflow-config.js';
 import { asRecord } from './object-guards.js';
 import { CONFIDENCE, WEIGHTS } from './wu-validation-constants.js';
 
@@ -92,7 +97,7 @@ function parseWorkspaceLaneDefinitions(configPath: string): LaneDefinition[] {
     throw createError(
       ErrorCodes.CONFIG_ERROR,
       `Missing ${SOFTWARE_DELIVERY_KEY} block in ${configPath}.\n\n` +
-        'Run `pnpm workspace-init --yes` and configure lanes in workspace.yaml.',
+        `Run \`${getWorkspaceInitCommand(path.dirname(configPath))}\` and configure lanes in workspace.yaml.`,
       { path: configPath },
     );
   }
@@ -106,7 +111,7 @@ function loadLaneDefinitions(configPath: string | null = null): LaneDefinition[]
       throw createError(
         ErrorCodes.FILE_NOT_FOUND,
         `Workspace config not found: ${configPath}\n\n` +
-          `Run \`pnpm workspace-init --yes\` and \`pnpm lane:setup\` to scaffold ` +
+          `Run \`${getWorkspaceInitCommand(path.dirname(configPath))}\` and \`pnpm lane:setup\` to scaffold ` +
           `${SOFTWARE_DELIVERY_KEY}.lanes.definitions.`,
         { path: configPath },
       );

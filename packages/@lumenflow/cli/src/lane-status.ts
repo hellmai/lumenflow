@@ -12,7 +12,11 @@
 
 import path from 'node:path';
 import { existsSync } from 'node:fs';
-import { findProjectRoot, WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
+import {
+  findProjectRoot,
+  getWorkspaceInitCommand,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import {
   ensureLaneLifecycleForProject,
@@ -27,7 +31,8 @@ import { runCLI } from './cli-entry-point.js';
 const LOG_PREFIX = '[lane:status]';
 const ARG_HELP = '--help';
 
-export const LANE_STATUS_HELP_TEXT = `Usage: pnpm lane:status
+function getLaneStatusHelpText(projectRoot: string): string {
+  return `Usage: pnpm lane:status
 
 Show lane lifecycle status and recommended next step.
 
@@ -37,6 +42,7 @@ status (unconfigured, draft, or locked) and the recommended next step.
 Options:
   ${ARG_HELP}    Show this help text and exit
 `;
+}
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -55,7 +61,7 @@ function ensureLumenflowInit(projectRoot: string): void {
   if (!existsSync(configPath)) {
     die(
       `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}.\n\n` +
-        'Run `pnpm workspace-init --yes` first, then re-run lane lifecycle commands.',
+        `Run \`${getWorkspaceInitCommand(projectRoot)}\` first, then re-run lane lifecycle commands.`,
     );
   }
 }
@@ -78,13 +84,13 @@ export function resolveLaneLifecycleForStatus(projectRoot: string) {
 async function main() {
   const userArgs = process.argv.slice(2);
   const { help } = parseLaneStatusArgs(userArgs);
+  const projectRoot = findProjectRoot();
 
   if (help) {
-    console.log(LANE_STATUS_HELP_TEXT);
+    console.log(getLaneStatusHelpText(projectRoot));
     return;
   }
 
-  const projectRoot = findProjectRoot();
   ensureLumenflowInit(projectRoot);
 
   const classification = resolveLaneLifecycleForStatus(projectRoot);

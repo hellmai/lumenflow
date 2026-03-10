@@ -188,12 +188,12 @@ describe('wu-done-docs-detection', () => {
   });
 
   describe('runDocsGenerate', () => {
-    it('should run turbo docs:generate', () => {
+    it('should run docs:generate via the resolved package-manager command', () => {
       vi.mocked(execSync).mockReturnValue('');
 
       runDocsGenerate('/repo/root');
 
-      expect(execSync).toHaveBeenCalledWith('pnpm turbo docs:generate', {
+      expect(execSync).toHaveBeenCalledWith('pnpm docs:generate', {
         cwd: '/repo/root',
         stdio: 'inherit',
         encoding: 'utf-8',

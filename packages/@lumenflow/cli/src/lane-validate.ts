@@ -13,7 +13,11 @@
 
 import path from 'node:path';
 import { existsSync } from 'node:fs';
-import { findProjectRoot, WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
+import {
+  findProjectRoot,
+  getWorkspaceInitCommand,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import {
@@ -34,7 +38,8 @@ const ARG_HELP = '--help';
 
 export const LANE_VALIDATE_OPERATION_NAME = 'lane-validate';
 
-export const LANE_VALIDATE_HELP_TEXT = `Usage: pnpm lane:validate
+function getLaneValidateHelpText(projectRoot: string): string {
+  return `Usage: pnpm lane:validate
 
 Validate lane artifacts before locking.
 
@@ -43,12 +48,13 @@ then sets lane lifecycle status to "draft" via micro-worktree isolation
 (changes committed atomically to main).
 
 Prerequisites:
-  - workspace.yaml must exist (run \`pnpm workspace-init --yes\` first)
+  - workspace.yaml must exist (run \`${getWorkspaceInitCommand(projectRoot)}\` first)
   - Lane artifacts must be created (run \`pnpm lane:setup\` first)
 
 Options:
   ${ARG_HELP}    Show this help text and exit
 `;
+}
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -67,7 +73,7 @@ function ensureLumenflowInit(projectRoot: string): void {
   if (!existsSync(configPath)) {
     die(
       `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}.\n\n` +
-        'Run `pnpm workspace-init --yes` first, then configure lane lifecycle.',
+        `Run \`${getWorkspaceInitCommand(projectRoot)}\` first, then configure lane lifecycle.`,
     );
   }
 }
@@ -79,13 +85,13 @@ function ensureLumenflowInit(projectRoot: string): void {
 async function main() {
   const userArgs = process.argv.slice(2);
   const { help } = parseLaneValidateArgs(userArgs);
+  const projectRoot = findProjectRoot();
 
   if (help) {
-    console.log(LANE_VALIDATE_HELP_TEXT);
+    console.log(getLaneValidateHelpText(projectRoot));
     return;
   }
 
-  const projectRoot = findProjectRoot();
   ensureLumenflowInit(projectRoot);
 
   const validation = validateLaneArtifacts(projectRoot);

@@ -14,6 +14,7 @@
 import { execSync } from 'node:child_process';
 import { getGitForCwd } from './git-adapter.js';
 import { STDIO, PKG_MANAGER, SCRIPTS, PRETTIER_FLAGS } from './wu-constants.js';
+import { getDocsGenerateCommand } from './lumenflow-config.js';
 
 /**
  * Pathspecs for files that affect generated documentation.
@@ -76,15 +77,15 @@ export async function stageDocOutputs(): Promise<void> {
 }
 
 /**
- * Run turbo docs:generate to regenerate documentation.
- * Turbo handles build dependencies and caching.
+ * Run docs:generate to regenerate documentation.
  *
  * @param repoRoot - Repository root directory
  * @returns void
  */
 export function runDocsGenerate(repoRoot: string): void {
-  // eslint-disable-next-line sonarjs/no-os-command-from-path -- pnpm resolved from PATH; workflow tooling orchestration
-  execSync('pnpm turbo docs:generate', {
+  const docsGenerateCommand = getDocsGenerateCommand(repoRoot);
+  // eslint-disable-next-line sonarjs/no-os-command-from-path -- package-manager command resolved from workspace config
+  execSync(docsGenerateCommand, {
     cwd: repoRoot,
     stdio: STDIO.INHERIT,
     encoding: 'utf-8',
@@ -150,9 +151,9 @@ export async function maybeRegenerateAndStageDocs(
     return { docsChanged: false, regenerated: false };
   }
 
-  console.log('[wu:done] Doc-source changes detected, running turbo docs:generate...');
+  console.log('[wu:done] Doc-source changes detected, running docs:generate...');
 
-  // Run turbo docs:generate (Turbo handles caching and dependencies)
+  // Run docs:generate via the resolved package-manager command.
   runDocsGenerate(repoRoot);
 
   // Format the generated doc outputs before staging

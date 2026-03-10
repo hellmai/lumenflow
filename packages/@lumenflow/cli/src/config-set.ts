@@ -30,6 +30,7 @@ import {
   findProjectRoot,
   WORKSPACE_CONFIG_FILE_NAME,
   clearConfigCache,
+  getWorkspaceInitCommand,
 } from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
@@ -53,7 +54,6 @@ const ARG_VALUE = '--value';
 const ARG_HELP = '--help';
 
 const COMMIT_PREFIX = 'chore: config:set';
-const WORKSPACE_INIT_COMMAND = 'pnpm workspace-init --yes';
 export const WORKSPACE_FILE_NAME = WORKSPACE_CONFIG_FILE_NAME;
 
 /**
@@ -925,9 +925,10 @@ export async function main(): Promise<void> {
 
   const projectRoot = findProjectRoot();
   const workspacePath = path.join(projectRoot, WORKSPACE_FILE_NAME);
+  const workspaceInitCommand = getWorkspaceInitCommand(projectRoot);
 
   if (!existsSync(workspacePath)) {
-    die(`${LOG_PREFIX} Missing ${WORKSPACE_FILE_NAME}. Run \`${WORKSPACE_INIT_COMMAND}\` first.`);
+    die(`${LOG_PREFIX} Missing ${WORKSPACE_FILE_NAME}. Run \`${workspaceInitCommand}\` first.`);
   }
 
   // Load pack config_keys from workspace for routing

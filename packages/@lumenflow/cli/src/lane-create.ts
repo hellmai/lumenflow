@@ -13,7 +13,11 @@
 import path from 'node:path';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import YAML from 'yaml';
-import { findProjectRoot, WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
+import {
+  findProjectRoot,
+  getWorkspaceInitCommand,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from '@lumenflow/core/config';
 import { WORKSPACE_V2_KEYS } from '@lumenflow/core/config-schema';
 import { isValidLaneFormat } from '@lumenflow/core/lane-suggest-prompt';
 import { createError, ErrorCodes, die } from '@lumenflow/core/error-handler';
@@ -168,7 +172,7 @@ export function validateLaneCreatePreconditions(projectRoot: string): Preconditi
   if (!existsSync(configPath)) {
     return {
       ok: false,
-      error: `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}. Run \`pnpm workspace-init --yes\` first.`,
+      error: `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}. Run \`${getWorkspaceInitCommand(projectRoot)}\` first.`,
     };
   }
 

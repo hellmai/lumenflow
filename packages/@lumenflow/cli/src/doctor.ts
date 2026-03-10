@@ -18,6 +18,7 @@ import {
   detectOrphanWorktrees,
   detectMissingTrackedWorktrees,
   getConfigFilePresence,
+  getWorkspaceInitCommand,
   WORKSPACE_CONFIG_FILE_NAME,
 } from '@lumenflow/core';
 import { getConfig } from '@lumenflow/core/config';
@@ -286,7 +287,7 @@ function checkLumenflowConfig(projectDir: string): CheckResult {
     return {
       passed: false,
       message: `${WORKSPACE_CONFIG_FILE_NAME} missing`,
-      details: `Run: pnpm workspace-init --yes`,
+      details: `Run: ${getWorkspaceInitCommand(projectDir)}`,
     };
   }
 
@@ -985,7 +986,9 @@ export function formatDoctorOutput(result: DoctorResult): string {
     lines.push('');
     lines.push('To fix missing components:');
     lines.push('  pnpm install && pnpm prepare  # Install Husky hooks');
-    lines.push('  pnpm workspace-init --yes      # Create canonical workspace.yaml');
+    lines.push(
+      `  ${getWorkspaceInitCommand(process.cwd())}      # Create canonical workspace.yaml`,
+    );
   }
 
   lines.push('');

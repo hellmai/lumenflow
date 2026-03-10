@@ -13,7 +13,11 @@
 
 import path from 'node:path';
 import { existsSync } from 'node:fs';
-import { findProjectRoot, WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
+import {
+  findProjectRoot,
+  getWorkspaceInitCommand,
+  WORKSPACE_CONFIG_FILE_NAME,
+} from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import {
@@ -36,7 +40,8 @@ const ARG_LOCK = '--lock';
 
 export const LANE_SETUP_OPERATION_NAME = 'lane-setup';
 
-export const LANE_SETUP_HELP_TEXT = `Usage: pnpm lane:setup [options]
+function getLaneSetupHelpText(projectRoot: string): string {
+  return `Usage: pnpm lane:setup [options]
 
 Create or update draft lane artifacts.
 
@@ -51,6 +56,7 @@ Examples:
   pnpm lane:setup              # Create draft lane artifacts
   pnpm lane:setup --lock       # Setup, validate, and lock in one step
 `;
+}
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -72,7 +78,7 @@ function ensureLumenflowInit(projectRoot: string): void {
   if (!existsSync(configPath)) {
     die(
       `${LOG_PREFIX} Missing ${WORKSPACE_CONFIG_FILE_NAME}.\n\n` +
-        'Run `pnpm workspace-init --yes` first, then configure lane lifecycle.',
+        `Run \`${getWorkspaceInitCommand(projectRoot)}\` first, then configure lane lifecycle.`,
     );
   }
 }
@@ -84,13 +90,13 @@ function ensureLumenflowInit(projectRoot: string): void {
 async function main() {
   const userArgs = process.argv.slice(2);
   const { help, lock: lockFlag } = parseLaneSetupArgs(userArgs);
+  const projectRoot = findProjectRoot();
 
   if (help) {
-    console.log(LANE_SETUP_HELP_TEXT);
+    console.log(getLaneSetupHelpText(projectRoot));
     return;
   }
 
-  const projectRoot = findProjectRoot();
   ensureLumenflowInit(projectRoot);
 
   console.log(`${LOG_PREFIX} Setting up lane artifacts via micro-worktree isolation (WU-2257)`);
