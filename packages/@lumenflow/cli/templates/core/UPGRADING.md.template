@@ -10,9 +10,6 @@ pnpm outdated @lumenflow/*
 
 # Update all LumenFlow packages atomically
 pnpm lumenflow:upgrade --latest
-
-# Refresh core docs, onboarding docs, and vendor assets
-pnpm docs:sync --force
 ```
 
 Package upgrades change the runtime `wu:brief` defaults immediately. `lumenflow:upgrade` automatically
@@ -61,17 +58,20 @@ pnpm lumenflow:upgrade --version 1.2.0
 
 ### 4. Sync Documentation
 
-After upgrading, sync agent onboarding documentation:
+`lumenflow:upgrade` already syncs the shipped docs surfaces inside the upgrade transaction:
 
 ```bash
-pnpm docs:sync --force
+pnpm lumenflow:upgrade --latest
 ```
 
 This updates:
 
 - Core docs: LUMENFLOW.md, AGENTS.md, .lumenflow/constraints.md
 - Scaffolded onboarding documentation
-- Supported vendor assets such as Claude skills
+- Already-present or configured vendor bootstraps
+- Reserved Claude skills when Claude assets are configured
+
+Run `pnpm docs:sync --vendor <type>` only when you want to refresh a specific vendor/bootstrap surface outside the upgrade flow.
 
 ## Defaults vs Overrides
 
@@ -117,7 +117,7 @@ pnpm install
 
 ### Template Conflicts
 
-If `docs:sync` reports conflicts:
+If a merge-block bootstrap file needs manual review:
 
 1. Review the diff for each conflicting file
 2. Merge manually or accept incoming changes

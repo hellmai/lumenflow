@@ -213,13 +213,14 @@ describe('quick-ref commands', () => {
       expect(content).not.toContain('pnpm deps:add --pkg zod');
     });
 
-    it('should document docs:sync as a forceable onboarding refresh path', async () => {
+    it('should document upgrade as the primary refresh path and keep docs:sync optional', async () => {
       await scaffoldProject(tempDir, getArc42Options());
 
       const content = fs.readFileSync(getQuickRefPath(), 'utf-8');
 
-      expect(content).toContain('pnpm docs:sync --force');
-      expect(content).toContain('supported vendor assets');
+      expect(content).toContain('pnpm lumenflow:upgrade --latest');
+      expect(content).toContain('automatically syncs managed docs');
+      expect(content).toContain('pnpm docs:sync');
     });
   });
 

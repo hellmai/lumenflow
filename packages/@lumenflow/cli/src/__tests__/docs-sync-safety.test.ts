@@ -25,6 +25,7 @@ import {
   MANAGED_DOC_PATHS,
   BOOTSTRAP_DOC_PATHS,
   syncCoreDocs,
+  syncVendorBootstraps,
   syncSkills,
   RESERVED_SKILL_NAMES,
 } from '../docs-sync.js';
@@ -381,6 +382,42 @@ More custom rules.
       // User skill untouched
       const content = fs.readFileSync(path.join(userSkillDir, 'SKILL.md'), 'utf-8');
       expect(content).toBe('# My custom skill\n');
+    });
+  });
+
+  describe('vendor bootstrap sync', () => {
+    it('should inject bootstrap content into an existing CLAUDE.md without destroying user content', async () => {
+      const claudePath = path.join(tempDir, 'CLAUDE.md');
+      fs.writeFileSync(claudePath, '# Team Claude Notes\n\nKeep this intro.\n');
+
+      const result = await syncVendorBootstraps(tempDir, { force: false, vendor: 'claude' });
+
+      const content = fs.readFileSync(claudePath, 'utf-8');
+      expect(content).toContain('# Team Claude Notes');
+      expect(content).toContain('Keep this intro.');
+      expect(content).toContain(MARKERS.START);
+      expect(content).toContain('LUMENFLOW.local.md');
+      expect(result.created).toContain('CLAUDE.md');
+    });
+
+    it('should refresh cursor bootstrap files when vendor=cursor', async () => {
+      const cursorPath = path.join(tempDir, '.cursor', 'rules', 'lumenflow.md');
+      fs.mkdirSync(path.dirname(cursorPath), { recursive: true });
+      fs.writeFileSync(cursorPath, '# Cursor notes\n');
+
+      const result = await syncVendorBootstraps(tempDir, { force: false, vendor: 'cursor' });
+
+      const content = fs.readFileSync(cursorPath, 'utf-8');
+      expect(content).toContain('# Cursor notes');
+      expect(content).toContain(MARKERS.START);
+      expect(result.created).toContain('.cursor/rules/lumenflow.md');
+    });
+
+    it('should skip vendor bootstraps entirely when vendor=none', async () => {
+      const result = await syncVendorBootstraps(tempDir, { force: false, vendor: 'none' });
+      expect(result.created).toEqual([]);
+      expect(result.skipped).toEqual([]);
+      expect(fs.existsSync(path.join(tempDir, 'CLAUDE.md'))).toBe(false);
     });
   });
 });

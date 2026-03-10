@@ -44,9 +44,9 @@ import { integrateClaudeCode, type IntegrateEnforcementConfig } from './commands
 import { getPublicManifest } from './public-manifest.js';
 import { runCLI } from './cli-entry-point.js';
 import { buildInitLaneLifecycleMessage, LANE_LIFECYCLE_STATUS } from './lane-lifecycle-process.js';
+import { syncCoreDocs } from './docs-sync.js';
 // WU-1643: Import template constants from dedicated data module
 import {
-  AGENTS_MD_TEMPLATE,
   CLAUDE_MD_TEMPLATE,
   CLAUDE_SETTINGS_TEMPLATE,
   CURSOR_RULES_TEMPLATE,
@@ -903,49 +903,13 @@ export async function scaffoldProject(
     result,
   );
 
-  // WU-1171: Create AGENTS.md (universal entry point for all agents)
-  // WU-2383: Use merge-block mode so existing AGENTS.md gets LumenFlow content
-  // injected via bounded markers instead of being silently skipped.
-  {
-    const bootstrapMode = fileMode === 'force' ? 'force' : 'merge-block';
-    try {
-      const agentsTemplate = loadTemplate('core/AGENTS.md.template');
-      await createFile(
-        path.join(targetDir, 'AGENTS.md'),
-        processTemplate(agentsTemplate, tokenDefaults),
-        bootstrapMode,
-        result,
-        targetDir,
-      );
-    } catch {
-      // Fallback to hardcoded template if template file not found
-      await createFile(
-        path.join(targetDir, 'AGENTS.md'),
-        processTemplate(AGENTS_MD_TEMPLATE, tokenDefaults),
-        bootstrapMode,
-        result,
-        targetDir,
-      );
-    }
-  }
-
-  // Create LUMENFLOW.md (main entry point)
-  await createFile(
-    path.join(targetDir, 'LUMENFLOW.md'),
-    processTemplate(loadTemplate('core/LUMENFLOW.md.template'), tokenDefaults),
-    fileMode,
-    result,
-    targetDir,
-  );
-
-  // Create .lumenflow/constraints.md
-  await createFile(
-    path.join(targetDir, LUMENFLOW_DIR, 'constraints.md'),
-    processTemplate(loadTemplate('core/.lumenflow/constraints.md.template'), tokenDefaults),
-    fileMode,
-    result,
-    targetDir,
-  );
+  // WU-2385: Core docs now follow the ownership model even on existing repos.
+  // Managed docs are installed/upgraded via syncCoreDocs, while AGENTS.md uses
+  // merge-block markers to preserve user content outside the managed section.
+  const coreDocsResult = await syncCoreDocs(targetDir, { force: options.force });
+  result.created.push(...coreDocsResult.created);
+  result.skipped.push(...coreDocsResult.skipped);
+  result.warnings = [...(result.warnings ?? []), ...(coreDocsResult.warnings ?? [])];
 
   // Create .lumenflow/agents directory with .gitkeep
   await createDirectory(path.join(targetDir, LUMENFLOW_AGENTS_DIR), result, targetDir);
@@ -1361,7 +1325,7 @@ async function scaffoldFullDocs(
   await createFile(
     path.join(targetDir, tokens.DOCS_BACKLOG_PATH),
     BACKLOG_TEMPLATE,
-    options.force,
+    true,
     result,
     targetDir,
   );
@@ -1369,7 +1333,7 @@ async function scaffoldFullDocs(
   await createFile(
     path.join(targetDir, tokens.DOCS_STATUS_PATH),
     STATUS_TEMPLATE,
-    options.force,
+    true,
     result,
     targetDir,
   );
@@ -1377,7 +1341,7 @@ async function scaffoldFullDocs(
   await createFile(
     path.join(templatesDir, 'wu-template.yaml'),
     processTemplate(WU_TEMPLATE_YAML, tokens),
-    options.force,
+    true,
     result,
     targetDir,
   );
@@ -1430,7 +1394,7 @@ async function scaffoldClaudeSkills(
   await createFile(
     path.join(wuLifecycleDir, 'SKILL.md'),
     processTemplate(WU_LIFECYCLE_SKILL_TEMPLATE, tokens),
-    options.force,
+    true,
     result,
     targetDir,
   );
@@ -1441,7 +1405,7 @@ async function scaffoldClaudeSkills(
   await createFile(
     path.join(worktreeDir, 'SKILL.md'),
     processTemplate(WORKTREE_DISCIPLINE_SKILL_TEMPLATE, tokens),
-    options.force,
+    true,
     result,
     targetDir,
   );
@@ -1452,7 +1416,7 @@ async function scaffoldClaudeSkills(
   await createFile(
     path.join(gatesDir, 'SKILL.md'),
     processTemplate(LUMENFLOW_GATES_SKILL_TEMPLATE, tokens),
-    options.force,
+    true,
     result,
     targetDir,
   );

@@ -520,8 +520,8 @@ extra project commands, or client-specific overrides.
 
 - New installs get the current defaults automatically.
 - Existing installs get the runtime defaults after `pnpm lumenflow:upgrade --latest`.
-- Run `pnpm docs:sync --force` when you also want refreshed core docs, onboarding docs, and
-  supported vendor assets.
+- `pnpm lumenflow:upgrade --latest` already refreshes managed docs, onboarding docs, and configured
+  vendor assets. Use `pnpm docs:sync --vendor <type>` only for an extra targeted refresh.
 
 Default profiles:
 

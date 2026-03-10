@@ -17,6 +17,7 @@ import {
   getDefaultConfig,
   createError,
   ErrorCodes,
+  LUMENFLOW_CLIENT_IDS,
 } from '@lumenflow/core';
 import { createWuPaths } from '@lumenflow/core/wu-paths';
 import { GIT_DIRECTORY_NAME, getConfig } from '@lumenflow/core/config';
@@ -26,9 +27,9 @@ import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard'
 import { withMicroWorktree, isInGitWorktree } from '@lumenflow/core/micro-worktree';
 import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
 import { resolveCliTemplatesDir } from './template-directory-resolver.js';
-import { updateMergeBlock } from './merge-block.js';
+import { updateMergeBlock, MARKERS } from './merge-block.js';
 
-export type VendorType = 'claude' | 'cursor' | 'aider' | 'all' | 'none';
+export type VendorType = 'claude' | 'cursor' | 'windsurf' | 'cline' | 'aider' | 'all' | 'none';
 
 /**
  * WU-1085: CLI option definitions for docs-sync command
@@ -37,7 +38,7 @@ const DOCS_SYNC_OPTIONS = {
   vendor: {
     name: 'vendor',
     flags: '--vendor <type>',
-    description: 'Vendor type (claude, cursor, aider, all, none)',
+    description: 'Vendor type (claude, cursor, windsurf, cline, aider, all, none)',
     default: 'claude',
   },
   force: WU_OPTIONS.force,
@@ -54,7 +55,7 @@ export function parseDocsSyncOptions(): {
   const opts = createWUParser({
     name: 'lumenflow-docs-sync',
     description:
-      'Refresh core docs, onboarding docs, and supported vendor assets (skips existing files by default)',
+      'Refresh managed docs, onboarding docs, and selected vendor bootstrap assets safely',
     options: Object.values(DOCS_SYNC_OPTIONS),
   });
 
@@ -67,6 +68,7 @@ export function parseDocsSyncOptions(): {
 export interface SyncOptions {
   force: boolean;
   vendor?: VendorType;
+  vendors?: VendorType[];
 }
 
 export interface SyncResult {
@@ -242,6 +244,21 @@ export const BOOTSTRAP_DOC_PATHS: Record<string, string> = {
   'AGENTS.md': 'core/AGENTS.md.template',
 };
 
+export const VENDOR_BOOTSTRAP_TEMPLATE_PATHS: Record<Exclude<VendorType, 'all' | 'none' | 'aider'>, Record<string, string>> = {
+  claude: {
+    'CLAUDE.md': 'vendors/claude/.claude/CLAUDE.md.template',
+  },
+  cursor: {
+    '.cursor/rules/lumenflow.md': 'vendors/cursor/.cursor/rules/lumenflow.md.template',
+  },
+  windsurf: {
+    '.windsurf/rules/lumenflow.md': 'vendors/windsurf/.windsurf/rules/lumenflow.md.template',
+  },
+  cline: {
+    '.clinerules': 'vendors/cline/.clinerules.template',
+  },
+};
+
 const CLAUDE_VENDOR_TEMPLATE_ROOT = ['vendors', 'claude', '.claude'].join('/');
 const CLAUDE_SKILLS_TEMPLATE_ROOT = `${CLAUDE_VENDOR_TEMPLATE_ROOT}/skills`;
 
@@ -261,6 +278,117 @@ const SKILL_TEMPLATE_PATHS: Record<string, string> = {
  * User-created skills outside this list are never touched.
  */
 export const RESERVED_SKILL_NAMES: string[] = Object.keys(SKILL_TEMPLATE_PATHS);
+
+function mergeBootstrapContent(
+  filePath: string,
+  processedContent: string,
+  targetDir: string,
+  result: SyncResult,
+): void {
+  const relativePath = path.relative(targetDir, filePath).split(path.sep).join('/');
+
+  if (fs.existsSync(filePath)) {
+    const existingContent = fs.readFileSync(filePath, 'utf-8');
+    const mergeResult = updateMergeBlock(existingContent, processedContent);
+
+    if (mergeResult.updated) {
+      fs.writeFileSync(filePath, mergeResult.content);
+      result.created.push(relativePath);
+    } else {
+      result.skipped.push(relativePath);
+    }
+
+    if (mergeResult.warning) {
+      result.warnings = result.warnings ?? [];
+      result.warnings.push(`${relativePath}: ${mergeResult.warning}`);
+    }
+    return;
+  }
+
+  const wrappedContent = `${MARKERS.START}\n${processedContent}\n${MARKERS.END}\n`;
+  const parentDir = path.dirname(filePath);
+  if (!fs.existsSync(parentDir)) {
+    fs.mkdirSync(parentDir, { recursive: true });
+  }
+  fs.writeFileSync(filePath, wrappedContent);
+  result.created.push(relativePath);
+}
+
+function normalizeConfiguredVendor(clientName: string): VendorType | null {
+  switch (clientName) {
+    case 'claude':
+    case LUMENFLOW_CLIENT_IDS.CLAUDE_CODE:
+      return 'claude';
+    case 'cursor':
+      return 'cursor';
+    case 'windsurf':
+      return 'windsurf';
+    case 'cline':
+      return 'cline';
+    default:
+      return null;
+  }
+}
+
+export function inferConfiguredVendors(targetDir: string): VendorType[] {
+  const inferred = new Set<VendorType>();
+  const workspacePath = path.join(targetDir, 'workspace.yaml');
+
+  for (const [vendor, files] of Object.entries(VENDOR_BOOTSTRAP_TEMPLATE_PATHS) as [
+    Exclude<VendorType, 'all' | 'none' | 'aider'>,
+    Record<string, string>,
+  ][]) {
+    if (Object.keys(files).some((relPath) => fs.existsSync(path.join(targetDir, relPath)))) {
+      inferred.add(vendor);
+    }
+  }
+
+  if (!fs.existsSync(workspacePath)) {
+    return [...inferred];
+  }
+
+  try {
+    const config = getConfig({ projectRoot: targetDir, reload: true });
+    const configuredClients = new Set<string>([
+      config.agents.defaultClient,
+      ...Object.keys(config.agents.clients ?? {}),
+    ]);
+
+    for (const clientName of configuredClients) {
+      const vendor = normalizeConfiguredVendor(clientName);
+      if (vendor) {
+        inferred.add(vendor);
+      }
+    }
+  } catch {
+    // Fall back to file-based detection only.
+  }
+
+  return [...inferred];
+}
+
+function resolveSelectedVendors(vendor?: VendorType, vendors?: VendorType[]): VendorType[] {
+  if (vendors && vendors.length > 0) {
+    return [...vendors];
+  }
+
+  if (!vendor || vendor === 'none') {
+    return [];
+  }
+
+  if (vendor === 'all') {
+    return Object.keys(VENDOR_BOOTSTRAP_TEMPLATE_PATHS) as Exclude<
+      VendorType,
+      'all' | 'none' | 'aider'
+    >[];
+  }
+
+  if (vendor === 'aider') {
+    return [];
+  }
+
+  return [vendor];
+}
 
 /**
  * Sync agent onboarding docs to an existing project
@@ -307,8 +435,8 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
     skipped: [],
   };
 
-  const vendor = options.vendor ?? 'none';
-  if (vendor !== 'claude' && vendor !== 'all') {
+  const selectedVendors = resolveSelectedVendors(options.vendor, options.vendors);
+  if (!selectedVendors.includes('claude')) {
     return result;
   }
 
@@ -329,6 +457,36 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
     // WU-2383: Reserved skills are always written (managed content).
     // force=true for reserved skills regardless of caller's force flag.
     await createFile(path.join(skillDir, 'SKILL.md'), processedContent, true, result, targetDir);
+  }
+
+  return result;
+}
+
+export async function syncVendorBootstraps(
+  targetDir: string,
+  options: SyncOptions,
+): Promise<SyncResult> {
+  const result: SyncResult = {
+    created: [],
+    skipped: [],
+  };
+
+  const tokens = buildCoreDocTokens(targetDir);
+  const selectedVendors = resolveSelectedVendors(options.vendor, options.vendors);
+
+  for (const vendor of selectedVendors) {
+    const templateMap = VENDOR_BOOTSTRAP_TEMPLATE_PATHS[vendor as Exclude<
+      VendorType,
+      'all' | 'none' | 'aider'
+    >];
+    if (!templateMap) {
+      continue;
+    }
+
+    for (const [outputFile, templatePath] of Object.entries(templateMap)) {
+      const processedContent = processTemplate(loadTemplate(templatePath), tokens);
+      mergeBootstrapContent(path.join(targetDir, outputFile), processedContent, targetDir, result);
+    }
   }
 
   return result;
@@ -387,30 +545,7 @@ export async function syncCoreDocs(targetDir: string, _options: SyncOptions): Pr
     const templateContent = loadTemplate(templatePath);
     const processedContent = processTemplate(templateContent, tokens);
     const filePath = path.join(targetDir, outputFile);
-    const relativePath = path.relative(targetDir, filePath).split(path.sep).join('/');
-
-    if (fs.existsSync(filePath)) {
-      // File exists — use merge-block to inject/update LumenFlow content
-      const existingContent = fs.readFileSync(filePath, 'utf-8');
-      const mergeResult = updateMergeBlock(existingContent, processedContent);
-
-      if (mergeResult.updated) {
-        fs.writeFileSync(filePath, mergeResult.content);
-        result.created.push(relativePath);
-      } else {
-        result.skipped.push(relativePath);
-      }
-    } else {
-      // File doesn't exist — create with markers wrapping the content
-      const wrappedContent = `<!-- LUMENFLOW:START -->\n${processedContent}\n<!-- LUMENFLOW:END -->\n`;
-
-      const parentDir = path.dirname(filePath);
-      if (!fs.existsSync(parentDir)) {
-        fs.mkdirSync(parentDir, { recursive: true });
-      }
-      fs.writeFileSync(filePath, wrappedContent);
-      result.created.push(relativePath);
-    }
+    mergeBootstrapContent(filePath, processedContent, targetDir, result);
   }
 
   return result;
@@ -463,15 +598,33 @@ export async function executeDocsSyncInDir(
   targetDir: string,
   options: SyncOptions & { vendor?: VendorType },
 ): Promise<{ created: string[]; skipped: string[]; allFiles: string[] }> {
+  const selectedVendors =
+    options.vendor === undefined
+      ? inferConfiguredVendors(targetDir)
+      : resolveSelectedVendors(options.vendor, options.vendors);
   const coreResult = await syncCoreDocs(targetDir, { force: options.force });
   const docsResult = await syncAgentDocs(targetDir, { force: options.force });
+  const vendorBootstrapResult = await syncVendorBootstraps(targetDir, {
+    force: options.force,
+    vendors: selectedVendors,
+  });
   const skillsResult = await syncSkills(targetDir, {
     force: options.force,
-    vendor: options.vendor,
+    vendors: selectedVendors,
   });
 
-  const created = [...coreResult.created, ...docsResult.created, ...skillsResult.created];
-  const skipped = [...coreResult.skipped, ...docsResult.skipped, ...skillsResult.skipped];
+  const created = [
+    ...coreResult.created,
+    ...docsResult.created,
+    ...vendorBootstrapResult.created,
+    ...skillsResult.created,
+  ];
+  const skipped = [
+    ...coreResult.skipped,
+    ...docsResult.skipped,
+    ...vendorBootstrapResult.skipped,
+    ...skillsResult.skipped,
+  ];
   const allFiles = [...created];
 
   return { created, skipped, allFiles };
@@ -515,7 +668,7 @@ export async function runDocsSyncWithIsolation(
         }
 
         if (skipped.length > 0) {
-          console.log('\nSkipped (already exists, use --force to overwrite):');
+          console.log('\nSkipped (already up to date or not selected for sync):');
           skipped.forEach((f) => console.log(`  - ${f}`));
         }
 
@@ -537,7 +690,7 @@ export async function runDocsSyncWithIsolation(
     }
 
     if (skipped.length > 0) {
-      console.log('\nSkipped (already exists, use --force to overwrite):');
+      console.log('\nSkipped (already up to date or not selected for sync):');
       skipped.forEach((f) => console.log(`  - ${f}`));
     }
 

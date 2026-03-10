@@ -563,6 +563,46 @@ describe('lumenflow-upgrade', () => {
       );
     });
 
+    it('should refresh existing non-Claude bootstrap files during upgrade without forcing Claude assets', async () => {
+      interface ExecuteParams {
+        worktreePath: string;
+      }
+      interface ExecuteResult {
+        commitMessage: string;
+        files: string[];
+      }
+      let executeResult: ExecuteResult | undefined;
+
+      mockWithMicroWorktree.mockImplementation(
+        async (options: { execute: (params: ExecuteParams) => Promise<ExecuteResult> }) => {
+          const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-upgrade-vendor-'));
+          mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+          mkdirSync(path.join(tempDir, '.cursor', 'rules'), { recursive: true });
+          writeFileSync(path.join(tempDir, '.cursor', 'rules', 'lumenflow.md'), '# Existing cursor\n');
+          writeFileSync(
+            path.join(tempDir, 'package.json'),
+            JSON.stringify({ name: 'test', scripts: {} }, null, 2),
+          );
+          try {
+            executeResult = await options.execute({ worktreePath: tempDir });
+          } finally {
+            rmSync(tempDir, { recursive: true, force: true });
+          }
+          return executeResult;
+        },
+      );
+
+      await executeUpgradeInMicroWorktree({ version: '2.1.0' });
+
+      expect(executeResult).toBeDefined();
+      expect(executeResult!.files).toEqual(
+        expect.arrayContaining(['.cursor/rules/lumenflow.md']),
+      );
+      expect(executeResult!.files).not.toEqual(
+        expect.arrayContaining(['.claude/skills/wu-lifecycle/SKILL.md']),
+      );
+    });
+
     it('should not print "run docs:sync" advice after upgrade', async () => {
       mockWithMicroWorktree.mockResolvedValue({});
       mockExecSync.mockReturnValue('');

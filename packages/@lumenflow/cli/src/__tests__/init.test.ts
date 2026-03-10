@@ -82,6 +82,36 @@ describe('lumenflow init', () => {
       const agentsContent = fs.readFileSync(path.join(tempDir, 'AGENTS.md'), 'utf-8');
       expect(agentsContent).toContain(`[${LUMENFLOW_MD}]`);
     });
+
+    it('should install managed LUMENFLOW.md into an existing repo and back up local edits', async () => {
+      fs.mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+      fs.writeFileSync(path.join(tempDir, LUMENFLOW_MD), '# My Existing Workflow\n\nLocal notes.\n');
+
+      await scaffoldProject(tempDir, { force: false, full: false });
+
+      const managedContent = fs.readFileSync(path.join(tempDir, LUMENFLOW_MD), 'utf-8');
+      const localContent = fs.readFileSync(path.join(tempDir, 'LUMENFLOW.local.md'), 'utf-8');
+
+      expect(managedContent).not.toContain('# My Existing Workflow');
+      expect(managedContent).toContain('LUMENFLOW.local.md');
+      expect(localContent).toContain('# My Existing Workflow');
+      expect(localContent).toContain('Local notes.');
+    });
+
+    it('should overwrite managed constraints.md in an existing repo without --force', async () => {
+      const constraintsDir = path.join(tempDir, '.lumenflow');
+      fs.mkdirSync(constraintsDir, { recursive: true });
+      fs.writeFileSync(path.join(constraintsDir, 'constraints.md'), '# Old constraints\n');
+
+      await scaffoldProject(tempDir, { force: false, full: false });
+
+      const constraintsContent = fs.readFileSync(
+        path.join(constraintsDir, 'constraints.md'),
+        'utf-8',
+      );
+      expect(constraintsContent).not.toBe('# Old constraints\n');
+      expect(constraintsContent).toContain('non-negotiable constraints');
+    });
   });
 
   describe('--client flag', () => {
@@ -96,6 +126,22 @@ describe('lumenflow init', () => {
 
       expect(fs.existsSync(path.join(tempDir, 'CLAUDE.md'))).toBe(true);
       expect(result.created).toContain('CLAUDE.md');
+    });
+
+    it('should refresh reserved Claude skills on existing repos without --force', async () => {
+      const skillDir = path.join(tempDir, '.claude', 'skills', 'wu-lifecycle');
+      fs.mkdirSync(skillDir, { recursive: true });
+      fs.writeFileSync(path.join(skillDir, 'SKILL.md'), '# Old skill content\n');
+
+      await scaffoldProject(tempDir, {
+        force: false,
+        full: false,
+        client: 'claude',
+      });
+
+      const skillContent = fs.readFileSync(path.join(skillDir, 'SKILL.md'), 'utf-8');
+      expect(skillContent).not.toBe('# Old skill content\n');
+      expect(skillContent).toContain('wu:claim');
     });
 
     it('should accept --client cursor', async () => {
@@ -305,7 +351,7 @@ describe('lumenflow init', () => {
 
       const result = await scaffoldProject(tempDir, options);
 
-      expect(result.merged).toContain('AGENTS.md');
+      expect(result.created).toContain('AGENTS.md');
       const content = fs.readFileSync(path.join(tempDir, 'AGENTS.md'), 'utf-8');
       expect(content).toContain('# Custom Header');
       expect(content).toContain('<!-- LUMENFLOW:START -->');
