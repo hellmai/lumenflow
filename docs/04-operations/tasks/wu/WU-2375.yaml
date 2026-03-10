@@ -1,6 +1,6 @@
 id: WU-2375
 title: Make orchestration client-capability-aware instead of Claude-only
-lane: 'Framework: CLI WU Commands'
+lane: 'Framework: CLI Orchestration'
 type: feature
 status: ready
 priority: P2
