@@ -341,7 +341,7 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
  * Managed docs (LUMENFLOW.md, constraints.md) are always written from template.
  * Bootstrap docs (AGENTS.md) use merge-block markers to preserve user content.
  */
-export async function syncCoreDocs(targetDir: string, options: SyncOptions): Promise<SyncResult> {
+export async function syncCoreDocs(targetDir: string, _options: SyncOptions): Promise<SyncResult> {
   const result: SyncResult = {
     created: [],
     skipped: [],
