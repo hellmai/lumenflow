@@ -15,7 +15,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
-import { die } from '@lumenflow/core/error-handler';
+import { die, getErrorMessage } from '@lumenflow/core/error-handler';
 import { WU_STATUS, PATTERNS, FILE_SYSTEM, EMOJI, BRANCHES } from '@lumenflow/core/wu-constants';
 import { createGitForPath } from '@lumenflow/core/git-adapter';
 // WU-1603: Check lane lock status before spawning
@@ -27,7 +27,10 @@ import {
   recordSpawnToRegistry,
   formatSpawnRecordedMessage,
 } from '@lumenflow/core/wu-spawn-helpers';
-import type { DelegationBriefAttestation } from '@lumenflow/core/delegation-registry-schema';
+import {
+  generateDelegationId,
+  type DelegationBriefAttestation,
+} from '@lumenflow/core/delegation-registry-schema';
 import { WUStateStore, WU_BRIEF_EVIDENCE_NOTE_PREFIX } from '@lumenflow/core/wu-state-store';
 import { SpawnStrategyFactory } from '@lumenflow/core/spawn-strategy';
 import { getConfig } from '@lumenflow/core/config';
@@ -340,6 +343,9 @@ interface SpawnOutputWithRegistryDependencies {
   log?: (message: string) => void;
   recordSpawn?: typeof recordSpawnToRegistry;
   formatSpawnMessage?: typeof formatSpawnRecordedMessage;
+  createDelegationStore?: (stateDir: string) => {
+    delegate: (childWuId: string, parentWuId: string, delegationId: string) => Promise<void>;
+  };
 }
 
 interface RecordWuBriefEvidenceOptions {
@@ -472,6 +478,8 @@ export async function emitSpawnOutputWithRegistry(
   const log = dependencies.log ?? console.log;
   const recordSpawn = dependencies.recordSpawn ?? recordSpawnToRegistry;
   const formatSpawnMessage = dependencies.formatSpawnMessage ?? formatSpawnRecordedMessage;
+  const createDelegationStore =
+    dependencies.createDelegationStore ?? ((stateDir: string) => new WUStateStore(stateDir));
 
   if (isCodexClient) {
     log(`${prefix} Generated Codex/GPT prompt for ${id}`);
@@ -487,13 +495,27 @@ export async function emitSpawnOutputWithRegistry(
     return;
   }
 
-  const config = getConfig({ projectRoot: process.cwd() });
+  const stateDir = resolveStateDir(process.cwd());
+  const delegationId = generateDelegationId(parentWu, id);
+  try {
+    await createDelegationStore(stateDir).delegate(id, parentWu, delegationId);
+  } catch (error) {
+    die(
+      `${prefix} Failed to record durable delegation intent for ${id}: ${getErrorMessage(error)}\n\n` +
+        `The wu-events delegation marker must be written before registry lineage is recorded.\n\n` +
+        `Fix options:\n` +
+        `  1. Ensure ${stateDir} is writable\n` +
+        `  2. Retry: pnpm wu:delegate --id ${id} --parent-wu ${parentWu} --client <client>`,
+    );
+  }
+
   const registryResult = await recordSpawn({
     parentWuId: parentWu,
     targetWuId: id,
     lane: lane || 'Unknown',
-    baseDir: config.state.stateDir,
+    baseDir: stateDir,
     briefAttestation,
+    delegationId,
   });
 
   const registryMessage = formatSpawnMessage(registryResult.spawnId, registryResult.error);

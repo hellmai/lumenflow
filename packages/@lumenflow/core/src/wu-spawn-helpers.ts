@@ -242,6 +242,7 @@ const LOG_PREFIX = '[wu:spawn]';
  * @param {string} options.targetWuId - Target WU ID (spawned work)
  * @param {string} options.lane - Lane for the spawned work
  * @param {string} [options.baseDir] - Base directory for registry (defaults to LUMENFLOW_PATHS.STATE_DIR)
+ * @param {string} [options.delegationId] - Optional pre-generated delegation ID
  * @returns {Promise<{success: boolean, spawnId: string|null, error?: string}>}
  *
  * @example
@@ -262,19 +263,28 @@ export async function recordSpawnToRegistry(options: UnsafeAny) {
     lane,
     baseDir = LUMENFLOW_PATHS.STATE_DIR,
     briefAttestation,
+    delegationId,
   }: {
     parentWuId: string;
     targetWuId: string;
     lane: string;
     baseDir?: string;
     briefAttestation?: DelegationBriefAttestation;
+    delegationId?: string;
   } = options;
 
   try {
     const store = new DelegationRegistryStore(baseDir);
     await store.load();
 
-    const spawnId = await store.record(parentWuId, targetWuId, lane, undefined, briefAttestation);
+    const spawnId = await store.record(
+      parentWuId,
+      targetWuId,
+      lane,
+      undefined,
+      briefAttestation,
+      delegationId,
+    );
 
     return {
       success: true,

@@ -24,7 +24,7 @@ import { stringifyYAML, parseYAML } from '@lumenflow/core/wu-yaml';
 import { WU_STATUS } from '@lumenflow/core/wu-constants';
 import { LUMENFLOW_PATHS, DOCS_LAYOUT_PRESETS } from '@lumenflow/core';
 import { DELEGATION_REGISTRY_FILE_NAME } from '@lumenflow/core/delegation-registry-store';
-import { getLatestWuBriefEvidence } from '@lumenflow/core/wu-state-store';
+import { getLatestWuBriefEvidence, WUStateStore } from '@lumenflow/core/wu-state-store';
 import {
   generateTaskInvocation,
   generateCodexPrompt,
@@ -34,6 +34,7 @@ import {
   generateEffortScalingRules,
   generateParallelToolCallGuidance,
   generateCompletionFormat,
+  emitSpawnOutputWithRegistry,
   recordWuBriefEvidence,
 } from '../wu-spawn.js';
 import {
@@ -73,7 +74,7 @@ function createSpawnProject(baseDir: string): void {
   // Create config with lane definitions
   const configContent = `
 software_delivery:
-  version: 1
+  version: '1'
   lanes:
     definitions:
       - name: 'Framework: CLI'
@@ -595,6 +596,22 @@ describe('Agent Spawn Coordination Integration Tests (WU-1363)', () => {
         expect(warnMessage).toContain('spawn provenance');
       });
 
+      it('should hard-block when durable delegation intent exists but registry provenance is missing', async () => {
+        process.chdir(tempDir);
+        const stateDir = join(tempDir, LUMENFLOW_PATHS.STATE_DIR);
+        const store = new WUStateStore(stateDir);
+
+        await store.delegate(TEST_WU_ID, 'WU-1500', 'dlg-a1b2');
+
+        await expect(
+          enforceSpawnProvenanceForDone(
+            TEST_WU_ID,
+            { initiative: 'INIT-023', lane: TEST_LANE },
+            { baseDir: tempDir, force: false },
+          ),
+        ).rejects.toThrow('Missing delegation registry provenance');
+      });
+
       it('should allow legacy/manual override with --force and record audit signal', async () => {
         process.chdir(tempDir);
 
@@ -759,6 +776,73 @@ describe('Agent Spawn Coordination Integration Tests (WU-1363)', () => {
         expect(message).toContain('Missing spawn provenance');
         expect(message).toContain('--force');
         expect(message).toContain('wu:delegate');
+      });
+    });
+
+    describe('wu:delegate durable delegation intent (WU-2362)', () => {
+      it('writes a durable delegation marker before recording registry lineage', async () => {
+        process.chdir(tempDir);
+        const log = vi.fn();
+        const recordSpawn = vi.fn().mockResolvedValue({
+          success: true,
+          spawnId: 'dlg-a1b2',
+        });
+
+        await emitSpawnOutputWithRegistry(
+          {
+            id: TEST_WU_ID,
+            output: 'delegate prompt',
+            isCodexClient: false,
+            parentWu: 'WU-1500',
+            lane: TEST_LANE,
+            recordDelegationIntent: true,
+          },
+          {
+            log,
+            recordSpawn,
+          },
+        );
+
+        const eventsPath = join(tempDir, LUMENFLOW_PATHS.STATE_DIR, 'wu-events.jsonl');
+        const eventsContent = readFileSync(eventsPath, 'utf-8');
+        expect(eventsContent).toContain('"type":"delegation"');
+        expect(eventsContent).toContain(`"wuId":"${TEST_WU_ID}"`);
+        expect(eventsContent).toContain('"parentWuId":"WU-1500"');
+        expect(recordSpawn).toHaveBeenCalledWith(
+          expect.objectContaining({
+            parentWuId: 'WU-1500',
+            targetWuId: TEST_WU_ID,
+            delegationId: expect.stringMatching(/^dlg-/),
+          }),
+        );
+      });
+
+      it('fails before registry recording when durable delegation marker cannot be written', async () => {
+        process.chdir(tempDir);
+        const delegateSpy = vi
+          .spyOn(WUStateStore.prototype, 'delegate')
+          .mockRejectedValue(new Error('disk full'));
+        const recordSpawn = vi.fn();
+
+        await expect(
+          emitSpawnOutputWithRegistry(
+            {
+              id: TEST_WU_ID,
+              output: 'delegate prompt',
+              isCodexClient: false,
+              parentWu: 'WU-1500',
+              lane: TEST_LANE,
+              recordDelegationIntent: true,
+            },
+            {
+              log: vi.fn(),
+              recordSpawn,
+            },
+          ),
+        ).rejects.toThrow('Failed to record durable delegation intent');
+
+        expect(delegateSpy).toHaveBeenCalled();
+        expect(recordSpawn).not.toHaveBeenCalled();
       });
     });
 

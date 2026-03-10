@@ -27,6 +27,8 @@ export {
   extractWuBriefEvidenceClient,
   extractWuBriefEvidenceHash,
   extractWuBriefEvidenceMode,
+  hasDelegationIntentMarker,
+  hasDelegationIntentMarkerInEvents,
   hasWuBriefEvidenceHash,
   hasMatchingWuBriefEvidenceHash,
   WU_EVENTS_FILE_NAME,

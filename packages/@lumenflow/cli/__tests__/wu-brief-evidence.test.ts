@@ -68,6 +68,26 @@ describe('WU-2359: evidence and spawn provenance policy', () => {
       // Should block — explicit delegation exists but pickup is missing
       expect(blocker).toHaveBeenCalled();
     });
+
+    it('hard-blocks when durable delegation intent exists but registry provenance is missing', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceSpawnProvenanceForDone(
+        'WU-TEST-3',
+        { initiative: 'INIT-001', type: 'feature' },
+        {
+          baseDir: '/tmp/fake-state',
+          force: false,
+          warn,
+          blocker,
+          _hasDelegationMarkerOverride: async () => true,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalled();
+    });
   });
 
   describe('wu:brief --evidence-only removal', () => {
@@ -113,7 +133,7 @@ describe('WU-2359: evidence and spawn provenance policy', () => {
     });
 
     it('error messages no longer reference --evidence-only', () => {
-      const message = buildMissingWuBriefEvidenceMessage('WU-TEST-3');
+      const message = buildMissingWuBriefEvidenceMessage('WU-TEST-4');
       expect(message).not.toContain('--evidence-only');
       expect(message).toContain('wu:brief');
     });

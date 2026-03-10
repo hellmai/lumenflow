@@ -205,6 +205,7 @@ export class DelegationRegistryStore {
    * @param {string} targetWuId - Target WU ID (delegated work)
    * @param {string} lane - Lane for the delegated work
    * @param {DelegationIntentValue} [intent] - Optional intent source (e.g., delegation)
+   * @param {string} [delegationId] - Optional pre-generated delegation ID
    * @returns {Promise<string>} The generated delegation ID
    * @throws {Error} If validation fails
    *
@@ -217,8 +218,9 @@ export class DelegationRegistryStore {
     lane: string,
     intent?: DelegationIntentValue,
     briefAttestation?: DelegationBriefAttestation,
+    delegationId?: string,
   ): Promise<string> {
-    const id = generateDelegationId(parentWuId, targetWuId);
+    const id = delegationId ?? generateDelegationId(parentWuId, targetWuId);
 
     const event = {
       id,

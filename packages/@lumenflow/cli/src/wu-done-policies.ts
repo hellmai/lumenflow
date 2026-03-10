@@ -18,6 +18,7 @@ import {
 import {
   getLatestWuBriefEvidence,
   getWuBriefEvidenceAgeMinutes,
+  hasDelegationIntentMarker,
   hasMatchingWuBriefEvidenceHash,
   isWuBriefEvidenceStale,
   WUStateStore,
@@ -610,6 +611,21 @@ export function buildMissingSpawnProvenanceMessage(id: string, initiativeId: str
 }
 
 /**
+ * Build actionable remediation guidance when delegation intent exists but the registry record is missing.
+ */
+export function buildMissingSpawnRegistryMessage(id: string, initiativeId: string): string {
+  return (
+    `Missing delegation registry provenance for delegated WU ${id} (${initiativeId}).\n\n` +
+    `A durable delegation-intent marker exists in wu-events.jsonl, but no delegation registry entry was found.\n` +
+    `This indicates lost or incomplete delegation provenance, not ordinary manual work.\n\n` +
+    `Fix options:\n` +
+    `  1. Restore delegation-registry.jsonl from the delegating checkout or repair the state store\n` +
+    `  2. Re-run with --force for an audited override when recovery is not possible\n\n` +
+    `Then retry: pnpm wu:done --id ${id}`
+  );
+}
+
+/**
  * Build actionable remediation guidance for intent-only spawn provenance.
  */
 export function buildMissingSpawnPickupEvidenceMessage(id: string, initiativeId: string): string {
@@ -740,6 +756,8 @@ export async function enforceSpawnProvenanceForDone(
     blocker?: (message: string) => void;
     /** @internal Test injection for delegation registry store */
     _storeOverride?: { getByTarget: (id: string) => SpawnEntryLike | null };
+    /** @internal Test injection for durable delegation marker lookup */
+    _hasDelegationMarkerOverride?: (stateDir: string, id: string) => Promise<boolean>;
   } = {},
 ): Promise<void> {
   const initiativeId =
@@ -749,18 +767,21 @@ export async function enforceSpawnProvenanceForDone(
   const force = options.force === true;
   const warn = options.warn ?? console.warn;
   const blocker = options.blocker ?? ((message: string) => die(message));
+  const stateDir = resolveStateDir(baseDir);
+  const hasDelegationMarker = options._hasDelegationMarkerOverride
+    ? await options._hasDelegationMarkerOverride(stateDir, id)
+    : await hasDelegationIntentMarker(stateDir, id);
 
   let spawnEntry: SpawnEntryLike | null;
   if (options._storeOverride) {
     spawnEntry = options._storeOverride.getByTarget(id);
   } else {
-    const stateDir = resolveStateDir(baseDir);
     const store = new DelegationRegistryStore(stateDir);
     await store.load();
     spawnEntry = store.getByTarget(id) as SpawnEntryLike | null;
   }
 
-  const enforceForDelegation = hasDelegationIntent(spawnEntry);
+  const enforceForDelegation = hasDelegationMarker || hasDelegationIntent(spawnEntry);
 
   if (!enforceForInitiative && !enforceForDelegation) {
     return;
@@ -769,6 +790,19 @@ export async function enforceSpawnProvenanceForDone(
   // WU-2359: No spawn entry means this WU was NOT created through spawn/delegate.
   // It just has an initiative: field. Warn instead of blocking.
   if (!spawnEntry) {
+    if (hasDelegationMarker) {
+      if (!force) {
+        blocker(buildMissingSpawnRegistryMessage(id, initiativeId));
+        return;
+      }
+
+      warn(
+        `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2362: missing delegation registry provenance override accepted for ${id} (${initiativeId}) via --force`,
+      );
+      await recordSpawnProvenanceOverride(id, doc, baseDir);
+      return;
+    }
+
     if (force) {
       warn(
         `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-1599: spawn provenance override accepted for ${id} (${initiativeId}) via --force`,
@@ -788,8 +822,6 @@ export async function enforceSpawnProvenanceForDone(
 
   // From here on, spawnEntry exists — this WU was explicitly spawned/delegated.
   // These paths remain hard-blocking because the delegation ceremony was started.
-  const stateDir = resolveStateDir(baseDir);
-
   if (hasSpawnPickupEvidence(spawnEntry)) {
     if (!hasSpawnBriefAttestation(spawnEntry)) {
       if (!force) {

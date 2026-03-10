@@ -289,6 +289,16 @@ export function hasWuBriefEvidenceHash(
 }
 
 /**
+ * Returns true when any delegation lifecycle event exists for the target WU.
+ */
+export function hasDelegationIntentMarkerInEvents(
+  events: readonly WUEvent[],
+  wuId: string,
+): boolean {
+  return events.some((event) => event?.type === 'delegation' && event.wuId === wuId);
+}
+
+/**
  * Read wu-events and return latest wu:brief evidence for a WU (if any).
  */
 export async function getLatestWuBriefEvidence(
@@ -318,6 +328,19 @@ export async function hasMatchingWuBriefEvidenceHash(
     return false;
   }
   return hasWuBriefEvidenceHash(parseValidatedEvents(content), wuId, expectedHash);
+}
+
+/**
+ * Read wu-events and check whether a WU has a durable delegation-intent marker.
+ */
+export async function hasDelegationIntentMarker(baseDir: string, wuId: string): Promise<boolean> {
+  const eventsFilePath = path.join(baseDir, WU_EVENTS_FILE_NAME);
+  const content = await readEventsFileSafely(eventsFilePath);
+  if (!content.trim()) {
+    return false;
+  }
+
+  return hasDelegationIntentMarkerInEvents(parseValidatedEvents(content), wuId);
 }
 
 /**
