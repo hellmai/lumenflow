@@ -30,11 +30,21 @@ artifacts:
   - .lumenflow/stamps/WU-2383.done
 dependencies: []
 risks: []
-notes: 'Merge-block pattern already exists in merge-block.ts for .gitignore. Extend to AGENTS.md and
+notes: >-
+  Merge-block pattern already exists in merge-block.ts for .gitignore. Extend to AGENTS.md and
   vendor bootstrap files only — NOT to LUMENFLOW.md (which is fully managed). Key insight from
   Codex: link-only files are too weak for agents that dont follow references. Bootstrap files need
   enough inline content to be useful standalone. The LUMENFLOW.local.md escape hatch prevents moving
-  the overwrite problem from vendor files to LUMENFLOW.md.'
+  the overwrite problem from vendor files to LUMENFLOW.md.
+
+
+  Codex review additions: (1) .local.md must be referenced from managed files so agents discover it.
+  (2) AGENTS.md managed block must be self-sufficient for dumb agents. (3) Upgrade must be
+  vendor-agnostic — only sync surfaces that exist/are configured, not hardcode claude. (4) Skills
+  allowlist must be exact, not glob. (5) First-time migration guard is critical — repos that
+  hand-edited LUMENFLOW.md before this change need drift detection + forced migration to .local.md
+  before we start force-syncing. Without this, the first upgrade under the new design still causes
+  data loss.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -107,3 +117,12 @@ acceptance:
   - 'Round-trip test: init → user edits outside markers → upgrade → user edits preserved'
   - 'Codex/dumb-agent test: AGENTS.md bootstrap contains enough inline instruction without requiring
     reference-following'
+  - LUMENFLOW.md, AGENTS.md, and vendor bootstrap files tell agents to read LUMENFLOW.local.md when
+    present
+  - Managed block in AGENTS.md contains real minimal bootstrap (critical operating rules), not just
+    a link
+  - upgrade syncs only managed surfaces that already exist or are configured — no hardcoded
+    Claude-only behavior
+  - Reserved skills are an exact allowlist; never recurse/overwrite arbitrary SKILL.md files
+  - 'Migration guard: detect LUMENFLOW.md drift from template before first force-sync; require user
+    to move local content to LUMENFLOW.local.md before overwriting'
