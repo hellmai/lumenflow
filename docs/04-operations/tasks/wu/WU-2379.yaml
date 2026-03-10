@@ -25,7 +25,10 @@ artifacts:
   - .lumenflow/stamps/WU-2379.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'WU-2379: wu:done and wu:prep now reject claim-auto evidence mode. Both
+  enforceWuBriefEvidenceForDone and enforceWuBriefEvidenceForPrep check evidence.mode and treat
+  claim-auto as insufficient. --force still available as audited override. All agent-facing docs and
+  templates updated to make wu:brief mandatory after wu:claim.'
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
