@@ -113,6 +113,89 @@ describe('wu:edit strict validation (WU-1329)', () => {
     });
   });
 
+  describe('WU-2382: free-text repeatable fields preserve commas', () => {
+    const baseWU = {
+      id: 'WU-2382',
+      title: 'Comma preservation test',
+      lane: 'Framework: CLI',
+      type: 'bug',
+      status: 'ready',
+      priority: 'P1',
+      description: 'Test comma preservation in free-text repeatable fields.',
+      acceptance: ['Existing criterion'],
+      code_paths: [],
+      risks: [],
+      tests: { unit: [], manual: [], e2e: [] },
+    };
+
+    it('preserves commas in risks (free-text field)', () => {
+      const result = applyEdits(baseWU, {
+        risks: ['If parsing fails, validation breaks, and serialization corrupts data'],
+      });
+      expect(result.risks).toEqual([
+        'If parsing fails, validation breaks, and serialization corrupts data',
+      ]);
+    });
+
+    it('preserves commas in test-paths-manual (free-text field)', () => {
+      const result = applyEdits(baseWU, {
+        testPathsManual: ['Run wu:edit with description containing commas, verify single entry'],
+      });
+      expect((result.tests as Record<string, unknown>).manual).toEqual([
+        'Run wu:edit with description containing commas, verify single entry',
+      ]);
+    });
+
+    it('splits commas in code-paths (path field)', () => {
+      const result = applyEdits(baseWU, {
+        codePaths: ['src/a.ts,src/b.ts,src/c.ts'],
+      });
+      expect(result.code_paths).toEqual(['src/a.ts', 'src/b.ts', 'src/c.ts']);
+    });
+
+    it('splits commas in test-paths-unit (path field)', () => {
+      const result = applyEdits(baseWU, {
+        testPathsUnit: ['test/a.test.ts,test/b.test.ts'],
+      });
+      expect((result.tests as Record<string, unknown>).unit).toEqual([
+        'test/a.test.ts',
+        'test/b.test.ts',
+      ]);
+    });
+
+    it('splits commas in test-paths-e2e (path field)', () => {
+      const result = applyEdits(baseWU, {
+        testPathsE2e: ['e2e/x.test.ts,e2e/y.test.ts'],
+      });
+      expect((result.tests as Record<string, unknown>).e2e).toEqual([
+        'e2e/x.test.ts',
+        'e2e/y.test.ts',
+      ]);
+    });
+
+    it('handles multiple risk entries each containing commas', () => {
+      const result = applyEdits(baseWU, {
+        risks: [
+          'Risk one, with commas',
+          'Risk two, also with commas',
+        ],
+      });
+      expect(result.risks).toEqual([
+        'Risk one, with commas',
+        'Risk two, also with commas',
+      ]);
+    });
+
+    it('handles string-typed risks input with commas (single value, no split)', () => {
+      const result = applyEdits(baseWU, {
+        risks: 'Single risk with commas, semicolons; and more' as unknown as string[],
+      });
+      expect(result.risks).toEqual([
+        'Single risk with commas, semicolons; and more',
+      ]);
+    });
+  });
+
   describe('noStrict option support', () => {
     // WU-1329: Verify CLI option parsing pattern
     it('should support noStrict option in CLI argument pattern', () => {
