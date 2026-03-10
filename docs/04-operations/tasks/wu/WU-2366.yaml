@@ -2,7 +2,7 @@ id: WU-2366
 title: Expand docs:sync to refresh core docs and add post-upgrade staleness warning
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P3
 created: 2026-03-10
 code_paths:
@@ -56,3 +56,11 @@ acceptance:
   - Doc surfaces describing docs:sync scope updated (public-manifest.ts, quick-ref-commands,
     starting-prompt, UPGRADING template)
   - sync-templates.ts core docs drift check updated to include AGENTS.md
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2366
+claimed_at: 2026-03-10T11:47:54.806Z
+baseline_main_sha: 533d79ed5ca6ba0a2316641a1556065bb26e081f
+session_id: c6e01991-1f21-4aa6-8902-bff3614340ab
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T11:47:54.813Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2366 — Expand docs:sync to refresh core docs and add post-upgrade staleness warning](wu/WU-2366.yaml)
 
 ## Completed
 
