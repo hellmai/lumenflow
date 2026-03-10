@@ -48,3 +48,4 @@ acceptance:
   - formatting.ts passes client strategy through instead of hardcoding claude-code
   - 'Output format varies by client capability: Task XML for Claude, markdown for Codex/Gemini'
   - Default fallback when --client is omitted produces a generic format usable by any client
+initiative: INIT-50

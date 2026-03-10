@@ -30,3 +30,6 @@ success_metrics:
   - Broader pnpm/monorepo/web portability debt is captured as one explicit next initiative or
     cut-line, not fragmented one-off WUs.
 labels: []
+wus:
+  - WU-2374
+  - WU-2375
