@@ -35,10 +35,10 @@ pnpm wu:brief --id WU-XXX --client claude-code      # Generate prompt only
 pnpm wu:delegate --id WU-XXX --parent-wu WU-YYY     # Generate prompt + record lineage
 ```
 
-**Use wu:brief --evidence-only** when you are implementing the WU yourself:
+**Self-implementation**: `wu:brief` always gives full context AND records evidence — use it even when implementing yourself:
 
 ```bash
-pnpm wu:brief --id WU-XXX --evidence-only           # Record required evidence, no prompt output
+pnpm wu:brief --id WU-XXX --client claude-code       # Full context + evidence (always)
 ```
 
 **DON'T use wu:brief/wu:delegate** for helper agents (code-reviewer, test-engineer) on YOUR WU.

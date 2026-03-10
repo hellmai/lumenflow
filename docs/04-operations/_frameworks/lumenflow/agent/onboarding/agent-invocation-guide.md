@@ -38,7 +38,7 @@ Use Tier 1 after `/clear` to stay lean, then load more only if needed.
 ## 2) Session Management (Start Fresh)
 
 When approaching context limits, **start a fresh agent instead of compaction**.
-The handoff prompt is the bridge between sessions. `wu:brief` can either generate this prompt (delegation path) or just record evidence with `--evidence-only` (self-implementation path).
+The handoff prompt is the bridge between sessions. `wu:brief` always generates the full WU context prompt and records evidence, whether you are delegating or self-implementing.
 
 **Mandatory triggers:**
 
@@ -119,16 +119,17 @@ It does **not** by itself prove pickup or execution. Pickup/execution confirmati
 
 ---
 
-## 2c) Self-Implementation Evidence-Only Flow (WU-2222)
+## 2c) Self-Implementation Flow (WU-2222)
 
-Use this when you are **not** delegating and will implement the WU in the current session:
+When you are **not** delegating and will implement the WU in the current session, run `wu:brief` normally:
 
 ```bash
-pnpm wu:brief --id WU-XXX --evidence-only
+pnpm wu:brief --id WU-XXX --client <client>
+# This outputs full WU context AND records evidence.
 # Then continue implementation directly in this session (no Task spawn).
 ```
 
-Use delegation flow (`wu:brief` or `wu:delegate`) only when handing the WU to another agent.
+`wu:brief` always provides full context and records evidence in a single step. Use delegation flow (`wu:delegate`) only when you need auditable lineage tracking for initiative work.
 
 ---
 

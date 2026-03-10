@@ -134,13 +134,13 @@ pnpm wu:brief --id WU-1501 --client claude-code    # Prompt generation only
 pnpm wu:delegate --id WU-1502 --parent-wu WU-1500  # Prompt + lineage recording
 pnpm wu:delegate --id WU-1503 --parent-wu WU-1500
 
-# For WUs implemented in current session:
-pnpm wu:brief --id WU-1504 --evidence-only         # Evidence only, no prompt output
+# For WUs implemented in current session (full context + evidence):
+pnpm wu:brief --id WU-1504 --client claude-code     # Always gives context + records evidence
 ```
 
 ### Orchestration Pattern
 
-1. **Choose execution path per WU**: delegation (`wu:brief`/`wu:delegate`) or self-implementation (`wu:brief --evidence-only`)
+1. **Choose execution path per WU**: delegation (`wu:brief`/`wu:delegate`) or self-implementation (`wu:brief --client <client>`)
 2. **Spawn only delegated WUs**: Use Task tool with `run_in_background: true`
 3. **Monitor delegated progress**: Use `pnpm mem:inbox --since 30m` (NOT TaskOutput - causes context explosion)
 4. **Synthesise**: Combine results from sub-agents and self-implemented WUs

@@ -33,8 +33,8 @@ pnpm wu:brief --id WU-XXX --client claude-code
 # ✅ CORRECT: Use wu:delegate for lineage-tracked delegation
 pnpm wu:delegate --id WU-XXX --parent-wu WU-YYY
 
-# ✅ CORRECT: Use evidence-only when implementing the WU yourself
-pnpm wu:brief --id WU-XXX --evidence-only
+# ✅ CORRECT: Use wu:brief for self-implementation (gives context + records evidence)
+pnpm wu:brief --id WU-XXX --client claude-code
 ```
 
 **❌ NEVER do this:**
@@ -46,7 +46,7 @@ pnpm wu:brief --id WU-XXX --evidence-only
 **Why this matters:**
 
 1. `wu:brief` generates prompts with context loading preamble, TDD directives, and constraints block
-2. `wu:brief --evidence-only` satisfies `wu:done` evidence policy when you are not delegating
+2. `wu:brief` always records evidence AND provides full WU context (no silent mode)
 3. Sub-agents need `wu:claim` (inside generated prompts) to create proper lane locks and event tracking
 4. Direct Task spawns bypass all safety mechanisms, coordination signals, and spawn registry tracking
 
@@ -223,7 +223,7 @@ pnpm wu:brief --id WU-XXX
 Starting WU?
 ├── Delegating to sub-agent?
 │   ├── Yes: pnpm wu:brief --id WU-XXX --client <client> (or wu:delegate for lineage)
-│   └── No:  pnpm wu:brief --id WU-XXX --evidence-only, then implement directly
+│   └── No:  pnpm wu:brief --id WU-XXX --client <client>, then implement directly
 └── If delegated, review generated prompt with agent recommendations
 
 Initiative with multiple WUs?

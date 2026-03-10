@@ -488,16 +488,13 @@ Use `wu:brief` to create parallel sub-agent handoff prompts for complex WUs. Use
 ### Choose the Correct Flow
 
 - **Delegating to a sub-agent:** Run `wu:brief` (or `wu:delegate` for lineage), then pass the generated prompt to Task tool.
-- **Implementing in current session:** Run `wu:brief --evidence-only` to satisfy evidence policy, then do the WU yourself (no spawn prompt output).
+- **Implementing in current session:** Run `wu:brief --client <client>` to satisfy evidence policy. It outputs full WU context and records evidence in a single step.
 
 ### How to Use wu:brief / wu:delegate
 
 ```bash
 # Generate a handoff prompt + evidence (no lineage side effect)
 pnpm wu:brief --id WU-XXXX --client <client-type>
-
-# Record required evidence without generating handoff prompt output (self-implementation)
-pnpm wu:brief --id WU-XXXX --evidence-only
 
 # Generate + record explicit delegation lineage
 pnpm wu:delegate --id WU-XXXX --parent-wu WU-YYYY --client <client-type>
@@ -556,8 +553,7 @@ Domain-specific commands must come from local configuration, not core framework 
 | `pnpm wu:claim --id WU-XXX --lane "Lane"`      | Claim WU and create worktree (default)           | Start working (local)       |
 | `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree)         | Start working (cloud)       |
 | `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                              | Update notes/desc           |
-| `pnpm wu:brief --id WU-XXX --client X`         | Generate handoff prompt + evidence               | Complex WUs                 |
-| `pnpm wu:brief --id WU-XXX --evidence-only`    | Record evidence only (no prompt output)          | Self-implementation path    |
+| `pnpm wu:brief --id WU-XXX --client X`         | Generate handoff prompt + record evidence        | Delegation or self-implementation |
 | `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation              | Auditable delegation flows  |
 | `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion  | Before wu:done              |
 | `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)               | After gates pass            |
