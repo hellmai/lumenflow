@@ -27,7 +27,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2358 — Fix SPDX header mismatches and stale private-package docs](wu/WU-2358.yaml) — Framework: Core
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1304,6 +1304,7 @@ sections:
 - [WU-2355 — Tighten sizing guidance and remove elapsed-time decomposition cues](wu/WU-2355.yaml)
 - [WU-2356 — Align sizing and initiative guidance across root and template docs](wu/WU-2356.yaml)
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2358 — Fix SPDX header mismatches and stale private-package docs](wu/WU-2358.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

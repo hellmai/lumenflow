@@ -2,7 +2,7 @@ id: WU-2358
 title: Fix SPDX header mismatches and stale private-package docs
 lane: 'Framework: Core'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -41,3 +41,6 @@ acceptance:
   - All kernel/src files have AGPL-3.0-only SPDX headers
   - No Apache-2.0 headers remain in kernel package
   - mcp-setup.mdx no longer claims private package access
+locked: true
+completed_at: 2026-03-10T08:09:13.568Z
+completed: 2026-03-10
