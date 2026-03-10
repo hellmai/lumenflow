@@ -2,7 +2,7 @@ id: WU-2386
 title: wu:edit blocks metadata-only edits on dirty worktrees
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: ready
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -41,11 +41,6 @@ acceptance:
   - wu:edit for fields that touch code_paths or structural WU fields still enforces the
     clean-worktree check
   - Regression test covers the metadata-only bypass path
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2386
-claimed_at: 2026-03-10T21:16:34.149Z
-baseline_main_sha: 538aa1cecd4c8cdb38dd29a28fac8ca2a1b455f0
-session_id: 1b722b62-f4e8-4c4d-a9e8-50ce23c7f320
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-10T21:16:34.155Z

@@ -5,7 +5,6 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2385 — Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review](wu/WU-2385.yaml)
-- [WU-2386 — wu:edit blocks metadata-only edits on dirty worktrees](wu/WU-2386.yaml)
 
 ## Completed
 
