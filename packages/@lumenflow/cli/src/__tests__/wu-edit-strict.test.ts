@@ -175,24 +175,16 @@ describe('wu:edit strict validation (WU-1329)', () => {
 
     it('handles multiple risk entries each containing commas', () => {
       const result = applyEdits(baseWU, {
-        risks: [
-          'Risk one, with commas',
-          'Risk two, also with commas',
-        ],
+        risks: ['Risk one, with commas', 'Risk two, also with commas'],
       });
-      expect(result.risks).toEqual([
-        'Risk one, with commas',
-        'Risk two, also with commas',
-      ]);
+      expect(result.risks).toEqual(['Risk one, with commas', 'Risk two, also with commas']);
     });
 
     it('handles string-typed risks input with commas (single value, no split)', () => {
       const result = applyEdits(baseWU, {
         risks: 'Single risk with commas, semicolons; and more' as unknown as string[],
       });
-      expect(result.risks).toEqual([
-        'Single risk with commas, semicolons; and more',
-      ]);
+      expect(result.risks).toEqual(['Single risk with commas, semicolons; and more']);
     });
   });
 
