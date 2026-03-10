@@ -1,7 +1,7 @@
 id: WU-2372
 title: Enforce command discovery and block CLI output truncation in spawned agents
 lane: 'Content: Specs Governance'
-type: documentation
+type: refactor
 status: in_progress
 priority: P2
 created: 2026-03-10
