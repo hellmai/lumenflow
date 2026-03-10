@@ -18,12 +18,20 @@ artifacts:
   - .lumenflow/stamps/WU-2373.done
 dependencies: []
 risks: []
-notes: ''
+notes: docs:sync uses micro-worktree isolation on main branch. lumenflow:upgrade integrates
+  docs:sync into its transaction. Direct-write preserved in worktrees.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T13:36:27.782Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2373
+session_id: e48a7038-f06e-4855-a7c7-d8a8350130b8
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T13:36:27.792Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -37,11 +45,3 @@ acceptance:
   - lumenflow:upgrade integrates docs:sync into its own transaction instead of requiring a separate
     manual step
   - Existing worktree behavior preserved (docs:sync in a worktree writes directly as before)
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2373
-claimed_at: 2026-03-10T13:36:27.782Z
-baseline_main_sha: c1337cf0a0ab66c1c732866b730152d70c6b6d7d
-session_id: e48a7038-f06e-4855-a7c7-d8a8350130b8
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T13:36:27.792Z
