@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2390 — Suppress git-adapter DEBUG logs by default in wu:claim](wu/WU-2390.yaml) — Framework: CLI WU Commands
 - [WU-2389 — Add wu:brief as explicit step in wu:claim Next Steps output](wu/WU-2389.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
