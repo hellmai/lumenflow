@@ -18,12 +18,21 @@ artifacts:
   - .lumenflow/stamps/WU-2388.done
 dependencies: []
 risks: []
-notes: ''
+notes: Changed wu:claim auto-brief log message from misleading success (checkmark + 'evidence
+  auto-recorded') to explicit warning that wu:brief must still be run. Updated corresponding test
+  expectation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T22:56:26.402Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2388
+session_id: 65709817-117d-4f35-a4b5-4f5ad4597498
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T22:56:26.407Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +44,3 @@ acceptance:
   - wu:claim log message clearly communicates that wu:brief must still be run
   - Message uses warning emoji instead of success emoji
   - Test expectations updated
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2388
-claimed_at: 2026-03-10T22:56:26.402Z
-baseline_main_sha: 0f490291fec81c90a91156ceed07849a15e84b0b
-session_id: 65709817-117d-4f35-a4b5-4f5ad4597498
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T22:56:26.407Z
