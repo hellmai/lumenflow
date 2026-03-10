@@ -6,7 +6,6 @@ status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
-  - AGENTS.md
   - .claude/agents/general-purpose.md
   - .claude/agents/test-engineer.md
   - .claude/agents/lumenflow-enforcer.md
@@ -16,6 +15,8 @@ code_paths:
   - .claude/agents/lumenflow-doc-sync.md
   - .windsurf/rules/lumenflow.md
   - .cursor/rules/lumenflow.md
+  - packages/@lumenflow/cli/templates/vendors/windsurf/.windsurf/rules/lumenflow.md.template
+  - packages/@lumenflow/cli/templates/vendors/cursor/.cursor/rules/lumenflow.md.template
 tests:
   manual:
     - Spawn a general-purpose sub-agent and verify it reads AGENTS.md before attempting CLI commands
@@ -35,10 +36,17 @@ notes: Docs-only WU. AGENTS.md is the vendor-agnostic source of truth and alread
   rules. The gap is that spawned agent prompts skip it. The fix is adding AGENTS.md to every agent's
   mandatory reading list and inlining the three rules as a reminder.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T13:08:26.038Z
+worktree_path: worktrees/content-specs-governance-wu-2372
+session_id: 11066507-6da2-4417-81a3-7ec0c00dba59
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T13:08:26.044Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -60,11 +68,3 @@ acceptance:
   - .windsurf/rules/lumenflow.md and .cursor/rules/lumenflow.md reference AGENTS.md command
     discovery rules
   - No hook changes - enforcement is guidance-only across all vendor configs
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2372
-claimed_at: 2026-03-10T13:08:26.038Z
-baseline_main_sha: 7e67a3c2965ee6a666b1243a56516950b2fc32b3
-session_id: 11066507-6da2-4417-81a3-7ec0c00dba59
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T13:08:26.044Z

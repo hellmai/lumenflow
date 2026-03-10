@@ -3096,3 +3096,4 @@
 {"type":"checkpoint","wuId":"WU-2372","timestamp":"2026-03-10T13:07:30.233Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2372.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2372","timestamp":"2026-03-10T13:08:26.066Z","lane":"Content: Specs Governance","title":"Enforce command discovery and block CLI output truncation in spawned agents"}
 {"type":"checkpoint","wuId":"WU-2372","timestamp":"2026-03-10T13:08:37.787Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2372","timestamp":"2026-03-10T13:11:23.151Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2372.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
