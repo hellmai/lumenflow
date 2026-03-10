@@ -3108,3 +3108,4 @@
 {"type":"checkpoint","wuId":"WU-2375","timestamp":"2026-03-10T16:21:08.935Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2375","timestamp":"2026-03-10T16:30:21.354Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2375.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2375","timestamp":"2026-03-10T16:30:41.067Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2375.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2375","timestamp":"2026-03-10T16:32:59.887Z"}

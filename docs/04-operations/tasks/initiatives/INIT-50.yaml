@@ -16,7 +16,7 @@ phases:
     status: done
   - id: 2
     title: 'Phase 2: Client-capability-aware orchestration output'
-    status: pending
+    status: done
   - id: 3
     title: 'Phase 3: Decide broader tech-stack portability cut-line'
     status: pending
