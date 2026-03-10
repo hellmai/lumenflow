@@ -3,7 +3,7 @@ title: 'Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alig
   lifecycle'
 lane: 'Content: Framework Docs'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -95,3 +95,6 @@ acceptance:
   - Canonical ownership table present in LUMENFLOW.md and mirrored in Starlight upgrade docs
   - No narrative doc still tells users to run docs:sync --force to refresh vendor assets after
     upgrade
+locked: true
+completed_at: 2026-03-10T20:43:00.790Z
+completed: 2026-03-10

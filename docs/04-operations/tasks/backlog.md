@@ -27,7 +27,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2384 — Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs lifecycle](wu/WU-2384.yaml) — Content: Framework Docs
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1330,6 +1330,7 @@ sections:
 - [WU-2382 — Fix wu:edit comma splitting for free-text repeatable fields](wu/WU-2382.yaml)
 - [WU-2380 — Add optional migration-state verification for schema-affecting WUs](wu/WU-2380.yaml)
 - [WU-2383 — upgrade force-overwrites user docs; init skip leaves LumenFlow content uninjected](wu/WU-2383.yaml)
+- [WU-2384 — Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs lifecycle](wu/WU-2384.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
