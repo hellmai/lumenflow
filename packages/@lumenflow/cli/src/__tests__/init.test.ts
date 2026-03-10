@@ -668,7 +668,7 @@ describe('lumenflow init', () => {
   // WU-1382: Improved templates for agent clarity
   describe('WU-1382: improved templates for agent clarity', () => {
     describe('CLAUDE.md template enhancements', () => {
-      it('should include CLI commands table inline in CLAUDE.md', async () => {
+      it('should point to AGENTS.md and LUMENFLOW.md instead of duplicating workflow', async () => {
         const options: ScaffoldOptions = {
           force: false,
           full: false,
@@ -681,12 +681,10 @@ describe('lumenflow init', () => {
         expect(fs.existsSync(claudeMdPath)).toBe(true);
 
         const content = fs.readFileSync(claudeMdPath, 'utf-8');
-        // Should have CLI commands table with common commands
-        expect(content).toContain('| Command');
-        expect(content).toContain('wu:claim');
-        expect(content).toContain('wu:done');
-        expect(content).toContain('wu:status');
-        expect(content).toContain('gates');
+        // WU-2365: Should point to canonical docs instead of duplicating
+        expect(content).toContain('AGENTS.md');
+        expect(content).toContain('LUMENFLOW.md');
+        expect(content).toContain('Claude Code-specific');
       });
 
       it('should include warning about manual YAML editing in CLAUDE.md', async () => {
