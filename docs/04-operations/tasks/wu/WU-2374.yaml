@@ -24,12 +24,20 @@ dependencies: []
 initiative: INIT-50
 phase: 1
 risks: []
-notes: ''
+notes: 'Design choice: option (b) — removed lumenflow-complete.md from preamble instead of
+  scaffolding it. LUMENFLOW.md + constraints.md + README.md provide sufficient context.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T15:34:12.250Z
+worktree_path: worktrees/framework-core-wu-2374
+session_id: 7c3eea53-c166-4664-92d6-bf671833b9d0
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T15:34:12.257Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -50,11 +58,3 @@ acceptance:
     wu:verify, matching wu:brief
   - Existing tests in spawn-strategy.test.ts and initiative-orchestrator.test.ts updated to match
     new paths
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-wu-2374
-claimed_at: 2026-03-10T15:34:12.250Z
-baseline_main_sha: 23a61b34c7693f3aad322d903a287e12319b5562
-session_id: 7c3eea53-c166-4664-92d6-bf671833b9d0
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T15:34:12.257Z
