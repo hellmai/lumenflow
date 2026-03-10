@@ -40,7 +40,7 @@ const ARG_LOCK = '--lock';
 
 export const LANE_SETUP_OPERATION_NAME = 'lane-setup';
 
-function getLaneSetupHelpText(projectRoot: string): string {
+function getLaneSetupHelpText(): string {
   return `Usage: pnpm lane:setup [options]
 
 Create or update draft lane artifacts.
@@ -93,7 +93,7 @@ async function main() {
   const projectRoot = findProjectRoot();
 
   if (help) {
-    console.log(getLaneSetupHelpText(projectRoot));
+    console.log(getLaneSetupHelpText());
     return;
   }
 

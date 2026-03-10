@@ -31,7 +31,7 @@ import { runCLI } from './cli-entry-point.js';
 const LOG_PREFIX = '[lane:status]';
 const ARG_HELP = '--help';
 
-function getLaneStatusHelpText(projectRoot: string): string {
+function getLaneStatusHelpText(): string {
   return `Usage: pnpm lane:status
 
 Show lane lifecycle status and recommended next step.
@@ -87,7 +87,7 @@ async function main() {
   const projectRoot = findProjectRoot();
 
   if (help) {
-    console.log(getLaneStatusHelpText(projectRoot));
+    console.log(getLaneStatusHelpText());
     return;
   }
 
