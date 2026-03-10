@@ -2,7 +2,7 @@ id: WU-2374
 title: 'Fix spawn prompt parity: stale guide path and verification drift'
 lane: 'Framework: Core'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -50,3 +50,11 @@ acceptance:
     wu:verify, matching wu:brief
   - Existing tests in spawn-strategy.test.ts and initiative-orchestrator.test.ts updated to match
     new paths
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-wu-2374
+claimed_at: 2026-03-10T15:34:12.250Z
+baseline_main_sha: 23a61b34c7693f3aad322d903a287e12319b5562
+session_id: 7c3eea53-c166-4664-92d6-bf671833b9d0
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T15:34:12.257Z

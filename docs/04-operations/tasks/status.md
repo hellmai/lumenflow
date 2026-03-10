@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml)
 
 ## Completed
 
