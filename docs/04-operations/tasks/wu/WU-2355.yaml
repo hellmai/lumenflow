@@ -2,7 +2,7 @@ id: WU-2355
 title: Tighten sizing guidance and remove elapsed-time decomposition cues
 lane: 'Content: Specs Governance'
 type: documentation
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -53,3 +53,6 @@ session_id: ec2bdbf5-f203-4934-95ab-db8a77edad40
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-10T00:28:50.568Z
+locked: true
+completed_at: 2026-03-10T00:31:51.721Z
+completed: 2026-03-10
