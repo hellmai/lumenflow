@@ -13,7 +13,7 @@ created: 2026-03-10
 phases:
   - id: 1
     title: 'Phase 1: Spawn prompt parity and portable references'
-    status: pending
+    status: done
   - id: 2
     title: 'Phase 2: Client-capability-aware orchestration output'
     status: pending

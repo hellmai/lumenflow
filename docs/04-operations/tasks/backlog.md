@@ -28,10 +28,13 @@ sections:
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2375 — Make orchestration client-capability-aware instead of Claude-only](wu/WU-2375.yaml) — Framework: CLI Orchestration
+- [WU-2376 — Resolve generic lifecycle commands from config instead of pnpm/turbo literals](wu/WU-2376.yaml) — Framework: Core
+- [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml) — Framework: Core
+- [WU-2378 — Demote web-framework assumptions and publish portability matrix](wu/WU-2378.yaml) — Framework: Core
 
 ## 🔧 In progress
 
-- [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml) — Framework: Core
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1324,6 +1327,7 @@ sections:
 - [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml)
 - [WU-2372 — Enforce command discovery and block CLI output truncation in spawned agents](wu/WU-2372.yaml)
 - [WU-2373 — docs:sync should use micro-worktree isolation](wu/WU-2373.yaml)
+- [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
