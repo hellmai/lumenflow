@@ -88,7 +88,7 @@ describe('recordWuBriefEvidence', () => {
       expect(checkpointCalls[0].note).toContain('[wu:brief]');
       expect(checkpointCalls[0].note).toContain('claude-code');
       const opts = checkpointCalls[0].options as { nextSteps?: string };
-      expect(opts.nextSteps).toContain('mode=evidence-only');
+      expect(opts.nextSteps).toContain('mode=full');
     });
 
     it('passes progress and nextSteps to checkpoint', async () => {
@@ -108,7 +108,7 @@ describe('recordWuBriefEvidence', () => {
       const opts = checkpointCalls[0].options as { progress?: string; nextSteps?: string };
       expect(opts.progress).toBe('wu:brief executed');
       expect(opts.nextSteps).toContain('codex-cli');
-      expect(opts.nextSteps).toContain('mode=evidence-only');
+      expect(opts.nextSteps).toContain('mode=full');
     });
 
     it('records prompt mode explicitly when caller generated a handoff prompt', async () => {

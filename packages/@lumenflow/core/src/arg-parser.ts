@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { Command, type OptionValues } from 'commander';
+import { Command, Option, type OptionValues } from 'commander';
 import { createError, ErrorCodes, ProcessExitError } from './error-handler.js';
 import { EXIT_CODES } from './wu-constants.js';
 
@@ -49,6 +49,8 @@ interface WUOption {
   type?: 'boolean' | 'string';
   /** Whether this option is required (used for validation hints) */
   required?: boolean;
+  /** Keep an option parseable while omitting it from generated help text. */
+  hiddenFromHelp?: boolean;
 }
 
 export const WU_OPTIONS: Record<string, WUOption> = {
@@ -490,6 +492,7 @@ export const WU_OPTIONS: Record<string, WUOption> = {
     flags: '--evidence-only',
     description:
       '[DEPRECATED] Removed in WU-2359. Use wu:brief --client <client> instead (always gives full context + records evidence).',
+    hiddenFromHelp: true,
   },
 
   // WU-1542: Mandatory agent enforcement for wu:done
@@ -767,17 +770,29 @@ export function createWUParser(config: {
     program.version(version);
   }
 
+  const buildCommanderOption = (opt: WUOption, isRequired: boolean = false): Option => {
+    const option = new Option(opt.flags, opt.description);
+
+    if (opt.isRepeatable) {
+      option.argParser(collectRepeatable).default([]);
+    } else if (opt.default !== undefined) {
+      option.default(opt.default);
+    }
+
+    if (isRequired) {
+      option.makeOptionMandatory(true);
+    }
+
+    if (opt.hiddenFromHelp) {
+      option.hideHelp();
+    }
+
+    return option;
+  };
+
   // Register options
   for (const opt of options) {
-    if (opt.isRepeatable) {
-      // Repeatable options use collect function with empty array default
-      // This allows: --flag "A" --flag "B" → ["A", "B"]
-      program.option(opt.flags, opt.description, collectRepeatable, []);
-    } else if (required.includes(opt.name)) {
-      program.requiredOption(opt.flags, opt.description, opt.default);
-    } else {
-      program.option(opt.flags, opt.description, opt.default);
-    }
+    program.addOption(buildCommanderOption(opt, required.includes(opt.name)));
   }
 
   try {
@@ -945,9 +960,20 @@ export function parseWUArgs(argv: string[]): OptionValues {
     WU_OPTIONS.vendor,
   ];
 
+  const buildCommanderOption = (opt: WUOption): Option => {
+    const option = new Option(opt.flags, opt.description);
+    if (opt.default !== undefined) {
+      option.default(opt.default);
+    }
+    if (opt.hiddenFromHelp) {
+      option.hideHelp();
+    }
+    return option;
+  };
+
   for (const opt of allOptions) {
     if (!opt) continue;
-    program.option(opt.flags, opt.description, opt.default);
+    program.addOption(buildCommanderOption(opt));
   }
 
   try {

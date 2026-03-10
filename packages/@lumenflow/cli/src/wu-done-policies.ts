@@ -781,7 +781,7 @@ export async function enforceSpawnProvenanceForDone(
     warn(
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2359: No spawn provenance for initiative WU ${id} (${initiativeId}). ` +
         `This is expected for non-orchestrated work. ` +
-        `To register lineage: pnpm wu:delegate --id ${id} --parent-wu WU-XXXX`,
+        `Delegation lineage must be recorded at delegation time, not retroactively during wu:done.`,
     );
     return;
   }

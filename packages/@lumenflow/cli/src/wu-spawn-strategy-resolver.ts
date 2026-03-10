@@ -62,6 +62,8 @@ export { SpawnStrategyFactory };
 const BRIEF_LOG_PREFIX = '[wu:brief]';
 const DELEGATE_LOG_PREFIX = '[wu:delegate]';
 const BRIEF_EVIDENCE_PROGRESS = 'wu:brief executed';
+const BRIEF_EVIDENCE_MODE_FULL: WuBriefEvidenceMode = 'full';
+const BRIEF_EVIDENCE_MODE_CLAIM_AUTO: WuBriefEvidenceMode = 'claim-auto';
 
 function buildBriefAttestation(
   output: string,
@@ -434,7 +436,10 @@ export async function recordWuBriefEvidence(
   const store = createStore(stateDir);
   const note = `${WU_BRIEF_EVIDENCE_NOTE_PREFIX} generated via ${clientName}`;
   const resolvedEvidenceMode =
-    evidenceMode ?? (clientName === 'wu:claim:auto' ? 'claim-auto' : 'evidence-only');
+    evidenceMode ??
+    (clientName === 'wu:claim:auto'
+      ? BRIEF_EVIDENCE_MODE_CLAIM_AUTO
+      : BRIEF_EVIDENCE_MODE_FULL);
   const nextStepsParts = [`client=${clientName}`, `mode=${resolvedEvidenceMode}`];
   if (promptHash) {
     nextStepsParts.push(`hash=${promptHash}`);

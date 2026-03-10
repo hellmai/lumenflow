@@ -26,7 +26,7 @@ import { getErrorMessage, createError, ErrorCodes } from './error-handler.js';
  */
 export const WU_EVENTS_FILE_NAME = 'wu-events.jsonl';
 export const WU_BRIEF_EVIDENCE_NOTE_PREFIX = '[wu:brief]';
-export const WU_BRIEF_EVIDENCE_MODES = ['prompt', 'evidence-only', 'claim-auto'] as const;
+export const WU_BRIEF_EVIDENCE_MODES = ['prompt', 'full', 'evidence-only', 'claim-auto'] as const;
 
 export type WuBriefEvidenceMode = (typeof WU_BRIEF_EVIDENCE_MODES)[number];
 

@@ -3013,3 +3013,6 @@
 {"type":"checkpoint","wuId":"WU-2360","timestamp":"2026-03-10T09:35:28.585Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2360.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2360","timestamp":"2026-03-10T09:38:12.861Z"}
 {"type":"claim","wuId":"WU-2361","timestamp":"2026-03-10T09:39:48.089Z","lane":"Framework: CLI WU Commands","title":"Clean up evidence-only remnants and fix misleading warn message"}
+{"type":"checkpoint","wuId":"WU-2361","timestamp":"2026-03-10T09:39:59.395Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2361","timestamp":"2026-03-10T09:40:26.034Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2361","timestamp":"2026-03-10T09:53:29.883Z","note":"WU-2361: scoped tests green, expanding to manual help check and wu:prep"}
