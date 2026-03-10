@@ -34,7 +34,8 @@ approved_at: 2026-02-21T16:50:47.292Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Testing lumenflow init on a downstream project revealed two cosmetic bugs in CLI
+description:
+  'Context: Testing lumenflow init on a downstream project revealed two cosmetic bugs in CLI
   output. Problem: (1) lumenflow doctor prints entire health check output twice -- likely same
   double-call pattern as the scaffold dedup issue fixed in WU-1965. (2) During init, prerequisite
   warning says git version 2.43.0 (requires >=2.0.0) which reads like a failure even though the

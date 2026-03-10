@@ -345,12 +345,12 @@ rm packages/@lumenflow/packs/software-delivery/lumenflow-packs-software-delivery
 
 ### Vercel Projects Reference
 
-| Project           | Domain                   | Purpose                 |
-| ----------------- | ------------------------ | ----------------------- |
-| `web`             | registry.lumenflow.dev   | Pack registry + web app |
-| `docs`            | lumenflow.dev            | Starlight documentation |
-| `lumenflow-dev`   | lumenflow-dev.vercel.app | Monorepo preview        |
-| `cloud`           | cloud.lumenflow.dev      | Control plane           |
+| Project         | Domain                   | Purpose                 |
+| --------------- | ------------------------ | ----------------------- |
+| `web`           | registry.lumenflow.dev   | Pack registry + web app |
+| `docs`          | lumenflow.dev            | Starlight documentation |
+| `lumenflow-dev` | lumenflow-dev.vercel.app | Monorepo preview        |
+| `cloud`         | cloud.lumenflow.dev      | Control plane           |
 
 ### Troubleshooting Pack Publishing
 
