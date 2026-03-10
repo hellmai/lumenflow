@@ -41,8 +41,8 @@ export const EventArchivalConfigSchema = z.object({
  * Directory paths configuration
  */
 export const DirectoriesSchema = z.object({
-  /** Working directory for web app (default: 'apps/web/') */
-  appsWeb: z.string().default('apps/web/'),
+  /** Optional working directory for a web app (default: empty for repo-agnostic consumers) */
+  appsWeb: z.string().default(''),
 
   /** Worktrees directory (default: 'worktrees/') */
   worktrees: z.string().default('worktrees/'),

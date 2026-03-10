@@ -3112,3 +3112,6 @@
 {"type":"complete","wuId":"WU-2375","timestamp":"2026-03-10T16:32:59.887Z"}
 {"type":"complete","wuId":"WU-2376","timestamp":"2026-03-10T16:37:40.602Z"}
 {"type":"claim","wuId":"WU-2377","timestamp":"2026-03-10T16:38:31.250Z","lane":"Framework: Core","title":"Make repo-shape defaults and gate planning config-driven"}
+{"type":"checkpoint","wuId":"WU-2377","timestamp":"2026-03-10T16:38:43.148Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2377","timestamp":"2026-03-10T16:38:53.124Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2377","timestamp":"2026-03-10T17:50:16.732Z","note":"WU-2377"}

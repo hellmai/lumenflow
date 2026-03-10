@@ -187,6 +187,12 @@ describe('WU-1301: CLI path centralization', () => {
       expect(defaultConfig.directories.backlogPath).toContain('docs');
       expect(defaultConfig.directories.statusPath).toContain('docs');
     });
+
+    it('does not assume apps/web as the default working directory for non-web repos', () => {
+      const defaultConfig = getDefaultConfig();
+
+      expect(defaultConfig.directories.appsWeb).toBe('');
+    });
   });
 
   describe('AC4: getResolvedPaths returns non-existent paths for validation', () => {

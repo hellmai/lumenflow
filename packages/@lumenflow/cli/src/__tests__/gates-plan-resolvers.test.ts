@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { resolveFormatCheckPlan } from '../gates-plan-resolvers.js';
+import { resolveFormatCheckPlan, resolveLintPlan } from '../gates-plan-resolvers.js';
 
 describe('resolveFormatCheckPlan (WU-1999)', () => {
   it('skips incremental format check when only dist artifact roots changed', () => {
@@ -74,5 +74,15 @@ describe('resolveFormatCheckPlan (WU-1999)', () => {
     } finally {
       rmSync(sandboxRoot, { recursive: true, force: true });
     }
+  });
+
+  it('keeps incremental lint targets for single-package and non-web monorepo layouts', () => {
+    const plan = resolveLintPlan({
+      isMainBranch: false,
+      changedFiles: ['src/index.ts', 'services/api/src/server.ts', 'docs/README.md'],
+    });
+
+    expect(plan.mode).toBe('incremental');
+    expect(plan.files).toEqual(['src/index.ts', 'services/api/src/server.ts']);
   });
 });

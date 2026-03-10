@@ -1429,6 +1429,15 @@ describe('WU-1495: Cloud Config Schema', () => {
  * Verifies configurable safe-git path with correct default.
  */
 describe('WU-1654: DirectoriesSchema safeGitPath', () => {
+  it('WU-2377: appsWeb default should be empty for repo-agnostic consumers', () => {
+    const result = DirectoriesSchema.safeParse({});
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.appsWeb).toBe('');
+    }
+  });
+
   it('should have safeGitPath field defaulting to scripts/safe-git', () => {
     const result = DirectoriesSchema.safeParse({});
 

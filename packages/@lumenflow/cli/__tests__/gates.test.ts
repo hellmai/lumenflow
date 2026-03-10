@@ -8,7 +8,8 @@
 /* eslint-disable sonarjs/no-duplicate-string -- Test files commonly repeat string literals for clarity */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
   buildPrettierWriteCommand,
@@ -299,6 +300,19 @@ describe('gates incremental planning (WU-1165)', () => {
 });
 
 describe('docs-only mode package filtering (WU-1299)', () => {
+  function createPackageFixture(relativePackageJsonPaths: Array<[string, Record<string, unknown>]>) {
+    const fixtureRoot = path.join(tmpdir(), `gates-package-fixture-${Date.now()}-${Math.random()}`);
+    mkdirSync(fixtureRoot, { recursive: true });
+
+    for (const [relativePath, packageJson] of relativePackageJsonPaths) {
+      const absolutePath = path.join(fixtureRoot, relativePath);
+      mkdirSync(path.dirname(absolutePath), { recursive: true });
+      writeFileSync(absolutePath, JSON.stringify(packageJson, null, 2));
+    }
+
+    return fixtureRoot;
+  }
+
   describe('extractPackagesFromCodePaths', () => {
     it('extracts package names from packages/* paths', () => {
       const codePaths = [
@@ -341,6 +355,34 @@ describe('docs-only mode package filtering (WU-1299)', () => {
     it('returns empty array for empty input', () => {
       expect(extractPackagesFromCodePaths([])).toEqual([]);
       expect(extractPackagesFromCodePaths(undefined as unknown as string[])).toEqual([]);
+    });
+
+    it('resolves the root package name for single-package repo layouts', () => {
+      const fixtureRoot = createPackageFixture([['package.json', { name: 'single-package-app' }]]);
+
+      try {
+        const packages = extractPackagesFromCodePaths(['src/index.ts'], { cwd: fixtureRoot });
+        expect(packages).toEqual(['single-package-app']);
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true });
+      }
+    });
+
+    it('resolves package names from non-web monorepo directories outside packages/', () => {
+      const fixtureRoot = createPackageFixture([
+        ['services/api/package.json', { name: '@acme/api' }],
+        ['libs/shared/package.json', { name: '@acme/shared' }],
+      ]);
+
+      try {
+        const packages = extractPackagesFromCodePaths(
+          ['services/api/src/server.ts', 'libs/shared/src/index.ts'],
+          { cwd: fixtureRoot },
+        );
+        expect(packages).toEqual(['@acme/api', '@acme/shared']);
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true });
+      }
     });
   });
 
@@ -388,6 +430,37 @@ describe('docs-only mode package filtering (WU-1299)', () => {
       });
       expect(plan.mode).toBe('skip');
       expect(plan.reason).toBe('no-code-packages');
+    });
+
+    it('filters docs-only tests for single-package and non-web monorepo layouts', () => {
+      const fixtureRoot = createPackageFixture([
+        ['package.json', { name: 'single-package-app' }],
+        ['services/api/package.json', { name: '@acme/api' }],
+      ]);
+
+      try {
+        expect(
+          resolveDocsOnlyTestPlan({
+            codePaths: ['src/index.ts'],
+            cwd: fixtureRoot,
+          }),
+        ).toEqual({
+          mode: 'filtered',
+          packages: ['single-package-app'],
+        });
+
+        expect(
+          resolveDocsOnlyTestPlan({
+            codePaths: ['services/api/src/server.ts'],
+            cwd: fixtureRoot,
+          }),
+        ).toEqual({
+          mode: 'filtered',
+          packages: ['@acme/api'],
+        });
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true });
+      }
     });
   });
 

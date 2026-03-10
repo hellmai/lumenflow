@@ -184,10 +184,7 @@ export function resolveLintPlan({
 
   const lintTargets = changedFiles.filter((filePath) => {
     const normalized = normalizePath(filePath);
-    return (
-      (normalized.startsWith('apps/') || normalized.startsWith('packages/')) &&
-      isLintableFile(normalized)
-    );
+    return isLintableFile(normalized);
   });
 
   if (lintTargets.length === 0) {
@@ -227,8 +224,14 @@ export function resolveTestPlan({
 /**
  * WU-1299: Resolve test plan for docs-only mode
  */
-export function resolveDocsOnlyTestPlan({ codePaths }: { codePaths: string[] }): DocsOnlyTestPlan {
-  const packages = extractPackagesFromCodePaths(codePaths);
+export function resolveDocsOnlyTestPlan({
+  codePaths,
+  cwd,
+}: {
+  codePaths: string[];
+  cwd?: string;
+}): DocsOnlyTestPlan {
+  const packages = extractPackagesFromCodePaths(codePaths, { cwd });
 
   if (packages.length === 0) {
     return {

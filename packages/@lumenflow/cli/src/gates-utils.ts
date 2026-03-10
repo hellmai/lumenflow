@@ -11,7 +11,16 @@
  */
 
 import { execSync, spawnSync } from 'node:child_process';
-import { closeSync, mkdirSync, openSync, readSync, statSync, writeSync } from 'node:fs';
+import {
+  closeSync,
+  existsSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  readSync,
+  statSync,
+  writeSync,
+} from 'node:fs';
 import { access } from 'node:fs/promises';
 import path from 'node:path';
 import { buildGatesLogPath } from '@lumenflow/core/gates-agent-mode';
@@ -403,10 +412,89 @@ function extractPackageFromPath(codePath: string): string | null {
   return null;
 }
 
+const DOCUMENTATION_FILE_EXTENSIONS = new Set(['.md', '.mdx', '.rst', '.txt']);
+const GLOB_SEGMENT_PATTERN = /[*{[]/;
+
+function isDocumentationPath(codePath: string): boolean {
+  const normalized = normalizePath(codePath);
+  if (normalized.startsWith('docs/')) {
+    return true;
+  }
+
+  const extension = path.extname(normalized).toLowerCase();
+  return DOCUMENTATION_FILE_EXTENSIONS.has(extension);
+}
+
+function sanitizePackageLookupPath(codePath: string): string {
+  const normalized = normalizePath(codePath).replace(/\/+$/, '');
+  const segments = normalized.split('/').filter(Boolean);
+  const safeSegments: string[] = [];
+
+  for (const segment of segments) {
+    if (GLOB_SEGMENT_PATTERN.test(segment)) {
+      break;
+    }
+    safeSegments.push(segment);
+  }
+
+  return safeSegments.join('/');
+}
+
+function resolvePackageNameFromManifest(packageJsonPath: string): string | null {
+  try {
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as { name?: unknown };
+    return typeof packageJson.name === 'string' && packageJson.name.length > 0
+      ? packageJson.name
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function extractPackageFromRepoShape(codePath: string, cwd?: string): string | null {
+  if (!cwd || isDocumentationPath(codePath)) {
+    return null;
+  }
+
+  const sanitizedPath = sanitizePackageLookupPath(codePath);
+  if (!sanitizedPath) {
+    return null;
+  }
+
+  const absoluteRoot = path.resolve(cwd);
+  const candidatePath = path.resolve(absoluteRoot, sanitizedPath);
+  let currentPath = path.extname(candidatePath) ? path.dirname(candidatePath) : candidatePath;
+
+  while (currentPath.startsWith(absoluteRoot)) {
+    const packageJsonPath = path.join(currentPath, 'package.json');
+    if (existsSync(packageJsonPath)) {
+      return (
+        resolvePackageNameFromManifest(packageJsonPath) ||
+        path.basename(currentPath === absoluteRoot ? absoluteRoot : currentPath)
+      );
+    }
+
+    if (currentPath === absoluteRoot) {
+      break;
+    }
+
+    const parentPath = path.dirname(currentPath);
+    if (parentPath === currentPath) {
+      break;
+    }
+    currentPath = parentPath;
+  }
+
+  return null;
+}
+
 /**
  * WU-1299: Extract package/app names from code_paths
  */
-export function extractPackagesFromCodePaths(codePaths: string[]): string[] {
+export function extractPackagesFromCodePaths(
+  codePaths: string[],
+  options: { cwd?: string } = {},
+): string[] {
   if (!codePaths || !Array.isArray(codePaths) || codePaths.length === 0) {
     return [];
   }
@@ -414,7 +502,7 @@ export function extractPackagesFromCodePaths(codePaths: string[]): string[] {
   const packages = new Set<string>();
 
   for (const codePath of codePaths) {
-    const pkg = extractPackageFromPath(codePath);
+    const pkg = extractPackageFromPath(codePath) || extractPackageFromRepoShape(codePath, options.cwd);
     if (pkg) {
       packages.add(pkg);
     }
