@@ -3120,3 +3120,4 @@
 {"type":"checkpoint","wuId":"WU-2378","timestamp":"2026-03-10T17:53:34.726Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2378","timestamp":"2026-03-10T17:54:29.220Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2378","timestamp":"2026-03-10T17:57:31.075Z","note":"WU-2378"}
+{"type":"complete","wuId":"WU-2378","timestamp":"2026-03-10T18:00:35.510Z"}

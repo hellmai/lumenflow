@@ -6,7 +6,7 @@ description: 'Remove the remaining repo-shape, package-manager, and web-framewor
   or Next.js-style defaults. Scope is deliberately bounded: keep LumenFlow as a Node-distributed
   CLI, but make the workflow operate correctly across a defined matrix of consumer stack archetypes
   instead of monorepo-web defaults.'
-status: in_progress
+status: done
 priority: P2
 owner: 'Framework: Core'
 created: 2026-03-10
@@ -19,7 +19,7 @@ phases:
     status: done
   - id: 3
     title: 'Phase 3: Framework heuristics and validation matrix'
-    status: pending
+    status: done
 success_metrics:
   - Generic lifecycle code paths do not hardcode pnpm workspace-init or pnpm turbo docs:generate
     when equivalent configured/runtime-resolved commands exist.

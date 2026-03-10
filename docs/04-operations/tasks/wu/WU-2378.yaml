@@ -2,7 +2,7 @@ id: WU-2378
 title: Demote web-framework assumptions and publish portability matrix
 lane: 'Framework: Core'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -75,3 +75,6 @@ session_id: 0e59dc04-dc7d-48cb-90d9-aab95fb198fe
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-10T17:53:22.508Z
+locked: true
+completed_at: 2026-03-10T18:00:30.504Z
+completed: 2026-03-10
