@@ -2997,3 +2997,4 @@
 {"type":"complete","wuId":"WU-2356","timestamp":"2026-03-10T01:03:12.109Z"}
 {"type":"complete","wuId":"WU-2348","timestamp":"2026-03-10T07:55:12.423Z"}
 {"type":"claim","wuId":"WU-2358","timestamp":"2026-03-10T08:02:23.690Z","lane":"Framework: Core","title":"Fix SPDX header mismatches and stale private-package docs"}
+{"type":"checkpoint","wuId":"WU-2358","timestamp":"2026-03-10T08:02:34.690Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
