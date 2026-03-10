@@ -38,76 +38,26 @@ artifacts:
 dependencies: []
 risks: []
 notes: >-
-  Merge-block pattern already exists in merge-block.ts for .gitignore. Extend to AGENTS.md and
-  vendor bootstrap files only — NOT to LUMENFLOW.md (which is fully managed). Key insight from
-  Codex: link-only files are too weak for agents that dont follow references. Bootstrap files need
-  enough inline content to be useful standalone. The LUMENFLOW.local.md escape hatch prevents moving
-  the overwrite problem from vendor files to LUMENFLOW.md.
+  SPLIT: WU-2384 (blocked by this WU) covers the narrative doc sweep — Starlight pages, dogfood
+  docs, stale docs:sync --force references, ownership table rollout. This WU covers the safety fix +
+  scaffold contract + CLI-emitted templates.
 
 
-  Codex review additions: (1) .local.md must be referenced from managed files so agents discover it.
-  (2) AGENTS.md managed block must be self-sufficient for dumb agents. (3) Upgrade must be
-  vendor-agnostic — only sync surfaces that exist/are configured, not hardcode claude. (4) Skills
-  allowlist must be exact, not glob. (5) First-time migration guard is critical — repos that
-  hand-edited LUMENFLOW.md before this change need drift detection + forced migration to .local.md
-  before we start force-syncing. Without this, the first upgrade under the new design still causes
-  data loss.
+  Design (confirmed by Claude + Codex multi-agent review):
 
+  - LUMENFLOW.md: fully managed, force-sync safe. LUMENFLOW.local.md as escape hatch.
 
-  Doc scope (mandatory, same WU — changes user contract):
+  - AGENTS.md + vendor files: thin bootstrap via merge-block markers. Never raw-overwritten.
 
+  - Reserved skills allowlist (exact names, no glob). User skills never touched.
 
-  TEMPLATES (become generated files in consumer repos):
+  - Migration guard for first upgrade on repos that hand-edited LUMENFLOW.md.
 
-  - LUMENFLOW.md.template
+  - merge-block.ts already implements bounded marker pattern for .gitignore — extend to bootstrap
+  surfaces only.
 
-  - AGENTS.md.template
-
-  - UPGRADING.md.template
-
-  - quick-ref-commands.md.template
-
-  - vendor-support.md.template (if exists)
-
-  - starting-prompt.md.template
-
-  - release-process.md.template
-
-
-  STARLIGHT DOCS (user-facing):
-
-  - upgrade.mdx
-
-  - agent-onboarding.mdx
-
-  - ai-integrations-setup.mdx
-
-  - ai-agent-integration.mdx
-
-  - reference/templates.mdx (LUMENFLOW.local.md override story)
-
-
-  DOGFOOD DOCS (this repo):
-
-  - AGENTS.md, LUMENFLOW.md, CLAUDE.md
-
-  - START-HERE.md, README.md if they reference old behavior
-
-
-  STALE REFERENCES (30+ hits for docs:sync --force):
-
-  - quick-ref-commands.md line 109: still says docs:sync --force refreshes after upgrade
-
-  - upgrade.mdx line 26: still tells users to run docs:sync --force
-
-  - UPGRADING.md.template line 15: same old flow
-
-  - Plus 27 more references across templates, Starlight, onboarding, tests, CLI README
-
-
-  Only touch docs that describe: (1) who owns LUMENFLOW.md vs .local, (2) what init does when files
-  exist, (3) what upgrade/docs:sync may rewrite, (4) what bootstrap content must remain inline for
-  dumb agents.
+  - Codex constraint: managed block must contain real bootstrap, not just a link. Dumb agents
+  (Codex) wont follow references.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -172,28 +122,18 @@ description: >-
   2. init skip mode leaves LumenFlow content uninjected when vendor files already exist
 acceptance:
   - LUMENFLOW.md is force-synced on upgrade without data loss (it is fully LumenFlow-managed)
-  - LUMENFLOW.local.md supported as user override file, documented in LUMENFLOW.md header
+  - LUMENFLOW.local.md supported as user override file, referenced in LUMENFLOW.md template header
   - AGENTS.md uses merge-block markers; user content outside markers preserved on upgrade
   - All vendor bootstrap files use merge-block markers; user content preserved on upgrade
   - init into existing project injects merge-block into existing bootstrap files
-  - Reserved LumenFlow skills updatable on upgrade; user-created skills never touched
-  - 'Round-trip test: init → user edits outside markers → upgrade → user edits preserved'
-  - 'Codex/dumb-agent test: AGENTS.md bootstrap contains enough inline instruction without requiring
-    reference-following'
+  - Reserved LumenFlow skills are an exact allowlist; user-created skills never touched
+  - 'Migration guard: detect LUMENFLOW.md drift from template before first force-sync; require user
+    to move local content to LUMENFLOW.local.md'
+  - 'Round-trip test: init -> user edits outside markers -> upgrade -> user edits preserved'
+  - 'Codex/dumb-agent test: AGENTS.md managed block contains real minimal bootstrap, not just a link'
+  - upgrade syncs only managed surfaces that already exist or are configured — no hardcoded vendor
+    assumption
   - LUMENFLOW.md, AGENTS.md, and vendor bootstrap files tell agents to read LUMENFLOW.local.md when
     present
-  - Managed block in AGENTS.md contains real minimal bootstrap (critical operating rules), not just
-    a link
-  - upgrade syncs only managed surfaces that already exist or are configured — no hardcoded
-    Claude-only behavior
-  - Reserved skills are an exact allowlist; never recurse/overwrite arbitrary SKILL.md files
-  - 'Migration guard: detect LUMENFLOW.md drift from template before first force-sync; require user
-    to move local content to LUMENFLOW.local.md before overwriting'
-  - Canonical ownership table added to LUMENFLOW.md template (who owns what, what init/upgrade may
-    touch)
-  - Same ownership table mirrored in Starlight upgrade and setup docs
-  - All docs:sync --force references updated to reflect new safe behavior
-  - All scaffold templates updated to match new ownership model
-  - 'Starlight docs updated: upgrade.mdx, agent-onboarding.mdx, ai-integrations-setup.mdx,
-    ai-agent-integration.mdx'
-  - 'Dogfood docs in this repo updated: AGENTS.md, LUMENFLOW.md, CLAUDE.md'
+  - 'CLI-emitted templates updated: LUMENFLOW.md.template, AGENTS.md.template,
+    UPGRADING.md.template, quick-ref-commands.md.template, starting-prompt.md.template'
