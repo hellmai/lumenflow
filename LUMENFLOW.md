@@ -50,6 +50,9 @@ cd worktrees/<lane>-wu-xxxx
 # 4b. Build CLI in worktree (required for gates)
 pnpm bootstrap
 
+# 4c. Run wu:brief (MANDATORY — wu:done blocks without this)
+pnpm wu:brief --id WU-XXXX --client <client>
+
 # 5. Implement in worktree
 
 # 6. Prepare (runs gates in worktree) - WU-1223 NEW
@@ -261,7 +264,7 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 | `pnpm wu:block`           | Block WU (transitions to blocked, frees lane)             |
 | `pnpm wu:unblock`         | Unblock WU (transitions to in_progress)                   |
 | `pnpm wu:release`         | Release orphaned WU (in_progress to ready for reclaim)    |
-| `pnpm wu:brief`           | Generate handoff prompt + record evidence                 |
+| `pnpm wu:brief`           | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence |
 | `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation |
 | `pnpm wu:escalate`        | Show or resolve WU escalation status                      |
 | `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)          |

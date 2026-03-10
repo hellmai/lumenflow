@@ -476,6 +476,8 @@ pnpm wu:done --id WU-XXX
 
 Use `wu:brief` to create parallel sub-agent handoff prompts for complex WUs. Use `wu:delegate` when you also need explicit lineage recording.
 
+**MANDATORY:** You **must** run `wu:brief` explicitly after `wu:claim`. While `wu:claim` auto-records a stub event (`claim-auto`), this stub does **not** satisfy the `wu:done` evidence gate (WU-2379). Only an explicit `wu:brief` run generates the handoff prompt, checks lane occupation, validates sizing, and records proper evidence. Without it, `wu:done` will block.
+
 **Evidence recording:** `wu:brief` writes a checkpoint event to `.lumenflow/state/wu-events.jsonl` when run in a claimed workspace (worktree mode) or on the claimed lane branch (branch-pr/branch-only mode). This evidence is **required** — `wu:done` blocks feature/bug WUs without it (WU-2132). Running from an unrelated checkout/branch is side-effect-free (WU-2144). **Never delete or revert `wu-events.jsonl` entries** written by lifecycle commands — if evidence is accidentally lost, rerun `wu:brief` to recreate it.
 
 ### When to Use wu:brief

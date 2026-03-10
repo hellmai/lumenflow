@@ -104,7 +104,7 @@ For complete CLI command documentation (100+ commands), see [quick-ref-commands.
 | `pnpm wu:prep`            | Run gates in worktree, prep for wu:done                   |
 | `pnpm wu:done`            | Complete WU (merge or PR, stamp, cleanup)                 |
 | `pnpm wu:status`          | Show WU status, location, valid commands                  |
-| `pnpm wu:brief`           | Generate handoff prompt + record evidence                 |
+| `pnpm wu:brief`           | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence |
 | `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation |
 | `pnpm wu:recover`         | Analyze and fix WU state inconsistencies                  |
 | `pnpm wu:escalate`        | Show or resolve WU escalation status                      |
@@ -165,9 +165,10 @@ This file provides universal guidance for all AI agents. Additional vendor-speci
 | ------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1. Create WU | main     | `pnpm wu:create --lane <Lane> --title "Title" --description "..." --acceptance "..." --code-paths "..." --test-paths-unit "..." --exposure backend-only` (ID auto-generated) |
 | 2. Claim     | main     | `pnpm wu:claim --id WU-XXX --lane <Lane>`                                                                                                                                    |
-| 3. Work      | worktree | `cd worktrees/<lane>-wu-xxx`                                                                                                                                                 |
-| 4. Prep      | worktree | `pnpm wu:prep --id WU-XXX` (runs gates)                                                                                                                                      |
-| 5. Complete  | main     | `pnpm wu:done --id WU-XXX` (copy-paste from wu:prep)                                                                                                                         |
+| 3. Brief     | worktree | `cd worktrees/<lane>-wu-xxx && pnpm wu:brief --id WU-XXX --client <client>` **(mandatory — wu:done blocks without this)**                                                    |
+| 4. Work      | worktree | Implement changes per acceptance criteria                                                                                                                                    |
+| 5. Prep      | worktree | `pnpm wu:prep --id WU-XXX` (runs gates)                                                                                                                                      |
+| 6. Complete  | main     | `pnpm wu:done --id WU-XXX` (copy-paste from wu:prep)                                                                                                                         |
 
 ### Cloud (Branch-PR Mode)
 
@@ -175,10 +176,11 @@ This file provides universal guidance for all AI agents. Additional vendor-speci
 | ------------ | ----------- | ---------------------------------------------------------------------------- |
 | 1. Create WU | lane branch | `pnpm wu:create --lane <Lane> --title "..." ... --cloud` (ID auto-generated) |
 | 2. Claim     | lane branch | `pnpm wu:claim --id WU-XXX --lane <Lane> --cloud`                            |
-| 3. Work      | lane branch | Work on `lane/<lane>/wu-xxx` in cloud environment                            |
-| 4. Prep      | lane branch | `pnpm wu:prep --id WU-XXX` (validates branch, runs gates)                    |
-| 5. Complete  | lane branch | `pnpm wu:done --id WU-XXX` (creates PR)                                      |
-| 6. Cleanup   | after merge | `pnpm wu:cleanup --id WU-XXX` (post-merge stamps)                            |
+| 3. Brief     | lane branch | `pnpm wu:brief --id WU-XXX --client <client>` **(mandatory — wu:done blocks without this)** |
+| 4. Work      | lane branch | Work on `lane/<lane>/wu-xxx` in cloud environment                            |
+| 5. Prep      | lane branch | `pnpm wu:prep --id WU-XXX` (validates branch, runs gates)                    |
+| 6. Complete  | lane branch | `pnpm wu:done --id WU-XXX` (creates PR)                                      |
+| 7. Cleanup   | after merge | `pnpm wu:cleanup --id WU-XXX` (post-merge stamps)                            |
 
 ---
 

@@ -241,6 +241,13 @@ pnpm wu:brief --id WU-100 --client claude-code
 
 This produces a prompt with the WU spec, code paths, acceptance criteria, and project context. Paste it into your AI agent to start work.
 
+<Aside type="caution" title="wu:brief is mandatory after wu:claim">
+  `wu:claim` auto-records a stub event (`claim-auto`), but this **does not** satisfy the `wu:done`
+  evidence gate. Agents must run `wu:brief` explicitly after claiming — it generates the handoff
+  prompt, checks lane occupation, validates sizing, and records proper evidence. Without an explicit
+  `wu:brief`, `wu:done` will block with an actionable error message.
+</Aside>
+
 ### Delegation with Lineage
 
 For initiative work where you need auditable delegation tracking:

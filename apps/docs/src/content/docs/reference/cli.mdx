@@ -1147,10 +1147,10 @@ pnpm wu:block --id <wuId>
 
 ### wu:brief
 
-Generate handoff prompt for sub-agent WU execution
+Generate handoff prompt for sub-agent WU execution. **Mandatory after `wu:claim`** — `wu:done` rejects the auto-recorded `claim-auto` evidence and requires an explicit `wu:brief` run that generates the full prompt, checks lane occupation, and validates sizing.
 
 ```bash
-pnpm wu:brief
+pnpm wu:brief --id WU-XXX --client <client>
 ```
 
 ### wu:claim

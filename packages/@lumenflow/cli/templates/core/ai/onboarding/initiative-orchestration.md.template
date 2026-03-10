@@ -382,7 +382,7 @@ pnpm delegation:list --initiative INIT-XXX --json
 | `pnpm orchestrate:initiative -i INIT-XXX`           | Execute all waves continuously                                |
 | `pnpm orchestrate:init-status -i INIT-XXX`          | Compact progress view                                         |
 | `pnpm orchestrate:monitor`                          | Detect stuck agents and zombie locks                          |
-| `pnpm wu:brief --id WU-XXX --client <client>`       | Generate handoff prompt + record evidence                     |
+| `pnpm wu:brief --id WU-XXX --client <client>`       | **MANDATORY after wu:claim.** Generate prompt + evidence      |
 | `pnpm wu:delegate --id WU-XXX --parent-wu <P>`      | Generate prompt + record delegation                           |
 | `pnpm delegation:list --initiative INIT-XXX`        | View delegation tree                                          |
 | `pnpm mem:signal "msg" --wu WU-XXX`                 | Broadcast coordination signal                                 |

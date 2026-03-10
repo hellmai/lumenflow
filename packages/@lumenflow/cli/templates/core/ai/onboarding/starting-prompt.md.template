@@ -556,7 +556,7 @@ Domain-specific commands must come from local configuration, not core framework 
 | `pnpm wu:claim --id WU-XXX --lane "Lane"`      | Claim WU and create worktree (default)           | Start working (local)       |
 | `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree)         | Start working (cloud)       |
 | `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                              | Update notes/desc           |
-| `pnpm wu:brief --id WU-XXX --client <client>`  | Generate handoff prompt + record evidence        | Delegation or self-impl     |
+| `pnpm wu:brief --id WU-XXX --client <client>`  | **MANDATORY after wu:claim.** Generate prompt + evidence | Delegation or self-impl     |
 | `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation              | Auditable delegation flows  |
 | `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion  | Before wu:done              |
 | `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)               | After gates pass            |
