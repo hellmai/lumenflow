@@ -9,7 +9,6 @@ code_paths:
   - packages/@lumenflow/cli/src/docs-sync.ts
   - packages/@lumenflow/cli/src/lumenflow-upgrade.ts
   - .claude/CLAUDE.md
-  - packages/@lumenflow/cli/templates/core/
 tests:
   manual:
     - Run pnpm docs:sync --force in a temp project and verify no unresolved {{...}} placeholders in
@@ -33,7 +32,11 @@ notes: >-
   Check whether .claude/CLAUDE.md.template also has the broken links (fix template to prevent
   regression on next sync).
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T12:51:31.153Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2371
+session_id: 41248690-b4c6-4164-8455-5af154605058
 exposure: backend-only
 sizing_estimate:
   estimated_files: 5
@@ -41,6 +44,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T12:51:31.161Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -83,11 +89,3 @@ acceptance:
   - checkDocsStaleness returns false for docs synced yesterday (date-invariant comparison)
   - pnpm docs:sync --help output matches public-manifest.ts description
   - All relative links in .claude/CLAUDE.md resolve correctly from the .claude/ directory
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2371
-claimed_at: 2026-03-10T12:51:31.153Z
-baseline_main_sha: 898aa44997f4cb9fef0be2ee1b9e39a9a452e679
-session_id: 41248690-b4c6-4164-8455-5af154605058
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T12:51:31.161Z
