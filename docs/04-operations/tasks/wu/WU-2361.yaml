@@ -1,0 +1,37 @@
+id: WU-2361
+title: Clean up evidence-only remnants and fix misleading warn message
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P2
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/cli/src/wu-done-policies.ts
+  - packages/@lumenflow/core/src/arg-parser.ts
+  - packages/@lumenflow/cli/src/wu-spawn-strategy-resolver.ts
+tests:
+  manual:
+    - Verify pnpm wu:brief --help no longer shows --evidence-only description
+  unit:
+    - packages/@lumenflow/cli/__tests__/wu-brief-evidence.test.ts
+    - packages/@lumenflow/cli/src/__tests__/agent-spawn-coordination.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2361.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'WU-2359 follow-up: (1) Remove --evidence-only from parser help surface, (2) stop serializing new brief evidence as mode=evidence-only (rename to mode=full), (3) fix misleading warning text that suggests running wu:delegate after the fact which would create intent without pickup and cause a later hard-block.'
+acceptance:
+  - arg-parser no longer shows --evidence-only in help output (flag still parses for die() migration)
+  - New wu:brief evidence records use mode=full instead of mode=evidence-only
+  - Spawn provenance warning no longer suggests running wu:delegate after the fact
+  - Existing tests updated for new mode label
