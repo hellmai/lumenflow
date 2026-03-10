@@ -3129,16 +3129,6 @@
 {"type":"complete","wuId":"WU-2379","timestamp":"2026-03-10T18:14:12.675Z"}
 {"type":"checkpoint","wuId":"WU-2380","timestamp":"2026-03-10T18:19:30.809Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2380.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2380","timestamp":"2026-03-10T18:19:56.668Z","lane":"Framework: Core Validation","title":"Add optional migration-state verification for schema-affecting WUs"}
-{"type":"claim","wuId":"WU-2381","timestamp":"2026-03-10T18:50:04.149Z","lane":"Framework: CLI WU Commands","title":"wu:edit splits free-text field values on commas"}
-{"type":"checkpoint","wuId":"WU-2381","timestamp":"2026-03-10T18:50:15.324Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2381","timestamp":"2026-03-10T18:50:40.434Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
-{"type":"checkpoint","wuId":"WU-2381","timestamp":"2026-03-10T18:52:47.792Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2381.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"complete","wuId":"WU-2381","timestamp":"2026-03-10T18:54:21.151Z"}
-{"type":"claim","wuId":"WU-2382","timestamp":"2026-03-10T18:54:50.464Z","lane":"Framework: CLI WU Commands","title":"Fix wu:edit comma splitting for free-text repeatable fields"}
-{"type":"checkpoint","wuId":"WU-2382","timestamp":"2026-03-10T18:55:02.149Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2382","timestamp":"2026-03-10T18:55:23.477Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
-{"type":"checkpoint","wuId":"WU-2382","timestamp":"2026-03-10T18:58:11.037Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2382.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"complete","wuId":"WU-2382","timestamp":"2026-03-10T19:00:10.694Z"}
 {"type":"checkpoint","wuId":"WU-2380","timestamp":"2026-03-10T18:21:14.924Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2380.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2380","timestamp":"2026-03-10T18:22:47.401Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2380.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2380","timestamp":"2026-03-10T18:23:03.565Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2380.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
@@ -3163,3 +3153,4 @@
 {"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:04:52.156Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:15:45.283Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:23:14.276Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2383.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2383","timestamp":"2026-03-10T20:25:57.082Z"}

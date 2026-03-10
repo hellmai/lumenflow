@@ -2,7 +2,7 @@ id: WU-2383
 title: upgrade force-overwrites user docs; init skip leaves LumenFlow content uninjected
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -137,3 +137,6 @@ acceptance:
     present
   - 'CLI-emitted templates updated: LUMENFLOW.md.template, AGENTS.md.template,
     UPGRADING.md.template, quick-ref-commands.md.template, starting-prompt.md.template'
+locked: true
+completed_at: 2026-03-10T20:25:52.304Z
+completed: 2026-03-10
