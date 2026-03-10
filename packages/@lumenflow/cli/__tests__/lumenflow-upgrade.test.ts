@@ -15,7 +15,12 @@ import * as os from 'node:os';
 // Functions under test (to be implemented)
 import { syncScriptsToPackageJson, checkDocsStaleness } from '../src/lumenflow-upgrade.js';
 import { generateScriptsFromManifest } from '../src/public-manifest.js';
-import { loadTemplate, processTemplate, CORE_DOC_TEMPLATE_PATHS } from '../src/docs-sync.js';
+import {
+  loadTemplate,
+  processTemplate,
+  CORE_DOC_TEMPLATE_PATHS,
+  buildCoreDocTokens,
+} from '../src/docs-sync.js';
 
 describe('WU-2226: syncScriptsToPackageJson', () => {
   const tmpDir = path.join(process.cwd(), '__test-tmp-wu2226__');
@@ -205,9 +210,9 @@ describe('WU-2366: checkDocsStaleness', () => {
   });
 
   it('should report no staleness when hashes match', () => {
-    // Write content that matches what processTemplate would produce
-    const currentDate = new Date().toISOString().split('T')[0];
-    const tokens = { DATE: currentDate };
+    // WU-2371: Use the full token set (not just DATE) to match what
+    // syncCoreDocs and checkDocsStaleness now produce
+    const tokens = buildCoreDocTokens(staleTmpDir);
 
     for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
       const templateContent = loadTemplate(templatePath);
