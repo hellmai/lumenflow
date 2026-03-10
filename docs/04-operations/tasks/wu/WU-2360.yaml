@@ -1,0 +1,36 @@
+id: WU-2360
+title: Redact internal product and competitor strategy references from public repo
+lane: 'Operations: Tooling'
+type: refactor
+status: ready
+priority: P2
+created: 2026-03-10
+code_paths:
+  - docs/04-operations/tasks/initiatives/
+  - docs/04-operations/tasks/wu/
+  - docs/04-operations/plans/
+  - apps/docs/src/content/docs/legal/privacy.mdx
+tests:
+  manual:
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2360.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Public repo contains internal strategy language (OpenClaw competitive positioning in INIT plans), internal product names (PatientPath domain in WU specs), and lumenflow-cloud references in WU notes. Redact from current tree going forward.
+acceptance:
+  - No OpenClaw competitive strategy language in initiative plans (technical comparison in public docs is fine)
+  - No PatientPath product name or domain in WU specs
+  - No lumenflow-cloud references in WU specs or initiative YAMLs
+  - Email typo tom@helllm.ai fixed in privacy.mdx
