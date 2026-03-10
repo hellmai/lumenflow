@@ -23,12 +23,12 @@ sections:
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
-- [WU-2386 — wu:edit blocks metadata-only edits on dirty worktrees](wu/WU-2386.yaml) — Framework: CLI WU Commands
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2385 — Close remaining safe-docs lifecycle gaps after WU-2383/WU-2384 review](wu/WU-2385.yaml) — Framework: CLI WU Commands
+- [WU-2386 — wu:edit blocks metadata-only edits on dirty worktrees](wu/WU-2386.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 

@@ -2,7 +2,7 @@ id: WU-2386
 title: wu:edit blocks metadata-only edits on dirty worktrees
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -43,4 +43,9 @@ acceptance:
   - Regression test covers the metadata-only bypass path
 approved_by:
   - tom@hellm.ai
-approved_at: 2026-03-10T21:16:34.155Z
+approved_at: 2026-03-10T21:18:06.906Z
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2386
+claimed_at: 2026-03-10T21:18:06.898Z
+baseline_main_sha: c85fa1ae80e4b3d777f6dda45fce668beed41a89
+session_id: 1b722b62-f4e8-4c4d-a9e8-50ce23c7f320
