@@ -708,7 +708,9 @@ describe('WU-2287: wu:brief policy automation on wu:claim', () => {
       claimedBranch: undefined,
     });
     expect(logger.log).toHaveBeenCalledWith(
-      '[wu-claim] ✅ wu:brief evidence auto-recorded (policy=auto; no handoff prompt generated).',
+      '[wu-claim] ⚠️ claim-auto stub recorded (policy=auto). ' +
+        'You MUST still run `pnpm wu:brief --client <client>` — ' +
+        'claim-auto does not satisfy wu:done and does not generate the handoff prompt.',
     );
   });
 

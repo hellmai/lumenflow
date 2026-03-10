@@ -207,7 +207,9 @@ export async function maybeRunAutoBriefForClaim(
       claimedBranch: options.claimedBranch,
     });
     logger.log(
-      `${PREFIX} ${EMOJI.SUCCESS} wu:brief evidence auto-recorded (policy=${mode}; no handoff prompt generated).`,
+      `${PREFIX} ${EMOJI.WARNING} claim-auto stub recorded (policy=${mode}). ` +
+        `You MUST still run \`pnpm wu:brief --client <client>\` — ` +
+        `claim-auto does not satisfy wu:done and does not generate the handoff prompt.`,
     );
     return { attempted: true, mode };
   } catch (error) {
