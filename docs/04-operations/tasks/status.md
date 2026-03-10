@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2365 — Centralize agent startup guidance in LUMENFLOW.md and deduplicate vendor overlays](wu/WU-2365.yaml)
 
 ## Completed
 
