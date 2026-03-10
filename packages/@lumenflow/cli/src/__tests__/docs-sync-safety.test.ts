@@ -61,10 +61,7 @@ describe('WU-2383: safe docs lifecycle', () => {
     });
 
     it('should have all core docs accounted for in managed + bootstrap', () => {
-      const allKeys = [
-        ...Object.keys(MANAGED_DOC_PATHS),
-        ...Object.keys(BOOTSTRAP_DOC_PATHS),
-      ];
+      const allKeys = [...Object.keys(MANAGED_DOC_PATHS), ...Object.keys(BOOTSTRAP_DOC_PATHS)];
       for (const key of Object.keys(CORE_DOC_TEMPLATE_PATHS)) {
         expect(allKeys).toContain(key);
       }
@@ -342,10 +339,7 @@ More custom rules.
 
     it('should skip when merge-block content is unchanged', async () => {
       const filePath = path.join(tempDir, 'UNCHANGED.md');
-      fs.writeFileSync(
-        filePath,
-        `${MARKERS.START}\nSame content\n${MARKERS.END}\n`,
-      );
+      fs.writeFileSync(filePath, `${MARKERS.START}\nSame content\n${MARKERS.END}\n`);
 
       const result: ScaffoldResult = { created: [], skipped: [] };
       await createFile(filePath, 'Same content', 'merge-block', result, tempDir);

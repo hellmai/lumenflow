@@ -328,13 +328,7 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
 
     // WU-2383: Reserved skills are always written (managed content).
     // force=true for reserved skills regardless of caller's force flag.
-    await createFile(
-      path.join(skillDir, 'SKILL.md'),
-      processedContent,
-      true,
-      result,
-      targetDir,
-    );
+    await createFile(path.join(skillDir, 'SKILL.md'), processedContent, true, result, targetDir);
   }
 
   return result;
