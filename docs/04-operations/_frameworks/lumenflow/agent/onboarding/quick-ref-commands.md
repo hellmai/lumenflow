@@ -129,27 +129,27 @@ automatically, and `.lumenflow/templates/` remains optional unless you want cust
 
 ## WU Lifecycle
 
-| Command                                                        | Description                                                          |
-| -------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `pnpm wu:create --lane <Lane> --title "..." ..`                | Create new WU spec (ID auto-generated; see fields below)             |
-| `pnpm wu:claim --id WU-XXX --lane <Lane>`                      | Claim WU and create worktree (default)                               |
-| `pnpm wu:claim --id WU-XXX --lane <L> --cloud`                 | Claim WU in cloud/branch-pr mode (no worktree)                       |
-| `pnpm wu:prep --id WU-XXX [--full-tests]`                      | Run gates, prep for wu:done (`tests.unit` scoped by default)         |
-| `pnpm wu:done --id WU-XXX`                                     | Complete WU (merge or PR, stamp, cleanup)                            |
-| `pnpm wu:edit --id WU-XXX --description "..."`                 | Edit WU spec fields (run --help for all flags)                       |
-| `pnpm wu:escalate --id WU-XXX`                                 | Show escalation status for a WU                                      |
-| `pnpm wu:escalate --resolve --id WU-XXX`                       | Resolve escalation (sets resolved_by/resolved_at)                    |
-| `pnpm approval:request --type <type> --subject <json>`         | Request control-plane approval for an action                         |
-| `pnpm approval:review --id <approvalId> --decision <decision>` | Resolve an approval decision (`approved`/`rejected`/`expired`)       |
-| `pnpm approval:list [--status <status>]`                       | List approvals with optional status/type filters                     |
-| `pnpm wu:block --id WU-XXX --reason "..."`                     | Block WU with reason                                                 |
-| `pnpm wu:unblock --id WU-XXX`                                  | Unblock WU                                                           |
-| `pnpm wu:release --id WU-XXX`                                  | Release orphaned WU (in_progress to ready)                           |
-| `pnpm wu:status --id WU-XXX`                                   | Show WU status, location, valid commands                             |
+| Command                                                        | Description                                                                                                    |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `pnpm wu:create --lane <Lane> --title "..." ..`                | Create new WU spec (ID auto-generated; see fields below)                                                       |
+| `pnpm wu:claim --id WU-XXX --lane <Lane>`                      | Claim WU and create worktree (default)                                                                         |
+| `pnpm wu:claim --id WU-XXX --lane <L> --cloud`                 | Claim WU in cloud/branch-pr mode (no worktree)                                                                 |
+| `pnpm wu:prep --id WU-XXX [--full-tests]`                      | Run gates, prep for wu:done (`tests.unit` scoped by default)                                                   |
+| `pnpm wu:done --id WU-XXX`                                     | Complete WU (merge or PR, stamp, cleanup)                                                                      |
+| `pnpm wu:edit --id WU-XXX --description "..."`                 | Edit WU spec fields (run --help for all flags)                                                                 |
+| `pnpm wu:escalate --id WU-XXX`                                 | Show escalation status for a WU                                                                                |
+| `pnpm wu:escalate --resolve --id WU-XXX`                       | Resolve escalation (sets resolved_by/resolved_at)                                                              |
+| `pnpm approval:request --type <type> --subject <json>`         | Request control-plane approval for an action                                                                   |
+| `pnpm approval:review --id <approvalId> --decision <decision>` | Resolve an approval decision (`approved`/`rejected`/`expired`)                                                 |
+| `pnpm approval:list [--status <status>]`                       | List approvals with optional status/type filters                                                               |
+| `pnpm wu:block --id WU-XXX --reason "..."`                     | Block WU with reason                                                                                           |
+| `pnpm wu:unblock --id WU-XXX`                                  | Unblock WU                                                                                                     |
+| `pnpm wu:release --id WU-XXX`                                  | Release orphaned WU (in_progress to ready)                                                                     |
+| `pnpm wu:status --id WU-XXX`                                   | Show WU status, location, valid commands                                                                       |
 | `pnpm wu:brief --id WU-XXX --client <client>`                  | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence. wu:done blocks without this (WU-2379) |
-| `pnpm wu:brief --id WU-XXX --no-context`                       | Generate prompt without memory context injection                     |
-| `pnpm wu:delegate --id WU-XXX --parent-wu <P>`                 | Generate prompt, record lineage, and store brief hash attestation    |
-| `pnpm wu:sandbox --id WU-XXX -- <cmd>`                         | Run command through hardened WU sandbox backend                      |
+| `pnpm wu:brief --id WU-XXX --no-context`                       | Generate prompt without memory context injection                                                               |
+| `pnpm wu:delegate --id WU-XXX --parent-wu <P>`                 | Generate prompt, record lineage, and store brief hash attestation                                              |
+| `pnpm wu:sandbox --id WU-XXX -- <cmd>`                         | Run command through hardened WU sandbox backend                                                                |
 
 ### WU Maintenance
 

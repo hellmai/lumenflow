@@ -97,26 +97,26 @@ For complete CLI command documentation (100+ commands), see [quick-ref-commands.
 
 **Essential commands:**
 
-| Command                   | Description                                               |
-| ------------------------- | --------------------------------------------------------- |
-| `pnpm wu:create`          | Create new WU spec (ID auto-generated)                    |
-| `pnpm wu:claim`           | Claim WU and create worktree (or `--cloud`)               |
-| `pnpm wu:prep`            | Run gates in worktree, prep for wu:done                   |
-| `pnpm wu:done`            | Complete WU (merge or PR, stamp, cleanup)                 |
-| `pnpm wu:status`          | Show WU status, location, valid commands                  |
+| Command                   | Description                                                             |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `pnpm wu:create`          | Create new WU spec (ID auto-generated)                                  |
+| `pnpm wu:claim`           | Claim WU and create worktree (or `--cloud`)                             |
+| `pnpm wu:prep`            | Run gates in worktree, prep for wu:done                                 |
+| `pnpm wu:done`            | Complete WU (merge or PR, stamp, cleanup)                               |
+| `pnpm wu:status`          | Show WU status, location, valid commands                                |
 | `pnpm wu:brief`           | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence |
-| `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation |
-| `pnpm wu:recover`         | Analyze and fix WU state inconsistencies                  |
-| `pnpm wu:escalate`        | Show or resolve WU escalation status                      |
-| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)          |
-| `pnpm wu:delete`          | Delete WU spec and cleanup                                |
-| `pnpm gates`              | Run all quality gates (`--docs-only` for docs)            |
-| `pnpm lumenflow:commands` | List all public commands (primary + aliases + legacy)     |
-| `pnpm lane:status`        | Show lane lifecycle status and next step                  |
-| `pnpm lane:setup`         | Create/update draft lane artifacts                        |
-| `pnpm lane:lock`          | Lock lane lifecycle for delivery WUs                      |
-| `pnpm mem:checkpoint`     | Save progress checkpoint                                  |
-| `pnpm mem:recover`        | Generate recovery context                                 |
+| `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation               |
+| `pnpm wu:recover`         | Analyze and fix WU state inconsistencies                                |
+| `pnpm wu:escalate`        | Show or resolve WU escalation status                                    |
+| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)                        |
+| `pnpm wu:delete`          | Delete WU spec and cleanup                                              |
+| `pnpm gates`              | Run all quality gates (`--docs-only` for docs)                          |
+| `pnpm lumenflow:commands` | List all public commands (primary + aliases + legacy)                   |
+| `pnpm lane:status`        | Show lane lifecycle status and next step                                |
+| `pnpm lane:setup`         | Create/update draft lane artifacts                                      |
+| `pnpm lane:lock`          | Lock lane lifecycle for delivery WUs                                    |
+| `pnpm mem:checkpoint`     | Save progress checkpoint                                                |
+| `pnpm mem:recover`        | Generate recovery context                                               |
 
 **Two-step completion (wu:prep then wu:done):**
 
@@ -172,15 +172,15 @@ This file provides universal guidance for all AI agents. Additional vendor-speci
 
 ### Cloud (Branch-PR Mode)
 
-| Step         | Location    | Command                                                                      |
-| ------------ | ----------- | ---------------------------------------------------------------------------- |
-| 1. Create WU | lane branch | `pnpm wu:create --lane <Lane> --title "..." ... --cloud` (ID auto-generated) |
-| 2. Claim     | lane branch | `pnpm wu:claim --id WU-XXX --lane <Lane> --cloud`                            |
+| Step         | Location    | Command                                                                                     |
+| ------------ | ----------- | ------------------------------------------------------------------------------------------- |
+| 1. Create WU | lane branch | `pnpm wu:create --lane <Lane> --title "..." ... --cloud` (ID auto-generated)                |
+| 2. Claim     | lane branch | `pnpm wu:claim --id WU-XXX --lane <Lane> --cloud`                                           |
 | 3. Brief     | lane branch | `pnpm wu:brief --id WU-XXX --client <client>` **(mandatory — wu:done blocks without this)** |
-| 4. Work      | lane branch | Work on `lane/<lane>/wu-xxx` in cloud environment                            |
-| 5. Prep      | lane branch | `pnpm wu:prep --id WU-XXX` (validates branch, runs gates)                    |
-| 6. Complete  | lane branch | `pnpm wu:done --id WU-XXX` (creates PR)                                      |
-| 7. Cleanup   | after merge | `pnpm wu:cleanup --id WU-XXX` (post-merge stamps)                            |
+| 4. Work      | lane branch | Work on `lane/<lane>/wu-xxx` in cloud environment                                           |
+| 5. Prep      | lane branch | `pnpm wu:prep --id WU-XXX` (validates branch, runs gates)                                   |
+| 6. Complete  | lane branch | `pnpm wu:done --id WU-XXX` (creates PR)                                                     |
+| 7. Cleanup   | after merge | `pnpm wu:cleanup --id WU-XXX` (post-merge stamps)                                           |
 
 ---
 

@@ -613,7 +613,9 @@ export async function enforceWuBriefEvidenceForDone(
       blocker(claimAutoMessage);
       return;
     }
-    warn(`${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2379: claim-auto evidence override accepted for ${id} via --force`);
+    warn(
+      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2379: claim-auto evidence override accepted for ${id} via --force`,
+    );
     return;
   }
 
