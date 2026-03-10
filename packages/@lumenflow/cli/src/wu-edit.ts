@@ -68,6 +68,7 @@ import {
   validateWorktreeClean,
   validateWorktreeBranch,
   normalizeReplaceCodePathsArgv,
+  isMetadataOnlyEdit,
   EDIT_MODE,
 } from './wu-edit-validators.js';
 
@@ -91,6 +92,7 @@ export {
   normalizeReplaceCodePathsArgv,
   hasScopeRelevantBranchChanges,
   buildAuthoritativeStateMismatchMessage,
+  isMetadataOnlyEdit,
 } from './wu-edit-validators.js';
 
 export {
@@ -599,7 +601,14 @@ export async function main() {
       id,
       buildRetryCommandFromArgv(id),
     );
-    await validateWorktreeClean(absoluteWorktreePath, id);
+    // WU-2386: Skip dirty-worktree check for metadata-only edits (notes,
+    // acceptance, risks, test paths). These only touch the WU YAML spec and
+    // cannot conflict with uncommitted source changes.
+    if (!isMetadataOnlyEdit(opts)) {
+      await validateWorktreeClean(absoluteWorktreePath, id);
+    } else {
+      console.log(`${PREFIX} Metadata-only edit — skipping clean-worktree check`);
+    }
 
     // Calculate expected branch and validate
     const expectedBranch = getLaneBranch(originalWU.lane as string, id);

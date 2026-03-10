@@ -504,6 +504,80 @@ export function hasScopeRelevantBranchChanges(changedFiles: string[]): boolean {
 }
 
 /**
+ * WU-2386: Fields that can be edited on dirty worktrees without conflict risk.
+ *
+ * These fields only modify the WU YAML spec (committed via micro-worktree or
+ * worktree commit), not source files. Edits limited to these fields skip the
+ * clean-worktree check so agents can fill metadata mid-implementation.
+ */
+const METADATA_ONLY_FIELDS: ReadonlySet<string> = new Set([
+  'notes',
+  'replaceNotes',
+  'acceptance',
+  'replaceAcceptance',
+  'risks',
+  'replaceRisks',
+  'testPathsManual',
+  'replaceTestPathsManual',
+  'testPathsUnit',
+  'replaceTestPathsUnit',
+  'testPathsE2e',
+  'replaceTestPathsE2e',
+  'escalation_triggers',
+]);
+
+/**
+ * WU-2386: Structural fields that affect code scope or WU identity.
+ *
+ * Edits touching any of these fields require a clean worktree because they
+ * can interact with branch merge state or change the WU's scope.
+ */
+const STRUCTURAL_FIELDS: ReadonlySet<string> = new Set([
+  'specFile',
+  'description',
+  'codePaths',
+  'replaceCodePaths',
+  'lane',
+  'type',
+  'priority',
+  'initiative',
+  'phase',
+  'blockedBy',
+  'replaceBlockedBy',
+  'addDep',
+  'replaceDependencies',
+  'exposure',
+  'plan',
+]);
+
+/**
+ * WU-2386: Determine whether the requested edits are metadata-only.
+ *
+ * Returns true when at least one metadata field is being edited and no
+ * structural fields are present. This allows skipping the dirty-worktree
+ * check for safe, non-conflicting edits like --notes and --acceptance.
+ */
+export function isMetadataOnlyEdit(opts: Record<string, unknown>): boolean {
+  let hasMetadataEdit = false;
+
+  for (const [key, value] of Object.entries(opts)) {
+    if (STRUCTURAL_FIELDS.has(key)) {
+      if (Array.isArray(value) ? value.length > 0 : Boolean(value)) {
+        return false;
+      }
+    }
+
+    if (METADATA_ONLY_FIELDS.has(key)) {
+      if (Array.isArray(value) ? value.length > 0 : Boolean(value)) {
+        hasMetadataEdit = true;
+      }
+    }
+  }
+
+  return hasMetadataEdit;
+}
+
+/**
  * WU-1618: Support `--replace-code-paths <paths>` shorthand by normalizing to
  * `--replace-code-paths --code-paths <paths>` before Commander parsing.
  */

@@ -18,6 +18,7 @@ import {
   buildWuEditStampNote,
   getWuEditCommitFiles,
   hasScopeRelevantBranchChanges,
+  isMetadataOnlyEdit,
   mergeStringField,
   normalizeReplaceCodePathsArgv,
   validateDoneWUEdits,
@@ -498,6 +499,55 @@ describe('WU-2339: wu:edit readiness summary', () => {
 
     expect(result.headline).toBe('ℹ️  WU status: done');
     expect(result.command).toBe('Run: pnpm wu:status --id WU-2339');
+  });
+});
+
+describe('WU-2386: metadata-only edit detection', () => {
+  it('recognises notes-only edits as metadata-only', () => {
+    expect(isMetadataOnlyEdit({ notes: 'some note' })).toBe(true);
+  });
+
+  it('recognises acceptance-only edits as metadata-only', () => {
+    expect(isMetadataOnlyEdit({ acceptance: ['AC1'] })).toBe(true);
+  });
+
+  it('recognises risks-only edits as metadata-only', () => {
+    expect(isMetadataOnlyEdit({ risks: ['risk'] })).toBe(true);
+  });
+
+  it('recognises combined metadata edits as metadata-only', () => {
+    expect(
+      isMetadataOnlyEdit({
+        notes: 'note',
+        acceptance: ['AC1'],
+        risks: ['risk'],
+        replaceNotes: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('rejects code_paths edits as NOT metadata-only', () => {
+    expect(isMetadataOnlyEdit({ codePaths: ['src/foo.ts'] })).toBe(false);
+  });
+
+  it('rejects description edits as NOT metadata-only', () => {
+    expect(isMetadataOnlyEdit({ description: 'new desc' })).toBe(false);
+  });
+
+  it('rejects lane edits as NOT metadata-only', () => {
+    expect(isMetadataOnlyEdit({ lane: 'Framework: Core' })).toBe(false);
+  });
+
+  it('rejects mixed metadata + structural edits as NOT metadata-only', () => {
+    expect(isMetadataOnlyEdit({ notes: 'note', codePaths: ['src/foo.ts'] })).toBe(false);
+  });
+
+  it('rejects specFile edits as NOT metadata-only', () => {
+    expect(isMetadataOnlyEdit({ specFile: '/tmp/spec.yaml' })).toBe(false);
+  });
+
+  it('returns false when no edits are present', () => {
+    expect(isMetadataOnlyEdit({})).toBe(false);
   });
 });
 
