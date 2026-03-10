@@ -469,18 +469,12 @@ export function applyEdits(
   }
 
   // WU-1225: Handle repeatable --risks flags (append by default, replace with --replace-risks)
-  // Split comma-separated values within each entry for consistency with other list fields
+  // WU-2381: Risks are free-text descriptions — do NOT split on commas
   if (opts.risks && opts.risks.length > 0) {
     const rawRisks = opts.risks;
     const risks = Array.isArray(rawRisks)
-      ? rawRisks
-          .flatMap((risk) => risk.split(','))
-          .map((risk) => risk.trim())
-          .filter(Boolean)
-      : rawRisks
-          .split(',')
-          .map((risk: string) => risk.trim())
-          .filter(Boolean);
+      ? rawRisks.map((risk) => risk.trim()).filter(Boolean)
+      : [rawRisks.trim()].filter(Boolean);
     // WU-1225: Invert logic - append by default
     const shouldAppend = !opts.replaceRisks || Boolean(opts.append);
     updated.risks = mergeArrayField(wu.risks, risks, shouldAppend);
@@ -489,26 +483,35 @@ export function applyEdits(
   // WU-1390: Handle test path flags (DRY refactor)
   // WU-1225: Test paths now append by default (consistent with --acceptance and --code-paths)
   // WU-2369: Added --replace-test-paths-* flags for parity with other --replace-* flags
-  const testPathMappings = [
-    { optKey: 'testPathsManual', replaceKey: 'replaceTestPathsManual', field: 'manual' },
-    { optKey: 'testPathsUnit', replaceKey: 'replaceTestPathsUnit', field: 'unit' },
-    { optKey: 'testPathsE2e', replaceKey: 'replaceTestPathsE2e', field: 'e2e' },
+  // WU-2381: manual is free-text (no comma split); unit/e2e are file paths (comma split OK)
+  const testPathMappings: Array<{
+    optKey: string;
+    replaceKey: string;
+    field: string;
+    freeText: boolean;
+  }> = [
+    { optKey: 'testPathsManual', replaceKey: 'replaceTestPathsManual', field: 'manual', freeText: true },
+    { optKey: 'testPathsUnit', replaceKey: 'replaceTestPathsUnit', field: 'unit', freeText: false },
+    { optKey: 'testPathsE2e', replaceKey: 'replaceTestPathsE2e', field: 'e2e', freeText: false },
   ];
 
-  for (const { optKey, replaceKey, field } of testPathMappings) {
+  for (const { optKey, replaceKey, field, freeText } of testPathMappings) {
     const rawPaths = opts[optKey] as string[] | string | undefined;
     if (rawPaths && (typeof rawPaths === 'string' || rawPaths.length > 0)) {
-      // Split comma-separated string into array (options are comma-separated per description)
-      // WU-1870: Fix to split comma-separated values WITHIN array elements
-      const paths = Array.isArray(rawPaths)
-        ? rawPaths
-            .flatMap((p) => p.split(','))
-            .map((p) => p.trim())
-            .filter(Boolean)
-        : rawPaths
-            .split(',')
-            .map((p: string) => p.trim())
-            .filter(Boolean);
+      // WU-2381: Free-text fields preserve commas; path fields split on commas (WU-1870)
+      const paths = freeText
+        ? Array.isArray(rawPaths)
+          ? rawPaths.map((p) => p.trim()).filter(Boolean)
+          : [rawPaths.trim()].filter(Boolean)
+        : Array.isArray(rawPaths)
+          ? rawPaths
+              .flatMap((p) => p.split(','))
+              .map((p) => p.trim())
+              .filter(Boolean)
+          : rawPaths
+              .split(',')
+              .map((p: string) => p.trim())
+              .filter(Boolean);
       const existingTests =
         typeof updated.tests === 'object' && updated.tests !== null
           ? (updated.tests as Record<string, unknown>)

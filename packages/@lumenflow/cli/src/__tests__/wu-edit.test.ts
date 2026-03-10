@@ -185,6 +185,77 @@ describe('wu-edit applyEdits', () => {
     });
   });
 
+  describe('WU-2381: free-text fields preserve commas', () => {
+    it('preserves commas in test-paths-manual values', () => {
+      const baseWU = {
+        id: 'WU-2381',
+        status: 'ready',
+        tests: { manual: ['Existing step'] },
+      };
+      const opts = {
+        testPathsManual: ['Configure the hook, run the WU, and confirm failure'],
+      };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).manual).toEqual([
+        'Existing step',
+        'Configure the hook, run the WU, and confirm failure',
+      ]);
+    });
+
+    it('preserves commas in risks values', () => {
+      const baseWU = {
+        id: 'WU-2381',
+        status: 'ready',
+        risks: ['Existing risk'],
+      };
+      const opts = { risks: ['May break parsing, validation, and serialization'] };
+      const result = applyEdits(baseWU, opts);
+      expect(result.risks).toEqual([
+        'Existing risk',
+        'May break parsing, validation, and serialization',
+      ]);
+    });
+
+    it('still splits commas in code-paths values', () => {
+      const baseWU = {
+        id: 'WU-2381',
+        status: 'ready',
+        code_paths: [],
+      };
+      const opts = { codePaths: ['src/a.ts,src/b.ts'] };
+      const result = applyEdits(baseWU, opts);
+      expect(result.code_paths).toEqual(['src/a.ts', 'src/b.ts']);
+    });
+
+    it('still splits commas in test-paths-unit values', () => {
+      const baseWU = {
+        id: 'WU-2381',
+        status: 'ready',
+        tests: { unit: [] },
+      };
+      const opts = { testPathsUnit: ['test/a.test.ts,test/b.test.ts'] };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).unit).toEqual([
+        'test/a.test.ts',
+        'test/b.test.ts',
+      ]);
+    });
+
+    it('still splits commas in test-paths-e2e values', () => {
+      const baseWU = {
+        id: 'WU-2381',
+        status: 'ready',
+        tests: { e2e: [] },
+      };
+      const opts = { testPathsE2e: ['e2e/a.test.ts,e2e/b.test.ts'] };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).e2e).toEqual([
+        'e2e/a.test.ts',
+        'e2e/b.test.ts',
+      ]);
+    });
+  });
+
   describe('WU-1144: acceptance already appends by default', () => {
     const baseWU = {
       id: 'WU-1225',
