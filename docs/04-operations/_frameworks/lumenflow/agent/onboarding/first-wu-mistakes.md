@@ -298,7 +298,7 @@ Agent: [ignores the warning, proceeds without sizing metadata]
 
 ### Right
 
-When `wu:create` or `wu:brief` emits a sizing advisory warning, either:
+When `wu:create` or `wu:brief` emits a sizing advisory warning, choose the smallest valid strategy:
 
 1. **Add exception metadata** if the oversize WU is justified:
 
@@ -311,7 +311,16 @@ sizing_estimate:
   exception_reason: All markdown documentation files, low complexity
 ```
 
-2. **Split the WU** if the estimate genuinely exceeds session capacity (see [wu-sizing-guide.md](./wu-sizing-guide.md) section 3 for splitting patterns).
+2. **Keep one WU with a stronger execution strategy** if the work is still one coherent outcome:
+
+```yaml
+sizing_estimate:
+  estimated_files: 32
+  estimated_tool_calls: 90
+  strategy: checkpoint-resume
+```
+
+3. **Split the WU** only if the work is no longer atomic or should land independently (see [wu-sizing-guide.md](./wu-sizing-guide.md) section 3 for splitting patterns).
 
 **Strict mode:** Teams can enforce sizing compliance for delegated work with `--strict-sizing` on `wu:brief`. In strict mode, missing or non-compliant sizing metadata blocks the operation.
 

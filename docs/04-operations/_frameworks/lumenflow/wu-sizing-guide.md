@@ -1,10 +1,10 @@
 # Work Unit Sizing & Strategy Guide
 
-**Purpose:** Decision framework for agents to determine execution strategy based on task complexity.
+**Purpose:** Decision framework for agents to determine when work should remain one WU, when it needs a handoff strategy, and when it truly needs decomposition.
 
 **Effective Date:** 2025-11-24 (Post-WU-1215 Analysis)
 
-**Status:** Active — Thresholds are **mandatory limits**, not guidelines.
+**Status:** Active — Thresholds are mandatory **strategy triggers**. They are not permission to over-split cohesive work.
 
 ---
 
@@ -19,7 +19,38 @@ Before claiming a WU, estimate its "weight" using these heuristics.
 | **Complex**   | 50+   | 100+       | >50%           | **Orchestrator-Worker** OR **Decomposition** |
 | **Oversized** | 100+  | 200+       | —              | **MUST Split** (See Patterns below)          |
 
-**These thresholds are mandatory.** Exceeding them leads to context exhaustion and rule loss (WU-1215 failure: 80k tokens consumed on analysis alone, zero implementation). Agents operate in context windows and tool calls, not clock time.
+**These thresholds are mandatory strategy triggers.** They exist to prevent context exhaustion and rule loss (WU-1215 failure: 80k tokens consumed on analysis alone, zero implementation). They do **not** mean every Medium or Complex WU should be broken into multiple smaller WUs. Agents operate in context windows and tool calls, not clock time.
+
+### 1.0 Cohesion Rule
+
+**Default bias: one coherent outcome = one WU.**
+
+Keep work in one WU when all of the following are true:
+
+- The acceptance criteria describe one coherent outcome
+- The work should land together to be meaningful
+- A single agent or handoff chain can finish it with `single-session`, `checkpoint-resume`, or `orchestrator-worker`
+- The touched files all support the same change, even if there are several of them
+
+Do **not** split a WU just because:
+
+- It has multiple implementation steps
+- Tests, docs, and code all need updates for the same change
+- The work may take more than one session
+- There are several files in the same lane supporting one atomic outcome
+
+Split a WU only when one of these is true:
+
+- Different parts can ship, review, or roll back independently
+- Different lanes or owners should deliver different parts
+- A risk-reduction pattern is needed, such as tracer bullet or feature flag
+- The work no longer has a clean stopping point and keeps widening during execution
+
+**Examples that should usually stay one WU:**
+
+- Add one API endpoint plus its tests and docs
+- Implement one dashboard card plus the backend query it depends on in the same lane
+- Mechanical import or config rewrites across many files when every change is uniform
 
 ### 1.1 Documentation-Only Exception
 
@@ -223,7 +254,7 @@ Strict mode is intended for teams that want to enforce sizing discipline before 
 
 ## 2. Strategy Decision Tree
 
-Use this logic to select your approach. If `git status` ever shows >20 modified files, STOP and re-evaluate.
+Use this logic to select your approach. If `git status` ever shows >20 modified files, STOP and re-evaluate cohesion and strategy. Do not auto-split without checking the exceptions and cohesion rule first.
 
 ```
 ┌─────────────────────────┐

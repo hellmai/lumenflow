@@ -91,13 +91,16 @@ If you are starting a new project or feature from a product vision (e.g., "Build
 
 ### When to Skip Initiatives
 
-Only skip initiatives for:
+Skip initiatives whenever the work is still one coherent WU, even if it spans several files or needs more than one session.
 
-- Single-file bug fixes
-- Small documentation updates
-- Isolated refactoring tasks
+Typical no-initiative cases:
 
-If work spans multiple WUs or multiple days, create an initiative first.
+- Single coherent bug fixes
+- Small or medium documentation updates
+- Isolated refactors that land as one atomic change
+- One feature WU that may need checkpoint-resume but does not need decomposition
+
+Create an initiative when you genuinely need multiple independently completable WUs, multiple lane owners, or staged rollout across phases. Do not use elapsed duration alone as the split signal.
 
 ### Lane-Fit Reasoning
 
