@@ -706,7 +706,7 @@ const NO_DASHBOARD_GUIDANCE =
  */
 export async function launchDashboard(
   targetDir: string,
-  options: LaunchDashboardOptions = {},
+  _options: LaunchDashboardOptions = {},
 ): Promise<LaunchDashboardResult> {
   const dashboardDir = path.join(targetDir, DASHBOARD_WORKTREE_PATH);
   const hasDashboard = fs.existsSync(dashboardDir);
