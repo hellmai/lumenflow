@@ -259,21 +259,24 @@ describe('lumenflow init', () => {
   });
 
   describe('createFile mode option', () => {
-    it('should skip existing files in skip mode (default)', async () => {
+    it('should merge-block existing AGENTS.md in skip mode (default)', async () => {
       const existingContent = 'Original content';
       fs.writeFileSync(path.join(tempDir, 'AGENTS.md'), existingContent);
 
       const options: ScaffoldOptions = {
         force: false,
         full: false,
-        // Default mode is 'skip'
+        // Default mode is 'skip' — but WU-2383 changed AGENTS.md to merge-block mode
       };
 
       const result = await scaffoldProject(tempDir, options);
 
-      expect(result.skipped).toContain('AGENTS.md');
+      // WU-2383: AGENTS.md now uses merge-block so LumenFlow content is injected
+      // even when the file already exists. User content is preserved.
       const content = fs.readFileSync(path.join(tempDir, 'AGENTS.md'), 'utf-8');
-      expect(content).toBe(existingContent);
+      expect(content).toContain('Original content');
+      expect(content).toContain('<!-- LUMENFLOW:START -->');
+      expect(content).toContain('<!-- LUMENFLOW:END -->');
     });
 
     it('should overwrite in force mode', async () => {

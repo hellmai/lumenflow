@@ -13,13 +13,14 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { createError, ErrorCodes } from '@lumenflow/core';
 // WU-1171: Import merge block utilities
-import { updateMergeBlock } from './merge-block.js';
+import { updateMergeBlock, MARKERS } from './merge-block.js';
 import { resolveCliTemplatesDir } from './template-directory-resolver.js';
 
 /**
  * WU-1171: File creation mode
+ * WU-2383: Added 'merge-block' — injects/updates content between LUMENFLOW:START/END markers
  */
-export type FileMode = 'skip' | 'merge' | 'force';
+export type FileMode = 'skip' | 'merge' | 'force' | 'merge-block';
 
 export interface ScaffoldResult {
   created: string[];
@@ -168,6 +169,32 @@ export async function createFile(
 
   if (fileExists && resolvedMode === 'skip') {
     result.skipped.push(relativePath);
+    return;
+  }
+
+  // WU-2383: merge-block mode — inject/update content between LUMENFLOW:START/END markers.
+  // When file exists, preserves all user content outside markers.
+  // When file doesn't exist, creates new file with content wrapped in markers.
+  if (resolvedMode === 'merge-block') {
+    if (fileExists) {
+      const existingContent = fs.readFileSync(filePath, 'utf-8');
+      const mergeResult = updateMergeBlock(existingContent, content);
+      if (mergeResult.updated) {
+        fs.writeFileSync(filePath, mergeResult.content);
+        result.merged = result.merged ?? [];
+        result.merged.push(relativePath);
+      } else {
+        result.skipped.push(relativePath);
+      }
+      if (mergeResult.warning) {
+        result.warnings = result.warnings ?? [];
+        result.warnings.push(mergeResult.warning);
+      }
+    } else {
+      // New file: wrap in markers
+      const wrappedContent = `${MARKERS.START}\n${content}\n${MARKERS.END}\n`;
+      writeNewFile(filePath, wrappedContent, result, relativePath);
+    }
     return;
   }
 

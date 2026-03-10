@@ -2,6 +2,10 @@
 
 **Last updated:** {{DATE}}
 
+> **This file is managed by LumenFlow.** Do not edit — it will be overwritten on upgrade.
+> For project-specific additions, create `LUMENFLOW.local.md` (never overwritten).
+> If `LUMENFLOW.local.md` exists, agents should read it after this file.
+
 LumenFlow is a vendor-agnostic workflow framework for AI-native software development.
 
 > **Context Safety**: When approaching context limits (80% usage, 50+ tool calls), spawn a fresh agent instead of continuing after compaction. See [wu-sizing-guide.md]({{DOCS_ONBOARDING_PATH}}/wu-sizing-guide.md).

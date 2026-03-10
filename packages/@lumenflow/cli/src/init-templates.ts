@@ -143,6 +143,7 @@ export const CLAUDE_MD_TEMPLATE = `# Claude Code Instructions
 **Last updated:** {{DATE}}
 
 **Read first:** [AGENTS.md](AGENTS.md) for universal startup rules, then [LUMENFLOW.md](LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
+If \`LUMENFLOW.local.md\` exists, read it after LUMENFLOW.md for project-specific additions.
 
 This file contains Claude Code-specific configuration only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
@@ -207,6 +208,7 @@ export const CLAUDE_SETTINGS_TEMPLATE = `{
 export const CURSOR_RULES_TEMPLATE = `# Cursor LumenFlow Rules
 
 **Read first:** [AGENTS.md](../../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../../LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
+If \`LUMENFLOW.local.md\` exists, read it after LUMENFLOW.md for project-specific additions.
 
 This file contains Cursor-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
@@ -225,6 +227,7 @@ This file contains Cursor-specific overrides only. Do not duplicate workflow rul
 export const WINDSURF_RULES_TEMPLATE = `# Windsurf LumenFlow Rules
 
 **Read first:** [AGENTS.md](../../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../../LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
+If \`LUMENFLOW.local.md\` exists, read it after LUMENFLOW.md for project-specific additions.
 
 This file contains Windsurf-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
@@ -243,6 +246,7 @@ This file contains Windsurf-specific overrides only. Do not duplicate workflow r
 export const CLINE_RULES_TEMPLATE = `# Cline LumenFlow Rules
 
 **Read first:** [AGENTS.md](AGENTS.md) for universal startup rules, then [LUMENFLOW.md](LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
+If \`LUMENFLOW.local.md\` exists, read it after LUMENFLOW.md for project-specific additions.
 
 This file contains Cline-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 

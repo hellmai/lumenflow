@@ -3159,3 +3159,6 @@
 {"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T19:53:31.902Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2383.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:02:04.828Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2383.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2383","timestamp":"2026-03-10T20:04:12.219Z","lane":"Framework: CLI WU Commands","title":"upgrade force-overwrites user docs; init skip leaves LumenFlow content uninjected"}
+{"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:04:23.566Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:04:52.156Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2383","timestamp":"2026-03-10T20:15:45.283Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

@@ -1,6 +1,7 @@
 # Cursor LumenFlow Rules
 
 **Read first:** [AGENTS.md](../../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../../LUMENFLOW.md) for the canonical workflow, commands, and safety rules.
+If `LUMENFLOW.local.md` exists, read it after LUMENFLOW.md for project-specific additions.
 
 This file contains Cursor-specific overrides only. Do not duplicate workflow rules from LUMENFLOW.md here.
 

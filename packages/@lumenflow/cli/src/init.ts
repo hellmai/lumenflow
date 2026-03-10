@@ -904,24 +904,29 @@ export async function scaffoldProject(
   );
 
   // WU-1171: Create AGENTS.md (universal entry point for all agents)
-  try {
-    const agentsTemplate = loadTemplate('core/AGENTS.md.template');
-    await createFile(
-      path.join(targetDir, 'AGENTS.md'),
-      processTemplate(agentsTemplate, tokenDefaults),
-      fileMode,
-      result,
-      targetDir,
-    );
-  } catch {
-    // Fallback to hardcoded template if template file not found
-    await createFile(
-      path.join(targetDir, 'AGENTS.md'),
-      processTemplate(AGENTS_MD_TEMPLATE, tokenDefaults),
-      fileMode,
-      result,
-      targetDir,
-    );
+  // WU-2383: Use merge-block mode so existing AGENTS.md gets LumenFlow content
+  // injected via bounded markers instead of being silently skipped.
+  {
+    const bootstrapMode = fileMode === 'force' ? 'force' : 'merge-block';
+    try {
+      const agentsTemplate = loadTemplate('core/AGENTS.md.template');
+      await createFile(
+        path.join(targetDir, 'AGENTS.md'),
+        processTemplate(agentsTemplate, tokenDefaults),
+        bootstrapMode,
+        result,
+        targetDir,
+      );
+    } catch {
+      // Fallback to hardcoded template if template file not found
+      await createFile(
+        path.join(targetDir, 'AGENTS.md'),
+        processTemplate(AGENTS_MD_TEMPLATE, tokenDefaults),
+        bootstrapMode,
+        result,
+        targetDir,
+      );
+    }
   }
 
   // Create LUMENFLOW.md (main entry point)
@@ -1503,6 +1508,9 @@ async function scaffoldClientFiles(
   client: ClientType,
 ): Promise<void> {
   const fileMode = getFileMode(options);
+  // WU-2383: Vendor bootstrap files use merge-block so existing files get
+  // LumenFlow content injected instead of being silently skipped.
+  const vendorBootstrapMode = fileMode === 'force' ? 'force' : 'merge-block';
 
   // Claude Code
   if (client === 'claude' || client === 'all') {
@@ -1510,7 +1518,7 @@ async function scaffoldClientFiles(
     await createFile(
       path.join(targetDir, 'CLAUDE.md'),
       processTemplate(CLAUDE_MD_TEMPLATE, tokens),
-      fileMode,
+      vendorBootstrapMode,
       result,
       targetDir,
     );
@@ -1611,7 +1619,7 @@ async function scaffoldClientFiles(
     await createFile(
       path.join(cursorRulesDir, 'lumenflow.md'),
       processTemplate(cursorContent, tokens),
-      fileMode,
+      vendorBootstrapMode,
       result,
       targetDir,
     );
@@ -1633,7 +1641,7 @@ async function scaffoldClientFiles(
     await createFile(
       path.join(windsurfRulesDir, 'lumenflow.md'),
       processTemplate(windsurfContent, tokens),
-      fileMode,
+      vendorBootstrapMode,
       result,
       targetDir,
     );
@@ -1655,7 +1663,7 @@ async function scaffoldClientFiles(
     await createFile(
       path.join(targetDir, '.clinerules'),
       processTemplate(clineContent, tokens),
-      fileMode,
+      vendorBootstrapMode,
       result,
       targetDir,
     );

@@ -3,6 +3,7 @@
 **Last updated:** {{DATE}}
 
 This project uses LumenFlow workflow. For complete documentation, see [LUMENFLOW.md](LUMENFLOW.md).
+If `LUMENFLOW.local.md` exists, read it after LUMENFLOW.md for project-specific additions.
 
 ---
 

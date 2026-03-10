@@ -15,9 +15,13 @@ pnpm lumenflow:upgrade --latest
 pnpm docs:sync --force
 ```
 
-Package upgrades change the runtime `wu:brief` defaults immediately. `lumenflow:upgrade` prints a
-staleness warning after the upgrade completes if any core docs (LUMENFLOW.md, AGENTS.md,
-constraints.md) differ from the latest templates. Run `pnpm docs:sync --force` to refresh them.
+Package upgrades change the runtime `wu:brief` defaults immediately. `lumenflow:upgrade` automatically
+syncs managed docs (LUMENFLOW.md, .lumenflow/constraints.md) from templates. Bootstrap files
+(AGENTS.md, vendor overlays) are updated via merge-block markers — only the LumenFlow-managed
+section between `<!-- LUMENFLOW:START -->` / `<!-- LUMENFLOW:END -->` is replaced; your content
+outside markers is preserved.
+
+If you have project-specific workflow additions, put them in `LUMENFLOW.local.md` (never overwritten).
 Project-local `.lumenflow/templates/` remains optional unless you want custom overrides.
 
 ## Version Compatibility

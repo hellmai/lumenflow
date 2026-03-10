@@ -552,9 +552,13 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
 
       // WU-2373: Sync core docs inside the upgrade transaction instead of
       // advising users to run docs:sync separately after upgrade.
+      // WU-2383: force=false — syncCoreDocs handles managed vs bootstrap docs
+      // internally. Managed docs (LUMENFLOW.md, constraints.md) are always
+      // written. Bootstrap docs (AGENTS.md) use merge-block markers.
+      // Onboarding docs and skills use their own force/allowlist logic.
       console.log(`${LOG_PREFIX} Syncing core docs...`);
       const docsSyncResult = await executeDocsSyncInDir(worktreePath, {
-        force: true,
+        force: false,
         vendor: 'claude',
       });
       if (docsSyncResult.created.length > 0) {

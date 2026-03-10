@@ -26,6 +26,7 @@ import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard'
 import { withMicroWorktree, isInGitWorktree } from '@lumenflow/core/micro-worktree';
 import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
 import { resolveCliTemplatesDir } from './template-directory-resolver.js';
+import { updateMergeBlock } from './merge-block.js';
 
 export type VendorType = 'claude' | 'cursor' | 'aider' | 'all' | 'none';
 
@@ -223,6 +224,24 @@ export const CORE_DOC_TEMPLATE_PATHS: Record<string, string> = {
   '.lumenflow/constraints.md': 'core/.lumenflow/constraints.md.template',
 };
 
+/**
+ * WU-2383: Managed docs — 100% LumenFlow-owned, safe to force-sync on upgrade.
+ * Users MUST NOT edit these files; use LUMENFLOW.local.md for project-specific additions.
+ */
+export const MANAGED_DOC_PATHS: Record<string, string> = {
+  'LUMENFLOW.md': 'core/LUMENFLOW.md.template',
+  '.lumenflow/constraints.md': 'core/.lumenflow/constraints.md.template',
+};
+
+/**
+ * WU-2383: Bootstrap docs — shared files using merge-block markers.
+ * LumenFlow content lives between LUMENFLOW:START/END markers.
+ * User content outside markers is never touched.
+ */
+export const BOOTSTRAP_DOC_PATHS: Record<string, string> = {
+  'AGENTS.md': 'core/AGENTS.md.template',
+};
+
 const CLAUDE_VENDOR_TEMPLATE_ROOT = ['vendors', 'claude', '.claude'].join('/');
 const CLAUDE_SKILLS_TEMPLATE_ROOT = `${CLAUDE_VENDOR_TEMPLATE_ROOT}/skills`;
 
@@ -235,6 +254,13 @@ const SKILL_TEMPLATE_PATHS: Record<string, string> = {
   'worktree-discipline': `${CLAUDE_SKILLS_TEMPLATE_ROOT}/worktree-discipline/SKILL.md.template`,
   'lumenflow-gates': `${CLAUDE_SKILLS_TEMPLATE_ROOT}/lumenflow-gates/SKILL.md.template`,
 };
+
+/**
+ * WU-2383: Exact allowlist of LumenFlow-owned skill names.
+ * These skills are managed and updatable on upgrade.
+ * User-created skills outside this list are never touched.
+ */
+export const RESERVED_SKILL_NAMES: string[] = Object.keys(SKILL_TEMPLATE_PATHS);
 
 /**
  * Sync agent onboarding docs to an existing project
@@ -272,6 +298,8 @@ export async function syncAgentDocs(targetDir: string, options: SyncOptions): Pr
 /**
  * Sync Claude skills to an existing project
  * WU-1124: Now reads templates from bundled files instead of hardcoded strings
+ * WU-2383: Reserved skill names are always updated (allowlist-based).
+ *          User-created skills outside the allowlist are never touched.
  */
 export async function syncSkills(targetDir: string, options: SyncOptions): Promise<SyncResult> {
   const result: SyncResult = {
@@ -290,7 +318,7 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
 
   const { skillsDir } = resolveDocsSyncDirectories(targetDir);
 
-  // WU-1124: Load and process skill templates from bundled files
+  // WU-2383: Only sync skills in the reserved allowlist. User-created skills are never touched.
   for (const [skillName, templatePath] of Object.entries(SKILL_TEMPLATE_PATHS)) {
     const skillDir = path.join(skillsDir, skillName);
     await createDirectory(skillDir, result, targetDir);
@@ -298,10 +326,12 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
     const templateContent = loadTemplate(templatePath);
     const processedContent = processTemplate(templateContent, tokens);
 
+    // WU-2383: Reserved skills are always written (managed content).
+    // force=true for reserved skills regardless of caller's force flag.
     await createFile(
       path.join(skillDir, 'SKILL.md'),
       processedContent,
-      options.force,
+      true,
       result,
       targetDir,
     );
@@ -312,7 +342,10 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
 
 /**
  * WU-2366: Sync core docs (LUMENFLOW.md, AGENTS.md, constraints.md) to an existing project
- * Uses templates from the bundled templates directory, same pattern as syncAgentDocs.
+ * WU-2383: Split into managed docs (force-sync) and bootstrap docs (merge-block).
+ *
+ * Managed docs (LUMENFLOW.md, constraints.md) are always written from template.
+ * Bootstrap docs (AGENTS.md) use merge-block markers to preserve user content.
  */
 export async function syncCoreDocs(targetDir: string, options: SyncOptions): Promise<SyncResult> {
   const result: SyncResult = {
@@ -322,17 +355,68 @@ export async function syncCoreDocs(targetDir: string, options: SyncOptions): Pro
 
   const tokens = buildCoreDocTokens(targetDir);
 
-  for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
+  // WU-2383: Managed docs — always write from template (these are 100% LumenFlow-owned)
+  for (const [outputFile, templatePath] of Object.entries(MANAGED_DOC_PATHS)) {
     const templateContent = loadTemplate(templatePath);
     const processedContent = processTemplate(templateContent, tokens);
+    const filePath = path.join(targetDir, outputFile);
 
-    await createFile(
-      path.join(targetDir, outputFile),
-      processedContent,
-      options.force,
-      result,
-      targetDir,
-    );
+    // WU-2383: Migration guard — if user has hand-edited a managed file,
+    // back up to .local.md before overwriting (first upgrade only).
+    if (outputFile === 'LUMENFLOW.md' && fs.existsSync(filePath)) {
+      const existingContent = fs.readFileSync(filePath, 'utf-8');
+      const DATE_PATTERN = /\d{4}-\d{2}-\d{2}/g;
+      const DATE_PLACEHOLDER = 'XXXX-XX-XX';
+      const normalizedExisting = existingContent.replace(DATE_PATTERN, DATE_PLACEHOLDER);
+      const normalizedTemplate = processedContent.replace(DATE_PATTERN, DATE_PLACEHOLDER);
+
+      if (normalizedExisting !== normalizedTemplate) {
+        const localPath = path.join(targetDir, 'LUMENFLOW.local.md');
+        if (!fs.existsSync(localPath)) {
+          // First drift detection: save user's custom content to .local.md
+          fs.writeFileSync(localPath, existingContent);
+          result.warnings = result.warnings ?? [];
+          result.warnings.push(
+            `LUMENFLOW.md has local modifications. Backed up to LUMENFLOW.local.md before overwriting.`,
+          );
+          result.created.push('LUMENFLOW.local.md');
+        }
+      }
+    }
+
+    // Always write managed docs regardless of force flag
+    await createFile(filePath, processedContent, true, result, targetDir);
+  }
+
+  // WU-2383: Bootstrap docs — use merge-block to preserve user content
+  for (const [outputFile, templatePath] of Object.entries(BOOTSTRAP_DOC_PATHS)) {
+    const templateContent = loadTemplate(templatePath);
+    const processedContent = processTemplate(templateContent, tokens);
+    const filePath = path.join(targetDir, outputFile);
+    const relativePath = path.relative(targetDir, filePath).split(path.sep).join('/');
+
+    if (fs.existsSync(filePath)) {
+      // File exists — use merge-block to inject/update LumenFlow content
+      const existingContent = fs.readFileSync(filePath, 'utf-8');
+      const mergeResult = updateMergeBlock(existingContent, processedContent);
+
+      if (mergeResult.updated) {
+        fs.writeFileSync(filePath, mergeResult.content);
+        result.created.push(relativePath);
+      } else {
+        result.skipped.push(relativePath);
+      }
+    } else {
+      // File doesn't exist — create with markers wrapping the content
+      const wrappedContent = `<!-- LUMENFLOW:START -->\n${processedContent}\n<!-- LUMENFLOW:END -->\n`;
+
+      const parentDir = path.dirname(filePath);
+      if (!fs.existsSync(parentDir)) {
+        fs.mkdirSync(parentDir, { recursive: true });
+      }
+      fs.writeFileSync(filePath, wrappedContent);
+      result.created.push(relativePath);
+    }
   }
 
   return result;
