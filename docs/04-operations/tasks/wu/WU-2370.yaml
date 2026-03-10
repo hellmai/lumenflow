@@ -20,12 +20,21 @@ artifacts:
   - .lumenflow/stamps/WU-2370.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Root cause: P0 emergency git restore of wu-events.jsonl in executePreFlightChecks wipes
+  uncommitted wu:brief evidence. On wu:done retry, enforceWuBriefEvidenceForDone cannot find the
+  evidence. Fix: read and preserve wu:brief lines across the restore.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T12:48:27.479Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2370
+session_id: 41248690-b4c6-4164-8455-5af154605058
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T12:48:27.487Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -36,11 +45,3 @@ acceptance:
   - wu:done finds wu:brief evidence recorded in worktree state dir
   - Existing tests pass
   - New test covers worktree-to-main evidence path resolution
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2370
-claimed_at: 2026-03-10T12:48:27.479Z
-baseline_main_sha: 059607e841080655ccf01734cbe2f8b2ede3ac58
-session_id: 41248690-b4c6-4164-8455-5af154605058
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T12:48:27.487Z
