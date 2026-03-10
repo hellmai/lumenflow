@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2373 — docs:sync should use micro-worktree isolation](wu/WU-2373.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1292,3 +1292,4 @@ _Last updated: 2026-03-10_
 - [WU-2371 — Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links](wu/WU-2371.yaml) — 2026-03-10
 - [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml) — 2026-03-10
 - [WU-2372 — Enforce command discovery and block CLI output truncation in spawned agents](wu/WU-2372.yaml) — 2026-03-10
+- [WU-2373 — docs:sync should use micro-worktree isolation](wu/WU-2373.yaml) — 2026-03-10

@@ -2,7 +2,7 @@ id: WU-2373
 title: docs:sync should use micro-worktree isolation
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -45,3 +45,6 @@ acceptance:
   - lumenflow:upgrade integrates docs:sync into its own transaction instead of requiring a separate
     manual step
   - Existing worktree behavior preserved (docs:sync in a worktree writes directly as before)
+locked: true
+completed_at: 2026-03-10T13:44:35.434Z
+completed: 2026-03-10
