@@ -1107,13 +1107,52 @@ async function executePreFlightChecks({
     // P0 EMERGENCY FIX Part 1: Restore wu-events.jsonl BEFORE parallel completion check
     // Previous wu:done runs or memory layer writes may have left this file dirty,
     // which causes the auto-rebase to fail with "You have unstaged changes"
+    // WU-2370: Preserve wu:brief evidence lines across the restore. Without this,
+    // a failed wu:done retry loses uncommitted evidence written by wu:brief, causing
+    // "Missing wu:brief evidence" errors on subsequent attempts.
     if (derivedWorktree) {
+      const wuEventsRelPath = resolveWuEventsRelativePath(derivedWorktree);
+      const wuEventsAbsPath = path.join(derivedWorktree, wuEventsRelPath);
+
+      // Read uncommitted wu:brief evidence lines before restore
+      let uncommittedBriefLines: string[] = [];
       try {
-        execSync(
-          `git -C "${derivedWorktree}" restore "${resolveWuEventsRelativePath(derivedWorktree)}"`,
-        );
+        const preRestoreContent = readFileSync(wuEventsAbsPath, {
+          encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
+        });
+        const committedContent = (() => {
+          try {
+            return execSync(`git -C "${derivedWorktree}" show HEAD:"${wuEventsRelPath}"`, {
+              encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
+            });
+          } catch {
+            return '';
+          }
+        })();
+        const committedLines = new Set(committedContent.trim().split('\n').filter(Boolean));
+        uncommittedBriefLines = preRestoreContent
+          .trim()
+          .split('\n')
+          .filter((line) => !committedLines.has(line) && line.includes('[wu:brief]'));
+      } catch {
+        // Non-fatal: file might not exist
+      }
+
+      try {
+        execSync(`git -C "${derivedWorktree}" restore "${wuEventsRelPath}"`);
       } catch {
         // Non-fatal: file might not exist or already clean
+      }
+
+      // Re-append preserved wu:brief evidence lines
+      if (uncommittedBriefLines.length > 0) {
+        try {
+          appendFileSync(wuEventsAbsPath, uncommittedBriefLines.join('\n') + '\n', {
+            encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
+          });
+        } catch {
+          // Non-fatal: best-effort evidence preservation
+        }
       }
     }
 
