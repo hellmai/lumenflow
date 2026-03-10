@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2359 — Remove --evidence-only, soften spawn provenance to warn-only for non-orchestrated WUs](wu/WU-2359.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1278,3 +1278,4 @@ _Last updated: 2026-03-10_
 - [WU-2356 — Align sizing and initiative guidance across root and template docs](wu/WU-2356.yaml) — 2026-03-10
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml) — 2026-03-10
 - [WU-2358 — Fix SPDX header mismatches and stale private-package docs](wu/WU-2358.yaml) — 2026-03-10
+- [WU-2359 — Remove --evidence-only, soften spawn provenance to warn-only for non-orchestrated WUs](wu/WU-2359.yaml) — 2026-03-10

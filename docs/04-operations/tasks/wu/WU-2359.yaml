@@ -2,7 +2,7 @@ id: WU-2359
 title: Remove --evidence-only, soften spawn provenance to warn-only for non-orchestrated WUs
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -52,3 +52,6 @@ acceptance:
   - spawn provenance still hard-blocks when WU was explicitly spawned/delegated
   - onboarding docs and Starlight reference docs updated to reflect changes
   - all existing tests pass; new tests cover warn-vs-block behavior
+locked: true
+completed_at: 2026-03-10T09:11:54.740Z
+completed: 2026-03-10
