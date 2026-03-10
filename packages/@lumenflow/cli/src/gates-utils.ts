@@ -502,7 +502,8 @@ export function extractPackagesFromCodePaths(
   const packages = new Set<string>();
 
   for (const codePath of codePaths) {
-    const pkg = extractPackageFromPath(codePath) || extractPackageFromRepoShape(codePath, options.cwd);
+    const pkg =
+      extractPackageFromPath(codePath) || extractPackageFromRepoShape(codePath, options.cwd);
     if (pkg) {
       packages.add(pkg);
     }

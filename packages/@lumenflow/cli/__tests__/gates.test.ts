@@ -300,7 +300,9 @@ describe('gates incremental planning (WU-1165)', () => {
 });
 
 describe('docs-only mode package filtering (WU-1299)', () => {
-  function createPackageFixture(relativePackageJsonPaths: Array<[string, Record<string, unknown>]>) {
+  function createPackageFixture(
+    relativePackageJsonPaths: Array<[string, Record<string, unknown>]>,
+  ) {
     const fixtureRoot = path.join(tmpdir(), `gates-package-fixture-${Date.now()}-${Math.random()}`);
     mkdirSync(fixtureRoot, { recursive: true });
 
