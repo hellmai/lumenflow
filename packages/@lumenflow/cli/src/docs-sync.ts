@@ -244,7 +244,10 @@ export const BOOTSTRAP_DOC_PATHS: Record<string, string> = {
   'AGENTS.md': 'core/AGENTS.md.template',
 };
 
-export const VENDOR_BOOTSTRAP_TEMPLATE_PATHS: Record<Exclude<VendorType, 'all' | 'none' | 'aider'>, Record<string, string>> = {
+export const VENDOR_BOOTSTRAP_TEMPLATE_PATHS: Record<
+  Exclude<VendorType, 'all' | 'none' | 'aider'>,
+  Record<string, string>
+> = {
   claude: {
     'CLAUDE.md': 'vendors/claude/.claude/CLAUDE.md.template',
   },
@@ -475,10 +478,8 @@ export async function syncVendorBootstraps(
   const selectedVendors = resolveSelectedVendors(options.vendor, options.vendors);
 
   for (const vendor of selectedVendors) {
-    const templateMap = VENDOR_BOOTSTRAP_TEMPLATE_PATHS[vendor as Exclude<
-      VendorType,
-      'all' | 'none' | 'aider'
-    >];
+    const templateMap =
+      VENDOR_BOOTSTRAP_TEMPLATE_PATHS[vendor as Exclude<VendorType, 'all' | 'none' | 'aider'>];
     if (!templateMap) {
       continue;
     }

@@ -578,7 +578,10 @@ describe('lumenflow-upgrade', () => {
           const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-upgrade-vendor-'));
           mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
           mkdirSync(path.join(tempDir, '.cursor', 'rules'), { recursive: true });
-          writeFileSync(path.join(tempDir, '.cursor', 'rules', 'lumenflow.md'), '# Existing cursor\n');
+          writeFileSync(
+            path.join(tempDir, '.cursor', 'rules', 'lumenflow.md'),
+            '# Existing cursor\n',
+          );
           writeFileSync(
             path.join(tempDir, 'package.json'),
             JSON.stringify({ name: 'test', scripts: {} }, null, 2),
@@ -595,9 +598,7 @@ describe('lumenflow-upgrade', () => {
       await executeUpgradeInMicroWorktree({ version: '2.1.0' });
 
       expect(executeResult).toBeDefined();
-      expect(executeResult!.files).toEqual(
-        expect.arrayContaining(['.cursor/rules/lumenflow.md']),
-      );
+      expect(executeResult!.files).toEqual(expect.arrayContaining(['.cursor/rules/lumenflow.md']));
       expect(executeResult!.files).not.toEqual(
         expect.arrayContaining(['.claude/skills/wu-lifecycle/SKILL.md']),
       );

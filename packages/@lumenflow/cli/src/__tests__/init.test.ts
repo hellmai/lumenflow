@@ -85,7 +85,10 @@ describe('lumenflow init', () => {
 
     it('should install managed LUMENFLOW.md into an existing repo and back up local edits', async () => {
       fs.mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
-      fs.writeFileSync(path.join(tempDir, LUMENFLOW_MD), '# My Existing Workflow\n\nLocal notes.\n');
+      fs.writeFileSync(
+        path.join(tempDir, LUMENFLOW_MD),
+        '# My Existing Workflow\n\nLocal notes.\n',
+      );
 
       await scaffoldProject(tempDir, { force: false, full: false });
 
