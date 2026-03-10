@@ -16,7 +16,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { execSync, execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -45,6 +45,14 @@ import { getGitForCwd } from '@lumenflow/core/git-adapter';
 // Import constants to validate command building uses centralized values
 import { PKG_MANAGER, PKG_COMMANDS, PKG_FLAGS } from '@lumenflow/core/wu-constants';
 
+// WU-2371: Import docs-sync functions for staleness tests
+import {
+  loadTemplate,
+  processTemplate,
+  CORE_DOC_TEMPLATE_PATHS,
+  buildCoreDocTokens,
+} from '../docs-sync.js';
+
 // Import functions under test after mocks are set up
 import {
   parseUpgradeArgs,
@@ -57,6 +65,7 @@ import {
   getInstalledCliVersion,
   resolveTargetVersion,
   buildBootstrapCommand,
+  checkDocsStaleness,
 } from '../lumenflow-upgrade.js';
 
 // Cast mocks for TypeScript
@@ -511,6 +520,50 @@ describe('lumenflow-upgrade', () => {
       ]);
       const count = cmd.args.filter((a: string) => a === '--no-bootstrap').length;
       expect(count).toBe(1);
+    });
+  });
+
+  // WU-2371: Staleness checker tests
+  describe('checkDocsStaleness', () => {
+    let tempDir: string;
+
+    beforeEach(() => {
+      tempDir = mkdtempSync(path.join(tmpdir(), 'lf-staleness-test-'));
+      mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+    });
+
+    afterEach(() => {
+      rmSync(tempDir, { recursive: true, force: true });
+    });
+
+    it('should report missing files as stale', () => {
+      // No files on disk → all stale
+      const result = checkDocsStaleness(tempDir);
+      expect(result.stale).toBe(true);
+      expect(result.staleFiles.length).toBeGreaterThan(0);
+    });
+
+    it('should not false-positive on docs synced with a different date', () => {
+      // Build the full token set, then override DATE with yesterday
+      const tokens = { ...buildCoreDocTokens(tempDir) };
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      tokens.DATE = yesterday;
+
+      for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS) as [
+        string,
+        string,
+      ][]) {
+        const templateContent = loadTemplate(templatePath);
+        const processedContent = processTemplate(templateContent, tokens);
+        const filePath = path.join(tempDir, outputFile);
+        mkdirSync(path.dirname(filePath), { recursive: true });
+        writeFileSync(filePath, processedContent);
+      }
+
+      // The staleness check should NOT report these as stale
+      // (date difference should be ignored)
+      const result = checkDocsStaleness(tempDir);
+      expect(result.stale).toBe(false);
     });
   });
 });

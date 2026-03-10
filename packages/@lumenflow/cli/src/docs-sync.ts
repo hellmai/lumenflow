@@ -51,7 +51,7 @@ export function parseDocsSyncOptions(): {
   const opts = createWUParser({
     name: 'lumenflow-docs-sync',
     description:
-      'Sync scaffolded onboarding docs and supported vendor assets (skips existing files by default)',
+      'Refresh core docs, onboarding docs, and supported vendor assets (skips existing files by default)',
     options: Object.values(DOCS_SYNC_OPTIONS),
   });
 
@@ -139,6 +139,34 @@ export function processTemplate(content: string, tokens: Record<string, string>)
   return output;
 }
 
+/**
+ * WU-2371: Build full token set for core doc template rendering.
+ * Matches the token set used by init.ts to ensure all placeholders are resolved.
+ */
+export function buildCoreDocTokens(targetDir: string): Record<string, string> {
+  const wuPaths = createWuPaths({ projectRoot: targetDir });
+  const wuDir = wuPaths.WU_DIR().split(path.sep).join('/');
+  const tasksDir = path.posix.dirname(wuDir);
+  const onboardingPath = wuPaths.ONBOARDING_DIR().split(path.sep).join('/');
+  const quickRefPath = wuPaths.QUICK_REF_PATH().split(path.sep).join('/');
+  const operationsPath = path.posix.dirname(tasksDir);
+  const backlogPath = wuPaths.BACKLOG().split(path.sep).join('/');
+  const statusPath = wuPaths.STATUS().split(path.sep).join('/');
+
+  return {
+    DATE: getCurrentDate(),
+    PROJECT_ROOT: '<project-root>',
+    QUICK_REF_LINK: quickRefPath,
+    DOCS_OPERATIONS_PATH: operationsPath,
+    DOCS_TASKS_PATH: tasksDir,
+    DOCS_ONBOARDING_PATH: onboardingPath,
+    DOCS_WU_DIR_PATH: wuDir,
+    DOCS_TEMPLATES_DIR_PATH: `${tasksDir}/templates`,
+    DOCS_BACKLOG_PATH: backlogPath,
+    DOCS_STATUS_PATH: statusPath,
+  };
+}
+
 function getRelativePath(targetDir: string, filePath: string): string {
   return path.relative(targetDir, filePath).split(path.sep).join('/');
 }
@@ -216,27 +244,7 @@ export async function syncAgentDocs(targetDir: string, options: SyncOptions): Pr
     skipped: [],
   };
 
-  const wuPaths = createWuPaths({ projectRoot: targetDir });
-  const wuDir = wuPaths.WU_DIR().split(path.sep).join('/');
-  const tasksDir = path.posix.dirname(wuDir);
-  const onboardingPath = wuPaths.ONBOARDING_DIR().split(path.sep).join('/');
-  const quickRefPath = wuPaths.QUICK_REF_PATH().split(path.sep).join('/');
-  const operationsPath = path.posix.dirname(tasksDir);
-  const backlogPath = wuPaths.BACKLOG().split(path.sep).join('/');
-  const statusPath = wuPaths.STATUS().split(path.sep).join('/');
-
-  const tokens = {
-    DATE: getCurrentDate(),
-    PROJECT_ROOT: '<project-root>',
-    QUICK_REF_LINK: quickRefPath,
-    DOCS_OPERATIONS_PATH: operationsPath,
-    DOCS_TASKS_PATH: tasksDir,
-    DOCS_ONBOARDING_PATH: onboardingPath,
-    DOCS_WU_DIR_PATH: wuDir,
-    DOCS_TEMPLATES_DIR_PATH: `${tasksDir}/templates`,
-    DOCS_BACKLOG_PATH: backlogPath,
-    DOCS_STATUS_PATH: statusPath,
-  };
+  const tokens = buildCoreDocTokens(targetDir);
 
   const { onboardingDir } = resolveDocsSyncDirectories(targetDir);
 
@@ -310,9 +318,7 @@ export async function syncCoreDocs(targetDir: string, options: SyncOptions): Pro
     skipped: [],
   };
 
-  const tokens = {
-    DATE: getCurrentDate(),
-  };
+  const tokens = buildCoreDocTokens(targetDir);
 
   for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
     const templateContent = loadTemplate(templatePath);

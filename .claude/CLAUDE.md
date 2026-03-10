@@ -2,7 +2,7 @@
 
 **Start here:** Read [AGENTS.md](../AGENTS.md) for universal startup rules, then [LUMENFLOW.md](../LUMENFLOW.md) for the canonical workflow.
 
-For complete onboarding: [starting-prompt.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md).
+For complete onboarding: [starting-prompt.md](../docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md).
 
 This file contains **Claude Code-specific** configuration only. Do not duplicate workflow rules from LUMENFLOW.md here.
 
@@ -74,7 +74,7 @@ Claude Code has tool-level hooks (PreToolUse) that validate worktree paths, but 
 
 **Exception:** Reading YAML files with the Read tool is acceptable.
 
-For details, see the [YAML editing policy](.lumenflow/rules/yaml-editing-policy.md) and [agent safety architecture](docs/04-operations/_frameworks/lumenflow/agent-safety-architecture.md).
+For details, see the [YAML editing policy](../.lumenflow/rules/yaml-editing-policy.md) and [agent safety architecture](../docs/04-operations/_frameworks/lumenflow/agent-safety-architecture.md).
 
 ## Quick Reminders
 

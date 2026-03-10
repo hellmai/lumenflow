@@ -42,7 +42,7 @@ import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { runCLI } from './cli-entry-point.js';
 import { generateScriptsFromManifest } from './public-manifest.js';
-import { loadTemplate, processTemplate, CORE_DOC_TEMPLATE_PATHS } from './docs-sync.js';
+import { loadTemplate, processTemplate, CORE_DOC_TEMPLATE_PATHS, buildCoreDocTokens } from './docs-sync.js';
 
 /** Log prefix for console output */
 const LOG_PREFIX = '[lumenflow:upgrade]';
@@ -580,10 +580,18 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
  * @param targetDir - Project root directory to check
  * @returns Object with stale flag and list of stale file paths
  */
+/**
+ * WU-2371: Date pattern used to normalize date tokens for staleness comparison.
+ * Matches YYYY-MM-DD date strings so that date differences don't cause false positives.
+ */
+const DATE_PATTERN = /\d{4}-\d{2}-\d{2}/g;
+const DATE_PLACEHOLDER = 'XXXX-XX-XX';
+
 export function checkDocsStaleness(targetDir: string): { stale: boolean; staleFiles: string[] } {
   const staleFiles: string[] = [];
-  const currentDate = new Date().toISOString().split('T')[0];
-  const tokens = { DATE: currentDate };
+  // WU-2371: Use the full token set (not just DATE) so the rendered template
+  // matches the shape of docs produced by syncCoreDocs / init.
+  const tokens = buildCoreDocTokens(targetDir);
 
   for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
     const filePath = path.join(targetDir, outputFile);
@@ -597,10 +605,14 @@ export function checkDocsStaleness(targetDir: string): { stale: boolean; staleFi
     try {
       const templateContent = loadTemplate(templatePath);
       const processedContent = processTemplate(templateContent, tokens);
-      const templateHash = createHash('sha256').update(processedContent).digest('hex');
+      // WU-2371: Normalize dates before hashing so that a file synced yesterday
+      // isn't reported stale just because the date differs.
+      const normalizedTemplate = processedContent.replace(DATE_PATTERN, DATE_PLACEHOLDER);
+      const templateHash = createHash('sha256').update(normalizedTemplate).digest('hex');
 
       const onDiskContent = readFileSync(filePath, 'utf-8');
-      const onDiskHash = createHash('sha256').update(onDiskContent).digest('hex');
+      const normalizedOnDisk = onDiskContent.replace(DATE_PATTERN, DATE_PLACEHOLDER);
+      const onDiskHash = createHash('sha256').update(normalizedOnDisk).digest('hex');
 
       if (templateHash !== onDiskHash) {
         staleFiles.push(outputFile);

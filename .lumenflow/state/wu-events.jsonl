@@ -3071,3 +3071,5 @@
 {"type":"checkpoint","wuId":"WU-2369","timestamp":"2026-03-10T12:51:14.396Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2369.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2371","timestamp":"2026-03-10T12:51:31.203Z","lane":"Framework: CLI WU Commands","title":"Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links"}
 {"type":"complete","wuId":"WU-2369","timestamp":"2026-03-10T12:53:09.503Z"}
+{"type":"checkpoint","wuId":"WU-2371","timestamp":"2026-03-10T12:51:44.185Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2371","timestamp":"2026-03-10T12:52:08.542Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
