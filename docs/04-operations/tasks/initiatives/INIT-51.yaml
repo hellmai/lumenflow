@@ -6,7 +6,7 @@ description: 'Remove the remaining repo-shape, package-manager, and web-framewor
   or Next.js-style defaults. Scope is deliberately bounded: keep LumenFlow as a Node-distributed
   CLI, but make the workflow operate correctly across a defined matrix of consumer stack archetypes
   instead of monorepo-web defaults.'
-status: open
+status: in_progress
 priority: P2
 owner: 'Framework: Core'
 created: 2026-03-10
@@ -30,5 +30,3 @@ success_metrics:
   - A documented archetype matrix defines what tech-stack portability means for LumenFlow and is
     backed by smoke validation.
 labels: []
-related_plan: lumenflow://plans/INIT-51-tech-stack-portability-baselin.md
-phase_execution_order: sequential
