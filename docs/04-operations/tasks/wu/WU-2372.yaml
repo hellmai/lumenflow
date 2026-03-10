@@ -2,7 +2,7 @@ id: WU-2372
 title: Enforce command discovery and block CLI output truncation in spawned agents
 lane: 'Content: Specs Governance'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -60,3 +60,11 @@ acceptance:
   - .windsurf/rules/lumenflow.md and .cursor/rules/lumenflow.md reference AGENTS.md command
     discovery rules
   - No hook changes - enforcement is guidance-only across all vendor configs
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2372
+claimed_at: 2026-03-10T13:08:26.038Z
+baseline_main_sha: 7e67a3c2965ee6a666b1243a56516950b2fc32b3
+session_id: 11066507-6da2-4417-81a3-7ec0c00dba59
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T13:08:26.044Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2372 — Enforce command discovery and block CLI output truncation in spawned agents](wu/WU-2372.yaml)
 
 ## Completed
 
