@@ -18,12 +18,19 @@ artifacts:
   - .lumenflow/stamps/WU-2358.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: SPDX header and docs-only changes, no logic to test'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T08:02:23.660Z
+worktree_path: worktrees/framework-core-wu-2358
+session_id: 80b943ce-233d-4d6b-b552-279e9375baeb
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T08:02:23.667Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -34,11 +41,3 @@ acceptance:
   - All kernel/src files have AGPL-3.0-only SPDX headers
   - No Apache-2.0 headers remain in kernel package
   - mcp-setup.mdx no longer claims private package access
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-wu-2358
-claimed_at: 2026-03-10T08:02:23.660Z
-baseline_main_sha: c2bb3ad245fd3599bbdf2002cb84fac426316515
-session_id: 80b943ce-233d-4d6b-b552-279e9375baeb
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T08:02:23.667Z
