@@ -1,0 +1,57 @@
+id: WU-2376
+title: Resolve generic lifecycle commands from config instead of pnpm/turbo literals
+lane: 'Framework: Core'
+type: refactor
+status: ready
+priority: P2
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/core/src/lumenflow-config.ts
+  - packages/@lumenflow/core/src/wu-done-docs-generate.ts
+  - packages/@lumenflow/core/src/lane-inference.ts
+  - packages/@lumenflow/cli/src/lane-edit.ts
+  - packages/@lumenflow/cli/src/lane-create.ts
+  - packages/@lumenflow/cli/src/lane-validate.ts
+  - packages/@lumenflow/cli/src/lane-lock.ts
+  - packages/@lumenflow/cli/src/lane-setup.ts
+  - packages/@lumenflow/cli/src/lane-status.ts
+  - packages/@lumenflow/cli/src/state-doctor.ts
+  - packages/@lumenflow/cli/src/doctor.ts
+  - packages/@lumenflow/cli/src/config-set.ts
+  - packages/@lumenflow/cli/src/config-get.ts
+tests:
+  manual:
+    - Run a lane/config/doctor command in a repo without workspace.yaml and verify the guidance no longer hardcodes pnpm workspace-init
+    - Trigger wu:done docs regeneration in a fixture repo and verify the docs-generate invocation is resolved through the portable command path
+  unit:
+    - packages/@lumenflow/core/src/__tests__/lumenflow-config.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-done-docs-detection.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-done-docs-integration.test.ts
+    - packages/@lumenflow/cli/src/__tests__/workspace-init.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2376.done
+dependencies: []
+initiative: INIT-51
+phase: 1
+spec_refs:
+  - lumenflow://plans/INIT-51-tech-stack-portability-baselin.md
+risks: []
+notes: 'Sized per wu-sizing-guide.md as one coherent operator-visible outcome: generic lifecycle command portability. Estimated medium complexity; keep as one WU with checkpoint-resume rather than splitting by individual command surface.'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 18
+  estimated_tool_calls: 80
+  strategy: checkpoint-resume
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: generic lifecycle paths still hardcode package-manager and workspace-tool commands, even though LumenFlow already models configurable package managers and should not assume Turborepo or pnpm in consumer repos. Problem: missing-workspace guidance and docs regeneration currently emit pnpm-specific or turbo-specific commands in core and CLI surfaces, which breaks the portability baseline for non-pnpm or non-turbo consumer repos. Solution: introduce shared portable command rendering/execution for generic lifecycle paths and replace hardcoded workspace-init and docs:generate literals where those commands are meant to be config- or capability-driven.'
+acceptance:
+  - Generic workspace-init guidance in core and CLI surfaces no longer hardcodes pnpm and instead renders the configured or portable bootstrap command consistently
+  - wu:done documentation regeneration no longer hardcodes 'pnpm turbo docs:generate' when a resolved docs generation command is available
+  - Automated tests cover both the portable guidance path and docs-generate execution path
