@@ -8,7 +8,7 @@ created: 2026-03-10
 code_paths:
   - packages/@lumenflow/initiatives/src/orchestrator/formatting.ts
   - packages/@lumenflow/cli/src/orchestrate-initiative.ts
-  - packages/@lumenflow/core/src/spawn-task-builder.ts
+  - packages/@lumenflow/initiatives/src/orchestrator/types.ts
 tests:
   manual:
     - Run pnpm orchestrate:initiative -i INIT-040 -c --client codex-cli and verify output is
