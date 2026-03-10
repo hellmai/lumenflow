@@ -6,11 +6,9 @@ status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
-  - packages/@lumenflow/cli/src/gates.ts
   - packages/@lumenflow/cli/src/gates-runners.ts
   - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
   - packages/@lumenflow/core/src/schemas/gates-section-config.ts
-  - .lumenflow/templates/manifest.yaml
 tests:
   manual:
     - Change a database schema fixture without a migration and confirm the gate fails with
@@ -31,10 +29,17 @@ risks: []
 notes: Triggered by repeated cases where DB work lands without migrations or companion verification
   and the gap is only discovered later in the lifecycle.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T12:20:43.702Z
+worktree_path: worktrees/framework-core-validation-wu-2368
+session_id: a6a8e7d2-01bb-48cf-bdb7-a64a0b334c4b
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T12:20:43.708Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -58,11 +63,3 @@ acceptance:
   - Existing configurable co-change support remains backwards compatible for repos with custom
     patterns
   - Regression tests cover trigger and require pattern enforcement plus DB-risk verification routing
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2368
-claimed_at: 2026-03-10T12:20:43.702Z
-baseline_main_sha: 8e50cd7637cc0c60d370556d48544ec54bd445a6
-session_id: a6a8e7d2-01bb-48cf-bdb7-a64a0b334c4b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T12:20:43.708Z
