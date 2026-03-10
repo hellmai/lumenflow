@@ -14,6 +14,7 @@ Before orchestrating an initiative, ensure:
 2. All WUs are linked to the initiative via `initiative:add-wu`
 3. Dependencies between WUs are defined (blocking relationships)
 4. Lane lifecycle is locked (`pnpm lane:status` shows `locked`)
+5. The initiative is not made of artificial micro-WUs that should really be one coherent WU
 
 ---
 
@@ -34,6 +35,8 @@ The dry-run output shows:
 - **Waves**: Groups of WUs that can run in parallel (computed via topological sort)
 - **Bottleneck WUs**: WUs that block the most downstream work (prioritize these)
 - **Recommended execution mode**: Checkpoint-per-wave vs continuous
+
+Before accepting the wave plan, sanity-check the decomposition. If several WUs sit in the same lane, describe one atomic outcome, and cannot ship independently, consolidate them instead of orchestrating them.
 
 ### Step 2: Choose Execution Mode
 

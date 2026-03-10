@@ -154,20 +154,20 @@ automatically, and `.lumenflow/templates/` remains optional unless you want cust
 
 ### WU Maintenance
 
-| Command                          | Description                              |
-| -------------------------------- | ---------------------------------------- |
-| `pnpm wu:validate --id WU-XXX`   | Validate WU spec                         |
-| `pnpm wu:preflight --id WU-XXX`  | Pre-flight checks before wu:done         |
-| `pnpm wu:verify --id WU-XXX`    | Verify WU completion (stamp, commit, clean tree) |
-| `pnpm wu:recover --id WU-XXX`    | Analyze and fix WU state inconsistencies |
-| `pnpm wu:repair --id WU-XXX`     | Repair WU state issues                   |
-| `pnpm wu:prune`                  | Clean stale worktrees                    |
-| `pnpm wu:cleanup --id WU-XXX`    | Cleanup after PR merge (PR-only)         |
-| `pnpm wu:deps --id WU-XXX`       | Show WU dependencies                     |
-| `pnpm wu:infer-lane --id WU-XXX` | Infer lane from code paths/description   |
-| `pnpm wu:delete --id WU-XXX`     | Delete WU spec and cleanup               |
-| `pnpm wu:unlock-lane --lane <L>` | Unlock stuck lane                        |
-| `pnpm wu:proto --lane <Lane>`    | Create WU prototype (lightweight draft)  |
+| Command                          | Description                                      |
+| -------------------------------- | ------------------------------------------------ |
+| `pnpm wu:validate --id WU-XXX`   | Validate WU spec                                 |
+| `pnpm wu:preflight --id WU-XXX`  | Pre-flight checks before wu:done                 |
+| `pnpm wu:verify --id WU-XXX`     | Verify WU completion (stamp, commit, clean tree) |
+| `pnpm wu:recover --id WU-XXX`    | Analyze and fix WU state inconsistencies         |
+| `pnpm wu:repair --id WU-XXX`     | Repair WU state issues                           |
+| `pnpm wu:prune`                  | Clean stale worktrees                            |
+| `pnpm wu:cleanup --id WU-XXX`    | Cleanup after PR merge (PR-only)                 |
+| `pnpm wu:deps --id WU-XXX`       | Show WU dependencies                             |
+| `pnpm wu:infer-lane --id WU-XXX` | Infer lane from code paths/description           |
+| `pnpm wu:delete --id WU-XXX`     | Delete WU spec and cleanup                       |
+| `pnpm wu:unlock-lane --lane <L>` | Unlock stuck lane                                |
+| `pnpm wu:proto --lane <Lane>`    | Create WU prototype (lightweight draft)          |
 
 ---
 
