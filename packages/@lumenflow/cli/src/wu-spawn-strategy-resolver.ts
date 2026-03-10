@@ -541,12 +541,13 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
     );
   }
 
+  // WU-2359: --evidence-only removed, but keep early exit for delegate conflict
   if (explicitDelegation && args.evidenceOnly) {
     die(
-      'wu:delegate does not support --evidence-only.\n\n' +
+      '--evidence-only has been removed (WU-2359).\n\n' +
         'Use:\n' +
         '  - pnpm wu:delegate --id WU-123 --parent-wu WU-100 --client <client>  # delegation prompt + lineage\n' +
-        '  - pnpm wu:brief --id WU-123 --evidence-only                           # self-implementation evidence only',
+        '  - pnpm wu:brief --id WU-123 --client <client>                         # handoff prompt + evidence',
     );
   }
 
@@ -640,16 +641,15 @@ export async function runBriefLogic(options: RunBriefOptions = {}): Promise<void
     }
   };
 
+  // WU-2359: --evidence-only removed. wu:brief always gives full context.
   if (args.evidenceOnly) {
-    await recordEvidenceOrFail({ evidenceMode: 'evidence-only' });
-    console.log(
-      `${effectiveLogPrefix} Recorded wu:brief evidence for ${id} (mode=evidence-only; no handoff prompt generated).`,
+    die(
+      `--evidence-only has been removed (WU-2359).\n\n` +
+        `wu:brief now always outputs full WU context AND records evidence.\n` +
+        `There is no longer a need for a silent evidence-only mode.\n\n` +
+        `Use instead:\n` +
+        `  pnpm wu:brief --id ${id} --client <client>`,
     );
-    console.log(`${effectiveLogPrefix} Continue implementing ${id} in the current session.`);
-    console.log(
-      `${effectiveLogPrefix} Need a handoff prompt instead? Run: pnpm wu:brief --id ${id} --client <client>`,
-    );
-    return;
   }
 
   // WU-1240: Generate memory context if not skipped

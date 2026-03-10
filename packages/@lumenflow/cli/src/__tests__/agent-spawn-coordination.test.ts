@@ -578,16 +578,21 @@ describe('Agent Spawn Coordination Integration Tests (WU-1363)', () => {
     });
 
     describe('spawn provenance enforcement for completion (WU-1599)', () => {
-      it('should enforce provenance for initiative-governed WUs without --force', async () => {
+      it('should warn (not block) for non-spawned initiative WUs (WU-2359)', async () => {
         process.chdir(tempDir);
+        const warn = vi.fn();
 
-        await expect(
-          enforceSpawnProvenanceForDone(
-            TEST_WU_ID,
-            { initiative: 'INIT-023', lane: TEST_LANE },
-            { baseDir: tempDir, force: false },
-          ),
-        ).rejects.toThrow('Missing spawn provenance');
+        await enforceSpawnProvenanceForDone(
+          TEST_WU_ID,
+          { initiative: 'INIT-023', lane: TEST_LANE },
+          { baseDir: tempDir, force: false, warn },
+        );
+
+        // WU-2359: non-spawned initiative WUs get a warning, not a hard-block
+        expect(warn).toHaveBeenCalled();
+        const warnMessage = warn.mock.calls.map((c) => c.join(' ')).join('\n');
+        expect(warnMessage).toContain('WU-2359');
+        expect(warnMessage).toContain('spawn provenance');
       });
 
       it('should allow legacy/manual override with --force and record audit signal', async () => {

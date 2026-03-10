@@ -243,13 +243,11 @@ export function buildMissingWuBriefEvidenceMessage(id: string): string {
     `Missing wu:brief evidence for ${id}.\n\n` +
     `Completion policy requires an auditable wu:brief execution record for feature/bug WUs.\n\n` +
     `Fix options:\n` +
-    `  1. If you need a real handoff prompt for another agent, generate prompt + evidence:\n` +
+    `  1. Generate handoff prompt + evidence (also works for self-implementation):\n` +
     `     pnpm wu:brief --id ${id} --client <client>\n` +
-    `  2. If you are implementing this WU yourself in the current session, record evidence only:\n` +
-    `     pnpm wu:brief --id ${id} --evidence-only\n` +
-    `  3. Retry completion:\n` +
+    `  2. Retry completion:\n` +
     `     pnpm wu:done --id ${id}\n` +
-    `  4. Legacy/manual override (audited):\n` +
+    `  3. Legacy/manual override (audited):\n` +
     `     pnpm wu:done --id ${id} --force`
   );
 }
@@ -262,13 +260,11 @@ export function buildMissingWuBriefEvidenceMessageForPrep(
     `Missing wu:brief evidence for ${id} (policy=${mode}).\n\n` +
     `wu:prep enforces wu:brief evidence when policy mode is required.\n\n` +
     `Fix options:\n` +
-    `  1. If you need a real handoff prompt for another agent, generate prompt + evidence:\n` +
+    `  1. Generate handoff prompt + evidence (also works for self-implementation):\n` +
     `     pnpm wu:brief --id ${id} --client <client>\n` +
-    `  2. If self-implementing, record evidence only:\n` +
-    `     pnpm wu:brief --id ${id} --evidence-only\n` +
-    `  3. Retry prep:\n` +
+    `  2. Retry prep:\n` +
     `     pnpm wu:prep --id ${id}\n` +
-    `  4. Emergency audited bypass (requires explicit reason):\n` +
+    `  3. Emergency audited bypass (requires explicit reason):\n` +
     `     pnpm wu:prep --id ${id} --force --reason "<why bypass is required>"`
   );
 }
@@ -299,8 +295,8 @@ function buildStaleWuBriefEvidenceMessageForPrep(options: {
     `Fix options:\n` +
     `  1. If you need a fresh handoff prompt, rerun:\n` +
     `     pnpm wu:brief --id ${options.id} --client <client>\n` +
-    `  2. If self-implementing, refresh evidence only:\n` +
-    `     pnpm wu:brief --id ${options.id} --evidence-only\n` +
+    `  2. If self-implementing, run wu:brief for context + evidence:\n` +
+    `     pnpm wu:brief --id ${options.id} --client <client>\n` +
     `  3. Retry prep:\n` +
     `     pnpm wu:prep --id ${options.id}\n` +
     `  4. Emergency audited bypass (requires explicit reason):\n` +
@@ -321,8 +317,8 @@ function buildStaleWuBriefEvidenceMessageForDone(options: {
     `Fix options:\n` +
     `  1. If you need a fresh handoff prompt, rerun:\n` +
     `     pnpm wu:brief --id ${options.id} --client <client>\n` +
-    `  2. If self-implementing, refresh evidence only:\n` +
-    `     pnpm wu:brief --id ${options.id} --evidence-only\n` +
+    `  2. If self-implementing, run wu:brief for context + evidence:\n` +
+    `     pnpm wu:brief --id ${options.id} --client <client>\n` +
     `  3. Retry completion:\n` +
     `     pnpm wu:done --id ${options.id}\n` +
     `  4. Legacy/manual override (audited):\n` +
@@ -729,6 +725,10 @@ async function recordSpawnProvenanceOverride(
 
 /**
  * Enforce spawn provenance policy for initiative-governed and explicitly delegated WUs.
+ *
+ * WU-2359: Non-spawned initiative WUs (no delegation registry entry) get a warning
+ * instead of a hard-block. Only explicitly delegated/spawned WUs are hard-blocked
+ * when provenance is incomplete.
  */
 export async function enforceSpawnProvenanceForDone(
   id: string,
@@ -736,6 +736,10 @@ export async function enforceSpawnProvenanceForDone(
   options: {
     baseDir?: string;
     force?: boolean;
+    warn?: (message: string) => void;
+    blocker?: (message: string) => void;
+    /** @internal Test injection for delegation registry store */
+    _storeOverride?: { getByTarget: (id: string) => SpawnEntryLike | null };
   } = {},
 ): Promise<void> {
   const initiativeId =
@@ -743,36 +747,57 @@ export async function enforceSpawnProvenanceForDone(
   const enforceForInitiative = shouldEnforceSpawnProvenance(doc);
   const baseDir = options.baseDir ?? process.cwd();
   const force = options.force === true;
-  const stateDir = resolveStateDir(baseDir);
-  const store = new DelegationRegistryStore(stateDir);
-  await store.load();
+  const warn = options.warn ?? console.warn;
+  const blocker = options.blocker ?? ((message: string) => die(message));
 
-  const spawnEntry = store.getByTarget(id) as SpawnEntryLike | null;
+  let spawnEntry: SpawnEntryLike | null;
+  if (options._storeOverride) {
+    spawnEntry = options._storeOverride.getByTarget(id);
+  } else {
+    const stateDir = resolveStateDir(baseDir);
+    const store = new DelegationRegistryStore(stateDir);
+    await store.load();
+    spawnEntry = store.getByTarget(id) as SpawnEntryLike | null;
+  }
+
   const enforceForDelegation = hasDelegationIntent(spawnEntry);
 
   if (!enforceForInitiative && !enforceForDelegation) {
     return;
   }
 
+  // WU-2359: No spawn entry means this WU was NOT created through spawn/delegate.
+  // It just has an initiative: field. Warn instead of blocking.
   if (!spawnEntry) {
-    if (!force) {
-      die(buildMissingSpawnProvenanceMessage(id, initiativeId));
+    if (force) {
+      warn(
+        `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-1599: spawn provenance override accepted for ${id} (${initiativeId}) via --force`,
+      );
+      await recordSpawnProvenanceOverride(id, doc, baseDir);
+      return;
     }
 
-    console.warn(
-      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-1599: spawn provenance override accepted for ${id} (${initiativeId}) via --force`,
+    // Non-spawned initiative WU: warn only (WU-2359)
+    warn(
+      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2359: No spawn provenance for initiative WU ${id} (${initiativeId}). ` +
+        `This is expected for non-orchestrated work. ` +
+        `To register lineage: pnpm wu:delegate --id ${id} --parent-wu WU-XXXX`,
     );
-    await recordSpawnProvenanceOverride(id, doc, baseDir);
     return;
   }
+
+  // From here on, spawnEntry exists — this WU was explicitly spawned/delegated.
+  // These paths remain hard-blocking because the delegation ceremony was started.
+  const stateDir = resolveStateDir(baseDir);
 
   if (hasSpawnPickupEvidence(spawnEntry)) {
     if (!hasSpawnBriefAttestation(spawnEntry)) {
       if (!force) {
-        die(buildMissingSpawnBriefAttestationMessage(id, initiativeId));
+        blocker(buildMissingSpawnBriefAttestationMessage(id, initiativeId));
+        return;
       }
 
-      console.warn(
+      warn(
         `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2301: brief attestation override accepted for ${id} (${initiativeId}) via --force`,
       );
       await recordSpawnProvenanceOverride(id, doc, baseDir);
@@ -782,10 +807,11 @@ export async function enforceSpawnProvenanceForDone(
     const attestedPromptHash = spawnEntry.briefAttestation?.promptHash;
     if (!attestedPromptHash) {
       if (!force) {
-        die(buildMissingSpawnBriefAttestationMessage(id, initiativeId));
+        blocker(buildMissingSpawnBriefAttestationMessage(id, initiativeId));
+        return;
       }
 
-      console.warn(
+      warn(
         `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2301: missing prompt hash override accepted for ${id} (${initiativeId}) via --force`,
       );
       await recordSpawnProvenanceOverride(id, doc, baseDir);
@@ -797,7 +823,7 @@ export async function enforceSpawnProvenanceForDone(
       hashMatchesEvidence = await hasMatchingWuBriefEvidenceHash(stateDir, id, attestedPromptHash);
     } catch (error) {
       if (!force) {
-        die(
+        blocker(
           `Could not verify spawn brief attestation for ${id}.\n\n` +
             `State path: ${stateDir}\n` +
             `Error: ${getErrorMessage(error)}\n\n` +
@@ -805,9 +831,10 @@ export async function enforceSpawnProvenanceForDone(
             `  1. Repair/restore state store, then rerun wu:done\n` +
             `  2. Use --force for audited override when recovery is not possible`,
         );
+        return;
       }
 
-      console.warn(
+      warn(
         `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2301: attestation verification failure override accepted for ${id} (${initiativeId}) via --force`,
       );
       await recordSpawnProvenanceOverride(id, doc, baseDir);
@@ -819,10 +846,11 @@ export async function enforceSpawnProvenanceForDone(
     }
 
     if (!force) {
-      die(buildSpawnBriefAttestationMismatchMessage(id, initiativeId));
+      blocker(buildSpawnBriefAttestationMismatchMessage(id, initiativeId));
+      return;
     }
 
-    console.warn(
+    warn(
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2301: attestation mismatch override accepted for ${id} (${initiativeId}) via --force`,
     );
     await recordSpawnProvenanceOverride(id, doc, baseDir);
@@ -830,10 +858,11 @@ export async function enforceSpawnProvenanceForDone(
   }
 
   if (!force) {
-    die(buildMissingSpawnPickupEvidenceMessage(id, initiativeId));
+    blocker(buildMissingSpawnPickupEvidenceMessage(id, initiativeId));
+    return;
   }
 
-  console.warn(
+  warn(
     `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-1605: pickup evidence override accepted for ${id} (${initiativeId}) via --force`,
   );
   await recordSpawnProvenanceOverride(id, doc, baseDir);

@@ -483,12 +483,13 @@ export const WU_OPTIONS: Record<string, WUOption> = {
     isNegated: true,
   },
 
-  // WU-2222: Record evidence without generating spawn prompt output
+  // WU-2222: --evidence-only removed by WU-2359
+  // Flag kept as deprecated error to guide migration.
   evidenceOnly: {
     name: 'evidenceOnly',
     flags: '--evidence-only',
     description:
-      'Record wu:brief evidence without generating handoff prompt output (self-implementation path)',
+      '[DEPRECATED] Removed in WU-2359. Use wu:brief --client <client> instead (always gives full context + records evidence).',
   },
 
   // WU-1542: Mandatory agent enforcement for wu:done
