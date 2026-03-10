@@ -1,7 +1,7 @@
 id: WU-2356
 title: Align sizing and initiative guidance across root and template docs
 lane: 'Content: Specs Governance'
-type: documentation
+type: bug
 status: in_progress
 priority: P1
 created: 2026-03-10
@@ -24,8 +24,14 @@ artifacts:
   - .lumenflow/stamps/WU-2356.done
 dependencies: []
 risks: []
-notes: Expanded after sync:templates --check-drift surfaced additional stale onboarding templates
-  that must be aligned for release-clean docs/template validation.
+notes: >-
+  Expanded after sync:templates --check-drift surfaced additional stale onboarding templates that
+  must be aligned for release-clean docs/template validation.
+
+
+  Adjust type from documentation to bug because package template paths under
+  packages/@lumenflow/cli/templates/** are not docs-only paths; exposure remains documentation and
+  the WU stays scoped to docs/template guidance alignment.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
