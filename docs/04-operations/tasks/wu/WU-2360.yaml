@@ -2,7 +2,7 @@ id: WU-2360
 title: Redact internal product and competitor strategy references from public repo
 lane: 'Operations: Tooling'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - apps/docs/src/content/docs/legal/privacy.mdx
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -28,9 +29,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Public repo contains internal strategy language (OpenClaw competitive positioning in INIT plans), internal product names (PatientPath domain in WU specs), and lumenflow-cloud references in WU notes. Redact from current tree going forward.
+description: Public repo contains internal strategy language (OpenClaw competitive positioning in
+  INIT plans), internal product names (PatientPath domain in WU specs), and lumenflow-cloud
+  references in WU notes. Redact from current tree going forward.
 acceptance:
-  - No OpenClaw competitive strategy language in initiative plans (technical comparison in public docs is fine)
+  - No OpenClaw competitive strategy language in initiative plans (technical comparison in public
+    docs is fine)
   - No PatientPath product name or domain in WU specs
   - No lumenflow-cloud references in WU specs or initiative YAMLs
   - Email typo tom@helllm.ai fixed in privacy.mdx
+claimed_mode: worktree
+worktree_path: worktrees/operations-tooling-wu-2360
+claimed_at: 2026-03-10T09:30:53.355Z
+baseline_main_sha: c47b03bbccbbda10fd345c395c672ef1441efc0d
+session_id: 90f6c781-bb62-40da-b70b-f35d731b7930
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T09:30:53.361Z

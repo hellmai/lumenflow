@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2360 — Redact internal product and competitor strategy references from public repo](wu/WU-2360.yaml)
 
 ## Completed
 
