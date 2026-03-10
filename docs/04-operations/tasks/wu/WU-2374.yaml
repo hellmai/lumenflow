@@ -1,0 +1,37 @@
+id: WU-2374
+title: 'Fix spawn prompt parity: stale guide path and verification drift'
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-10
+code_paths:
+  - packages/@lumenflow/core/src/docs-layout-presets.ts
+  - packages/@lumenflow/core/src/spawn-constraints-generator.ts
+  - packages/@lumenflow/core/src/spawn-task-builder.ts
+  - packages/@lumenflow/cli/src/init-templates.ts
+tests:
+  manual:
+    - Run pnpm wu:brief --id WU-001 --client claude-code in lumenflow-cloud and verify preamble references an existing file and verification uses pnpm wu:verify
+  unit:
+    - packages/@lumenflow/core/src/__tests__/spawn-strategy.test.ts
+    - packages/@lumenflow/core/src/__tests__/spawn-constraints-generator.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2374.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Spawn prompts (wu:brief and orchestration) reference files that do not exist in consumer projects. (1) The completeGuidePath default in docs-layout-presets.ts points to docs/_frameworks/lumenflow/lumenflow-complete.md, which is not scaffolded by lumenflow init or docs:sync — onboarding-template-paths.ts only scaffolds onboarding docs. Even lumenflow-agent-capsule.md (which LUMENFLOW.md.template now references) is not scaffolded either. The prompt preamble step 4 sends agents to read a nonexistent file. (2) spawn-constraints-generator.ts and spawn-task-builder.ts emit node packages/@lumenflow/agent/verification which is a monorepo-only path. wu:brief already uses pnpm wu:verify — orchestration/core prompts must be unified to match. Fix both by either scaffolding the referenced doc or changing prompts to reference a doc that actually exists, and unifying verification to pnpm wu:verify.
+acceptance:
+  - Preamble step 4 references a file that exists in consumer projects after lumenflow init
+  - Verification instructions in spawn-constraints-generator.ts and spawn-task-builder.ts use pnpm wu:verify, matching wu:brief
+  - Existing tests in spawn-strategy.test.ts and initiative-orchestrator.test.ts updated to match new paths
