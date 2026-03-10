@@ -11,13 +11,16 @@ code_paths:
   - packages/@lumenflow/core/src/spawn-task-builder.ts
 tests:
   manual:
-    - Run pnpm orchestrate:initiative -i INIT-040 -c --client codex-cli and verify output is markdown not XML
+    - Run pnpm orchestrate:initiative -i INIT-040 -c --client codex-cli and verify output is
+      markdown not XML
   unit:
     - packages/@lumenflow/initiatives/__tests__/initiative-orchestrator.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2375.done
 dependencies: []
+blocked_by:
+  - WU-2374
 spec_refs:
   - lumenflow://plans/WU-2375-client-aware-orchestration.md
 risks: []
@@ -30,7 +33,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: orchestrate:initiative hardcodes claude-code strategy in formatting.ts (generateEmbeddedSpawnPrompt and formatExecutionPlanWithEmbeddedSpawns) and has no --client parameter. wu:brief already handles client-specific output — Codex gets markdown, Claude gets Task XML — via wu-spawn-strategy-resolver.ts. But orchestration always emits Claude-style Task XML regardless of which agent platform will consume it. The default fallback in wu-spawn-strategy-resolver.ts is also Claude. Add --client to orchestrate:initiative, pass client strategy through formatting.ts instead of hardcoding SpawnStrategyFactory.create claude-code, and choose output format by client capability (XML invocation for Claude, markdown prompt for Codex/Gemini). This makes orchestration vendor-agnostic, consistent with the rest of the spawn pipeline.
+description: orchestrate:initiative hardcodes claude-code strategy in formatting.ts
+  (generateEmbeddedSpawnPrompt and formatExecutionPlanWithEmbeddedSpawns) and has no --client
+  parameter. wu:brief already handles client-specific output — Codex gets markdown, Claude gets Task
+  XML — via wu-spawn-strategy-resolver.ts. But orchestration always emits Claude-style Task XML
+  regardless of which agent platform will consume it. The default fallback in
+  wu-spawn-strategy-resolver.ts is also Claude. Add --client to orchestrate:initiative, pass client
+  strategy through formatting.ts instead of hardcoding SpawnStrategyFactory.create claude-code, and
+  choose output format by client capability (XML invocation for Claude, markdown prompt for
+  Codex/Gemini). This makes orchestration vendor-agnostic, consistent with the rest of the spawn
+  pipeline.
 acceptance:
   - orchestrate:initiative accepts --client parameter (claude-code, codex-cli, gemini-cli)
   - formatting.ts passes client strategy through instead of hardcoding claude-code

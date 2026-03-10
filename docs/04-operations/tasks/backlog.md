@@ -20,12 +20,12 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2375 — Make orchestration client-capability-aware instead of Claude-only](wu/WU-2375.yaml) — Framework: CLI WU Commands
-- [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
+- [WU-2374 — Fix spawn prompt parity: stale guide path and verification drift](wu/WU-2374.yaml) — Framework: CLI WU Commands
+- [WU-2375 — Make orchestration client-capability-aware instead of Claude-only](wu/WU-2375.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
