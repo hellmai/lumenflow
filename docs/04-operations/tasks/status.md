@@ -5,6 +5,7 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2376 — Resolve generic lifecycle commands from config instead of pnpm/turbo literals](wu/WU-2376.yaml)
+- [WU-2375 — Make orchestration client-capability-aware instead of Claude-only](wu/WU-2375.yaml)
 
 ## Completed
 

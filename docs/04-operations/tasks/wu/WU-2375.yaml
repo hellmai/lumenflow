@@ -2,7 +2,7 @@ id: WU-2375
 title: Make orchestration client-capability-aware instead of Claude-only
 lane: 'Framework: CLI Orchestration'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -50,3 +50,11 @@ acceptance:
   - formatting.ts passes client strategy through instead of hardcoding claude-code
   - 'Output format varies by client capability: Task XML for Claude, markdown for Codex/Gemini'
   - Default fallback when --client is omitted produces a generic format usable by any client
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-orchestration-wu-2375
+claimed_at: 2026-03-10T16:20:33.207Z
+baseline_main_sha: 732283b7e3bc3c0a709a1ac6474cf5a706fc9f04
+session_id: 0843c8ca-2d30-4094-9a5b-f483c11c3b92
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T16:20:33.212Z

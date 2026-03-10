@@ -3103,3 +3103,4 @@
 {"type":"checkpoint","wuId":"WU-2374","timestamp":"2026-03-10T15:55:32.981Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2374.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2374","timestamp":"2026-03-10T15:57:00.097Z"}
 {"type":"claim","wuId":"WU-2376","timestamp":"2026-03-10T16:19:51.853Z","lane":"Framework: Core","title":"Resolve generic lifecycle commands from config instead of pnpm/turbo literals"}
+{"type":"claim","wuId":"WU-2375","timestamp":"2026-03-10T16:20:33.236Z","lane":"Framework: CLI Orchestration","title":"Make orchestration client-capability-aware instead of Claude-only"}
