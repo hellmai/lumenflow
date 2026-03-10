@@ -18,10 +18,12 @@ code_paths:
   - docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
 tests:
   manual:
-    - Configure the migration-state verification hook with a failing fixture command, run a
-      schema-affecting WU through wu:prep, and confirm the lifecycle fails with actionable guidance
-    - Configure the hook with a passing fixture command, run the same schema-affecting WU through
-      gates/wu:prep, and confirm the lifecycle passes
+    - Configure the migration-state verification hook with a failing fixture command
+    - run a schema-affecting WU through wu:prep
+    - and confirm the lifecycle fails with actionable guidance
+    - Configure the hook with a passing fixture command
+    - run the same schema-affecting WU through gates/wu:prep
+    - and confirm the lifecycle passes
     - Run gates for a non-DB WU with the hook configured and confirm no migration-state verification
       command is invoked
     - Review the internal agent-facing docs and Starlight docs and confirm both explain
@@ -48,7 +50,11 @@ notes: >-
   feature is discoverable to both repo maintainers and spawned agents, not just workspace config
   readers.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T18:19:56.630Z
+worktree_path: worktrees/framework-core-validation-wu-2380
+session_id: 36dcca29-b2cd-41e1-9960-588de55dd7e4
 exposure: backend-only
 sizing_estimate:
   estimated_files: 8
@@ -56,6 +62,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T18:19:56.638Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -78,11 +87,3 @@ acceptance:
     project-defined verification, not an automatic production migration runner'
   - Internal agent docs and Starlight docs explain when migration-state verification runs, what it
     checks, and how agents should respond when it fails
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2380
-claimed_at: 2026-03-10T18:19:56.630Z
-baseline_main_sha: a2bdfd00ca03c600619cf50d7ccdd1c85ac6f477
-session_id: 36dcca29-b2cd-41e1-9960-588de55dd7e4
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T18:19:56.638Z
