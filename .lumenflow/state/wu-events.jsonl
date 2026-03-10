@@ -3029,3 +3029,5 @@
 {"type":"checkpoint","wuId":"WU-2363","timestamp":"2026-03-10T10:54:21.370Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2363.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2363","timestamp":"2026-03-10T10:56:30.547Z"}
 {"type":"claim","wuId":"WU-2364","timestamp":"2026-03-10T10:56:46.751Z","lane":"Framework: CLI WU Commands","title":"plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename"}
+{"type":"checkpoint","wuId":"WU-2364","timestamp":"2026-03-10T10:56:58.013Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2364","timestamp":"2026-03-10T10:57:04.247Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
