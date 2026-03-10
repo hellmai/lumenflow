@@ -15,11 +15,20 @@ code_paths:
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
   - packages/@lumenflow/cli/templates/core/AGENTS.md.template
   - packages/@lumenflow/cli/templates/vendors/
+  - packages/@lumenflow/cli/src/init-templates.ts
 tests:
   manual:
-    - Run pnpm docs:sync --force in a test workspace and confirm LUMENFLOW.md carries Before You Begin section
+    - Run pnpm docs:sync --force in a test workspace and confirm LUMENFLOW.md carries Before You
+      Begin section
     - Verify CLAUDE.md no longer duplicates Quick Start or Core Principles from LUMENFLOW.md
     - Verify vendor overlay files reference LUMENFLOW.md instead of duplicating workflow
+    - Verify LUMENFLOW.md has Before You Begin section before Quick Start with three startup rules
+    - Verify AGENTS.md has First Session bootstrap block pointing to LUMENFLOW.md
+    - Verify CLAUDE.md no longer duplicates Quick Start or Core Principles — only Claude-specific
+      deltas plus pointer to LUMENFLOW.md
+    - Verify .cursor/rules and .windsurf/rules reference LUMENFLOW.md instead of duplicating workflow
+    - Verify all corresponding .template files in packages/@lumenflow/cli/templates/ match deployed
+      copies
   unit: []
   e2e: []
 artifacts:
@@ -28,7 +37,10 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/none
 risks: []
-notes: 'Follows two-layer model: LUMENFLOW.md is canon for shared workflow, AGENTS.md is universal bootstrap, vendor files are deltas only. Related to WU-2363 (sizing guidance consolidation). head/tail rule is scoped: never truncate lumenflow:commands, --help, or error output — not a blanket ban.'
+notes: 'Follows two-layer model: LUMENFLOW.md is canon for shared workflow, AGENTS.md is universal
+  bootstrap, vendor files are deltas only. Related to WU-2363 (sizing guidance consolidation).
+  head/tail rule is scoped: never truncate lumenflow:commands, --help, or error output — not a
+  blanket ban.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
@@ -37,11 +49,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: LUMENFLOW.md is the canonical vendor-agnostic entry point but buries command discovery (line 260) and help-first (line 135). CLAUDE.md, .cursor/rules, .windsurf/rules duplicate Quick Start, Core Principles, and command tables from LUMENFLOW.md, causing drift. Add a Before You Begin section to LUMENFLOW.md with three mandatory startup rules (lumenflow:commands first, --help before first use, never truncate discovery/help/error output). Add short First Session bootstrap to AGENTS.md. Strip duplicated workflow from vendor overlays, replacing with pointer to LUMENFLOW.md plus vendor-specific deltas only. Update all corresponding .template files.
+description: LUMENFLOW.md is the canonical vendor-agnostic entry point but buries command discovery
+  (line 260) and help-first (line 135). CLAUDE.md, .cursor/rules, .windsurf/rules duplicate Quick
+  Start, Core Principles, and command tables from LUMENFLOW.md, causing drift. Add a Before You
+  Begin section to LUMENFLOW.md with three mandatory startup rules (lumenflow:commands first, --help
+  before first use, never truncate discovery/help/error output). Add short First Session bootstrap
+  to AGENTS.md. Strip duplicated workflow from vendor overlays, replacing with pointer to
+  LUMENFLOW.md plus vendor-specific deltas only. Update all corresponding .template files.
 acceptance:
   - LUMENFLOW.md has a Before You Begin section before Quick Start with the three startup rules
   - AGENTS.md has a First Session bootstrap block pointing agents to LUMENFLOW.md
-  - CLAUDE.md contains only Claude-specific deltas (hooks, skills, slash commands) plus pointer to LUMENFLOW.md — no duplicated Quick Start, Core Principles, or command tables
-  - 'Vendor overlay files (.cursor/rules, .windsurf/rules) follow same pattern: pointer to LUMENFLOW.md plus vendor-specific deltas only'
+  - CLAUDE.md contains only Claude-specific deltas (hooks, skills, slash commands) plus pointer to
+    LUMENFLOW.md — no duplicated Quick Start, Core Principles, or command tables
+  - 'Vendor overlay files (.cursor/rules, .windsurf/rules) follow same pattern: pointer to
+    LUMENFLOW.md plus vendor-specific deltas only'
   - All corresponding .template files updated in packages/@lumenflow/cli/templates/
   - No net-new workflow guidance — all shared rules consolidated into LUMENFLOW.md
