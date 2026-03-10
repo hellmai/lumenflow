@@ -2,7 +2,7 @@ id: WU-2363
 title: Tighten WU sizing guidance against over-splitting and remove legacy sizing template
 lane: 'Content: Specs Governance'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -22,7 +22,8 @@ code_paths:
   - packages/@lumenflow/cli/src/init-templates.ts
 tests:
   manual:
-    - Run pnpm docs:sync --force in a test workspace and confirm refreshed onboarding docs carry the new anti-over-splitting guidance
+    - Run pnpm docs:sync --force in a test workspace and confirm refreshed onboarding docs carry the
+      new anti-over-splitting guidance
   unit:
     - packages/@lumenflow/cli/src/__tests__/init.test.ts
     - packages/@lumenflow/cli/src/__tests__/init-quick-ref.test.ts
@@ -41,9 +42,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Agents are over-splitting cohesive work into tiny WUs because the sizing guidance still over-emphasizes decomposition in some copies. Update the canonical sizing guide, the onboarding summary, and upgrade/scaffold templates to bias strongly toward one coherent outcome per WU, add explicit anti-patterns, and align all surfaces. Remove the legacy inline WU sizing template from init-templates.ts to eliminate drift.
+description: Agents are over-splitting cohesive work into tiny WUs because the sizing guidance still
+  over-emphasizes decomposition in some copies. Update the canonical sizing guide, the onboarding
+  summary, and upgrade/scaffold templates to bias strongly toward one coherent outcome per WU, add
+  explicit anti-patterns, and align all surfaces. Remove the legacy inline WU sizing template from
+  init-templates.ts to eliminate drift.
 acceptance:
-  - Canonical sizing guidance explicitly prioritizes cohesion over heuristic-driven splitting and includes anti-pattern examples for over-splitting
-  - Onboarding and upgrade template copies are aligned so existing projects refreshed via docs:sync receive the same guidance
+  - Canonical sizing guidance explicitly prioritizes cohesion over heuristic-driven splitting and
+    includes anti-pattern examples for over-splitting
+  - Onboarding and upgrade template copies are aligned so existing projects refreshed via docs:sync
+    receive the same guidance
   - Legacy inline WU sizing template is removed so only the maintained template path remains
   - Tests updated as needed for scaffolded onboarding docs after removing the legacy inline template
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2363
+claimed_at: 2026-03-10T10:37:44.369Z
+baseline_main_sha: ea9ab4f832089a188e050702b9ab3c7a713340b4
+session_id: 8362d0eb-b470-4611-8fb7-06b0cd5244f3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T10:37:44.375Z

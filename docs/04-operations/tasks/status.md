@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2363 — Tighten WU sizing guidance against over-splitting and remove legacy sizing template](wu/WU-2363.yaml)
 
 ## Completed
 

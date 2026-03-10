@@ -3021,3 +3021,4 @@
 {"type":"checkpoint","wuId":"WU-2362","timestamp":"2026-03-10T10:03:00.906Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2362","timestamp":"2026-03-10T10:03:10.894Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2362","timestamp":"2026-03-10T10:21:59.826Z"}
+{"type":"claim","wuId":"WU-2363","timestamp":"2026-03-10T10:37:44.396Z","lane":"Content: Specs Governance","title":"Tighten WU sizing guidance against over-splitting and remove legacy sizing template"}
