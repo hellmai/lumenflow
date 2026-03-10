@@ -67,6 +67,12 @@ export const GatesCommandsConfigSchema = z.object({
    * Default: 'pnpm format:check'
    */
   format: z.string().optional(),
+
+  /**
+   * WU-2380: Optional command to verify migration state against the target database.
+   * Default: empty string, which disables the check until a project opts in.
+   */
+  migration_verify: z.string().default(''),
 });
 
 /** WU-1356: TypeScript type for gates commands config */

@@ -113,6 +113,7 @@ import {
   runChangedTests,
   runSafetyCriticalTests,
   runIntegrationTests,
+  runMigrationVerifyGate,
   runSpecLinterGate,
   runClaimValidationGate,
   runBacklogSyncGate,
@@ -422,6 +423,7 @@ async function executeGates(opts: {
     [GATE_NAMES.CLAIM_VALIDATION]: runClaimValidationGate,
     [GATE_NAMES.BACKLOG_SYNC]: runBacklogSyncGate,
     [GATE_NAMES.SUPABASE_DOCS_LINTER]: runSupabaseDocsGate,
+    [GATE_NAMES.MIGRATION_VERIFY]: runMigrationVerifyGate,
     [GATE_NAMES.LANE_HEALTH]: (ctx: GateLogContext) =>
       runLaneHealthGate({ ...ctx, mode: laneHealthMode }),
   };

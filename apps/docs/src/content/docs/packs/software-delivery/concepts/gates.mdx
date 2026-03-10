@@ -44,6 +44,23 @@ gates:
     test: 'pnpm test'
 ```
 
+### Optional Migration Verification
+
+Projects with manual database deploy steps can add an explicit migration-state verifier:
+
+```yaml
+gates:
+  commands:
+    migration_verify: 'pnpm db:preflight'
+```
+
+When `migration_verify` is configured, `pnpm gates` and `pnpm wu:prep` run it only when the
+working diff touches schema or migration paths such as `db/schema/**`, `prisma/schema.prisma`,
+`supabase/schema.sql`, or migration directories.
+
+Use this for commands that check whether the target database is up to date. Do not use it to run
+migrations automatically.
+
 This approach works with any language and toolchain.
 
 ## Using Presets
@@ -88,6 +105,12 @@ pnpm gates
 ```
 
 If any gate fails, `wu:prep` fails and you fix issues in the worktree before completion.
+
+For migration verification failures, the expected fix is:
+
+1. Apply the pending migrations using your project's normal process
+2. Re-run the configured verification command manually if needed
+3. Re-run `pnpm wu:prep --id WU-XXX`
 
 ### Gate Flags
 

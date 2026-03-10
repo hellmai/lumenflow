@@ -113,6 +113,7 @@ describe('WU-1550: Default gate registration', () => {
       expect(names).toContain(GATE_NAMES.FORMAT_CHECK);
       expect(names).toContain(GATE_NAMES.LINT);
       expect(names).toContain(GATE_NAMES.CO_CHANGE);
+      expect(names).toContain(GATE_NAMES.MIGRATION_VERIFY);
       expect(names).toContain(GATE_NAMES.TYPECHECK);
       expect(names).toContain(GATE_NAMES.SPEC_LINTER);
       expect(names).toContain(GATE_NAMES.BACKLOG_SYNC);
@@ -124,7 +125,12 @@ describe('WU-1550: Default gate registration', () => {
       // Invariants should be first
       expect(names[0]).toBe(GATE_NAMES.INVARIANTS);
       expect(names.indexOf(GATE_NAMES.CO_CHANGE)).toBeGreaterThan(names.indexOf(GATE_NAMES.LINT));
-      expect(names.indexOf(GATE_NAMES.CO_CHANGE)).toBeLessThan(names.indexOf(GATE_NAMES.TEST));
+      expect(names.indexOf(GATE_NAMES.MIGRATION_VERIFY)).toBeGreaterThan(
+        names.indexOf(GATE_NAMES.CO_CHANGE),
+      );
+      expect(names.indexOf(GATE_NAMES.MIGRATION_VERIFY)).toBeLessThan(
+        names.indexOf(GATE_NAMES.TEST),
+      );
     });
 
     it('should include integration test gate when shouldRunIntegration is true', () => {

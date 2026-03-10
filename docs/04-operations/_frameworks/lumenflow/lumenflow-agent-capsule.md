@@ -18,6 +18,9 @@ For the full framework (rationale, extended examples, ceremonies), see:
 6. **Run the right gates**:
    - Code WUs: `pnpm gates`
    - Docs-only WUs: `pnpm gates -- --docs-only`
+   - If a repo configures `gates.commands.migration_verify`, treat failures as a required manual
+     migration-state fix for DB-affecting work. Do not auto-run production migrations unless the
+     project explicitly instructs you to.
 
 If you forget anything, load `.lumenflow/constraints.md` and restate the six constraints before continuing.
 

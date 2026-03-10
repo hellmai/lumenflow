@@ -72,6 +72,7 @@ export const GATES_COMMAND_FIELDS = {
   LINT: 'lint',
   TYPECHECK: 'typecheck',
   FORMAT: 'format',
+  MIGRATION_VERIFY: 'migration_verify',
 } as const;
 
 // ---------------------------------------------------------------------------

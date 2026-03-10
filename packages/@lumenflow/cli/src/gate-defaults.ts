@@ -144,6 +144,10 @@ export function registerCodeGates(registry: GateRegistry, options: CodeGateOptio
   } as GateDefinition);
 
   registry.register({
+    name: GATE_NAMES.MIGRATION_VERIFY,
+  } as GateDefinition);
+
+  registry.register({
     name: GATE_NAMES.TYPECHECK,
     cmd: `pnpm ${SCRIPTS.TYPECHECK}`,
     scriptName: SCRIPTS.TYPECHECK,

@@ -122,6 +122,8 @@ export const GATE_NAMES = {
   LINT: 'lint',
   /** WU-2158: Generic co-change rule enforcement gate */
   CO_CHANGE: 'co-change',
+  /** WU-2380: Optional migration-state verification gate */
+  MIGRATION_VERIFY: 'migration-verify',
   TYPECHECK: 'typecheck',
   TEST: 'test',
   COVERAGE: 'coverage',

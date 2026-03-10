@@ -169,4 +169,5 @@ export interface GatesCommands {
   lint?: string;
   typecheck?: string;
   format?: string;
+  migration_verify: string;
 }

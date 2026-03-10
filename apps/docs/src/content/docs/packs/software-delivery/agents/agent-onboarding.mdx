@@ -218,6 +218,13 @@ Fix: Add the return type.
 Re-run: pnpm wu:prep --id WU-123
 ```
 
+If the failing gate is migration verification:
+
+- Read the message to find the configured project command, for example `pnpm db:preflight`
+- Apply or verify pending migrations using the project's documented process
+- Re-run `pnpm wu:prep --id WU-123`
+- Do not bypass the gate unless the WU owner has explicitly documented a valid exception
+
 ### Mistake 9: Working After Hours Without Committing
 
 If you need to pause:

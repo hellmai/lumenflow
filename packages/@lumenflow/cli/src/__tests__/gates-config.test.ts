@@ -102,6 +102,7 @@ describe('WU-1356: Package manager and script configuration', () => {
       expect(result.test_full).toBeDefined();
       expect(result.test_docs_only).toBeDefined();
       expect(result.test_incremental).toBeDefined();
+      expect(result.migration_verify).toBe('');
     });
 
     it('allows custom test commands', () => {
@@ -109,11 +110,13 @@ describe('WU-1356: Package manager and script configuration', () => {
         test_full: 'npm test',
         test_docs_only: 'npm test -- --grep docs',
         test_incremental: 'npm test -- --changed',
+        migration_verify: 'npm run db:verify',
       };
       const result = GatesCommandsConfigSchema.parse(config);
       expect(result.test_full).toBe('npm test');
       expect(result.test_docs_only).toBe('npm test -- --grep docs');
       expect(result.test_incremental).toBe('npm test -- --changed');
+      expect(result.migration_verify).toBe('npm run db:verify');
     });
   });
 
@@ -237,6 +240,7 @@ describe('WU-1356: Package manager and script configuration', () => {
       expect(commands.test_full).toBeDefined();
       expect(commands.test_docs_only).toBeDefined();
       expect(commands.test_incremental).toBeDefined();
+      expect(commands.migration_verify).toBe('');
     });
 
     it('returns configured commands from config file', () => {
@@ -246,6 +250,7 @@ describe('WU-1356: Package manager and script configuration', () => {
             test_full: 'npm test',
             test_docs_only: 'npm test -- --docs',
             test_incremental: 'npm test -- --changed',
+            migration_verify: 'npm run db:verify',
           },
         },
       });
@@ -253,6 +258,7 @@ describe('WU-1356: Package manager and script configuration', () => {
       expect(commands.test_full).toBe('npm test');
       expect(commands.test_docs_only).toBe('npm test -- --docs');
       expect(commands.test_incremental).toBe('npm test -- --changed');
+      expect(commands.migration_verify).toBe('npm run db:verify');
     });
   });
 
@@ -408,6 +414,10 @@ describe('WU-2009: claim-validation gate contract', () => {
 
   it('GATE_NAMES includes co-change as an authoritative gate', () => {
     expect(GATE_NAMES.CO_CHANGE).toBe('co-change');
+  });
+
+  it('GATE_NAMES includes migration-verify as an authoritative gate', () => {
+    expect(GATE_NAMES.MIGRATION_VERIFY).toBe('migration-verify');
   });
 });
 

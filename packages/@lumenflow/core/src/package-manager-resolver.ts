@@ -57,6 +57,7 @@ const DEFAULT_GATES_COMMANDS: Record<PackageManager, GatesCommands> = {
     lint: 'pnpm lint',
     typecheck: 'pnpm typecheck',
     format: 'pnpm format:check',
+    migration_verify: '',
   },
   npm: {
     test_full: 'npm test',
@@ -65,6 +66,7 @@ const DEFAULT_GATES_COMMANDS: Record<PackageManager, GatesCommands> = {
     lint: 'npm run lint',
     typecheck: 'npm run typecheck',
     format: 'npm run format:check',
+    migration_verify: '',
   },
   yarn: {
     test_full: 'yarn test',
@@ -73,6 +75,7 @@ const DEFAULT_GATES_COMMANDS: Record<PackageManager, GatesCommands> = {
     lint: 'yarn lint',
     typecheck: 'yarn typecheck',
     format: 'yarn format:check',
+    migration_verify: '',
   },
   bun: {
     test_full: 'bun test',
@@ -81,6 +84,7 @@ const DEFAULT_GATES_COMMANDS: Record<PackageManager, GatesCommands> = {
     lint: 'bun run lint',
     typecheck: 'bun run typecheck',
     format: 'bun run format:check',
+    migration_verify: '',
   },
 };
 
@@ -219,6 +223,9 @@ export function resolveGatesCommands(projectRoot: string): GatesCommands {
     typecheck:
       (commands[GATES_COMMAND_FIELDS.TYPECHECK] as string | undefined) ?? defaults.typecheck,
     format: (commands[GATES_COMMAND_FIELDS.FORMAT] as string | undefined) ?? defaults.format,
+    migration_verify:
+      (commands[GATES_COMMAND_FIELDS.MIGRATION_VERIFY] as string | undefined) ??
+      defaults.migration_verify,
   };
 }
 

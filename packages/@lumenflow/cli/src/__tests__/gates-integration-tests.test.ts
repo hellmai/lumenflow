@@ -184,6 +184,91 @@ describe('WU-2368: runCoChangeGate merges built-in defaults', () => {
   });
 });
 
+describe('WU-2380: migration verification gate', () => {
+  it('matches DB-affecting changed files using built-in patterns', async () => {
+    const { shouldRunMigrationVerifyForChanges } = await import('../gates-runners.js');
+
+    expect(
+      shouldRunMigrationVerifyForChanges({
+        changedFiles: ['src/lib/db/schema/platform-audit-events.ts'],
+      }),
+    ).toBe(true);
+    expect(
+      shouldRunMigrationVerifyForChanges({
+        changedFiles: ['drizzle/migrations/0045_platform_audit.sql'],
+      }),
+    ).toBe(true);
+    expect(
+      shouldRunMigrationVerifyForChanges({
+        changedFiles: ['docs/README.md'],
+      }),
+    ).toBe(false);
+  });
+
+  it('fails with actionable guidance when the configured verify command fails', async () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'gates-migration-verify-'));
+
+    try {
+      writeFileSync(
+        path.join(root, 'workspace.yaml'),
+        YAML.stringify({
+          software_delivery: {
+            gates: {
+              commands: {
+                migration_verify: 'pnpm db:verify',
+              },
+            },
+          },
+        }),
+        'utf-8',
+      );
+
+      const { runMigrationVerifyGate } = await import('../gates-runners.js');
+      const gitAdapter = await import('@lumenflow/core/git-adapter');
+      const gatesUtils = await import('../gates-utils.js');
+
+      const gitRaw = {
+        getCurrentBranch: vi.fn().mockResolvedValue('lane/framework-core-validation/wu-2380'),
+        mergeBase: vi.fn().mockResolvedValue('origin/main'),
+        raw: vi
+          .fn()
+          .mockResolvedValueOnce('src/lib/db/schema/platform-audit-events.ts\n')
+          .mockResolvedValueOnce('')
+          .mockResolvedValueOnce(''),
+      };
+
+      const gitSpy = vi.spyOn(gitAdapter, 'createGitForPath');
+      gitSpy.mockReturnValue(gitRaw as ReturnType<typeof gitAdapter.createGitForPath>);
+
+      const runSpy = vi.spyOn(gatesUtils, 'run').mockReturnValue({ ok: false, duration: 1 });
+      const logLines: string[] = [];
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation((line?: unknown) => {
+        if (typeof line === 'string') {
+          logLines.push(line);
+        }
+      });
+
+      try {
+        const result = await runMigrationVerifyGate({
+          cwd: root,
+          useAgentMode: false,
+          agentLog: null,
+        });
+
+        expect(result.ok).toBe(false);
+        expect(runSpy).toHaveBeenCalledWith('pnpm db:verify', { agentLog: null, cwd: root });
+        expect(logLines.join('\n')).toContain('Run the configured migration verification command');
+      } finally {
+        consoleSpy.mockRestore();
+        runSpy.mockRestore();
+        gitSpy.mockRestore();
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('WU-2160: gates NDJSON cloud sync', () => {
   const TEST_TOKEN_ENV = 'LUMENFLOW_CLOUD_TOKEN_TEST';
   const TEST_ENDPOINT = 'https://cloud.example.com';

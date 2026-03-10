@@ -7,12 +7,16 @@ priority: P1
 created: 2026-03-10
 code_paths:
   - packages/@lumenflow/core/src/schemas/gates-section-config.ts
+  - packages/@lumenflow/core/src/gates-schemas.ts
+  - packages/@lumenflow/core/src/gates-config-internal.ts
+  - packages/@lumenflow/core/src/package-manager-resolver.ts
   - packages/@lumenflow/core/src/wu-cli-constants.ts
+  - packages/@lumenflow/cli/src/gate-defaults.ts
   - packages/@lumenflow/cli/src/gates-runners.ts
-  - packages/@lumenflow/cli/src/wu-prep.ts
+  - packages/@lumenflow/cli/src/gates.ts
   - packages/@lumenflow/cli/src/__tests__/gates-config.test.ts
+  - packages/@lumenflow/cli/src/__tests__/gate-registry-defaults.test.ts
   - packages/@lumenflow/cli/src/__tests__/gates-integration-tests.test.ts
-  - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
   - apps/docs/src/content/docs/packs/software-delivery/concepts/gates.mdx
   - apps/docs/src/content/docs/packs/software-delivery/agents/agent-onboarding.mdx
   - docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
@@ -28,8 +32,8 @@ tests:
       verification usage plus limits plus the expected agent or operator response.
   unit:
     - packages/@lumenflow/cli/src/__tests__/gates-config.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gate-registry-defaults.test.ts
     - packages/@lumenflow/cli/src/__tests__/gates-integration-tests.test.ts
-    - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2380.done
@@ -53,7 +57,7 @@ worktree_path: worktrees/framework-core-validation-wu-2380
 session_id: 36dcca29-b2cd-41e1-9960-588de55dd7e4
 exposure: backend-only
 sizing_estimate:
-  estimated_files: 8
+  estimated_files: 14
   estimated_tool_calls: 60
   strategy: checkpoint-resume
 escalation_triggers: []

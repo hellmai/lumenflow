@@ -73,6 +73,22 @@ const CO_CHANGE_SEVERITY = {
   ERROR: 'error',
   OFF: 'off',
 } as const;
+const DEFAULT_MIGRATION_VERIFY_PATTERNS = [
+  '**/schema*.sql',
+  '**/schema*.prisma',
+  '**/db/schema*.ts',
+  '**/db/schema*.js',
+  '**/db/schema/**/*.ts',
+  '**/db/schema/**/*.js',
+  '**/drizzle/schema*.ts',
+  '**/migrations/**',
+  '**/migration/**',
+  'supabase/schema.sql',
+  'supabase/migrations/**',
+  'prisma/schema.prisma',
+  'prisma/migrations/**',
+  'drizzle/migrations/**',
+] as const;
 
 /**
  * WU-2368: Built-in default co-change rules for database-affecting work.
@@ -605,6 +621,10 @@ function hasPatternMatch(changedFiles: string[], patterns: string[]): boolean {
   return changedFiles.some((filePath) => micromatch.isMatch(filePath, patterns));
 }
 
+export function shouldRunMigrationVerifyForChanges(options: { changedFiles: string[] }): boolean {
+  return hasPatternMatch(options.changedFiles, [...DEFAULT_MIGRATION_VERIFY_PATTERNS]);
+}
+
 export function evaluateCoChangeRules({
   changedFiles,
   rules,
@@ -699,6 +719,43 @@ export async function runCoChangeGate({ agentLog, useAgentMode, cwd }: GateLogCo
   }
 
   logLine('co-change check passed.');
+  return { ok: true, duration: Date.now() - start };
+}
+
+export async function runMigrationVerifyGate({ agentLog, useAgentMode, cwd }: GateLogContext) {
+  const start = Date.now();
+  const effectiveCwd = cwd ?? process.cwd();
+  const logLine = makeGateLogger({ agentLog, useAgentMode });
+  logLine('\n> Migration verification\n');
+
+  const configuredCommand = resolveGatesCommands(effectiveCwd).migration_verify.trim();
+  if (configuredCommand.length === 0) {
+    logLine('ℹ️  No gates.commands.migration_verify configured; skipping.');
+    return { ok: true, duration: Date.now() - start };
+  }
+
+  const git = createGitForPath(effectiveCwd);
+  const changedFiles = await getChangedFilesForIncremental({ git });
+  if (changedFiles.length === 0) {
+    logLine('ℹ️  No changed files detected; skipping migration verification.');
+    return { ok: true, duration: Date.now() - start };
+  }
+
+  if (!shouldRunMigrationVerifyForChanges({ changedFiles })) {
+    logLine('ℹ️  No schema or migration paths changed; skipping migration verification.');
+    return { ok: true, duration: Date.now() - start };
+  }
+
+  const result = run(configuredCommand, { agentLog, cwd: effectiveCwd });
+  if (!result.ok) {
+    logLine('❌ Migration verification failed.');
+    logLine(
+      'Run the configured migration verification command after applying pending migrations, then retry wu:prep.',
+    );
+    return { ok: false, duration: Date.now() - start };
+  }
+
+  logLine('Migration verification passed.');
   return { ok: true, duration: Date.now() - start };
 }
 
