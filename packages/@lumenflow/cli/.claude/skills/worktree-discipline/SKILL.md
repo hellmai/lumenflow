@@ -1,0 +1,142 @@
+---
+name: worktree-discipline
+description: Prevents the "absolute path trap" in Write/Edit/Read tools. Use when working in worktrees, before file operations, or when changes don't appear in git status.
+version: 2.0.0
+source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source_sections: Worktree Discipline, Tool Usage
+last_updated: 2026-03-10
+allowed-tools: Read, Bash, Grep
+---
+
+# Worktree Discipline: Absolute Path Trap Prevention
+
+**Purpose**: Prevent AI agents from bypassing worktree isolation via absolute file paths.
+
+**For full worktree workflow**: See `wu-lifecycle` skill or `lumenflow-agent-capsule.md`.
+
+## The Absolute Path Trap
+
+**Problem**: AI agents using Write/Edit/Read tools can bypass worktree isolation by passing absolute paths. Even when your shell is in the worktree, absolute paths target the main checkout.
+
+### Example
+
+```typescript
+// Shell: cd worktrees/operations-wu-427
+
+// WRONG - Absolute path bypasses worktree
+Write({
+  file_path: '<absolute-path>/apps/web/src/validator.ts',
+  content: '...',
+});
+// Result: Written to MAIN checkout, not worktree!
+
+// RIGHT - Relative path respects worktree
+Write({
+  file_path: 'apps/web/src/validator.ts',
+  content: '...',
+});
+// Result: Written to worktree correctly
+```
+
+## Pre-Operation Checklist
+
+**Before ANY Write/Edit/Read operation:**
+
+1. **Verify working directory**:
+
+   ```bash
+   pwd
+   # Must show: .../worktrees/<lane>-wu-xxx
+   ```
+
+2. **Check file path format**:
+
+   | Pattern                             | Safe? | Example                        |
+   | ----------------------------------- | ----- | ------------------------------ |
+   | Starts with an absolute-root prefix | NO    | `<absolute-path>/.../file.ts`  |
+   | Contains full repo path             | NO    | `<repo-root>/apps/.../file.ts` |
+   | Starts with package name            | YES   | `apps/web/src/...`             |
+   | Starts with `./` or `../`           | YES   | `./src/lib/...`                |
+   | Just filename                       | YES   | `README.md`                    |
+
+3. **Use relative paths for ALL file operations**
+
+4. **Docs-only exception (documentation WUs)**:
+   - Read-only commands may run from main.
+   - **All file writes still require a worktree** (claim first if needed).
+
+## Quick Detection
+
+**Red flags** (you're about to fall into the trap):
+
+- Path starts with an absolute-root prefix
+- Path contains organisation/project name
+- Path length > 50 characters (suspiciously long)
+
+**Safe patterns**:
+
+- `apps/web/src/...`
+- `packages/@lumenflow/...`
+- `tools/...`
+- `docs/...`
+
+## Troubleshooting
+
+### "Changes not showing in git status"
+
+**Cause**: Absolute paths wrote to main instead of worktree.
+
+**Fix**:
+
+```bash
+# Check where changes landed
+cd /path/to/main && git status
+
+# If changes are in main, move them
+git stash
+cd worktrees/<lane>-wu-xxx
+git stash pop
+
+# Re-apply with relative paths
+```
+
+### "Pre-commit hook blocked my commit"
+
+**Cause**: Attempted WU commit from main checkout.
+
+**Fix**: Move to worktree, commit there:
+
+```bash
+cd worktrees/<lane>-wu-xxx
+git add . && git commit -m "..."
+```
+
+## Decision Tree
+
+```
+About to use Write/Edit/Read?
+├─ Check: Am I in a worktree?
+│   ├─ YES → Use RELATIVE paths only
+│   └─ NO → Did I claim a WU?
+│       ├─ YES → cd worktrees/<lane>-wu-xxx first
+│       └─ NO → Claim WU or use docs-only paths (read-only only)
+└─ Path starts with "/" ?
+    ├─ YES → STOP! Convert to relative path
+    └─ NO → Safe to proceed
+```
+
+## Golden Rules
+
+1. **Always verify pwd** before file operations
+2. **Never use absolute paths** in Write/Edit/Read tools
+3. **When in doubt, use relative paths**
+
+## Cross-References
+
+- **Full worktree workflow**: `wu-lifecycle` skill
+- **Git command restrictions**: `lumenflow-agent-capsule.md`
+
+## Version History
+
+- **v2.0.0** (2026-03-10): Refactored to focus on absolute path trap (per Anthropic one-capability-per-skill guideline)
+- **v1.0.0** (2026-03-10): Initial skill from lumenflow-agent-capsule.md

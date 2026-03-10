@@ -1,0 +1,66 @@
+# WU Creation Checklist
+
+**Last updated:** 2026-03-10
+
+Use this checklist before running `pnpm wu:create`.
+
+---
+
+## Step 1: Confirm the Lane
+
+```bash
+pnpm lane:status
+pnpm wu:infer-lane --paths "packages/@lumenflow/cli/src/init.ts" --desc "Fix init docs drift"
+```
+
+The lane should match the real implementation scope, not just the first file you noticed.
+
+---
+
+## Step 2: Gather the Required Fields
+
+| Field                 | Required For          | Example                                                |
+| --------------------- | --------------------- | ------------------------------------------------------ |
+| `--lane`              | All WUs               | `"Framework: CLI"`                                     |
+| `--title`             | All WUs               | `"Eliminate onboarding docs drift"`                    |
+| `--description`       | All WUs               | `"Context: ... Problem: ... Solution: ..."`            |
+| `--acceptance`        | All WUs               | `--acceptance "Docs and templates stay aligned"`       |
+| `--exposure`          | All WUs               | `documentation`                                        |
+| `--code-paths`        | Non-documentation WUs | `"packages/@lumenflow/cli/src/init.ts"`                |
+| `--test-paths-manual` | Non-documentation WUs | `"Run focused init/docs-sync tests"`                   |
+| `--test-paths-unit`   | Code WUs              | `"packages/@lumenflow/cli/src/__tests__/init.test.ts"` |
+| `--spec-refs`         | Feature WUs           | `"lumenflow://plans/WU-XXXX-plan.md"`                  |
+
+`--id` is optional. If omitted, `wu:create` allocates the next WU ID automatically.
+
+---
+
+## Step 3: Decide Plan Storage
+
+If the work needs a plan, prefer repo-native or `lumenflow://plans/` references:
+
+```bash
+pnpm plan:create --id INIT-XXX --title "Plan title"
+pnpm wu:create --lane "Framework: CLI" --title "..." --plan
+```
+
+Avoid pointing `--spec-refs` at random local filesystem notes that other agents cannot resolve.
+
+---
+
+## Step 4: Validate Before Creating
+
+```bash
+pnpm wu:create --lane "Framework: CLI" --title "..." --description "..." \
+  --acceptance "..." --exposure documentation --validate
+```
+
+Let validation tell you which fields are still missing before you create the real spec.
+
+---
+
+## After Creation
+
+1. Review `docs/tasks/wu/WU-XXX.yaml`.
+2. Claim it with `pnpm wu:claim --id WU-XXX --lane "<Lane>"`.
+3. Move into the worktree immediately.

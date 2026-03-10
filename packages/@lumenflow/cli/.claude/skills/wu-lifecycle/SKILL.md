@@ -1,0 +1,119 @@
+---
+name: wu-lifecycle
+description: Work Unit claim/block/done workflow automation. Use when claiming WUs, blocking/unblocking, running wu:prep + wu:done, or understanding WU state transitions.
+version: 2.2.0
+source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source_sections: WU Lifecycle
+last_updated: 2026-03-10
+allowed-tools: Read, Bash, Grep
+---
+
+# WU Lifecycle Skill
+
+**Source**: `{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
+
+## When to Use
+
+Activate this skill when:
+
+- Claiming a WU (`pnpm wu:claim`)
+- Blocking/unblocking WUs due to dependencies
+- Running `wu:done` completion workflow
+- Understanding WU state machine transitions
+
+**Use skill first**: Follow the core commands and worktree discipline patterns.
+
+**Spawn lumenflow-pm agent when**: WU lifecycle issues require investigation, coordination across multiple blocked WUs needed, or worktree state requires recovery.
+
+## State Machine
+
+```
+ready → in_progress → waiting/blocked → done
+```
+
+## Core Commands
+
+```bash
+# Claim WU
+pnpm wu:claim --id WU-XXX --lane <lane>
+cd worktrees/<lane>-wu-xxx   # IMMEDIATELY
+
+# Complete WU - TWO STEPS (WU-1223)
+# Step 1: From worktree, run wu:prep
+pnpm wu:prep --id WU-XXX
+# This prints: cd /path/to/main && pnpm wu:done --id WU-XXX
+
+# Step 2: From main, run wu:done (copy-paste from wu:prep output)
+cd /path/to/main && pnpm wu:done --id WU-XXX
+
+# Block/Unblock
+pnpm wu:block --id WU-XXX --reason "..."
+pnpm wu:unblock --id WU-XXX
+
+# Create (full spec -- ID auto-generated)
+pnpm wu:create --lane "Operations" --title "Add feature" \
+  --description "Context: ... Problem: ... Solution: ..." \
+  --acceptance "Feature works" --code-paths "src/a.ts" --validate
+# Output: Created WU-999
+# Note: Use --id only when re-creating a specific WU or for migration tooling.
+
+# Edit spec
+pnpm wu:edit --id WU-XXX --description "..." --acceptance "..."
+
+# Maintenance
+pnpm wu:prune --execute     # Clean stale worktrees
+pnpm wu:cleanup --id WU-XXX # After PR merge
+```
+
+## wu:prep + wu:done Workflow (WU-1223)
+
+**Two-step completion:**
+
+1. `wu:prep` (from worktree): Runs gates, prints copy-paste instruction
+2. `wu:done` (from main): Fast-forward merge, stamp, cleanup
+
+**wu:done workflow (from main):**
+
+1. Validates running from main (errors if in worktree)
+2. Fast-forward merge to main
+3. Creates `.lumenflow/stamps/WU-XXX.done`
+4. Updates backlog.md + status.md
+5. Removes worktree
+
+**GitHub rules REJECT merge commits**. Never `git merge` on main.
+
+## Worktree Discipline
+
+After `wu:claim`:
+
+- `cd worktrees/<lane>-wu-xxx` immediately
+- Use relative paths (never absolute)
+- Main is read-only
+
+**Blocked on main**: `reset --hard`, `stash`, `clean -fd`, manual merge
+
+## Skip Gates (Emergency)
+
+Only when pre-existing failures:
+
+```bash
+pnpm wu:done --id WU-XXX --skip-gates --reason "Pre-existing" --fix-wu WU-YYY
+```
+
+## Fix-in-Place vs Bug WU
+
+**Create Bug WU if ANY true**:
+
+- Bug in different `code_paths`
+- Fix >10 lines
+- Bug doesn't block acceptance criteria
+
+**Fix in place if ALL true**:
+
+- Bug blocks your acceptance criteria
+- Bug in your `code_paths`
+- Fix <=10 lines
+
+---
+
+**Full spec**: [LumenFlow Agent Capsule](../../../{{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md)
