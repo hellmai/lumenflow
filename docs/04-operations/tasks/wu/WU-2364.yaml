@@ -22,12 +22,20 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/none
 risks: []
-notes: ''
+notes: Adds plan-resolve.ts shared helper. plan:edit and plan:promote now support --file flag and
+  resolve plans from initiative related_plan metadata. Removes hardcoded filename convention.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T10:56:46.713Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2364
+session_id: 8362d0eb-b470-4611-8fb7-06b0cd5244f3
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T10:56:46.720Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -39,11 +47,3 @@ acceptance:
   - plan:edit accepts --file flag to specify plan path directly
   - plan:promote uses same resolution logic
   - Hardcoded ${id}-plan.md pattern removed from plan-edit.ts and plan-promote.ts
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2364
-claimed_at: 2026-03-10T10:56:46.713Z
-baseline_main_sha: a8a0cd8c10888d5f1dbf3b4b6ac4429512af2f96
-session_id: 8362d0eb-b470-4611-8fb7-06b0cd5244f3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T10:56:46.720Z
