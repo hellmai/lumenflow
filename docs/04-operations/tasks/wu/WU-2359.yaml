@@ -11,6 +11,10 @@ code_paths:
   - packages/@lumenflow/core/src/arg-parser.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding
   - apps/docs/src/content/docs
+  - packages/@lumenflow/cli/src/wu-done-policies.ts
+  - packages/@lumenflow/cli/src/wu-brief.ts
+  - packages/@lumenflow/core/src/arg-parser.ts
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding
 tests:
   manual:
     - Verify wu:brief without --evidence-only gives full context and records evidence
