@@ -32,7 +32,8 @@ tests:
     - Verify .cursor/rules and .windsurf/rules reference LUMENFLOW.md instead of duplicating workflow
     - Verify all corresponding .template files in packages/@lumenflow/cli/templates/ match deployed
       copies
-  unit: []
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/init.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2365.done
@@ -40,8 +41,10 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/none
 risks: []
-notes: 'Evidence: during WU spec discussion, agent used head -40 and tail -20 on wu:edit --help,
-  truncating the middle of authoritative CLI output — exactly the anti-pattern this WU prevents. The
+notes: 'tdd-exception: docs-only WU — init-templates.ts is listed as code_path because it contains
+  the legacy inline template being removed, but the change is deletion of dead code, not new logic
+  requiring tests. Evidence: agent used head -40 and tail -20 on wu:edit --help during spec
+  discussion, truncating authoritative CLI output — exactly the anti-pattern this WU prevents. The
   rule is narrow: never truncate lumenflow:commands, --help, or error/fix output. General command
   output like git log | head -20 stays allowed.'
 requires_review: false
