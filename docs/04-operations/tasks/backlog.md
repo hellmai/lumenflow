@@ -27,7 +27,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2367 — Align claim/readiness test enforcement with fit-for-surface verification](wu/WU-2367.yaml) — Framework: Core Lifecycle
 - [WU-2368 — Add stronger default co-change safeguards for database-affecting WUs](wu/WU-2368.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
@@ -1314,6 +1313,7 @@ sections:
 - [WU-2364 — plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename](wu/WU-2364.yaml)
 - [WU-2365 — Centralize agent startup guidance in LUMENFLOW.md and deduplicate vendor overlays](wu/WU-2365.yaml)
 - [WU-2366 — Expand docs:sync to refresh core docs and add post-upgrade staleness warning](wu/WU-2366.yaml)
+- [WU-2367 — Align claim/readiness test enforcement with fit-for-surface verification](wu/WU-2367.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

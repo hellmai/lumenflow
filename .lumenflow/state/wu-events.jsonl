@@ -3054,5 +3054,7 @@
 {"type":"claim","wuId":"WU-2368","timestamp":"2026-03-10T12:20:43.728Z","lane":"Framework: Core Validation","title":"Add stronger default co-change safeguards for database-affecting WUs"}
 {"type":"checkpoint","wuId":"WU-2367","timestamp":"2026-03-10T12:19:53.766Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2367","timestamp":"2026-03-10T12:20:14.277Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"claim","wuId":"WU-2368","timestamp":"2026-03-10T12:20:43.728Z","lane":"Framework: Core Validation","title":"Add stronger default co-change safeguards for database-affecting WUs"}
 {"type":"checkpoint","wuId":"WU-2367","timestamp":"2026-03-10T12:25:50.764Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2367.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2367","timestamp":"2026-03-10T12:25:59.349Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2367.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2367","timestamp":"2026-03-10T12:27:51.796Z"}

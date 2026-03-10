@@ -2,7 +2,7 @@ id: WU-2367
 title: Align claim/readiness test enforcement with fit-for-surface verification
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -69,3 +69,6 @@ acceptance:
     fake tests.unit entries
   - Regression tests cover claim validation, spec completeness, and prompt/constraint generation for
     UI and documented-exception cases
+locked: true
+completed_at: 2026-03-10T12:27:46.616Z
+completed: 2026-03-10
