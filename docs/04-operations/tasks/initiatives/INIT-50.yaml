@@ -6,7 +6,7 @@ description: 'Establish a portable spawn/orchestration baseline for LumenFlow by
   orchestration emit client-capability-appropriate output instead of Claude-only XML. Keep scope
   intentionally tight: land spawn/orchestration vendor portability first, then make a single
   explicit go/no-go decision on broader tech-stack portability instead of scattering ad hoc WUs.'
-status: draft
+status: open
 priority: P1
 owner: 'Framework: CLI'
 created: 2026-03-10
@@ -30,6 +30,6 @@ success_metrics:
   - Broader pnpm/monorepo/web portability debt is captured as one explicit next initiative or
     cut-line, not fragmented one-off WUs.
 labels: []
-wus:
-  - WU-2374
-  - WU-2375
+lanes:
+  - 'Framework: CLI WU Commands'
+phase_execution_order: sequential
