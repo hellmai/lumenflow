@@ -25,10 +25,11 @@ sections:
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
+- [WU-2364 — plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename](wu/WU-2364.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
-- [WU-2363 — Tighten WU sizing guidance against over-splitting and remove legacy sizing template](wu/WU-2363.yaml) — Content: Specs Governance
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1310,6 +1311,7 @@ sections:
 - [WU-2360 — Redact internal product and competitor strategy references from public repo](wu/WU-2360.yaml)
 - [WU-2361 — Clean up evidence-only remnants and fix misleading warn message](wu/WU-2361.yaml)
 - [WU-2362 — Durable delegation intent: distinguish non-orchestrated from lost-provenance WUs](wu/WU-2362.yaml)
+- [WU-2363 — Tighten WU sizing guidance against over-splitting and remove legacy sizing template](wu/WU-2363.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
