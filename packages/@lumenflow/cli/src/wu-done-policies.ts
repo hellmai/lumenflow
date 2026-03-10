@@ -41,6 +41,7 @@ const DEFAULT_WU_BRIEF_FRESHNESS_MINUTES = 1440;
 const PREP_LOG_PREFIX = '[wu-prep]';
 const PREP_FORCE_REASON_REQUIRED_MESSAGE =
   'Missing required --reason for wu:brief policy bypass in wu:prep.';
+const CLAIM_AUTO_EVIDENCE_MODE = 'claim-auto';
 
 interface SpawnEntryLike {
   intent?: string;
@@ -270,6 +271,24 @@ export function buildMissingWuBriefEvidenceMessageForPrep(
   );
 }
 
+/**
+ * WU-2379: Build remediation guidance when only claim-auto evidence exists.
+ * claim-auto is auto-recorded by wu:claim but does not generate the handoff
+ * prompt or run lane/sizing checks — agents must run wu:brief explicitly.
+ */
+export function buildClaimAutoEvidenceMessage(id: string): string {
+  return (
+    `wu:brief evidence for ${id} is claim-auto (auto-recorded by wu:claim).\n\n` +
+    `claim-auto evidence does not satisfy completion policy because wu:claim only\n` +
+    `records a stub — it does not generate the handoff prompt, check lane occupation,\n` +
+    `or validate sizing. Agents must run wu:brief explicitly after wu:claim.\n\n` +
+    `Fix:\n` +
+    `  pnpm wu:brief --id ${id} --client <client>\n\n` +
+    `Then retry completion:\n` +
+    `  pnpm wu:done --id ${id}`
+  );
+}
+
 function describeWuBriefFreshness(
   evidenceTimestamp: string,
   freshnessMinutes: number,
@@ -444,6 +463,19 @@ export async function enforceWuBriefEvidenceForPrep(
     return;
   }
 
+  // WU-2379: Reject claim-auto evidence — it only records a stub, not actual wu:brief output.
+  if (evidence && evidence.mode === CLAIM_AUTO_EVIDENCE_MODE) {
+    const claimAutoMessage = buildClaimAutoEvidenceMessage(id);
+    if (mode === 'auto') {
+      warn(`${PREP_LOG_PREFIX} ${EMOJI.WARNING} ${claimAutoMessage}`);
+      return;
+    }
+    if (!force) {
+      blocker(claimAutoMessage);
+      return;
+    }
+  }
+
   if (evidence) {
     return;
   }
@@ -571,6 +603,17 @@ export async function enforceWuBriefEvidenceForDone(
     warn(
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2289: stale brief evidence override accepted for ${id} via --force`,
     );
+    return;
+  }
+
+  // WU-2379: Reject claim-auto evidence — it only records a stub, not actual wu:brief output.
+  if (evidence && evidence.mode === CLAIM_AUTO_EVIDENCE_MODE) {
+    const claimAutoMessage = buildClaimAutoEvidenceMessage(id);
+    if (!force) {
+      blocker(claimAutoMessage);
+      return;
+    }
+    warn(`${LOG_PREFIX.DONE} ${EMOJI.WARNING} WU-2379: claim-auto evidence override accepted for ${id} via --force`);
     return;
   }
 

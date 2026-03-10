@@ -374,6 +374,114 @@ status: done
       expect(warn).not.toHaveBeenCalled();
     });
 
+    it('WU-2379: rejects claim-auto evidence as insufficient for wu:done', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceWuBriefEvidenceForDone(
+        'WU-2379',
+        { type: 'feature' },
+        {
+          baseDir: '/repo',
+          force: false,
+          freshnessMinutes: null,
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2379',
+            timestamp: '2026-03-10T12:00:00.000Z',
+            note: '[wu:brief] generated via wu:claim:auto',
+            mode: 'claim-auto',
+          }),
+          blocker,
+          warn,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('claim-auto'));
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('pnpm wu:brief'));
+    });
+
+    it('WU-2379: allows claim-auto evidence override with --force for wu:done', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+
+      await enforceWuBriefEvidenceForDone(
+        'WU-2379',
+        { type: 'feature' },
+        {
+          baseDir: '/repo',
+          force: true,
+          freshnessMinutes: null,
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2379',
+            timestamp: '2026-03-10T12:00:00.000Z',
+            note: '[wu:brief] generated via wu:claim:auto',
+            mode: 'claim-auto',
+          }),
+          blocker,
+          warn,
+        },
+      );
+
+      expect(blocker).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('claim-auto'));
+    });
+
+    it('WU-2379: rejects claim-auto evidence for wu:prep with required policy', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const recordBypassAudit = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2379',
+        { type: 'bug' },
+        {
+          mode: 'required',
+          force: false,
+          freshnessMinutes: null,
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2379',
+            timestamp: '2026-03-10T12:00:00.000Z',
+            note: '[wu:brief] generated via wu:claim:auto',
+            mode: 'claim-auto',
+          }),
+          blocker,
+          warn,
+          recordBypassAudit,
+        },
+      );
+
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('claim-auto'));
+      expect(blocker).toHaveBeenCalledWith(expect.stringContaining('pnpm wu:brief'));
+    });
+
+    it('WU-2379: warns about claim-auto evidence for wu:prep with auto policy', async () => {
+      const blocker = vi.fn();
+      const warn = vi.fn();
+      const recordBypassAudit = vi.fn();
+
+      await enforceWuBriefEvidenceForPrep(
+        'WU-2379',
+        { type: 'feature' },
+        {
+          mode: 'auto',
+          freshnessMinutes: null,
+          getBriefEvidenceFn: vi.fn().mockResolvedValue({
+            wuId: 'WU-2379',
+            timestamp: '2026-03-10T12:00:00.000Z',
+            note: '[wu:brief] generated via wu:claim:auto',
+            mode: 'claim-auto',
+          }),
+          blocker,
+          warn,
+          recordBypassAudit,
+        },
+      );
+
+      expect(blocker).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('claim-auto'));
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('pnpm wu:brief'));
+    });
+
     it('allows missing brief evidence with --force and logs warning', async () => {
       const blocker = vi.fn();
       const warn = vi.fn();
