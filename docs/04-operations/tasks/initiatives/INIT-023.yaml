@@ -1,9 +1,9 @@
 id: INIT-023
-slug: lumenflow-cloud-branch-pr-lifecycle
-title: LumenFlow Cloud Branch-PR Lifecycle Completion
-description: Deliver complete cloud/branch-pr lifecycle support for LumenFlow so cloud agents can
-  execute create->claim->prep->done->cleanup from feature branches with PR completion, without
-  breaking local worktree workflow.
+slug: cloud-branch-pr-lifecycle
+title: Cloud Branch-PR Lifecycle Completion
+description: Deliver complete cloud branch-PR lifecycle support so cloud agents can execute
+  create->claim->prep->done->cleanup from feature branches with PR completion, without breaking
+  local worktree workflow.
 status: done
 priority: P0
 owner: 'Operations: Tooling'

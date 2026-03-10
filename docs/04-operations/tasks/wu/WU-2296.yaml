@@ -37,7 +37,7 @@ requires_cto_approval: false
 requires_design_approval: false
 description: Active docs and config files still reference .lumenflow.config.yaml as if it is
   current. The file is deprecated — workspace.yaml is the sole config contract. These stale
-  references confuse agents and users (caused lumenflow-cloud team to chase wrong config). Clean up
+  references confuse agents and users (caused a downstream team to chase wrong config). Clean up
   ~10 active files.
 acceptance:
   - No active doc or config file presents .lumenflow.config.yaml as current behavior

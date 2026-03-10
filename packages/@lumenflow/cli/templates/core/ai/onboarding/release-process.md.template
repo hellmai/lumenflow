@@ -350,7 +350,7 @@ rm packages/@lumenflow/packs/software-delivery/lumenflow-packs-software-delivery
 | `web`             | registry.lumenflow.dev   | Pack registry + web app |
 | `docs`            | lumenflow.dev            | Starlight documentation |
 | `lumenflow-dev`   | lumenflow-dev.vercel.app | Monorepo preview        |
-| `lumenflow-cloud` | cloud.lumenflow.dev      | Control plane           |
+| `cloud`           | cloud.lumenflow.dev      | Control plane           |
 
 ### Troubleshooting Pack Publishing
 

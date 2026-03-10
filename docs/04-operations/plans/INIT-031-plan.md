@@ -4,7 +4,7 @@ Created: 2026-02-18
 
 ## Goal
 
-Make LumenFlow visible and exciting. Build user-facing surfaces on top of the kernel runtime (INIT-029) and runtime adoption (INIT-030) so two personas can interact with LumenFlow: (1) software devs using the software delivery pack who want to watch agents work and trust the automation, (2) pack authors and consumers who want to teach their AI new domains by adding packs. Capture displaced OpenClaw community with governance-first alternative.
+Make LumenFlow visible and exciting. Build user-facing surfaces on top of the kernel runtime (INIT-029) and runtime adoption (INIT-030) so two personas can interact with LumenFlow: (1) software devs using the software delivery pack who want to watch agents work and trust the automation, (2) pack authors and consumers who want to teach their AI new domains by adding packs. Attract teams seeking governance-first alternatives to execution-only agent frameworks.
 
 ## Scope
 
@@ -28,4 +28,4 @@ EventStore performance under tailing: current replay() re-reads entire file. Mit
 
 ## References
 
-Initiative: INIT-031 (docs/04-operations/tasks/initiatives/INIT-031.yaml). Depends on: INIT-029 (kernel runtime, done), INIT-030 (runtime adoption, completing). 27 WUs: WU-1816 through WU-1842. Detailed plan: .claude/plans/zazzy-growing-cook.md. Key files: packages/@lumenflow/kernel/src/event-store/index.ts, packages/@lumenflow/surfaces/, packages/@lumenflow/kernel/src/pack/pack-loader.ts, packages/@lumenflow/kernel/src/runtime/kernel-runtime.ts. External references: AG-UI Protocol (docs.ag-ui.com), CopilotKit (copilotkit.ai), Cyera OpenClaw security research.
+Initiative: INIT-031 (docs/04-operations/tasks/initiatives/INIT-031.yaml). Depends on: INIT-029 (kernel runtime, done), INIT-030 (runtime adoption, completing). 27 WUs: WU-1816 through WU-1842. Detailed plan: .claude/plans/zazzy-growing-cook.md. Key files: packages/@lumenflow/kernel/src/event-store/index.ts, packages/@lumenflow/surfaces/, packages/@lumenflow/kernel/src/pack/pack-loader.ts, packages/@lumenflow/kernel/src/runtime/kernel-runtime.ts. External references: AG-UI Protocol (docs.ag-ui.com), CopilotKit (copilotkit.ai), Industry agent security research.

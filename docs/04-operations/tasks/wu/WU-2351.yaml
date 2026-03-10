@@ -39,11 +39,11 @@ requires_cto_approval: false
 requires_design_approval: false
 description: Claude Code deny patterns use glob syntax (git reset --hard *) which requires trailing
   args. Bare git reset --hard (no args) slips through. Same gap for git clean -fd. Fix across
-  settings.json, all vendor templates, and lumenflow-cloud.
+  settings.json and all vendor templates.
 acceptance:
   - No-argument variants added to .claude/settings.json deny list
   - No-argument variants added to settings.json.template
-  - lumenflow-cloud .claude/settings.json patched
+  - downstream project .claude/settings.json patched
 locked: true
 completed_at: 2026-03-09T11:46:06.611Z
 completed: 2026-03-09

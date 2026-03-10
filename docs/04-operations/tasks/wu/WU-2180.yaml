@@ -36,7 +36,7 @@ requires_design_approval: false
 description: "REQUIRED_GITIGNORE_EXCLUSIONS in init-templates.ts is missing 4 ephemeral paths that
   exist in the source repo .gitignore: checkpoints/, locks/, artifacts/, state/spawn-registry.jsonl.
   Consumer repos that run lumenflow init don't get these entries, causing wu:done clean-tree check
-  failures when wu:prep creates checkpoint files. Discovered on lumenflow-cloud where an agent
+  failures when wu:prep creates checkpoint files. Discovered on a downstream project where an agent
   committed a checkpoint file to the branch to get past the check."
 acceptance:
   - REQUIRED_GITIGNORE_EXCLUSIONS includes all .lumenflow/* ephemeral paths from source .gitignore

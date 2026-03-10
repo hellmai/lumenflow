@@ -127,7 +127,7 @@ description: >-
   ## Problem
 
 
-  Dogfooding the lumenflow-cloud onboarding guide shows that cloud connection setup works, but
+  Dogfooding the onboarding guide shows that cloud connection setup works, but
   runtime control-plane forwarding is still mock-only because no HTTP sync implementation exists.
   The port interface, mock, sync loop (in control-plane-event-subscriber.ts), and config schema are
   all in place — only the production adapter is missing.

@@ -28,7 +28,7 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Testing lumenflow init from scratch on lumenflow-cloud revealed multiple
+description: 'Context: Testing lumenflow init from scratch on a downstream project revealed multiple
   issues. Problem: (1) scaffoldAgentOnboardingDocs() called twice in full+claude mode -- once via
   scaffoldFullDocs(), again via scaffoldClientFiles() (WU-1083) -- causing files to appear in both
   Created and Skipped output. (2) Existing .gitignore is skipped entirely instead of merging

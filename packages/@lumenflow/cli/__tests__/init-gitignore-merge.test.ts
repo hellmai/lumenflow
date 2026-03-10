@@ -146,7 +146,7 @@ describe('WU-1969: gitignore merge path completeness', () => {
      * WU-2180 AC1: REQUIRED_GITIGNORE_EXCLUSIONS includes all .lumenflow/* ephemeral paths
      * from the source .gitignore.
      *
-     * The 4 missing ephemeral paths discovered on lumenflow-cloud:
+     * The 4 missing ephemeral paths discovered on a downstream project:
      * - .lumenflow/checkpoints/
      * - .lumenflow/locks/
      * - .lumenflow/artifacts/

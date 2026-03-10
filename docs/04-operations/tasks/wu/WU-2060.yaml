@@ -22,7 +22,7 @@ artifacts:
   - .lumenflow/stamps/WU-2060.done
 dependencies: []
 risks: []
-notes: P0 fix for upgrade + publish regressions affecting lumenflow-cloud and patientpath.co.uk
+notes: P0 fix for upgrade + publish regressions affecting downstream consumer projects
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -33,7 +33,7 @@ requires_cto_approval: false
 requires_design_approval: false
 description: 'Context: @lumenflow/core 3.1.3/3.2.0 publishes broken package artifacts and
   lumenflow-upgrade fails in non-workspace repos due to forced -w flag. Problem: upgrades fail for
-  lumenflow-cloud and patientpath, and release flow can publish incomplete dist artifacts. Solution:
+  downstream consumer projects, and release flow can publish incomplete dist artifacts. Solution:
   make workspace-root flag conditional and add release artifact guards to prevent broken npm
   publishes.'
 acceptance:

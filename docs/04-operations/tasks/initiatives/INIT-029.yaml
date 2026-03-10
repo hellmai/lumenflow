@@ -3,10 +3,10 @@ slug: agent-runtime-kernel
 title: LumenFlow Agent Runtime + Control Plane
 description: 'Evolve LumenFlow from a software delivery CLI into a general-purpose agent runtime +
   hosted control plane. Work Units become universal task primitives for any goal-directed task,
-  executed by agents that cannot go off-script. Differentiator vs OpenClaw: deterministic,
+  executed by agents that cannot go off-script. LumenFlow provides deterministic,
   auditable, safe-by-default execution via capability-scoped tool calls, sandbox enforcement, policy
-  governance, and immutable evidence receipts. No external users affected - Patient Path stays on
-  current version. Greenfield design, no backwards compat. Architecture constraints are tracked in
+  governance, and immutable evidence receipts. No external users affected - downstream consumers stay
+  on current version. Greenfield design, no backwards compat. Architecture constraints are tracked in
   initiative phases and linked WU specs.'
 status: done
 priority: P0

@@ -43,8 +43,7 @@ requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
 description: When schema files change in a WU but no corresponding migration files are included,
-  deployed code can reference tables/columns that don't exist yet. This has happened on PatientPath
-  and LumenFlow Cloud. Add a configurable co-change gate to the Software Delivery Pack that detects
+  deployed code can reference tables/columns that don't exist yet. This has happened on downstream consumer projects. Add a configurable co-change gate to the Software Delivery Pack that detects
   when files matching trigger patterns change without corresponding files matching require patterns
   also changing.
 acceptance:

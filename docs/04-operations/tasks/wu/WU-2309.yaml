@@ -48,7 +48,7 @@ requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
 description: 'Context: wu:brief guidance currently forces TDD in cases like prompt/content YAML and
-  some UI presentation work, and lane-specific Intelligence guidance hardcodes PatientPath-style
+  some UI presentation work, and lane-specific Intelligence guidance hardcodes project-specific
   prompt eval commands. Problem: this couples core policy to domain specifics and causes
   inappropriate test directives for non-code changes. Solution: introduce profile-aware non-code
   handling in policy-based test guidance, keep core generic, move domain-specific guidance to

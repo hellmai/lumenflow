@@ -18,7 +18,7 @@ artifacts:
   - .lumenflow/stamps/WU-2347.done
 dependencies: []
 risks: []
-notes: Discovered during WU-371 completion on lumenflow-cloud. Audit write at wu-done.ts:615
+notes: Discovered during WU-371 completion on a downstream project. Audit write at wu-done.ts:615
   (auditSkipGates). Prettierignore template at init-templates.ts:1639. Spawn-provenance override
   writes may have similar dirty-state issues.
 requires_review: false

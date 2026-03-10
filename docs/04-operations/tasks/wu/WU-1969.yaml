@@ -33,7 +33,7 @@ description: 'Context: WU-1965 added auto-merge for .gitignore when the file alr
   .lumenflow/sessions/, .lumenflow/memory/, and .logs/. Problem: Projects that had a .gitignore
   before running lumenflow init get an incomplete .gitignore -- runtime state files
   (.lumenflow/flow.log, sessions, memory) show up as untracked in git status. Discovered testing
-  lumenflow init on lumenflow-cloud. Solution: Sync requiredExclusions array with GITIGNORE_TEMPLATE
+  lumenflow init on a downstream project. Solution: Sync requiredExclusions array with GITIGNORE_TEMPLATE
   entries. Extract the exclusion list into a shared constant so the merge path and full template
   cannot drift.'
 acceptance:
