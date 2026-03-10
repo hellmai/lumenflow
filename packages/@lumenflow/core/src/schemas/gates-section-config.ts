@@ -90,6 +90,8 @@ export const CoChangeRuleConfigSchema = z.object({
   trigger_patterns: z.array(z.string().min(1)).min(1),
   require_patterns: z.array(z.string().min(1)).min(1),
   severity: CoChangeSeveritySchema.default('error'),
+  /** WU-2368: Optional actionable guidance shown when this rule fails */
+  guidance: z.string().optional(),
 });
 
 export type CoChangeRuleConfig = z.infer<typeof CoChangeRuleConfigSchema>;
@@ -150,6 +152,13 @@ export const GatesConfigSchema = z.object({
    * at least one require_patterns file must also be changed.
    */
   co_change: z.array(CoChangeRuleConfigSchema).default([]),
+
+  /**
+   * WU-2368: Include built-in database co-change defaults.
+   * When true (default), the co-change gate merges built-in DB schema-to-migration
+   * rules with user-configured co_change rules. Set to false to disable defaults.
+   */
+  include_builtin_co_change_defaults: z.boolean().default(true),
 });
 
 export type GatesConfig = z.infer<typeof GatesConfigSchema>;

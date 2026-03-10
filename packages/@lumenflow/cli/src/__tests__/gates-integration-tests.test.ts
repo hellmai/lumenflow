@@ -136,6 +136,56 @@ describe('WU-1415: Gates infrastructure fixes', () => {
   });
 });
 
+describe('WU-2368: runCoChangeGate merges built-in defaults', () => {
+  it('should include default DB co-change rules when config has no user rules', async () => {
+    const { DEFAULT_DB_CO_CHANGE_RULES, evaluateCoChangeRules } = await import(
+      '../gates-runners.js'
+    );
+
+    // Simulates what runCoChangeGate does: merge defaults with user rules
+    const userRules: unknown[] = [];
+    const effectiveRules = [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules];
+
+    const result = evaluateCoChangeRules({
+      changedFiles: ['supabase/schema.sql'],
+      rules: effectiveRules,
+    });
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.errors[0]).toContain('schema-requires-migration');
+  });
+
+  it('should merge user rules with defaults', async () => {
+    const { DEFAULT_DB_CO_CHANGE_RULES, evaluateCoChangeRules } = await import(
+      '../gates-runners.js'
+    );
+
+    const userRules = [
+      {
+        name: 'api-needs-docs',
+        trigger_patterns: ['src/api/**'],
+        require_patterns: ['docs/api/**'],
+        severity: 'error' as const,
+      },
+    ];
+    const effectiveRules = [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules];
+
+    // DB schema change should still trigger
+    const dbResult = evaluateCoChangeRules({
+      changedFiles: ['supabase/schema.sql'],
+      rules: effectiveRules,
+    });
+    expect(dbResult.errors.length).toBeGreaterThan(0);
+
+    // API change should also trigger
+    const apiResult = evaluateCoChangeRules({
+      changedFiles: ['src/api/users.ts'],
+      rules: effectiveRules,
+    });
+    expect(apiResult.errors.length).toBe(1);
+    expect(apiResult.errors[0]).toContain('api-needs-docs');
+  });
+});
+
 describe('WU-2160: gates NDJSON cloud sync', () => {
   const TEST_TOKEN_ENV = 'LUMENFLOW_CLOUD_TOKEN_TEST';
   const TEST_ENDPOINT = 'https://cloud.example.com';

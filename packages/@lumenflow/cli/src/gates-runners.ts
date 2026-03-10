@@ -74,6 +74,42 @@ const CO_CHANGE_SEVERITY = {
   OFF: 'off',
 } as const;
 
+/**
+ * WU-2368: Built-in default co-change rules for database-affecting work.
+ *
+ * These rules enforce that database schema changes are accompanied by
+ * migration files. They are merged with user-configured co_change rules
+ * unless `include_builtin_co_change_defaults` is set to false.
+ */
+export const DEFAULT_DB_CO_CHANGE_RULES: CoChangeRuleConfig[] = [
+  {
+    name: 'schema-requires-migration',
+    trigger_patterns: [
+      '**/schema*.sql',
+      '**/schema*.prisma',
+      '**/db/schema*.ts',
+      '**/db/schema*.js',
+      '**/drizzle/schema*.ts',
+      'supabase/schema.sql',
+      'prisma/schema.prisma',
+    ],
+    require_patterns: [
+      '**/migrations/**',
+      '**/migration/**',
+      'supabase/migrations/**',
+      'prisma/migrations/**',
+      'drizzle/migrations/**',
+    ],
+    severity: 'error',
+    guidance:
+      'Database schema changes require a companion migration file. ' +
+      'Create a migration in the appropriate migrations directory ' +
+      '(e.g., supabase/migrations/, prisma/migrations/, or drizzle/migrations/). ' +
+      'If this is a documentation-only schema change, set the co-change rule ' +
+      'severity to "off" in workspace.yaml gates.co_change.',
+  },
+];
+
 // ── Format check gate ──────────────────────────────────────────────────
 
 export async function runFormatCheckGate({ agentLog, useAgentMode, cwd }: GateLogContext): Promise<{
@@ -594,10 +630,15 @@ export function evaluateCoChangeRules({
       continue;
     }
 
-    const message =
+    let message =
       `co-change "${rule.name}" violated: ` +
       `trigger matched (${rule.trigger_patterns.join(', ')}) but required patterns missing ` +
       `(${rule.require_patterns.join(', ')})`;
+
+    // WU-2368: Append actionable guidance when present
+    if (rule.guidance) {
+      message += `\n  Guidance: ${rule.guidance}`;
+    }
 
     if (rule.severity === CO_CHANGE_SEVERITY.WARN) {
       warnings.push(message);
@@ -616,14 +657,21 @@ export async function runCoChangeGate({ agentLog, useAgentMode, cwd }: GateLogCo
   const logLine = makeGateLogger({ agentLog, useAgentMode });
   logLine('\n> Co-change check\n');
 
-  const gatesSection = getGatesSection(effectiveCwd) as { co_change?: unknown } | null;
+  const gatesSection = getGatesSection(effectiveCwd) as {
+    co_change?: unknown;
+    include_builtin_co_change_defaults?: boolean;
+  } | null;
   const parsedRules = CoChangeRulesConfigSchema.safeParse(gatesSection?.co_change ?? []);
   if (!parsedRules.success) {
     logLine('⚠️  Invalid gates.co_change config; skipping check.');
     return { ok: true, duration: Date.now() - start };
   }
 
-  const rules = parsedRules.data;
+  // WU-2368: Merge built-in DB defaults with user-configured rules
+  const includeDefaults = gatesSection?.include_builtin_co_change_defaults !== false;
+  const userRules = parsedRules.data;
+  const rules = includeDefaults ? [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules] : userRules;
+
   if (rules.length === 0) {
     logLine('ℹ️  No co-change rules configured; skipping.');
     return { ok: true, duration: Date.now() - start };

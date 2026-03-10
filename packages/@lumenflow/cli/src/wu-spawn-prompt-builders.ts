@@ -1129,6 +1129,44 @@ export function generateLaneGuidance(lane: string | undefined): string {
 }
 
 /**
+ * WU-2368: Patterns that indicate database-affecting work.
+ */
+const DB_RISK_CODE_PATH_PATTERNS = [
+  /\bmigrations?\b/i,
+  /\bschema\b.*\.(sql|prisma|ts|js)$/i,
+  /\bdrizzle\b/i,
+  /\bsupabase\b/i,
+  /\bprisma\b/i,
+  /\bdb\b/i,
+  /\bdatabase\b/i,
+];
+
+/**
+ * WU-2368: Detect if code_paths indicate database-affecting work.
+ */
+export function isDbRiskWork(codePaths: string[]): boolean {
+  return codePaths.some((p) => DB_RISK_CODE_PATH_PATTERNS.some((pattern) => pattern.test(p)));
+}
+
+/**
+ * WU-2368: Generate DB-risk verification guidance for database-affecting WUs.
+ */
+export function generateDbRiskVerificationGuidance(codePaths: string[]): string {
+  if (!isDbRiskWork(codePaths)) return '';
+
+  return `## DB-Risk Verification
+
+This WU touches database or migration files. Ensure:
+
+1. **Schema changes have companion migrations** - every schema modification needs a migration file
+2. **Migrations are reversible** - include both up and down (where supported)
+3. **RLS policies are reviewed** - if adding tables, verify row-level security
+4. **Co-change gate will enforce** - the co-change gate checks that schema files are accompanied by migration files
+
+If the co-change gate fails, create the required migration companion before retrying gates.`;
+}
+
+/**
  * Generate the Action section based on WU claim status (WU-1745).
  *
  * If WU is already claimed (has claimed_at and worktree_path), tells agent
@@ -1647,6 +1685,8 @@ export function generateCodexPrompt(
   const clientBlocks = generateClientBlocksSection(clientContext);
   const laneGuidance = resolveLaneGuidanceSection(templates, doc.lane);
   const designContextSection = resolveDesignContextSection(templates, classification);
+  // WU-2368: DB-risk verification guidance when code_paths touch database files
+  const dbRiskGuidance = generateDbRiskVerificationGuidance(codePaths);
 
   const executionModeSection = generateExecutionModeSection(options);
   const thinkToolGuidance = generateThinkToolGuidance(options);
@@ -1738,7 +1778,7 @@ ${mandatorySection}${implementationContext ? `${implementationContext}\n\n---\n\
 
 ---
 
-${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}${selfReviewDirective}
+${laneGuidance}${laneGuidance ? '\n\n---\n\n' : ''}${dbRiskGuidance}${dbRiskGuidance ? '\n\n---\n\n' : ''}${selfReviewDirective}
 
 ---
 

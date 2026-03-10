@@ -594,6 +594,49 @@ describe('WUAutomatedTestsChecker', () => {
   });
 });
 
+describe('WU-2368: DB-risk invariant integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should validate DB schema co-change invariants when configured', () => {
+    vi.mocked(existsSync).mockReturnValue(true);
+
+    const result = validateInvariants(
+      [
+        {
+          id: 'INV-DB-001',
+          type: 'required-file',
+          description: 'Migration file required for schema changes',
+          path: 'supabase/migrations/latest.sql',
+        },
+      ],
+      { baseDir: '/test' },
+    );
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('should fail when migration file is missing for schema work', () => {
+    vi.mocked(existsSync).mockReturnValue(false);
+
+    const result = validateInvariants(
+      [
+        {
+          id: 'INV-DB-001',
+          type: 'required-file',
+          description: 'Migration file required for schema changes',
+          path: 'supabase/migrations/latest.sql',
+        },
+      ],
+      { baseDir: '/test' },
+    );
+
+    expect(result.valid).toBe(false);
+    expect(result.violations).toHaveLength(1);
+  });
+});
+
 describe('validateInvariants', () => {
   beforeEach(() => {
     vi.clearAllMocks();

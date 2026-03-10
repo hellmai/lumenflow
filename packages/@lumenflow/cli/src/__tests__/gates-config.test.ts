@@ -410,3 +410,42 @@ describe('WU-2009: claim-validation gate contract', () => {
     expect(GATE_NAMES.CO_CHANGE).toBe('co-change');
   });
 });
+
+describe('WU-2368: CoChangeRuleConfigSchema accepts guidance field', () => {
+  it('should accept a rule with optional guidance field', () => {
+    const { CoChangeRuleConfigSchema } = require('@lumenflow/core/config-schema');
+    const result = CoChangeRuleConfigSchema.parse({
+      name: 'schema-requires-migration',
+      trigger_patterns: ['**/schema*.sql'],
+      require_patterns: ['**/migrations/**'],
+      severity: 'error',
+      guidance: 'Create a migration file for schema changes.',
+    });
+    expect(result.guidance).toBe('Create a migration file for schema changes.');
+  });
+
+  it('should accept a rule without guidance field (backwards compatible)', () => {
+    const { CoChangeRuleConfigSchema } = require('@lumenflow/core/config-schema');
+    const result = CoChangeRuleConfigSchema.parse({
+      name: 'legacy-rule',
+      trigger_patterns: ['src/**'],
+      require_patterns: ['tests/**'],
+      severity: 'error',
+    });
+    expect(result.guidance).toBeUndefined();
+  });
+
+  it('should accept include_builtin_co_change_defaults in gates config', () => {
+    const config = parseConfig({
+      gates: {
+        include_builtin_co_change_defaults: false,
+      },
+    });
+    expect(config.gates.include_builtin_co_change_defaults).toBe(false);
+  });
+
+  it('should default include_builtin_co_change_defaults to true', () => {
+    const config = parseConfig({});
+    expect(config.gates.include_builtin_co_change_defaults).toBe(true);
+  });
+});

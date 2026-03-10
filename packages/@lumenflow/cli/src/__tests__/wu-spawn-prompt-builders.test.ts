@@ -770,6 +770,70 @@ describe('WU-2329: verification guidance composition', () => {
   });
 });
 
+describe('WU-2368: DB-risk verification guidance in spawn prompts', () => {
+  const id = 'WU-2368';
+  const strategy: SpawnStrategy = {
+    getPreamble: () => 'Load context preamble',
+    getSkillLoadingInstruction: () => 'Load skills instruction',
+  };
+
+  const config = LumenFlowConfigSchema.parse({
+    directories: {
+      skillsDir: '.claude/skills',
+      agentsDir: '.claude/agents',
+    },
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should include DB-risk verification guidance when code_paths contain migration files', async () => {
+    const dbDoc = {
+      title: 'Add user table',
+      lane: 'Framework: Core',
+      type: 'feature',
+      status: 'ready',
+      code_paths: [
+        'supabase/migrations/20260310_add_users.sql',
+        'supabase/schema.sql',
+      ],
+      acceptance: ['Migration runs cleanly'],
+      description: 'Add users table with RLS',
+    };
+
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    mockLoad.mockReturnValue(new Map<string, LoadedTemplate>());
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(dbDoc, id, strategy, { config });
+
+    expect(prompt).toContain('database');
+  });
+
+  it('should NOT include DB-risk guidance when code_paths are unrelated to databases', async () => {
+    const nonDbDoc = {
+      title: 'Fix button color',
+      lane: 'Experience: Web',
+      type: 'bug',
+      status: 'ready',
+      code_paths: ['apps/web/src/components/Button.tsx'],
+      acceptance: ['Button is blue'],
+      description: 'Change button from red to blue',
+    };
+
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const mockLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    mockLoad.mockReturnValue(new Map<string, LoadedTemplate>());
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(nonDbDoc, id, strategy, { config });
+
+    expect(prompt).not.toContain('DB-Risk Verification');
+  });
+});
+
 describe('WU-2309: profile-aware guidance and lane guidance customization', () => {
   const id = 'WU-2309';
   const strategy: SpawnStrategy = {
