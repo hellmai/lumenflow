@@ -14,11 +14,9 @@ code_paths:
   - .windsurf/rules/lumenflow.md
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
   - packages/@lumenflow/cli/templates/core/AGENTS.md.template
-  - packages/@lumenflow/cli/templates/vendors/
   - packages/@lumenflow/cli/src/init-templates.ts
   - .lumenflow/rules/tool-usage.md
-  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
+  - templates/vendor-rules.template.md
 tests:
   manual:
     - Run pnpm docs:sync --force in a test workspace and confirm LUMENFLOW.md carries Before You
@@ -48,10 +46,17 @@ notes: 'tdd-exception: docs-only WU — init-templates.ts is listed as code_path
   rule is narrow: never truncate lumenflow:commands, --help, or error/fix output. General command
   output like git log | head -20 stays allowed.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T11:33:17.387Z
+worktree_path: worktrees/content-specs-governance-wu-2365
+session_id: e8cf369a-1923-47ae-8b34-9a48b51d5ed5
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T11:33:17.395Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -73,11 +78,3 @@ acceptance:
   - No net-new workflow guidance — all shared rules consolidated into LUMENFLOW.md
   - 'tool-usage.md updated: head/tail exception for command output explicitly excludes
     lumenflow:commands, --help output, and CLI error/fix output'
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2365
-claimed_at: 2026-03-10T11:33:17.387Z
-baseline_main_sha: 70c64ae3ecd59f2c5aeece83429726714a763520
-session_id: e8cf369a-1923-47ae-8b34-9a48b51d5ed5
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T11:33:17.395Z

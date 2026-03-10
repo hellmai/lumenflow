@@ -3041,3 +3041,4 @@
 {"type":"claim","wuId":"WU-2365","timestamp":"2026-03-10T11:33:17.422Z","lane":"Content: Specs Governance","title":"Centralize agent startup guidance in LUMENFLOW.md and deduplicate vendor overlays"}
 {"type":"checkpoint","wuId":"WU-2365","timestamp":"2026-03-10T11:33:28.666Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2365","timestamp":"2026-03-10T11:33:37.269Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2365","timestamp":"2026-03-10T11:39:05.679Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2365.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
