@@ -6,8 +6,6 @@ status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
-  - packages/@lumenflow/cli/src/wu-edit-operations.ts
-  - packages/@lumenflow/cli/src/__tests__/wu-edit.test.ts
   - packages/@lumenflow/cli/src/__tests__/wu-edit-strict.test.ts
 tests:
   manual:
@@ -26,7 +24,11 @@ risks: []
 notes: 'Keep this WU tight per wu-sizing-guide.md: one CLI authoring bug, one implementation file
   cluster, and regression tests. Do not broaden into general WU authoring refactors.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T18:54:50.428Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2382
+session_id: bf249521-a185-479c-9c68-2aa2dcd32020
 exposure: backend-only
 sizing_estimate:
   estimated_files: 3
@@ -34,6 +36,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T18:54:50.437Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -50,11 +55,3 @@ acceptance:
   - Path and ID style repeatable fields that intentionally support comma-separated shorthand
     continue to work as before
   - Regression tests cover both preserved prose fields and supported comma-split path or WU-ID fields
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2382
-claimed_at: 2026-03-10T18:54:50.428Z
-baseline_main_sha: 855b9f0acd0f332002e8bf6b8e8f08c2916cf8ee
-session_id: bf249521-a185-479c-9c68-2aa2dcd32020
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T18:54:50.437Z
