@@ -1,6 +1,6 @@
 # LumenFlow Agent Starting Prompt
 
-**Last updated:** 2026-02-27
+**Last updated:** 2026-03-10
 
 This is the complete onboarding document for AI agents working with LumenFlow. Read this entire document before starting any work.
 
@@ -91,7 +91,7 @@ If you are starting a new project or feature from a product vision (e.g., "Build
 
 ### When to Skip Initiatives
 
-Skip initiatives whenever the work is still one coherent WU, even if it spans several files or needs more than one session.
+Skip initiatives whenever the work is still one coherent WU, even if it spans several files or needs checkpoint-resume.
 
 Typical no-initiative cases:
 
@@ -100,7 +100,7 @@ Typical no-initiative cases:
 - Isolated refactors that land as one atomic change
 - One feature WU that may need checkpoint-resume but does not need decomposition
 
-Create an initiative when you genuinely need multiple independently completable WUs, multiple lane owners, or staged rollout across phases. Do not use elapsed duration alone as the split signal.
+Create an initiative when you genuinely need multiple independently completable WUs, multiple lane owners, or staged rollout across phases. File count or execution strategy alone is not the split signal.
 
 ### Lane-Fit Reasoning
 

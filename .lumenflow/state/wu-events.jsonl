@@ -2990,3 +2990,5 @@
 {"type":"claim","wuId":"WU-2355","timestamp":"2026-03-10T00:28:50.586Z","lane":"Content: Specs Governance","title":"Tighten sizing guidance and remove elapsed-time decomposition cues"}
 {"type":"complete","wuId":"WU-2355","timestamp":"2026-03-10T00:31:56.390Z"}
 {"type":"claim","wuId":"WU-2356","timestamp":"2026-03-10T00:39:28.345Z","lane":"Content: Specs Governance","title":"Align sizing and initiative guidance across root and template docs"}
+{"type":"checkpoint","wuId":"WU-2356","timestamp":"2026-03-10T00:39:39.715Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2356","timestamp":"2026-03-10T00:39:50.254Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}

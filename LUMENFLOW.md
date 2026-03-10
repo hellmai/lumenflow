@@ -1,6 +1,6 @@
 # LumenFlow Workflow Guide
 
-**Last updated:** 2026-02-27
+**Last updated:** 2026-03-10
 
 LumenFlow is a vendor-agnostic workflow framework for AI-native software development.
 
@@ -72,7 +72,16 @@ pnpm initiative:add-wu --initiative INIT-001 --wu WU-XXX --phase 1
 pnpm initiative:status --id INIT-001
 ```
 
-**Skip initiatives** for: single-file bug fixes, small docs updates, isolated refactoring.
+**Skip initiatives whenever the work is still one coherent WU**, even if it spans several files or needs checkpoint-resume.
+
+Typical no-initiative cases:
+
+- Single coherent bug fixes
+- Small or medium documentation updates
+- Isolated refactors that land as one atomic change
+- One feature WU that needs checkpoint-resume but does not need decomposition
+
+Create an initiative when you genuinely need multiple independently completable WUs, multiple lane owners, or staged rollout across phases. File count alone is not the split signal.
 
 ---
 
