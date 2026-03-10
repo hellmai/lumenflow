@@ -92,7 +92,7 @@ ${stopAskNum}. STOP-AND-ASK TRIGGERS (LumenFlow \u00a77.2 - narrow scope)
    - For ordinary errors: fix and retry autonomously (up to 3 attempts)
 
 ${verifyNum}. VERIFY COMPLETION before reporting success
-   - Run: node packages/@lumenflow/agent/verification ${id} (from shared checkout)
+   - Run: pnpm wu:verify --id ${id} (from shared checkout)
    - Exit 0 = passed, Exit 1 = INCOMPLETE
    - Never report "done" if verification fails
 
@@ -154,7 +154,7 @@ export function generateCodexConstraints(id: string, options?: ConstraintsOption
   return `## Constraints (Critical)
 
 ${tddLine}${tddLine ? '\n' : ''}${stopNum}. **Stop on errors**: if UnsafeAny command fails, report BLOCKED (never DONE) with the error
-${verifyNum}. **Verify before success**: run \`pnpm gates\` in the worktree, then run \`node packages/@lumenflow/agent/verification ${id}\` (from the shared checkout)
+${verifyNum}. **Verify before success**: run \`pnpm gates\` in the worktree, then run \`pnpm wu:verify --id ${id}\` (from the shared checkout)
 ${fabricateNum}. **No fabrication**: if blockers remain or verification fails, report INCOMPLETE
 ${gitNum}. **Git workflow**: avoid merge commits; use \`wu:prep\` from worktree, then \`wu:done\` from main
 ${scopeNum}. **Scope discipline**: stay within \`code_paths\`; capture out-of-scope issues via \`pnpm mem:create\`

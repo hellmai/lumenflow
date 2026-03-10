@@ -27,14 +27,16 @@ export interface SpawnStrategy {
 abstract class BaseSpawnStrategy implements SpawnStrategy {
   protected getCorePreamble(wuId: string): string {
     const wuPaths = createWuPaths();
+    // WU-2374: Removed lumenflow-complete.md step — that file does not exist in
+    // consumer projects after `lumenflow init`. LUMENFLOW.md + constraints.md +
+    // README.md + WU YAML + quick-ref-commands.md provide sufficient context.
     return `Load the following context in this order:
 
 1. Read LUMENFLOW.md (workflow fundamentals and critical rules)
 2. Read .lumenflow/constraints.md (non-negotiable constraints)
 3. Read README.md (project structure and tech stack)
-4. Read ${wuPaths.COMPLETE_GUIDE_PATH()} sections 1-7 (TDD, gates, Definition of Done)
-5. Read ${wuPaths.WU(wuId)} (the specific WU you're working on)
-6. Read ${wuPaths.QUICK_REF_PATH()} (CLI tooling reference - USE THESE COMMANDS)`;
+4. Read ${wuPaths.WU(wuId)} (the specific WU you're working on)
+5. Read ${wuPaths.QUICK_REF_PATH()} (CLI tooling reference - USE THESE COMMANDS)`;
   }
 
   abstract getPreamble(wuId: string): string;
@@ -68,7 +70,7 @@ export class ClaudeCodeStrategy extends BaseSpawnStrategy {
       // Actually, checking original behavior: CLAUDE.md was #1.
       // But new plan says LUMENFLOW.md is core.
       // We will append it as an overlay step.
-      preamble += `\n7. Read ${claudeOverlayPath.replace(/\\/g, '/')} (Claude-specific workflow overlay)`;
+      preamble += `\n6. Read ${claudeOverlayPath.replace(/\\/g, '/')} (Claude-specific workflow overlay)`;
     }
 
     return preamble;
@@ -93,7 +95,7 @@ export class GeminiCliStrategy extends BaseSpawnStrategy {
     let preamble = this.getCorePreamble(wuId);
 
     if (existsSync('GEMINI.md')) {
-      preamble += `\n7. Read GEMINI.md (Gemini-specific workflow overlay)`;
+      preamble += `\n6. Read GEMINI.md (Gemini-specific workflow overlay)`;
     }
 
     return preamble;

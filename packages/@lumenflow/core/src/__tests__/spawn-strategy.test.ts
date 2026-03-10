@@ -35,43 +35,50 @@ describe('SpawnStrategy', () => {
       expect(preamble).toContain('CLI tooling reference');
     });
 
-    it('should include quick-ref-commands.md as step 6', () => {
+    it('should include quick-ref-commands.md as step 5', () => {
       const strategy = new GenericStrategy();
       const preamble = strategy.getPreamble('WU-1234');
       const quickRefPath = createWuPaths().QUICK_REF_PATH();
 
-      // Check that quick-ref is listed as step 6
-      expect(preamble).toMatch(new RegExp(`6\\.\\s*Read\\s+${escapeRegex(quickRefPath)}`));
+      // Check that quick-ref is listed as step 5 (WU-2374: renumbered after removing lumenflow-complete.md)
+      expect(preamble).toMatch(new RegExp(`5\\.\\s*Read\\s+${escapeRegex(quickRefPath)}`));
+    });
+
+    it('should not reference lumenflow-complete.md (WU-2374: does not exist in consumer projects)', () => {
+      const strategy = new GenericStrategy();
+      const preamble = strategy.getPreamble('WU-TEST');
+
+      expect(preamble).not.toContain('lumenflow-complete.md');
     });
 
     it('should include all required context files in correct order', () => {
       const strategy = new GenericStrategy();
       const preamble = strategy.getPreamble('WU-TEST');
 
-      // Verify order: LUMENFLOW.md < constraints.md < README.md < lumenflow-complete.md < WU YAML < quick-ref
+      // WU-2374: Verify order after removing lumenflow-complete.md step
+      // LUMENFLOW.md < constraints.md < README.md < WU YAML < quick-ref
       const lumenflowPos = preamble.indexOf('LUMENFLOW.md');
       const constraintsPos = preamble.indexOf('.lumenflow/constraints.md');
       const readmePos = preamble.indexOf('README.md');
-      const completePos = preamble.indexOf('lumenflow-complete.md');
       const wuYamlPos = preamble.indexOf('WU-TEST.yaml');
       const quickRefPos = preamble.indexOf('quick-ref-commands.md');
 
       expect(lumenflowPos).toBeLessThan(constraintsPos);
       expect(constraintsPos).toBeLessThan(readmePos);
-      expect(readmePos).toBeLessThan(completePos);
-      expect(completePos).toBeLessThan(wuYamlPos);
+      expect(readmePos).toBeLessThan(wuYamlPos);
       expect(wuYamlPos).toBeLessThan(quickRefPos);
     });
   });
 
   describe('ClaudeCodeStrategy', () => {
-    it('should add Claude overlay as step 7 when .claude/CLAUDE.md exists', () => {
+    it('should add Claude overlay as step 6 when .claude/CLAUDE.md exists', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       const strategy = new ClaudeCodeStrategy();
       const preamble = strategy.getPreamble('WU-1234');
 
-      expect(preamble).toContain('7. Read .claude/CLAUDE.md');
+      // WU-2374: Step number changed from 7 to 6 after removing lumenflow-complete.md step
+      expect(preamble).toContain('6. Read .claude/CLAUDE.md');
       expect(preamble).toContain('Claude-specific workflow overlay');
     });
 
@@ -84,25 +91,27 @@ describe('SpawnStrategy', () => {
       expect(preamble).not.toContain('.claude/CLAUDE.md');
     });
 
-    it('should still include quick-ref-commands.md as step 6', () => {
+    it('should still include quick-ref-commands.md as step 5', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       const strategy = new ClaudeCodeStrategy();
       const preamble = strategy.getPreamble('WU-1234');
 
-      expect(preamble).toMatch(/6\.\s*Read.*quick-ref-commands\.md/);
-      expect(preamble).toMatch(/7\.\s*Read.*\.claude\/CLAUDE\.md/);
+      // WU-2374: Step numbers shifted after removing lumenflow-complete.md step
+      expect(preamble).toMatch(/5\.\s*Read.*quick-ref-commands\.md/);
+      expect(preamble).toMatch(/6\.\s*Read.*\.claude\/CLAUDE\.md/);
     });
   });
 
   describe('GeminiCliStrategy', () => {
-    it('should add Gemini overlay as step 7 when GEMINI.md exists', () => {
+    it('should add Gemini overlay as step 6 when GEMINI.md exists', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       const strategy = new GeminiCliStrategy();
       const preamble = strategy.getPreamble('WU-1234');
 
-      expect(preamble).toContain('7. Read GEMINI.md');
+      // WU-2374: Step number changed from 7 to 6 after removing lumenflow-complete.md step
+      expect(preamble).toContain('6. Read GEMINI.md');
       expect(preamble).toContain('Gemini-specific workflow overlay');
     });
 

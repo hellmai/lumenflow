@@ -511,7 +511,7 @@ ${action}
 ## Verification
 
 - Run in worktree: \`pnpm gates\`
-- From shared checkout: \`node packages/@lumenflow/agent/verification ${id}\`
+- From shared checkout: \`pnpm wu:verify --id ${id}\`
 
 ---
 
