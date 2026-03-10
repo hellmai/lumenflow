@@ -10,10 +10,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as os from 'node:os';
 
 // Functions under test (to be implemented)
-import { syncScriptsToPackageJson } from '../src/lumenflow-upgrade.js';
+import { syncScriptsToPackageJson, checkDocsStaleness } from '../src/lumenflow-upgrade.js';
 import { generateScriptsFromManifest } from '../src/public-manifest.js';
+import { loadTemplate, processTemplate, CORE_DOC_TEMPLATE_PATHS } from '../src/docs-sync.js';
 
 describe('WU-2226: syncScriptsToPackageJson', () => {
   const tmpDir = path.join(process.cwd(), '__test-tmp-wu2226__');
@@ -175,5 +177,59 @@ describe('WU-2226: syncScriptsToPackageJson', () => {
     // Assert: gates:docs uses the override pattern (same as init)
     const updated = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     expect(updated.scripts['gates:docs']).toBe('gates --docs-only');
+  });
+});
+
+describe('WU-2366: checkDocsStaleness', () => {
+  let staleTmpDir: string;
+
+  beforeEach(() => {
+    staleTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lumenflow-staleness-test-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(staleTmpDir, { recursive: true, force: true });
+  });
+
+  it('should detect stale docs when on-disk content differs from template', () => {
+    // Write stale content for each core doc
+    fs.writeFileSync(path.join(staleTmpDir, 'LUMENFLOW.md'), '# Old LUMENFLOW content');
+    fs.writeFileSync(path.join(staleTmpDir, 'AGENTS.md'), '# Old AGENTS content');
+    fs.mkdirSync(path.join(staleTmpDir, '.lumenflow'), { recursive: true });
+    fs.writeFileSync(path.join(staleTmpDir, '.lumenflow', 'constraints.md'), '# Old constraints');
+
+    const result = checkDocsStaleness(staleTmpDir);
+
+    expect(result.stale).toBe(true);
+    expect(result.staleFiles.length).toBeGreaterThan(0);
+  });
+
+  it('should report no staleness when hashes match', () => {
+    // Write content that matches what processTemplate would produce
+    const currentDate = new Date().toISOString().split('T')[0];
+    const tokens = { DATE: currentDate };
+
+    for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
+      const templateContent = loadTemplate(templatePath);
+      const processedContent = processTemplate(templateContent, tokens);
+      const filePath = path.join(staleTmpDir, outputFile);
+      fs.mkdirSync(path.dirname(filePath), { recursive: true });
+      fs.writeFileSync(filePath, processedContent);
+    }
+
+    const result = checkDocsStaleness(staleTmpDir);
+
+    expect(result.stale).toBe(false);
+    expect(result.staleFiles).toEqual([]);
+  });
+
+  it('should report stale when file does not exist on disk', () => {
+    // Don't create any files — empty directory
+    const result = checkDocsStaleness(staleTmpDir);
+
+    expect(result.stale).toBe(true);
+    expect(result.staleFiles).toContain('LUMENFLOW.md');
+    expect(result.staleFiles).toContain('AGENTS.md');
+    expect(result.staleFiles).toContain('.lumenflow/constraints.md');
   });
 });

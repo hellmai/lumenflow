@@ -231,6 +231,41 @@ The 6 non-negotiable constraints.`,
     });
   });
 
+  // WU-2366: AGENTS.md drift check
+  describe('checkTemplateDrift includes AGENTS.md (WU-2366)', () => {
+    it('should include AGENTS.md in drift check', async () => {
+      const { checkTemplateDrift } = await import('../src/sync-templates.js');
+
+      // Create AGENTS.md source
+      fs.writeFileSync(
+        path.join(tempDir, 'AGENTS.md'),
+        `# Agent Startup Rules
+
+**Last updated:** 2026-01-26
+
+Universal rules for all agents.`,
+      );
+
+      // Create AGENTS.md template
+      const agentsTemplateDir = path.join(templatesDir, 'core');
+      fs.mkdirSync(agentsTemplateDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(agentsTemplateDir, 'AGENTS.md.template'),
+        `# Agent Startup Rules
+
+**Last updated:** {{DATE}}
+
+Universal rules for all agents.`,
+      );
+
+      const result = await checkTemplateDrift(tempDir);
+
+      // AGENTS.md should be in the checked files list
+      const agentsChecked = result.checkedFiles.some((f) => f.includes('AGENTS.md'));
+      expect(agentsChecked).toBe(true);
+    });
+  });
+
   describe('CLI entry point', () => {
     it('should export main function for CLI', async () => {
       const mod = await import('../src/sync-templates.js');

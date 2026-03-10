@@ -123,6 +123,17 @@ This document contains the 7 non-negotiable constraints.
 ## Critical Rule: Use wu:prep Then wu:done
 `,
       );
+
+      // WU-2366: Create AGENTS.md
+      fs.writeFileSync(
+        path.join(tempDir, 'AGENTS.md'),
+        `# Agent Startup Rules
+
+**Last updated:** 2026-02-02
+
+Universal rules for all agents.
+`,
+      );
     });
 
     it('should sync constraints.md to template', async () => {
@@ -271,6 +282,20 @@ pnpm wu:prep --id WU-123
 7 constraints`,
       );
 
+      // WU-2366: Create AGENTS.md and LUMENFLOW.md source for drift checks
+      fs.writeFileSync(
+        path.join(tempDir, 'AGENTS.md'),
+        `# Agent Startup Rules
+**Last updated:** 2026-02-02
+Universal rules.`,
+      );
+      fs.writeFileSync(
+        path.join(tempDir, 'LUMENFLOW.md'),
+        `# LumenFlow Workflow Guide
+**Last updated:** 2026-02-02
+Guide content.`,
+      );
+
       // Set up template directory
       const templatesDir = path.join(
         tempDir,
@@ -352,6 +377,7 @@ pnpm wu:prep --id WU-123
       fs.writeFileSync(path.join(lumenflowDir, CONSTRAINTS_FILE), 'content');
 
       fs.writeFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'content');
+      fs.writeFileSync(path.join(tempDir, 'AGENTS.md'), 'content');
 
       const onboardingDir = path.join(getOnboardingDir(tempDir));
       fs.mkdirSync(onboardingDir, { recursive: true });

@@ -11,13 +11,14 @@ pnpm outdated @lumenflow/*
 # Update all LumenFlow packages atomically
 pnpm lumenflow:upgrade --latest
 
-# Refresh scaffolded onboarding docs and vendor assets
+# Refresh core docs, onboarding docs, and vendor assets
 pnpm docs:sync --force
 ```
 
-Package upgrades change the runtime `wu:brief` defaults immediately. `docs:sync --force` refreshes
-scaffolded onboarding docs and supported vendor assets, but project-local `.lumenflow/templates/`
-remains optional unless you want custom overrides.
+Package upgrades change the runtime `wu:brief` defaults immediately. `lumenflow:upgrade` prints a
+staleness warning after the upgrade completes if any core docs (LUMENFLOW.md, AGENTS.md,
+constraints.md) differ from the latest templates. Run `pnpm docs:sync --force` to refresh them.
+Project-local `.lumenflow/templates/` remains optional unless you want custom overrides.
 
 ## Version Compatibility
 
@@ -64,10 +65,9 @@ pnpm docs:sync --force
 
 This updates:
 
+- Core docs: LUMENFLOW.md, AGENTS.md, .lumenflow/constraints.md
 - Scaffolded onboarding documentation
 - Supported vendor assets such as Claude skills
-
-It does not rewrite root workflow files such as `LUMENFLOW.md` or `.lumenflow/constraints.md`.
 
 ## Defaults vs Overrides
 

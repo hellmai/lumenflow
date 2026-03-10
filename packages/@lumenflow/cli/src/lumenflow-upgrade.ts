@@ -22,6 +22,7 @@
  *   pnpm lumenflow:upgrade --latest --dry-run
  */
 
+import { createHash } from 'node:crypto';
 import { execSync, execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -41,6 +42,7 @@ import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { runCLI } from './cli-entry-point.js';
 import { generateScriptsFromManifest } from './public-manifest.js';
+import { loadTemplate, processTemplate, CORE_DOC_TEMPLATE_PATHS } from './docs-sync.js';
 
 /** Log prefix for console output */
 const LOG_PREFIX = '[lumenflow:upgrade]';
@@ -570,6 +572,48 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
 }
 
 /**
+ * WU-2366: Check whether core docs are stale after an upgrade.
+ *
+ * Processes each core doc template with the DATE token, hashes the result,
+ * and compares against the on-disk file hash. Returns which files differ.
+ *
+ * @param targetDir - Project root directory to check
+ * @returns Object with stale flag and list of stale file paths
+ */
+export function checkDocsStaleness(targetDir: string): { stale: boolean; staleFiles: string[] } {
+  const staleFiles: string[] = [];
+  const currentDate = new Date().toISOString().split('T')[0];
+  const tokens = { DATE: currentDate };
+
+  for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
+    const filePath = path.join(targetDir, outputFile);
+
+    if (!existsSync(filePath)) {
+      // File doesn't exist on disk — it's stale by definition
+      staleFiles.push(outputFile);
+      continue;
+    }
+
+    try {
+      const templateContent = loadTemplate(templatePath);
+      const processedContent = processTemplate(templateContent, tokens);
+      const templateHash = createHash('sha256').update(processedContent).digest('hex');
+
+      const onDiskContent = readFileSync(filePath, 'utf-8');
+      const onDiskHash = createHash('sha256').update(onDiskContent).digest('hex');
+
+      if (templateHash !== onDiskHash) {
+        staleFiles.push(outputFile);
+      }
+    } catch {
+      // Template loading failed — skip gracefully (template may not exist in older versions)
+    }
+  }
+
+  return { stale: staleFiles.length > 0, staleFiles };
+}
+
+/**
  * Print help message for lumenflow-upgrade
  */
 /* istanbul ignore next -- CLI entry point */
@@ -674,6 +718,17 @@ export async function main(): Promise<void> {
     console.error(`\n${LOG_PREFIX} Upgrade failed`);
     console.error(`${LOG_PREFIX} ${error instanceof Error ? error.message : String(error)}`);
     process.exit(EXIT_CODES.ERROR);
+  }
+
+  // WU-2366: Check if core docs are stale after upgrade
+  try {
+    const staleness = checkDocsStaleness(process.cwd());
+    if (staleness.stale) {
+      console.log(`\n${LOG_PREFIX} Core docs may be out of date after upgrade.`);
+      console.log(`${LOG_PREFIX}   Run: pnpm docs:sync --force`);
+    }
+  } catch {
+    // Staleness check is advisory — never block the upgrade
   }
 }
 

@@ -250,6 +250,72 @@ describe('lumenflow docs:sync command (WU-1083)', () => {
     });
   });
 
+  // WU-2366: Core docs sync tests
+  describe('syncCoreDocs (WU-2366)', () => {
+    it('should sync LUMENFLOW.md, AGENTS.md, and constraints.md with --force', async () => {
+      const { syncCoreDocs } = await import('../src/docs-sync.js');
+
+      // Create existing files so we can verify --force overwrites them
+      fs.writeFileSync(path.join(tempDir, 'LUMENFLOW.md'), '# Old content');
+      fs.writeFileSync(path.join(tempDir, 'AGENTS.md'), '# Old agents');
+      fs.mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+      fs.writeFileSync(path.join(tempDir, '.lumenflow', 'constraints.md'), '# Old constraints');
+
+      const result = await syncCoreDocs(tempDir, { force: true });
+
+      expect(result.created).toContain('LUMENFLOW.md');
+      expect(result.created).toContain('AGENTS.md');
+      expect(result.created).toContain('.lumenflow/constraints.md');
+      expect(result.skipped.length).toBe(0);
+
+      // Verify content was updated from templates
+      const lumenflow = fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8');
+      expect(lumenflow).not.toBe('# Old content');
+      expect(lumenflow).not.toContain('{{DATE}}');
+
+      const agents = fs.readFileSync(path.join(tempDir, 'AGENTS.md'), 'utf-8');
+      expect(agents).not.toBe('# Old agents');
+      expect(agents).not.toContain('{{DATE}}');
+    });
+
+    it('should skip existing core docs without --force', async () => {
+      const { syncCoreDocs } = await import('../src/docs-sync.js');
+
+      // Create existing files
+      fs.writeFileSync(path.join(tempDir, 'LUMENFLOW.md'), '# Custom LUMENFLOW');
+      fs.writeFileSync(path.join(tempDir, 'AGENTS.md'), '# Custom AGENTS');
+      fs.mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+      fs.writeFileSync(path.join(tempDir, '.lumenflow', 'constraints.md'), '# Custom constraints');
+
+      const result = await syncCoreDocs(tempDir, { force: false });
+
+      expect(result.skipped).toContain('LUMENFLOW.md');
+      expect(result.skipped).toContain('AGENTS.md');
+      expect(result.skipped).toContain('.lumenflow/constraints.md');
+      expect(result.created.length).toBe(0);
+
+      // Verify content was NOT overwritten
+      expect(fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8')).toBe(
+        '# Custom LUMENFLOW',
+      );
+    });
+
+    it('should create core docs when they do not exist', async () => {
+      const { syncCoreDocs } = await import('../src/docs-sync.js');
+
+      const result = await syncCoreDocs(tempDir, { force: false });
+
+      expect(result.created).toContain('LUMENFLOW.md');
+      expect(result.created).toContain('AGENTS.md');
+      expect(result.created).toContain('.lumenflow/constraints.md');
+      expect(result.skipped.length).toBe(0);
+
+      expect(fs.existsSync(path.join(tempDir, 'LUMENFLOW.md'))).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, 'AGENTS.md'))).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, '.lumenflow', 'constraints.md'))).toBe(true);
+    });
+  });
+
   // WU-1085: CLI argument parsing with --help support
   describe('CLI argument parsing (WU-1085)', () => {
     let mockExit: ReturnType<typeof vi.spyOn>;

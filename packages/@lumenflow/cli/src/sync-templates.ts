@@ -269,6 +269,11 @@ export async function syncCoreDocs(
   const lumenflowTarget = path.join(templatesDir, 'core', 'LUMENFLOW.md.template');
   syncFile(lumenflowSource, lumenflowTarget, projectRoot, result, dryRun);
 
+  // WU-2366: Sync AGENTS.md
+  const agentsSource = path.join(projectRoot, 'AGENTS.md');
+  const agentsTarget = path.join(templatesDir, 'core', 'AGENTS.md.template');
+  syncFile(agentsSource, agentsTarget, projectRoot, result, dryRun);
+
   // Sync constraints.md
   const constraintsSource = path.join(projectRoot, LUMENFLOW_DIR, 'constraints.md');
   const constraintsTarget = path.join(
@@ -352,6 +357,10 @@ export async function checkTemplateDrift(projectRoot: string): Promise<DriftResu
     {
       source: path.join(projectRoot, 'LUMENFLOW.md'),
       template: path.join(templatesDir, 'core', 'LUMENFLOW.md.template'),
+    },
+    {
+      source: path.join(projectRoot, 'AGENTS.md'),
+      template: path.join(templatesDir, 'core', 'AGENTS.md.template'),
     },
     {
       source: path.join(projectRoot, LUMENFLOW_DIR, 'constraints.md'),
@@ -494,6 +503,11 @@ export async function syncTemplatesWithWorktree(projectRoot: string): Promise<Sy
         const lumenflowSource = path.join(projectRoot, 'LUMENFLOW.md');
         const lumenflowTarget = path.join(templatesDir, 'core', 'LUMENFLOW.md.template');
         syncFileToWorktree(lumenflowSource, lumenflowTarget, projectRoot, coreResult);
+
+        // WU-2366: Sync AGENTS.md
+        const agentsSource = path.join(projectRoot, 'AGENTS.md');
+        const agentsTarget = path.join(templatesDir, 'core', 'AGENTS.md.template');
+        syncFileToWorktree(agentsSource, agentsTarget, projectRoot, coreResult);
 
         const constraintsSource = path.join(projectRoot, LUMENFLOW_DIR, 'constraints.md');
         const constraintsTarget = path.join(

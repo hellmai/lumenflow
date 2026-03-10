@@ -130,7 +130,7 @@ function getCurrentDate(): string {
 /**
  * Process template content by replacing placeholders
  */
-function processTemplate(content: string, tokens: Record<string, string>): string {
+export function processTemplate(content: string, tokens: Record<string, string>): string {
   let output = content;
   for (const [key, value] of Object.entries(tokens)) {
     // eslint-disable-next-line security/detect-non-literal-regexp -- key is from internal token map, not user input
@@ -182,6 +182,16 @@ async function createFile(
   fs.writeFileSync(filePath, content);
   result.created.push(relativePath);
 }
+
+/**
+ * WU-2366: Template paths for core docs synced by docs:sync
+ * Maps output file paths (relative to targetDir) to template paths (relative to templates dir)
+ */
+export const CORE_DOC_TEMPLATE_PATHS: Record<string, string> = {
+  'LUMENFLOW.md': 'core/LUMENFLOW.md.template',
+  'AGENTS.md': 'core/AGENTS.md.template',
+  '.lumenflow/constraints.md': 'core/.lumenflow/constraints.md.template',
+};
 
 const CLAUDE_VENDOR_TEMPLATE_ROOT = ['vendors', 'claude', '.claude'].join('/');
 const CLAUDE_SKILLS_TEMPLATE_ROOT = `${CLAUDE_VENDOR_TEMPLATE_ROOT}/skills`;
@@ -291,6 +301,36 @@ export async function syncSkills(targetDir: string, options: SyncOptions): Promi
 }
 
 /**
+ * WU-2366: Sync core docs (LUMENFLOW.md, AGENTS.md, constraints.md) to an existing project
+ * Uses templates from the bundled templates directory, same pattern as syncAgentDocs.
+ */
+export async function syncCoreDocs(targetDir: string, options: SyncOptions): Promise<SyncResult> {
+  const result: SyncResult = {
+    created: [],
+    skipped: [],
+  };
+
+  const tokens = {
+    DATE: getCurrentDate(),
+  };
+
+  for (const [outputFile, templatePath] of Object.entries(CORE_DOC_TEMPLATE_PATHS)) {
+    const templateContent = loadTemplate(templatePath);
+    const processedContent = processTemplate(templateContent, tokens);
+
+    await createFile(
+      path.join(targetDir, outputFile),
+      processedContent,
+      options.force,
+      result,
+      targetDir,
+    );
+  }
+
+  return result;
+}
+
+/**
  * WU-1362: Check branch guard before writing tracked files
  *
  * Warns (but does not block) if:
@@ -340,18 +380,20 @@ export async function main(): Promise<void> {
   const opts = parseDocsSyncOptions();
   const targetDir = process.cwd();
 
-  console.log('[lumenflow docs:sync] Syncing scaffolded onboarding docs and vendor assets...');
+  console.log('[lumenflow docs:sync] Syncing core docs, onboarding docs, and vendor assets...');
   console.log(`  Vendor: ${opts.vendor}`);
   console.log(`  Force: ${opts.force}`);
 
   // WU-1362: Check branch guard before writing files
   const branchWarnings = await checkBranchGuard(targetDir);
 
+  // WU-2366: Sync core docs (LUMENFLOW.md, AGENTS.md, constraints.md)
+  const coreResult = await syncCoreDocs(targetDir, { force: opts.force });
   const docsResult = await syncAgentDocs(targetDir, { force: opts.force });
   const skillsResult = await syncSkills(targetDir, { force: opts.force, vendor: opts.vendor });
 
-  const created = [...docsResult.created, ...skillsResult.created];
-  const skipped = [...docsResult.skipped, ...skillsResult.skipped];
+  const created = [...coreResult.created, ...docsResult.created, ...skillsResult.created];
+  const skipped = [...coreResult.skipped, ...docsResult.skipped, ...skillsResult.skipped];
   const warnings = [...branchWarnings];
 
   if (created.length > 0) {
