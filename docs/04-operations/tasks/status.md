@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2367 — Align claim/readiness test enforcement with fit-for-surface verification](wu/WU-2367.yaml)
 
 ## Completed
 
