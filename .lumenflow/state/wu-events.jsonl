@@ -3052,3 +3052,5 @@
 {"type":"complete","wuId":"WU-2366","timestamp":"2026-03-10T12:12:39.329Z"}
 {"type":"claim","wuId":"WU-2367","timestamp":"2026-03-10T12:19:42.065Z","lane":"Framework: Core Lifecycle","title":"Align claim/readiness test enforcement with fit-for-surface verification"}
 {"type":"claim","wuId":"WU-2368","timestamp":"2026-03-10T12:20:43.728Z","lane":"Framework: Core Validation","title":"Add stronger default co-change safeguards for database-affecting WUs"}
+{"type":"checkpoint","wuId":"WU-2367","timestamp":"2026-03-10T12:19:53.766Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2367","timestamp":"2026-03-10T12:20:14.277Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

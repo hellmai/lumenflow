@@ -279,7 +279,10 @@ export function validateAutomatedTestRequirement(doc: WuDocForTests | null | und
         `  Code files: ${codeFiles.join(', ')}\n` +
         `  Required: At least one automated test (unit, e2e, or integration)\n` +
         `  Manual-only tests are not allowed for code changes.\n\n` +
-        `  Fix: Add tests to tests.unit, tests.e2e, or tests.integration in WU YAML.`,
+        `  Fix options:\n` +
+        `    1. Add tests to tests.unit, tests.e2e, or tests.integration in WU YAML\n` +
+        `    2. If this WU legitimately does not need automated tests (UI, config, templates),\n` +
+        `       add tdd-exception: <reason> to the WU notes field`,
     );
     return { valid: false, errors };
   }

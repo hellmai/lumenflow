@@ -50,6 +50,7 @@ interface WUDoneValidationDoc {
   code_paths?: unknown;
   tests?: unknown;
   test_paths?: unknown;
+  notes?: unknown;
 }
 
 interface ValidatePostMutationInput {

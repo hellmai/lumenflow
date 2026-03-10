@@ -46,6 +46,7 @@ import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
 import { validateSpecCompleteness } from '@lumenflow/core/wu-done-validators';
 import { hasManualTests, isDocsOrProcessType } from '@lumenflow/core/wu-type-helpers';
 import type { TestsLike } from '@lumenflow/core/wu-type-helpers';
+import { isExemptFromAutomatedTests } from '@lumenflow/core/manual-test-validator';
 import { detectFixableIssues, applyFixes, formatIssues } from '@lumenflow/core/wu-yaml-fixer';
 import { getConfig } from '@lumenflow/core/config';
 import { MICRO_WORKTREE_OPERATIONS, LUMENFLOW_PATHS } from '@lumenflow/core/wu-constants';
@@ -230,6 +231,8 @@ export function validateYAMLSchema(
 
 /**
  * WU-1508: Enforce tests.manual at claim time for non-doc/process WUs.
+ * WU-2367: Honor tdd-exception notes — WUs with documented exceptions
+ * are not forced to add manual test paths at claim time.
  * This is non-bypassable (independent of --allow-incomplete) to fail early.
  */
 export function validateManualTestsForClaim(
@@ -237,6 +240,11 @@ export function validateManualTestsForClaim(
   id: string,
 ): { valid: true } | { valid: false; error: string } {
   if (isDocsOrProcessType(doc?.type)) {
+    return { valid: true };
+  }
+
+  // WU-2367: Honor tdd-exception notes at claim time
+  if (isExemptFromAutomatedTests(doc)) {
     return { valid: true };
   }
 
@@ -248,7 +256,8 @@ export function validateManualTestsForClaim(
     valid: false,
     error:
       `${id}: Missing required tests.manual for non-documentation WU.\n` +
-      `Add at least one manual verification step under tests.manual before claiming.`,
+      `Add at least one manual verification step under tests.manual before claiming.\n` +
+      `If this WU does not require automated tests, add tdd-exception: <reason> to notes.`,
   };
 }
 
