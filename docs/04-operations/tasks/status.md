@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2379 — wu:done must reject claim-auto as sufficient wu:brief evidence](wu/WU-2379.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1298,3 +1298,4 @@ _Last updated: 2026-03-10_
 - [WU-2376 — Resolve generic lifecycle commands from config instead of pnpm/turbo literals](wu/WU-2376.yaml) — 2026-03-10
 - [WU-2377 — Make repo-shape defaults and gate planning config-driven](wu/WU-2377.yaml) — 2026-03-10
 - [WU-2378 — Demote web-framework assumptions and publish portability matrix](wu/WU-2378.yaml) — 2026-03-10
+- [WU-2379 — wu:done must reject claim-auto as sufficient wu:brief evidence](wu/WU-2379.yaml) — 2026-03-10
