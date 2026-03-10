@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Hellmai Ltd
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: AGPL-3.0-only
 
 import { z, type ZodTypeAny } from 'zod';
 import { KERNEL_EVENT_KINDS, TOOL_TRACE_KINDS } from './event-kinds.js';
