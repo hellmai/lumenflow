@@ -3109,3 +3109,4 @@
 {"type":"checkpoint","wuId":"WU-2375","timestamp":"2026-03-10T16:30:21.354Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2375.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2375","timestamp":"2026-03-10T16:30:41.067Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2375.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2375","timestamp":"2026-03-10T16:32:59.887Z"}
+{"type":"checkpoint","wuId":"WU-2376","timestamp":"2026-03-10T16:20:04.102Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
