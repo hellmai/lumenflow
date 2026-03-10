@@ -26,8 +26,7 @@ import { runBriefLogic } from './wu-spawn.js';
 import { runCLI } from './cli-entry-point.js';
 
 const BRIEF_LOG_PREFIX = '[wu:brief]';
-const BRIEF_DESCRIPTION =
-  'Generate config-aware handoff prompt and record wu:brief evidence';
+const BRIEF_DESCRIPTION = 'Generate config-aware handoff prompt and record wu:brief evidence';
 
 /**
  * Main entry point for wu:brief (canonical command)
