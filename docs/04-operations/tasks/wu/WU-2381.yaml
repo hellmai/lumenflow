@@ -19,9 +19,15 @@ artifacts:
   - .lumenflow/stamps/WU-2381.done
 dependencies: []
 risks: []
-notes: ''
+notes: WU-1870 introduced comma-splitting for path shorthand but applied it to all repeatable fields
+  including free-text. Fix differentiates free-text fields (manual tests and risks) from path/ID
+  fields.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T18:50:04.123Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2381
+session_id: 36dcca29-b2cd-41e1-9960-588de55dd7e4
 exposure: backend-only
 sizing_estimate:
   estimated_files: 2
@@ -29,6 +35,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T18:50:04.129Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -43,11 +52,3 @@ acceptance:
   - Path/ID fields (code-paths and test-paths-unit and test-paths-e2e and blocked-by and add-dep)
     continue to support comma-separated shorthand
   - Existing tests pass and new tests cover comma-containing free-text values
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2381
-claimed_at: 2026-03-10T18:50:04.123Z
-baseline_main_sha: 2e2be34e094ba227522f099e48574f92e159d6c1
-session_id: 36dcca29-b2cd-41e1-9960-588de55dd7e4
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T18:50:04.129Z
