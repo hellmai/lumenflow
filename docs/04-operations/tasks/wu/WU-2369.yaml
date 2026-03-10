@@ -21,12 +21,21 @@ plan: lumenflow://plans/WU-2369-plan.md
 spec_refs:
   - lumenflow://plans/WU-2369-plan.md
 risks: []
-notes: ''
+notes: Follows existing --replace-* pattern. Added replaceTestPathsUnit, replaceTestPathsE2e,
+  replaceTestPathsManual to ApplyEditsOpts and EDIT_OPTIONS. Wired into test path loop via
+  replaceKey mapping.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T12:46:53.845Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2369
+session_id: 41248690-b4c6-4164-8455-5af154605058
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T12:46:53.854Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +49,3 @@ acceptance:
   - wu:edit --replace-test-paths-manual replaces existing manual test descriptions instead of
     appending
   - CLI --help output documents the new flags
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2369
-claimed_at: 2026-03-10T12:46:53.845Z
-baseline_main_sha: e6fc6d7a7bc844dbdb262e10d607e1488b90596f
-session_id: 41248690-b4c6-4164-8455-5af154605058
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T12:46:53.854Z
