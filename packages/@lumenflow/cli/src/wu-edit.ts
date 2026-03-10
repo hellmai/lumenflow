@@ -116,8 +116,11 @@ interface WuEditArgs extends Record<string, unknown> {
   risks?: string[];
   replaceRisks?: boolean;
   testPathsManual?: string[];
+  replaceTestPathsManual?: boolean;
   testPathsUnit?: string[];
+  replaceTestPathsUnit?: boolean;
   testPathsE2e?: string[];
+  replaceTestPathsE2e?: boolean;
   lane?: string;
   type?: string;
   priority?: string;
@@ -189,6 +192,22 @@ const EDIT_OPTIONS = {
     name: 'replaceRisks',
     flags: '--replace-risks',
     description: 'Replace existing risks instead of appending',
+  },
+  // WU-2369: Add replace flags for test paths (parity with other --replace-* flags)
+  replaceTestPathsUnit: {
+    name: 'replaceTestPathsUnit',
+    flags: '--replace-test-paths-unit',
+    description: 'Replace existing unit test paths instead of appending',
+  },
+  replaceTestPathsE2e: {
+    name: 'replaceTestPathsE2e',
+    flags: '--replace-test-paths-e2e',
+    description: 'Replace existing e2e test paths instead of appending',
+  },
+  replaceTestPathsManual: {
+    name: 'replaceTestPathsManual',
+    flags: '--replace-test-paths-manual',
+    description: 'Replace existing manual test descriptions instead of appending',
   },
   // WU-1225: Deprecated --append flag (kept for backwards compatibility)
   append: {
@@ -285,6 +304,10 @@ function parseArgs(): WuEditArgs {
         WU_OPTIONS.testPathsManual,
         WU_OPTIONS.testPathsUnit,
         WU_OPTIONS.testPathsE2e,
+        // WU-2369: Add replace flags for test paths
+        EDIT_OPTIONS.replaceTestPathsUnit,
+        EDIT_OPTIONS.replaceTestPathsE2e,
+        EDIT_OPTIONS.replaceTestPathsManual,
         // WU-1456: Add lane reassignment
         EDIT_OPTIONS.lane,
         // WU-1620: Add type and priority
@@ -414,9 +437,9 @@ export async function main() {
         '  --priority <priority>     Update priority (P0, P1, P2, P3)\n' +
         '  --initiative <initId>     Update initiative (bidirectional update)\n' +
         '  --phase <number>          Update phase within initiative\n' +
-        '  --test-paths-manual <t>   Append manual test descriptions (repeatable)\n' +
-        '  --test-paths-unit <path>  Append unit test paths (repeatable)\n' +
-        '  --test-paths-e2e <path>   Append e2e test paths (repeatable)\n' +
+        '  --test-paths-manual <t>   Append manual test descriptions (repeatable; use --replace-test-paths-manual to overwrite)\n' +
+        '  --test-paths-unit <path>  Append unit test paths (repeatable; use --replace-test-paths-unit to overwrite)\n' +
+        '  --test-paths-e2e <path>   Append e2e test paths (repeatable; use --replace-test-paths-e2e to overwrite)\n' +
         '  --blocked-by <wuIds>      Append WU IDs that block this WU (use --replace-blocked-by to overwrite)\n' +
         '  --add-dep <wuIds>         Append WU IDs to dependencies (use --replace-dependencies to overwrite)\n' +
         '  --exposure <type>         Update exposure level (ui, api, backend-only, documentation)\n' +

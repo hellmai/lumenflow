@@ -116,6 +116,75 @@ describe('wu-edit applyEdits', () => {
     });
   });
 
+  describe('WU-2369: test-paths-unit replace flag', () => {
+    const baseWU = {
+      id: 'WU-2369',
+      status: 'ready',
+      tests: { unit: ['existing/test.test.ts'] },
+    };
+
+    it('appends test-paths-unit by default', () => {
+      const opts = { testPathsUnit: ['new/test.test.ts'] };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).unit).toEqual([
+        'existing/test.test.ts',
+        'new/test.test.ts',
+      ]);
+    });
+
+    it('replaces test-paths-unit when --replace-test-paths-unit is set', () => {
+      const opts = { testPathsUnit: ['new/test.test.ts'], replaceTestPathsUnit: true };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).unit).toEqual(['new/test.test.ts']);
+    });
+  });
+
+  describe('WU-2369: test-paths-e2e replace flag', () => {
+    const baseWU = {
+      id: 'WU-2369',
+      status: 'ready',
+      tests: { e2e: ['existing/e2e.test.ts'] },
+    };
+
+    it('appends test-paths-e2e by default', () => {
+      const opts = { testPathsE2e: ['new/e2e.test.ts'] };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).e2e).toEqual([
+        'existing/e2e.test.ts',
+        'new/e2e.test.ts',
+      ]);
+    });
+
+    it('replaces test-paths-e2e when --replace-test-paths-e2e is set', () => {
+      const opts = { testPathsE2e: ['new/e2e.test.ts'], replaceTestPathsE2e: true };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).e2e).toEqual(['new/e2e.test.ts']);
+    });
+  });
+
+  describe('WU-2369: test-paths-manual replace flag', () => {
+    const baseWU = {
+      id: 'WU-2369',
+      status: 'ready',
+      tests: { manual: ['Existing manual test step'] },
+    };
+
+    it('appends test-paths-manual by default', () => {
+      const opts = { testPathsManual: ['New manual test step'] };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).manual).toEqual([
+        'Existing manual test step',
+        'New manual test step',
+      ]);
+    });
+
+    it('replaces test-paths-manual when --replace-test-paths-manual is set', () => {
+      const opts = { testPathsManual: ['New manual test step'], replaceTestPathsManual: true };
+      const result = applyEdits(baseWU, opts);
+      expect((result.tests as Record<string, unknown>).manual).toEqual(['New manual test step']);
+    });
+  });
+
   describe('WU-1144: acceptance already appends by default', () => {
     const baseWU = {
       id: 'WU-1225',

@@ -366,8 +366,11 @@ export interface ApplyEditsOpts {
   risks?: string[] | string;
   replaceRisks?: boolean;
   testPathsManual?: string[] | string;
+  replaceTestPathsManual?: boolean;
   testPathsUnit?: string[] | string;
+  replaceTestPathsUnit?: boolean;
   testPathsE2e?: string[] | string;
+  replaceTestPathsE2e?: boolean;
   blockedBy?: string;
   replaceBlockedBy?: boolean;
   addDep?: string;
@@ -485,13 +488,14 @@ export function applyEdits(
 
   // WU-1390: Handle test path flags (DRY refactor)
   // WU-1225: Test paths now append by default (consistent with --acceptance and --code-paths)
+  // WU-2369: Added --replace-test-paths-* flags for parity with other --replace-* flags
   const testPathMappings = [
-    { optKey: 'testPathsManual', field: 'manual' },
-    { optKey: 'testPathsUnit', field: 'unit' },
-    { optKey: 'testPathsE2e', field: 'e2e' },
+    { optKey: 'testPathsManual', replaceKey: 'replaceTestPathsManual', field: 'manual' },
+    { optKey: 'testPathsUnit', replaceKey: 'replaceTestPathsUnit', field: 'unit' },
+    { optKey: 'testPathsE2e', replaceKey: 'replaceTestPathsE2e', field: 'e2e' },
   ];
 
-  for (const { optKey, field } of testPathMappings) {
+  for (const { optKey, replaceKey, field } of testPathMappings) {
     const rawPaths = opts[optKey] as string[] | string | undefined;
     if (rawPaths && (typeof rawPaths === 'string' || rawPaths.length > 0)) {
       // Split comma-separated string into array (options are comma-separated per description)
@@ -510,8 +514,8 @@ export function applyEdits(
           ? (updated.tests as Record<string, unknown>)
           : {};
       updated.tests = existingTests;
-      // WU-1225: Append by default (no individual replace flags for test paths yet)
-      const shouldAppend = true;
+      // WU-2369: Append by default, replace with --replace-test-paths-* flags
+      const shouldAppend = !opts[replaceKey];
       const wuTests =
         typeof wu.tests === 'object' && wu.tests !== null
           ? (wu.tests as Record<string, unknown>)
