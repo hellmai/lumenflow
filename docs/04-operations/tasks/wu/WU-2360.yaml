@@ -20,12 +20,19 @@ artifacts:
   - .lumenflow/stamps/WU-2360.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: YAML/docs-only redactions, no logic to test'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T09:30:53.355Z
+worktree_path: worktrees/operations-tooling-wu-2360
+session_id: 90f6c781-bb62-40da-b70b-f35d731b7930
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T09:30:53.361Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -38,11 +45,3 @@ acceptance:
   - No PatientPath product name or domain in WU specs
   - No lumenflow-cloud references in WU specs or initiative YAMLs
   - Email typo tom@helllm.ai fixed in privacy.mdx
-claimed_mode: worktree
-worktree_path: worktrees/operations-tooling-wu-2360
-claimed_at: 2026-03-10T09:30:53.355Z
-baseline_main_sha: c47b03bbccbbda10fd345c395c672ef1441efc0d
-session_id: 90f6c781-bb62-40da-b70b-f35d731b7930
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T09:30:53.361Z
