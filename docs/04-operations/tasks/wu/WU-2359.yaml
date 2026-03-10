@@ -23,12 +23,21 @@ artifacts:
   - .lumenflow/stamps/WU-2359.done
 dependencies: []
 risks: []
-notes: ''
+notes: Removed --evidence-only flag from wu:brief. wu:brief now always outputs full context AND
+  records evidence. Spawn provenance softened to warn-only for non-spawned initiative WUs. Updated
+  onboarding docs, Starlight, templates, and skills.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T08:32:33.594Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2359
+session_id: dc4abf8b-b1c4-4b72-b7ce-81a68db48277
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T08:32:33.601Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -44,11 +53,3 @@ acceptance:
   - spawn provenance still hard-blocks when WU was explicitly spawned/delegated
   - onboarding docs and Starlight reference docs updated to reflect changes
   - all existing tests pass; new tests cover warn-vs-block behavior
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2359
-claimed_at: 2026-03-10T08:32:33.594Z
-baseline_main_sha: 104db1b22b290d28975279fa57235f76a4e61368
-session_id: dc4abf8b-b1c4-4b72-b7ce-81a68db48277
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T08:32:33.601Z
