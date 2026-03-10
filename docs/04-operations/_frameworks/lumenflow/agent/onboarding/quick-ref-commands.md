@@ -325,18 +325,18 @@ If the plan exists only in conversation, use `--plan` on `wu:create` to generate
 stub in `$LUMENFLOW_HOME/plans/` and automatically set the WU's `plan` field to the
 `lumenflow://plans/` URI. Feature WUs should have a `plan` field; notes do not replace the plan link.
 
-| Command                                                                  | Description                                                         |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `pnpm plan:create --id INIT-XXX --title "..."`                           | Create a repo-native plan file in configured `directories.plansDir` |
-| `pnpm plan:create --id INIT-XXX --title "..." --from <path>`             | Import external plan file into repo plansDir                        |
+| Command                                                                       | Description                                                         |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `pnpm plan:create --id INIT-XXX --title "..."`                                | Create a repo-native plan file in configured `directories.plansDir` |
+| `pnpm plan:create --id INIT-XXX --title "..." --from <path>`                  | Import external plan file into repo plansDir                        |
 | `pnpm plan:edit --id INIT-XXX --section Goal --content "..."`                 | Edit plan section (auto-resolves file from initiative metadata)     |
-| `pnpm plan:edit --id WU-XXX --file my-plan.md --section Goal --content "..."` | Edit plan by explicit filename                                     |
-| `pnpm plan:link --id INIT-XXX --plan lumenflow://plans/INIT-XXX-plan.md`      | Link plan URI to initiative or WU                                  |
-| `pnpm plan:promote --id INIT-XXX`                                             | Promote plan to approved (auto-resolves from initiative metadata)  |
-| `pnpm plan:promote --id WU-XXX --file my-plan.md`                             | Promote plan by explicit filename                                  |
-| `pnpm initiative:plan --initiative INIT-XXX --plan <path>`               | Link plan to initiative (auto-imports external files into repo)     |
-| `pnpm initiative:plan --initiative INIT-XXX --create`                    | Create blank plan template and link to initiative                   |
-| `pnpm initiative:plan --initiative INIT-XXX --create --plan <path>`      | Import external plan content into new template and link             |
+| `pnpm plan:edit --id WU-XXX --file my-plan.md --section Goal --content "..."` | Edit plan by explicit filename                                      |
+| `pnpm plan:link --id INIT-XXX --plan lumenflow://plans/INIT-XXX-plan.md`      | Link plan URI to initiative or WU                                   |
+| `pnpm plan:promote --id INIT-XXX`                                             | Promote plan to approved (auto-resolves from initiative metadata)   |
+| `pnpm plan:promote --id WU-XXX --file my-plan.md`                             | Promote plan by explicit filename                                   |
+| `pnpm initiative:plan --initiative INIT-XXX --plan <path>`                    | Link plan to initiative (auto-imports external files into repo)     |
+| `pnpm initiative:plan --initiative INIT-XXX --create`                         | Create blank plan template and link to initiative                   |
+| `pnpm initiative:plan --initiative INIT-XXX --create --plan <path>`           | Import external plan content into new template and link             |
 
 ### Linking Plans
 
