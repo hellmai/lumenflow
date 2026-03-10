@@ -5,6 +5,7 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2367 — Align claim/readiness test enforcement with fit-for-surface verification](wu/WU-2367.yaml)
+- [WU-2368 — Add stronger default co-change safeguards for database-affecting WUs](wu/WU-2368.yaml)
 
 ## Completed
 
