@@ -2,7 +2,7 @@ id: WU-2384
 title: 'Doc sweep: ownership table, stale docs:sync refs, Starlight/dogfood alignment for safe docs
   lifecycle'
 lane: 'Content: Framework Docs'
-type: documentation
+type: feature
 status: in_progress
 priority: P1
 created: 2026-03-10
@@ -37,10 +37,17 @@ notes: 'Full grep of stale references captured in WU-2383 notes. Key files:
   generate-cli-docs.ts:1220 which hardcodes docs:sync --force in generated output. tdd-exception:
   documentation-only WU, all changes are .md/.mdx files.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T20:27:45.013Z
+worktree_path: worktrees/content-framework-docs-wu-2384
+session_id: 8af2e7f1-4a66-493a-a227-ba2c3d53f959
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T20:27:45.021Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -88,11 +95,3 @@ acceptance:
   - Canonical ownership table present in LUMENFLOW.md and mirrored in Starlight upgrade docs
   - No narrative doc still tells users to run docs:sync --force to refresh vendor assets after
     upgrade
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2384
-claimed_at: 2026-03-10T20:27:45.013Z
-baseline_main_sha: 95a57fbc4e30cab85361b83f380591c4ebcefa02
-session_id: 8af2e7f1-4a66-493a-a227-ba2c3d53f959
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T20:27:45.021Z
