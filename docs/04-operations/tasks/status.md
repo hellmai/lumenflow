@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-- [WU-2364 — plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename](wu/WU-2364.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1283,3 +1283,4 @@ _Last updated: 2026-03-10_
 - [WU-2361 — Clean up evidence-only remnants and fix misleading warn message](wu/WU-2361.yaml) — 2026-03-10
 - [WU-2362 — Durable delegation intent: distinguish non-orchestrated from lost-provenance WUs](wu/WU-2362.yaml) — 2026-03-10
 - [WU-2363 — Tighten WU sizing guidance against over-splitting and remove legacy sizing template](wu/WU-2363.yaml) — 2026-03-10
+- [WU-2364 — plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename](wu/WU-2364.yaml) — 2026-03-10
