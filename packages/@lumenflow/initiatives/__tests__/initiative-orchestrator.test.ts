@@ -50,15 +50,30 @@ function cleanupTestStamps() {
 }
 
 describe('WU-1604: delegation command generation', () => {
-  it('generateSpawnCommands outputs explicit delegation commands', async () => {
+  it('generateSpawnCommands outputs explicit delegation commands with client placeholder', async () => {
     const { generateSpawnCommands } = await import('../src/initiative-orchestrator.js');
 
     const commands = generateSpawnCommands([
       { id: 'WU-1604', doc: { lane: 'Framework: Initiatives', status: 'ready' } },
     ]);
 
+    // WU-2375: Default is generic <client> placeholder
     expect(commands).toEqual([
-      'pnpm wu:delegate --id WU-1604 --parent-wu <PARENT-WU-ID> --client claude-code',
+      'pnpm wu:delegate --id WU-1604 --parent-wu <PARENT-WU-ID> --client <client>',
+    ]);
+  });
+
+  // WU-2375: Test with explicit client name
+  it('generateSpawnCommands uses provided client name', async () => {
+    const { generateSpawnCommands } = await import('../src/initiative-orchestrator.js');
+
+    const commands = generateSpawnCommands(
+      [{ id: 'WU-1604', doc: { lane: 'Framework: Initiatives', status: 'ready' } }],
+      'codex-cli',
+    );
+
+    expect(commands).toEqual([
+      'pnpm wu:delegate --id WU-1604 --parent-wu <PARENT-WU-ID> --client codex-cli',
     ]);
   });
 });
@@ -271,7 +286,7 @@ acceptance:
   });
 
   describe('AC1: Output format unambiguously NOT a tool call', () => {
-    it('should NOT output raw antml XML tags that could be interpreted as tool calls', async () => {
+    it('should NOT output raw antml XML tags that could be interpreted as tool calls (claude-code)', async () => {
       createTestWUFile('WU-TEST-2280A', { lane: 'Test Lane A', status: 'ready' });
 
       const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
@@ -281,6 +296,7 @@ acceptance:
         wave: 0,
         wus: [{ id: 'WU-TEST-2280A', lane: 'Test Lane A' }],
         manifestPath: '.lumenflow/artifacts/waves/INIT-TEST-wave-0.json',
+        clientName: 'claude-code', // WU-2375: Explicit client for XML output
       };
 
       const output = formatCheckpointOutput(waveData);
@@ -296,7 +312,7 @@ acceptance:
       expect(hasRawInvoke).toBe(false);
     });
 
-    it('should wrap XML content in markdown code blocks', async () => {
+    it('should wrap XML content in markdown code blocks (claude-code)', async () => {
       createTestWUFile('WU-TEST-2280B', { lane: 'Test Lane B', status: 'ready' });
 
       const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
@@ -306,6 +322,7 @@ acceptance:
         wave: 0,
         wus: [{ id: 'WU-TEST-2280B', lane: 'Test Lane B' }],
         manifestPath: '.lumenflow/artifacts/waves/INIT-TEST-wave-0.json',
+        clientName: 'claude-code', // WU-2375: Explicit client for XML output
       };
 
       const output = formatCheckpointOutput(waveData);
@@ -335,7 +352,7 @@ acceptance:
       expect(output).toContain('ACTION REQUIRED');
     });
 
-    it('should instruct agent to copy and invoke Task tool', async () => {
+    it('should instruct agent to copy and invoke Task tool (claude-code)', async () => {
       createTestWUFile('WU-TEST-2280D', { lane: 'Test Lane D', status: 'ready' });
 
       const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
@@ -345,6 +362,7 @@ acceptance:
         wave: 0,
         wus: [{ id: 'WU-TEST-2280D', lane: 'Test Lane D' }],
         manifestPath: '.lumenflow/artifacts/waves/INIT-TEST-wave-0.json',
+        clientName: 'claude-code', // WU-2375: Explicit client for XML output
       };
 
       const output = formatCheckpointOutput(waveData);
@@ -773,7 +791,7 @@ describe('WU-2432: internal blockers and dry-run output alignment', () => {
     expect(waitingEntry.reason).toMatch(/waiting/i);
   });
 
-  it('should output Task XML blocks for execution plan previews', async () => {
+  it('should output Task XML blocks for execution plan previews (claude-code)', async () => {
     const { formatExecutionPlanWithEmbeddedSpawns } =
       await import('../src/initiative-orchestrator.js');
 
@@ -789,10 +807,36 @@ describe('WU-2432: internal blockers and dry-run output alignment', () => {
       skipped: [],
     };
 
-    const output = formatExecutionPlanWithEmbeddedSpawns(plan);
+    // WU-2375: Pass claude-code client for XML output
+    const output = formatExecutionPlanWithEmbeddedSpawns(plan, 'claude-code');
 
     expect(output).toContain('antml:invoke name="Task"');
     expect(output).not.toContain('pnpm wu:spawn');
+  });
+
+  // WU-2375: Test generic/markdown output when no client specified
+  it('should output markdown prompts for execution plan when no client specified', async () => {
+    const { formatExecutionPlanWithEmbeddedSpawns } =
+      await import('../src/initiative-orchestrator.js');
+
+    const plan = {
+      waves: [
+        [
+          {
+            id: 'WU-TEST-MD',
+            doc: { title: 'Test WU', lane: 'Lane A', status: 'ready', type: 'task' },
+          },
+        ],
+      ],
+      skipped: [],
+    };
+
+    const output = formatExecutionPlanWithEmbeddedSpawns(plan);
+
+    // Generic output should use markdown, not XML
+    expect(output).toContain('```markdown');
+    expect(output).not.toContain('antml:invoke');
+    expect(output).toContain('ACTION REQUIRED');
   });
 });
 
@@ -1108,7 +1152,7 @@ acceptance:
   });
 
   describe('AC1: Spawn XML output in execution plan path when not dry-run', () => {
-    it('should include Task invocation XML when formatExecutionPlan is used with actual execution intent', async () => {
+    it('should include Task invocation XML when formatExecutionPlan is used with actual execution intent (claude-code)', async () => {
       createTestWUFile('WU-TEST-1202A', { lane: 'Test Lane A', status: 'ready' });
 
       const { formatExecutionPlanWithEmbeddedSpawns } =
@@ -1129,7 +1173,8 @@ acceptance:
         deferred: [],
       };
 
-      const output = formatExecutionPlanWithEmbeddedSpawns(plan);
+      // WU-2375: Pass claude-code client for XML output
+      const output = formatExecutionPlanWithEmbeddedSpawns(plan, 'claude-code');
 
       // Should include Task XML for spawning
       expect(output).toContain('antml:invoke name="Task"');
@@ -1547,6 +1592,7 @@ acceptance:
         wave: 0,
         wus: [{ id: 'WU-TEST-1', lane: 'Test Lane' }],
         manifestPath: '.lumenflow/artifacts/waves/INIT-TEST-wave-0.json',
+        clientName: 'claude-code', // WU-2375: Explicit client
       };
 
       const output = formatCheckpointOutput(waveData);
@@ -1557,7 +1603,7 @@ acceptance:
       expect(hasMetaPrompt).toBe(false);
     });
 
-    it('should include Task invocation with embedded spawn prompt when WU file exists', async () => {
+    it('should include Task invocation with embedded spawn prompt when WU file exists (claude-code)', async () => {
       // Create a real WU file for this test
       createTestWUFile('WU-TEST-TASK1', { lane: 'Task Test Lane', status: 'ready' });
 
@@ -1568,6 +1614,7 @@ acceptance:
         wave: 0,
         wus: [{ id: 'WU-TEST-TASK1', lane: 'Task Test Lane' }],
         manifestPath: '.lumenflow/artifacts/waves/INIT-TEST-wave-0.json',
+        clientName: 'claude-code', // WU-2375: Explicit client for XML output
       };
 
       const output = formatCheckpointOutput(waveData);
@@ -1580,7 +1627,7 @@ acceptance:
       expect(hasPromptParam).toBe(true);
     });
 
-    it('should output function_calls wrapper for Task invocations', async () => {
+    it('should output function_calls wrapper for Task invocations (claude-code)', async () => {
       createTestWUFile('WU-TEST-TASK2', { lane: 'Task Test Lane 2', status: 'ready' });
 
       const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
@@ -1590,6 +1637,7 @@ acceptance:
         wave: 0,
         wus: [{ id: 'WU-TEST-TASK2', lane: 'Task Test Lane 2' }],
         manifestPath: '.lumenflow/artifacts/waves/INIT-TEST-wave-0.json',
+        clientName: 'claude-code', // WU-2375: Explicit client for XML output
       };
 
       const output = formatCheckpointOutput(waveData);
@@ -1750,12 +1798,226 @@ describe('WU-1417: Dry-run guide and mem:inbox guidance', () => {
         deferred: [],
       };
 
-      const output = formatExecutionPlanWithEmbeddedSpawns(plan);
+      // WU-2375: Multi-wave --since guidance appears in both XML and markdown paths
+      const output = formatExecutionPlanWithEmbeddedSpawns(plan, 'claude-code');
 
       // Should NOT contain --unread (invalid flag)
       expect(output).not.toContain('--unread');
       // Should use --since instead for multi-wave guidance
       expect(output).toContain('--since');
+    });
+  });
+});
+
+/**
+ * WU-2375: Client-capability-aware orchestration output
+ *
+ * Tests for:
+ * - AC1: formatExecutionPlanWithEmbeddedSpawns outputs XML for claude-code, markdown for others
+ * - AC2: formatCheckpointOutput varies by clientName
+ * - AC3: generateSpawnCommands uses provided client name
+ * - AC4: Default (no client) produces generic markdown format
+ */
+describe('WU-2375: Client-capability-aware orchestration', () => {
+  describe('AC1: formatExecutionPlanWithEmbeddedSpawns client-aware output', () => {
+    it('should output XML Task invocations for claude-code client', async () => {
+      const { formatExecutionPlanWithEmbeddedSpawns } =
+        await import('../src/initiative-orchestrator.js');
+
+      const plan = {
+        waves: [
+          [
+            {
+              id: 'WU-2375-A',
+              doc: { title: 'Test WU', lane: 'Lane A', status: 'ready', type: 'task' },
+            },
+          ],
+        ],
+        skipped: [],
+        skippedWithReasons: [],
+        deferred: [],
+      };
+
+      const output = formatExecutionPlanWithEmbeddedSpawns(plan, 'claude-code');
+
+      expect(output).toContain('antml:invoke name="Task"');
+      expect(output).toContain('```xml');
+      expect(output).not.toContain('```markdown');
+    });
+
+    it('should output markdown prompts for codex-cli client', async () => {
+      const { formatExecutionPlanWithEmbeddedSpawns } =
+        await import('../src/initiative-orchestrator.js');
+
+      const plan = {
+        waves: [
+          [
+            {
+              id: 'WU-2375-B',
+              doc: { title: 'Test WU', lane: 'Lane A', status: 'ready', type: 'task' },
+            },
+          ],
+        ],
+        skipped: [],
+        skippedWithReasons: [],
+        deferred: [],
+      };
+
+      const output = formatExecutionPlanWithEmbeddedSpawns(plan, 'codex-cli');
+
+      expect(output).toContain('```markdown');
+      expect(output).not.toContain('antml:invoke');
+      expect(output).toContain('ACTION REQUIRED');
+    });
+
+    it('should output markdown prompts for gemini-cli client', async () => {
+      const { formatExecutionPlanWithEmbeddedSpawns } =
+        await import('../src/initiative-orchestrator.js');
+
+      const plan = {
+        waves: [
+          [
+            {
+              id: 'WU-2375-C',
+              doc: { title: 'Test WU', lane: 'Lane A', status: 'ready', type: 'task' },
+            },
+          ],
+        ],
+        skipped: [],
+        skippedWithReasons: [],
+        deferred: [],
+      };
+
+      const output = formatExecutionPlanWithEmbeddedSpawns(plan, 'gemini-cli');
+
+      expect(output).toContain('```markdown');
+      expect(output).not.toContain('antml:invoke');
+    });
+  });
+
+  describe('AC2: formatCheckpointOutput client-aware output', () => {
+    const TEST_WU_DIR = `${DOCS_LAYOUT_PRESETS.arc42.tasks}/wu`;
+
+    function createTestWUFile(
+      wuId: string,
+      options: { lane?: string; status?: string } = {},
+    ) {
+      const { lane = 'Test Lane', status = 'ready' } = options;
+      if (!existsSync(TEST_WU_DIR)) {
+        mkdirSync(TEST_WU_DIR, { recursive: true });
+      }
+      const yaml = `id: ${wuId}\ntitle: Test WU ${wuId}\nlane: "${lane}"\nstatus: ${status}\ntype: task\nblocked_by: []\ncode_paths: []\nacceptance: []\n`;
+      writeFileSync(join(TEST_WU_DIR, `${wuId}.yaml`), yaml);
+    }
+
+    function cleanupTestWUs() {
+      if (existsSync(TEST_WU_DIR)) {
+        const files = readdirSync(TEST_WU_DIR);
+        for (const file of files) {
+          if (file.startsWith('WU-2375-')) {
+            rmSync(join(TEST_WU_DIR, file));
+          }
+        }
+      }
+    }
+
+    beforeEach(() => cleanupTestWUs());
+    afterEach(() => cleanupTestWUs());
+
+    it('should output XML for claude-code client in checkpoint mode', async () => {
+      createTestWUFile('WU-2375-CP1', { lane: 'Test Lane', status: 'ready' });
+
+      const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
+
+      const waveData = {
+        initiative: 'INIT-TEST',
+        wave: 0,
+        wus: [{ id: 'WU-2375-CP1', lane: 'Test Lane' }],
+        manifestPath: '.lumenflow/artifacts/waves/test.json',
+        clientName: 'claude-code',
+      };
+
+      const output = formatCheckpointOutput(waveData);
+
+      expect(output).toContain('```xml');
+      expect(output).toContain('antml:function_calls');
+    });
+
+    it('should output markdown for codex-cli client in checkpoint mode', async () => {
+      createTestWUFile('WU-2375-CP2', { lane: 'Test Lane', status: 'ready' });
+
+      const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
+
+      const waveData = {
+        initiative: 'INIT-TEST',
+        wave: 0,
+        wus: [{ id: 'WU-2375-CP2', lane: 'Test Lane' }],
+        manifestPath: '.lumenflow/artifacts/waves/test.json',
+        clientName: 'codex-cli',
+      };
+
+      const output = formatCheckpointOutput(waveData);
+
+      expect(output).toContain('```markdown');
+      expect(output).not.toContain('antml:invoke');
+      expect(output).toContain('ACTION REQUIRED');
+    });
+
+    it('should output generic markdown when no client specified', async () => {
+      createTestWUFile('WU-2375-CP3', { lane: 'Test Lane', status: 'ready' });
+
+      const { formatCheckpointOutput } = await import('../src/initiative-orchestrator.js');
+
+      const waveData = {
+        initiative: 'INIT-TEST',
+        wave: 0,
+        wus: [{ id: 'WU-2375-CP3', lane: 'Test Lane' }],
+        manifestPath: '.lumenflow/artifacts/waves/test.json',
+        // No clientName - should default to generic markdown
+      };
+
+      const output = formatCheckpointOutput(waveData);
+
+      expect(output).toContain('```markdown');
+      expect(output).not.toContain('antml:invoke');
+    });
+  });
+
+  describe('AC4: Default fallback produces generic format', () => {
+    it('formatExecutionPlanWithEmbeddedSpawns defaults to markdown when no client', async () => {
+      const { formatExecutionPlanWithEmbeddedSpawns } =
+        await import('../src/initiative-orchestrator.js');
+
+      const plan = {
+        waves: [
+          [
+            {
+              id: 'WU-2375-DEF',
+              doc: { title: 'Test WU', lane: 'Lane A', status: 'ready', type: 'task' },
+            },
+          ],
+        ],
+        skipped: [],
+        skippedWithReasons: [],
+        deferred: [],
+      };
+
+      const output = formatExecutionPlanWithEmbeddedSpawns(plan);
+
+      // No client = generic markdown output
+      expect(output).toContain('```markdown');
+      expect(output).not.toContain('antml:invoke');
+      expect(output).toContain('Copy the prompt');
+    });
+
+    it('generateSpawnCommands defaults to <client> placeholder', async () => {
+      const { generateSpawnCommands } = await import('../src/initiative-orchestrator.js');
+
+      const commands = generateSpawnCommands([
+        { id: 'WU-2375-SC', doc: { lane: 'Lane A', status: 'ready' } },
+      ]);
+
+      expect(commands[0]).toContain('--client <client>');
     });
   });
 });

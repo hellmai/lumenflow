@@ -7,6 +7,9 @@
  * All display/output formatting functions for execution plans,
  * checkpoint waves, progress stats, and spawn commands.
  *
+ * WU-2375: Client-capability-aware output formatting.
+ * XML Task invocations for Claude, markdown prompts for Codex/Gemini/generic.
+ *
  * @module orchestrator/formatting
  */
 
@@ -20,7 +23,8 @@ import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
 import { createError, ErrorCodes } from '@lumenflow/core/error-handler';
 // WU-2027: Import spawn generation for embedding in orchestration output
-import { generateTaskInvocation } from '@lumenflow/core/wu-spawn';
+// WU-2375: Import both XML (Task) and markdown (Codex) prompt generators
+import { generateTaskInvocation, generateCodexPrompt } from '@lumenflow/core/wu-spawn';
 import { SpawnStrategyFactory } from '@lumenflow/core/spawn-strategy';
 
 /**
@@ -41,6 +45,19 @@ const XML_PATTERNS = {
   INVOKE_OPEN: `<${ANTML_NS}invoke`,
   INVOKE_CLOSE: `</${ANTML_NS}invoke>`,
 };
+
+/**
+ * WU-2375: Clients that support XML Task invocations (Claude Code).
+ * All other clients receive markdown prompts.
+ */
+const XML_CAPABLE_CLIENTS = new Set(['claude-code', 'claude']);
+
+/**
+ * WU-2375: Check if a client supports XML Task invocations.
+ */
+function isXmlCapableClient(clientName?: string): boolean {
+  return clientName !== undefined && XML_CAPABLE_CLIENTS.has(clientName.toLowerCase());
+}
 
 /**
  * Format execution plan for display.
@@ -147,12 +164,16 @@ export function formatExecutionPlan(initiative: InitiativeDoc, plan: ExecutionPl
 /**
  * Generate spawn commands for a wave of WUs.
  *
+ * WU-2375: Now accepts optional clientName parameter.
+ *
  * @param {Array<{id: string, doc: object}>} wave - WUs in the wave
+ * @param {string} [clientName] - Client name (defaults to generic --client <client> placeholder)
  * @returns {string[]} Array of spawn command strings
  */
-export function generateSpawnCommands(wave: WUEntry[]): string[] {
+export function generateSpawnCommands(wave: WUEntry[], clientName?: string): string[] {
+  const clientArg = clientName || '<client>';
   return wave.map(
-    (wu) => `pnpm wu:delegate --id ${wu.id} --parent-wu <PARENT-WU-ID> --client claude-code`,
+    (wu) => `pnpm wu:delegate --id ${wu.id} --parent-wu <PARENT-WU-ID> --client ${clientArg}`,
   );
 }
 
@@ -275,19 +296,21 @@ export function getBottleneckWUs(wus: WUEntry[], limit = 5): BottleneckWU[] {
 }
 
 /**
- * Format checkpoint wave output with Task invocations.
+ * Format checkpoint wave output.
  *
  * WU-1821: Token discipline - keep output minimal for context management.
  * WU-2040: Output full Task invocation blocks instead of pnpm wu:spawn meta-prompts.
  * WU-2280: Prevent false wave spawned confusion - use markdown code blocks and ACTION REQUIRED banner.
+ * WU-2375: Client-capability-aware: XML for Claude, markdown for Codex/Gemini/generic.
  * WU-2430: Handle dry-run mode - indicate preview mode clearly.
  *
- * @param {{initiative: string, wave: number, wus: Array<{id: string, lane: string}>, manifestPath: string, blockedBy?: string[], waitingMessage?: string, dryRun?: boolean}} waveData
- * @returns {string} Formatted output with embedded Task invocations
+ * @param {CheckpointWaveResult} waveData
+ * @returns {string} Formatted output with embedded spawn content
  */
 export function formatCheckpointOutput(waveData: CheckpointWaveResult): string {
   const lines = [];
   const isDryRun = waveData.dryRun === true;
+  const clientName = waveData.clientName;
 
   // WU-2040: Handle blocked case with waiting message
   if (waveData.blockedBy && waveData.blockedBy.length > 0) {
@@ -319,8 +342,26 @@ export function formatCheckpointOutput(waveData: CheckpointWaveResult): string {
 
   lines.push('');
 
-  // WU-2280: ACTION REQUIRED banner - per Anthropic skill best practices
-  // Make it unambiguous that agents have NOT been spawned yet
+  // WU-2375: Branch by client capability
+  if (isXmlCapableClient(clientName)) {
+    formatCheckpointXml(waveData, lines);
+  } else {
+    formatCheckpointMarkdown(waveData, lines, clientName);
+  }
+
+  lines.push('');
+  lines.push('Resume with:');
+  lines.push(`  pnpm mem:ready --wu WU-ORCHESTRATOR`);
+  lines.push(`  pnpm orchestrate:initiative -i ${waveData.initiative} -c`);
+
+  return lines.join(STRING_LITERALS.NEWLINE);
+}
+
+/**
+ * WU-2375: Format checkpoint output as XML Task invocations (Claude).
+ */
+function formatCheckpointXml(waveData: CheckpointWaveResult, lines: string[]): void {
+  // WU-2280: ACTION REQUIRED banner
   lines.push(BANNER_SEPARATOR);
   lines.push('ACTION REQUIRED: Agents have NOT been spawned yet.');
   lines.push('');
@@ -329,20 +370,14 @@ export function formatCheckpointOutput(waveData: CheckpointWaveResult): string {
   lines.push(BANNER_SEPARATOR);
   lines.push('');
 
-  // WU-2280: Wrap XML in markdown code block to prevent confusion with actual tool calls
-  // Raw XML output could be mistaken for a tool invocation by agents
   lines.push('```xml');
 
-  // Build the Task invocation content
   const xmlLines = [];
   xmlLines.push(XML_PATTERNS.FUNCTION_CALLS_OPEN);
 
   for (const wu of waveData.wus) {
     try {
-      // Generate full Task invocation with embedded spawn prompt
-      const fullInvocation = generateEmbeddedSpawnPrompt(wu.id);
-
-      // Extract just the inner invoke block (remove outer function_calls wrapper)
+      const fullInvocation = generateEmbeddedSpawnPrompt(wu.id, waveData.clientName);
       const startIdx = fullInvocation.indexOf(XML_PATTERNS.INVOKE_OPEN);
       const endIdx = fullInvocation.indexOf(XML_PATTERNS.INVOKE_CLOSE);
 
@@ -354,39 +389,56 @@ export function formatCheckpointOutput(waveData: CheckpointWaveResult): string {
         xmlLines.push(invokeBlock);
       }
     } catch {
-      // Fallback to simple reference if WU file not found
       xmlLines.push(`<!-- Could not generate Task invocation for ${wu.id} -->`);
     }
   }
 
   xmlLines.push(XML_PATTERNS.FUNCTION_CALLS_CLOSE);
   lines.push(xmlLines.join(STRING_LITERALS.NEWLINE));
-
   lines.push('```');
+}
 
+/**
+ * WU-2375: Format checkpoint output as markdown prompts (Codex/Gemini/generic).
+ */
+function formatCheckpointMarkdown(
+  waveData: CheckpointWaveResult,
+  lines: string[],
+  clientName?: string,
+): void {
+  lines.push(BANNER_SEPARATOR);
+  lines.push('ACTION REQUIRED: Agents have NOT been spawned yet.');
   lines.push('');
-  lines.push('Resume with:');
-  lines.push(`  pnpm mem:ready --wu WU-ORCHESTRATOR`);
-  lines.push(`  pnpm orchestrate:initiative -i ${waveData.initiative} -c`);
+  lines.push('Copy the prompt(s) below to your agent platform.');
+  lines.push('The output below is documentation only - it will NOT execute automatically.');
+  lines.push(BANNER_SEPARATOR);
+  lines.push('');
 
-  return lines.join(STRING_LITERALS.NEWLINE);
+  for (const wu of waveData.wus) {
+    try {
+      const prompt = generateEmbeddedMarkdownPrompt(wu.id, clientName);
+      lines.push(`### ${wu.id}`);
+      lines.push('');
+      lines.push('```markdown');
+      lines.push(prompt);
+      lines.push('```');
+      lines.push('');
+    } catch {
+      lines.push(`<!-- Could not generate prompt for ${wu.id} -->`);
+    }
+  }
 }
 
 /**
  * WU-2027: Generate embedded spawn prompt for a WU.
- *
- * Instead of outputting a meta-prompt like "Run: pnpm wu:spawn --id WU-XXX",
- * this function runs the spawn logic internally and returns the full ~3KB
- * prompt content ready for embedding in a Task invocation.
- *
- * This follows Anthropic guidance that sub-agent prompts must be fully
- * self-contained to prevent delegation failures.
+ * WU-2375: Now accepts clientName to select output format.
  *
  * @param {string} wuId - WU ID (e.g., 'WU-001')
- * @returns {string} Escaped spawn prompt content ready for XML embedding
+ * @param {string} [clientName] - Client name for strategy selection
+ * @returns {string} Spawn prompt content (XML for Claude, markdown for others)
  * @throws {Error} If WU file not found or cannot be parsed
  */
-export function generateEmbeddedSpawnPrompt(wuId: string): string {
+export function generateEmbeddedSpawnPrompt(wuId: string, clientName?: string): string {
   const wuPath = WU_PATHS.WU(wuId);
 
   if (!existsSync(wuPath)) {
@@ -396,43 +448,75 @@ export function generateEmbeddedSpawnPrompt(wuId: string): string {
     });
   }
 
-  // Read and parse WU YAML
   const text = readFileSync(wuPath, 'utf8');
   const doc = parseYAML(text);
+  const resolvedClient = clientName || 'generic';
+  const strategy = SpawnStrategyFactory.create(resolvedClient);
 
-  // Generate the full Task invocation (includes XML wrapper)
-  // The prompt is already XML-escaped in generateTaskInvocation
-  return generateTaskInvocation(doc, wuId, SpawnStrategyFactory.create('claude-code'));
+  if (isXmlCapableClient(resolvedClient)) {
+    return generateTaskInvocation(doc, wuId, strategy);
+  }
+  return generateCodexPrompt(doc, wuId, strategy);
 }
 
 /**
- * WU-2027: Format a Task invocation with embedded spawn content for a WU.
+ * WU-2375: Generate embedded markdown prompt for a WU (non-Claude clients).
  *
- * Creates a complete Task tool invocation block with the full spawn prompt
- * embedded directly, rather than a meta-prompt referencing wu:spawn.
+ * @param {string} wuId - WU ID
+ * @param {string} [clientName] - Client name for strategy selection
+ * @returns {string} Markdown prompt content
+ * @throws {Error} If WU file not found or cannot be parsed
+ */
+function generateEmbeddedMarkdownPrompt(wuId: string, clientName?: string): string {
+  const wuPath = WU_PATHS.WU(wuId);
+
+  if (!existsSync(wuPath)) {
+    throw createError(ErrorCodes.WU_NOT_FOUND, `WU file not found: ${wuPath}`, {
+      wuId,
+      path: wuPath,
+    });
+  }
+
+  const text = readFileSync(wuPath, 'utf8');
+  const doc = parseYAML(text);
+  const resolvedClient = clientName || 'generic';
+  const strategy = SpawnStrategyFactory.create(resolvedClient);
+  return generateCodexPrompt(doc, wuId, strategy);
+}
+
+/**
+ * WU-2027: Format a spawn prompt with embedded content for a WU.
+ * WU-2375: Now accepts clientName to select output format.
  *
  * @param {{id: string, doc: object}} wu - WU with id and YAML doc
- * @returns {string} Complete Task invocation with embedded spawn content
+ * @param {string} [clientName] - Client name for format selection
+ * @returns {string} Complete spawn content (XML Task invocation or markdown prompt)
  */
-export function formatTaskInvocationWithEmbeddedSpawn(wu: WUEntry): string {
-  // Generate the full Task invocation for this WU
-  return generateTaskInvocation(wu.doc, wu.id, SpawnStrategyFactory.create('claude-code'));
+export function formatTaskInvocationWithEmbeddedSpawn(wu: WUEntry, clientName?: string): string {
+  const resolvedClient = clientName || 'generic';
+  const strategy = SpawnStrategyFactory.create(resolvedClient);
+
+  if (isXmlCapableClient(resolvedClient)) {
+    return generateTaskInvocation(wu.doc, wu.id, strategy);
+  }
+  return generateCodexPrompt(wu.doc, wu.id, strategy);
 }
 
 /**
  * WU-2027: Format execution plan with embedded spawns (no meta-prompts).
  * WU-2280: Updated to use markdown code blocks and ACTION REQUIRED banner.
+ * WU-2375: Client-capability-aware: XML for Claude, markdown for Codex/Gemini/generic.
  *
- * Generates Task invocation blocks for all WUs in the execution plan,
- * with full spawn content embedded directly. This replaces the meta-prompt
- * pattern that was causing delegation failures.
- *
- * @param {{waves: Array<Array<{id: string, doc: object}>>, skipped: string[]}} plan - Execution plan
- * @returns {string} Formatted output with embedded Task invocations
+ * @param {ExecutionPlan} plan - Execution plan
+ * @param {string} [clientName] - Client name for output format selection
+ * @returns {string} Formatted output with embedded spawn content
  */
-
-export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): string {
-  const lines = [];
+// eslint-disable-next-line sonarjs/cognitive-complexity -- display formatting inherently complex
+export function formatExecutionPlanWithEmbeddedSpawns(
+  plan: ExecutionPlan,
+  clientName?: string,
+): string {
+  const lines: string[] = [];
 
   if (plan.waves.length === 0) {
     // WU-1906: Distinguish all-done from all-blocked
@@ -446,6 +530,20 @@ export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): stri
     return 'All WUs are complete.';
   }
 
+  // WU-2375: Branch by client capability
+  if (isXmlCapableClient(clientName)) {
+    formatPlanWavesXml(plan, lines, clientName);
+  } else {
+    formatPlanWavesMarkdown(plan, lines, clientName);
+  }
+
+  return lines.join(STRING_LITERALS.NEWLINE);
+}
+
+/**
+ * WU-2375: Format execution plan waves as XML Task invocations (Claude).
+ */
+function formatPlanWavesXml(plan: ExecutionPlan, lines: string[], clientName?: string): void {
   for (let waveIndex = 0; waveIndex < plan.waves.length; waveIndex++) {
     const wave = plan.waves[waveIndex]!;
     lines.push(
@@ -453,7 +551,6 @@ export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): stri
     );
     lines.push('');
 
-    // WU-2280: ACTION REQUIRED banner - per Anthropic skill best practices
     lines.push(BANNER_SEPARATOR);
     lines.push('ACTION REQUIRED: Agents have NOT been spawned yet.');
     lines.push('');
@@ -462,10 +559,8 @@ export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): stri
     lines.push(BANNER_SEPARATOR);
     lines.push('');
 
-    // WU-2280: Wrap XML in markdown code block to prevent confusion with actual tool calls
     lines.push('```xml');
 
-    // Build parallel spawn block for this wave
     const xmlLines = [];
     const openTag = '<' + 'antml:function_calls>';
     const closeTag = '</' + 'antml:function_calls>';
@@ -473,14 +568,10 @@ export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): stri
     xmlLines.push(openTag);
 
     for (const wu of wave) {
-      const fullInvocation = generateTaskInvocation(
-        wu.doc,
-        wu.id,
-        SpawnStrategyFactory.create('claude-code'),
-      );
+      const resolvedClient = clientName || 'claude-code';
+      const strategy = SpawnStrategyFactory.create(resolvedClient);
+      const fullInvocation = generateTaskInvocation(wu.doc, wu.id, strategy);
 
-      // Extract just the inner invoke block (remove outer function_calls wrapper)
-      // Use indexOf for reliable extraction (regex can have escaping issues)
       const startPattern = '<' + 'antml:invoke';
       const endPattern = '</' + 'antml:invoke>';
       const startIdx = fullInvocation.indexOf(startPattern);
@@ -489,7 +580,6 @@ export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): stri
       if (startIdx !== -1 && endIdx !== -1) {
         let invokeBlock = fullInvocation.substring(startIdx, endIdx + endPattern.length);
 
-        // Add run_in_background parameter for parallel execution
         if (!invokeBlock.includes('run_in_background')) {
           const paramOpen = '<' + 'antml:parameter name="';
           const paramClose = '</' + 'antml:parameter>';
@@ -514,6 +604,48 @@ export function formatExecutionPlanWithEmbeddedSpawns(plan: ExecutionPlan): stri
       lines.push('');
     }
   }
+}
 
-  return lines.join(STRING_LITERALS.NEWLINE);
+/**
+ * WU-2375: Format execution plan waves as markdown prompts (Codex/Gemini/generic).
+ */
+function formatPlanWavesMarkdown(
+  plan: ExecutionPlan,
+  lines: string[],
+  clientName?: string,
+): void {
+  for (let waveIndex = 0; waveIndex < plan.waves.length; waveIndex++) {
+    const wave = plan.waves[waveIndex]!;
+    lines.push(
+      `## Wave ${waveIndex} (${wave.length} WU${wave.length !== 1 ? 's' : ''} in parallel)`,
+    );
+    lines.push('');
+
+    lines.push(BANNER_SEPARATOR);
+    lines.push('ACTION REQUIRED: Agents have NOT been spawned yet.');
+    lines.push('');
+    lines.push('Copy the prompt(s) below to your agent platform.');
+    lines.push('The output below is documentation only - it will NOT execute automatically.');
+    lines.push(BANNER_SEPARATOR);
+    lines.push('');
+
+    for (const wu of wave) {
+      const resolvedClient = clientName || 'generic';
+      const strategy = SpawnStrategyFactory.create(resolvedClient);
+      const prompt = generateCodexPrompt(wu.doc, wu.id, strategy);
+
+      lines.push(`### ${wu.id}: ${wu.doc.title || 'Untitled'}`);
+      lines.push('');
+      lines.push('```markdown');
+      lines.push(prompt);
+      lines.push('```');
+      lines.push('');
+    }
+
+    if (waveIndex < plan.waves.length - 1) {
+      lines.push(`After all Wave ${waveIndex} agents complete, proceed to Wave ${waveIndex + 1}.`);
+      lines.push('Before next wave: pnpm mem:inbox --since 10m (check for bug discoveries)');
+      lines.push('');
+    }
+  }
 }

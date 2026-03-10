@@ -8,9 +8,12 @@
  * Orchestrate initiative execution with parallel agent spawning.
  * Builds execution plan based on WU dependencies and manages wave-based execution.
  *
+ * WU-2375: Added --client parameter for client-capability-aware output.
+ *
  * Usage:
  *   pnpm orchestrate:initiative --initiative INIT-001
  *   pnpm orchestrate:initiative --initiative INIT-001 --dry-run
+ *   pnpm orchestrate:initiative --initiative INIT-001 --client codex-cli
  */
 
 import { Command } from 'commander';
@@ -37,6 +40,8 @@ import { getConfig } from '@lumenflow/core/config';
 import { getErrorMessage, ProcessExitError } from '@lumenflow/core/error-handler';
 import { runCLI } from './cli-entry-point.js';
 
+const VALID_CLIENTS = ['claude-code', 'codex-cli', 'gemini-cli', 'cursor', 'windsurf'];
+
 const program = new Command()
   .name('orchestrate-initiative')
   .description('Orchestrate initiative execution with parallel agent spawning')
@@ -45,6 +50,10 @@ const program = new Command()
   .option('-p, --progress', 'Show current progress only')
   .option('-c, --checkpoint-per-wave', 'Spawn next wave then exit (no polling)')
   .option('--no-checkpoint', 'Force polling mode')
+  .option(
+    '--client <name>',
+    'Agent client (claude-code, codex-cli, gemini-cli, cursor, windsurf)',
+  )
   .action(async (options) => {
     const {
       initiative: initIds,
@@ -52,6 +61,7 @@ const program = new Command()
       progress: progressOnly,
       checkpointPerWave,
       checkpoint,
+      client: clientArg,
     } = options;
     const noCheckpoint = checkpoint === false;
 
@@ -63,6 +73,24 @@ const program = new Command()
       throw new ProcessExitError(message, EXIT_CODES.ERROR);
     }
 
+    // WU-2375: Resolve client name
+    const config = getConfig();
+    const clientName: string | undefined =
+      clientArg || config.agents?.defaultClient || undefined;
+
+    if (clientArg && !VALID_CLIENTS.includes(clientArg)) {
+      console.warn(
+        chalk.yellow(
+          `${LOG_PREFIX} Warning: Unknown client '${clientArg}'. ` +
+            `Valid clients: ${VALID_CLIENTS.join(', ')}`,
+        ),
+      );
+    }
+
+    if (clientName) {
+      console.log(chalk.cyan(`${LOG_PREFIX} Client: ${clientName}`));
+    }
+
     if (!initIds || initIds.length === 0) {
       const message = `${LOG_PREFIX} Error: --initiative is required`;
       console.error(chalk.red(message));
@@ -70,6 +98,7 @@ const program = new Command()
       console.error('Usage:');
       console.error('  pnpm orchestrate:initiative --initiative INIT-001');
       console.error('  pnpm orchestrate:initiative --initiative INIT-001 --dry-run');
+      console.error('  pnpm orchestrate:initiative --initiative INIT-001 --client codex-cli');
       throw new ProcessExitError(message, EXIT_CODES.ERROR);
     }
 
@@ -119,12 +148,13 @@ const program = new Command()
           return;
         }
 
-        console.log(formatCheckpointOutput({ ...waveData, dryRun }));
+        // WU-2375: Pass clientName to checkpoint output formatting
+        console.log(formatCheckpointOutput({ ...waveData, dryRun, clientName }));
         return;
       }
 
       console.log(chalk.cyan(`${LOG_PREFIX} Building execution plan...`));
-      const laneConfigs = resolveLaneConfigsFromConfig(getConfig());
+      const laneConfigs = resolveLaneConfigsFromConfig(config);
       const plan = buildExecutionPlanWithLockPolicy(wus, { laneConfigs });
 
       if (plan.waves.length === 0) {
@@ -188,15 +218,18 @@ const program = new Command()
         return;
       }
 
-      // WU-1202: Output spawn XML for actual execution (not dry-run)
-      // formatExecutionPlan only shows the plan structure, not spawn commands
-      // formatExecutionPlanWithEmbeddedSpawns includes Task XML for spawning agents
+      // WU-1202: Output spawn content for actual execution (not dry-run)
+      // WU-2375: Format varies by client capability (XML for Claude, markdown for others)
       console.log('');
       console.log(chalk.bold('Spawn Commands:'));
-      console.log(formatExecutionPlanWithEmbeddedSpawns(plan));
+      console.log(formatExecutionPlanWithEmbeddedSpawns(plan, clientName));
 
       console.log(chalk.green(`${LOG_PREFIX} Execution plan output complete.`));
-      console.log(chalk.cyan('Copy the spawn XML above to execute agents.'));
+      if (!clientName || clientName === 'claude-code') {
+        console.log(chalk.cyan('Copy the spawn XML above to execute agents.'));
+      } else {
+        console.log(chalk.cyan('Copy the prompts above to your agent platform.'));
+      }
     } catch (error) {
       if (error instanceof ProcessExitError) {
         throw error;

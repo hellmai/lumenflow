@@ -119,6 +119,8 @@ export interface CheckpointWaveResult {
   blockedBy?: string[];
   waitingMessage?: string;
   dryRun?: boolean;
+  /** WU-2375: Client name for output format selection */
+  clientName?: string;
 }
 
 /**
