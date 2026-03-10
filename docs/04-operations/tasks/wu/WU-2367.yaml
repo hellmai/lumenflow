@@ -21,6 +21,8 @@ tests:
     - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
     - packages/@lumenflow/core/src/__tests__/wu-done-validation-code-paths.test.ts
+    - packages/@lumenflow/core/src/__tests__/wu-claim-validation-surface.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-claim-validation-surface.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2367.done
