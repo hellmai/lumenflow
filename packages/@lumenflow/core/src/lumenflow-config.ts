@@ -254,7 +254,11 @@ export function clearConfigCache(): void {
   cachedProjectRoot = null;
 }
 
-function formatScriptCommand(packageManager: string, scriptName: string, args: string[] = []): string {
+function formatScriptCommand(
+  packageManager: string,
+  scriptName: string,
+  args: string[] = [],
+): string {
   switch (packageManager) {
     case 'npm':
       return args.length > 0
@@ -263,9 +267,7 @@ function formatScriptCommand(packageManager: string, scriptName: string, args: s
     case 'yarn':
       return args.length > 0 ? `yarn ${scriptName} ${args.join(' ')}` : `yarn ${scriptName}`;
     case 'bun':
-      return args.length > 0
-        ? `bun run ${scriptName} ${args.join(' ')}`
-        : `bun run ${scriptName}`;
+      return args.length > 0 ? `bun run ${scriptName} ${args.join(' ')}` : `bun run ${scriptName}`;
     case 'pnpm':
     default:
       return args.length > 0 ? `pnpm ${scriptName} ${args.join(' ')}` : `pnpm ${scriptName}`;

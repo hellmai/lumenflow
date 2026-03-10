@@ -19,7 +19,11 @@
 import path from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import YAML from 'yaml';
-import { findProjectRoot, getWorkspaceInitCommand, WRITABLE_ROOT_KEYS } from '@lumenflow/core/config';
+import {
+  findProjectRoot,
+  getWorkspaceInitCommand,
+  WRITABLE_ROOT_KEYS,
+} from '@lumenflow/core/config';
 import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
 import { runCLI } from './cli-entry-point.js';
