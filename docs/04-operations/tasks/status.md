@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2361 — Clean up evidence-only remnants and fix misleading warn message](wu/WU-2361.yaml)
 
 ## Completed
 

@@ -3012,3 +3012,4 @@
 {"type":"checkpoint","wuId":"WU-2360","timestamp":"2026-03-10T09:34:26.473Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2360.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2360","timestamp":"2026-03-10T09:35:28.585Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2360.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2360","timestamp":"2026-03-10T09:38:12.861Z"}
+{"type":"claim","wuId":"WU-2361","timestamp":"2026-03-10T09:39:48.089Z","lane":"Framework: CLI WU Commands","title":"Clean up evidence-only remnants and fix misleading warn message"}

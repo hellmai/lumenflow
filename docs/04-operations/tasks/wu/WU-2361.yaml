@@ -2,7 +2,7 @@ id: WU-2361
 title: Clean up evidence-only remnants and fix misleading warn message
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -29,9 +29,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'WU-2359 follow-up: (1) Remove --evidence-only from parser help surface, (2) stop serializing new brief evidence as mode=evidence-only (rename to mode=full), (3) fix misleading warning text that suggests running wu:delegate after the fact which would create intent without pickup and cause a later hard-block.'
+description: 'WU-2359 follow-up: (1) Remove --evidence-only from parser help surface, (2) stop
+  serializing new brief evidence as mode=evidence-only (rename to mode=full), (3) fix misleading
+  warning text that suggests running wu:delegate after the fact which would create intent without
+  pickup and cause a later hard-block.'
 acceptance:
   - arg-parser no longer shows --evidence-only in help output (flag still parses for die() migration)
   - New wu:brief evidence records use mode=full instead of mode=evidence-only
   - Spawn provenance warning no longer suggests running wu:delegate after the fact
   - Existing tests updated for new mode label
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2361
+claimed_at: 2026-03-10T09:39:48.061Z
+baseline_main_sha: 958d47e055edfee10db561cd9b94b23abaae204e
+session_id: dc84db6a-7477-4946-8264-181eebd3beeb
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T09:39:48.068Z
