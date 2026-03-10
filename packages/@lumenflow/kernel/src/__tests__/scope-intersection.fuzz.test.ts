@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Hellmai Ltd
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // Property-based fuzz tests for the patternContains glob heuristic.
 //

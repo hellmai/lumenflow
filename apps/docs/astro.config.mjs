@@ -68,8 +68,40 @@ export default defineConfig({
       plugins: [starlightThemeNova()],
       customCss: ['./src/styles/splash.css'],
       title: 'LumenFlow',
-      description: 'The governance layer between AI agents and the world',
+      description:
+        'LumenFlow is an open-source governance framework for AI agents — constraints, evidence, and workflow automation for software delivery. Not affiliated with LumenFlow Corp (photonics) or LumeFlow AI.',
       social: [],
+      head: [
+        {
+          tag: 'script',
+          attrs: { type: 'application/ld+json' },
+          content: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'LumenFlow',
+            alternateName: 'LumenFlow OS',
+            description:
+              'Open-source governance framework for AI agents — constraints, evidence, and workflow automation for software delivery.',
+            url: 'https://lumenflow.dev',
+            applicationCategory: 'DeveloperApplication',
+            operatingSystem: 'Cross-platform',
+            license: 'https://spdx.org/licenses/AGPL-3.0-only.html',
+            author: {
+              '@type': 'Organization',
+              name: 'Hellmai Ltd',
+              url: 'https://hellm.ai',
+            },
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          }),
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            property: 'og:image',
+            content: 'https://lumenflow.dev/og-image.png',
+          },
+        },
+      ],
       sidebar: [
         {
           label: 'Getting Started',
