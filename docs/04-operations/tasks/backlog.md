@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2371 — Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links](wu/WU-2371.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -30,6 +29,7 @@ sections:
 
 - [WU-2369 — Add --replace-test-paths flags to wu:edit](wu/WU-2369.yaml) — Framework: CLI WU Commands
 - [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml) — Framework: CLI WU Commands
+- [WU-2371 — Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links](wu/WU-2371.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
