@@ -7,10 +7,14 @@ priority: P2
 created: 2026-03-10
 code_paths:
   - packages/@lumenflow/cli/src/wu-done-policies.ts
-  - packages/@lumenflow/core/src/wu-event-sourcer.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/initiative-orchestration.md
   - AGENTS.md
+  - LUMENFLOW.md
+  - apps/docs/src/content/docs/packs/software-delivery/workflows/team-workflow.mdx
+  - apps/docs/src/content/docs/reference/cli.mdx
 tests:
   manual:
     - Run pnpm wu:claim then pnpm wu:done without explicit wu:brief and verify it blocks
@@ -23,10 +27,17 @@ dependencies: []
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T18:01:57.473Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2379
+session_id: e7ae3ede-0106-48ca-878d-d42ac57f6dcf
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T18:01:57.480Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -49,11 +60,3 @@ acceptance:
   - Starlight docs (wu-brief concept page or lifecycle page) document the evidence modes and why
     claim-auto is insufficient
   - AGENTS.md and/or LUMENFLOW.md updated to make wu:brief requirement unambiguous
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2379
-claimed_at: 2026-03-10T18:01:57.473Z
-baseline_main_sha: 952fc68f48aefcc6e718dbd999851309f38cf8e7
-session_id: e7ae3ede-0106-48ca-878d-d42ac57f6dcf
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T18:01:57.480Z
