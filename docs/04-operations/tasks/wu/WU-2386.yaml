@@ -19,12 +19,22 @@ artifacts:
   - .lumenflow/stamps/WU-2386.done
 dependencies: []
 risks: []
-notes: ''
+notes: Implementation adds isMetadataOnlyEdit() to wu-edit-validators.ts. When only metadata fields
+  (notes, acceptance, risks, test paths, escalation_triggers) are edited, validateWorktreeClean is
+  skipped. Structural fields (code_paths, lane, description, type, priority, initiative, etc.) still
+  require a clean worktree. 10 regression tests cover the detection logic.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T21:18:06.898Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2386
+session_id: 1b722b62-f4e8-4c4d-a9e8-50ce23c7f320
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T21:18:06.906Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +51,3 @@ acceptance:
   - wu:edit for fields that touch code_paths or structural WU fields still enforces the
     clean-worktree check
   - Regression test covers the metadata-only bypass path
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T21:18:06.906Z
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2386
-claimed_at: 2026-03-10T21:18:06.898Z
-baseline_main_sha: c85fa1ae80e4b3d777f6dda45fce668beed41a89
-session_id: 1b722b62-f4e8-4c4d-a9e8-50ce23c7f320

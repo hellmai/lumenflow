@@ -3163,3 +3163,6 @@
 {"type":"claim","wuId":"WU-2386","timestamp":"2026-03-10T21:16:34.175Z","lane":"Framework: CLI WU Commands","title":"wu:edit blocks metadata-only edits on dirty worktrees"}
 {"type":"release","wuId":"WU-2386","timestamp":"2026-03-10T21:17:44.714Z","reason":"Reset via wu:recover --action reset"}
 {"type":"claim","wuId":"WU-2386","timestamp":"2026-03-10T21:18:06.934Z","lane":"Framework: CLI WU Commands","title":"wu:edit blocks metadata-only edits on dirty worktrees"}
+{"type":"checkpoint","wuId":"WU-2386","timestamp":"2026-03-10T21:18:18.377Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2386","timestamp":"2026-03-10T21:18:24.810Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2386","timestamp":"2026-03-10T21:21:17.471Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2386.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
