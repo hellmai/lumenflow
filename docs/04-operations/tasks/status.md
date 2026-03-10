@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2364 — plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename](wu/WU-2364.yaml)
 
 ## Completed
 

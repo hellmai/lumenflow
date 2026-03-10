@@ -2,7 +2,7 @@ id: WU-2364
 title: 'plan:edit/promote: resolve plan file from initiative/WU metadata instead of hardcoded filename'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/plan-promote.ts
 tests:
   manual:
-    - Run plan:edit --id INIT-40 --section Goal --content test and verify it finds the plan via related_plan
+    - Run plan:edit --id INIT-40 --section Goal --content test and verify it finds the plan via
+      related_plan
   unit:
     - packages/@lumenflow/cli/src/__tests__/plan-edit.test.ts
     - packages/@lumenflow/cli/src/__tests__/plan-promote.test.ts
@@ -30,9 +31,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: plan:edit and plan:promote hardcode plan filename as ${id}-plan.md. This forces a naming convention on consumers. Instead, resolve the plan file from initiative related_plan metadata or allow explicit --file flag.
+description: plan:edit and plan:promote hardcode plan filename as ${id}-plan.md. This forces a
+  naming convention on consumers. Instead, resolve the plan file from initiative related_plan
+  metadata or allow explicit --file flag.
 acceptance:
   - plan:edit resolves plan file from initiative YAML related_plan field when given --id INIT-XX
   - plan:edit accepts --file flag to specify plan path directly
   - plan:promote uses same resolution logic
   - Hardcoded ${id}-plan.md pattern removed from plan-edit.ts and plan-promote.ts
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2364
+claimed_at: 2026-03-10T10:56:46.713Z
+baseline_main_sha: a8a0cd8c10888d5f1dbf3b4b6ac4429512af2f96
+session_id: 8362d0eb-b470-4611-8fb7-06b0cd5244f3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T10:56:46.720Z
