@@ -2,7 +2,7 @@ id: WU-2356
 title: Align sizing and initiative guidance across root and template docs
 lane: 'Content: Specs Governance'
 type: documentation
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -34,9 +34,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: WU-2355 tightened sizing guidance in the core onboarding docs, and a follow-up review found residual drift in root and template entrypoints. Problem: LUMENFLOW.md and template copies still carry oversplitting guidance, including time-based initiative cues and a false binary for sizing advisories, so fresh scaffolds can regress the sizing contract. Solution: align the root and template docs with the one-coherent-outcome rule, remove time-based split language, and verify docs/template sync is clean before release.'
+description: 'Context: WU-2355 tightened sizing guidance in the core onboarding docs, and a
+  follow-up review found residual drift in root and template entrypoints. Problem: LUMENFLOW.md and
+  template copies still carry oversplitting guidance, including time-based initiative cues and a
+  false binary for sizing advisories, so fresh scaffolds can regress the sizing contract. Solution:
+  align the root and template docs with the one-coherent-outcome rule, remove time-based split
+  language, and verify docs/template sync is clean before release.'
 acceptance:
-  - LUMENFLOW.md and its template describe initiative use in terms of multiple independently completable WUs, lane ownership, or staged rollout, not file-count shorthand alone.
-  - Starting-prompt source and template contain no time-based initiative split cues and use the same one-coherent-outcome guidance.
+  - LUMENFLOW.md and its template describe initiative use in terms of multiple independently
+    completable WUs, lane ownership, or staged rollout, not file-count shorthand alone.
+  - Starting-prompt source and template contain no time-based initiative split cues and use the same
+    one-coherent-outcome guidance.
   - first-wu-mistakes template advises stronger single-WU strategies before splitting oversized work.
   - Docs/template validation passes so release proceeds from aligned guidance.
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2356
+claimed_at: 2026-03-10T00:39:28.311Z
+baseline_main_sha: cc3af555172a0bbc38c9b1b414017252872a84c6
+session_id: edb8a244-bf26-4276-87a9-dcc36c13c2cc
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T00:39:28.321Z

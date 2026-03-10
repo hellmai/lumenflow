@@ -5,6 +5,7 @@ _Last updated: 2026-03-10_
 ## In Progress
 
 - [WU-2348 — Block unscoped pnpm format at CLI level for all agents](wu/WU-2348.yaml)
+- [WU-2356 — Align sizing and initiative guidance across root and template docs](wu/WU-2356.yaml)
 
 ## Completed
 
