@@ -3000,3 +3000,4 @@
 {"type":"checkpoint","wuId":"WU-2358","timestamp":"2026-03-10T08:02:34.690Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2358","timestamp":"2026-03-10T08:04:05.845Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2358.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2358","timestamp":"2026-03-10T08:09:18.257Z"}
+{"type":"claim","wuId":"WU-2359","timestamp":"2026-03-10T08:32:33.621Z","lane":"Framework: CLI WU Commands","title":"Remove --evidence-only, soften spawn provenance to warn-only for non-orchestrated WUs"}

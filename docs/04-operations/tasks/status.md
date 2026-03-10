@@ -4,7 +4,7 @@ _Last updated: 2026-03-10_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2359 — Remove --evidence-only, soften spawn provenance to warn-only for non-orchestrated WUs](wu/WU-2359.yaml)
 
 ## Completed
 
