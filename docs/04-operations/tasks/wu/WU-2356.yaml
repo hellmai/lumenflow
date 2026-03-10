@@ -11,6 +11,9 @@ code_paths:
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
   - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
   - packages/@lumenflow/cli/templates/core/ai/onboarding/first-wu-mistakes.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/initiative-orchestration.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
+  - packages/@lumenflow/cli/templates/core/ai/onboarding/wu-sizing-guide.md.template
 tests:
   manual:
     - pnpm sync:templates --check-drift
@@ -21,9 +24,14 @@ artifacts:
   - .lumenflow/stamps/WU-2356.done
 dependencies: []
 risks: []
-notes: ''
+notes: Expanded after sync:templates --check-drift surfaced additional stale onboarding templates
+  that must be aligned for release-clean docs/template validation.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-10T00:39:28.311Z
+worktree_path: worktrees/content-specs-governance-wu-2356
+session_id: edb8a244-bf26-4276-87a9-dcc36c13c2cc
 exposure: documentation
 sizing_estimate:
   estimated_files: 5
@@ -31,6 +39,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-10T00:39:28.321Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -47,11 +58,3 @@ acceptance:
     one-coherent-outcome guidance.
   - first-wu-mistakes template advises stronger single-WU strategies before splitting oversized work.
   - Docs/template validation passes so release proceeds from aligned guidance.
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2356
-claimed_at: 2026-03-10T00:39:28.311Z
-baseline_main_sha: cc3af555172a0bbc38c9b1b414017252872a84c6
-session_id: edb8a244-bf26-4276-87a9-dcc36c13c2cc
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-10T00:39:28.321Z
