@@ -2,7 +2,7 @@ id: WU-2370
 title: Fix wu:brief evidence path mismatch between worktree and main
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-10
 code_paths:
@@ -43,3 +43,6 @@ acceptance:
   - wu:done finds wu:brief evidence recorded in worktree state dir
   - Existing tests pass
   - New test covers worktree-to-main evidence path resolution
+locked: true
+completed_at: 2026-03-10T13:04:42.561Z
+completed: 2026-03-10

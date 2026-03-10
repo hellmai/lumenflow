@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2372 — Enforce command discovery and block CLI output truncation in spawned agents](wu/WU-2372.yaml) — Framework: CLI Enforcement
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -28,7 +27,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1318,6 +1317,7 @@ sections:
 - [WU-2368 — Add stronger default co-change safeguards for database-affecting WUs](wu/WU-2368.yaml)
 - [WU-2369 — Add --replace-test-paths flags to wu:edit](wu/WU-2369.yaml)
 - [WU-2371 — Fix docs:sync core-doc rendering, staleness checker, help text, and overlay links](wu/WU-2371.yaml)
+- [WU-2370 — Fix wu:brief evidence path mismatch between worktree and main](wu/WU-2370.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
