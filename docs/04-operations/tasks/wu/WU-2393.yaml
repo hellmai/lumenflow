@@ -2,7 +2,7 @@ id: WU-2393
 title: Add gate:co-change command for safe co-change rule management
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-11
 code_paths:
@@ -64,3 +64,6 @@ acceptance:
   - Duplicate name detection on --add, unknown name error on --edit and --remove
   - Registered in public-manifest.ts, docs:generate produces correct output
   - 'Doc parity: quick-ref-commands.md and templates updated'
+locked: true
+completed_at: 2026-03-11T15:41:55.856Z
+completed: 2026-03-11

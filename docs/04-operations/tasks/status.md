@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-- [WU-2393 — Add gate:co-change command for safe co-change rule management](wu/WU-2393.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1311,3 +1311,4 @@ _Last updated: 2026-03-11_
 - [WU-2390 — Suppress git-adapter DEBUG logs by default in wu:claim](wu/WU-2390.yaml) — 2026-03-11
 - [WU-2391 — plan:create reports success but silently fails to commit the plan file](wu/WU-2391.yaml) — 2026-03-11
 - [WU-2392 — Fix pre-commit hook template to skip tmp/\* branches](wu/WU-2392.yaml) — 2026-03-11
+- [WU-2393 — Add gate:co-change command for safe co-change rule management](wu/WU-2393.yaml) — 2026-03-11
