@@ -104,21 +104,21 @@ describe('parseGateCoChangeArgs', () => {
   });
 
   it('throws on --add without name', () => {
-    expect(() =>
-      parseGateCoChangeArgs(['--add', '--trigger', 'x', '--require', 'y']),
-    ).toThrow(/--name is required/i);
+    expect(() => parseGateCoChangeArgs(['--add', '--trigger', 'x', '--require', 'y'])).toThrow(
+      /--name is required/i,
+    );
   });
 
   it('throws on --add without trigger', () => {
-    expect(() =>
-      parseGateCoChangeArgs(['--add', '--name', 'foo', '--require', 'y']),
-    ).toThrow(/--trigger is required/i);
+    expect(() => parseGateCoChangeArgs(['--add', '--name', 'foo', '--require', 'y'])).toThrow(
+      /--trigger is required/i,
+    );
   });
 
   it('throws on --add without require', () => {
-    expect(() =>
-      parseGateCoChangeArgs(['--add', '--name', 'foo', '--trigger', 'x']),
-    ).toThrow(/--require is required/i);
+    expect(() => parseGateCoChangeArgs(['--add', '--name', 'foo', '--trigger', 'x'])).toThrow(
+      /--require is required/i,
+    );
   });
 
   it('throws on --remove without name', () => {

@@ -173,27 +173,27 @@ you want to refresh docs without upgrading packages (e.g., after manually editin
 
 ## Gates & Quality
 
-| Command                                           | Description                                     |
-| ------------------------------------------------- | ----------------------------------------------- |
-| `pnpm gates`                                      | Run all quality gates                           |
-| `pnpm gates --docs-only`                          | Run gates for docs changes                      |
-| `pnpm format`                                     | Format all files (Prettier)                     |
-| `pnpm format:check`                               | Check formatting without changes                |
-| `pnpm lint`                                       | Run ESLint                                      |
-| `pnpm typecheck`                                  | Run TypeScript type checking                    |
-| `pnpm test`                                       | Run all tests (Vitest)                          |
-| `pnpm spec:linter`                                | Validate WU specs (all) ¹                       |
-| `pnpm lane:health`                                | Check lane config health                        |
-| `pnpm lane:suggest --output workspace.lanes.yaml` | Generate a workspace lane-definition snippet    |
-| `pnpm lane:status`                                | Show lane lifecycle status                      |
-| `pnpm lane:setup`                                 | Create/update draft lane config                 |
-| `pnpm lane:validate`                              | Validate lane draft artifacts                   |
-| `pnpm lane:lock`                                  | Lock lane lifecycle for WU create               |
-| `pnpm lane:edit --name <L>`                       | Edit lane definition (rename, wip-limit, paths) |
-| `pnpm gate:co-change --add --name <N> --trigger <G> --require <G>` | Add co-change gate rule |
-| `pnpm gate:co-change --remove --name <N>`         | Remove co-change gate rule                      |
-| `pnpm gate:co-change --edit --name <N> --severity <S>` | Edit co-change gate rule                   |
-| `pnpm gate:co-change --list`                      | List all co-change rules (built-in + custom)    |
+| Command                                                            | Description                                     |
+| ------------------------------------------------------------------ | ----------------------------------------------- |
+| `pnpm gates`                                                       | Run all quality gates                           |
+| `pnpm gates --docs-only`                                           | Run gates for docs changes                      |
+| `pnpm format`                                                      | Format all files (Prettier)                     |
+| `pnpm format:check`                                                | Check formatting without changes                |
+| `pnpm lint`                                                        | Run ESLint                                      |
+| `pnpm typecheck`                                                   | Run TypeScript type checking                    |
+| `pnpm test`                                                        | Run all tests (Vitest)                          |
+| `pnpm spec:linter`                                                 | Validate WU specs (all) ¹                       |
+| `pnpm lane:health`                                                 | Check lane config health                        |
+| `pnpm lane:suggest --output workspace.lanes.yaml`                  | Generate a workspace lane-definition snippet    |
+| `pnpm lane:status`                                                 | Show lane lifecycle status                      |
+| `pnpm lane:setup`                                                  | Create/update draft lane config                 |
+| `pnpm lane:validate`                                               | Validate lane draft artifacts                   |
+| `pnpm lane:lock`                                                   | Lock lane lifecycle for WU create               |
+| `pnpm lane:edit --name <L>`                                        | Edit lane definition (rename, wip-limit, paths) |
+| `pnpm gate:co-change --add --name <N> --trigger <G> --require <G>` | Add co-change gate rule                         |
+| `pnpm gate:co-change --remove --name <N>`                          | Remove co-change gate rule                      |
+| `pnpm gate:co-change --edit --name <N> --severity <S>`             | Edit co-change gate rule                        |
+| `pnpm gate:co-change --list`                                       | List all co-change rules (built-in + custom)    |
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
