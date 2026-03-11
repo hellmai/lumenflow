@@ -2,7 +2,7 @@ id: WU-2392
 title: Fix pre-commit hook template to skip tmp/* branches
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-11
 code_paths:
@@ -41,3 +41,6 @@ description: 'The pre-commit.template ships pnpm lumenflow:pre-commit-check whic
 acceptance:
   - pre-commit.template includes tmp/* branch skip before any pnpm/node commands
   - lumenflow init scaffolds the updated hook
+locked: true
+completed_at: 2026-03-11T12:10:15.224Z
+completed: 2026-03-11

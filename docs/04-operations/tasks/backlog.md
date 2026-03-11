@@ -28,7 +28,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2392 — Fix pre-commit hook template to skip tmp/\* branches](wu/WU-2392.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1338,6 +1338,7 @@ sections:
 - [WU-2389 — Add wu:brief as explicit step in wu:claim Next Steps output](wu/WU-2389.yaml)
 - [WU-2390 — Suppress git-adapter DEBUG logs by default in wu:claim](wu/WU-2390.yaml)
 - [WU-2391 — plan:create reports success but silently fails to commit the plan file](wu/WU-2391.yaml)
+- [WU-2392 — Fix pre-commit hook template to skip tmp/\* branches](wu/WU-2392.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
