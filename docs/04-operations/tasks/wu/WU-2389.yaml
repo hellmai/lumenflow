@@ -6,8 +6,10 @@ status: in_progress
 priority: P1
 created: 2026-03-11
 code_paths:
-  - packages/@lumenflow/cli/src/wu-claim.ts
+  - packages/@lumenflow/cli/src/wu-claim-worktree.ts
+  - packages/@lumenflow/cli/src/wu-claim-branch.ts
   - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-claim-worktree.test.ts
 tests:
   manual:
     - Run wu:claim and verify wu:brief appears as step 2 in Next Steps
