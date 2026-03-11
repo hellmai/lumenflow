@@ -2,7 +2,7 @@ id: WU-2395
 title: 'Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier'
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-11
 code_paths:
@@ -26,7 +26,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'wu:done shells out to pnpm prettier write to format generated files including WU YAML specs. Prettier exits 0 without formatting yaml files when no YAML parser is available. This silently produces unformatted YAML committed to main, causing consumer CI format check gates to fail. Fix: format WU YAML programmatically using js-yaml in wu-done-metadata.ts.'
+description: 'wu:done shells out to pnpm prettier write to format generated files including WU YAML
+  specs. Prettier exits 0 without formatting yaml files when no YAML parser is available. This
+  silently produces unformatted YAML committed to main, causing consumer CI format check gates to
+  fail. Fix: format WU YAML programmatically using js-yaml in wu-done-metadata.ts.'
 acceptance:
-  - WU YAML files written by wu:done pass prettier --check in a consumer project that has no @prettier/plugin-yaml installed
+  - WU YAML files written by wu:done pass prettier --check in a consumer project that has no
+    @prettier/plugin-yaml installed
   - Markdown files (backlog.md, status.md) continue to be formatted via pnpm prettier as before
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2395
+claimed_at: 2026-03-11T21:51:22.109Z
+baseline_main_sha: 1d850af427f193eaf942389b93e8897bcf3f5b61
+session_id: 915e0499-1b77-4716-ac45-013982c73884
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T21:51:22.116Z

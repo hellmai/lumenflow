@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml)
 
 ## Completed
 
