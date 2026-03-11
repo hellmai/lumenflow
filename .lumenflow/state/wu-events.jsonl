@@ -3207,3 +3207,5 @@
 {"type":"complete","wuId":"WU-2393","timestamp":"2026-03-11T15:42:01.654Z"}
 {"type":"claim","wuId":"WU-2394","timestamp":"2026-03-11T21:04:51.896Z","lane":"Framework: CLI WU Commands","title":"Fix cloud/branch-pr completion to be fail-closed and self-consistent"}
 {"type":"checkpoint","wuId":"WU-2394","timestamp":"2026-03-11T21:05:03.304Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2394","timestamp":"2026-03-11T21:31:26.403Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2394","timestamp":"2026-03-11T21:31:35.371Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2394.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}

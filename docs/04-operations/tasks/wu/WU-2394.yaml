@@ -27,12 +27,24 @@ artifacts:
   - .lumenflow/stamps/WU-2394.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Codex identified and fixed the fail-open PR path in branch-pr completion mode. Changes:
+  enforce PR creation result in wu-done-pr.ts (createPR now propagates gh errors),
+  wu-done-branch-only.ts (PR failure stops completion), wu-done-merge-phase.ts and
+  wu-done-worktree-services.ts (same). Align messaging in wu-prep.ts (always direct to wu:done) and
+  wu-claim-branch.ts (consistent guidance). Added cloud/branch-pr troubleshooting section to all
+  three doc locations. This was a straightforward fail-closed fix with no architectural changes.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-11T21:04:51.864Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2394
+session_id: 709d0d7f-7f3a-44eb-93fa-7b722c758a5a
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T21:04:51.871Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -45,11 +57,3 @@ acceptance:
   - wu:prep always directs branch-pr users to wu:done, never to manual gh pr create
   - wu:claim branch-pr messaging is consistent with the above
   - Troubleshooting docs cover cloud/branch-pr path with parity to worktree docs
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2394
-claimed_at: 2026-03-11T21:04:51.864Z
-baseline_main_sha: 57cc5ac2186957311357791ab4ca063c08f406c1
-session_id: 709d0d7f-7f3a-44eb-93fa-7b722c758a5a
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-11T21:04:51.871Z
