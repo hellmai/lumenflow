@@ -17,8 +17,13 @@ artifacts:
   - .lumenflow/stamps/WU-2390.done
 dependencies: []
 risks: []
-notes: Removed per-constructor and getGitForCwd DEBUG console.log calls from git-adapter.ts. These
+notes: >-
+  Removed per-constructor and getGitForCwd DEBUG console.log calls from git-adapter.ts. These
   produced 40+ lines per wu:claim with no diagnostic value.
+
+
+  tdd-exception: Removed debug console.log lines only — no new behavior or branching logic to test.
+  Typecheck confirms no regressions.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
