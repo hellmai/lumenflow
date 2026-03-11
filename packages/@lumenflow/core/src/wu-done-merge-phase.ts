@@ -18,7 +18,7 @@ import { BRANCHES, REMOTES, THRESHOLDS, LOG_PREFIX, BOX } from './wu-constants.j
 import { PREFLIGHT, MERGE } from './wu-done-messages.js';
 import { getDriftLevel, DRIFT_LEVELS } from './branch-drift.js';
 import { createError, ErrorCodes } from './error-handler.js';
-import { isPRModeEnabled, createPR, printPRCreatedMessage } from './wu-done-pr.js';
+import { isPRModeEnabled, createPR, ensurePRCreated, printPRCreatedMessage } from './wu-done-pr.js';
 import { isBranchAlreadyMerged } from './wu-done-branch-utils.js';
 import { branchExists } from './wu-done-validators.js';
 import { withMergeLock } from './merge-lock.js';
@@ -113,10 +113,12 @@ export async function executeMergePhase(ctx: MergePhaseContext): Promise<MergePh
       doc: docMain,
       draft: args.prDraft,
     });
-    if (prResult.success && prResult.prUrl) {
-      printPRCreatedMessage(prResult.prUrl, id);
-      prUrl = prResult.prUrl;
-    }
+    prUrl = ensurePRCreated({
+      result: prResult,
+      branch: laneBranch,
+      id,
+    });
+    printPRCreatedMessage(prUrl, id);
   } else {
     // Default mode: Auto-merge with pre-flight checks
     console.log(PREFLIGHT.RUNNING);

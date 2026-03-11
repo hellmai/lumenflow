@@ -71,6 +71,16 @@ export function getBranchClaimNextSteps(id: string, claimedMode: string): string
   ];
 }
 
+export function getBranchClaimCommonMistakes(claimedMode: string): string[] {
+  const common = [`  - Don't manually edit WU YAML status fields`];
+
+  if (claimedMode === CLAIMED_MODES.BRANCH_PR) {
+    return [...common, `  - Don't skip wu:done and create the PR manually`];
+  }
+
+  return [...common, `  - Don't create PRs (trunk-based development)`];
+}
+
 /**
  * Execute branch-only mode claim workflow
  */
@@ -183,7 +193,7 @@ export async function claimBranchOnlyMode(ctx: ClaimContext) {
   }
 
   // Summary
-  console.log(`\n${PREFIX} Claim recorded in Branch-Only mode.`);
+  console.log(`\n${PREFIX} Claim recorded in ${getBranchModeDisplayLabel(claimedMode)}.`);
   const wuDisplay = finalTitle ? `- WU: ${id} — ${finalTitle}` : `- WU: ${id}`;
   console.log(wuDisplay);
   console.log(`- Lane: ${args.lane}`);
@@ -203,8 +213,9 @@ export async function claimBranchOnlyMode(ctx: ClaimContext) {
     console.log(step);
   }
   console.log(`\n${PREFIX} Common mistakes to avoid:`);
-  console.log(`  - Don't manually edit WU YAML status fields`);
-  console.log(`  - Don't create PRs (trunk-based development)`);
+  for (const mistake of getBranchClaimCommonMistakes(claimedMode)) {
+    console.log(mistake);
+  }
 
   // WU-1501: Hint for sub-agent execution context
   console.log(`\n${PREFIX} For sub-agent execution:`);

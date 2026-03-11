@@ -185,7 +185,7 @@ describe('wu-prep spec-linter classification (WU-1441)', () => {
  * - wu:prep reads claimed_mode before hard worktree rejection
  * - For branch-pr WUs, wu:prep runs from main checkout on the correct lane branch
  * - wu:prep validates current branch matches the WU lane branch in branch-pr mode
- * - Success output for branch-pr shows PR-based completion next step
+ * - Success output for branch-pr hands off to wu:done for PR creation
  */
 describe('wu-prep branch-pr mode (WU-1493)', () => {
   describe('isBranchPrMode', () => {
@@ -248,15 +248,16 @@ describe('wu-prep branch-pr mode (WU-1493)', () => {
   });
 
   describe('formatBranchPrSuccessMessage', () => {
-    it('should include PR-based next step in success output', async () => {
+    it('should include wu:done-based PR completion in success output', async () => {
       const { formatBranchPrSuccessMessage } = await import('../wu-prep.js');
       const message = formatBranchPrSuccessMessage({
         wuId: 'WU-1493',
         laneBranch: 'lane/framework-cli/wu-1493',
       });
-      // Should mention creating a PR
+      expect(message).toContain('pnpm wu:done --id WU-1493');
       expect(message).toContain('PR');
       expect(message).toContain('WU-1493');
+      expect(message).not.toContain('gh pr create');
     });
 
     it('should include the lane branch name', async () => {

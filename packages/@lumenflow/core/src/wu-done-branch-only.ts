@@ -50,7 +50,12 @@ import { WUTransaction } from './wu-transaction.js';
 // WU-1061: Import docs regeneration utilities
 import { maybeRegenerateAndStageDocs } from './wu-done-docs-generate.js';
 // WU-1492: Import PR creation utilities for branch-pr mode
-import { createPR, printPRCreatedMessage, WU_DONE_COMPLETION_MODES } from './wu-done-pr.js';
+import {
+  createPR,
+  ensurePRCreated,
+  printPRCreatedMessage,
+  WU_DONE_COMPLETION_MODES,
+} from './wu-done-pr.js';
 import { createWuPaths } from './wu-paths.js';
 
 export const LANE_SIGNALS_NDJSON = path.join(LUMENFLOW_PATHS.TELEMETRY, 'lane-signals.ndjson');
@@ -536,12 +541,12 @@ export async function executeBranchPRCompletion(context: UnsafeAny) {
     doc: docMain,
     draft: args.prDraft,
   });
-
-  let prUrl = null;
-  if (prResult.success && prResult.prUrl) {
-    printPRCreatedMessage(prResult.prUrl, id);
-    prUrl = prResult.prUrl;
-  }
+  const prUrl = ensurePRCreated({
+    result: prResult,
+    branch: laneBranch,
+    id,
+  });
+  printPRCreatedMessage(prUrl, id);
 
   // WU-1498: Passive lane telemetry (fail-open)
   await emitLaneSignalForCompletion({

@@ -22,6 +22,12 @@ vi.mock('../git-adapter.js', () => ({
 
 vi.mock('../wu-done-pr.js', () => ({
   createPR: vi.fn(),
+  ensurePRCreated: vi.fn((input: { result: { success: boolean; prUrl: string | null } }) => {
+    if (input.result.success && input.result.prUrl) {
+      return input.result.prUrl;
+    }
+    throw new Error('PR mode could not create a pull request');
+  }),
   printPRCreatedMessage: vi.fn(),
   WU_DONE_COMPLETION_MODES: {
     WORKTREE: 'worktree',
@@ -178,6 +184,40 @@ describe('executeBranchPRCompletion', () => {
         merged: false,
         prUrl: 'https://github.com/pr/3',
       }),
+    );
+  });
+
+  it('fails closed when PR creation does not succeed', async () => {
+    const mockCreatePR = vi.mocked(createPR);
+    mockCreatePR.mockResolvedValue({
+      success: false,
+      prUrl: null,
+      ghAvailable: false,
+    });
+    mockGit.push.mockResolvedValue(undefined);
+    mockGit.commit.mockResolvedValue(undefined);
+    mockGit.add.mockResolvedValue(undefined);
+
+    const context = {
+      id: 'WU-1492',
+      args: {},
+      docMain: {
+        id: 'WU-1492',
+        lane: 'Framework: Core',
+        claimed_mode: 'branch-pr',
+        status: 'in_progress',
+      },
+      title: 'Test branch-pr',
+      laneBranch: 'lane/framework-core/wu-1492',
+      isDocsOnly: false,
+      maxCommitLength: 100,
+      validateStagedFiles: vi.fn(),
+      updateMetadata: vi.fn(),
+      stageMetadata: vi.fn(),
+    };
+
+    await expect(executeBranchPRCompletion(context)).rejects.toThrow(
+      'could not create a pull request',
     );
   });
 });

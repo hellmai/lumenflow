@@ -562,7 +562,7 @@ export function validateBranchPrBranch(options: {
 
 /**
  * WU-1493: Format success message for branch-pr mode.
- * Shows PR-based completion next steps instead of wu:done.
+ * Shows the wu:done handoff for branch-pr completion.
  *
  * @param options - Message options
  * @param options.wuId - The WU ID
@@ -581,9 +581,9 @@ export function formatBranchPrSuccessMessage(options: {
     `\n` +
     `${PREP_PREFIX} Next steps for branch-pr mode:\n` +
     `\n` +
-    `  1. Push the branch:  git push origin ${laneBranch}\n` +
-    `  2. Create a PR:      gh pr create --base main --head ${laneBranch}\n` +
-    `  3. After PR merge:   pnpm wu:cleanup --id ${wuId}\n`
+    `  1. Run completion:   pnpm wu:done --id ${wuId}\n` +
+    `     wu:done will push ${laneBranch} and create the PR.\n` +
+    `  2. After PR merge:   pnpm wu:cleanup --id ${wuId}\n`
   );
 }
 

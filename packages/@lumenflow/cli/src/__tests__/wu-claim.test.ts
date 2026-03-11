@@ -43,7 +43,11 @@ import {
 import { CLAIMED_MODES, WU_STATUS } from '@lumenflow/core/wu-constants';
 import { DELEGATION_REGISTRY_FILE_NAME } from '@lumenflow/core/delegation-registry-store';
 import { resolveBranchClaimExecution } from '../wu-claim-cloud.js';
-import { getBranchClaimNextSteps, getBranchModeDisplayLabel } from '../wu-claim-branch.js';
+import {
+  getBranchClaimCommonMistakes,
+  getBranchClaimNextSteps,
+  getBranchModeDisplayLabel,
+} from '../wu-claim-branch.js';
 
 describe('wu-claim mode resolution (WU-1491)', () => {
   describe('resolveClaimMode', () => {
@@ -238,6 +242,21 @@ describe('wu-claim branch completion guidance (WU-2306)', () => {
   it('labels branch-pr mode explicitly in output metadata', () => {
     expect(getBranchModeDisplayLabel(CLAIMED_MODES.BRANCH_PR)).toBe('Branch-PR (no worktree)');
     expect(getBranchModeDisplayLabel(CLAIMED_MODES.BRANCH_ONLY)).toBe('Branch-Only (no worktree)');
+  });
+
+  it('warns branch-pr claimants not to bypass wu:done with a manual PR', () => {
+    const mistakes = getBranchClaimCommonMistakes(CLAIMED_MODES.BRANCH_PR);
+
+    expect(mistakes).toContain(`  - Don't manually edit WU YAML status fields`);
+    expect(mistakes).toContain(`  - Don't skip wu:done and create the PR manually`);
+    expect(mistakes.join('\n')).not.toContain('trunk-based development');
+  });
+
+  it('keeps the trunk-based no-PR warning for branch-only mode', () => {
+    const mistakes = getBranchClaimCommonMistakes(CLAIMED_MODES.BRANCH_ONLY);
+
+    expect(mistakes).toContain(`  - Don't manually edit WU YAML status fields`);
+    expect(mistakes).toContain(`  - Don't create PRs (trunk-based development)`);
   });
 });
 

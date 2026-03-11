@@ -41,9 +41,21 @@ export const WU_DONE_COMPLETION_MODES = Object.freeze({
 /**
  * @typedef {Object} PRResult
  * @property {boolean} success - Whether PR creation succeeded
- * @property {string|null} prUrl - URL of created PR (null if gh CLI unavailable)
+ * @property {string|null} prUrl - URL of created PR
  * @property {boolean} ghAvailable - Whether gh CLI is available
  */
+
+export interface PRResult {
+  success: boolean;
+  prUrl: string | null;
+  ghAvailable: boolean;
+}
+
+interface EnsurePRCreatedInput {
+  result: PRResult;
+  branch: string;
+  id: string;
+}
 
 /**
  * Check if PR mode is enabled for this WU
@@ -78,15 +90,26 @@ export function isGhCliAvailable() {
  *
  * @param {PRContext} context - PR context
  * @returns {Promise<PRResult>} PR creation result
+ * @throws {WUError} If gh is unavailable or PR creation fails
  */
-export async function createPR(context: UnsafeAny) {
+export async function createPR(context: UnsafeAny): Promise<PRResult> {
   const { branch, id, title, doc, draft = false } = context;
   console.log(`\n${LOG_PREFIX.DONE} Creating PR for ${branch}...`);
 
   // Check if gh CLI is available
   if (!isGhCliAvailable()) {
     printGhCliMissingMessage(branch, id);
-    return { success: false, prUrl: null, ghAvailable: false };
+    throw createError(
+      ErrorCodes.GIT_ERROR,
+      `gh CLI is not available; PR mode requires gh to create the pull request.\n\n` +
+        `Install/authenticate gh in this environment, then rerun: pnpm wu:done --id ${id}`,
+      {
+        branch,
+        id,
+        operation: 'pr-create',
+        ghAvailable: false,
+      },
+    );
   }
 
   // Push branch to remote
@@ -111,6 +134,14 @@ export async function createPR(context: UnsafeAny) {
       `gh pr create --title ${JSON.stringify(prTitle)} --body ${JSON.stringify(body)} ${draftFlag} --head ${JSON.stringify(branch)} --base main`,
       { encoding: 'utf-8' },
     ).trim();
+    if (!prUrl) {
+      throw createError(ErrorCodes.GIT_ERROR, `Failed to create PR: gh returned no PR URL`, {
+        branch,
+        id,
+        operation: 'pr-create',
+        ghAvailable: true,
+      });
+    }
     console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} PR created: ${prUrl}`);
     return { success: true, prUrl, ghAvailable: true };
   } catch (e) {
@@ -121,6 +152,36 @@ export async function createPR(context: UnsafeAny) {
       originalError: e.message,
     });
   }
+}
+
+/**
+ * Ensure PR mode actually produced a PR URL before completion succeeds.
+ *
+ * Callers use this as a fail-closed guard even when createPR is mocked in tests
+ * or if a future implementation returns an unsuccessful result instead of throwing.
+ */
+export function ensurePRCreated(input: EnsurePRCreatedInput): string {
+  if (input.result.success && input.result.prUrl) {
+    return input.result.prUrl;
+  }
+
+  const reason =
+    input.result.ghAvailable === false
+      ? 'gh CLI is unavailable in this environment.'
+      : 'PR creation did not return a PR URL.';
+
+  throw createError(
+    ErrorCodes.GIT_ERROR,
+    `PR mode could not create a pull request for ${input.branch}. ${reason}\n\n` +
+      `Fix the PR environment, then rerun: pnpm wu:done --id ${input.id}`,
+    {
+      branch: input.branch,
+      id: input.id,
+      operation: 'pr-create',
+      ghAvailable: input.result.ghAvailable,
+      prUrl: input.result.prUrl,
+    },
+  );
 }
 
 /**
@@ -177,12 +238,13 @@ export function printGhCliMissingMessage(branch: UnsafeAny, id: UnsafeAny) {
   console.error('╔═══════════════════════════════════════════════════════════════════╗');
   console.error('║  GH CLI NOT AVAILABLE');
   console.error('╠═══════════════════════════════════════════════════════════════════╣');
-  console.error('║  The gh CLI tool is required to create PRs.');
+  console.error('║  wu:done PR mode requires gh to create the PR.');
   console.error('║');
-  console.error('║  Manual PR creation steps:');
-  console.error(`║  1. Push branch: git push origin ${branch}`);
-  console.error('║  2. Create PR in GitHub UI');
-  console.error(`║  3. After merge, run: pnpm wu:cleanup --id ${id}`);
+  console.error(`║  Branch: ${branch}`);
+  console.error('║');
+  console.error('║  Fix the environment, then retry:');
+  console.error('║  1. Install/authenticate gh');
+  console.error(`║  2. Re-run: pnpm wu:done --id ${id}`);
   console.error('╚═══════════════════════════════════════════════════════════════════╝');
 }
 

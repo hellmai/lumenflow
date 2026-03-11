@@ -437,7 +437,7 @@ export async function mergeToMain(input: MergeToMainInput): Promise<MergeResult>
 
   if (args.prMode) {
     // PR mode: import and use createPR
-    const { createPR, printPRCreatedMessage } = await import('./wu-done-pr.js');
+    const { createPR, ensurePRCreated, printPRCreatedMessage } = await import('./wu-done-pr.js');
     const prResult = await createPR({
       branch: laneBranch,
       id: wuId,
@@ -445,10 +445,12 @@ export async function mergeToMain(input: MergeToMainInput): Promise<MergeResult>
       doc,
       draft: args.prDraft,
     });
-    const prUrl = prResult.success && prResult.prUrl ? prResult.prUrl : null;
-    if (prUrl) {
-      printPRCreatedMessage(prUrl, wuId);
-    }
+    const prUrl = ensurePRCreated({
+      result: prResult,
+      branch: laneBranch,
+      id: wuId,
+    });
+    printPRCreatedMessage(prUrl, wuId);
     return { merged: false, prUrl };
   }
 
