@@ -125,6 +125,73 @@ Feature WUs **must** include `spec_refs` (use `pnpm wu:create --plan` if the pla
 
 ---
 
+---
+
+## Cloud / Branch-PR Mode
+
+Cloud agents (Codex, Claude web, CI runners) run on an active branch without a local worktree.
+The completion flow is different: **there is no worktree and no merge to main**. Instead `wu:done` opens a PR.
+
+### Cloud Completion Flow
+
+```bash
+# 1. From the active branch (cloud sandbox) — run wu:prep
+pnpm wu:prep --id WU-XXX
+# Output includes: pnpm wu:done --id WU-XXX
+# (no "cd to main" — you stay on your branch)
+
+# 2. Run wu:done from the same branch
+pnpm wu:done --id WU-XXX
+# wu:done detects branch-pr mode, calls gh pr create, stamps the WU
+```
+
+`wu:done` **must** successfully create a PR and return a URL. If it cannot (no `gh`, missing
+permissions, or network error) the command exits with an error and the WU is **not** marked done.
+
+### Cloud Error Messages
+
+#### "PR creation failed: gh is not available"
+
+`gh` CLI is not installed or not in `PATH`. Install it and authenticate before running `wu:done`:
+
+```bash
+# Verify gh is available
+gh --version
+gh auth status
+```
+
+#### "PR creation failed: no PR URL returned"
+
+`gh pr create` ran but did not return a URL (may indicate an existing open PR or a
+non-zero exit from `gh`). Check:
+
+```bash
+# See if a PR already exists for this branch
+gh pr list --head $(git branch --show-current)
+```
+
+If a PR already exists, pass `--existing-pr <url>` to `wu:done` (if supported) or mark the WU
+done manually via `pnpm wu:done --already-merged` once the PR is merged.
+
+#### "wu:done must be run from main checkout" (cloud agent)
+
+Cloud agents should **not** see this error — it means the WU was not claimed with `--cloud`.
+Re-claim with the correct flag:
+
+```bash
+pnpm wu:claim --id WU-XXX --cloud
+```
+
+### Cloud Checklist
+
+- [ ] WU was claimed with `--cloud` (sets branch-pr completion mode)
+- [ ] `gh` CLI is installed and authenticated (`gh auth status`)
+- [ ] `pnpm wu:prep --id WU-XXX` ran without errors
+- [ ] `pnpm wu:done --id WU-XXX` completed and printed a PR URL
+- [ ] WU stamp exists: `.lumenflow/stamps/WU-XXX.done`
+
+---
+
 ## Exposure Auto-Fill (WU-1041)
 
 If a WU is missing `exposure`, `wu:done` auto-sets a safe default:
