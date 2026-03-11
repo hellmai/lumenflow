@@ -3178,3 +3178,6 @@
 {"type":"checkpoint","wuId":"WU-2388","timestamp":"2026-03-10T22:58:37.606Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2388.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2388","timestamp":"2026-03-10T23:00:20.591Z"}
 {"type":"claim","wuId":"WU-2389","timestamp":"2026-03-11T00:02:56.180Z","lane":"Framework: CLI WU Commands","title":"Add wu:brief as explicit step in wu:claim Next Steps output"}
+{"type":"checkpoint","wuId":"WU-2389","timestamp":"2026-03-11T00:03:07.483Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2389","timestamp":"2026-03-11T00:03:16.035Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2389","timestamp":"2026-03-11T00:08:44.426Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2389.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}

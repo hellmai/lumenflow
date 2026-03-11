@@ -18,12 +18,20 @@ artifacts:
   - .lumenflow/stamps/WU-2389.done
 dependencies: []
 risks: []
-notes: ''
+notes: Added wu:brief as step 2 in all three claim modes (worktree, branch-pr, branch-only). Updated
+  tests for new 5-step flow.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-11T00:02:56.145Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2389
+session_id: 12a8d752-b4eb-4c54-bc27-8ca92c1ce3a9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T00:02:56.152Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +43,3 @@ acceptance:
   - wu:claim Next Steps includes wu:brief as step 2 between cd-to-worktree and implement
   - Step numbering updated (implement becomes step 3, wu:prep step 4, wu:done step 5)
   - Test expectations updated for new Next Steps output
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2389
-claimed_at: 2026-03-11T00:02:56.145Z
-baseline_main_sha: eb819f972768f96329e69e0121b80290f7dab9a3
-session_id: 12a8d752-b4eb-4c54-bc27-8ca92c1ce3a9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-11T00:02:56.152Z
