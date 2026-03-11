@@ -69,6 +69,7 @@ Claude Code has tool-level hooks (PreToolUse) that validate worktree paths, but 
 | ---------------- | -------------------------------------------- | -------------------- |
 | `workspace.yaml` | `pnpm config:set --key <path> --value <val>` | Write/Edit tools     |
 | `workspace.yaml` | `pnpm config:get --key <path>` (read)        | --                   |
+| `workspace.yaml` | `pnpm gate:co-change --add/--edit/--remove`  | Write/Edit tools     |
 | WU YAML specs    | `pnpm wu:edit --id WU-XXX --field value`     | Write/Edit tools     |
 | WU YAML specs    | `pnpm wu:create ...` (creation)              | Write to create YAML |
 

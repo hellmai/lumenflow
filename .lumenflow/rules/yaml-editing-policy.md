@@ -28,6 +28,7 @@ This applies to:
 | Set a boolean   | `pnpm config:set --key <path> --value <val>` | `pnpm config:set --key gates.enableCoverage --value false`                       |
 | Set a number    | `pnpm config:set --key <path> --value <val>` | `pnpm config:set --key gates.minCoverage --value 85`                             |
 | Append to array | `pnpm config:set --key <path> --value <val>` | `pnpm config:set --key agents.methodology.principles --value Library-First,KISS` |
+| Co-change rules | `pnpm gate:co-change --add/--remove/--edit/--list` | `pnpm gate:co-change --add --name my-rule --trigger "src/**" --require "tests/**"` |
 
 ### For WU YAML Specs
 

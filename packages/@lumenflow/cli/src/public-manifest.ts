@@ -332,6 +332,13 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     audience: 'advanced',
   },
   {
+    name: 'gate:co-change',
+    binName: 'gate-co-change',
+    binPath: './dist/gate-co-change.js',
+    description: 'Manage co-change gate rules (add, remove, edit, list)',
+    category: COMMAND_CATEGORIES.GATES_QUALITY,
+  },
+  {
     name: 'lane:create',
     binName: 'lane-create',
     binPath: './dist/lane-create.js',
