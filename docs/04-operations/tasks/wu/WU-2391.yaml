@@ -18,12 +18,21 @@ artifacts:
   - .lumenflow/stamps/WU-2391.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'WU-2391: Added post-condition verification to plan:create. After withMicroWorktree resolves,
+  the command now uses showFileAtRef to verify the plan file exists on the target branch. If
+  missing, exits non-zero with a descriptive error instead of reporting success.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-11T11:56:07.309Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2391
+session_id: 9a5a06bf-f973-4b3c-b7db-f62dcbf12d19
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T11:56:07.315Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +50,3 @@ acceptance:
   - plan:create exits non-zero when micro-worktree commit/push fails
   - plan:create surfaces the underlying git error message on failure
   - plan:create verifies the committed file exists on the target branch before reporting success
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2391
-claimed_at: 2026-03-11T11:56:07.309Z
-baseline_main_sha: 40e5baffa8e5125676377a5446804396f22b7f18
-session_id: 9a5a06bf-f973-4b3c-b7db-f62dcbf12d19
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-11T11:56:07.315Z

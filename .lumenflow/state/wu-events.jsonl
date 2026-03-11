@@ -3191,3 +3191,6 @@
 {"type":"complete","wuId":"WU-2390","timestamp":"2026-03-11T00:18:48.687Z"}
 {"type":"claim","wuId":"WU-2391","timestamp":"2026-03-11T11:56:07.336Z","lane":"Framework: CLI WU Commands","title":"plan:create reports success but silently fails to commit the plan file"}
 {"type":"claim","wuId":"WU-2392","timestamp":"2026-03-11T12:06:35.891Z","lane":"Framework: CLI WU Commands","title":"Fix pre-commit hook template to skip tmp/* branches"}
+{"type":"checkpoint","wuId":"WU-2391","timestamp":"2026-03-11T11:56:18.848Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2391","timestamp":"2026-03-11T11:56:32.485Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2391","timestamp":"2026-03-11T12:02:53.230Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2391.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
