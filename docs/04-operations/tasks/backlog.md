@@ -28,7 +28,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml) — Framework: Core Lifecycle
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1341,6 +1341,7 @@ sections:
 - [WU-2392 — Fix pre-commit hook template to skip tmp/\* branches](wu/WU-2392.yaml)
 - [WU-2393 — Add gate:co-change command for safe co-change rule management](wu/WU-2393.yaml)
 - [WU-2394 — Fix cloud/branch-pr completion to be fail-closed and self-consistent](wu/WU-2394.yaml)
+- [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

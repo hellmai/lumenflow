@@ -1,0 +1,2 @@
+WU WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier
+Completed: 2026-03-11
