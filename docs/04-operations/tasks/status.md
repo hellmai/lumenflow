@@ -4,7 +4,6 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-- [WU-2391 — plan:create reports success but silently fails to commit the plan file](wu/WU-2391.yaml)
 - [WU-2392 — Fix pre-commit hook template to skip tmp/\* branches](wu/WU-2392.yaml)
 
 ## Completed
@@ -1310,3 +1309,4 @@ _Last updated: 2026-03-11_
 - [WU-2388 — Fix misleading wu:claim auto-brief log message that causes agents to skip wu:brief](wu/WU-2388.yaml) — 2026-03-10
 - [WU-2389 — Add wu:brief as explicit step in wu:claim Next Steps output](wu/WU-2389.yaml) — 2026-03-11
 - [WU-2390 — Suppress git-adapter DEBUG logs by default in wu:claim](wu/WU-2390.yaml) — 2026-03-11
+- [WU-2391 — plan:create reports success but silently fails to commit the plan file](wu/WU-2391.yaml) — 2026-03-11

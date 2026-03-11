@@ -2,7 +2,7 @@ id: WU-2391
 title: plan:create reports success but silently fails to commit the plan file
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-11
 code_paths:
@@ -50,3 +50,6 @@ acceptance:
   - plan:create exits non-zero when micro-worktree commit/push fails
   - plan:create surfaces the underlying git error message on failure
   - plan:create verifies the committed file exists on the target branch before reporting success
+locked: true
+completed_at: 2026-03-11T12:07:07.297Z
+completed: 2026-03-11
