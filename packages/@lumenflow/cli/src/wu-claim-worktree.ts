@@ -112,9 +112,10 @@ export function getWorktreeClaimNextSteps(
 ): string[] {
   return [
     `  1. cd ${worktree}  (IMPORTANT: work here, not main)`,
-    '  2. Implement changes per acceptance criteria',
-    `  3. Run: pnpm wu:prep --id ${id}`,
-    `  4. Copy and run the wu:done command printed by wu:prep (from main): cd ${originalCwd} && pnpm wu:done --id ${id}`,
+    `  2. Run: pnpm wu:brief --id ${id} --client <client>  (REQUIRED — generates handoff prompt and records evidence)`,
+    '  3. Implement changes per acceptance criteria',
+    `  4. Run: pnpm wu:prep --id ${id}`,
+    `  5. Copy and run the wu:done command printed by wu:prep (from main): cd ${originalCwd} && pnpm wu:done --id ${id}`,
   ];
 }
 

@@ -55,17 +55,19 @@ export function getBranchClaimNextSteps(id: string, claimedMode: string): string
   if (claimedMode === CLAIMED_MODES.BRANCH_PR) {
     return [
       '  1. Work on this branch in the main checkout',
-      '  2. Implement changes per acceptance criteria',
-      `  3. Run: pnpm wu:prep --id ${id}`,
-      `  4. Run: pnpm wu:done --id ${id}  (creates PR in branch-pr mode)`,
+      `  2. Run: pnpm wu:brief --id ${id} --client <client>  (REQUIRED — generates handoff prompt and records evidence)`,
+      '  3. Implement changes per acceptance criteria',
+      `  4. Run: pnpm wu:prep --id ${id}`,
+      `  5. Run: pnpm wu:done --id ${id}  (creates PR in branch-pr mode)`,
     ];
   }
 
   return [
     '  1. Work on this branch in the main checkout',
-    '  2. Implement changes per acceptance criteria',
-    '  3. Run: pnpm gates',
-    `  4. pnpm wu:done --id ${id}`,
+    `  2. Run: pnpm wu:brief --id ${id} --client <client>  (REQUIRED — generates handoff prompt and records evidence)`,
+    '  3. Implement changes per acceptance criteria',
+    '  4. Run: pnpm gates',
+    `  5. pnpm wu:done --id ${id}`,
   ];
 }
 

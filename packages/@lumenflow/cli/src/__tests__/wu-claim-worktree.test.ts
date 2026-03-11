@@ -127,9 +127,10 @@ describe('wu-claim worktree completion guidance (WU-2306)', () => {
       'WU-2306',
     );
 
-    expect(steps).toHaveLength(4);
-    expect(steps[2]).toContain('pnpm wu:prep --id WU-2306');
-    expect(steps[3]).toContain('cd /repo && pnpm wu:done --id WU-2306');
+    expect(steps).toHaveLength(5);
+    expect(steps[1]).toContain('pnpm wu:brief --id WU-2306 --client <client>');
+    expect(steps[3]).toContain('pnpm wu:prep --id WU-2306');
+    expect(steps[4]).toContain('cd /repo && pnpm wu:done --id WU-2306');
     expect(steps.join('\n')).not.toContain('Run: pnpm gates');
   });
 });

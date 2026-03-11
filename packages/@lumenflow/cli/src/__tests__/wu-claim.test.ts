@@ -219,18 +219,20 @@ describe('wu-claim branch completion guidance (WU-2306)', () => {
   it('uses wu:prep-first guidance for branch-pr mode', () => {
     const steps = getBranchClaimNextSteps('WU-2306', CLAIMED_MODES.BRANCH_PR);
 
-    expect(steps).toHaveLength(4);
-    expect(steps[2]).toContain('pnpm wu:prep --id WU-2306');
-    expect(steps[3]).toContain('pnpm wu:done --id WU-2306');
+    expect(steps).toHaveLength(5);
+    expect(steps[1]).toContain('pnpm wu:brief --id WU-2306 --client <client>');
+    expect(steps[3]).toContain('pnpm wu:prep --id WU-2306');
+    expect(steps[4]).toContain('pnpm wu:done --id WU-2306');
     expect(steps.join('\n')).not.toContain('Run: pnpm gates');
   });
 
-  it('keeps branch-only guidance unchanged', () => {
+  it('keeps branch-only guidance with wu:brief step', () => {
     const steps = getBranchClaimNextSteps('WU-2306', CLAIMED_MODES.BRANCH_ONLY);
 
-    expect(steps[2]).toContain('Run: pnpm gates');
-    expect(steps[3]).toContain('pnpm wu:done --id WU-2306');
-    expect(steps.join('\n')).not.toContain('wu:prep');
+    expect(steps).toHaveLength(5);
+    expect(steps[1]).toContain('pnpm wu:brief --id WU-2306 --client <client>');
+    expect(steps[3]).toContain('Run: pnpm gates');
+    expect(steps[4]).toContain('pnpm wu:done --id WU-2306');
   });
 
   it('labels branch-pr mode explicitly in output metadata', () => {
