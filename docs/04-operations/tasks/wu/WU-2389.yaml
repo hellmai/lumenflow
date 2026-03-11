@@ -2,7 +2,7 @@ id: WU-2389
 title: Add wu:brief as explicit step in wu:claim Next Steps output
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-11
 code_paths:
@@ -45,3 +45,6 @@ acceptance:
   - wu:claim Next Steps includes wu:brief as step 2 between cd-to-worktree and implement
   - Step numbering updated (implement becomes step 3, wu:prep step 4, wu:done step 5)
   - Test expectations updated for new Next Steps output
+locked: true
+completed_at: 2026-03-11T00:10:31.885Z
+completed: 2026-03-11
