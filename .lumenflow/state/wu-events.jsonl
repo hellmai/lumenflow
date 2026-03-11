@@ -3204,3 +3204,4 @@
 {"type":"complete","wuId":"WU-2391","timestamp":"2026-03-11T12:07:12.147Z"}
 {"type":"checkpoint","wuId":"WU-2392","timestamp":"2026-03-11T12:09:04.258Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2392.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2392","timestamp":"2026-03-11T12:10:20.104Z"}
+{"type":"claim","wuId":"WU-2393","timestamp":"2026-03-11T15:17:16.296Z","lane":"Framework: CLI WU Commands","title":"Add gate:co-change command for safe co-change rule management"}

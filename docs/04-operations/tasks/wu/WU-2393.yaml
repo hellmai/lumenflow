@@ -2,7 +2,7 @@ id: WU-2393
 title: Add gate:co-change command for safe co-change rule management
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-11
 code_paths:
@@ -39,9 +39,13 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Agents cannot safely add/remove/modify co-change gate rules because config:set only handles scalars. The only option today is raw YAML editing, violating Constraint 9. Add a dedicated gate:co-change command following the lane:edit pattern with --add, --remove, --edit, --list operations. Micro-worktree isolated, schema-validated, glob-syntax checked.
+description: Agents cannot safely add/remove/modify co-change gate rules because config:set only
+  handles scalars. The only option today is raw YAML editing, violating Constraint 9. Add a
+  dedicated gate:co-change command following the lane:edit pattern with --add, --remove, --edit,
+  --list operations. Micro-worktree isolated, schema-validated, glob-syntax checked.
 acceptance:
-  - gate:co-change --add creates a new co-change rule with --name, --trigger, --require, --severity, --guidance flags
+  - gate:co-change --add creates a new co-change rule with --name, --trigger, --require, --severity,
+    --guidance flags
   - gate:co-change --remove deletes a rule by --name, errors on built-in rule names
   - gate:co-change --edit merges specified flags into existing rule (overwrite semantics for arrays)
   - gate:co-change --list shows merged view of built-in and custom rules with labels
@@ -49,3 +53,11 @@ acceptance:
   - Duplicate name detection on --add, unknown name error on --edit and --remove
   - Registered in public-manifest.ts, docs:generate produces correct output
   - 'Doc parity: quick-ref-commands.md and templates updated'
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2393
+claimed_at: 2026-03-11T15:17:16.262Z
+baseline_main_sha: a1c725942fb5630031906b3980aecaa3cd1544b3
+session_id: 55e48047-94b9-4158-91d7-ddba39888dc5
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T15:17:16.271Z

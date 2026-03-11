@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2393 — Add gate:co-change command for safe co-change rule management](wu/WU-2393.yaml)
 
 ## Completed
 
