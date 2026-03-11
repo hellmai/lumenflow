@@ -9,7 +9,6 @@ import { afterEach, describe, it, expect } from 'vitest';
 import { DEFAULTS } from '../wu-constants.js';
 import { generateCommitMessage, validateMetadataFilesExist } from '../wu-done-metadata.js';
 
-
 describe('generateCommitMessage provenance trailers', () => {
   const tempDirs: string[] = [];
 

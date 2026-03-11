@@ -9,9 +9,7 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 
 const { mockExec, mockGit } = vi.hoisted(() => {
-  const mockExec = vi.fn((_cmd: string, cb: (err: null, stdout: string) => void) =>
-    cb(null, ''),
-  );
+  const mockExec = vi.fn((_cmd: string, cb: (err: null, stdout: string) => void) => cb(null, ''));
   const mockGit = {
     add: vi.fn().mockResolvedValue(undefined),
     raw: vi.fn().mockResolvedValue(undefined),
