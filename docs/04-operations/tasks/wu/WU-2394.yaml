@@ -1,0 +1,42 @@
+id: WU-2394
+title: Fix cloud/branch-pr completion to be fail-closed and self-consistent
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-11
+code_paths:
+  - packages/@lumenflow/core/src/wu-done-pr.ts
+  - packages/@lumenflow/core/src/wu-done-branch-only.ts
+  - packages/@lumenflow/core/src/wu-done-merge-phase.ts
+  - packages/@lumenflow/core/src/wu-done-worktree-services.ts
+  - packages/@lumenflow/cli/src/wu-prep.ts
+  - packages/@lumenflow/cli/src/wu-claim-branch.ts
+tests:
+  manual:
+    - Run wu:done --cloud --completion-mode branch-pr without gh installed; verify it fails with a clear error and does not mark WU done
+    - Run wu:prep on a branch-pr WU; verify output instructs user to run wu:done, not to create PR manually
+  unit:
+    - packages/@lumenflow/core/src/__tests__/wu-done-branch-only.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-prep.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-claim.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2394.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: wu:done branch-pr was fail-open when gh is unavailable (reported success without creating a PR). wu:prep gave contradictory guidance telling users to manually create PRs instead of letting wu:done handle it. wu:claim had inconsistent messaging. Also missing cloud/branch-pr troubleshooting doc parity.
+acceptance:
+  - wu:done branch-pr fails closed when gh is unavailable or PR creation returns no URL
+  - wu:prep always directs branch-pr users to wu:done, never to manual gh pr create
+  - wu:claim branch-pr messaging is consistent with the above
+  - Troubleshooting docs cover cloud/branch-pr path with parity to worktree docs
