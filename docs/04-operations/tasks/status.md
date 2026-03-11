@@ -5,6 +5,7 @@ _Last updated: 2026-03-11_
 ## In Progress
 
 - [WU-2391 — plan:create reports success but silently fails to commit the plan file](wu/WU-2391.yaml)
+- [WU-2392 — Fix pre-commit hook template to skip tmp/\* branches](wu/WU-2392.yaml)
 
 ## Completed
 

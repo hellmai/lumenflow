@@ -2,7 +2,7 @@ id: WU-2392
 title: Fix pre-commit hook template to skip tmp/* branches
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-11
 code_paths:
@@ -28,7 +28,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'The pre-commit.template ships pnpm lumenflow:pre-commit-check which fails in /tmp micro-worktrees because pnpm cannot resolve node_modules. The lumenflow-cloud hook already has the fix: case branch in tmp/*) exit 0. Update the template to match.'
+description: 'The pre-commit.template ships pnpm lumenflow:pre-commit-check which fails in /tmp
+  micro-worktrees because pnpm cannot resolve node_modules. The lumenflow-cloud hook already has the
+  fix: case branch in tmp/*) exit 0. Update the template to match.'
 acceptance:
   - pre-commit.template includes tmp/* branch skip before any pnpm/node commands
   - lumenflow init scaffolds the updated hook
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2392
+claimed_at: 2026-03-11T12:06:35.859Z
+baseline_main_sha: 04221c2ffcf4a3e3cc570277307ced412e4a7ac7
+session_id: 9a5a06bf-f973-4b3c-b7db-f62dcbf12d19
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T12:06:35.864Z
