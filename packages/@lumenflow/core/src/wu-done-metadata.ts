@@ -363,10 +363,11 @@ export async function stageAndFormatMetadata({
   // Format documentation
   console.log(`${LOG_PREFIX.DONE} Formatting auto-generated documentation...`);
   try {
-    const filesToFormat = [wuPath, statusPath, backlogPath];
-    if (initiativePath) {
-      filesToFormat.push(initiativePath);
-    }
+    // WU-2395: Exclude YAML files from prettier. WU YAML is already formatted
+    // by writeWU (yaml.stringify). Running prettier on .yaml silently no-ops
+    // when the consumer has no yaml plugin, leaving unformatted files that
+    // break consumer CI format:check gates.
+    const filesToFormat = [statusPath, backlogPath];
     const prettierTargets = filesToFormat.map((file) => `"${file}"`).join(' ');
     const prettierCmd = `${PKG_MANAGER} ${SCRIPTS.PRETTIER} ${PRETTIER_FLAGS.WRITE} ${prettierTargets}`;
     await execAsync(prettierCmd);
