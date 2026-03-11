@@ -222,10 +222,11 @@ export async function main(): Promise<void> {
   // Ensure on main for micro-worktree operations
   await ensureOnMain(getGitForCwd());
 
-  try {
-    let createdPlanPath: string = '';
+  let createdPlanPath: string = '';
+  const planRelPath = `${WU_PATHS.PLANS_DIR()}/${id}-plan.md`;
 
-    await withMicroWorktree({
+  try {
+    const result = await withMicroWorktree({
       operation: OPERATION_NAME,
       id,
       logPrefix: LOG_PREFIX,
@@ -235,28 +236,53 @@ export async function main(): Promise<void> {
         createdPlanPath = createPlan(worktreePath, id, title, fromPath);
 
         // Get relative path for commit
-        const planRelPath = createdPlanPath.replace(worktreePath + '/', '');
+        const relPath = createdPlanPath.replace(worktreePath + '/', '');
 
         return {
           commitMessage: getCommitMessage(id, title),
-          files: [planRelPath],
+          files: [relPath],
         };
       },
     });
 
+    // WU-2391: Verify plan file actually landed on the target branch.
+    // withMicroWorktree can resolve without error even when the commit
+    // silently fails to land (observed in lumenflow-cloud WU-645).
+    const mainGit = getGitForCwd();
+    const verifyRef = result.ref;
+    console.log(`${LOG_PREFIX} Verifying plan file on ${verifyRef}...`);
+    const content = await mainGit.showFileAtRef(verifyRef, planRelPath);
+    if (!content) {
+      die(
+        `Plan file not found on ${verifyRef} after push.\n\n` +
+          `The micro-worktree reported success but the plan file ` +
+          `"${planRelPath}" does not exist on the target branch.\n` +
+          `This indicates a silent commit/push failure.\n\n` +
+          `Suggestions:\n` +
+          `  1. Retry: pnpm plan:create --id ${id} --title "${title}"${fromPath ? ` --from ${fromPath}` : ''}\n` +
+          `  2. Check remote: git log origin/main --oneline -5\n` +
+          `  3. Check for orphaned branches: git branch | grep tmp/${OPERATION_NAME}`,
+      );
+    }
+
     const planUri = getPlanUri(id);
 
+    console.log(`${LOG_PREFIX} ✅ Verified plan file on ${verifyRef}`);
     console.log(`\n${LOG_PREFIX} Plan created successfully!`);
     console.log(`\nPlan Details:`);
     console.log(`  ID:      ${id}`);
     console.log(`  Title:   ${title}`);
     console.log(`  URI:     ${planUri}`);
-    console.log(`  File:    ${createdPlanPath}`);
+    console.log(`  File:    ${planRelPath}`);
     console.log(`\nNext steps:`);
     console.log(`  1. Edit the plan file with your goals and approach`);
     console.log(`  2. Link to WU/initiative: pnpm plan:link --id ${id} --plan ${planUri}`);
     console.log(`  3. When ready, promote: pnpm plan:promote --id ${id}`);
   } catch (error) {
+    // Re-throw ProcessExitError from die() without wrapping
+    if ((error as { exitCode?: number }).exitCode !== undefined) {
+      throw error;
+    }
     die(
       `Plan creation failed: ${(error as Error).message}\n\n` +
         `Micro-worktree cleanup was attempted automatically.\n` +
