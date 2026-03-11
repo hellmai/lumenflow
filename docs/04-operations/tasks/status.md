@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-- [WU-2396 — Restore Prettier-validated YAML formatting for wu:done metadata](wu/WU-2396.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1314,3 +1314,4 @@ _Last updated: 2026-03-11_
 - [WU-2393 — Add gate:co-change command for safe co-change rule management](wu/WU-2393.yaml) — 2026-03-11
 - [WU-2394 — Fix cloud/branch-pr completion to be fail-closed and self-consistent](wu/WU-2394.yaml) — 2026-03-11
 - [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml) — 2026-03-11
+- [WU-2396 — Restore Prettier-validated YAML formatting for wu:done metadata](wu/WU-2396.yaml) — 2026-03-11

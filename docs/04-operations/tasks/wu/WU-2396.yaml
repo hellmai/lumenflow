@@ -2,7 +2,7 @@ id: WU-2396
 title: Restore Prettier-validated YAML formatting for wu:done metadata
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-11
 code_paths:
@@ -48,3 +48,6 @@ session_id: 762059b9-6e22-44f4-9e9d-6ec25ad98e8e
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-11T22:42:12.071Z
+locked: true
+completed_at: 2026-03-11T22:47:15.575Z
+completed: 2026-03-11

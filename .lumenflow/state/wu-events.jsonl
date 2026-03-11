@@ -3217,3 +3217,6 @@
 {"type":"checkpoint","wuId":"WU-2395","timestamp":"2026-03-11T21:57:39.323Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2395","timestamp":"2026-03-11T21:58:03.632Z"}
 {"type":"claim","wuId":"WU-2396","timestamp":"2026-03-11T22:42:12.106Z","lane":"Framework: Core Lifecycle","title":"Restore Prettier-validated YAML formatting for wu:done metadata"}
+{"type":"checkpoint","wuId":"WU-2396","timestamp":"2026-03-11T22:42:23.786Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2396","timestamp":"2026-03-11T22:42:31.375Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2396","timestamp":"2026-03-11T22:47:20.327Z"}
