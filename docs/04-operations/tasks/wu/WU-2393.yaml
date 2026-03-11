@@ -1,0 +1,51 @@
+id: WU-2393
+title: Add gate:co-change command for safe co-change rule management
+lane: 'Framework: CLI WU Commands'
+type: feature
+status: ready
+priority: P1
+created: 2026-03-11
+code_paths:
+  - packages/@lumenflow/cli/src/gate-co-change.ts
+  - packages/@lumenflow/cli/src/public-manifest.ts
+  - packages/@lumenflow/cli/package.json
+  - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+tests:
+  manual:
+    - Verify gate:co-change --add creates rule and gates pass
+    - Verify gate:co-change --remove deletes rule, errors on built-in names
+    - Verify gate:co-change --edit merges fields correctly
+    - Verify gate:co-change --list shows merged built-in and custom rules
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/gate-co-change-cmd.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2393.done
+dependencies: []
+plan: lumenflow://plans/WU-2393-plan.md
+spec_refs:
+  - lumenflow://plans/WU-2393-plan.md
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 10
+  estimated_tool_calls: 80
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Agents cannot safely add/remove/modify co-change gate rules because config:set only handles scalars. The only option today is raw YAML editing, violating Constraint 9. Add a dedicated gate:co-change command following the lane:edit pattern with --add, --remove, --edit, --list operations. Micro-worktree isolated, schema-validated, glob-syntax checked.
+acceptance:
+  - gate:co-change --add creates a new co-change rule with --name, --trigger, --require, --severity, --guidance flags
+  - gate:co-change --remove deletes a rule by --name, errors on built-in rule names
+  - gate:co-change --edit merges specified flags into existing rule (overwrite semantics for arrays)
+  - gate:co-change --list shows merged view of built-in and custom rules with labels
+  - Glob syntax validation on --trigger and --require patterns
+  - Duplicate name detection on --add, unknown name error on --edit and --remove
+  - Registered in public-manifest.ts, docs:generate produces correct output
+  - 'Doc parity: quick-ref-commands.md and templates updated'
