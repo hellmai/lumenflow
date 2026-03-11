@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-10_
+_Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2389 — Add wu:brief as explicit step in wu:claim Next Steps output](wu/WU-2389.yaml)
 
 ## Completed
 

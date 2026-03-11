@@ -2,7 +2,7 @@ id: WU-2389
 title: Add wu:brief as explicit step in wu:claim Next Steps output
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-11
 code_paths:
@@ -27,8 +27,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: wu:claim 'Next steps' section goes straight from 'cd worktrees/...' to 'Implement changes' without mentioning wu:brief. Agents follow the numbered steps literally and skip wu:brief. The warning at the end (WU-2388) helps but is not enough — wu:brief should be step 2 in the numbered list.
+description: wu:claim 'Next steps' section goes straight from 'cd worktrees/...' to 'Implement
+  changes' without mentioning wu:brief. Agents follow the numbered steps literally and skip
+  wu:brief. The warning at the end (WU-2388) helps but is not enough — wu:brief should be step 2 in
+  the numbered list.
 acceptance:
   - wu:claim Next Steps includes wu:brief as step 2 between cd-to-worktree and implement
   - Step numbering updated (implement becomes step 3, wu:prep step 4, wu:done step 5)
   - Test expectations updated for new Next Steps output
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2389
+claimed_at: 2026-03-11T00:02:56.145Z
+baseline_main_sha: eb819f972768f96329e69e0121b80290f7dab9a3
+session_id: 12a8d752-b4eb-4c54-bc27-8ca92c1ce3a9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T00:02:56.152Z
