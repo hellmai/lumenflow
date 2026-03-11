@@ -3216,3 +3216,4 @@
 {"type":"checkpoint","wuId":"WU-2395","timestamp":"2026-03-11T21:55:55.869Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2395.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2395","timestamp":"2026-03-11T21:57:39.323Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2395","timestamp":"2026-03-11T21:58:03.632Z"}
+{"type":"claim","wuId":"WU-2396","timestamp":"2026-03-11T22:42:12.106Z","lane":"Framework: Core Lifecycle","title":"Restore Prettier-validated YAML formatting for wu:done metadata"}

@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2396 — Restore Prettier-validated YAML formatting for wu:done metadata](wu/WU-2396.yaml)
 
 ## Completed
 
