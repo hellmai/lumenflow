@@ -8,8 +8,9 @@ created: 2026-03-11
 code_paths:
   - packages/@lumenflow/cli/src/gate-co-change.ts
   - packages/@lumenflow/cli/src/public-manifest.ts
-  - packages/@lumenflow/cli/package.json
   - docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+  - .lumenflow/rules/yaml-editing-policy.md
+  - .claude/CLAUDE.md
 tests:
   manual:
     - Verify gate:co-change --add creates rule and gates pass
