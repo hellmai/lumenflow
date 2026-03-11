@@ -1523,23 +1523,30 @@ exec git "$@"
 
 export const PRE_COMMIT_TEMPLATE = `#!/bin/sh
 #
-# LumenFlow Pre-Commit Hook
-#
-# Enforces worktree discipline by blocking direct commits to main/master.
-# Does NOT assume pnpm test or UnsafeAny other commands exist.
+# LumenFlow Pre-Commit Hook (Vendor-Agnostic)
 #
 # Rules:
 #   1. BLOCK commits to main/master (use WU workflow instead)
 #   2. ALLOW commits on lane branches (lane/*/wu-*)
 #   3. ALLOW commits on tmp/* branches (CLI micro-worktrees)
 #
+# Escape hatch (logged, emergency only):
+#   LUMENFLOW_FORCE=1 LUMENFLOW_FORCE_REASON="reason" git commit ...
+#
 
-# Skip on tmp/* branches (CLI micro-worktrees)
+# Skip on tmp/* branches (CLI micro-worktrees in /tmp with no node_modules)
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 case "$BRANCH" in tmp/*) exit 0 ;; esac
 
-# Check for force bypass
-if [ "$LUMENFLOW_FORCE" = "1" ]; then
+# Check for force bypass (logged for audit)
+if [ "\\\${LUMENFLOW_FORCE:-}" = "1" ]; then
+  LUMENFLOW_DIR="$(git rev-parse --show-toplevel 2>/dev/null)/.lumenflow"
+  if [ -n "$LUMENFLOW_DIR" ]; then
+    mkdir -p "$LUMENFLOW_DIR"
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    USER=$(git config user.name 2>/dev/null || echo "unknown")
+    echo "\\\${TIMESTAMP} | pre-commit | \\\${USER} | \\\${BRANCH} | \\\${LUMENFLOW_FORCE_REASON:-no reason} | $(pwd)" >> "\\\${LUMENFLOW_DIR}/force-bypasses.log"
+  fi
   exit 0
 fi
 
@@ -1547,23 +1554,20 @@ fi
 case "$BRANCH" in
   main|master)
     echo "" >&2
-    echo "=== DIRECT COMMIT TO \${BRANCH} BLOCKED ===" >&2
+    echo "[pre-commit] BLOCKED: Direct commit to \${BRANCH}." >&2
     echo "" >&2
-    echo "LumenFlow protects main from direct commits." >&2
-    echo "" >&2
-    echo "USE INSTEAD:" >&2
+    echo "Use the WU workflow instead:" >&2
+    echo "  pnpm wu:create --lane \\"<Lane>\\" --title \\"Your task\\"" >&2
     echo "  pnpm wu:claim --id WU-XXXX --lane \\"<Lane>\\"" >&2
     echo "  cd worktrees/<lane>-wu-xxxx" >&2
-    echo "  # Make commits in the worktree" >&2
     echo "" >&2
-    echo "EMERGENCY BYPASS (logged):" >&2
-    echo "  LUMENFLOW_FORCE=1 git commit ..." >&2
-    echo "==========================================" >&2
+    echo "Stuck? pnpm wu:recover --id WU-XXXX" >&2
+    echo "" >&2
     exit 1
     ;;
 esac
 
-# Allow commits on other branches
+# Allow commits on lane branches and other branches
 exit 0
 `;
 

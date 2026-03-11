@@ -1214,7 +1214,7 @@ describe('lumenflow init', () => {
         expect(content).not.toContain('npm test');
       });
 
-      it('should delegate to lumenflow:pre-commit-check in pre-commit', async () => {
+      it('should skip tmp/* branches for micro-worktree safety', async () => {
         const options: ScaffoldOptions = {
           force: false,
           full: true,
@@ -1224,7 +1224,22 @@ describe('lumenflow init', () => {
 
         const preCommitPath = path.join(tempDir, '.husky', 'pre-commit');
         const content = fs.readFileSync(preCommitPath, 'utf-8');
-        expect(content).toContain('pnpm lumenflow:pre-commit-check');
+        expect(content).toContain('tmp/*');
+        expect(content).toContain('exit 0');
+      });
+
+      it('should block direct commits to main/master', async () => {
+        const options: ScaffoldOptions = {
+          force: false,
+          full: true,
+        };
+
+        await scaffoldProject(tempDir, options);
+
+        const preCommitPath = path.join(tempDir, '.husky', 'pre-commit');
+        const content = fs.readFileSync(preCommitPath, 'utf-8');
+        expect(content).toContain('main|master');
+        expect(content).toContain('BLOCKED');
       });
 
       it('should scaffold pre-commit even in minimal mode', async () => {
