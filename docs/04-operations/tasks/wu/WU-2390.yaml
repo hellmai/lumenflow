@@ -2,7 +2,7 @@ id: WU-2390
 title: Suppress git-adapter DEBUG logs by default in wu:claim
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-11
 code_paths:
@@ -45,3 +45,6 @@ description: "wu:claim produces 40+ '[git-adapter] DEBUG: GitAdapter constructor
 acceptance:
   - git-adapter DEBUG logs are not shown during normal wu:claim execution
   - DEBUG logs are still available via --verbose flag or LOG_LEVEL=debug
+locked: true
+completed_at: 2026-03-11T00:18:43.990Z
+completed: 2026-03-11
