@@ -19,12 +19,19 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/tmp-branch-skip-plan.md
 risks: []
-notes: ''
+notes: Pure shell hook template matching lumenflow-cloud pattern. No node/pnpm dependency.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-11T12:06:35.859Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2392
+session_id: 9a5a06bf-f973-4b3c-b7db-f62dcbf12d19
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T12:06:35.864Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -34,11 +41,3 @@ description: 'The pre-commit.template ships pnpm lumenflow:pre-commit-check whic
 acceptance:
   - pre-commit.template includes tmp/* branch skip before any pnpm/node commands
   - lumenflow init scaffolds the updated hook
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2392
-claimed_at: 2026-03-11T12:06:35.859Z
-baseline_main_sha: 04221c2ffcf4a3e3cc570277307ced412e4a7ac7
-session_id: 9a5a06bf-f973-4b3c-b7db-f62dcbf12d19
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-11T12:06:35.864Z
