@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import { existsSync } from 'node:fs';
-import { exec as execCallback } from 'node:child_process';
+import { execFile as execFileCallback } from 'node:child_process';
 import { promisify } from 'node:util';
 
 import { getGitForCwd } from './git-adapter.js';
@@ -31,6 +31,7 @@ import {
   PKG_MANAGER,
   SCRIPTS,
   PRETTIER_FLAGS,
+  PRETTIER_ARGS,
   LUMENFLOW_PATHS,
   WU_STATUS,
 } from './wu-constants.js';
@@ -40,7 +41,9 @@ import { writeWU } from './wu-yaml.js';
 import { normalizeToDateString } from './date-utils.js';
 import { getErrorMessage } from './error-handler.js';
 
-const execAsync = promisify(execCallback);
+const execFileAsync = promisify(execFileCallback);
+const PNPM_EXEC_SUBCOMMAND = 'exec';
+const PRETTIER_EXECUTION_ARGS = Object.freeze([PNPM_EXEC_SUBCOMMAND, SCRIPTS.PRETTIER]);
 
 interface CommitProvenance {
   branch?: string;
@@ -90,6 +93,36 @@ interface StageAndFormatMetadataParams {
   initiativePath?: string | null;
   gitAdapter?: GitAddAdapter | null;
   repoRoot?: string | null;
+}
+
+function resolveMetadataRepoRoot(repoRoot: string | null): string {
+  return repoRoot ?? process.cwd();
+}
+
+function collectMetadataFilesToFormat({
+  wuPath,
+  statusPath,
+  backlogPath,
+  initiativePath,
+}: Pick<
+  StageAndFormatMetadataParams,
+  'wuPath' | 'statusPath' | 'backlogPath' | 'initiativePath'
+>): string[] {
+  const filesToFormat = [wuPath, statusPath, backlogPath];
+  if (initiativePath) {
+    filesToFormat.push(initiativePath);
+  }
+  return filesToFormat;
+}
+
+async function runPrettierForMetadataFiles(
+  filePaths: string[],
+  repoRoot: string | null,
+  prettierMode: string,
+): Promise<void> {
+  await execFileAsync(PKG_MANAGER, [...PRETTIER_EXECUTION_ARGS, prettierMode, ...filePaths], {
+    cwd: resolveMetadataRepoRoot(repoRoot),
+  });
 }
 
 /**
@@ -360,22 +393,23 @@ export async function stageAndFormatMetadata({
   // WU-1653: Force-add stamps to override .gitignore (stamps must always be tracked)
   await gitCwd.raw(['add', '--force', stampsDir]);
 
-  // Format documentation
-  console.log(`${LOG_PREFIX.DONE} Formatting auto-generated documentation...`);
+  // Format metadata with the consumer repo's Prettier, then verify the same
+  // files before commit so wu:done cannot leak format:check regressions.
+  console.log(`${LOG_PREFIX.DONE} Formatting auto-generated metadata...`);
   try {
-    // WU-2395: Exclude YAML files from prettier. WU YAML is already formatted
-    // by writeWU (yaml.stringify). Running prettier on .yaml silently no-ops
-    // when the consumer has no yaml plugin, leaving unformatted files that
-    // break consumer CI format:check gates.
-    const filesToFormat = [statusPath, backlogPath];
-    const prettierTargets = filesToFormat.map((file) => `"${file}"`).join(' ');
-    const prettierCmd = `${PKG_MANAGER} ${SCRIPTS.PRETTIER} ${PRETTIER_FLAGS.WRITE} ${prettierTargets}`;
-    await execAsync(prettierCmd);
+    const filesToFormat = collectMetadataFilesToFormat({
+      wuPath,
+      statusPath,
+      backlogPath,
+      initiativePath,
+    });
+    await runPrettierForMetadataFiles(filesToFormat, repoRoot, PRETTIER_FLAGS.WRITE);
+    await runPrettierForMetadataFiles(filesToFormat, repoRoot, PRETTIER_ARGS.CHECK);
     await gitCwd.add(filesToFormat);
-    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Documentation formatted`);
+    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Metadata formatted`);
   } catch (err: unknown) {
     const errorMessage = getErrorMessage(err);
-    throw createValidationError(`Failed to format documentation: ${errorMessage}`, {
+    throw createValidationError(`Failed to format metadata with Prettier: ${errorMessage}`, {
       wuId: id,
       error: errorMessage,
     });

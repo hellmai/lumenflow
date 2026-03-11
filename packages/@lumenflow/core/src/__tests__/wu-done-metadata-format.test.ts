@@ -1,25 +1,31 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// WU-2395: stageAndFormatMetadata must NOT pass .yaml files to prettier.
-// WU YAML is already correctly formatted by writeWU (yaml.stringify). Passing it
-// to prettier causes silent no-ops (no yaml plugin) or reformatting mismatches,
-// both of which cause consumer CI format:check failures.
+// WU-2396: wu:done metadata must be formatted and verified with the
+// consumer repo's Prettier before commit. YAML files must stay in the target
+// set because writeWU() output does not necessarily match prettier --check.
 
-import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockExec, mockGit } = vi.hoisted(() => {
-  const mockExec = vi.fn((_cmd: string, cb: (err: null, stdout: string) => void) => cb(null, ''));
+const { mockExecFile, mockGit } = vi.hoisted(() => {
+  const mockExecFile = vi.fn(
+    (
+      _command: string,
+      _args: readonly string[],
+      _options: { cwd?: string } | undefined,
+      callback: (error: Error | null, stdout: string, stderr: string) => void,
+    ) => callback(null, '', ''),
+  );
   const mockGit = {
     add: vi.fn().mockResolvedValue(undefined),
     raw: vi.fn().mockResolvedValue(undefined),
   };
-  return { mockExec, mockGit };
+  return { mockExecFile, mockGit };
 });
 
 vi.mock('node:child_process', async () => {
   const actual = await vi.importActual<typeof import('node:child_process')>('node:child_process');
-  return { ...actual, exec: mockExec };
+  return { ...actual, execFile: mockExecFile };
 });
 
 vi.mock('../git-adapter.js', () => ({
@@ -31,64 +37,90 @@ vi.mock('node:fs', async () => {
   return { ...actual, existsSync: vi.fn(() => false) };
 });
 
-describe('stageAndFormatMetadata prettier targets', () => {
+describe('stageAndFormatMetadata prettier verification', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockExec.mockImplementation((_cmd: string, cb: (err: null, stdout: string) => void) =>
-      cb(null, ''),
+    mockExecFile.mockImplementation(
+      (
+        _command: string,
+        _args: readonly string[],
+        _options: { cwd?: string } | undefined,
+        callback: (error: Error | null, stdout: string, stderr: string) => void,
+      ) => callback(null, '', ''),
     );
     mockGit.add.mockResolvedValue(undefined);
     mockGit.raw.mockResolvedValue(undefined);
   });
 
-  it('does not pass the WU yaml file to prettier', async () => {
+  it('formats and verifies YAML and markdown files from the provided repo root', async () => {
     const { stageAndFormatMetadata } = await import('../wu-done-metadata.js');
 
-    const wuPath = '/repo/docs/tasks/wu/WU-2395.yaml';
-    const statusPath = '/repo/docs/tasks/status.md';
-    const backlogPath = '/repo/docs/tasks/backlog.md';
-
-    await stageAndFormatMetadata({
-      id: 'WU-2395',
-      wuPath,
-      statusPath,
-      backlogPath,
-      stampsDir: '/repo/.lumenflow/stamps',
-    });
-
-    const calls = mockExec.mock.calls;
-    const prettierCall = calls.find(([cmd]) => String(cmd).includes('prettier'));
-    expect(prettierCall).toBeDefined();
-    const cmd = String(prettierCall![0]);
-    expect(cmd).not.toContain('WU-2395.yaml');
-    expect(cmd).toContain('status.md');
-    expect(cmd).toContain('backlog.md');
-  });
-
-  it('does not pass an initiative yaml file to prettier when provided', async () => {
-    const { stageAndFormatMetadata } = await import('../wu-done-metadata.js');
-
-    const wuPath = '/repo/docs/tasks/wu/WU-2395.yaml';
-    const statusPath = '/repo/docs/tasks/status.md';
-    const backlogPath = '/repo/docs/tasks/backlog.md';
+    const wuPath = '/repo/docs/tasks/wu/WU-2396.yaml';
     const initiativePath = '/repo/docs/tasks/initiatives/INIT-001.yaml';
+    const statusPath = '/repo/docs/tasks/status.md';
+    const backlogPath = '/repo/docs/tasks/backlog.md';
+    const filesToFormat = [wuPath, statusPath, backlogPath, initiativePath];
 
     await stageAndFormatMetadata({
-      id: 'WU-2395',
+      id: 'WU-2396',
       wuPath,
       statusPath,
       backlogPath,
       stampsDir: '/repo/.lumenflow/stamps',
       initiativePath,
+      repoRoot: '/repo',
     });
 
-    const calls = mockExec.mock.calls;
-    const prettierCall = calls.find(([cmd]) => String(cmd).includes('prettier'));
-    expect(prettierCall).toBeDefined();
-    const cmd = String(prettierCall![0]);
-    expect(cmd).not.toContain('WU-2395.yaml');
-    expect(cmd).not.toContain('INIT-001.yaml');
-    expect(cmd).toContain('status.md');
-    expect(cmd).toContain('backlog.md');
+    expect(mockExecFile).toHaveBeenCalledTimes(2);
+    expect(mockExecFile).toHaveBeenNthCalledWith(
+      1,
+      'pnpm',
+      ['exec', 'prettier', '--write', ...filesToFormat],
+      { cwd: '/repo' },
+      expect.any(Function),
+    );
+    expect(mockExecFile).toHaveBeenNthCalledWith(
+      2,
+      'pnpm',
+      ['exec', 'prettier', '--check', ...filesToFormat],
+      { cwd: '/repo' },
+      expect.any(Function),
+    );
+    expect(mockGit.add).toHaveBeenNthCalledWith(2, filesToFormat);
+  });
+
+  it('aborts when the post-format prettier check still fails', async () => {
+    const { stageAndFormatMetadata } = await import('../wu-done-metadata.js');
+
+    mockExecFile
+      .mockImplementationOnce(
+        (
+          _command: string,
+          _args: readonly string[],
+          _options: { cwd?: string } | undefined,
+          callback: (error: Error | null, stdout: string, stderr: string) => void,
+        ) => callback(null, '', ''),
+      )
+      .mockImplementationOnce(
+        (
+          _command: string,
+          _args: readonly string[],
+          _options: { cwd?: string } | undefined,
+          callback: (error: Error | null, stdout: string, stderr: string) => void,
+        ) => callback(new Error('prettier check failed'), '', ''),
+      );
+
+    await expect(
+      stageAndFormatMetadata({
+        id: 'WU-2396',
+        wuPath: '/repo/docs/tasks/wu/WU-2396.yaml',
+        statusPath: '/repo/docs/tasks/status.md',
+        backlogPath: '/repo/docs/tasks/backlog.md',
+        stampsDir: '/repo/.lumenflow/stamps',
+        repoRoot: '/repo',
+      }),
+    ).rejects.toThrow('Failed to format metadata with Prettier');
+
+    expect(mockGit.add).toHaveBeenCalledTimes(1);
   });
 });
