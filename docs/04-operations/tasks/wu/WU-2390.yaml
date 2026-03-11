@@ -6,7 +6,7 @@ status: in_progress
 priority: P2
 created: 2026-03-11
 code_paths:
-  - packages/@lumenflow/cli/src/wu-claim.ts
+  - packages/@lumenflow/core/src/git-adapter.ts
 tests:
   manual:
     - Run wu:claim and verify no DEBUG lines in output without --verbose
@@ -17,12 +17,20 @@ artifacts:
   - .lumenflow/stamps/WU-2390.done
 dependencies: []
 risks: []
-notes: ''
+notes: Removed per-constructor and getGitForCwd DEBUG console.log calls from git-adapter.ts. These
+  produced 40+ lines per wu:claim with no diagnostic value.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-11T00:12:50.586Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2390
+session_id: 3ea5d0b4-9731-4e41-bcb4-7bf55a226eb0
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T00:12:50.592Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -32,11 +40,3 @@ description: "wu:claim produces 40+ '[git-adapter] DEBUG: GitAdapter constructor
 acceptance:
   - git-adapter DEBUG logs are not shown during normal wu:claim execution
   - DEBUG logs are still available via --verbose flag or LOG_LEVEL=debug
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2390
-claimed_at: 2026-03-11T00:12:50.586Z
-baseline_main_sha: b824744a1ca81d72d9fe6dcff1c6b211be72e463
-session_id: 3ea5d0b4-9731-4e41-bcb4-7bf55a226eb0
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-11T00:12:50.592Z
