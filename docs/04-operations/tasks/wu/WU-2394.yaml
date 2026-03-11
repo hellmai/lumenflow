@@ -2,7 +2,7 @@ id: WU-2394
 title: Fix cloud/branch-pr completion to be fail-closed and self-consistent
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-11
 code_paths:
@@ -64,3 +64,6 @@ acceptance:
   - wu:prep always directs branch-pr users to wu:done, never to manual gh pr create
   - wu:claim branch-pr messaging is consistent with the above
   - Troubleshooting docs cover cloud/branch-pr path with parity to worktree docs
+locked: true
+completed_at: 2026-03-11T21:33:52.263Z
+completed: 2026-03-11
