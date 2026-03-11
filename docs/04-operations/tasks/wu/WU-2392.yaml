@@ -1,0 +1,34 @@
+id: WU-2392
+title: Fix pre-commit hook template to skip tmp/* branches
+lane: 'Framework: CLI WU Commands'
+type: feature
+status: ready
+priority: P2
+created: 2026-03-11
+code_paths:
+  - packages/@lumenflow/cli/templates/core/.husky/pre-commit.template
+tests:
+  manual:
+    - Run lumenflow init in a temp dir, verify .husky/pre-commit contains tmp/* skip
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/init.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2392.done
+dependencies: []
+spec_refs:
+  - lumenflow://plans/tmp-branch-skip-plan.md
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'The pre-commit.template ships pnpm lumenflow:pre-commit-check which fails in /tmp micro-worktrees because pnpm cannot resolve node_modules. The lumenflow-cloud hook already has the fix: case branch in tmp/*) exit 0. Update the template to match.'
+acceptance:
+  - pre-commit.template includes tmp/* branch skip before any pnpm/node commands
+  - lumenflow init scaffolds the updated hook
