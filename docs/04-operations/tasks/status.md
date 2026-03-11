@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2394 — Fix cloud/branch-pr completion to be fail-closed and self-consistent](wu/WU-2394.yaml)
 
 ## Completed
 
