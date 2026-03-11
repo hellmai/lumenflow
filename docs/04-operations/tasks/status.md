@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2391 — plan:create reports success but silently fails to commit the plan file](wu/WU-2391.yaml)
 
 ## Completed
 
