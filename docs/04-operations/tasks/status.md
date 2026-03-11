@@ -4,7 +4,7 @@ _Last updated: 2026-03-11_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2390 — Suppress git-adapter DEBUG logs by default in wu:claim](wu/WU-2390.yaml)
 
 ## Completed
 

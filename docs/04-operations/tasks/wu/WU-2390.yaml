@@ -2,7 +2,7 @@ id: WU-2390
 title: Suppress git-adapter DEBUG logs by default in wu:claim
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-11
 code_paths:
@@ -26,7 +26,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "wu:claim produces 40+ '[git-adapter] DEBUG: GitAdapter constructor' log lines during a single claim operation. These debug logs clutter agent output and waste context tokens. DEBUG logs should be suppressed unless an explicit --verbose or LOG_LEVEL=debug flag is set."
+description: "wu:claim produces 40+ '[git-adapter] DEBUG: GitAdapter constructor' log lines during a
+  single claim operation. These debug logs clutter agent output and waste context tokens. DEBUG logs
+  should be suppressed unless an explicit --verbose or LOG_LEVEL=debug flag is set."
 acceptance:
   - git-adapter DEBUG logs are not shown during normal wu:claim execution
   - DEBUG logs are still available via --verbose flag or LOG_LEVEL=debug
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2390
+claimed_at: 2026-03-11T00:12:50.586Z
+baseline_main_sha: b824744a1ca81d72d9fe6dcff1c6b211be72e463
+session_id: 3ea5d0b4-9731-4e41-bcb4-7bf55a226eb0
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-11T00:12:50.592Z

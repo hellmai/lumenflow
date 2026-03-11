@@ -3183,3 +3183,4 @@
 {"type":"checkpoint","wuId":"WU-2389","timestamp":"2026-03-11T00:08:44.426Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2389.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2389","timestamp":"2026-03-11T00:09:07.545Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2389.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2389","timestamp":"2026-03-11T00:10:36.622Z"}
+{"type":"claim","wuId":"WU-2390","timestamp":"2026-03-11T00:12:50.612Z","lane":"Framework: CLI WU Commands","title":"Suppress git-adapter DEBUG logs by default in wu:claim"}
