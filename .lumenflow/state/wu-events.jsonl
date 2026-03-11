@@ -3212,3 +3212,5 @@
 {"type":"checkpoint","wuId":"WU-2394","timestamp":"2026-03-11T21:32:22.674Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2394.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2394","timestamp":"2026-03-11T21:33:57.053Z"}
 {"type":"claim","wuId":"WU-2395","timestamp":"2026-03-11T21:51:22.141Z","lane":"Framework: Core Lifecycle","title":"Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier"}
+{"type":"checkpoint","wuId":"WU-2395","timestamp":"2026-03-11T21:51:34.058Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2395","timestamp":"2026-03-11T21:55:55.869Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2395.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
