@@ -17,12 +17,20 @@ artifacts:
   - .lumenflow/stamps/WU-2432.done
 dependencies: []
 risks: []
-notes: ''
+notes: Validated with vercel production build from apps/docs after pulling linked project settings
+  into the worktree. Deploy from main after WU completion using the prebuilt Vercel flow.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T18:34:59.517Z
+worktree_path: worktrees/content-site-comms-wu-2432
+session_id: 6dd38895-7b95-43aa-b5ca-8ecef187cd75
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T18:34:59.528Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +43,3 @@ acceptance:
   - Vercel production build for apps/docs succeeds from main.
   - Production docs are deployed to Vercel and the live Sidekick workflows page responds
     successfully.
-claimed_mode: worktree
-worktree_path: worktrees/content-site-comms-wu-2432
-claimed_at: 2026-03-12T18:34:59.517Z
-baseline_main_sha: da69463623be892328966ebff04e3b8b782112ff
-session_id: 6dd38895-7b95-43aa-b5ca-8ecef187cd75
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T18:34:59.528Z
