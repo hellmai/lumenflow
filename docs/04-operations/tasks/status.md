@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-11_
+_Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml)
 
 ## Completed
 
