@@ -3439,3 +3439,4 @@
 {"type":"checkpoint","wuId":"WU-2440","timestamp":"2026-03-12T22:05:44.220Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2440","timestamp":"2026-03-12T22:05:59.078Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2440","timestamp":"2026-03-12T22:13:32.228Z"}
+{"type":"claim","wuId":"WU-2441","timestamp":"2026-03-12T22:22:35.011Z","lane":"Content: Framework Docs","title":"Validate config examples against live schemas"}

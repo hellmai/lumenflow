@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2441 — Validate config examples against live schemas](wu/WU-2441.yaml)
 
 ## Completed
 
