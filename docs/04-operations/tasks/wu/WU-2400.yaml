@@ -1,0 +1,41 @@
+id: WU-2400
+title: 'Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity'
+lane: 'Framework: CLI WU Commands'
+type: refactor
+status: ready
+priority: P3
+created: 2026-03-12
+code_paths:
+  - packages/@lumenflow/cli/src/wu-done.ts
+tests:
+  manual:
+    - Verify wu:done --already-merged completes successfully
+    - Verify wu:done normal path completes with valid WU
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2400.done
+dependencies: []
+risks: []
+notes: Related to WU-1215 case study in wu-sizing-guide.md. This is helper extraction, not a rewrite of main() logic — lower risk than WU-1215. Use checkpoint-resume if tool calls exceed 50.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 8
+  estimated_tool_calls: 45
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Code review found wu-done.ts (2,087 lines) has several decomposition opportunities: (1) executePreFlightChecks is 428 LOC with eslint-disable for cognitive complexity — extract validateYamlSchema, validateApprovalGates, validateCodePathsConsistency, etc; (2) main() is 512 LOC — extract executeAlreadyMergedPath() and executeNormalWuDonePath(); (3) rollbackTransaction is 137 LOC with nested try/catch — extract resetGitStaging, restoreFilesFromSnapshot, resetMainBranchIfNeeded; (4) DRY violations: validateClaimMetadataBeforeGates and _assertWorktreeWUInProgressInStateStore duplicate state store logic; auditSkipGates and auditSkipCosGates are 95% identical.'
+acceptance:
+  - executePreFlightChecks delegates to named validator functions
+  - main() delegates to extracted path-specific handlers
+  - rollbackTransaction delegates to named sub-operations
+  - Duplicate validation/audit functions consolidated
+  - No eslint-disable comments for cognitive complexity remain
+  - All existing wu-done tests pass
