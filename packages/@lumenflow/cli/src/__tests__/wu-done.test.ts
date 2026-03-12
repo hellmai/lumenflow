@@ -307,9 +307,12 @@ status: done
   describe('WU-2132: wu:brief evidence enforcement', () => {
     it('checks wu:brief evidence before preflight restores the worktree event log', async () => {
       const source = await readFile(new URL('../wu-done.ts', import.meta.url), 'utf-8');
-      const mainBody = source.slice(source.indexOf('export async function main()'));
-      const evidenceCheckIndex = mainBody.indexOf('await enforceWuBriefEvidenceForDone');
-      const preflightIndex = mainBody.indexOf('preFlightResult = await executePreFlightChecks');
+      // WU-2400: main() delegates to executeNormalWuDonePath; check ordering there
+      const normalPathBody = source.slice(source.indexOf('async function executeNormalWuDonePath'));
+      const evidenceCheckIndex = normalPathBody.indexOf('await enforceWuBriefEvidenceForDone');
+      const preflightIndex = normalPathBody.indexOf(
+        'preFlightResult = await executePreFlightChecks',
+      );
 
       expect(evidenceCheckIndex).toBeGreaterThan(-1);
       expect(preflightIndex).toBeGreaterThan(-1);

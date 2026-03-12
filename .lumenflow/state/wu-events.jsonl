@@ -3229,3 +3229,5 @@
 {"type":"claim","wuId":"WU-2400","timestamp":"2026-03-12T09:52:56.045Z","lane":"Framework: CLI WU Commands","title":"Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity"}
 {"type":"claim","wuId":"WU-2401","timestamp":"2026-03-12T09:53:24.085Z","lane":"Framework: Core Validation","title":"Close test coverage gaps: add tests for metrics, memory, runtime, and web packages"}
 {"type":"claim","wuId":"WU-2402","timestamp":"2026-03-12T09:53:50.425Z","lane":"Framework: Core Validation","title":"Align test config: coverage threshold mismatch and passWithNoTests masking gaps"}
+{"type":"checkpoint","wuId":"WU-2400","timestamp":"2026-03-12T09:53:07.770Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2400","timestamp":"2026-03-12T09:54:17.395Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

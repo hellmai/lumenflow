@@ -476,37 +476,9 @@ async function validateClaimMetadataBeforeGates(
   );
 }
 
-async function _assertWorktreeWUInProgressInStateStore(id: string, worktreePath: string) {
-  const resolvedWorktreePath = path.resolve(worktreePath);
-  const stateDir = resolveStateDir(resolvedWorktreePath);
-  const eventsPath = path.join(
-    resolvedWorktreePath,
-    resolveWuEventsRelativePath(resolvedWorktreePath),
-  );
-
-  const store = new WUStateStore(stateDir);
-  try {
-    await store.load();
-  } catch (err) {
-    die(
-      `Cannot read WU state store for ${id}.\n\n` +
-        `Path: ${eventsPath}\n\n` +
-        `Error: ${getErrorMessage(err)}\n\n` +
-        `If this WU was claimed on an older tool version or the event log is missing/corrupt,\n` +
-        `repair the worktree state store before rerunning wu:done.`,
-    );
-  }
-
-  const inProgress = store.getByStatus(WU_STATUS.IN_PROGRESS);
-  if (!inProgress.has(id)) {
-    die(
-      `WU ${id} is not in_progress in the worktree state store.\n\n` +
-        `Path: ${eventsPath}\n\n` +
-        `This will fail later when wu:done tries to append a complete event and regenerate backlog/status.\n` +
-        `Fix the claim/state log first, then rerun wu:done.`,
-    );
-  }
-}
+// _assertWorktreeWUInProgressInStateStore removed (WU-2400): dead code,
+// strict subset of validateClaimMetadataBeforeGates which already covers
+// YAML status + state store checks with actionable repair guidance.
 
 /**
  * WU-1946: Update spawn registry on WU completion.
@@ -588,33 +560,57 @@ function getCommitHeaderLimit() {
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
 
-async function auditSkipGates(
-  id: string,
-  reason: unknown,
-  fixWU: unknown,
+/**
+ * WU-2400: Generic audit entry appender — shared by auditSkipGates and auditSkipCosGates.
+ * Consolidates the duplicate git-identity lookup, JSON serialisation, and file-append logic.
+ */
+async function appendAuditEntry(
+  filename: string,
+  buildEntry: (git: { userName: string; userEmail: string; commitHash: string }) => object,
   worktreePath: string | null,
+  options?: { logLabel?: string },
 ): Promise<void> {
   const auditBaseDir = worktreePath || process.cwd();
-  const auditPath = path.join(auditBaseDir, '.lumenflow', SKIP_GATES_AUDIT_FILENAME);
+  const auditPath = path.join(auditBaseDir, '.lumenflow', filename);
   const auditDir = path.dirname(auditPath);
   if (!existsSync(auditDir)) mkdirSync(auditDir, { recursive: true });
   const gitAdapter = getGitForCwd();
   const userName = await gitAdapter.getConfigValue(GIT_CONFIG_USER_NAME);
   const userEmail = await gitAdapter.getConfigValue(GIT_CONFIG_USER_EMAIL);
   const commitHash = await gitAdapter.getCommitHash();
-  const entry = buildSkipGatesAuditEntry({
-    id,
-    reason,
-    fixWU,
-    worktreePath,
+  const entry = buildEntry({
     userName: userName.trim(),
     userEmail: userEmail.trim(),
     commitHash: commitHash.trim(),
   });
   const line = JSON.stringify(entry);
   appendFileSync(auditPath, `${line}\n`, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
+  const label = options?.logLabel ?? `Audit event logged to`;
   console.log(
-    `${LOG_PREFIX.DONE} ${EMOJI.MEMO} Skip-gates event logged to ${path.relative(process.cwd(), auditPath) || auditPath}`,
+    `${LOG_PREFIX.DONE} ${EMOJI.MEMO} ${label} ${path.relative(process.cwd(), auditPath) || auditPath}`,
+  );
+}
+
+async function auditSkipGates(
+  id: string,
+  reason: unknown,
+  fixWU: unknown,
+  worktreePath: string | null,
+): Promise<void> {
+  await appendAuditEntry(
+    SKIP_GATES_AUDIT_FILENAME,
+    (git) =>
+      buildSkipGatesAuditEntry({
+        id,
+        reason,
+        fixWU,
+        worktreePath,
+        userName: git.userName,
+        userEmail: git.userEmail,
+        commitHash: git.commitHash,
+      }),
+    worktreePath,
+    { logLabel: 'Skip-gates event logged to' },
   );
 }
 
@@ -661,31 +657,26 @@ export function buildSkipGatesAuditEntry(
 /**
  * Audit trail for COS gates skip (COS v1.3 S7)
  * WU-1852: Renamed from skip-cos-gates to avoid referencing non-existent CLI flag
+ * WU-2400: Delegates to appendAuditEntry to remove DRY violation
  */
 async function auditSkipCosGates(
   id: string,
   reason: unknown,
   worktreePath: string | null,
 ): Promise<void> {
-  const auditBaseDir = worktreePath || process.cwd();
-  const auditPath = path.join(auditBaseDir, '.lumenflow', 'skip-cos-gates-audit.log');
-  const auditDir = path.dirname(auditPath);
-  if (!existsSync(auditDir)) mkdirSync(auditDir, { recursive: true });
-  const gitAdapter = getGitForCwd();
-  const userName = await gitAdapter.getConfigValue(GIT_CONFIG_USER_NAME);
-  const userEmail = await gitAdapter.getConfigValue(GIT_CONFIG_USER_EMAIL);
-  const commitHash = await gitAdapter.getCommitHash();
   const reasonText = typeof reason === 'string' ? reason : undefined;
-  const entry = {
-    timestamp: new Date().toISOString(),
-    wu_id: id,
-    reason: reasonText || DEFAULT_NO_REASON,
-    git_user: `${userName.trim()} <${userEmail.trim()}>`,
-    git_commit: commitHash.trim(),
-  };
-  const line = JSON.stringify(entry);
-  appendFileSync(auditPath, `${line}\n`, { encoding: FILE_SYSTEM.UTF8 as BufferEncoding });
-  console.log(`${LOG_PREFIX.DONE} ${EMOJI.MEMO} Skip-COS-gates event logged to ${auditPath}`);
+  await appendAuditEntry(
+    'skip-cos-gates-audit.log',
+    (git) => ({
+      timestamp: new Date().toISOString(),
+      wu_id: id,
+      reason: reasonText || DEFAULT_NO_REASON,
+      git_user: `${git.userName} <${git.userEmail}>`,
+      git_commit: git.commitHash,
+    }),
+    worktreePath,
+    { logLabel: 'Skip-COS-gates event logged to' },
+  );
 }
 
 // WU-2308: validateAllPreCommitHooks moved to wu-done-validators.ts
@@ -751,6 +742,111 @@ function recordTransactionState(
  * @param {string} statusPath - Path to status.md (WU-1230)
  */
 
+// ── WU-2400: Named rollback sub-operations extracted from rollbackTransaction ──
+
+/** Unstage all staged files and discard working tree changes. */
+async function resetGitStaging(): Promise<void> {
+  // Step 1: Unstage all staged files FIRST
+  try {
+    const gitAdapter = getGitForCwd();
+    await gitAdapter.raw(['reset', 'HEAD']);
+    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Unstaged all files`);
+  } catch {
+    // Ignore - may not have anything staged
+  }
+
+  // Step 2: Discard working directory changes (reset to last commit)
+  try {
+    const gitAdapter = getGitForCwd();
+    await gitAdapter.raw(['checkout', '--', '.']);
+    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Reset working tree to HEAD`);
+  } catch {
+    // Ignore - may not have anything to discard
+  }
+}
+
+/** Remove stamp file unconditionally if it exists (WU-1440). */
+function removeStampIfExists(stampPath: string): void {
+  if (!existsSync(stampPath)) return;
+  try {
+    unlinkSync(stampPath);
+    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Removed ${stampPath}`);
+  } catch (err) {
+    console.error(
+      `${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Failed to remove stamp: ${getErrorMessage(err)}`,
+    );
+  }
+}
+
+/** Build file list and restore from transaction snapshot (WU-1255). */
+function restoreFilesFromSnapshot(
+  txState: TransactionState,
+  wuPath: string,
+  backlogPath: string,
+  statusPath: string,
+): ReturnType<typeof rollbackFiles> {
+  const filesToRestore = [];
+
+  if (txState.backlogContent && existsSync(backlogPath)) {
+    filesToRestore.push({ name: 'backlog.md', path: backlogPath, content: txState.backlogContent });
+  }
+  if (txState.statusContent && existsSync(statusPath)) {
+    filesToRestore.push({ name: 'status.md', path: statusPath, content: txState.statusContent });
+  }
+  if (txState.wuYamlContent && existsSync(wuPath)) {
+    filesToRestore.push({ name: 'WU YAML', path: wuPath, content: txState.wuYamlContent });
+  }
+
+  const restoreResult = rollbackFiles(filesToRestore);
+
+  for (const name of restoreResult.restored) {
+    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Restored ${name}`);
+  }
+  for (const err of restoreResult.errors) {
+    console.error(
+      `${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Failed to restore ${err.name}: ${err.error}`,
+    );
+  }
+
+  return restoreResult;
+}
+
+/** Reset main branch to original SHA if we drifted during the transaction. */
+async function resetMainBranchIfNeeded(txState: TransactionState): Promise<void> {
+  try {
+    const gitAdapter = getGitForCwd();
+    const currentBranch = await gitAdapter.getCurrentBranch();
+    if (currentBranch === BRANCHES.MAIN) {
+      const currentSHA = await gitAdapter.getCommitHash();
+      if (currentSHA !== txState.mainSHA) {
+        await gitAdapter.reset(txState.mainSHA, { hard: true });
+        console.log(
+          `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Reset main to ${txState.mainSHA.slice(0, GIT.SHA_SHORT_LENGTH)}`,
+        );
+      }
+    }
+  } catch (e) {
+    console.warn(`${LOG_PREFIX.DONE} Warning: Could not reset main: ${getErrorMessage(e)}`);
+  }
+}
+
+/** WU-1280: Verify clean git status after rollback and log any residue. */
+async function verifyCleanGitStateAfterRollback(): Promise<void> {
+  try {
+    const gitAdapter = getGitForCwd();
+    const statusOutput = (await gitAdapter.raw(['status', '--porcelain'])).trim();
+    if (statusOutput) {
+      printStatusPreview(statusOutput);
+    } else {
+      console.log(`${LOG_PREFIX.DONE} ✅ Working tree is clean`);
+    }
+  } catch {
+    // Ignore - git status may fail in edge cases
+  }
+}
+
+// ── End of extracted rollback sub-operations ──
+
 async function rollbackTransaction(
   txState: TransactionState,
   wuPath: string,
@@ -763,114 +859,12 @@ async function rollbackTransaction(
   );
 
   // WU-1280: ATOMIC ROLLBACK - Clean git state FIRST, then restore files
-  // Previous order (restore → git checkout) caused issues:
-  // - git checkout -- . would UNDO file restorations
-  // - Left messy state with staged + unstaged conflicts
-  //
-  // New order:
-  // 1. Unstage everything (git reset HEAD)
-  // 2. Discard working tree changes (git checkout -- .)
-  // 3. Remove stamp if created
-  // 4. THEN restore files from txState
-
-  // Step 1: Unstage all staged files FIRST
-  // Emergency fix Session 2: Use git-adapter instead of raw execSync
-  try {
-    const gitAdapter = getGitForCwd();
-    await gitAdapter.raw(['reset', 'HEAD']);
-    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Unstaged all files`);
-  } catch {
-    // Ignore - may not have anything staged
-  }
-
-  // Step 2: Discard working directory changes (reset to last commit)
-  // Emergency fix Session 2: Use git-adapter instead of raw execSync
-  try {
-    const gitAdapter = getGitForCwd();
-    await gitAdapter.raw(['checkout', '--', '.']);
-    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Reset working tree to HEAD`);
-  } catch {
-    // Ignore - may not have anything to discard
-  }
-
-  // Step 3: Remove stamp unconditionally if it exists (WU-1440)
-  // Previous behavior only removed if !stampExisted, but that flag could be wrong
-  // due to edge cases. Unconditional removal ensures clean rollback state.
-  if (existsSync(stampPath)) {
-    try {
-      unlinkSync(stampPath);
-      console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Removed ${stampPath}`);
-    } catch (err) {
-      console.error(
-        `${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Failed to remove stamp: ${getErrorMessage(err)}`,
-      );
-    }
-  }
-
-  // Step 4: Restore files from txState (AFTER git cleanup)
-  // Build list of files to restore with per-file error tracking (ref: WU-1255)
-  const filesToRestore = [];
-
-  // Restore backlog.md (ref: WU-1230)
-  if (txState.backlogContent && existsSync(backlogPath)) {
-    filesToRestore.push({ name: 'backlog.md', path: backlogPath, content: txState.backlogContent });
-  }
-
-  // Restore status.md (ref: WU-1230)
-  if (txState.statusContent && existsSync(statusPath)) {
-    filesToRestore.push({ name: 'status.md', path: statusPath, content: txState.statusContent });
-  }
-
-  // Restore WU YAML if it was modified
-  if (txState.wuYamlContent && existsSync(wuPath)) {
-    filesToRestore.push({ name: 'WU YAML', path: wuPath, content: txState.wuYamlContent });
-  }
-
-  // WU-1255: Use rollbackFiles utility for per-file error tracking
-  const restoreResult = rollbackFiles(filesToRestore);
-
-  // Log results
-  for (const name of restoreResult.restored) {
-    console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Restored ${name}`);
-  }
-  for (const err of restoreResult.errors) {
-    console.error(
-      `${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Failed to restore ${err.name}: ${err.error}`,
-    );
-  }
-
-  // Reset main to original SHA if we're on main
-  try {
-    const gitAdapter = getGitForCwd();
-    const currentBranch = await gitAdapter.getCurrentBranch();
-    if (currentBranch === BRANCHES.MAIN) {
-      const currentSHA = await gitAdapter.getCommitHash();
-      if (currentSHA !== txState.mainSHA) {
-        await gitAdapter.reset(txState.mainSHA, { hard: true });
-        // Emergency fix Session 2: Use GIT.SHA_SHORT_LENGTH constant
-        console.log(
-          `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Reset main to ${txState.mainSHA.slice(0, GIT.SHA_SHORT_LENGTH)}`,
-        );
-      }
-    }
-  } catch (e) {
-    console.warn(`${LOG_PREFIX.DONE} Warning: Could not reset main: ${getErrorMessage(e)}`);
-  }
-
-  // WU-1280: Verify clean git status after rollback
-  // WU-1281: Extracted to helper to fix repeated parsing and magic number
-  // Emergency fix Session 2: Use git-adapter instead of raw execSync
-  try {
-    const gitAdapter = getGitForCwd();
-    const statusOutput = (await gitAdapter.raw(['status', '--porcelain'])).trim();
-    if (statusOutput) {
-      printStatusPreview(statusOutput);
-    } else {
-      console.log(`${LOG_PREFIX.DONE} ✅ Working tree is clean`);
-    }
-  } catch {
-    // Ignore - git status may fail in edge cases
-  }
+  // WU-2400: Delegates to named sub-operations for readability.
+  await resetGitStaging();
+  removeStampIfExists(stampPath);
+  const restoreResult = restoreFilesFromSnapshot(txState, wuPath, backlogPath, statusPath);
+  await resetMainBranchIfNeeded(txState);
+  await verifyCleanGitStateAfterRollback();
 
   // WU-1255: Report final status with all errors
   if (restoreResult.errors.length > 0) {
@@ -976,17 +970,11 @@ function runWUValidator(
  * @param {string|null} params.derivedWorktree - Derived worktree path
  * @returns {Promise<{title: string, docForValidation: object}>} Updated title and doc
  */
-// eslint-disable-next-line sonarjs/cognitive-complexity -- Pre-existing complexity, refactor tracked separately
-async function executePreFlightChecks({
-  id,
-  args,
-  isBranchOnly,
-  isDocsOnly,
-  docMain,
-  docForValidation,
-  derivedWorktree,
-}: PreFlightParams): Promise<{ title: string; docForValidation: WUDocLike }> {
-  // YAML schema validation
+
+// ── WU-2400: Named validator functions extracted from executePreFlightChecks ──
+
+/** Validate WU YAML against Zod schema and done-specific rules. */
+function preflightValidateYamlSchema(docForValidation: WUDocLike): ReturnType<typeof validateWU> {
   console.log(`${LOG_PREFIX.DONE} Validating WU YAML structure...`);
   const schemaResult = validateWU(docForValidation);
   if (!schemaResult.success) {
@@ -996,7 +984,6 @@ async function executePreFlightChecks({
     die(`❌ WU YAML validation failed:\n\n${errors}\n\nFix these issues before running wu:done`);
   }
 
-  // Additional done-specific validation
   if (docForValidation.status === WU_STATUS.DONE) {
     const doneResult = validateDoneWU(schemaResult.data);
     if (!doneResult.valid) {
@@ -1006,11 +993,16 @@ async function executePreFlightChecks({
     }
   }
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} WU YAML validation passed`);
+  return schemaResult;
+}
 
-  // WU-2079: Approval gate validation
-  // Ensures required approvals are present before allowing completion
+/** WU-2079: Ensure required approvals are present before allowing completion. */
+function preflightValidateApprovalGates(
+  id: string,
+  schemaData: Parameters<typeof validateApprovalGates>[0],
+): void {
   console.log(`${LOG_PREFIX.DONE} Checking approval gates...`);
-  const approvalResult = validateApprovalGates(schemaResult.data);
+  const approvalResult = validateApprovalGates(schemaData);
   if (!approvalResult.valid) {
     const governancePath = getConfig({ projectRoot: process.cwd() }).directories.governancePath;
     die(
@@ -1022,16 +1014,21 @@ async function executePreFlightChecks({
         `   See ${governancePath} for role definitions.`,
     );
   }
-  // Log advisory warnings (non-blocking)
   if (approvalResult.warnings.length > 0) {
     approvalResult.warnings.forEach((w) => {
       console.warn(`${LOG_PREFIX.DONE} ⚠️  ${w}`);
     });
   }
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Approval gates passed`);
+}
 
+/** WU-1805 + WU-2310: Validate code_paths consistency (preflight + type vs code_paths). */
+async function preflightValidateCodePathsConsistency(
+  id: string,
+  docForValidation: WUDocLike,
+  derivedWorktree: string | null,
+): Promise<void> {
   // WU-1805: Preflight code_paths and test_paths validation
-  // Run BEFORE gates to catch YAML mismatches early (saves time vs. discovering after full gate run)
   const preflightResult = await executePreflightCodePathValidation(id, {
     rootDir: process.cwd(),
     worktreePath: derivedWorktree,
@@ -1051,7 +1048,6 @@ async function executePreFlightChecks({
   }
 
   // WU-2310: Preflight type vs code_paths validation
-  // Run BEFORE transaction to prevent documentation WUs with code paths from failing at git commit
   console.log(`${LOG_PREFIX.DONE} Validating type vs code_paths (WU-2310)...`);
   const typeVsCodePathsResult = validateTypeVsCodePathsPreflight(docForValidation);
   if (!typeVsCodePathsResult.valid) {
@@ -1059,12 +1055,10 @@ async function executePreFlightChecks({
     die(errorMessage);
   }
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Type vs code_paths validation passed`);
+}
 
-  // Tripwire: Scan commands log for violations
-  runTripwireCheck();
-
-  // WU-1234: Pre-flight backlog consistency check
-  // Fail fast if WU is in both Done and In Progress sections
+/** WU-1234 + WU-1276: Validate backlog and WU state store consistency. */
+async function preflightValidateBacklogAndStateConsistency(id: string): Promise<void> {
   console.log(`${LOG_PREFIX.DONE} Checking backlog consistency...`);
   const backlogPath = WU_PATHS.BACKLOG();
   const backlogConsistency = checkBacklogConsistencyForWU(id, backlogPath);
@@ -1073,8 +1067,6 @@ async function executePreFlightChecks({
   }
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Backlog consistency check passed`);
 
-  // WU-1276: Pre-flight WU state consistency check
-  // Layer 2 defense-in-depth: fail fast if WU has pre-existing inconsistencies
   console.log(`${LOG_PREFIX.DONE} Checking WU state consistency...`);
   const stateCheck = await checkWUConsistency(id);
   if (!stateCheck.valid) {
@@ -1087,8 +1079,19 @@ async function executePreFlightChecks({
     );
   }
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} WU state consistency check passed`);
+}
 
-  // Branch-Only mode validation
+/** Validate worktree state: branch-only vs worktree mode, parallel detection, claim metadata. */
+async function preflightValidateWorktreeState(params: {
+  id: string;
+  args: WuDoneArgsLike;
+  isBranchOnly: boolean;
+  docMain: WUDocLike;
+  docForValidation: WUDocLike;
+  derivedWorktree: string | null;
+}): Promise<void> {
+  const { id, args, isBranchOnly, docMain, docForValidation, derivedWorktree } = params;
+
   if (isBranchOnly) {
     const laneBranch = await defaultBranchFrom(docMain);
     if (!laneBranch) die('Cannot determine lane branch from WU YAML');
@@ -1100,137 +1103,286 @@ async function executePreFlightChecks({
 
     console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Branch-Only mode validation passed`);
     console.log(`${LOG_PREFIX.DONE} Working on branch: ${laneBranch}`);
-  } else {
-    // Worktree mode: must be on main
-    await ensureOnMain(getGitForCwd());
+    return;
+  }
 
-    // P0 EMERGENCY FIX Part 1: Restore wu-events.jsonl BEFORE parallel completion check
-    // Previous wu:done runs or memory layer writes may have left this file dirty,
-    // which causes the auto-rebase to fail with "You have unstaged changes"
-    // WU-2370: Preserve wu:brief evidence lines across the restore. Without this,
-    // a failed wu:done retry loses uncommitted evidence written by wu:brief, causing
-    // "Missing wu:brief evidence" errors on subsequent attempts.
-    if (derivedWorktree) {
-      const wuEventsRelPath = resolveWuEventsRelativePath(derivedWorktree);
-      const wuEventsAbsPath = path.join(derivedWorktree, wuEventsRelPath);
+  // Worktree mode: must be on main
+  await ensureOnMain(getGitForCwd());
 
-      // Read uncommitted wu:brief evidence lines before restore
-      let uncommittedBriefLines: string[] = [];
-      try {
-        const preRestoreContent = readFileSync(wuEventsAbsPath, {
-          encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
-        });
-        const committedContent = (() => {
-          try {
-            return execSync(`git -C "${derivedWorktree}" show HEAD:"${wuEventsRelPath}"`, {
-              encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
-            });
-          } catch {
-            return '';
-          }
-        })();
-        const committedLines = new Set(committedContent.trim().split('\n').filter(Boolean));
-        uncommittedBriefLines = preRestoreContent
-          .trim()
-          .split('\n')
-          .filter((line) => !committedLines.has(line) && line.includes('[wu:brief]'));
-      } catch {
-        // Non-fatal: file might not exist
-      }
+  // P0 EMERGENCY FIX Part 1: Restore wu-events.jsonl BEFORE parallel completion check
+  // WU-2370: Preserve wu:brief evidence lines across the restore.
+  if (derivedWorktree) {
+    const wuEventsRelPath = resolveWuEventsRelativePath(derivedWorktree);
+    const wuEventsAbsPath = path.join(derivedWorktree, wuEventsRelPath);
 
-      try {
-        execSync(`git -C "${derivedWorktree}" restore "${wuEventsRelPath}"`);
-      } catch {
-        // Non-fatal: file might not exist or already clean
-      }
-
-      // Re-append preserved wu:brief evidence lines
-      if (uncommittedBriefLines.length > 0) {
+    let uncommittedBriefLines: string[] = [];
+    try {
+      const preRestoreContent = readFileSync(wuEventsAbsPath, {
+        encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
+      });
+      const committedContent = (() => {
         try {
-          appendFileSync(wuEventsAbsPath, uncommittedBriefLines.join('\n') + '\n', {
+          return execSync(`git -C "${derivedWorktree}" show HEAD:"${wuEventsRelPath}"`, {
             encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
           });
         } catch {
-          // Non-fatal: best-effort evidence preservation
+          return '';
         }
+      })();
+      const committedLines = new Set(committedContent.trim().split('\n').filter(Boolean));
+      uncommittedBriefLines = preRestoreContent
+        .trim()
+        .split('\n')
+        .filter((line) => !committedLines.has(line) && line.includes('[wu:brief]'));
+    } catch {
+      // Non-fatal: file might not exist
+    }
+
+    try {
+      execSync(`git -C "${derivedWorktree}" restore "${wuEventsRelPath}"`);
+    } catch {
+      // Non-fatal: file might not exist or already clean
+    }
+
+    if (uncommittedBriefLines.length > 0) {
+      try {
+        appendFileSync(wuEventsAbsPath, uncommittedBriefLines.join('\n') + '\n', {
+          encoding: FILE_SYSTEM.UTF8 as BufferEncoding,
+        });
+      } catch {
+        // Non-fatal: best-effort evidence preservation
       }
-    }
-
-    // WU-1382: Detect parallel completions and warn
-    // WU-1584 Fix #3: Trigger auto-rebase instead of just warning
-    console.log(`${LOG_PREFIX.DONE} Checking for parallel WU completions...`);
-    const parallelResult = await detectParallelCompletions(id, docForValidation);
-    if (parallelResult.hasParallelCompletions) {
-      console.warn(parallelResult.warning);
-      // Emit telemetry for parallel detection
-      emitTelemetry({
-        script: 'wu-done',
-        wu_id: id,
-        step: 'parallel_detection',
-        parallel_wus: parallelResult.completedWUs,
-        count: parallelResult.completedWUs.length,
-      });
-
-      // WU-1588: Check inbox for recent signals from parallel agents
-      // Non-blocking: failures handled internally by checkInboxForRecentSignals
-      await checkInboxForRecentSignals(id);
-
-      // WU-1584: Instead of proceeding with warning, trigger auto-rebase
-      // This prevents merge conflicts that would fail downstream
-      if (derivedWorktree && !args.noAutoRebase) {
-        console.log(
-          `${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-1584: Triggering auto-rebase to incorporate parallel completions...`,
-        );
-        const laneBranch = await defaultBranchFrom(docForValidation);
-        if (laneBranch) {
-          const rebaseResult = await autoRebaseBranch(laneBranch, derivedWorktree, id);
-          if (rebaseResult.success) {
-            console.log(
-              `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} WU-1584: Auto-rebase complete - parallel completions incorporated`,
-            );
-            emitTelemetry({
-              script: MICRO_WORKTREE_OPERATIONS.WU_DONE,
-              wu_id: id,
-              step: TELEMETRY_STEPS.PARALLEL_AUTO_REBASE,
-              parallel_wus: parallelResult.completedWUs,
-              count: parallelResult.completedWUs.length,
-            });
-          } else {
-            // Rebase failed - provide detailed instructions
-            console.error(`${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Auto-rebase failed`);
-            console.error(rebaseResult.error);
-            die(
-              `WU-1584: Auto-rebase failed after detecting parallel completions.\n` +
-                `Manual resolution required - see instructions above.`,
-            );
-          }
-        }
-      } else if (!args.noAutoRebase) {
-        // No worktree path available - warn and proceed (legacy behavior)
-        console.log(
-          `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Cannot auto-rebase (no worktree path) - proceeding with caution`,
-        );
-      } else {
-        // Auto-rebase disabled - warn and proceed
-        console.log(
-          `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Auto-rebase disabled (--no-auto-rebase) - proceeding with caution`,
-        );
-      }
-    }
-
-    // WU-1381: Detect background processes that might interfere with gates
-    // Non-blocking warning - helps agents understand mixed stdout/stderr output
-    if (derivedWorktree) {
-      await runBackgroundProcessCheck(derivedWorktree);
-    }
-
-    // WU-1804: Fail fast before gates with comprehensive claim metadata check.
-    // Validates both YAML status AND state store BEFORE gates, not just one of them.
-    // Provides actionable guidance to run wu:repair --claim if validation fails.
-    if (derivedWorktree) {
-      await validateClaimMetadataBeforeGates(id, derivedWorktree, docForValidation.status);
     }
   }
+
+  // WU-1382: Detect parallel completions and warn
+  // WU-1584 Fix #3: Trigger auto-rebase instead of just warning
+  console.log(`${LOG_PREFIX.DONE} Checking for parallel WU completions...`);
+  const parallelResult = await detectParallelCompletions(id, docForValidation);
+  if (parallelResult.hasParallelCompletions) {
+    console.warn(parallelResult.warning);
+    emitTelemetry({
+      script: 'wu-done',
+      wu_id: id,
+      step: 'parallel_detection',
+      parallel_wus: parallelResult.completedWUs,
+      count: parallelResult.completedWUs.length,
+    });
+
+    await checkInboxForRecentSignals(id);
+
+    if (derivedWorktree && !args.noAutoRebase) {
+      console.log(
+        `${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-1584: Triggering auto-rebase to incorporate parallel completions...`,
+      );
+      const laneBranch = await defaultBranchFrom(docForValidation);
+      if (laneBranch) {
+        const rebaseResult = await autoRebaseBranch(laneBranch, derivedWorktree, id);
+        if (rebaseResult.success) {
+          console.log(
+            `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} WU-1584: Auto-rebase complete - parallel completions incorporated`,
+          );
+          emitTelemetry({
+            script: MICRO_WORKTREE_OPERATIONS.WU_DONE,
+            wu_id: id,
+            step: TELEMETRY_STEPS.PARALLEL_AUTO_REBASE,
+            parallel_wus: parallelResult.completedWUs,
+            count: parallelResult.completedWUs.length,
+          });
+        } else {
+          console.error(`${LOG_PREFIX.DONE} ${EMOJI.FAILURE} Auto-rebase failed`);
+          console.error(rebaseResult.error);
+          die(
+            `WU-1584: Auto-rebase failed after detecting parallel completions.\n` +
+              `Manual resolution required - see instructions above.`,
+          );
+        }
+      }
+    } else if (!args.noAutoRebase) {
+      console.log(
+        `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Cannot auto-rebase (no worktree path) - proceeding with caution`,
+      );
+    } else {
+      console.log(
+        `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Auto-rebase disabled (--no-auto-rebase) - proceeding with caution`,
+      );
+    }
+  }
+
+  // WU-1381: Detect background processes that might interfere with gates
+  if (derivedWorktree) {
+    await runBackgroundProcessCheck(derivedWorktree);
+  }
+
+  // WU-1804: Fail fast before gates with comprehensive claim metadata check.
+  if (derivedWorktree) {
+    await validateClaimMetadataBeforeGates(id, derivedWorktree, docForValidation.status);
+  }
+}
+
+/** Validate ownership: session ownership + assigned_to ownership (worktree mode only). */
+async function preflightValidateOwnership(params: {
+  id: string;
+  args: WuDoneArgsLike;
+  isBranchOnly: boolean;
+  docForValidation: WUDocLike;
+  derivedWorktree: string | null;
+}): Promise<void> {
+  const { id, args, isBranchOnly, docForValidation, derivedWorktree } = params;
+  if (isBranchOnly) return;
+
+  const activeSession = getCurrentSessionForWU();
+  const prepCheckpointResult = await resolveCheckpointSkipResult(id, derivedWorktree || null);
+  const sessionOwnership = validateClaimSessionOwnership({
+    wuId: id,
+    claimedSessionId:
+      typeof docForValidation.session_id === 'string' ? docForValidation.session_id : null,
+    activeSessionId: activeSession?.session_id ?? null,
+    force: Boolean(args.force),
+    hasValidPrepCheckpoint: prepCheckpointResult.canSkip,
+    skipGates: Boolean(args['skip-gates']),
+  });
+
+  if (!sessionOwnership.valid) {
+    die(sessionOwnership.error ?? 'Claim-session ownership check failed');
+  }
+
+  if (
+    sessionOwnership.auditRequired &&
+    typeof docForValidation.session_id === 'string' &&
+    derivedWorktree
+  ) {
+    await appendClaimSessionOverrideAuditEvent({
+      wuId: id,
+      claimedSessionId: docForValidation.session_id,
+      activeSessionId: activeSession?.session_id ?? null,
+      reason: args.reason || 'force ownership override',
+      worktreePath: derivedWorktree,
+    });
+    console.log(
+      `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Claim-session ownership overridden with --force; audit checkpoint recorded.`,
+    );
+  }
+
+  const ownershipCheck = await checkOwnership(
+    id,
+    docForValidation,
+    derivedWorktree,
+    args.overrideOwner,
+    args.reason,
+  );
+
+  if (!ownershipCheck.valid) {
+    die(ownershipCheck.error ?? 'Ownership check failed');
+  }
+
+  if (ownershipCheck.auditEntry) {
+    auditOwnershipOverride(ownershipCheck.auditEntry);
+
+    const overrideNote = `Ownership override: Completed by ${ownershipCheck.auditEntry.completed_by} (assigned to ${ownershipCheck.auditEntry.assigned_to}). Reason: ${args.reason}`;
+    appendNote(docForValidation, overrideNote);
+
+    if (derivedWorktree) {
+      const wtWUPath = path.join(derivedWorktree, WU_PATHS.WU(id));
+      if (existsSync(wtWUPath)) {
+        writeWU(wtWUPath, docForValidation);
+      }
+    }
+  }
+}
+
+/** WU-1280: Early spec completeness validation (before gates). */
+function preflightValidateSpecCompleteness(id: string, docForValidation: WUDocLike): void {
+  console.log(`\n${LOG_PREFIX.DONE} Validating spec completeness for ${id}...`);
+  const specResult = validateSpecCompleteness(docForValidation, id);
+  if (!specResult.valid) {
+    console.error(`\n❌ Spec completeness validation failed for ${id}:\n`);
+    specResult.errors.forEach((err) => console.error(`  - ${err}`));
+    const specConfig = getConfig();
+    console.error(
+      `\nFix these issues before running wu:done:\n` +
+        `  1. Update ${specConfig.directories.wuDir}/${id}.yaml\n` +
+        `  2. Fill description with Context/Problem/Solution\n` +
+        `  3. Replace ${PLACEHOLDER_SENTINEL} text with specific criteria\n` +
+        `  4. List all modified files in code_paths\n` +
+        `  5. Add at least one test path (unit, e2e, integration, or manual)\n` +
+        `  6. Re-run: pnpm wu:done --id ${id}\n\n` +
+        `See: CLAUDE.md §2.7 "WUs are specs, not code"\n`,
+    );
+    die(`Cannot mark ${id} as done - spec incomplete`);
+  }
+  console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Spec completeness check passed`);
+
+  // WU-1351: Validate code_paths files exist
+  console.log(`\n${LOG_PREFIX.DONE} Validating code_paths existence for ${id}...`);
+}
+
+/** WU-1324 + WU-1542: Check mandatory agent compliance. */
+function preflightCheckMandatoryAgents(
+  id: string,
+  args: WuDoneArgsLike,
+  codePaths: string[],
+): void {
+  const compliance = checkMandatoryAgentsComplianceBlocking(codePaths, id, {
+    blocking: Boolean(args.requireAgents),
+  });
+
+  if (compliance.blocking && compliance.errorMessage) {
+    die(compliance.errorMessage);
+  } else if (!compliance.compliant) {
+    console.warn(`\n${LOG_PREFIX.DONE} ${EMOJI.WARNING} MANDATORY AGENT WARNING`);
+    console.warn(`The following mandatory agents were not confirmed as invoked:`);
+    for (const agent of compliance.missing) {
+      console.warn(`  • ${agent}`);
+    }
+    console.warn(`\nThis is a NON-BLOCKING warning.`);
+    console.warn(`Use --require-agents to make this a blocking error.\n`);
+  }
+}
+
+/** Validate --skip-gates requirements: --reason and --fix-wu are mandatory. */
+function preflightValidateSkipGatesRequirements(args: WuDoneArgsLike): void {
+  if (!args.skipGates) return;
+  if (!args.reason) {
+    die('--skip-gates requires --reason "<explanation of why gates are being skipped>"');
+  }
+  if (!args.fixWu) {
+    die('--skip-gates requires --fix-wu WU-{id} (the WU that will fix the failing tests)');
+  }
+  if (!PATTERNS.WU_ID.test(args.fixWu.toUpperCase())) {
+    die(`Invalid --fix-wu value '${args.fixWu}'. Expected format: WU-123`);
+  }
+}
+
+// ── End of extracted validators ──
+
+async function executePreFlightChecks({
+  id,
+  args,
+  isBranchOnly,
+  isDocsOnly,
+  docMain,
+  docForValidation,
+  derivedWorktree,
+}: PreFlightParams): Promise<{ title: string; docForValidation: WUDocLike }> {
+  // WU-2400: Delegates to named validator functions to reduce cognitive complexity.
+  const schemaResult = preflightValidateYamlSchema(docForValidation);
+  // schemaResult.data is guaranteed defined: preflightValidateYamlSchema die()s on failure
+  preflightValidateApprovalGates(id, schemaResult.data!);
+  await preflightValidateCodePathsConsistency(id, docForValidation, derivedWorktree);
+
+  // Tripwire: Scan commands log for violations
+  runTripwireCheck();
+
+  await preflightValidateBacklogAndStateConsistency(id);
+  await preflightValidateWorktreeState({
+    id,
+    args,
+    isBranchOnly,
+    docMain,
+    docForValidation,
+    derivedWorktree,
+  });
 
   // Use worktree title for commit message (not stale main title)
   const title = docForValidation.title || docMain.title || '';
@@ -1247,99 +1399,17 @@ async function executePreFlightChecks({
     console.log('   - No worktree to remove\n');
   }
 
-  // Ownership check (skip in branch-only mode)
-  if (!isBranchOnly) {
-    const activeSession = getCurrentSessionForWU();
-    // WU-2341: Check if wu:prep created a valid checkpoint — proves authorized session handoff.
-    const prepCheckpointResult = await resolveCheckpointSkipResult(id, derivedWorktree || null);
-    const sessionOwnership = validateClaimSessionOwnership({
-      wuId: id,
-      claimedSessionId:
-        typeof docForValidation.session_id === 'string' ? docForValidation.session_id : null,
-      activeSessionId: activeSession?.session_id ?? null,
-      force: Boolean(args.force),
-      hasValidPrepCheckpoint: prepCheckpointResult.canSkip,
-      skipGates: Boolean(args['skip-gates']),
-    });
+  await preflightValidateOwnership({
+    id,
+    args,
+    isBranchOnly,
+    docForValidation,
+    derivedWorktree,
+  });
 
-    if (!sessionOwnership.valid) {
-      die(sessionOwnership.error ?? 'Claim-session ownership check failed');
-    }
+  preflightValidateSpecCompleteness(id, docForValidation);
 
-    if (
-      sessionOwnership.auditRequired &&
-      typeof docForValidation.session_id === 'string' &&
-      derivedWorktree
-    ) {
-      await appendClaimSessionOverrideAuditEvent({
-        wuId: id,
-        claimedSessionId: docForValidation.session_id,
-        activeSessionId: activeSession?.session_id ?? null,
-        reason: args.reason || 'force ownership override',
-        worktreePath: derivedWorktree,
-      });
-      console.log(
-        `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Claim-session ownership overridden with --force; audit checkpoint recorded.`,
-      );
-    }
-
-    const ownershipCheck = await checkOwnership(
-      id,
-      docForValidation,
-      derivedWorktree,
-      args.overrideOwner,
-      args.reason,
-    );
-
-    if (!ownershipCheck.valid) {
-      die(ownershipCheck.error ?? 'Ownership check failed');
-    }
-
-    // If override was used, log to audit trail and add to WU notes
-    if (ownershipCheck.auditEntry) {
-      auditOwnershipOverride(ownershipCheck.auditEntry);
-
-      // Add override reason to WU notes (schema requires string, not array)
-      const overrideNote = `Ownership override: Completed by ${ownershipCheck.auditEntry.completed_by} (assigned to ${ownershipCheck.auditEntry.assigned_to}). Reason: ${args.reason}`;
-      appendNote(docForValidation, overrideNote);
-
-      // Write updated WU YAML back to worktree
-      if (derivedWorktree) {
-        const wtWUPath = path.join(derivedWorktree, WU_PATHS.WU(id));
-        if (existsSync(wtWUPath)) {
-          writeWU(wtWUPath, docForValidation);
-        }
-      }
-    }
-  }
-
-  // WU-1280: Early spec completeness validation (before gates)
-  // Catches missing tests.manual, empty code_paths, etc. BEFORE 2min gate run
-  console.log(`\n${LOG_PREFIX.DONE} Validating spec completeness for ${id}...`);
-  const specResult = validateSpecCompleteness(docForValidation, id);
-  if (!specResult.valid) {
-    console.error(`\n❌ Spec completeness validation failed for ${id}:\n`);
-    specResult.errors.forEach((err) => console.error(`  - ${err}`));
-    // WU-1311: Use config-based path in error message
-    const specConfig = getConfig();
-    console.error(
-      `\nFix these issues before running wu:done:\n` +
-        `  1. Update ${specConfig.directories.wuDir}/${id}.yaml\n` +
-        `  2. Fill description with Context/Problem/Solution\n` +
-        `  3. Replace ${PLACEHOLDER_SENTINEL} text with specific criteria\n` +
-        `  4. List all modified files in code_paths\n` +
-        `  5. Add at least one test path (unit, e2e, integration, or manual)\n` +
-        `  6. Re-run: pnpm wu:done --id ${id}\n\n` +
-        `See: CLAUDE.md §2.7 "WUs are specs, not code"\n`,
-    );
-    die(`Cannot mark ${id} as done - spec incomplete`);
-  }
-  console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Spec completeness check passed`);
-
-  // WU-1351: Validate code_paths files exist (prevents false completions)
-  // In worktree mode: validate files exist in worktree (will be merged)
-  // In branch-only mode: validate files exist on current branch
-  console.log(`\n${LOG_PREFIX.DONE} Validating code_paths existence for ${id}...`);
+  // code_paths existence check (continuation of spec completeness)
   const codePathsResult = await validateCodePathsExist(docForValidation, id, {
     worktreePath: derivedWorktree,
     targetBranch: isBranchOnly ? 'HEAD' : BRANCHES.MAIN,
@@ -1352,26 +1422,7 @@ async function executePreFlightChecks({
     die(`Cannot mark ${id} as done - code_paths missing from target branch`);
   }
 
-  // WU-1324 + WU-1542: Check mandatory agent compliance
-  // WU-1542: --require-agents makes this a BLOCKING check
-  const codePaths = docForValidation.code_paths || [];
-  const compliance = checkMandatoryAgentsComplianceBlocking(codePaths, id, {
-    blocking: Boolean(args.requireAgents),
-  });
-
-  if (compliance.blocking && compliance.errorMessage) {
-    // WU-1542: Blocking mode - fail wu:done with detailed error
-    die(compliance.errorMessage);
-  } else if (!compliance.compliant) {
-    // Non-blocking mode - show warning (original WU-1324 behavior)
-    console.warn(`\n${LOG_PREFIX.DONE} ${EMOJI.WARNING} MANDATORY AGENT WARNING`);
-    console.warn(`The following mandatory agents were not confirmed as invoked:`);
-    for (const agent of compliance.missing) {
-      console.warn(`  • ${agent}`);
-    }
-    console.warn(`\nThis is a NON-BLOCKING warning.`);
-    console.warn(`Use --require-agents to make this a blocking error.\n`);
-  }
+  preflightCheckMandatoryAgents(id, args, docForValidation.code_paths || []);
 
   // WU-1012: Validate --docs-only flag usage (BLOCKING)
   const docsOnlyValidation = validateDocsOnlyFlag(docForValidation, { docsOnly: args.docsOnly });
@@ -1390,18 +1441,7 @@ async function executePreFlightChecks({
   // Run WU validator
   runWUValidator(docForValidation, id, args.allowTodo, derivedWorktree);
 
-  // Validate skip-gates requirements
-  if (args.skipGates) {
-    if (!args.reason) {
-      die('--skip-gates requires --reason "<explanation of why gates are being skipped>"');
-    }
-    if (!args.fixWu) {
-      die('--skip-gates requires --fix-wu WU-{id} (the WU that will fix the failing tests)');
-    }
-    if (!PATTERNS.WU_ID.test(args.fixWu.toUpperCase())) {
-      die(`Invalid --fix-wu value '${args.fixWu}'. Expected format: WU-123`);
-    }
-  }
+  preflightValidateSkipGatesRequirements(args);
 
   return { title, docForValidation };
 }
@@ -1455,136 +1495,121 @@ function printStateHUD({
   );
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity -- Pre-existing complexity, refactor tracked separately
-export async function main() {
-  // Allow pre-push hook to recognize wu:done automation (WU-1030)
-  process.env[ENV_VARS.WU_TOOL] = 'wu-done';
+// ── WU-2400: Extracted path-specific handlers from main() ──
 
-  // Validate CLI arguments and WU ID format (extracted to wu-done-validators.ts)
-  const { args, id } = validateInputs(process.argv);
+/**
+ * WU-2211: Handle --already-merged early exit path.
+ * Skips merge phase, gates, worktree detection. Only writes metadata.
+ */
+async function executeAlreadyMergedFinalizePath(id: string, docMain: WUDocLike): Promise<never> {
+  console.log(`${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-2211: --already-merged mode activated`);
 
-  // WU-1223: Check if running from worktree - wu:done now requires main checkout
-  // Agents should use wu:prep from worktree, then wu:done from main
-  const { LOCATION_TYPES } = CONTEXT_VALIDATION;
-  const currentLocation = await resolveLocation();
-  if (currentLocation.type === LOCATION_TYPES.WORKTREE) {
+  // Safety check: verify code_paths exist on HEAD of main
+  const codePaths = (docMain.code_paths as string[]) || [];
+  const verification = await verifyCodePathsOnMainHead(codePaths);
+
+  if (!verification.valid) {
     die(
-      `${EMOJI.FAILURE} wu:done must be run from main checkout, not from a worktree.\n\n` +
-        `Current location: ${currentLocation.cwd}\n\n` +
-        `WU-1223 NEW WORKFLOW:\n` +
-        `  1. From worktree, run: pnpm wu:prep --id ${id}\n` +
-        `     (This runs gates and prepares for completion)\n\n` +
-        `  2. From main, run: cd ${currentLocation.mainCheckout} && pnpm wu:done --id ${id}\n` +
-        `     (This does merge + cleanup only)\n\n` +
-        `Use wu:prep to run gates in the worktree, then wu:done from main for merge/cleanup.`,
+      `${EMOJI.FAILURE} --already-merged safety check failed\n\n` +
+        `${verification.error}\n\n` +
+        `Cannot finalize ${id}: code_paths must exist on HEAD before using --already-merged.`,
     );
   }
 
-  // Detect workspace mode and calculate paths (WU-1215: extracted to validators module)
-  const pathInfo = await detectModeAndPaths(id, args);
+  console.log(
+    `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Safety check passed: all ${codePaths.length} code_paths verified on HEAD`,
+  );
+
+  // Execute finalize-only path
+  const title = String(docMain.title || id);
+  const lane = String(docMain.lane || '');
+  const finalizeResult = await executeAlreadyMergedFinalizeFromModule({
+    id,
+    title,
+    lane,
+    doc: docMain as Record<string, unknown>,
+  });
+
+  if (!finalizeResult.success) {
+    die(
+      `${EMOJI.FAILURE} --already-merged finalization failed\n\n` +
+        `Errors:\n${finalizeResult.errors.map((e) => `  - ${e}`).join('\n')}\n\n` +
+        `Partial state may remain. Rerun: pnpm wu:done --id ${id} --already-merged`,
+    );
+  }
+
+  // Release lane lock (non-blocking)
+  try {
+    const lane = docMain.lane;
+    if (lane) {
+      const releaseResult = releaseLaneLock(lane, { wuId: id });
+      if (releaseResult.released && !releaseResult.notFound) {
+        console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Lane lock released for "${lane}"`);
+      }
+    }
+  } catch (err) {
+    console.warn(
+      `${LOG_PREFIX.DONE} Warning: Could not release lane lock: ${getErrorMessage(err)}`,
+    );
+  }
+
+  // End agent session (non-blocking)
+  try {
+    endSessionForWU();
+  } catch {
+    // Non-blocking
+  }
+
+  // Broadcast completion signal (non-blocking)
+  await broadcastCompletionSignal(id, title);
+
+  console.log(`\n${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} ${id} finalized via --already-merged`);
+  console.log(`- WU: ${id} -- ${title}`);
+
+  clearConfigCache();
+  process.exit(EXIT_CODES.SUCCESS);
+}
+
+/**
+ * WU-2400: The normal wu:done pipeline (validation, gates, completion, cleanup).
+ * Extracted from main() to reduce cognitive complexity.
+ */
+async function executeNormalWuDonePath(params: {
+  id: string;
+  args: ReturnType<typeof validateInputs>['args'];
+  docMain: WUDocLike;
+  initialDocForValidation: WUDocLike;
+  isBranchOnly: boolean;
+  isBranchPR: boolean;
+  derivedWorktree: string | null;
+  isDocsOnly: boolean;
+  mainCheckoutPath: string;
+  WU_PATH: string;
+  STATUS_PATH: string;
+  BACKLOG_PATH: string;
+  STAMPS_DIR: string;
+}): Promise<void> {
   const {
+    id,
+    args,
+    docMain,
+    initialDocForValidation,
+    isBranchOnly,
+    isBranchPR,
+    derivedWorktree,
+    isDocsOnly,
+    mainCheckoutPath,
     WU_PATH,
     STATUS_PATH,
     BACKLOG_PATH,
     STAMPS_DIR,
-    docMain: docMainRaw,
-    isBranchOnly,
-    // WU-1492: Detect branch-pr mode for separate completion path
-    isBranchPR,
-    derivedWorktree,
-    docForValidation: initialDocForValidationRaw,
-    isDocsOnly,
-  } = pathInfo;
-  const docMain = normalizeWUDocLike(docMainRaw);
-  const initialDocForValidation = normalizeWUDocLike(initialDocForValidationRaw);
-
-  // Capture main checkout path once. process.cwd() may drift later during recovery flows.
-  const mainCheckoutPath = process.cwd();
-
-  // ──────────────────────────────────────────────
-  // WU-2211: --already-merged early exit path
-  // Skips merge phase, gates, worktree detection. Only writes metadata.
-  // ──────────────────────────────────────────────
-  if (args.alreadyMerged) {
-    console.log(`${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-2211: --already-merged mode activated`);
-
-    // Safety check: verify code_paths exist on HEAD of main
-    const codePaths = (docMain.code_paths as string[]) || [];
-    const verification = await verifyCodePathsOnMainHead(codePaths);
-
-    if (!verification.valid) {
-      die(
-        `${EMOJI.FAILURE} --already-merged safety check failed\n\n` +
-          `${verification.error}\n\n` +
-          `Cannot finalize ${id}: code_paths must exist on HEAD before using --already-merged.`,
-      );
-    }
-
-    console.log(
-      `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Safety check passed: all ${codePaths.length} code_paths verified on HEAD`,
-    );
-
-    // Execute finalize-only path
-    const title = String(docMain.title || id);
-    const lane = String(docMain.lane || '');
-    const finalizeResult = await executeAlreadyMergedFinalizeFromModule({
-      id,
-      title,
-      lane,
-      doc: docMain as Record<string, unknown>,
-    });
-
-    if (!finalizeResult.success) {
-      die(
-        `${EMOJI.FAILURE} --already-merged finalization failed\n\n` +
-          `Errors:\n${finalizeResult.errors.map((e) => `  - ${e}`).join('\n')}\n\n` +
-          `Partial state may remain. Rerun: pnpm wu:done --id ${id} --already-merged`,
-      );
-    }
-
-    // Release lane lock (non-blocking, same as normal wu:done)
-    try {
-      const lane = docMain.lane;
-      if (lane) {
-        const releaseResult = releaseLaneLock(lane, { wuId: id });
-        if (releaseResult.released && !releaseResult.notFound) {
-          console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Lane lock released for "${lane}"`);
-        }
-      }
-    } catch (err) {
-      console.warn(
-        `${LOG_PREFIX.DONE} Warning: Could not release lane lock: ${getErrorMessage(err)}`,
-      );
-    }
-
-    // End agent session (non-blocking)
-    try {
-      endSessionForWU();
-    } catch {
-      // Non-blocking
-    }
-
-    // Broadcast completion signal (non-blocking)
-    await broadcastCompletionSignal(id, title);
-
-    console.log(`\n${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} ${id} finalized via --already-merged`);
-    console.log(`- WU: ${id} -- ${title}`);
-
-    clearConfigCache();
-    process.exit(EXIT_CODES.SUCCESS);
-  }
+  } = params;
 
   // WU-1663: Determine prepPassed early for pipeline actor input.
-  // canSkipGates checks if wu:prep already ran gates successfully via checkpoint.
-  // This drives the isPrepPassed guard on the GATES_SKIPPED transition.
-  // WU-2102: Look for checkpoint in worktree (where wu:prep writes it), not main
   const earlySkipResult = await resolveCheckpointSkipResult(id, derivedWorktree || null);
   const prepPassed = earlySkipResult.canSkip;
 
   // WU-1663: Create XState pipeline actor for state-driven orchestration.
-  // The actor tracks which pipeline stage we're in (validating, gating, committing, etc.)
-  // and provides explicit state/transition contracts. Existing procedural logic continues
-  // to do the real work; the actor provides structured state tracking alongside it.
   const pipelineActor = createActor(wuDoneMachine, {
     input: {
       wuId: id,
@@ -1594,7 +1619,6 @@ export async function main() {
   });
   pipelineActor.start();
 
-  // WU-1663: Send START event to transition from idle -> validating
   pipelineActor.send({
     type: WU_DONE_EVENTS.START,
     wuId: id,
@@ -1612,7 +1636,6 @@ export async function main() {
   const worktreeExists = resolvedWorktreePath ? existsSync(resolvedWorktreePath) : false;
   const { allowFallback: allowBranchOnlyFallback, effectiveBranchOnly } = computeBranchOnlyFallback(
     {
-      // WU-1590: Treat branch-pr like branch-only for fallback computation
       isBranchOnly: isNoWorktreeMode,
       branchOnlyRequested: args.branchOnly,
       worktreeExists,
@@ -1640,20 +1663,17 @@ export async function main() {
   }
 
   // WU-2327: Verify current-session wu:brief evidence before pre-flight restores
-  // the tracked worktree wu-events log used to keep auto-rebase safe.
   await enforceWuBriefEvidenceForDone(id, docMain, {
     baseDir: effectiveWorktreePath || mainCheckoutPath,
     force: Boolean(args.force),
   });
 
   // WU-1169: Ensure worktree is clean before proceeding
-  // This prevents WU-1943 rollback loops if rebase fails due to dirty state
   if (effectiveWorktreePath && existsSync(effectiveWorktreePath)) {
     await ensureCleanWorktree(effectiveWorktreePath);
   }
 
-  // Pre-flight checks (WU-1215: extracted to executePreFlightChecks function)
-  // WU-1663: Wrap in try/catch to send pipeline failure event before die() propagates
+  // Pre-flight checks
   let preFlightResult: Awaited<ReturnType<typeof executePreFlightChecks>>;
   try {
     preFlightResult = await executePreFlightChecks({
@@ -1674,10 +1694,7 @@ export async function main() {
     throw preFlightErr;
   }
   const title = preFlightResult.title;
-  // Note: docForValidation is returned but not used after pre-flight checks
-  // The metadata transaction uses docForUpdate instead
 
-  // WU-1663: Pre-flight checks passed - transition to preparing state
   pipelineActor.send({ type: WU_DONE_EVENTS.VALIDATION_PASSED });
 
   // WU-1599: Enforce auditable spawn provenance for initiative-governed WUs.
@@ -1686,10 +1703,10 @@ export async function main() {
     force: Boolean(args.force),
   });
 
-  // Step 0: Run gates (WU-1215: extracted to executeGates function)
+  // Step 0: Run gates
   const worktreePath = effectiveWorktreePath;
 
-  // WU-1471 AC3 + WU-1998: Config-driven checkpoint gate with accurate warn-mode messaging.
+  // WU-1471 AC3 + WU-1998: Config-driven checkpoint gate
   const checkpointGateConfig = getConfig();
   const requireCheckpoint = resolveCheckpointGateMode(
     checkpointGateConfig.memory?.enforcement?.require_checkpoint_for_done,
@@ -1700,7 +1717,6 @@ export async function main() {
     mode: requireCheckpoint,
   });
 
-  // WU-1663: Preparation complete - transition to gating state
   pipelineActor.send({ type: WU_DONE_EVENTS.PREPARATION_COMPLETE });
 
   // WU-2102: Resolve scoped test paths from WU spec tests.unit for gate fallback
@@ -1708,7 +1724,6 @@ export async function main() {
     tests: docMain.tests as { unit?: unknown } | undefined,
   });
 
-  // WU-1663: Wrap gates in try/catch to send pipeline failure event
   let gateExecutionResult: Awaited<ReturnType<typeof executeGates>>;
   try {
     gateExecutionResult = await executeGates(
@@ -1736,15 +1751,12 @@ export async function main() {
     throw gateErr;
   }
 
-  // WU-1663: Gates passed - transition from gating state.
-  // Use GATES_SKIPPED if checkpoint dedup allowed skip, GATES_PASSED otherwise.
   if (gateExecutionResult.skippedByCheckpoint) {
     pipelineActor.send({ type: WU_DONE_EVENTS.GATES_SKIPPED });
   } else {
     pipelineActor.send({ type: WU_DONE_EVENTS.GATES_PASSED });
   }
 
-  // Print State HUD for visibility (WU-1215: extracted to printStateHUD function)
   printStateHUD({
     id,
     docMain,
@@ -1768,7 +1780,6 @@ export async function main() {
   });
 
   // Step 1: Execute mode-specific completion workflow (WU-2167)
-  // Main remains orchestration-only; execution details live in wu-done-mode-execution.ts.
   let completionResult: {
     cleanupSafe?: boolean;
     success?: boolean;
@@ -1808,10 +1819,8 @@ export async function main() {
   }
 
   // WU-2262: Do not run repository-wide worktree_path sanitation from local main during wu:done.
-  // The prior flow could leave staged residue on main when direct-commit guards blocked commit hooks.
 
-  // Step 6 & 7: Cleanup (remove worktree, delete branch) - WU-1215
-  // WU-1811: Only run cleanup if all completion steps succeeded
+  // Step 6 & 7: Cleanup (remove worktree, delete branch)
   if (completionResult.cleanupSafe !== false) {
     await runCleanup(docMain, args);
   } else {
@@ -1821,7 +1830,6 @@ export async function main() {
   }
 
   // WU-1603: Release lane lock after successful completion
-  // This allows the lane to be claimed by another WU
   try {
     const lane = docMain.lane;
     if (lane) {
@@ -1829,10 +1837,8 @@ export async function main() {
       if (releaseResult.released && !releaseResult.notFound) {
         console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Lane lock released for "${lane}"`);
       }
-      // Silent if notFound - lock may not exist (older WUs, manual cleanup)
     }
   } catch (err) {
-    // Non-blocking: lock release failure should not block completion
     console.warn(
       `${LOG_PREFIX.DONE} Warning: Could not release lane lock: ${getErrorMessage(err)}`,
     );
@@ -1844,26 +1850,21 @@ export async function main() {
     if (sessionResult.ended) {
       const sessionId = sessionResult.summary?.session_id;
       if (sessionId) {
-        // Emergency fix Session 2: Use SESSION.ID_DISPLAY_LENGTH constant
         console.log(
           `${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Agent session ended (${sessionId.slice(0, SESSION.ID_DISPLAY_LENGTH)}...)`,
         );
       }
     }
-    // No warning if no active session - silent no-op is expected
   } catch (err) {
-    // Non-blocking: session end failure should not block completion
     console.warn(
       `${LOG_PREFIX.DONE} Warning: Could not end agent session: ${getErrorMessage(err)}`,
     );
   }
 
   // WU-1588: Broadcast completion signal after session end
-  // Non-blocking: failures handled internally by broadcastCompletionSignal
   await broadcastCompletionSignal(id, title);
 
-  // WU-1473: Mark completed-WU signals as read using receipt-aware behavior
-  // Non-blocking: markCompletedWUSignalsAsRead is fail-open (AC4)
+  // WU-1473: Mark completed-WU signals as read
   const markResult = await markCompletedWUSignalsAsRead(mainCheckoutPath, id);
   if (markResult.markedCount > 0) {
     console.log(
@@ -1872,8 +1873,6 @@ export async function main() {
   }
 
   // WU-1946: Update spawn registry to mark WU as completed
-  // Non-blocking: failures handled internally by updateSpawnRegistryOnCompletion
-  // Works in both worktree and branch-only modes (called after completionResult)
   await updateSpawnRegistryOnCompletion(id, mainCheckoutPath);
 
   await flushWuLifecycleSync(
@@ -1890,15 +1889,12 @@ export async function main() {
   );
 
   // WU-1747: Clear checkpoint on successful completion
-  // Checkpoint is no longer needed once WU is fully complete
   clearCheckpoint(id, { baseDir: worktreePath || undefined });
 
   // WU-1471 AC4: Remove per-WU hook counter file on completion
-  // Fail-safe: cleanupHookCounters never throws
   cleanupHookCounters(mainCheckoutPath, id);
 
   // WU-1474: Invoke decay archival when memory.decay policy is configured
-  // Non-blocking: errors are captured but never block wu:done completion (fail-open)
   try {
     const decayConfig = getConfig().memory?.decay;
     const decayResult = await runDecayOnDone(mainCheckoutPath, decayConfig);
@@ -1912,7 +1908,6 @@ export async function main() {
       );
     }
   } catch (err) {
-    // Double fail-open: even if runDecayOnDone itself throws unexpectedly, never block wu:done
     console.warn(
       `${LOG_PREFIX.DONE} ${EMOJI.WARNING} Decay archival error (fail-open): ${getErrorMessage(err)}`,
     );
@@ -1921,7 +1916,6 @@ export async function main() {
   // WU-1663: Cleanup complete - transition to final done state
   pipelineActor.send({ type: WU_DONE_EVENTS.CLEANUP_COMPLETE });
 
-  // WU-1663: Log final pipeline state for diagnostics
   const finalSnapshot = pipelineActor.getSnapshot();
   console.log(`${LOG_PREFIX.DONE} Pipeline state: ${finalSnapshot.value} (WU-1663)`);
   pipelineActor.stop();
@@ -1932,17 +1926,12 @@ export async function main() {
   console.log(`${LOG_PREFIX.DONE} ${EMOJI.SUCCESS} Marked done, pushed, and cleaned up.`);
   console.log(`- WU: ${id} — ${title}`);
 
-  // WU-2126: Invalidate config cache so subsequent commands in the same process
-  // read fresh values from disk (wu:done may have mutated workspace.yaml/state).
   clearConfigCache();
 
   // WU-1763: Print lifecycle nudges (conditional, non-blocking)
-  // Discovery summary nudge - only if discoveries exist
   const discoveries = await loadDiscoveriesForWU(mainCheckoutPath, id);
   printDiscoveryNudge(id, discoveries.count, discoveries.ids);
 
-  // Documentation validation nudge - only if docs changed
-  // Use worktreePath if available, otherwise skip (branch-only mode has no worktree)
   if (worktreePath) {
     const changedDocs = await detectChangedDocPaths(worktreePath, BRANCHES.MAIN);
     printDocValidationNudge(id, changedDocs);
@@ -1955,18 +1944,78 @@ export async function main() {
     currentBranch !== BRANCHES.MASTER;
 
   if (shouldRunCleanupMutations) {
-    // WU-1366: Auto state cleanup after successful completion
-    // Non-fatal: errors are logged but do not block completion
     await runAutoCleanupAfterDone(mainCheckoutPath);
-
-    // WU-1533: Auto-commit dirty state files left by cleanup.
-    // Branch-aware: in branch-pr mode this stays on the lane branch.
     await commitCleanupChanges({ targetBranch: currentBranch });
   } else {
     console.log(
       `${LOG_PREFIX.DONE} ${EMOJI.INFO} WU-1611: Skipping auto-cleanup mutations on protected branch ${currentBranch}`,
     );
   }
+}
+
+// ── End of extracted path-specific handlers ──
+
+export async function main() {
+  // Allow pre-push hook to recognize wu:done automation (WU-1030)
+  process.env[ENV_VARS.WU_TOOL] = 'wu-done';
+
+  // Validate CLI arguments and WU ID format
+  const { args, id } = validateInputs(process.argv);
+
+  // WU-1223: Check if running from worktree - wu:done requires main checkout
+  const { LOCATION_TYPES } = CONTEXT_VALIDATION;
+  const currentLocation = await resolveLocation();
+  if (currentLocation.type === LOCATION_TYPES.WORKTREE) {
+    die(
+      `${EMOJI.FAILURE} wu:done must be run from main checkout, not from a worktree.\n\n` +
+        `Current location: ${currentLocation.cwd}\n\n` +
+        `WU-1223 NEW WORKFLOW:\n` +
+        `  1. From worktree, run: pnpm wu:prep --id ${id}\n` +
+        `     (This runs gates and prepares for completion)\n\n` +
+        `  2. From main, run: cd ${currentLocation.mainCheckout} && pnpm wu:done --id ${id}\n` +
+        `     (This does merge + cleanup only)\n\n` +
+        `Use wu:prep to run gates in the worktree, then wu:done from main for merge/cleanup.`,
+    );
+  }
+
+  // Detect workspace mode and calculate paths
+  const pathInfo = await detectModeAndPaths(id, args);
+  const {
+    WU_PATH,
+    STATUS_PATH,
+    BACKLOG_PATH,
+    STAMPS_DIR,
+    docMain: docMainRaw,
+    isBranchOnly,
+    isBranchPR,
+    derivedWorktree,
+    docForValidation: initialDocForValidationRaw,
+    isDocsOnly,
+  } = pathInfo;
+  const docMain = normalizeWUDocLike(docMainRaw);
+  const initialDocForValidation = normalizeWUDocLike(initialDocForValidationRaw);
+  const mainCheckoutPath = process.cwd();
+
+  // WU-2400: Dispatch to extracted path-specific handlers.
+  if (args.alreadyMerged) {
+    await executeAlreadyMergedFinalizePath(id, docMain);
+  }
+
+  await executeNormalWuDonePath({
+    id,
+    args,
+    docMain,
+    initialDocForValidation,
+    isBranchOnly,
+    isBranchPR,
+    derivedWorktree,
+    isDocsOnly,
+    mainCheckoutPath,
+    WU_PATH,
+    STATUS_PATH,
+    BACKLOG_PATH,
+    STAMPS_DIR,
+  });
 }
 
 /**
