@@ -3342,3 +3342,6 @@
 {"type":"checkpoint","wuId":"WU-2414","timestamp":"2026-03-12T14:59:27.586Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2414.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2414","timestamp":"2026-03-12T15:01:53.673Z"}
 {"type":"claim","wuId":"WU-2415","timestamp":"2026-03-12T15:03:21.455Z","lane":"Framework: Core Lifecycle","title":"Add streaming turns with explicit evidence support"}
+{"type":"checkpoint","wuId":"WU-2415","timestamp":"2026-03-12T15:03:34.712Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2415","timestamp":"2026-03-12T15:03:41.686Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2415","timestamp":"2026-03-12T15:18:34.397Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
