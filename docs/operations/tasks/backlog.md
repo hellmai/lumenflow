@@ -31,7 +31,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1372,6 +1372,7 @@ sections:
 - [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml)
 - [WU-2416 — Add multi-provider adapter support](wu/WU-2416.yaml)
 - [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml)
+- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

@@ -2,7 +2,7 @@ id: WU-2418
 title: Add DAG branching and routine scheduling for agent-session
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -57,3 +57,6 @@ acceptance:
   - Scheduled wakeups and workflow finalization are represented coherently in evidence and state
     transitions
   - Documentation defines what remains kernel-owned versus pack-owned in orchestration
+locked: true
+completed_at: 2026-03-12T17:07:13.147Z
+completed: 2026-03-12
