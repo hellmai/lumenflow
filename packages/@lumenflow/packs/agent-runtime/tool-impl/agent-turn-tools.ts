@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { TOOL_ERROR_CODES, type ExecutionContext, type ToolOutput } from '@lumenflow/kernel';
-import { AGENT_RUNTIME_API_KEY_ENV, AGENT_RUNTIME_BASE_URL_ENV } from '../constants.js';
+import {
+  AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY,
+  AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY,
+  AGENT_RUNTIME_API_KEY_ENV,
+  AGENT_RUNTIME_BASE_URL_ENV,
+} from '../constants.js';
 import type {
   AgentRuntimeExecuteTurnInput,
   AgentRuntimeIntentCatalogEntry,
@@ -15,8 +20,6 @@ import { STATIC_PROVIDER_CAPABILITY_BASELINE, executeProviderTurn } from './prov
 const LIMIT_EXCEEDED_ERROR_CODE = 'LIMIT_EXCEEDED';
 const MISSING_ENVIRONMENT_ERROR_CODE = 'MISSING_ENVIRONMENT';
 const CONFIGURATION_ERROR_CODE = 'CONFIGURATION_ERROR';
-const AGENT_TURN_INDEX_METADATA_KEY = 'agent_turn_index';
-const AGENT_TOOL_CALL_COUNT_METADATA_KEY = 'agent_tool_call_count';
 const PROVIDER_CALL_COUNT_ONE = 1;
 const PROVIDER_CALL_COUNT_ZERO = 0;
 
@@ -375,10 +378,10 @@ function enforceExecutionLimits(
     if (turnIndex !== null && turnIndex >= maxTurnsPerSession) {
       return createFailureOutput(
         LIMIT_EXCEEDED_ERROR_CODE,
-        `Execution metadata ${AGENT_TURN_INDEX_METADATA_KEY}=${turnIndex} reached max_turns_per_session=${maxTurnsPerSession}.`,
+        `Execution metadata ${AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY}=${turnIndex} reached max_turns_per_session=${maxTurnsPerSession}.`,
         {
           provider_call_count: PROVIDER_CALL_COUNT_ZERO,
-          [AGENT_TURN_INDEX_METADATA_KEY]: turnIndex,
+          [AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY]: turnIndex,
           max_turns_per_session: maxTurnsPerSession,
         },
       );
@@ -391,10 +394,10 @@ function enforceExecutionLimits(
     if (toolCallCount !== null && toolCallCount >= maxToolCallsPerSession) {
       return createFailureOutput(
         LIMIT_EXCEEDED_ERROR_CODE,
-        `Execution metadata ${AGENT_TOOL_CALL_COUNT_METADATA_KEY}=${toolCallCount} reached max_tool_calls_per_session=${maxToolCallsPerSession}.`,
+        `Execution metadata ${AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY}=${toolCallCount} reached max_tool_calls_per_session=${maxToolCallsPerSession}.`,
         {
           provider_call_count: PROVIDER_CALL_COUNT_ZERO,
-          [AGENT_TOOL_CALL_COUNT_METADATA_KEY]: toolCallCount,
+          [AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY]: toolCallCount,
           max_tool_calls_per_session: maxToolCallsPerSession,
         },
       );
@@ -536,7 +539,7 @@ function readAgentTurnIndex(ctx: ExecutionContext): number | null {
   if (!ctx.metadata) {
     return null;
   }
-  const value = ctx.metadata.agent_turn_index;
+  const value = ctx.metadata[AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY];
   return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null;
 }
 
@@ -544,7 +547,7 @@ function readAgentToolCallCount(ctx: ExecutionContext): number | null {
   if (!ctx.metadata) {
     return null;
   }
-  const value = ctx.metadata.agent_tool_call_count;
+  const value = ctx.metadata[AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY];
   return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null;
 }
 

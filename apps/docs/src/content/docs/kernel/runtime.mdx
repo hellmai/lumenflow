@@ -27,7 +27,7 @@ When an agent calls a tool (e.g., `file:write`), the kernel executes a strict pi
 
 4. **Input persistence.** The tool's input is serialized, hashed with SHA-256, and written to the evidence store as a content-addressed blob. This happens _before_ execution — even if the tool fails, the input is recorded.
 
-5. **Policy evaluation.** The kernel's [policy engine](/kernel/policy-engine) evaluates all matching rules with the `on_tool_request` trigger. A single deny from any layer makes the decision final.
+5. **Policy evaluation.** The kernel's [policy engine](/kernel/policy-engine) evaluates all matching rules with the `on_tool_request` trigger. A single deny from any layer makes the decision final, and `approval_required` pauses execution before the tool handler runs.
 
 6. **Input validation.** If the tool declares a Zod input schema, the input is validated. Invalid inputs are rejected with `INVALID_INPUT`.
 
@@ -75,6 +75,17 @@ Task specs are immutable YAML files stored at `.lumenflow/kernel/tasks/<id>.yaml
   reviews, data pipeline runs — to the same task lifecycle.
 </Aside>
 
+## Host-Driven Agent Loops
+
+Agent orchestration can stay above the kernel while still using kernel-enforced governance. A host can:
+
+1. call `agent:execute-turn`
+2. inspect the governed turn output for `status: tool_request`
+3. call the requested tool through `executeTool()` with `execution_metadata.agent_intent`
+4. feed the tool result back into the next `agent:execute-turn`
+
+This keeps the model-turn loop in host code, but the actual tool request still passes through scope enforcement, pack policies, approvals, and evidence recording. Hosts can also pass `agent_turn_index` and `agent_tool_call_count` in `execution_metadata` to enforce loop limits consistently across turns.
+
 ## Filesystem Layout
 
 The kernel stores all state under `.lumenflow/kernel/` in the workspace root:
@@ -104,6 +115,7 @@ When a tool call fails at any stage in the pipeline, the kernel returns a struct
 | `TOOL_NOT_FOUND`        | Lookup         | Tool name not registered by any pack                   |
 | `SCOPE_DENIED`          | Authorization  | Scope intersection is empty or reserved path violation |
 | `POLICY_DENIED`         | Authorization  | Policy engine returned a deny decision                 |
+| `APPROVAL_REQUIRED`     | Authorization  | Policy engine paused execution pending human approval  |
 | `SPEC_TAMPERED`         | Pre-check      | Workspace spec changed since kernel startup            |
 | `INVALID_INPUT`         | Validation     | Input failed the tool's schema                         |
 | `INVALID_OUTPUT`        | Post-execution | Output failed schema normalization                     |

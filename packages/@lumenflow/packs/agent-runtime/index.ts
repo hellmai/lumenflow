@@ -3,6 +3,8 @@
 
 export * from './constants.js';
 export * from './manifest.js';
+export * from './orchestration.js';
 export * from './pack-registration.js';
+export * from './policy-factory.js';
 export * from './types.js';
 export * from './tools/index.js';

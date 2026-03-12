@@ -26,6 +26,7 @@ import {
 } from './types.js';
 
 const EXECUTE_TURN_TOOL_ENTRY = 'tool-impl/agent-turn-tools.ts#agentExecuteTurnTool';
+const POLICY_FACTORY_ENTRY = 'policy-factory.ts#createAgentRuntimePolicyFactory';
 
 const EXECUTE_TURN_INPUT_SCHEMA: Record<string, unknown> = {
   type: 'object',
@@ -169,6 +170,7 @@ export const AGENT_RUNTIME_MANIFEST = DomainPackManifestSchema.parse({
   version: AGENT_RUNTIME_PACK_VERSION,
   config_key: AGENT_RUNTIME_CONFIG_KEY,
   config_schema: AGENT_RUNTIME_CONFIG_SCHEMA_FILE,
+  policy_factory: POLICY_FACTORY_ENTRY,
   task_types: ['agent-session'],
   tools: MANIFEST_TOOL_DEFINITIONS,
   policies: [
@@ -176,7 +178,7 @@ export const AGENT_RUNTIME_MANIFEST = DomainPackManifestSchema.parse({
       id: `${AGENT_RUNTIME_POLICY_ID_PREFIX}.default`,
       trigger: POLICY_TRIGGERS.ON_TOOL_REQUEST,
       decision: 'allow',
-      reason: 'Scaffold baseline until agent-runtime policy rules are enabled.',
+      reason: 'Pack baseline allow; dynamic intent gating is applied by the pack policy factory.',
     },
   ],
   evidence_types: ['agent-runtime.turn', 'agent-runtime.provider-call'],

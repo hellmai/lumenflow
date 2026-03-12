@@ -32,10 +32,10 @@ A rule has four parts:
 | ---------- | ------- | ------------------------------------------------------------------------------------- |
 | `id`       | string  | Unique identifier (e.g., `software-delivery.gate.format`)                             |
 | `trigger`  | enum    | When to evaluate: `on_tool_request`, `on_claim`, `on_completion`, `on_evidence_added` |
-| `decision` | enum    | `allow` or `deny`                                                                     |
+| `decision` | enum    | `allow`, `deny`, or `approval_required`                                               |
 | `reason`   | string? | Human-readable explanation                                                            |
 
-Rules in pack manifests are static — they apply unconditionally when their trigger fires. Runtime rules (set programmatically) can include a `when` predicate for conditional evaluation (see [Conditional Rules with `when()`](#conditional-rules-with-when) below).
+Rules in pack manifests are static — they apply unconditionally when their trigger fires. Packs can also register runtime-authored rules through a manifest `policy_factory`, and those rules can include a `when` predicate for conditional evaluation (see [Conditional Rules with `when()`](#conditional-rules-with-when) below).
 
 ## Deny-Wins Evaluation
 
@@ -44,7 +44,7 @@ The evaluation algorithm processes layers in order:
 1. **Start with deny.** The effective decision begins as `deny` (fail-closed).
 2. **Apply defaults.** The first layer to declare a `default_decision` sets the baseline. Subsequent layers can only tighten (deny), not loosen, unless explicitly granted `allow_loosening`.
 3. **Match rules.** For each layer, find rules whose `trigger` matches the current context.
-4. **Sticky deny.** Once any rule emits `deny`, no subsequent `allow` rule in any layer can reverse it.
+4. **Sticky deny.** Once any rule emits `deny`, no subsequent `allow` or `approval_required` rule in any layer can reverse it.
 
 ```
 Workspace: default=allow          → effective: allow
@@ -59,6 +59,8 @@ Task:      rule allow(on_completion) → REJECTED (cannot loosen a hard deny)
   a hard deny from a specific rule. Once a rule says deny, the decision is final regardless of
   `allow_loosening`.
 </Aside>
+
+`approval_required` sits between `allow` and `deny`: it blocks execution and records a pending human decision, but it is still overridden by any explicit deny.
 
 ## Triggers
 
@@ -117,15 +119,16 @@ const rule: PolicyRule = {
 
 The `when` predicate receives a `PolicyEvaluationContext` with these fields:
 
-| Field            | Type                       | Description                                           |
-| ---------------- | -------------------------- | ----------------------------------------------------- |
-| `trigger`        | `string`                   | The trigger type that fired this evaluation           |
-| `run_id`         | `string`                   | Current run identifier                                |
-| `tool_name`      | `string?`                  | Name of the tool being called (for `on_tool_request`) |
-| `task_id`        | `string?`                  | Active task identifier                                |
-| `lane_id`        | `string?`                  | Lane the task belongs to                              |
-| `pack_id`        | `string?`                  | Pack that provides the tool                           |
-| `tool_arguments` | `Record<string, unknown>?` | Parsed tool input arguments (see below)               |
+| Field                | Type                       | Description                                                         |
+| -------------------- | -------------------------- | ------------------------------------------------------------------- |
+| `trigger`            | `string`                   | The trigger type that fired this evaluation                         |
+| `run_id`             | `string`                   | Current run identifier                                              |
+| `tool_name`          | `string?`                  | Name of the tool being called (for `on_tool_request`)               |
+| `task_id`            | `string?`                  | Active task identifier                                              |
+| `lane_id`            | `string?`                  | Lane the task belongs to                                            |
+| `pack_id`            | `string?`                  | Pack that provides the tool                                         |
+| `tool_arguments`     | `Record<string, unknown>?` | Parsed tool input arguments (see below)                             |
+| `execution_metadata` | `Record<string, unknown>?` | Host-supplied runtime metadata used for conditional policy matching |
 
 ### Argument-level policy evaluation
 
@@ -159,7 +162,7 @@ const rule: PolicyRule = {
 
 Every policy evaluation returns:
 
-- `decision` — the final `allow` or `deny`
+- `decision` — the final `allow`, `deny`, or `approval_required`
 - `decisions[]` — every rule that matched, with its individual decision and reason
 - `warnings[]` — any loosening attempts that were rejected
 

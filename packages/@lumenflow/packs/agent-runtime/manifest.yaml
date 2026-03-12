@@ -2,6 +2,7 @@ id: agent-runtime
 version: 0.1.0
 config_key: agent_runtime
 config_schema: config.schema.json
+policy_factory: policy-factory.ts#createAgentRuntimePolicyFactory
 task_types:
   - agent-session
 tools:
@@ -179,7 +180,7 @@ policies:
   - id: agent-runtime.policy.default
     trigger: on_tool_request
     decision: allow
-    reason: Scaffold baseline until agent-runtime policy rules are enabled.
+    reason: Pack baseline allow; dynamic intent gating is applied by the pack policy factory.
 evidence_types:
   - agent-runtime.turn
   - agent-runtime.provider-call

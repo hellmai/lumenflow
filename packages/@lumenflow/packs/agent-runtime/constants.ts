@@ -15,3 +15,6 @@ export const AGENT_RUNTIME_API_KEY_ENV = 'AGENT_RUNTIME_API_KEY' as const;
 export const AGENT_RUNTIME_BASE_URL_ENV = 'AGENT_RUNTIME_BASE_URL' as const;
 export const AGENT_RUNTIME_STATIC_PROVIDER_ALLOWLIST = ['model-provider.invalid:443'] as const;
 export const AGENT_RUNTIME_STATIC_PROVIDER_URLS = ['https://model-provider.invalid/'] as const;
+export const AGENT_RUNTIME_AGENT_INTENT_METADATA_KEY = 'agent_intent' as const;
+export const AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY = 'agent_turn_index' as const;
+export const AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY = 'agent_tool_call_count' as const;

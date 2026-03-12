@@ -23,6 +23,9 @@ describe('agent-runtime manifest scaffold', () => {
     expect(AGENT_RUNTIME_MANIFEST.id).toBe(AGENT_RUNTIME_PACK_ID);
     expect(AGENT_RUNTIME_MANIFEST.version).toBe(AGENT_RUNTIME_PACK_VERSION);
     expect(AGENT_RUNTIME_MANIFEST.config_key).toBe(AGENT_RUNTIME_CONFIG_KEY);
+    expect(AGENT_RUNTIME_MANIFEST.policy_factory).toBe(
+      'policy-factory.ts#createAgentRuntimePolicyFactory',
+    );
     expect(AGENT_RUNTIME_MANIFEST.task_types).toEqual(['agent-session']);
   });
 
@@ -57,6 +60,9 @@ describe('agent-runtime manifest scaffold', () => {
 
     expect(manifestRaw).toContain('id: agent-runtime');
     expect(manifestRaw).toContain('config_key: agent_runtime');
+    expect(manifestRaw).toContain(
+      'policy_factory: policy-factory.ts#createAgentRuntimePolicyFactory',
+    );
     expect(manifestRaw).toContain('entry: tool-impl/agent-turn-tools.ts#agentExecuteTurnTool');
     expect(manifestRaw).toContain('model-provider.invalid:443');
     expect(manifestRaw).toContain('https://model-provider.invalid/');
