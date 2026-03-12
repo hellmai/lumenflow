@@ -3245,3 +3245,8 @@
 {"type":"checkpoint","wuId":"WU-2399","timestamp":"2026-03-12T10:10:45.642Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2399.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2400","timestamp":"2026-03-12T10:10:57.129Z"}
 {"type":"complete","wuId":"WU-2399","timestamp":"2026-03-12T10:12:36.431Z"}
+{"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T09:53:35.811Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T09:54:31.421Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:04:53.327Z","note":"WU-2401"}
+{"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:09:29.607Z","note":"WU-2401"}
+{"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:10:50.974Z","note":"WU-2401"}
