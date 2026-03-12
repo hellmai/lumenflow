@@ -20,17 +20,17 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml) — Framework: Initiatives
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
+- [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml) — Framework: Initiatives
 
 ## 🔧 In progress
 
-- [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml) — Framework: Core Validation
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1349,6 +1349,7 @@ sections:
 - [WU-2400 — Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity](wu/WU-2400.yaml)
 - [WU-2399 — Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching](wu/WU-2399.yaml)
 - [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml)
+- [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

@@ -2,7 +2,7 @@ id: WU-2402
 title: 'Align test config: coverage threshold mismatch and passWithNoTests masking gaps'
 lane: 'Framework: Core Validation'
 type: bug
-status: in_progress
+status: done
 priority: P3
 created: 2026-03-12
 code_paths:
@@ -61,3 +61,6 @@ acceptance:
   - Coverage threshold is consistent between workspace.yaml and vitest.config.ts
   - passWithNoTests is disabled or scoped to only explicitly exempt packages
   - CI passes with the updated config
+locked: true
+completed_at: 2026-03-12T10:19:16.005Z
+completed: 2026-03-12
