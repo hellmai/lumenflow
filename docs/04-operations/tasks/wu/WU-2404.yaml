@@ -17,9 +17,14 @@ artifacts:
   - .lumenflow/stamps/WU-2404.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: N/A - full TDD applied. Fix adds existsSync check + node_modules fallback to
+  resolveManifestPath for consumer installs where monorepo layout does not exist.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T10:56:31.267Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2404
+session_id: ecaa89ea-0177-4692-85fb-77137376271a
 exposure: backend-only
 sizing_estimate:
   estimated_files: 6
@@ -27,6 +32,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T10:56:31.274Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +48,3 @@ acceptance:
   - config:set software_delivery keys work in simulated consumer layout
   - Existing monorepo resolution path unchanged
   - Tests cover registry source, local source without path, and missing manifest graceful skip
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2404
-claimed_at: 2026-03-12T10:56:31.267Z
-baseline_main_sha: 005739cbe38d78a67978813fb4b1ff4d460333ea
-session_id: ecaa89ea-0177-4692-85fb-77137376271a
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T10:56:31.274Z
