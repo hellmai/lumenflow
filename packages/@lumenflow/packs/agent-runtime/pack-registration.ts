@@ -6,11 +6,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { AGENT_RUNTIME_MANIFEST } from './manifest.js';
-import {
-  AGENT_RUNTIME_MANIFEST_FILE_NAME,
-  SHA256_ALGORITHM,
-  UTF8_ENCODING,
-} from './constants.js';
+import { AGENT_RUNTIME_MANIFEST_FILE_NAME, SHA256_ALGORITHM, UTF8_ENCODING } from './constants.js';
 import type { AgentRuntimePackManifest } from './manifest.js';
 
 const NULL_BYTE_BUFFER = Buffer.from([0]);

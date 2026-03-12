@@ -5,7 +5,11 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { AGENT_RUNTIME_CONFIG_KEY, AGENT_RUNTIME_PACK_ID, AGENT_RUNTIME_PACK_VERSION } from '../constants.js';
+import {
+  AGENT_RUNTIME_CONFIG_KEY,
+  AGENT_RUNTIME_PACK_ID,
+  AGENT_RUNTIME_PACK_VERSION,
+} from '../constants.js';
 import {
   AGENT_RUNTIME_MANIFEST,
   AGENT_RUNTIME_MANIFEST_TOOL_NAMES,

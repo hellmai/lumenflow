@@ -9,7 +9,11 @@ import YAML from 'yaml';
 import { AGENT_RUNTIME_PACK_ID } from '../../../packs/agent-runtime/constants.js';
 import { AGENT_RUNTIME_MANIFEST } from '../../../packs/agent-runtime/manifest.js';
 import { WorkspaceSpecSchema } from '../kernel.schemas.js';
-import { DomainPackManifestSchema, PackLoader, computeDeterministicPackHash } from '../pack/index.js';
+import {
+  DomainPackManifestSchema,
+  PackLoader,
+  computeDeterministicPackHash,
+} from '../pack/index.js';
 
 const PACK_TEST_DIR = dirname(fileURLToPath(import.meta.url));
 

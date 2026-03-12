@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ToolScope } from '@lumenflow/kernel';
-import { AGENT_RUNTIME_DOMAIN, AGENT_RUNTIME_PACK_ID, AGENT_RUNTIME_PACK_VERSION } from '../constants.js';
+import {
+  AGENT_RUNTIME_DOMAIN,
+  AGENT_RUNTIME_PACK_ID,
+  AGENT_RUNTIME_PACK_VERSION,
+} from '../constants.js';
 import type { AgentRuntimeToolName } from '../types.js';
 
 export const AGENT_RUNTIME_TOOL_PERMISSIONS = {

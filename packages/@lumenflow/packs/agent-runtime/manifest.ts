@@ -1,7 +1,11 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DomainPackManifestSchema, POLICY_TRIGGERS, type DomainPackManifest } from '@lumenflow/kernel';
+import {
+  DomainPackManifestSchema,
+  POLICY_TRIGGERS,
+  type DomainPackManifest,
+} from '@lumenflow/kernel';
 import {
   AGENT_RUNTIME_API_KEY_ENV,
   AGENT_RUNTIME_BASE_URL_ENV,
