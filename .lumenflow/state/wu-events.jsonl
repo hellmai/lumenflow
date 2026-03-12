@@ -3424,6 +3424,8 @@
 {"type":"complete","wuId":"WU-2438","timestamp":"2026-03-12T21:41:39.866Z"}
 {"type":"complete","wuId":"WU-2436","timestamp":"2026-03-12T21:44:07.027Z"}
 {"type":"claim","wuId":"WU-2437","timestamp":"2026-03-12T21:50:06.064Z","lane":"Framework: CLI WU Commands","title":"BUG: gate-co-change crashes with require() in ESM context"}
+{"type":"checkpoint","wuId":"WU-2437","timestamp":"2026-03-12T21:50:20.528Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2437","timestamp":"2026-03-12T21:50:32.212Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"claim","wuId":"WU-2439","timestamp":"2026-03-12T21:53:29.928Z","lane":"Content: Framework Docs","title":"Validate MCP example payloads against live tool schemas"}
 {"type":"checkpoint","wuId":"WU-2437","timestamp":"2026-03-12T21:50:20.528Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2437","timestamp":"2026-03-12T21:50:32.212Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
@@ -3431,7 +3433,9 @@
 {"type":"complete","wuId":"WU-2437","timestamp":"2026-03-12T21:55:02.181Z"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T21:53:44.670Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T21:53:51.363Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2437","timestamp":"2026-03-12T21:55:02.181Z"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T21:57:22.194Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2439.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T21:59:43.926Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2439.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T22:00:07.423Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2439.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T22:01:39.328Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2439.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2439","timestamp":"2026-03-12T22:02:13.896Z"}
