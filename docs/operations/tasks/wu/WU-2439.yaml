@@ -20,6 +20,8 @@ artifacts:
   - .lumenflow/stamps/WU-2439.done
 dependencies: []
 plan: lumenflow://plans/INIT-52-plan.md
+spec_refs:
+  - lumenflow://plans/INIT-52-plan.md
 risks: []
 notes: Implements schema-aware MCP payload validation in docs parity tests and updates MCP docs
   authoring guidance for strict versus illustrative payload examples.
