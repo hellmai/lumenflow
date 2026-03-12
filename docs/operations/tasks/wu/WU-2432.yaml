@@ -17,8 +17,13 @@ artifacts:
   - .lumenflow/stamps/WU-2432.done
 dependencies: []
 risks: []
-notes: Validated with vercel production build from apps/docs after pulling linked project settings
-  into the worktree. Deploy from main after WU completion using the prebuilt Vercel flow.
+notes: >-
+  Validated with vercel production build from apps/docs after pulling linked project settings into
+  the worktree. Deploy from main after WU completion using the prebuilt Vercel flow.
+
+
+  tdd-exception: structured-content MDX fix validated with production-style docs build rather than
+  an application test file.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
