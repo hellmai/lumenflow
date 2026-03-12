@@ -21,12 +21,20 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/WU-2423-plan.md
 risks: []
-notes: ''
+notes: 'Follows existing --description pattern. Minimal change: 4 files, ~50 lines added. Discovered
+  wu-lifecycle skill gap (mem-632d): missing wu:brief as required post-claim step.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T13:02:17.824Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2423
+session_id: 863ece90-9fda-41d5-b487-b01ff5b1ceb6
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T13:02:17.832Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -40,11 +48,3 @@ acceptance:
   - wu:edit --id WU-XXX --title 'New title' updates the title field
   - Title changes blocked on done WUs with clear error message
   - --help output includes --title
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2423
-claimed_at: 2026-03-12T13:02:17.824Z
-baseline_main_sha: 9c3cc68afd00a22a19aa13afadfa0eda083aa51b
-session_id: 863ece90-9fda-41d5-b487-b01ff5b1ceb6
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T13:02:17.832Z
