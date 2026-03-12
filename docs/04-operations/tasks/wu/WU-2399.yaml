@@ -2,7 +2,7 @@ id: WU-2399
 title: 'Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -56,3 +56,6 @@ acceptance:
   - scaffoldProject() delegates to extracted sub-modules (docs, package config, safety scripts)
   - gitignore deduplication ignores comments and partial matches
   - All existing init tests pass
+locked: true
+completed_at: 2026-03-12T10:12:31.331Z
+completed: 2026-03-12
