@@ -597,7 +597,7 @@ software_delivery:
         code_paths:
           - .lumenflow.lane-inference.yaml
           - .lumenflow/**
-          - docs/04-operations/**
+          - docs/operations/**
       - name: 'Content: Framework Docs'
         wip_limit: 2
         wip_justification: Framework docs are generally low-conflict and can run in parallel
