@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml)
 
 ## Completed
 
