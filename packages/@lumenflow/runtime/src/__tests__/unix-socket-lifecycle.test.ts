@@ -17,7 +17,11 @@ import { createConnection } from 'node:net';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { UnixSocketServer, type DaemonRequest, type DaemonResponse } from '../transport/unix-socket-server.js';
+import {
+  UnixSocketServer,
+  type DaemonRequest,
+  type DaemonResponse,
+} from '../transport/unix-socket-server.js';
 
 describe('UnixSocketServer lifecycle', () => {
   let tempDir: string;
@@ -32,7 +36,9 @@ describe('UnixSocketServer lifecycle', () => {
     }
   });
 
-  async function createServer(handler?: (req: DaemonRequest) => Promise<DaemonResponse>): Promise<UnixSocketServer> {
+  async function createServer(
+    handler?: (req: DaemonRequest) => Promise<DaemonResponse>,
+  ): Promise<UnixSocketServer> {
     tempDir = await mkdtemp(join(tmpdir(), 'lf-socket-'));
     const socketPath = join(tempDir, 'test.sock');
     server = new UnixSocketServer({

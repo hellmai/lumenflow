@@ -36,7 +36,10 @@ describe('SessionManager checkpoint lifecycle', () => {
     expect(session.agent_id).toBe('agent-a');
     expect(session.state).toBeUndefined();
 
-    const checkpointed = await manager.checkpoint(session.session_id, { step: 1, note: 'progress' });
+    const checkpointed = await manager.checkpoint(session.session_id, {
+      step: 1,
+      note: 'progress',
+    });
     expect(checkpointed.state).toEqual({ step: 1, note: 'progress' });
 
     const restored = await manager.restore(session.session_id);
@@ -84,16 +87,14 @@ describe('SessionManager checkpoint lifecycle', () => {
   });
 
   it('checkpoint throws for an unknown session ID', async () => {
-    await expect(
-      manager.checkpoint('no-such-session', { data: 'test' }),
-    ).rejects.toThrow('Session not found');
+    await expect(manager.checkpoint('no-such-session', { data: 'test' })).rejects.toThrow(
+      'Session not found',
+    );
   });
 
   it('concurrent session creation produces unique IDs', async () => {
     const sessions = await Promise.all(
-      Array.from({ length: 20 }, (_, i) =>
-        manager.createSession({ agent_id: `agent-${i}` }),
-      ),
+      Array.from({ length: 20 }, (_, i) => manager.createSession({ agent_id: `agent-${i}` })),
     );
     const ids = new Set(sessions.map((s) => s.session_id));
     expect(ids.size).toBe(20);

@@ -77,9 +77,7 @@ describe('bottleneck analysis edge cases', () => {
   });
 
   it('impactScore returns 0 for a node not in the graph', () => {
-    const graph: DependencyGraph = new Map([
-      ['WU-1', makeNode('WU-1', [], [])],
-    ]);
+    const graph: DependencyGraph = new Map([['WU-1', makeNode('WU-1', [], [])]]);
     expect(impactScore(graph, 'WU-999')).toBe(0);
   });
 
@@ -92,9 +90,7 @@ describe('bottleneck analysis edge cases', () => {
   });
 
   it('impactScore returns 0 for a leaf node (no downstream)', () => {
-    const graph: DependencyGraph = new Map([
-      ['WU-1', makeNode('WU-1', [], [])],
-    ]);
+    const graph: DependencyGraph = new Map([['WU-1', makeNode('WU-1', [], [])]]);
     expect(impactScore(graph, 'WU-1')).toBe(0);
   });
 
@@ -111,9 +107,7 @@ describe('bottleneck analysis edge cases', () => {
 
 describe('topological sort edge cases', () => {
   it('single node graph', () => {
-    const graph: DependencyGraph = new Map([
-      ['WU-1', makeNode('WU-1', [], [])],
-    ]);
+    const graph: DependencyGraph = new Map([['WU-1', makeNode('WU-1', [], [])]]);
     const result = topologicalSort(graph);
     expect(result.hasCycle).toBe(false);
     expect(result.order).toEqual(['WU-1']);
@@ -143,9 +137,7 @@ describe('topological sort edge cases', () => {
 
 describe('critical path edge cases', () => {
   it('returns empty path for all-done graph', () => {
-    const graph: DependencyGraph = new Map([
-      ['WU-1', makeNode('WU-1', [], [], 'done')],
-    ]);
+    const graph: DependencyGraph = new Map([['WU-1', makeNode('WU-1', [], [], 'done')]]);
     const result = criticalPath(graph);
     expect(result.path).toEqual([]);
     expect(result.length).toBe(0);
@@ -186,9 +178,7 @@ describe('getBottleneckAnalysis', () => {
   });
 
   it('uses default limit of 10', () => {
-    const graph: DependencyGraph = new Map([
-      ['WU-1', makeNode('WU-1', [], [])],
-    ]);
+    const graph: DependencyGraph = new Map([['WU-1', makeNode('WU-1', [], [])]]);
     const analysis = getBottleneckAnalysis(graph);
     expect(analysis.bottlenecks).toBeDefined();
   });

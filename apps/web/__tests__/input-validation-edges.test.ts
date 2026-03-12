@@ -310,8 +310,7 @@ describe('validateBodySize edge cases', () => {
   it('accepts Content-Length at exactly the default limit', () => {
     const request = {
       headers: {
-        get: (name: string) =>
-          name === 'Content-Length' ? String(DEFAULT_MAX_BODY_SIZE) : null,
+        get: (name: string) => (name === 'Content-Length' ? String(DEFAULT_MAX_BODY_SIZE) : null),
       },
     };
     const result = validateBodySize(request);

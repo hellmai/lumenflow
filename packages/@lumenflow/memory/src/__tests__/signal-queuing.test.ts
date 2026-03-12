@@ -58,9 +58,7 @@ describe('signal queuing lifecycle', () => {
 
     it('throws on empty message', async () => {
       const baseDir = await makeTempDir();
-      await expect(createSignal(baseDir, { message: '' })).rejects.toThrow(
-        'message is required',
-      );
+      await expect(createSignal(baseDir, { message: '' })).rejects.toThrow('message is required');
     });
 
     it('throws on whitespace-only message', async () => {
@@ -72,16 +70,14 @@ describe('signal queuing lifecycle', () => {
 
     it('throws on invalid WU ID format', async () => {
       const baseDir = await makeTempDir();
-      await expect(
-        createSignal(baseDir, { message: 'test', wuId: 'invalid' }),
-      ).rejects.toThrow('Invalid WU ID');
+      await expect(createSignal(baseDir, { message: 'test', wuId: 'invalid' })).rejects.toThrow(
+        'Invalid WU ID',
+      );
     });
 
     it('throws on empty optional string fields', async () => {
       const baseDir = await makeTempDir();
-      await expect(
-        createSignal(baseDir, { message: 'test', type: '  ' }),
-      ).rejects.toThrow();
+      await expect(createSignal(baseDir, { message: 'test', type: '  ' })).rejects.toThrow();
     });
   });
 

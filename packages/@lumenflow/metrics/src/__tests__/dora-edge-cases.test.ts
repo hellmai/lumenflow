@@ -120,9 +120,7 @@ describe('DORA edge cases: lead time', () => {
 
 describe('DORA edge cases: change failure rate', () => {
   it('handles no failures with commits', () => {
-    const commits: GitCommit[] = [
-      { hash: 'a', timestamp: new Date(), message: 'feat: a' },
-    ];
+    const commits: GitCommit[] = [{ hash: 'a', timestamp: new Date(), message: 'feat: a' }];
     const result = calculateCFR(commits, []);
     expect(result.failurePercentage).toBe(0);
     expect(result.totalDeployments).toBe(1);
@@ -131,9 +129,7 @@ describe('DORA edge cases: change failure rate', () => {
   });
 
   it('handles all-failure scenario', () => {
-    const commits: GitCommit[] = [
-      { hash: 'a', timestamp: new Date(), message: 'feat: a' },
-    ];
+    const commits: GitCommit[] = [{ hash: 'a', timestamp: new Date(), message: 'feat: a' }];
     const entries: SkipGatesEntry[] = [
       { timestamp: new Date(), wuId: 'WU-1', reason: 'broke', gate: 'test' },
     ];
