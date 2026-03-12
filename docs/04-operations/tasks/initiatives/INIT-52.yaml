@@ -1,0 +1,36 @@
+id: INIT-52
+slug: governed-agent-runtime-pack
+title: Governed Agent Runtime Pack
+description: Deliver a governed agent-runtime pack for LumenFlow with kernel-backed policy gating,
+  runtime pack-config plumbing, sandboxed credential handling, provider-neutral turn execution,
+  policy-aware tool filtering, streaming and evidence support, and pack-owned agent-session
+  orchestration including suspend/resume, branching, and scheduled routines.
+status: draft
+priority: P1
+owner: tom
+created: 2026-03-12
+phases:
+  - id: 1
+    title: 'Phase 1: Architecture and kernel foundations'
+    status: pending
+  - id: 2
+    title: 'Phase 2: Core pack delivery'
+    status: pending
+  - id: 3
+    title: 'Phase 3: Runtime expansion'
+    status: pending
+  - id: 4
+    title: 'Phase 4: Full agent-session orchestration'
+    status: pending
+success_metrics:
+  - ADR defines the agent-runtime architecture boundary, task model, and orchestration cut-line.
+  - Kernel runtime supports resolved pack config, manifest-level env allowlisting, and
+    policy_factory-based intent gating.
+  - agent-runtime pack provides governed model-turn execution with provider-neutral adapters and
+    evidence-preserving tool use.
+  - Runtime supports config-aware provider capability resolution and policy-aware tool filtering.
+  - agent-runtime supports streaming, multi-provider adapters, suspend/resume, branching, and
+    scheduled routines inside agent-session.
+  - Public docs and examples describe the pack accurately without coupling it to private
+    implementation details.
+labels: []
