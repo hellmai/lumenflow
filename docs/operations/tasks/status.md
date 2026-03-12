@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml)
+- [WU-2426 — cli-entry.mjs triggers full build on --help flag](wu/WU-2426.yaml)
 
 ## Completed
 

@@ -3320,3 +3320,4 @@
 {"type":"checkpoint","wuId":"WU-2425","timestamp":"2026-03-12T13:44:48.814Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2425","timestamp":"2026-03-12T13:45:16.798Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2425","timestamp":"2026-03-12T13:49:10.683Z"}
+{"type":"claim","wuId":"WU-2426","timestamp":"2026-03-12T13:49:24.770Z","lane":"Framework: CLI WU Commands","title":"cli-entry.mjs triggers full build on --help flag"}
