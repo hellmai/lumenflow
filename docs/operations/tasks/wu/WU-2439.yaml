@@ -10,15 +10,19 @@ code_paths:
   - docs/operations/_frameworks/lumenflow/agent/onboarding/docs-generation.md
   - docs/operations/_frameworks/lumenflow/mcp-server.md
 tests:
-  manual: []
+  manual:
+    - pnpm exec vitest run apps/docs/__tests__/docs-parity.test.ts
+    - pnpm --filter @lumenflow/docs build
   unit:
     - apps/docs/__tests__/docs-parity.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2439.done
 dependencies: []
+plan: lumenflow://plans/INIT-52-plan.md
 risks: []
-notes: ''
+notes: Implements schema-aware MCP payload validation in docs parity tests and updates MCP docs
+  authoring guidance for strict versus illustrative payload examples.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
