@@ -9,6 +9,7 @@ code_paths:
   - packages/@lumenflow/packs/
   - packages/@lumenflow/kernel/src/
   - packages/@lumenflow/runtime/src/
+  - packages/@lumenflow/surfaces/
 tests:
   manual:
     - Verify partial and final streaming traces are recorded coherently and non-streaming behavior
@@ -16,6 +17,8 @@ tests:
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
     - packages/@lumenflow/runtime/src/
+    - packages/@lumenflow/packs/agent-runtime/__tests__/
+    - packages/@lumenflow/surfaces/__tests__/
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2415.done
@@ -30,7 +33,11 @@ spec_refs:
 risks: []
 notes: Streaming and evidence only. Multi-provider behavior stays separate.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T15:03:21.420Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2415
+session_id: 6f6b3a14-3e57-4f71-b952-9035eb909615
 exposure: backend-only
 sizing_estimate:
   estimated_files: 15
@@ -38,6 +45,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T15:03:21.427Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -49,11 +59,3 @@ acceptance:
     turn traces
   - Partial and final streaming outputs remain auditable
   - Non-streaming behavior remains unchanged
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2415
-claimed_at: 2026-03-12T15:03:21.420Z
-baseline_main_sha: d7d89af70f6a26f67a79f559106b08cab9814602
-session_id: 6f6b3a14-3e57-4f71-b952-9035eb909615
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T15:03:21.427Z
