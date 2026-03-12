@@ -2,7 +2,7 @@ id: WU-2428
 title: Fix published docs navigation and release metadata
 lane: 'Content: Site Comms'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -25,11 +25,10 @@ phase: 4
 spec_refs:
   - docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md
 risks: []
-notes: 'Implements public docs discoverability and release metadata fixes for the
-  post-INIT-52 release surface. Work is limited to docs navigation and release/changelog
-  content; deployment follows the standard docs release flow after the WU is merged.
-  Verification includes a focused docs test at apps/docs/__tests__/site-docs.test.ts
-  plus docs build and docs-only gates.'
+notes: Implements public docs discoverability and release metadata fixes for the post-INIT-52
+  release surface. Work is limited to docs navigation and release/changelog content; deployment
+  follows the standard docs release flow after the WU is merged. Verification includes a focused
+  docs test at apps/docs/__tests__/site-docs.test.ts plus docs build and docs-only gates.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
@@ -63,3 +62,6 @@ session_id: 86f794ba-63e6-49a1-84ac-28d0ea6948da
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T17:41:52.678Z
+locked: true
+completed_at: 2026-03-12T17:51:00.004Z
+completed: 2026-03-12

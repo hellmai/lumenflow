@@ -5,7 +5,6 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2427 — Migrate CI workflows from GitHub-hosted to self-hosted runners](wu/WU-2427.yaml)
-- [WU-2428 — Fix published docs navigation and release metadata](wu/WU-2428.yaml)
 
 ## Completed
 
@@ -1344,3 +1343,4 @@ _Last updated: 2026-03-12_
 - [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml) — 2026-03-12
 - [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — 2026-03-12
 - [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — 2026-03-12
+- [WU-2428 — Fix published docs navigation and release metadata](wu/WU-2428.yaml) — 2026-03-12
