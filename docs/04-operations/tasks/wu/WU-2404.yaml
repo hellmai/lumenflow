@@ -1,0 +1,38 @@
+id: WU-2404
+title: Pack manifest resolution returns empty config_key map in consumer installs
+lane: 'Framework: Core Lifecycle'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-12
+code_paths:
+  - packages/@lumenflow/kernel/src/pack/pack-manifest-resolver.ts
+tests:
+  manual:
+    - Run pnpm config:set --key software_delivery.gates.minCoverage --value 85 and verify it succeeds
+  unit:
+    - packages/@lumenflow/kernel/src/pack/__tests__/pack-manifest-resolver.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2404.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 6
+  estimated_tool_calls: 40
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: resolvePackManifestPaths() in pack-manifest-resolver.ts silently returns an empty map when pack manifests are not at the expected monorepo disk path. In consumer projects installed via npm, the SD pack manifest lives under node_modules but the resolver only checks the monorepo layout for source:local packs without an explicit path field. This causes config:set to reject software_delivery as an unknown root key with empty pack config_key list.
+acceptance:
+  - resolvePackManifestPaths finds pack manifests for all source types in consumer installs
+  - config:set software_delivery keys work in simulated consumer layout
+  - Existing monorepo resolution path unchanged
+  - Tests cover registry source, local source without path, and missing manifest graceful skip
