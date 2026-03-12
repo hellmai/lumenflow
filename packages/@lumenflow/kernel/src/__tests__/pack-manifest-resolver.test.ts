@@ -286,6 +286,79 @@ describe('resolvePackManifestPaths', () => {
   });
 
   // -------------------------------------------------------------------------
+  // Consumer install fallback (WU-2404)
+  // -------------------------------------------------------------------------
+
+  describe('consumer install fallback (WU-2404)', () => {
+    it('falls back to node_modules when monorepo layout does not exist and source is local', async () => {
+      // Only create manifest in node_modules, NOT in packages/@lumenflow/packs/
+      const nmDir = join(testDir, 'node_modules', '@lumenflow', 'packs', 'software-delivery');
+      await createManifest(nmDir, {
+        id: 'software-delivery',
+        version: '3.0.0',
+        config_key: 'software_delivery',
+      });
+
+      const result = resolvePackManifestPaths({
+        projectRoot: testDir,
+        packs: [{ id: 'software-delivery', version: '3.0.0', integrity: 'dev', source: 'local' }],
+      });
+
+      expect(result.get('software_delivery')).toBe('software-delivery');
+    });
+
+    it('falls back to node_modules when monorepo layout does not exist and source is missing', async () => {
+      // Only create manifest in node_modules, NOT in packages/@lumenflow/packs/
+      const nmDir = join(testDir, 'node_modules', '@lumenflow', 'packs', 'software-delivery');
+      await createManifest(nmDir, {
+        id: 'software-delivery',
+        version: '3.0.0',
+        config_key: 'software_delivery',
+      });
+
+      const result = resolvePackManifestPaths({
+        projectRoot: testDir,
+        packs: [
+          // No 'source' field - backward compat
+          {
+            id: 'software-delivery',
+            version: '3.0.0',
+            integrity: 'dev',
+          } as PackManifestResolverInput['packs'][number],
+        ],
+      });
+
+      expect(result.get('software_delivery')).toBe('software-delivery');
+    });
+
+    it('prefers monorepo layout over node_modules when both exist', async () => {
+      // Create manifest in BOTH locations with different config_key values
+      const monorepoDir = join(testDir, 'packages', '@lumenflow', 'packs', 'software-delivery');
+      await createManifest(monorepoDir, {
+        id: 'software-delivery',
+        version: '3.0.0',
+        config_key: 'software_delivery_monorepo',
+      });
+
+      const nmDir = join(testDir, 'node_modules', '@lumenflow', 'packs', 'software-delivery');
+      await createManifest(nmDir, {
+        id: 'software-delivery',
+        version: '3.0.0',
+        config_key: 'software_delivery_nm',
+      });
+
+      const result = resolvePackManifestPaths({
+        projectRoot: testDir,
+        packs: [{ id: 'software-delivery', version: '3.0.0', integrity: 'dev', source: 'local' }],
+      });
+
+      // Monorepo layout should win
+      expect(result.get('software_delivery_monorepo')).toBe('software-delivery');
+      expect(result.has('software_delivery_nm')).toBe(false);
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // Malformed entries
   // -------------------------------------------------------------------------
 

@@ -101,9 +101,23 @@ function resolveManifestPath(
   }
 
   // Default monorepo layout: packages/@lumenflow/packs/<id>/manifest.yaml
-  return path.join(
+  const monorepoPath = path.join(
     projectRoot,
     PACKAGES_DIR_NAME,
+    LUMENFLOW_SCOPE_NAME,
+    PACKS_DIR_NAME,
+    pack.id,
+    PACK_MANIFEST_FILE_NAME,
+  );
+
+  if (existsSync(monorepoPath)) {
+    return monorepoPath;
+  }
+
+  // WU-2404: Fallback to node_modules for consumer installs
+  return path.join(
+    projectRoot,
+    NODE_MODULES_DIR_NAME,
     LUMENFLOW_SCOPE_NAME,
     PACKS_DIR_NAME,
     pack.id,

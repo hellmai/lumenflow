@@ -3262,3 +3262,5 @@
 {"type":"complete","wuId":"WU-2403","timestamp":"2026-03-12T10:39:42.200Z"}
 {"type":"claim","wuId":"WU-2404","timestamp":"2026-03-12T10:56:31.299Z","lane":"Framework: Core Lifecycle","title":"Pack manifest resolution returns empty config_key map in consumer installs"}
 {"type":"claim","wuId":"WU-2405","timestamp":"2026-03-12T11:01:10.144Z","lane":"Content: Specs Governance","title":"Arc42 compliance: proper section structure, ADR location, and docs index"}
+{"type":"checkpoint","wuId":"WU-2404","timestamp":"2026-03-12T10:56:45.976Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2404","timestamp":"2026-03-12T10:57:23.923Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
