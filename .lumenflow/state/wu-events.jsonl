@@ -3369,3 +3369,4 @@
 {"type":"checkpoint","wuId":"WU-2419","timestamp":"2026-03-12T17:20:29.851Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2419.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2419","timestamp":"2026-03-12T17:22:07.753Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2419.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2419","timestamp":"2026-03-12T17:22:49.426Z"}
+{"type":"claim","wuId":"WU-2427","timestamp":"2026-03-12T17:40:49.277Z","lane":"Operations: Automation","title":"Migrate CI workflows from GitHub-hosted to self-hosted runners"}
