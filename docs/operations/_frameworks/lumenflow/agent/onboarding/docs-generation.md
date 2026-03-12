@@ -29,6 +29,9 @@ snippets:
 - `<!-- lumenflow-example: historical -->`, `legacy`, and `placeholder` are reserved for
   compatibility, migration, or incomplete examples that intentionally do not match the current
   live command surface.
+- Strict MCP JSON payload examples with `"name"` and `"arguments"` are additionally validated
+  against the live MCP registry and the target tool's input schema. Required fields, enum values,
+  and payload shapes must all remain valid.
 
 Place the comment immediately above the fenced code block it applies to:
 
@@ -42,6 +45,24 @@ pnpm wu:status --id WU-123
 
 If no tag is present, shell code blocks are treated as illustrative by default. Add a `strict` tag
 whenever readers are expected to copy-paste a current workflow or command sequence.
+
+For MCP payload examples, prefer:
+
+````md
+<!-- lumenflow-example: strict -->
+
+```json
+{
+  "name": "wu_status",
+  "arguments": {
+    "id": "WU-1234"
+  }
+}
+```
+````
+
+Use `illustrative` when a payload is intentionally partial or schematic and should not be enforced
+against the full schema.
 
 ---
 

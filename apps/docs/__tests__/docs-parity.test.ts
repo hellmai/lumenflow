@@ -36,6 +36,7 @@ const PRIMARY_COMMANDS = new Set(
   ),
 );
 const MCP_TOOL_NAMES = new Set(registeredTools.map((tool) => tool.name));
+const MCP_TOOL_MAP = new Map(registeredTools.map((tool) => [tool.name, tool]));
 const EXAMPLE_TAG_PREFIX = 'lumenflow-example:';
 const COMMAND_BLOCK_LANGUAGES = new Set(['bash', 'sh', 'shell', 'zsh']);
 const WORKFLOW_STEP_CLAIM = 'wu:claim';
@@ -150,6 +151,13 @@ type MappedToolExample = {
   line: number;
 };
 
+type McpPayloadExample = {
+  name: string;
+  arguments: Record<string, unknown>;
+  line: number;
+  tag: ExampleTag;
+};
+
 type CodeBlock = {
   content: string;
   filePath: string;
@@ -255,6 +263,48 @@ function extractMcpToolExamples(text: string): MappedToolExample[] {
   }
 
   return matches;
+}
+
+function extractMcpPayloadExamples(_blocks: CodeBlock[]): McpPayloadExample[] {
+  const examples: McpPayloadExample[] = [];
+
+  for (const block of _blocks) {
+    if (block.language !== 'json') {
+      continue;
+    }
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(block.content);
+    } catch {
+      continue;
+    }
+
+    if (!parsed || typeof parsed !== 'object') {
+      continue;
+    }
+
+    const candidate = parsed as { name?: unknown; arguments?: unknown };
+    if (typeof candidate.name !== 'string') {
+      continue;
+    }
+
+    const args =
+      candidate.arguments &&
+      typeof candidate.arguments === 'object' &&
+      !Array.isArray(candidate.arguments)
+        ? (candidate.arguments as Record<string, unknown>)
+        : {};
+
+    examples.push({
+      name: candidate.name,
+      arguments: args,
+      line: block.line,
+      tag: block.tag,
+    });
+  }
+
+  return examples;
 }
 
 function parseExampleTag(line: string): ExampleTag | null {
@@ -589,5 +639,84 @@ describe('public docs parity', () => {
     }
 
     expect(failures).toEqual([]);
+  });
+
+  it('keeps strict MCP payload examples aligned with live tool schemas', () => {
+    const docsFiles = [
+      PUBLIC_MCP_REFERENCE_PATH,
+      INTERNAL_MCP_REFERENCE_PATH,
+      INTERNAL_MCP_CONCEPTS_PATH,
+    ];
+    const failures: string[] = [];
+
+    for (const filePath of docsFiles) {
+      const text = readText(filePath);
+      const repoRelativePath = getRepoRelativePath(filePath);
+
+      for (const example of extractMcpPayloadExamples(parseCodeBlocks(text, filePath))) {
+        if (example.tag !== 'strict') {
+          continue;
+        }
+
+        const tool = MCP_TOOL_MAP.get(example.name);
+        if (!tool) {
+          failures.push(
+            `${repoRelativePath}:${example.line} references unknown MCP tool \`${example.name}\``,
+          );
+          continue;
+        }
+
+        const validation = tool.inputSchema.safeParse(example.arguments);
+        if (!validation.success) {
+          const issue = validation.error.issues[0];
+          const issuePath = issue?.path?.length ? issue.path.join('.') : '(root)';
+          failures.push(
+            `${repoRelativePath}:${example.line} invalid strict MCP payload for \`${example.name}\` at \`${issuePath}\`: ${issue?.message ?? 'schema validation failed'}`,
+          );
+        }
+      }
+    }
+
+    expect(failures).toEqual([]);
+  });
+
+  it('parses strict MCP payload examples for schema validation', () => {
+    const filePath = resolve(DOCS_CONTENT_ROOT, 'fixtures/mcp-payload-example.mdx');
+    const blocks = parseCodeBlocks(
+      [
+        '<!-- lumenflow-example: strict -->',
+        '```json',
+        '{',
+        '  "name": "wu_status",',
+        '  "arguments": {',
+        '    "id": "WU-1234"',
+        '  }',
+        '}',
+        '```',
+        '<!-- lumenflow-example: illustrative -->',
+        '```json',
+        '{',
+        '  "name": "wu_claim",',
+        '  "arguments": {}',
+        '}',
+        '```',
+      ].join('\n'),
+      filePath,
+    );
+
+    expect(extractMcpPayloadExamples(blocks)).toEqual([
+      {
+        name: 'wu_status',
+        arguments: { id: 'WU-1234' },
+        line: 2,
+        tag: 'strict',
+      },
+      {
+        name: 'wu_claim',
+        arguments: {},
+        line: 11,
+        tag: 'illustrative',
+      },
+    ]);
   });
 });

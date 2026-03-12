@@ -88,6 +88,28 @@ Wave-2 parity families now available in MCP include:
 For full per-tool parameter and response reference, see:
 `apps/docs/src/content/docs/reference/mcp.mdx`.
 
+## Example Payload Validation
+
+Strict MCP payload examples are validated against the live tool registry and each tool's input
+schema. Use explicit example tags so docs parity can distinguish copy-paste-safe examples from
+illustrative snippets.
+
+<!-- lumenflow-example: strict -->
+
+```json
+{
+  "name": "wu_status",
+  "arguments": {
+    "id": "WU-1234",
+    "json": true
+  }
+}
+```
+
+The strict example above must continue to parse against the live `wu_status` input schema. For
+partial or schematic examples, use `illustrative`, `historical`, `legacy`, or `placeholder` tags
+instead so readers and tests both know they are not copy-paste-safe.
+
 ## Resources Reference
 
 | URI                   | Description                                               |
