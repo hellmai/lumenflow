@@ -1,0 +1,45 @@
+id: WU-2428
+title: Fix published docs navigation and release metadata
+lane: 'Content: Site Comms'
+type: feature
+status: ready
+priority: P1
+created: 2026-03-12
+code_paths:
+  - apps/docs/astro.config.mjs
+  - apps/docs/src/content/docs/releases/index.mdx
+  - apps/docs/src/content/docs/reference/changelog.mdx
+tests:
+  manual:
+    - Open /packs/agent-runtime/ from the Packs sidebar on the built docs site.
+    - Open /releases/ and verify latest stable is 3.18.0.
+    - Open /reference/changelog/ and verify 3.18.0 is marked latest.
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2428.done
+dependencies: []
+initiative: INIT-52
+phase: 4
+spec_refs:
+  - docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+sizing_estimate:
+  estimated_files: 3
+  estimated_tool_calls: 24
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: Published Starlight docs are live, but the pack sidebar omits published pack pages and the release surfaces still advertise v3.9.6 as latest. Problem: users cannot discover all published pack docs from navigation, and /releases plus the changelog contradict the actual published stable version 3.18.0. Solution: update docs site navigation, release index content, and changelog latest markers so the public site matches the published docs and release state.'
+acceptance:
+  - Packs sidebar includes the published Agent Runtime pack and routes to its overview/configuration/workflows pages.
+  - Release index reflects 3.18.0 as the latest stable release and links to current release notes or changelog entries consistently.
+  - Reference changelog latest marker and release metadata are updated to 3.18.0 and no longer claim v3.9.6 as latest.
+  - Docs verification covers the updated navigation and release pages via docs build/gates.
