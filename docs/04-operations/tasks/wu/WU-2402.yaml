@@ -17,11 +17,23 @@ artifacts:
   - .lumenflow/stamps/WU-2402.done
 dependencies: []
 risks: []
-notes: Config-only change. May need to coordinate with WU-2401 (test coverage gaps) — if
-  passWithNoTests is disabled before test gaps are closed, CI will break. Consider landing WU-2401
-  first or landing together.
+notes: >-
+  Config-only change. May need to coordinate with WU-2401 (test coverage gaps) — if passWithNoTests
+  is disabled before test gaps are closed, CI will break. Consider landing WU-2401 first or landing
+  together.
+
+
+  Config-only change. May need to coordinate with WU-2401 (test coverage gaps) — if passWithNoTests
+  is disabled before test gaps are closed, CI will break. Consider landing WU-2401 first or landing
+  together. tdd-exception: config-only change — vitest.config.ts threshold alignment and
+  passWithNoTests toggle do not require test file changes. Do NOT run wu:done until WU-2401 has
+  landed on main.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T09:53:50.387Z
+worktree_path: worktrees/framework-core-validation-wu-2402
+session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
 exposure: backend-only
 sizing_estimate:
   estimated_files: 2
@@ -29,6 +41,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:53:50.395Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +56,3 @@ acceptance:
   - Coverage threshold is consistent between workspace.yaml and vitest.config.ts
   - passWithNoTests is disabled or scoped to only explicitly exempt packages
   - CI passes with the updated config
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2402
-claimed_at: 2026-03-12T09:53:50.387Z
-baseline_main_sha: 903f58890c78cc6fe478b30ea8be92c6e07c5922
-session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T09:53:50.395Z
