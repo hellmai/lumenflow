@@ -3337,3 +3337,5 @@
 {"type":"checkpoint","wuId":"WU-2413","timestamp":"2026-03-12T14:28:01.540Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2413","timestamp":"2026-03-12T14:43:44.967Z"}
 {"type":"claim","wuId":"WU-2414","timestamp":"2026-03-12T14:45:57.321Z","lane":"Framework: Core Lifecycle","title":"Add policy-aware tool filtering and auto-discovery"}
+{"type":"checkpoint","wuId":"WU-2414","timestamp":"2026-03-12T14:46:09.633Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2414","timestamp":"2026-03-12T14:46:16.319Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
