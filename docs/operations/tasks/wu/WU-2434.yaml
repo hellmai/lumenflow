@@ -2,7 +2,7 @@ id: WU-2434
 title: 'BUG: initiative:edit reads from stale local main, drops fields added via origin'
 lane: 'Framework: Initiatives'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -45,3 +45,6 @@ acceptance:
   - 'Failing test demonstrates wus: dropped when local is stale'
   - Fix reads initiative from micro-worktree path inside execute callback
   - Existing fields preserved through edit round-trip
+locked: true
+completed_at: 2026-03-12T20:17:15.289Z
+completed: 2026-03-12

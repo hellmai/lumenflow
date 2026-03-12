@@ -1,0 +1,2 @@
+WU WU-2434 — BUG: initiative:edit reads from stale local main, drops fields added via origin
+Completed: 2026-03-12

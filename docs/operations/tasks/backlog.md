@@ -30,7 +30,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2434 — BUG: initiative:edit reads from stale local main, drops fields added via origin](wu/WU-2434.yaml) — Framework: Initiatives
 - [WU-2435 — Broaden docs example parity coverage](wu/WU-2435.yaml) — Content: Framework Docs
 
 ## ⛔ Blocked
@@ -1381,6 +1380,7 @@ sections:
 - [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml)
 - [WU-2432 — Fix Sidekick workflows docs build regression](wu/WU-2432.yaml)
 - [WU-2433 — Docs example parity validator for CLI and MCP usage](wu/WU-2433.yaml)
+- [WU-2434 — BUG: initiative:edit reads from stale local main, drops fields added via origin](wu/WU-2434.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

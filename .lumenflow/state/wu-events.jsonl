@@ -3410,3 +3410,5 @@
 {"type":"checkpoint","wuId":"WU-2434","timestamp":"2026-03-12T20:09:59.760Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2434","timestamp":"2026-03-12T20:10:30.060Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2434","timestamp":"2026-03-12T20:14:01.870Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2434.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"claim","wuId":"WU-2435","timestamp":"2026-03-12T20:14:23.126Z","lane":"Content: Framework Docs","title":"Broaden docs example parity coverage"}
+{"type":"complete","wuId":"WU-2434","timestamp":"2026-03-12T20:17:20.547Z"}
