@@ -10,7 +10,7 @@ code_paths:
   - apps/docs/src/content/docs
   - docs/operations/_frameworks/lumenflow
   - packages/@lumenflow/mcp/src
-  - packages/@lumenflow/packs/sidekick
+  - packages/@lumenflow/cli
 tests:
   manual:
     - Open public docs sidebar and verify Agent Runtime, Sidekick, and Software Delivery packs are
@@ -35,7 +35,11 @@ notes: Scope includes public Starlight docs, internal docs under
   the actual CLI command manifest and MCP registry/tool definitions as source of truth; do not treat
   older prose counts as authoritative.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T17:56:00.720Z
+worktree_path: worktrees/content-site-comms-wu-2429
+session_id: 13cc4628-9d0f-498e-aa7e-a45b561451bc
 exposure: documentation
 sizing_estimate:
   estimated_files: 18
@@ -43,6 +47,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T17:56:00.725Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -62,11 +69,3 @@ acceptance:
     updated where they currently contradict the implementation or published site.
   - Docs examples and links across affected public pages are reviewed and corrected where stale or
     broken, and docs verification covers the updated surfaces.
-claimed_mode: worktree
-worktree_path: worktrees/content-site-comms-wu-2429
-claimed_at: 2026-03-12T17:56:00.720Z
-baseline_main_sha: 978d71d5de74be55d640af9a4acb106a07675ae2
-session_id: 13cc4628-9d0f-498e-aa7e-a45b561451bc
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T17:56:00.725Z
