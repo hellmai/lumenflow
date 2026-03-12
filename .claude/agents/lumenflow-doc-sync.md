@@ -49,9 +49,9 @@ Before ANY Write/Edit/Read operation:
 
 **Core Workflow Docs:**
 
-- `docs/04-operations/tasks/wu/WU-*.yaml` — Individual WU specifications
-- `docs/04-operations/tasks/status.md` — Current work status board
-- `docs/04-operations/tasks/backlog.md` — Work queue and completed items
+- `docs/operations/tasks/wu/WU-*.yaml` — Individual WU specifications
+- `docs/operations/tasks/status.md` — Current work status board
+- `docs/operations/tasks/backlog.md` — Work queue and completed items
 - `.lumenflow/stamps/WU-*.done` — Completion stamps
 
 ## Critical Sync Rules
@@ -225,8 +225,8 @@ pnpm validate --wu WU-XXX
 ls .lumenflow/stamps/*.done
 
 # Compare status.md vs backlog.md for consistency
-diff <(grep -o "WU-[0-9]*" docs/04-operations/tasks/status.md | sort) \
-     <(grep -o "WU-[0-9]*" docs/04-operations/tasks/backlog.md | grep -A2 "In progress" | sort)
+diff <(grep -o "WU-[0-9]*" docs/operations/tasks/status.md | sort) \
+     <(grep -o "WU-[0-9]*" docs/operations/tasks/backlog.md | grep -A2 "In progress" | sort)
 ```
 
 ## Success Criteria

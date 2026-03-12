@@ -1,7 +1,7 @@
 # Cursor Rules for LumenFlow
 
 CRITICAL: Before starting any work, read this file completely:
-docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
+docs/operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
 
 This contains all the rules you must follow, including:
 - How to claim and complete Work Units (WUs)

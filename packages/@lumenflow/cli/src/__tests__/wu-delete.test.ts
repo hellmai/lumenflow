@@ -43,10 +43,10 @@ vi.mock('@lumenflow/core/arg-parser', () => ({
 
 vi.mock('@lumenflow/core/wu-paths', () => ({
   WU_PATHS: {
-    WU: (id: string) => `docs/04-operations/tasks/wu/${id}.yaml`,
-    WU_DIR: () => 'docs/04-operations/tasks/wu',
-    STATUS: () => 'docs/04-operations/tasks/status.md',
-    BACKLOG: () => 'docs/04-operations/tasks/backlog.md',
+    WU: (id: string) => `docs/operations/tasks/wu/${id}.yaml`,
+    WU_DIR: () => 'docs/operations/tasks/wu',
+    STATUS: () => 'docs/operations/tasks/status.md',
+    BACKLOG: () => 'docs/operations/tasks/backlog.md',
     STAMPS_DIR: () => '.lumenflow/stamps',
   },
 }));
@@ -104,8 +104,8 @@ vi.mock('@lumenflow/core/micro-worktree', () => ({
 
 vi.mock('@lumenflow/initiatives/paths', () => ({
   INIT_PATHS: {
-    INITIATIVES_DIR: () => 'docs/04-operations/tasks/initiatives',
-    INITIATIVE: (id: string) => `docs/04-operations/tasks/initiatives/${id}.yaml`,
+    INITIATIVES_DIR: () => 'docs/operations/tasks/initiatives',
+    INITIATIVE: (id: string) => `docs/operations/tasks/initiatives/${id}.yaml`,
   },
 }));
 
@@ -149,17 +149,17 @@ describe('wu-delete consistency cleanup', () => {
 
     // Seed minimal WU docs
     write(
-      join(tempDir, 'docs/04-operations/tasks/wu/WU-1007.yaml'),
+      join(tempDir, 'docs/operations/tasks/wu/WU-1007.yaml'),
       'id: WU-1007\ntitle: Delete me\nlane: Framework: CLI WU Commands\nstatus: blocked\n',
     );
     write(
-      join(tempDir, 'docs/04-operations/tasks/wu/WU-2000.yaml'),
+      join(tempDir, 'docs/operations/tasks/wu/WU-2000.yaml'),
       'id: WU-2000\ntitle: Keep me\nlane: Framework: CLI WU Commands\nstatus: ready\n',
     );
 
     // Seed initiative with both WUs
     write(
-      join(tempDir, 'docs/04-operations/tasks/initiatives/INIT-001.yaml'),
+      join(tempDir, 'docs/operations/tasks/initiatives/INIT-001.yaml'),
       [
         'id: INIT-001',
         'title: Test Initiative',
@@ -193,11 +193,11 @@ describe('wu-delete consistency cleanup', () => {
 
     // Seed stale projections that still reference WU-1007
     write(
-      join(tempDir, 'docs/04-operations/tasks/backlog.md'),
+      join(tempDir, 'docs/operations/tasks/backlog.md'),
       '# Backlog\n\n- [WU-1007 — Delete me](wu/WU-1007.yaml)\n- [WU-2000 — Keep me](wu/WU-2000.yaml)\n',
     );
     write(
-      join(tempDir, 'docs/04-operations/tasks/status.md'),
+      join(tempDir, 'docs/operations/tasks/status.md'),
       '# Work Unit Status\n\n## Blocked\n\n- [WU-1007 — Delete me](wu/WU-1007.yaml)\n',
     );
 
@@ -217,7 +217,7 @@ describe('wu-delete consistency cleanup', () => {
 
     // Initiative no longer references deleted WU
     const initContent = readFileSync(
-      join(tempDir, 'docs/04-operations/tasks/initiatives/INIT-001.yaml'),
+      join(tempDir, 'docs/operations/tasks/initiatives/INIT-001.yaml'),
       'utf-8',
     );
     expect(initContent).not.toContain('WU-1007');
@@ -229,8 +229,8 @@ describe('wu-delete consistency cleanup', () => {
     expect(events).toContain('"wuId":"WU-2000"');
 
     // Generated projections should not include deleted WU
-    const backlog = readFileSync(join(tempDir, 'docs/04-operations/tasks/backlog.md'), 'utf-8');
-    const status = readFileSync(join(tempDir, 'docs/04-operations/tasks/status.md'), 'utf-8');
+    const backlog = readFileSync(join(tempDir, 'docs/operations/tasks/backlog.md'), 'utf-8');
+    const status = readFileSync(join(tempDir, 'docs/operations/tasks/status.md'), 'utf-8');
     expect(backlog).not.toContain('WU-1007');
     expect(status).not.toContain('WU-1007');
   });
@@ -240,16 +240,16 @@ describe('wu-delete consistency cleanup', () => {
 
     await cleanupDeletedWUsInWorktree({ worktreePath: tempDir, ids: [WU_ID_DELETE] });
 
-    expect(existsSync(join(tempDir, 'docs/04-operations/tasks/wu/WU-1007.yaml'))).toBe(false);
+    expect(existsSync(join(tempDir, 'docs/operations/tasks/wu/WU-1007.yaml'))).toBe(false);
     expect(existsSync(join(tempDir, '.lumenflow/stamps/WU-1007.done'))).toBe(false);
-    expect(existsSync(join(tempDir, 'docs/04-operations/tasks/wu/WU-2000.yaml'))).toBe(true);
+    expect(existsSync(join(tempDir, 'docs/operations/tasks/wu/WU-2000.yaml'))).toBe(true);
   });
 
   it('completes without pathspec error when WU YAML is already removed (WU-1528)', async () => {
     // Simulate the scenario: WU YAML was already removed from the worktree
     // (e.g., due to a race condition where another agent deleted it)
     // but events and projections still reference it.
-    const missingWuYamlPath = join(tempDir, 'docs/04-operations/tasks/wu/WU-3000.yaml');
+    const missingWuYamlPath = join(tempDir, 'docs/operations/tasks/wu/WU-3000.yaml');
 
     // WU-3000 does NOT have a YAML file in the worktree, but events reference it
     writeFileSync(
@@ -311,7 +311,7 @@ describe('wu-delete consistency cleanup', () => {
     });
 
     // The WU YAML and stamp were deleted by cleanupDeletedWUsInWorktree
-    expect(existsSync(join(tempDir, 'docs/04-operations/tasks/wu/WU-1007.yaml'))).toBe(false);
+    expect(existsSync(join(tempDir, 'docs/operations/tasks/wu/WU-1007.yaml'))).toBe(false);
     expect(existsSync(join(tempDir, '.lumenflow/stamps/WU-1007.done'))).toBe(false);
 
     // Every file in the returned list must still exist on disk

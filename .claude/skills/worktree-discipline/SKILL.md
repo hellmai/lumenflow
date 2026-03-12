@@ -2,7 +2,7 @@
 name: worktree-discipline
 description: Prevents the "absolute path trap" in Write/Edit/Read tools. Use when working in worktrees, before file operations, or when changes don't appear in git status.
 version: 2.0.0
-source: docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source: docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: Worktree Discipline, Tool Usage
 last_updated: 2026-01-22
 allowed-tools: Read, Bash, Grep

@@ -371,7 +371,7 @@ export interface RemoteAwareIdOptions {
  * Get the highest WU ID considering both local and remote state.
  *
  * WU-2208: Scans 5 sources for the highest WU ID:
- * 1. Local YAML directory (docs/04-operations/tasks/wu/)
+ * 1. Local YAML directory (docs/operations/tasks/wu/)
  * 2. Local stamps directory (.lumenflow/stamps/)
  * 3. Remote YAML directory at ref (origin/main)
  * 4. Remote stamps directory at ref (origin/main)

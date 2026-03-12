@@ -190,7 +190,7 @@ export function getDocsPath(structure: DocsStructureType): DocsPathConfig {
 
 /**
  * WU-1309: Detect existing docs structure or return default
- * Auto-detects arc42 when docs/04-operations or UnsafeAny numbered dir (01-*, 02-*, etc.) exists
+ * Auto-detects arc42 when docs/operations or UnsafeAny numbered dir (01-*, 02-*, etc.) exists
  */
 export function detectDocsStructure(targetDir: string): DocsStructureType {
   const docsDir = path.join(targetDir, 'docs');
@@ -199,7 +199,7 @@ export function detectDocsStructure(targetDir: string): DocsStructureType {
     return 'simple';
   }
 
-  // Check for arc42 numbered directories (01-*, 02-*, ..., 04-operations, etc.)
+  // Check for arc42 numbered directories (01-*, 02-*, ..., operations, etc.)
   const entries = fs.readdirSync(docsDir);
   const hasNumberedDir = entries.some((entry) => /^\d{2}-/.test(entry));
 

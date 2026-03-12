@@ -6,9 +6,9 @@ on:
       - main
     paths-ignore:
       # LumenFlow operational files (WU specs, stamps, state, sessions)
-      - 'docs/04-operations/tasks/wu/**'
-      - 'docs/04-operations/tasks/backlog.md'
-      - 'docs/04-operations/tasks/status.md'
+      - 'docs/operations/tasks/wu/**'
+      - 'docs/operations/tasks/backlog.md'
+      - 'docs/operations/tasks/status.md'
       - '.lumenflow/stamps/**'
       - '.lumenflow/state/**'
       - '.lumenflow/sessions/**'
@@ -23,9 +23,9 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'docs/04-operations/tasks/wu/**'
-      - 'docs/04-operations/tasks/backlog.md'
-      - 'docs/04-operations/tasks/status.md'
+      - 'docs/operations/tasks/wu/**'
+      - 'docs/operations/tasks/backlog.md'
+      - 'docs/operations/tasks/status.md'
       - '.lumenflow/stamps/**'
       - '.lumenflow/state/**'
       - '.lumenflow/sessions/**'

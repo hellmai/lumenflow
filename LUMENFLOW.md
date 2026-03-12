@@ -4,7 +4,7 @@
 
 LumenFlow is a vendor-agnostic workflow framework for AI-native software development.
 
-> **Context Safety**: When approaching context limits (80% usage, 50+ tool calls), spawn a fresh agent instead of continuing after compaction. See [wu-sizing-guide.md](docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md).
+> **Context Safety**: When approaching context limits (80% usage, 50+ tool calls), spawn a fresh agent instead of continuing after compaction. See [wu-sizing-guide.md](docs/operations/_frameworks/lumenflow/wu-sizing-guide.md).
 
 ---
 
@@ -12,7 +12,7 @@ LumenFlow is a vendor-agnostic workflow framework for AI-native software develop
 
 Completion is a **two-step process**: run `wu:prep` from the worktree (runs gates, prints copy-paste instruction), then run `wu:done` from main (merge + cleanup only). Do NOT run `wu:done` from a worktree, skip `wu:prep`, or forget to run `wu:done` after `wu:prep`.
 
-For detailed troubleshooting, common mistakes, and recovery steps, see [troubleshooting-wu-done.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md).
+For detailed troubleshooting, common mistakes, and recovery steps, see [troubleshooting-wu-done.md](docs/operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md).
 
 ---
 
@@ -189,7 +189,7 @@ For cloud agents (Codex/Claude web/CI) operating on feature branches:
 - **LUMENFLOW.md** - This file, main workflow documentation
 - **.lumenflow/constraints.md** - Non-negotiable workflow constraints
 - **.lumenflow/rules/** - Workflow rules (git-safety.md, wu-workflow.md, etc.)
-- **docs/04-operations/\_frameworks/lumenflow/agent/onboarding/** - Agent onboarding documentation
+- **docs/operations/\_frameworks/lumenflow/agent/onboarding/** - Agent onboarding documentation
 
 ### Public Starlight Docs (Kernel/Packs IA)
 
@@ -242,7 +242,7 @@ The `--merge` flag uses bounded markers (`LUMENFLOW:START`/`END`) to safely inse
 
 After claiming a WU, immediately `cd worktrees/<lane>-wu-xxx` and work exclusively in the worktree. Main checkout becomes read-only -- hooks will block WU commits from main. Return to main only to run `wu:done`.
 
-For the full worktree lifecycle (parallel execution, bootstrap, isolation guarantees), see [LumenFlow Agent Capsule](docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md). For the mandatory pre-write check, see [.lumenflow/constraints.md](.lumenflow/constraints.md).
+For the full worktree lifecycle (parallel execution, bootstrap, isolation guarantees), see [LumenFlow Agent Capsule](docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md). For the mandatory pre-write check, see [.lumenflow/constraints.md](.lumenflow/constraints.md).
 
 ### Vendor-Agnostic Dirty-Main Guard
 
@@ -250,7 +250,7 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 
 - In worktree mode, commands block if main checkout has non-allowlisted dirty files
 - This includes writes from MCP tools or any vendor client that bypasses hook execution
-- Allowed dirty prefixes on main: `docs/04-operations/tasks/wu/`, `.lumenflow/`, `.claude/`, `plan/`
+- Allowed dirty prefixes on main: `docs/operations/tasks/wu/`, `.lumenflow/`, `.claude/`, `plan/`
 - `branch-pr` mode is exempt (no local worktree/main split)
 
 ---
@@ -267,7 +267,7 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 
 ## Core Commands
 
-> **Complete CLI reference (100+ commands):** See [quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md). Always run `<command> --help` for the authoritative option list.
+> **Complete CLI reference (100+ commands):** See [quick-ref-commands.md](docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md). Always run `<command> --help` for the authoritative option list.
 
 | Command                   | Description                                                             |
 | ------------------------- | ----------------------------------------------------------------------- |
@@ -298,7 +298,7 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 Commands include **context-aware validation** that checks location, WU status, and git state. When validation fails, commands provide copy-paste ready fix commands. Configure in `workspace.yaml` under `software_delivery.experimental.context_validation`.
 The Starlight CLI reference page is intentionally curated to primary commands; use `pnpm lumenflow:commands` for complete discovery.
 
-For recovery commands, state management, memory coordination, and orchestration tools, see [quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md).
+For recovery commands, state management, memory coordination, and orchestration tools, see [quick-ref-commands.md](docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md).
 
 ---
 
@@ -322,11 +322,11 @@ See [.lumenflow/constraints.md](.lumenflow/constraints.md) for the 9 non-negotia
 
 If you're an AI agent, read the onboarding docs:
 
-1. [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) - Most common mistake
-2. [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md) - First WU pitfalls
-3. [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/agent-safety-card.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-safety-card.md) - Safety guardrails
-4. [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) - Command reference
-5. [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/test-ratchet.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/test-ratchet.md) - Test baseline ratchet pattern
+1. [docs/operations/\_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md](docs/operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) - Most common mistake
+2. [docs/operations/\_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md](docs/operations/_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md) - First WU pitfalls
+3. [docs/operations/\_frameworks/lumenflow/agent/onboarding/agent-safety-card.md](docs/operations/_frameworks/lumenflow/agent/onboarding/agent-safety-card.md) - Safety guardrails
+4. [docs/operations/\_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md](docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) - Command reference
+5. [docs/operations/\_frameworks/lumenflow/agent/onboarding/test-ratchet.md](docs/operations/_frameworks/lumenflow/agent/onboarding/test-ratchet.md) - Test baseline ratchet pattern
 
 ---
 
@@ -369,10 +369,10 @@ Supported clients: `claude-code`, `codex-cli`, `cursor`, `gemini-cli`, `windsurf
 
 ## References
 
-- [LumenFlow Agent Capsule](docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md) -- Full framework reference (lifecycle, lanes, gates, DoD)
-- [Quick Reference: Commands](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) -- Complete CLI reference (100+ commands)
-- [Troubleshooting wu:done](docs/04-operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) -- Most common completion mistakes
+- [LumenFlow Agent Capsule](docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md) -- Full framework reference (lifecycle, lanes, gates, DoD)
+- [Quick Reference: Commands](docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) -- Complete CLI reference (100+ commands)
+- [Troubleshooting wu:done](docs/operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) -- Most common completion mistakes
 - [.lumenflow/constraints.md](.lumenflow/constraints.md) -- Non-negotiable rules and forbidden commands
-- [WU Sizing Guide](docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md) -- Scoping work without needless fragmentation
+- [WU Sizing Guide](docs/operations/_frameworks/lumenflow/wu-sizing-guide.md) -- Scoping work without needless fragmentation
 - [Skills Index](.claude/skills/INDEX.md)
 - [Agents README](.claude/agents/README.md)

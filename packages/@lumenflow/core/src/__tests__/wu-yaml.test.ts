@@ -458,7 +458,7 @@ lane: 'Framework: Core'
 
     beforeEach(async () => {
       // Create the WU directory structure in temp
-      const wuDir = path.join(tempDir, 'docs', '04-operations', 'tasks', 'wu');
+      const wuDir = path.join(tempDir, 'docs', 'operations', 'tasks', 'wu');
       await mkdir(wuDir, { recursive: true });
 
       // Save original cwd and change to temp
@@ -472,7 +472,7 @@ lane: 'Framework: Core'
     });
 
     it('should append session to existing agent_sessions array', async () => {
-      const wuPath = path.join(tempDir, 'docs', '04-operations', 'tasks', 'wu', 'WU-100.yaml');
+      const wuPath = path.join(tempDir, 'docs', 'operations', 'tasks', 'wu', 'WU-100.yaml');
       const existingSession = {
         session_id: 'a0000000-0000-4000-a000-000000000001',
         started: '2026-01-01T00:00:00Z',
@@ -501,7 +501,7 @@ lane: 'Framework: Core'
     });
 
     it('should initialize agent_sessions array if not present', async () => {
-      const wuPath = path.join(tempDir, 'docs', '04-operations', 'tasks', 'wu', 'WU-200.yaml');
+      const wuPath = path.join(tempDir, 'docs', 'operations', 'tasks', 'wu', 'WU-200.yaml');
       const yamlContent = stringifyYAML(validWUDoc({ id: 'WU-200', title: 'No sessions' }));
       await writeFile(wuPath, yamlContent);
 

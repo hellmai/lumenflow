@@ -154,7 +154,7 @@ pnpm gates                # Ensure gates still pass
      Lowest: 'P3',
    };
 
-   mkdirSync('docs/04-operations/tasks/wu', { recursive: true });
+   mkdirSync('docs/operations/tasks/wu', { recursive: true });
 
    jiraExport.issues.forEach((issue, index) => {
      const wuId = `WU-${String(index + 1).padStart(3, '0')}`;
@@ -173,7 +173,7 @@ pnpm gates                # Ensure gates still pass
        external_refs: [`JIRA-${issue.key}`],
      };
 
-     writeFileSync(`docs/04-operations/tasks/wu/${wuId}.yaml`, toYAML(wu));
+     writeFileSync(`docs/operations/tasks/wu/${wuId}.yaml`, toYAML(wu));
    });
 
    function parseAcceptanceCriteria(description) {
@@ -241,7 +241,7 @@ pnpm gates                # Ensure gates still pass
      4: 'P3', // Low
    };
 
-   mkdirSync('docs/04-operations/tasks/wu', { recursive: true });
+   mkdirSync('docs/operations/tasks/wu', { recursive: true });
 
    linearExport.forEach((issue, index) => {
      const wuId = `WU-${String(index + 1).padStart(3, '0')}`;
@@ -259,7 +259,7 @@ pnpm gates                # Ensure gates still pass
        external_refs: [`LINEAR-${issue.identifier}`],
      };
 
-     writeFileSync(`docs/04-operations/tasks/wu/${wuId}.yaml`, toYAML(wu));
+     writeFileSync(`docs/operations/tasks/wu/${wuId}.yaml`, toYAML(wu));
    });
 
    function extractAcceptance(description) {
@@ -324,7 +324,7 @@ pnpm gates                # Ensure gates still pass
      return 'feature';
    };
 
-   mkdirSync('docs/04-operations/tasks/wu', { recursive: true });
+   mkdirSync('docs/operations/tasks/wu', { recursive: true });
 
    issues.forEach((issue) => {
      const wuId = `WU-${String(issue.number).padStart(3, '0')}`;
@@ -343,7 +343,7 @@ pnpm gates                # Ensure gates still pass
        assigned_to: issue.assignees?.[0]?.login || null,
      };
 
-     writeFileSync(`docs/04-operations/tasks/wu/${wuId}.yaml`, toYAML(wu));
+     writeFileSync(`docs/operations/tasks/wu/${wuId}.yaml`, toYAML(wu));
    });
 
    function extractTasks(body) {
@@ -429,7 +429,7 @@ pnpm gates                # Ensure gates still pass
 
    Set ticket system to read-only for the migrated project, or add a banner:
 
-   > This project now uses LumenFlow. New work: see [repo]/docs/04-operations/tasks/
+   > This project now uses LumenFlow. New work: see [repo]/docs/operations/tasks/
 
 9. **Team onboarding**
    - Share the [Agent Quickstart](/getting-started/quickstart) with your AI agent
@@ -494,7 +494,7 @@ external_refs:
 
 ```bash
 # Find WU by Jira ID
-grep -r "JIRA-PROJ-123" docs/04-operations/tasks/wu/
+grep -r "JIRA-PROJ-123" docs/operations/tasks/wu/
 ```
 
 ### Bidirectional Links
@@ -537,7 +537,7 @@ Move attachments to:
 LumenFlow provides:
 
 - `pnpm flow:report` - DORA metrics
-- `cat docs/04-operations/tasks/status.md` - Recent completions
+- `cat docs/operations/tasks/status.md` - Recent completions
 - Initiative progress tracking
 
 ## Validation
@@ -552,7 +552,7 @@ npx lumenflow validate
 npx lumenflow backlog:check
 
 # 3. Verify external references are unique
-grep -rh "external_refs" docs/04-operations/tasks/wu/ | sort | uniq -d
+grep -rh "external_refs" docs/operations/tasks/wu/ | sort | uniq -d
 
 # 4. Run gates to ensure everything builds
 npx gates

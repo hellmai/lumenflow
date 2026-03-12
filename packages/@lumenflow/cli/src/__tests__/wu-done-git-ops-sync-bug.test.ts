@@ -23,9 +23,9 @@ vi.mock('@lumenflow/core/commands-logger', () => ({
 vi.mock('@lumenflow/core/config', () => ({
   getConfig: vi.fn().mockReturnValue({
     directories: {
-      wuDir: 'docs/04-operations/tasks/wu',
-      statusPath: 'docs/04-operations/tasks/status.md',
-      backlogPath: 'docs/04-operations/tasks/backlog.md',
+      wuDir: 'docs/operations/tasks/wu',
+      statusPath: 'docs/operations/tasks/status.md',
+      backlogPath: 'docs/operations/tasks/backlog.md',
     },
   }),
 }));

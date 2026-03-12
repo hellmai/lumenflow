@@ -23,9 +23,9 @@ describe('no legacy .beacon references in docs (WU-1450, WU-1529)', () => {
     const repoRoot = repoRootFromThisFile();
 
     const files = [
-      'docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-safety-card.md',
-      'docs/04-operations/_frameworks/lumenflow/agent/onboarding/lumenflow-force-usage.md',
-      'docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
+      'docs/operations/_frameworks/lumenflow/agent/onboarding/agent-safety-card.md',
+      'docs/operations/_frameworks/lumenflow/agent/onboarding/lumenflow-force-usage.md',
+      'docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
       'CLAUDE.md',
       'apps/docs/src/content/docs/getting-started/upgrade.mdx',
       'apps/docs/src/content/docs/reference/changelog.mdx',

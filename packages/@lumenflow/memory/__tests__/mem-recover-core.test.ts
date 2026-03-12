@@ -424,7 +424,7 @@ describe('mem-recover-core (WU-1390)', () => {
      * Helper to write a WU YAML spec file
      */
     async function writeWuYaml(wuId: string, content: string): Promise<void> {
-      const wuDir = path.join(testDir, 'docs', '04-operations', 'tasks', 'wu');
+      const wuDir = path.join(testDir, 'docs', 'operations', 'tasks', 'wu');
       await fs.mkdir(wuDir, { recursive: true });
       await fs.writeFile(path.join(wuDir, `${wuId}.yaml`), content, 'utf-8');
     }

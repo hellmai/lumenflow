@@ -18,7 +18,7 @@ In scope:
 
 Out of scope:
 
-- Historical task artifacts (`docs/04-operations/tasks/**`)
+- Historical task artifacts (`docs/operations/tasks/**`)
 - `.lumenflow/memory/**` and `.lumenflow/stamps/**`
 
 Migration behavior:

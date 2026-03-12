@@ -19,7 +19,7 @@ describe('wu:create notes field (WU-2245)', () => {
     testPathsManual: ['Manual test: verify output'],
     testPathsUnit: ['packages/@lumenflow/cli/__tests__/wu-create.test.ts'],
     exposure: 'backend-only' as const,
-    specRefs: ['docs/04-operations/plans/WU-9999-plan.md'],
+    specRefs: ['docs/operations/plans/WU-9999-plan.md'],
     strict: false,
   };
 

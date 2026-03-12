@@ -33,7 +33,7 @@ pnpm initiative:create \
   --target-date 2026-02-01
 ```
 
-This creates `docs/04-operations/tasks/initiatives/INIT-001.yaml`:
+This creates `docs/operations/tasks/initiatives/INIT-001.yaml`:
 
 ```yaml
 id: INIT-001
@@ -570,12 +570,12 @@ Plans capture goals, scope, approach, and success criteria before implementation
 pnpm initiative:plan --initiative INIT-001 --create
 ```
 
-This creates a plan template at `docs/04-operations/plans/INIT-001-<slug>.md` and links it to the initiative via the `related_plan` field.
+This creates a plan template at `docs/operations/plans/INIT-001-<slug>.md` and links it to the initiative via the `related_plan` field.
 
 ### Link an Existing Plan
 
 ```bash
-pnpm initiative:plan --initiative INIT-001 --plan docs/04-operations/plans/my-plan.md
+pnpm initiative:plan --initiative INIT-001 --plan docs/operations/plans/my-plan.md
 ```
 
 ### Plan URI Format

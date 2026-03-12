@@ -111,7 +111,7 @@ describe('generateBacklog', () => {
     const status = await generateStatus(store);
 
     expect(backlog).toContain(
-      '> Agent: Read **docs/04-operations/\\_frameworks/lumenflow/agent/onboarding/starting-prompt.md** first',
+      '> Agent: Read **docs/operations/\\_frameworks/lumenflow/agent/onboarding/starting-prompt.md** first',
     );
     expect(backlog).toContain(
       '- [WU-777 — Escape \\_frameworks guard-\\* \\[alpha\\] and keep node_modules spec_refs](wu/WU-777.yaml) — Content: docs/\\_frameworks guard-\\* node_modules spec_refs',

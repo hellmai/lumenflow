@@ -4,7 +4,7 @@
 # remove optional fields if not needed.
 #
 # If you used "lumenflow init --full", this template lives at:
-# docs/04-operations/tasks/templates/wu-template.yaml
+# docs/operations/tasks/templates/wu-template.yaml
 
 # Required: Unique work unit identifier (format: WU-NNN)
 id: WU-XXX
@@ -171,5 +171,5 @@ requires_review: false
 # 5. Exemptions require approval from rule owner
 #
 # For more details, see:
-# - docs/04-operations/_frameworks/cos/system-prompt-v1.3.md
-# - docs/04-operations/_frameworks/cos/evidence-format.md
+# - docs/operations/_frameworks/cos/system-prompt-v1.3.md
+# - docs/operations/_frameworks/cos/evidence-format.md

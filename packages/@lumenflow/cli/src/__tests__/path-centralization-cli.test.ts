@@ -5,10 +5,10 @@
  * @fileoverview Tests for WU-1311: CLI path centralization
  *
  * Tests that CLI commands use WU_PATHS/getResolvedPaths/getConfig
- * instead of hardcoded 'docs/04-operations' paths.
+ * instead of hardcoded 'docs/operations' paths.
  *
  * WU-1311 Acceptance Criteria:
- * - No hardcoded docs/04-operations paths remain in CLI commands (use WU_PATHS/getResolvedPaths)
+ * - No hardcoded docs/operations paths remain in CLI commands (use WU_PATHS/getResolvedPaths)
  * - state-doctor warns when configured paths are missing
  * - Config overrides are respected across wu-* commands and diagnostics
  * - Unit tests cover CLI path usage and warnings
@@ -54,11 +54,11 @@ describe('WU-1311: CLI path centralization', () => {
     clearConfigCache();
   });
 
-  describe('AC1: No hardcoded docs/04-operations paths in CLI commands', () => {
+  describe('AC1: No hardcoded docs/operations paths in CLI commands', () => {
     it('should use config-based paths for WU file path generation', () => {
       const paths = createWuPaths({ projectRoot: tempDir });
 
-      // WU-2105: Defaults are consumer-simple (no 04-operations prefix)
+      // WU-2105: Defaults are consumer-simple (no operations prefix)
       expect(paths.WU('WU-1311')).toBe('docs/tasks/wu/WU-1311.yaml');
       expect(paths.STATUS()).toBe('docs/tasks/status.md');
       expect(paths.BACKLOG()).toBe('docs/tasks/backlog.md');

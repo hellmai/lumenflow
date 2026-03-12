@@ -17,11 +17,11 @@ describe('wu:done worktree metadata path isolation', () => {
   beforeEach(() => {
     worktreeRoot = mkdtempSync(join(tmpdir(), 'wu-done-worktree-'));
 
-    mkdirSync(join(worktreeRoot, 'docs', '04-operations', 'tasks'), { recursive: true });
+    mkdirSync(join(worktreeRoot, 'docs', 'operations', 'tasks'), { recursive: true });
     mkdirSync(join(worktreeRoot, '.lumenflow', 'state'), { recursive: true });
 
     writeFileSync(
-      join(worktreeRoot, 'docs', '04-operations', 'tasks', 'backlog.md'),
+      join(worktreeRoot, 'docs', 'operations', 'tasks', 'backlog.md'),
       '# Backlog\n',
     );
     writeFileSync(

@@ -56,10 +56,10 @@ vi.mock('../lumenflow-config.js', async () => {
         backlogPath: `${arc42.tasks}/backlog.md`,
         initiativesDir: `${arc42.tasks}/initiatives`,
         worktrees: 'worktrees',
-        plansDir: 'docs/04-operations/plans',
+        plansDir: 'docs/operations/plans',
         templatesDir: LP.TEMPLATES_DIR,
-        onboardingDir: 'docs/04-operations/_frameworks/lumenflow/agent/onboarding',
-        sizingGuidePath: 'docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md',
+        onboardingDir: 'docs/operations/_frameworks/lumenflow/agent/onboarding',
+        sizingGuidePath: 'docs/operations/_frameworks/lumenflow/wu-sizing-guide.md',
       },
       state: {
         stampsDir: LP.STAMPS_DIR,
@@ -260,7 +260,7 @@ describe('wu-paths', () => {
 
     it('should return correct PLANS_DIR path', () => {
       const paths = createWuPaths();
-      expect(paths.PLANS_DIR()).toBe('docs/04-operations/plans');
+      expect(paths.PLANS_DIR()).toBe('docs/operations/plans');
     });
 
     it('should return correct TEMPLATES_DIR path (WU-1310)', () => {
@@ -271,14 +271,14 @@ describe('wu-paths', () => {
     it('should return correct ONBOARDING_DIR path (WU-1310)', () => {
       const paths = createWuPaths();
       expect(paths.ONBOARDING_DIR()).toBe(
-        'docs/04-operations/_frameworks/lumenflow/agent/onboarding',
+        'docs/operations/_frameworks/lumenflow/agent/onboarding',
       );
     });
 
     it('should return correct SIZING_GUIDE_PATH', () => {
       const paths = createWuPaths();
       expect(paths.SIZING_GUIDE_PATH()).toBe(
-        'docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md',
+        'docs/operations/_frameworks/lumenflow/wu-sizing-guide.md',
       );
     });
 

@@ -4,8 +4,8 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml)
-- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml)
+- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml)
+- [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, operations to operations](wu/WU-2421.yaml)
 
 ## Completed
 
@@ -277,7 +277,7 @@ _Last updated: 2026-03-12_
 - [WU-1310 — Centralize path defaults in core config (simple/arc42)](wu/WU-1310.yaml) — 2026-02-01
 - [WU-1312 — Update wu-sizing-guide with doc-only exception and tuning guidance](wu/WU-1312.yaml) — 2026-02-01
 - [WU-1309 — Fix init docs structure + portability + onboarding docs + quick-ref](wu/WU-1309.yaml) — 2026-02-02
-- [WU-1311 — Remove hardcoded docs/04-operations paths in CLI commands](wu/WU-1311.yaml) — 2026-02-02
+- [WU-1311 — Remove hardcoded docs/operations paths in CLI commands](wu/WU-1311.yaml) — 2026-02-02
 - [WU-1313 — Introduce first-class plan tooling (create/link/edit/promote)](wu/WU-1313.yaml) — 2026-02-02
 - [WU-1315 — Add onboarding smoke-test gate](wu/WU-1315.yaml) — 2026-02-02
 - [WU-1319 — Generate status.md from merged state during wu:done](wu/WU-1319.yaml) — 2026-02-02
@@ -1324,6 +1324,3 @@ _Last updated: 2026-03-12_
 - [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml) — 2026-03-12
 - [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml) — 2026-03-12
 - [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml) — 2026-03-12
-- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml) — 2026-03-12
-- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — 2026-03-12
-- [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — 2026-03-12

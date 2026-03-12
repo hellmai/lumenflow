@@ -9,7 +9,7 @@
  *
  * @see {@link packages/@lumenflow/cli/src/validate.ts} - Consumer (CI validation)
  * @see {@link packages/@lumenflow/cli/src/lib/initiative-validator.ts} - Consumer (dependency graph validation)
- * @see {@link docs/04-operations/tasks/initiatives/} - Initiative YAML files
+ * @see {@link docs/operations/tasks/initiatives/} - Initiative YAML files
  */
 
 import { z } from 'zod';

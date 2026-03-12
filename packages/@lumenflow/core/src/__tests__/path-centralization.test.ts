@@ -370,10 +370,10 @@ describe('WU-1310: Core path centralization', () => {
       expect(config.directories.plansDir).toBe('plans');
     });
 
-    it('should support arc42 structure config (nested docs/04-operations)', () => {
+    it('should support arc42 structure config (nested docs/operations)', () => {
       const defaultConfig = getDefaultConfig();
 
-      // Default arc42 pattern: docs/04-operations/...
+      // Default arc42 pattern: docs/operations/...
       expect(defaultConfig.directories.wuDir).toContain('docs');
       expect(defaultConfig.directories.backlogPath).toContain('docs');
       expect(defaultConfig.directories.statusPath).toContain('docs');

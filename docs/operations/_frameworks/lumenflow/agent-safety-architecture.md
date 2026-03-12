@@ -43,7 +43,7 @@ LumenFlow enforces agent safety through 8 layered protection mechanisms. No sing
 
 **Allowlist:** The following paths are permitted even outside a worktree:
 
-- `docs/04-operations/tasks/wu/*.yaml` (WU specifications)
+- `docs/operations/tasks/wu/*.yaml` (WU specifications)
 - `.lumenflow/*` (workflow configuration and state)
 - Files matching documentation patterns
 
@@ -197,7 +197,7 @@ YAML configuration files (`workspace.yaml`, WU specification files) are in the a
 | ---------------- | -------------------------------------------- | ------------------------------------------------------- |
 | `workspace.yaml` | `pnpm config:set --key <path> --value <val>` | Write/Edit to `workspace.yaml`                          |
 | `workspace.yaml` | `pnpm config:get --key <path>` (read)        | Read `workspace.yaml` (acceptable for reading)          |
-| WU YAML specs    | `pnpm wu:edit --id WU-XXX --field value`     | Write/Edit to `docs/04-operations/tasks/wu/WU-XXX.yaml` |
+| WU YAML specs    | `pnpm wu:edit --id WU-XXX --field value`     | Write/Edit to `docs/operations/tasks/wu/WU-XXX.yaml` |
 | WU YAML specs    | `pnpm wu:create ...` (creation)              | Write to create new YAML files                          |
 
 **Why CLI tooling is required:**

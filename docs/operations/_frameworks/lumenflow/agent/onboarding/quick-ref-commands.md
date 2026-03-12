@@ -67,7 +67,7 @@ Run `--help` first, then run the real command with explicit flags.
 | `pnpm pack:all`                                    | Pack all packages for distribution                                                      |
 | `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                                         |
 | `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
-| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/04-operations`)                                         |
+| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/operations`)                                         |
 | `pnpm docs:sync`                                   | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
 | `pnpm sync:templates`                              | Sync repo docs into bundled templates                                                   |
 | `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                                              |
@@ -732,9 +732,9 @@ When `requireRemote: true` (default):
 
 | Path                                      | Description          |
 | ----------------------------------------- | -------------------- |
-| `docs/04-operations/tasks/wu/WU-XXX.yaml` | WU specification     |
-| `docs/04-operations/tasks/status.md`      | Current status board |
-| `docs/04-operations/tasks/backlog.md`     | Backlog summary      |
+| `docs/operations/tasks/wu/WU-XXX.yaml` | WU specification     |
+| `docs/operations/tasks/status.md`      | Current status board |
+| `docs/operations/tasks/backlog.md`     | Backlog summary      |
 | `.lumenflow/stamps/WU-XXX.done`           | Completion stamp     |
 | `worktrees/<lane>-wu-xxx/`                | Worktree directory   |
 

@@ -27,8 +27,8 @@ const STATUS_PATH = `${ARC42.tasks}/status.md`;
 const LUMENFLOW_MD = 'LUMENFLOW.md';
 const VENDOR_RULES_FILE = 'lumenflow.md';
 // WU-1300: Additional constants for lint compliance
-const ONBOARDING_DOCS_PATH = 'docs/04-operations/_frameworks/lumenflow/agent/onboarding';
-const DOCS_OPS_DIR = 'docs/04-operations';
+const ONBOARDING_DOCS_PATH = 'docs/operations/_frameworks/lumenflow/agent/onboarding';
+const DOCS_OPS_DIR = 'docs/operations';
 const PACKAGE_JSON_FILE = 'package.json';
 const WORKSPACE_CONFIG_FILE = 'workspace.yaml';
 const SOFTWARE_DELIVERY_KEY = 'software_delivery';
@@ -581,7 +581,7 @@ describe('lumenflow init', () => {
 
         const agentsContent = fs.readFileSync(path.join(tempDir, 'AGENTS.md'), 'utf-8');
         // If quick-ref is mentioned, link should point to correct location
-        // docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+        // docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
         if (agentsContent.includes('quick-ref')) {
           expect(agentsContent).toContain(`${ONBOARDING_DOCS_PATH}/quick-ref-commands.md`);
         }
@@ -612,7 +612,7 @@ describe('lumenflow init', () => {
         await scaffoldProject(tempDir, options);
 
         // Arc42 uses numbered directories: 01-*, 02-*, etc.
-        // The current default is arc42-style with 04-operations
+        // The current default is arc42-style with operations
         const operationsDir = path.join(tempDir, DOCS_OPS_DIR);
         expect(fs.existsSync(operationsDir)).toBe(true);
       });
@@ -793,17 +793,17 @@ describe('lumenflow init', () => {
         initiativesDir: INITIATIVES_DIR,
         backlogPath: BACKLOG_PATH,
         statusPath: STATUS_PATH,
-        plansDir: 'docs/04-operations/plans',
-        onboardingDir: 'docs/04-operations/_frameworks/lumenflow/agent/onboarding',
-        completeGuidePath: 'docs/04-operations/_frameworks/lumenflow/lumenflow-complete.md',
+        plansDir: 'docs/operations/plans',
+        onboardingDir: 'docs/operations/_frameworks/lumenflow/agent/onboarding',
+        completeGuidePath: 'docs/operations/_frameworks/lumenflow/lumenflow-complete.md',
         quickRefPath:
-          'docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
+          'docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
         startingPromptPath:
-          'docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md',
-        governancePath: 'docs/04-operations/governance/project-governance.md',
+          'docs/operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md',
+        governancePath: 'docs/operations/governance/project-governance.md',
       };
 
-      it('simple layout: all directory paths use docs/ prefix (no 04-operations)', async () => {
+      it('simple layout: all directory paths use docs/ prefix (no operations)', async () => {
         await scaffoldProject(tempDir, { force: false, full: true });
 
         const sd = readSoftwareDeliveryConfig(tempDir);
@@ -813,15 +813,15 @@ describe('lumenflow init', () => {
           expect(dirs[key]).toBe(expected);
         }
 
-        // No path should contain '04-operations' in simple layout
+        // No path should contain 'operations' in simple layout
         for (const [key, value] of Object.entries(dirs)) {
           if (typeof value === 'string' && key !== 'appsWeb') {
-            expect(value).not.toContain('04-operations');
+            expect(value).not.toContain('operations');
           }
         }
       });
 
-      it('arc42 layout: all directory paths use docs/04-operations/ prefix', async () => {
+      it('arc42 layout: all directory paths use docs/operations/ prefix', async () => {
         await scaffoldProject(tempDir, {
           force: false,
           full: true,
@@ -1043,7 +1043,7 @@ describe('lumenflow init', () => {
   });
 
   // WU-1385 / WU-2398: wu-sizing-guide.md is no longer scaffolded as an onboarding
-  // template. The canonical doc lives at docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md.
+  // template. The canonical doc lives at docs/operations/_frameworks/lumenflow/wu-sizing-guide.md.
   // The starting-prompt.md template still references wu-sizing-guide.md (via LUMENFLOW.md link).
 
   // WU-1408: safe-git and pre-commit hook scaffolding

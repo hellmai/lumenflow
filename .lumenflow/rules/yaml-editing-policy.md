@@ -13,7 +13,7 @@ This document defines the mandatory policy for modifying YAML configuration file
 This applies to:
 
 - `workspace.yaml` (project configuration — the sole config contract)
-- `docs/04-operations/tasks/wu/*.yaml` (WU specification files)
+- `docs/operations/tasks/wu/*.yaml` (WU specification files)
 
 ---
 
@@ -51,8 +51,8 @@ Write(workspace.yaml, "...")
 Edit(workspace.yaml, old, new)
 
 # WRONG: Raw-editing WU YAML
-Write(docs/04-operations/tasks/wu/WU-123.yaml, "...")
-Edit(docs/04-operations/tasks/wu/WU-123.yaml, old, new)
+Write(docs/operations/tasks/wu/WU-123.yaml, "...")
+Edit(docs/operations/tasks/wu/WU-123.yaml, old, new)
 
 # WRONG: Using Bash to edit YAML
 sed -i 's/old/new/' workspace.yaml
@@ -111,5 +111,5 @@ Raw edits frequently introduce type mismatches (e.g., YAML string `"true"` vs. b
 ## References
 
 - [.lumenflow/constraints.md](../constraints.md) -- Constraint 9: YAML files must be modified via CLI tooling only
-- [config:set and config:get](../../docs/04-operations/_frameworks/lumenflow/config-set-usage.md) -- Full command documentation
-- [Agent Safety Architecture](../../docs/04-operations/_frameworks/lumenflow/agent-safety-architecture.md) -- Protection landscape overview
+- [config:set and config:get](../../docs/operations/_frameworks/lumenflow/config-set-usage.md) -- Full command documentation
+- [Agent Safety Architecture](../../docs/operations/_frameworks/lumenflow/agent-safety-architecture.md) -- Protection landscape overview

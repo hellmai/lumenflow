@@ -13,7 +13,7 @@ const GLOB_PATTERNS = {
   RUNTIME_TESTS: 'packages/@lumenflow/**/__tests__/**/*.{ts,tsx,js,mjs,cjs}',
   RUNTIME_E2E: 'packages/@lumenflow/**/e2e/**/*.{ts,tsx,js,mjs,cjs}',
   PUBLIC_DOCS: 'apps/docs/src/content/docs/**/*.{md,mdx}',
-  INTERNAL_FRAMEWORK_DOCS: 'docs/04-operations/_frameworks/lumenflow/**/*.{md,mdx,yml,yaml}',
+  INTERNAL_FRAMEWORK_DOCS: 'docs/operations/_frameworks/lumenflow/**/*.{md,mdx,yml,yaml}',
 } as const;
 
 const IGNORE_PATTERNS = ['**/dist/**', '**/node_modules/**', '**/__snapshots__/**'] as const;

@@ -76,7 +76,7 @@ describe('template portability', () => {
       const quickRefPath = path.join(
         tempDir,
         'docs',
-        '04-operations',
+        'operations',
         '_frameworks',
         'lumenflow',
         'agent',
@@ -106,7 +106,7 @@ describe('template portability', () => {
       const onboardingDir = path.join(
         tempDir,
         'docs',
-        '04-operations',
+        'operations',
         '_frameworks',
         'lumenflow',
         'agent',
@@ -134,7 +134,7 @@ describe('template portability', () => {
       const startingPromptPath = path.join(
         tempDir,
         'docs',
-        '04-operations',
+        'operations',
         '_frameworks',
         'lumenflow',
         'agent',

@@ -415,7 +415,7 @@ describe('ComputeContextUseCase', () => {
         status: 'in_progress',
         lane: 'Content: Documentation',
         title: 'Test WU',
-        yamlPath: '/test/docs/04-operations/tasks/wu/WU-1095.yaml',
+        yamlPath: '/test/docs/operations/tasks/wu/WU-1095.yaml',
         isConsistent: true,
         inconsistencyReason: null,
       }),

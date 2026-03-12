@@ -66,9 +66,9 @@ vi.mock('@lumenflow/core/wu-transaction', () => {
 
 vi.mock('@lumenflow/core/wu-paths', () => ({
   WU_PATHS: {
-    WU: (id: string) => `docs/04-operations/tasks/wu/${id}.yaml`,
-    STATUS: () => 'docs/04-operations/tasks/status.md',
-    BACKLOG: () => 'docs/04-operations/tasks/backlog.md',
+    WU: (id: string) => `docs/operations/tasks/wu/${id}.yaml`,
+    STATUS: () => 'docs/operations/tasks/status.md',
+    BACKLOG: () => 'docs/operations/tasks/backlog.md',
     STAMP: (id: string) => `.lumenflow/stamps/${id}.done`,
   },
 }));
@@ -261,9 +261,9 @@ describe('WU-2211: executeAlreadyMergedFinalize', () => {
 
     // All file paths must be absolute, prefixed with the micro-worktree path.
     // This prevents WUTransaction.commit() from writing to process.cwd() (main checkout).
-    expect(callArgs.wuPath).toBe(`${microWorktreePath}/docs/04-operations/tasks/wu/WU-100.yaml`);
-    expect(callArgs.statusPath).toBe(`${microWorktreePath}/docs/04-operations/tasks/status.md`);
-    expect(callArgs.backlogPath).toBe(`${microWorktreePath}/docs/04-operations/tasks/backlog.md`);
+    expect(callArgs.wuPath).toBe(`${microWorktreePath}/docs/operations/tasks/wu/WU-100.yaml`);
+    expect(callArgs.statusPath).toBe(`${microWorktreePath}/docs/operations/tasks/status.md`);
+    expect(callArgs.backlogPath).toBe(`${microWorktreePath}/docs/operations/tasks/backlog.md`);
     expect(callArgs.stampPath).toBe(`${microWorktreePath}/.lumenflow/stamps/WU-100.done`);
   });
 

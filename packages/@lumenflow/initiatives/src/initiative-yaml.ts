@@ -61,7 +61,7 @@ export interface InitiativeEntry {
  * import { readInitiative, writeInitiative, listInitiatives } from './lib/initiative-yaml.js';
  *
  * // Read initiative
- * const doc = readInitiative('docs/04-operations/tasks/initiatives/INIT-001.yaml', 'INIT-001');
+ * const doc = readInitiative('docs/operations/tasks/initiatives/INIT-001.yaml', 'INIT-001');
  *
  * // List all initiatives
  * const initiatives = listInitiatives();

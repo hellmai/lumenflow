@@ -176,4 +176,4 @@ Narrow types (e.g., `Pick<>`) may be defined from this canonical interface, but 
 - `packages/@lumenflow/cli/src/wu-done-git-ops.ts`
 - `packages/@lumenflow/core/src/micro-worktree.ts`
 - `packages/@lumenflow/core/src/micro-worktree-shared.ts`
-- `docs/04-operations/tasks/wu/WU-2199.yaml`
+- `docs/operations/tasks/wu/WU-2199.yaml`

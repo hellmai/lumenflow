@@ -92,7 +92,7 @@ S (1 WU)
 3. Cloud telemetry sync includes `costs` source with offset tracking and no regression to existing sources.
 4. `pnpm cost:summary` is registered, has `--help`, and reports aggregated local totals.
 5. Tests cover cost event emission, cost sync mapping, and CLI summary behavior.
-6. Documentation is updated in relevant docs pages under `apps/docs/src/content/docs/reference/**` and command references in `docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md`.
+6. Documentation is updated in relevant docs pages under `apps/docs/src/content/docs/reference/**` and command references in `docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md`.
 
 ---
 
@@ -232,7 +232,7 @@ M (1 WU)
 3. `approval:request`, `approval:review`, and `approval:list` CLI wrappers are registered and documented with `--help`.
 4. Existing local WU escalation gate behavior remains unchanged.
 5. Tests cover approval SDK methods and CLI wrapper behavior (including cloud-unavailable failure paths).
-6. Documentation is updated in CLI/reference docs under `apps/docs/src/content/docs/reference/**` and command references in `docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md`.
+6. Documentation is updated in CLI/reference docs under `apps/docs/src/content/docs/reference/**` and command references in `docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md`.
 
 ---
 

@@ -15,7 +15,7 @@
  * aggregation across custom log locations. Uses native JSON.parse like existing
  * tail-logs.ts in the codebase.
  *
- * @see docs/02-technical/standards/logging.md
+ * @see docs/05-building-block-view/standards/logging.md
  */
 
 import { existsSync, readFileSync } from 'node:fs';

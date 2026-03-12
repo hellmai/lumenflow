@@ -362,8 +362,8 @@ describe('WU-1145: Concurrent backlog modification', () => {
   describe('computeBacklogContentWithMerge', () => {
     it('should use merged state when computing backlog content', async () => {
       // Setup backlog paths
-      const worktreeBacklogDir = join(tempDir, 'worktree', 'docs', '04-operations', 'tasks');
-      const mainBacklogDir = join(tempDir, 'main', 'docs', '04-operations', 'tasks');
+      const worktreeBacklogDir = join(tempDir, 'worktree', 'docs', 'operations', 'tasks');
+      const mainBacklogDir = join(tempDir, 'main', 'docs', 'operations', 'tasks');
       mkdirSync(worktreeBacklogDir, { recursive: true });
       mkdirSync(mainBacklogDir, { recursive: true });
 
@@ -539,7 +539,7 @@ describe('WU-1145: Concurrent backlog modification', () => {
 
     it('should use computeStatusContentWithMainMerge to preserve concurrent completions', async () => {
       // Setup paths
-      const worktreeBacklogDir = join(tempDir, 'worktree', 'docs', '04-operations', 'tasks');
+      const worktreeBacklogDir = join(tempDir, 'worktree', 'docs', 'operations', 'tasks');
       mkdirSync(worktreeBacklogDir, { recursive: true });
 
       // Setup: Worktree has WU-100 in_progress and WU-200 in_progress (stale)

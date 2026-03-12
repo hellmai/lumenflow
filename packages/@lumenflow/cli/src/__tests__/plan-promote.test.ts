@@ -15,7 +15,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 /** Test constants - avoid sonarjs/no-duplicate-string */
-const TEST_PLANS_DIR = 'docs/04-operations/plans';
+const TEST_PLANS_DIR = 'docs/operations/plans';
 const TEST_WU_ID = 'WU-1313';
 
 // Mock modules before importing

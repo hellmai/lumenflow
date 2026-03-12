@@ -20,7 +20,7 @@ describe('wu-done policy helpers', () => {
         {
           id: 'WU-2162',
           type: 'documentation',
-          code_paths: ['docs/04-operations/plans/example.md'],
+          code_paths: ['docs/operations/plans/example.md'],
         },
         { docsOnly: true },
       );

@@ -40,7 +40,7 @@ export interface IWuIdGitAdapter {
    * Returns empty array if the path does not exist at the given ref.
    *
    * @param ref - Git ref (e.g., 'origin/main')
-   * @param path - Directory path relative to repo root (e.g., 'docs/04-operations/tasks/wu')
+   * @param path - Directory path relative to repo root (e.g., 'docs/operations/tasks/wu')
    * @returns Array of filenames in the directory at the given ref
    */
   listTreeAtRef(ref: string, path: string): Promise<string[]>;

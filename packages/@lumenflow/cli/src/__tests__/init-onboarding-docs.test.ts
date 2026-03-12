@@ -37,7 +37,7 @@ describe('onboarding docs scaffold', () => {
     return path.join(
       tempDir,
       'docs',
-      '04-operations',
+      'operations',
       '_frameworks',
       'lumenflow',
       'agent',
@@ -228,10 +228,10 @@ describe('onboarding docs scaffold', () => {
       const onboardingDir = getOnboardingDir('simple');
       const content = fs.readFileSync(path.join(onboardingDir, FIRST_15_MINS_FILE), 'utf-8');
 
-      // In simple mode, paths like "cat docs/04-operations/tasks/status.md"
+      // In simple mode, paths like "cat docs/operations/tasks/status.md"
       // should become "cat docs/tasks/status.md"
       expect(content).toContain('docs/tasks');
-      expect(content).not.toContain('docs/04-operations');
+      expect(content).not.toContain('docs/operations');
     });
 
     it('simple: starting-prompt should reference docs/tasks paths', async () => {
@@ -247,7 +247,7 @@ describe('onboarding docs scaffold', () => {
       const content = fs.readFileSync(path.join(onboardingDir, STARTING_PROMPT_FILE), 'utf-8');
 
       // starting-prompt references WU spec paths - should use simple paths
-      expect(content).not.toContain('docs/04-operations');
+      expect(content).not.toContain('docs/operations');
     });
 
     it('simple: wu-create-checklist should reference docs/tasks paths', async () => {
@@ -262,18 +262,18 @@ describe('onboarding docs scaffold', () => {
       const onboardingDir = getOnboardingDir('simple');
       const content = fs.readFileSync(path.join(onboardingDir, 'wu-create-checklist.md'), 'utf-8');
 
-      // wu-create-checklist has "cat docs/04-operations/tasks/wu/WU-XXX.yaml"
+      // wu-create-checklist has "cat docs/operations/tasks/wu/WU-XXX.yaml"
       // In simple mode this should be "cat docs/tasks/wu/WU-XXX.yaml"
-      expect(content).not.toContain('docs/04-operations');
+      expect(content).not.toContain('docs/operations');
     });
 
-    it('arc42: first-15-mins should reference docs/04-operations paths', async () => {
+    it('arc42: first-15-mins should reference docs/operations paths', async () => {
       await scaffoldProject(tempDir, getArc42Options());
 
       const onboardingDir = getOnboardingDir();
       const content = fs.readFileSync(path.join(onboardingDir, FIRST_15_MINS_FILE), 'utf-8');
 
-      expect(content).toContain('docs/04-operations/tasks');
+      expect(content).toContain('docs/operations/tasks');
     });
 
     it('all docs: no unresolved template placeholders', async () => {

@@ -6,7 +6,7 @@
  * Single source of truth — reads workspace.yaml via getConfig().
  *
  * Usage: node dist/cli/get-wu-dir.js [project-root]
- * Outputs: the configured wuDir path (relative, e.g. "docs/04-operations/tasks/wu")
+ * Outputs: the configured wuDir path (relative, e.g. "docs/operations/tasks/wu")
  * Exit codes: 0 = success (wuDir on stdout), 1 = error (nothing on stdout)
  *
  * WU-2310: Created to eliminate hardcoded wuDir paths in shell hooks and scripts.

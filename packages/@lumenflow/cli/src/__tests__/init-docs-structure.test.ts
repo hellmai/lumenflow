@@ -21,7 +21,7 @@ import {
 // Constants to avoid duplicate strings (sonarjs/no-duplicate-string)
 const ARC42_DOCS_STRUCTURE = 'arc42' as const;
 const SIMPLE_DOCS_STRUCTURE = 'simple' as const;
-const DOCS_04_OPERATIONS = '04-operations';
+const DOCS_04_OPERATIONS = 'operations';
 
 describe('docs-structure', () => {
   let tempDir: string;
@@ -35,7 +35,7 @@ describe('docs-structure', () => {
   });
 
   describe('detectDocsStructure', () => {
-    it('should return "arc42" when docs/04-operations exists', () => {
+    it('should return "arc42" when docs/operations exists', () => {
       fs.mkdirSync(path.join(tempDir, 'docs', DOCS_04_OPERATIONS), { recursive: true });
 
       const result = detectDocsStructure(tempDir);
@@ -43,7 +43,7 @@ describe('docs-structure', () => {
       expect(result).toBe(ARC42_DOCS_STRUCTURE);
     });
 
-    it('should return "simple" when docs exists without 04-operations', () => {
+    it('should return "simple" when docs exists without operations', () => {
       fs.mkdirSync(path.join(tempDir, 'docs'), { recursive: true });
       fs.writeFileSync(path.join(tempDir, 'docs', 'README.md'), '# Docs\n');
 
@@ -79,9 +79,9 @@ describe('docs-structure', () => {
     it('should return arc42 paths for arc42 structure', () => {
       const paths = getDocsPath(ARC42_DOCS_STRUCTURE);
 
-      expect(paths.operations).toBe('docs/04-operations');
-      expect(paths.tasks).toBe('docs/04-operations/tasks');
-      expect(paths.onboarding).toBe('docs/04-operations/_frameworks/lumenflow/agent/onboarding');
+      expect(paths.operations).toBe('docs/operations');
+      expect(paths.tasks).toBe('docs/operations/tasks');
+      expect(paths.onboarding).toBe('docs/operations/_frameworks/lumenflow/agent/onboarding');
     });
   });
 
@@ -95,7 +95,7 @@ describe('docs-structure', () => {
 
       await scaffoldProject(tempDir, options);
 
-      // Simple structure: docs/tasks, not docs/04-operations/tasks
+      // Simple structure: docs/tasks, not docs/operations/tasks
       expect(fs.existsSync(path.join(tempDir, 'docs', 'tasks'))).toBe(true);
       expect(fs.existsSync(path.join(tempDir, 'docs', DOCS_04_OPERATIONS))).toBe(false);
     });
@@ -134,7 +134,7 @@ describe('docs-structure', () => {
 
       await scaffoldProject(tempDir, options);
 
-      // Arc42 structure: docs/04-operations/tasks
+      // Arc42 structure: docs/operations/tasks
       expect(fs.existsSync(path.join(tempDir, 'docs', DOCS_04_OPERATIONS, 'tasks'))).toBe(true);
     });
 
@@ -165,7 +165,7 @@ describe('docs-structure', () => {
       expect(content).toContain('Manual check:');
     });
 
-    it('should auto-detect arc42 when docs/04-operations exists', async () => {
+    it('should auto-detect arc42 when docs/operations exists', async () => {
       // Create existing arc42 structure
       fs.mkdirSync(path.join(tempDir, 'docs', DOCS_04_OPERATIONS), { recursive: true });
 
@@ -237,7 +237,7 @@ describe('docs-structure', () => {
       expect(lumenflowMd).not.toContain('{{DOCS_ONBOARDING_PATH}}');
     });
 
-    it('arc42 structure: templates should reference docs/04-operations paths', async () => {
+    it('arc42 structure: templates should reference docs/operations paths', async () => {
       const options: ScaffoldOptions = {
         force: true,
         full: true,
@@ -247,7 +247,7 @@ describe('docs-structure', () => {
       await scaffoldProject(tempDir, options);
 
       const lumenflowMd = fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8');
-      expect(lumenflowMd).toContain('docs/04-operations/tasks');
+      expect(lumenflowMd).toContain('docs/operations/tasks');
       expect(lumenflowMd).not.toContain('{{DOCS_TASKS_PATH}}');
     });
 
@@ -276,15 +276,15 @@ describe('docs-structure', () => {
         .filter((f) => f.endsWith('.md') && f !== 'quick-ref-commands.md');
       for (const doc of docs) {
         const content = fs.readFileSync(path.join(onboardingDir, doc), 'utf-8');
-        // Simple structure should NOT have docs/04-operations references
+        // Simple structure should NOT have docs/operations references
         expect(
           content,
           `${doc} should not contain hardcoded arc42 paths in simple mode`,
-        ).not.toContain('docs/04-operations');
+        ).not.toContain('docs/operations');
       }
     });
 
-    it('arc42: onboarding docs should reference docs/04-operations paths', async () => {
+    it('arc42: onboarding docs should reference docs/operations paths', async () => {
       const options: ScaffoldOptions = {
         force: true,
         full: true,
@@ -305,7 +305,7 @@ describe('docs-structure', () => {
 
       // first-15-mins.md has references to task paths - these should use arc42 paths
       const first15 = fs.readFileSync(path.join(onboardingDir, 'first-15-mins.md'), 'utf-8');
-      expect(first15).toContain('docs/04-operations/tasks');
+      expect(first15).toContain('docs/operations/tasks');
     });
 
     it('simple: config should use simple docs paths', async () => {

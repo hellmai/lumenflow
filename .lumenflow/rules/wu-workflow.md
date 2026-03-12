@@ -44,7 +44,7 @@ air-gapped/offline work; it creates a local-only claim and warns explicitly.
 
 ```bash
 # 1. Check lane is free
-cat docs/04-operations/tasks/status.md
+cat docs/operations/tasks/status.md
 
 # 2. Claim the WU (creates worktree)
 pnpm wu:claim --id WU-XXX --lane <Lane>

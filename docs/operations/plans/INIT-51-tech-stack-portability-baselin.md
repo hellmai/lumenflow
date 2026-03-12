@@ -175,8 +175,8 @@ INIT-51 is complete when all of the following are true:
 
 - Initiative: INIT-51
 - Created: 2026-03-10
-- `docs/04-operations/tasks/initiatives/INIT-51.yaml`
-- `docs/04-operations/tasks/initiatives/INIT-50.yaml`
+- `docs/operations/tasks/initiatives/INIT-51.yaml`
+- `docs/operations/tasks/initiatives/INIT-50.yaml`
 - `packages/@lumenflow/core/src/lumenflow-config.ts`
 - `packages/@lumenflow/core/src/wu-done-docs-generate.ts`
 - `packages/@lumenflow/core/src/schemas/directories-config.ts`

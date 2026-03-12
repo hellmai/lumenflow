@@ -15,7 +15,7 @@ const UPGRADE_MARKER_RELATIVE_PATH = posix.join(LUMENFLOW_PATHS.STATE_DIR, UPGRA
 const WU_EVENTS_RELATIVE_PATH = LUMENFLOW_PATHS.WU_EVENTS;
 
 const LUMENFLOW_VERSION_PATTERN = /@lumenflow\/(agent|cli|core|initiatives|memory|metrics|shims)/;
-const WU_YAML_PATH_PATTERN = /^docs\/04-operations\/tasks\/wu\/WU-\d+\.ya?ml$/i;
+const WU_YAML_PATH_PATTERN = /^docs\/operations\/tasks\/wu\/WU-\d+\.ya?ml$/i;
 const WU_EDIT_STAMP_PATTERN = /\[wu:edit\]\s+path=([^"\\\s]+)/g;
 
 export interface UpgradeMarker {

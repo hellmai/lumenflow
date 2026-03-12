@@ -39,7 +39,7 @@ const TEST_LANE_CONTENT = 'Content';
 const TEST_DIR_PREFIX = 'lane-checker-test-';
 
 /** Test directory path segments for tasks directory */
-const TEST_TASKS_DIR_SEGMENTS = ['docs', '04-operations', 'tasks'] as const;
+const TEST_TASKS_DIR_SEGMENTS = ['docs', 'operations', 'tasks'] as const;
 
 /** Test directory name for WU files */
 const TEST_WU_DIR_NAME = 'wu';
@@ -65,7 +65,7 @@ function writeWorkspaceConfig(configPath: string, config: Record<string, unknown
   writeFileSync(configPath, stringifyYAML(workspace));
 }
 
-/** Arc42 layout paths matching the test fixture directory structure (docs/04-operations/tasks/...) */
+/** Arc42 layout paths matching the test fixture directory structure (docs/operations/tasks/...) */
 const ARC42_TASKS = DOCS_LAYOUT_PRESETS['arc42'].tasks;
 
 function withArc42Directories(config: Record<string, unknown>): Record<string, unknown> {
@@ -92,7 +92,7 @@ describe('lane-checker WIP justification', () => {
     );
     mkdirSync(testBaseDir, { recursive: true });
 
-    // Create docs/04-operations/tasks directory structure
+    // Create docs/operations/tasks directory structure
     const tasksDir = join(testBaseDir, ...TEST_TASKS_DIR_SEGMENTS);
     mkdirSync(tasksDir, { recursive: true });
     mkdirSync(join(tasksDir, TEST_WU_DIR_NAME), { recursive: true });
@@ -338,7 +338,7 @@ describe('lane-checker lock_policy (WU-1325)', () => {
     );
     mkdirSync(testBaseDir, { recursive: true });
 
-    // Create docs/04-operations/tasks directory structure
+    // Create docs/operations/tasks directory structure
     const tasksDir = join(testBaseDir, ...TEST_TASKS_DIR_SEGMENTS);
     mkdirSync(tasksDir, { recursive: true });
     mkdirSync(join(tasksDir, TEST_WU_DIR_NAME), { recursive: true });
@@ -560,7 +560,7 @@ describe('lane-checker checkLaneFree with lock_policy (WU-1324)', () => {
     );
     mkdirSync(testBaseDir, { recursive: true });
 
-    // Create docs/04-operations/tasks directory structure
+    // Create docs/operations/tasks directory structure
     const tasksDir = join(testBaseDir, ...TEST_TASKS_DIR_SEGMENTS);
     mkdirSync(tasksDir, { recursive: true });
     wuDir = join(tasksDir, TEST_WU_DIR_NAME);

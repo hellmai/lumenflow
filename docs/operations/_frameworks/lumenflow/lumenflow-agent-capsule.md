@@ -4,7 +4,7 @@ This capsule is the **agent-facing** summary of LumenFlow for day-to-day work in
 It is designed to be loaded into context quickly without triggering “prompt too long”.
 
 For the full framework (rationale, extended examples, ceremonies), see:
-`docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md`.
+`docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md`.
 
 ---
 
@@ -32,7 +32,7 @@ For most work, load only:
 
 1. `CLAUDE-core.md` (core workflow + safety)
 2. `README.md` (repo structure / commands)
-3. The WU YAML: `docs/04-operations/tasks/wu/WU-<id>.yaml`
+3. The WU YAML: `docs/operations/tasks/wu/WU-<id>.yaml`
 
 Only load the full LumenFlow doc when:
 

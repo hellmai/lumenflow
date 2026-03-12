@@ -60,7 +60,7 @@ This creates:
 - `LUMENFLOW.md` — Workflow entry point (managed)
 - `AGENTS.md` — Universal AI agent entry point (user-owned, LumenFlow inserts managed section)
 - `.lumenflow/constraints.md` — Non-negotiable constraints (managed)
-- `docs/tasks/` — Task storage (default path, or `docs/04-operations/tasks/` for arc42 projects)
+- `docs/tasks/` — Task storage (default path, or `docs/operations/tasks/` for arc42 projects)
 
 <Aside type="tip" title="AGENTS.md is user-owned">
   You can add your own content to AGENTS.md. LumenFlow uses bounded markers (`<!-- LUMENFLOW:START -->` / `<!-- LUMENFLOW:END -->`) to manage its section without overwriting yours. Use `--merge` when re-running init on existing projects.
@@ -134,7 +134,7 @@ The CLI prints a WU ID (example: `WU-123`). Use this ID in subsequent commands.
 
 <Aside type="danger" title="DO NOT">
   Do not manually create WU YAML files. Do not manually edit WU YAML files. Use `pnpm wu:create` and
-  `pnpm wu:edit` commands. Default path is `docs/tasks/wu/` (or `docs/04-operations/tasks/wu/` for
+  `pnpm wu:edit` commands. Default path is `docs/tasks/wu/` (or `docs/operations/tasks/wu/` for
   arc42 projects).
 </Aside>
 

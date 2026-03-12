@@ -49,7 +49,7 @@ Before ANY Write/Edit/Read operation:
 
 **Testing Strategy:**
 
-- `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (Testing Strategy)
+- `docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (Testing Strategy)
 - `.claude/skills/tdd-workflow/SKILL.md` — TDD patterns and examples
 
 ## Critical Testing Rules

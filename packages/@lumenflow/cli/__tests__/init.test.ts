@@ -60,7 +60,7 @@ describe('lumenflow init command (WU-1045)', () => {
       const content = fs.readFileSync(lumenflowPath, 'utf-8');
       expect(content).toContain('Use wu:prep Then wu:done');
       expect(content).toContain('LUMENFLOW.md');
-      expect(content).toContain('docs/04-operations/_frameworks/lumenflow/agent/onboarding');
+      expect(content).toContain('docs/operations/_frameworks/lumenflow/agent/onboarding');
     });
 
     it('should create .lumenflow/constraints.md', async () => {
@@ -140,7 +140,7 @@ describe('lumenflow init command (WU-1045)', () => {
   });
 
   describe('full mode', () => {
-    it('should scaffold docs/04-operations tasks structure with --full', async () => {
+    it('should scaffold docs/operations tasks structure with --full', async () => {
       const { scaffoldProject } = await import('../src/init.js');
       await scaffoldProject(tempDir, { ...baseOptions, full: true });
 
@@ -149,7 +149,7 @@ describe('lumenflow init command (WU-1045)', () => {
       const templatePath = path.join(
         tempDir,
         'docs',
-        '04-operations',
+        'operations',
         'tasks',
         'templates',
         'wu-template.yaml',
@@ -170,7 +170,7 @@ describe('lumenflow init command (WU-1045)', () => {
       const overlayPath = path.join(
         tempDir,
         'docs',
-        '04-operations',
+        'operations',
         '_frameworks',
         'next-js',
         'README.md',
@@ -203,7 +203,7 @@ describe('lumenflow init command (WU-1045)', () => {
 
   // WU-1083: Agent onboarding docs and skills scaffolding
   describe('agent onboarding docs (WU-1083)', () => {
-    const onboardingDir = 'docs/04-operations/_frameworks/lumenflow/agent/onboarding';
+    const onboardingDir = 'docs/operations/_frameworks/lumenflow/agent/onboarding';
 
     it('should scaffold agent onboarding docs with --full', async () => {
       const { scaffoldProject } = await import('../src/init.js');

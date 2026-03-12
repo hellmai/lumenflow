@@ -2,7 +2,7 @@
 name: execution-memory
 description: Memory layer for session tracking, context recovery, and agent coordination. Use when resuming work after /clear, coordinating with parallel agents, or managing long-running sessions.
 version: 1.2.0
-source: docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+source: docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
 source_sections: Memory Commands
 last_updated: 2026-01-26
 allowed-tools: Read, Bash, Grep

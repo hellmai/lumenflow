@@ -93,11 +93,11 @@ describe('init WU template lane neutrality (WU-1499)', () => {
   /** Helper to read the generated WU template YAML as raw text */
   function readWuTemplate(): string {
     // The template is scaffolded under the docs tasks path templates dir.
-    // With arc42 (default), that is docs/04-operations/tasks/templates/wu-template.yaml
+    // With arc42 (default), that is docs/operations/tasks/templates/wu-template.yaml
     const templatePath = path.join(
       tempDir,
       'docs',
-      '04-operations',
+      'operations',
       'tasks',
       'templates',
       WU_TEMPLATE_FILE_NAME,

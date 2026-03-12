@@ -29,8 +29,8 @@ If the doctor reports a repo-level problem, stop there and fix it before claimin
 ## Minute 5-8: Find the Work
 
 ```bash
-cat docs/04-operations/tasks/status.md
-ls docs/04-operations/tasks/wu/*.yaml | head -5
+cat docs/operations/tasks/status.md
+ls docs/operations/tasks/wu/*.yaml | head -5
 ```
 
 Read the assigned WU spec before touching files.
@@ -60,7 +60,7 @@ pnpm test -- --run
 For docs-heavy WUs:
 
 ```bash
-pnpm format docs/04-operations/_frameworks/lumenflow/agent/onboarding/*.md
+pnpm format docs/operations/_frameworks/lumenflow/agent/onboarding/*.md
 ```
 
 Before completion, always use the two-step flow:

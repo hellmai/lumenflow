@@ -38,8 +38,8 @@ Before using ANY CLI command:
 
 ## Key Documents to Reference
 
-- `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (WU Lifecycle)
-- WU YAML at `docs/04-operations/tasks/wu/WU-XXX.yaml`
+- `docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (WU Lifecycle)
+- WU YAML at `docs/operations/tasks/wu/WU-XXX.yaml`
 - `workspace.yaml` — Lane definitions and parameters
 
 ## Validation Workflow
@@ -47,7 +47,7 @@ Before using ANY CLI command:
 ### Step 1: Load WU YAML
 
 ```bash
-cat docs/04-operations/tasks/wu/WU-XXX.yaml
+cat docs/operations/tasks/wu/WU-XXX.yaml
 ```
 
 Extract:

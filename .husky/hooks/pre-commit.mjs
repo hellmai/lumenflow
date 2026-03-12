@@ -68,7 +68,7 @@ const MAIN_BRANCH_BLOCK_MESSAGES = {
     HEADER: 'NEED HELP?',
     RESOURCES: [
       '• Read: LUMENFLOW.md (workflow overview)',
-      '• Read: docs/04-operations/_frameworks/lumenflow/agent/onboarding/',
+      '• Read: docs/operations/_frameworks/lumenflow/agent/onboarding/',
       '• Run:  pnpm wu:help',
     ],
   },

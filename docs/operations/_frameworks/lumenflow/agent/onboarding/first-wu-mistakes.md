@@ -264,7 +264,7 @@ pnpm wu:edit --id WU-1348 --notes "Research findings: ..."
 **Option 2: Direct file edit**
 
 ```bash
-# Edit docs/04-operations/tasks/wu/WU-1348.yaml directly
+# Edit docs/operations/tasks/wu/WU-1348.yaml directly
 ```
 
 ### Recognizing Implied Directives

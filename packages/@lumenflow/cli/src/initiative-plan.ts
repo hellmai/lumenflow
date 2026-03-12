@@ -217,7 +217,7 @@ export function isExternalPlanPath(planPath: string, projectRoot: string): boole
     return false;
   }
 
-  // Check relative path match (e.g. "docs/04-operations/plans/foo.md")
+  // Check relative path match (e.g. "docs/operations/plans/foo.md")
   const relativePlansPrefix = trimOuterSlashes(plansDirSegment) + '/';
   if (normalizedPath.startsWith(relativePlansPrefix)) {
     return false;

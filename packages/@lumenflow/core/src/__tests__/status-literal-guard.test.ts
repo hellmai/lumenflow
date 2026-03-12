@@ -632,7 +632,7 @@ describe('WU-1548: Status literal regression guard', () => {
 
     const violations: Array<{ file: string; line: number; content: string }> = [];
     const TASK_PATH_PATTERN =
-      /['"]docs\/04-operations\/tasks(?:\/(?:wu|backlog\.md|status\.md|initiatives))/;
+      /['"]docs\/operations\/tasks(?:\/(?:wu|backlog\.md|status\.md|initiatives))/;
 
     for (const file of sourceFiles) {
       if (allowedForPaths.some((allowed) => file.includes(allowed))) continue;

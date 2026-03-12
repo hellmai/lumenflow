@@ -22,7 +22,7 @@ const INITIATIVES_DIR = `${ARC42.tasks}/initiatives`;
 /** Test constants - avoid sonarjs/no-duplicate-string */
 const TEST_WU_DIR = WU_DIR;
 const TEST_INIT_DIR = INITIATIVES_DIR;
-const TEST_PLANS_DIR = 'docs/04-operations/plans';
+const TEST_PLANS_DIR = 'docs/operations/plans';
 const TEST_WU_ID = 'WU-1313';
 const TEST_INIT_ID = 'INIT-001';
 const TEST_WU_PLAN_URI = `lumenflow://plans/${TEST_WU_ID}-plan.md`;
@@ -318,8 +318,8 @@ describe('plan:link command', () => {
     it('should reject path traversal plan URIs', async () => {
       const { validatePlanExists } = await import('../plan-link.js');
 
-      const parentPlanPath = join(tempDir, 'docs/04-operations', 'escape.md');
-      mkdirSync(join(tempDir, 'docs/04-operations'), { recursive: true });
+      const parentPlanPath = join(tempDir, 'docs/operations', 'escape.md');
+      mkdirSync(join(tempDir, 'docs/operations'), { recursive: true });
       writeFileSync(parentPlanPath, '# Escaped Plan');
 
       expect(() => validatePlanExists(tempDir, 'lumenflow://plans/../escape.md')).toThrow(

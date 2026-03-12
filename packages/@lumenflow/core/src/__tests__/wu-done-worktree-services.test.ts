@@ -99,13 +99,13 @@ function createTempWorktree() {
   const root = mkdtempSync(join(tmpdir(), 'wu-done-services-'));
 
   // Create required directory structure
-  mkdirSync(join(root, 'docs', '04-operations', 'tasks', 'wu'), { recursive: true });
+  mkdirSync(join(root, 'docs', 'operations', 'tasks', 'wu'), { recursive: true });
   mkdirSync(join(root, '.lumenflow', 'state'), { recursive: true });
   mkdirSync(join(root, '.lumenflow', 'stamps'), { recursive: true });
 
   // Create required metadata files
-  writeFileSync(join(root, 'docs', '04-operations', 'tasks', 'status.md'), '# Status\n');
-  writeFileSync(join(root, 'docs', '04-operations', 'tasks', 'backlog.md'), '# Backlog\n');
+  writeFileSync(join(root, 'docs', 'operations', 'tasks', 'status.md'), '# Status\n');
+  writeFileSync(join(root, 'docs', 'operations', 'tasks', 'backlog.md'), '# Backlog\n');
 
   // Create WU YAML
   const wuContent = [
@@ -127,7 +127,7 @@ function createTempWorktree() {
     'exposure: backend-only',
   ].join('\n');
   writeFileSync(
-    join(root, 'docs', '04-operations', 'tasks', 'wu', `${TEST_WU_ID}.yaml`),
+    join(root, 'docs', 'operations', 'tasks', 'wu', `${TEST_WU_ID}.yaml`),
     wuContent,
   );
 

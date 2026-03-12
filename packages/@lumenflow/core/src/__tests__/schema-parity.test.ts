@@ -586,7 +586,7 @@ describe('Initiative Command Schemas (WU-1455)', () => {
     it('should accept valid input with plan path', () => {
       const input: InitiativePlanInput = {
         initiative: 'INIT-001',
-        plan: 'docs/04-operations/plans/my-plan.md',
+        plan: 'docs/operations/plans/my-plan.md',
       };
       const result = initiativePlanSchema.safeParse(input);
       expect(result.success).toBe(true);

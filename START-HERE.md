@@ -11,7 +11,7 @@ Welcome to the LumenFlow repository. This document helps you find the right star
 | An AI agent working in this repo     | [AGENTS.md](AGENTS.md)                                                                          |
 | A developer setting up LumenFlow     | [Getting Started](#getting-started)                                                             |
 | Debugging an issue                   | [Troubleshooting](#troubleshooting)                                                             |
-| A maintainer releasing a new version | [Release Process](docs/04-operations/_frameworks/lumenflow/agent/onboarding/release-process.md) |
+| A maintainer releasing a new version | [Release Process](docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md) |
 
 ---
 
@@ -80,9 +80,9 @@ For detailed workflow documentation, see [LUMENFLOW.md](LUMENFLOW.md).
 
 ### Get Help
 
-- **Documentation**: [docs/04-operations/\_frameworks/lumenflow/](docs/04-operations/_frameworks/lumenflow/)
-- **Agent Onboarding**: [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/](docs/04-operations/_frameworks/lumenflow/agent/onboarding/)
-- **Troubleshooting wu:done**: [troubleshooting-wu-done.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md)
+- **Documentation**: [docs/operations/\_frameworks/lumenflow/](docs/operations/_frameworks/lumenflow/)
+- **Agent Onboarding**: [docs/operations/\_frameworks/lumenflow/agent/onboarding/](docs/operations/_frameworks/lumenflow/agent/onboarding/)
+- **Troubleshooting wu:done**: [troubleshooting-wu-done.md](docs/operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md)
 
 ---
 
@@ -106,7 +106,7 @@ For detailed workflow documentation, see [LUMENFLOW.md](LUMENFLOW.md).
 │       ├── content/docs/packs/software-delivery/        # Software Delivery Pack docs IA
 │       └── data/                                         # YAML truth files (version/language/repos)
 └── docs/
-    └── 04-operations/
+    └── operations/
         └── _frameworks/
             └── lumenflow/  # Full LumenFlow documentation
 ```

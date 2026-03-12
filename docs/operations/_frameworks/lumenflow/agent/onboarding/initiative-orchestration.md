@@ -10,7 +10,7 @@ Step-by-step guide for agents orchestrating multi-WU initiatives. This document 
 
 Before orchestrating an initiative, ensure:
 
-1. The initiative YAML exists at `docs/04-operations/tasks/initiatives/INIT-XXX.yaml`
+1. The initiative YAML exists at `docs/operations/tasks/initiatives/INIT-XXX.yaml`
 2. All WUs are linked to the initiative via `initiative:add-wu`
 3. Dependencies between WUs are defined (blocking relationships)
 4. Lane lifecycle is locked (`pnpm lane:status` shows `locked`)

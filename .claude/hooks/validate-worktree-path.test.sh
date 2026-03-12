@@ -128,7 +128,7 @@ mkdir -p "$TEMP_REPO/.lumenflow"
 cat > "$TEMP_REPO/workspace.yaml" << 'WSEOF'
 software_delivery:
   directories:
-    wuDir: docs/04-operations/tasks/wu
+    wuDir: docs/operations/tasks/wu
 WSEOF
 # Deliberately do NOT create $TEMP_REPO/worktrees
 
@@ -148,7 +148,7 @@ echo ""
 echo "--- WU-1501 AC2: Allowlist paths allowed on main ---"
 
 expect_allow "Write to WU YAML allowed" \
-  "{\"tool_name\": \"Write\", \"tool_input\": {\"file_path\": \"$TEMP_REPO/docs/04-operations/tasks/wu/WU-1501.yaml\"}}" \
+  "{\"tool_name\": \"Write\", \"tool_input\": {\"file_path\": \"$TEMP_REPO/docs/operations/tasks/wu/WU-1501.yaml\"}}" \
   "CLAUDE_PROJECT_DIR=$TEMP_REPO"
 
 expect_allow "Write to .lumenflow/ allowed" \

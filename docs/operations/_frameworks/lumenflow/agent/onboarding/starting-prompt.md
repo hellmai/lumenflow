@@ -120,7 +120,7 @@ When creating WUs or scoping initiatives, always evaluate whether the assigned l
 
 ```bash
 # 1. Check your assigned WU
-cat docs/04-operations/tasks/wu/WU-XXXX.yaml
+cat docs/operations/tasks/wu/WU-XXXX.yaml
 
 # 2. Claim the WU (creates isolated worktree)
 pnpm wu:claim --id WU-XXXX --lane "Lane Name"
@@ -147,7 +147,7 @@ For cloud agents (Codex, Claude web, CI bots) that cannot create local worktrees
 
 ```bash
 # 1. Check your assigned WU
-cat docs/04-operations/tasks/wu/WU-XXXX.yaml
+cat docs/operations/tasks/wu/WU-XXXX.yaml
 
 # 2. Claim in cloud mode (no worktree, sets claimed_mode: branch-pr)
 pnpm wu:claim --id WU-XXXX --lane "Lane Name" --cloud
@@ -406,7 +406,7 @@ git add . && git commit -m "your message"
 **Fix:** Regenerate the backlog or manually add the missing WU:
 
 ```bash
-# In worktree, edit docs/04-operations/tasks/backlog.md
+# In worktree, edit docs/operations/tasks/backlog.md
 # Add the missing WU reference in the appropriate section
 ```
 
@@ -571,7 +571,7 @@ Domain-specific commands must come from local configuration, not core framework 
 
 ```
 /path/to/repo/
-├── docs/04-operations/tasks/
+├── docs/operations/tasks/
 │   ├── backlog.md              # All WUs listed here (auto-generated, don't edit)
 │   └── wu/WU-XXXX.yaml         # Individual WU specs
 ├── worktrees/

@@ -2,7 +2,7 @@
 name: context-management
 description: Session checkpoint patterns, output bypass for large results, when to spawn fresh sub-agents. Use for long-running sessions, context exhaustion, or agent coordination.
 version: 1.4.0
-source: docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md
+source: docs/operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md
 source_sections: Context Tiers, Session Management, Wave Orchestration
 last_updated: 2026-02-03
 allowed-tools: Read, Write, Bash
@@ -10,7 +10,7 @@ allowed-tools: Read, Write, Bash
 
 # Context Management Skill
 
-**Source**: `docs/04-operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md`
+**Source**: `docs/operations/_frameworks/lumenflow/agent/onboarding/agent-invocation-guide.md`
 
 Patterns for managing context in long-running AI coding sessions.
 
@@ -56,7 +56,7 @@ pnpm wu:brief --id WU-XXX --client claude-code
 - Recovery mechanisms are complex and vendor-specific
 - Prevention (fresh agent) is simpler and more reliable than recovery
 
-**This is not failure—it's disciplined execution.** See [wu-sizing-guide.md](../../../docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md) for complete sizing thresholds.
+**This is not failure—it's disciplined execution.** See [wu-sizing-guide.md](../../../docs/operations/_frameworks/lumenflow/wu-sizing-guide.md) for complete sizing thresholds.
 
 ---
 

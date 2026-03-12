@@ -94,7 +94,7 @@ pnpm wu:cleanup --id WU-XXXX
 
 ## CLI Commands and Lifecycle Reference
 
-For complete CLI command documentation (100+ commands), see [quick-ref-commands.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md).
+For complete CLI command documentation (100+ commands), see [quick-ref-commands.md](docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md).
 
 **Essential commands:**
 
@@ -123,7 +123,7 @@ For complete CLI command documentation (100+ commands), see [quick-ref-commands.
 
 The completion workflow is a two-step process. Run `wu:prep` from the worktree (runs gates, prints copy-paste instruction), then run `wu:done` from main (merge + cleanup). Do NOT run `wu:done` from a worktree.
 
-For detailed troubleshooting, see [troubleshooting-wu-done.md](docs/04-operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md).
+For detailed troubleshooting, see [troubleshooting-wu-done.md](docs/operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md).
 
 ---
 
@@ -201,9 +201,9 @@ This file provides universal guidance for all AI agents. Additional vendor-speci
 
 - [LUMENFLOW.md](LUMENFLOW.md) -- Main workflow documentation (principles, setup, initiatives, skills)
 - [.lumenflow/constraints.md](.lumenflow/constraints.md) -- Non-negotiable rules and forbidden commands
-- [Quick Reference: Commands](docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) -- Complete CLI reference (100+ commands)
-- [Troubleshooting wu:done](docs/04-operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) -- Most common completion mistakes
-- [LumenFlow Agent Capsule](docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md) -- Full framework reference (lifecycle, lanes, gates, DoD)
+- [Quick Reference: Commands](docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) -- Complete CLI reference (100+ commands)
+- [Troubleshooting wu:done](docs/operations/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) -- Most common completion mistakes
+- [LumenFlow Agent Capsule](docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md) -- Full framework reference (lifecycle, lanes, gates, DoD)
 
 ---
 

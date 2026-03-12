@@ -320,7 +320,7 @@ Content:
   Specs Governance:
     description: 'Governance specs, WU artifacts, and LumenFlow state/config docs'
     code_paths:
-      - 'docs/04-operations/**'
+      - 'docs/operations/**'
       - 'workspace.yaml'
       - '.lumenflow.lane-inference.yaml'
       - '.lumenflow/**'

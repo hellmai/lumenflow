@@ -12,7 +12,7 @@ Internal documentation for LumenFlow, organized by concern. Uses arc42 section n
 | -------------------- | -------------------------------------------------------- | ------------------------------------------- |
 | **Product/Business** | [01-introduction-and-goals/](01-introduction-and-goals/) | Vision, quality goals, stakeholders         |
 | **Engineering**      | [02-technical/](02-technical/)                           | Package architecture, implementation guides |
-| **Operations**       | [04-operations/](04-operations/)                         | Tasks, WU management, framework docs        |
+| **Operations**       | [operations/](operations/)                         | Tasks, WU management, framework docs        |
 | **Architecture**     | [09-architecture-decisions/](09-architecture-decisions/) | ADRs, migration guides                      |
 
 ---
@@ -37,7 +37,7 @@ Technical architecture, package documentation, implementation guides.
 
 ---
 
-### [04-operations/](04-operations/) — Operations
+### [operations/](operations/) — Operations
 
 Task management, WU tracking, framework docs, and operational procedures.
 
@@ -45,9 +45,9 @@ Task management, WU tracking, framework docs, and operational procedures.
 
 **Key paths:**
 
-- [tasks/backlog.md](04-operations/tasks/backlog.md) — master backlog
-- [tasks/status.md](04-operations/tasks/status.md) — current WU status
-- [\_frameworks/lumenflow/](04-operations/_frameworks/lumenflow/) — framework reference documentation
+- [tasks/backlog.md](operations/tasks/backlog.md) — master backlog
+- [tasks/status.md](operations/tasks/status.md) — current WU status
+- [\_frameworks/lumenflow/](operations/_frameworks/lumenflow/) — framework reference documentation
 
 ---
 

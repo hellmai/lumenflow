@@ -78,4 +78,4 @@ Re-evaluate extraction only when at least two are true:
 - `packages/@lumenflow/core/src/delegation-monitor.ts`
 - `packages/@lumenflow/core/src/delegation-tree.ts`
 - `packages/@lumenflow/core/src/delegation/index.ts`
-- `docs/04-operations/tasks/wu/WU-2171.yaml`
+- `docs/operations/tasks/wu/WU-2171.yaml`

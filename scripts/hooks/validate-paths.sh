@@ -67,7 +67,7 @@ PATTERN="(/home/|/Users/|/mnt/c/|/C:/|/D:/)"
 # lumenflow-home.ts resolves $HOME by design
 FILES=$(git diff --cached --name-only --diff-filter=ACMR \
   | grep -v "scripts/hooks/validate-paths.sh" \
-  | grep -v "docs/04-operations/tasks/wu/" \
+  | grep -v "docs/operations/tasks/wu/" \
   | grep -v "apps/docs/" \
   | grep -v "\.md$" \
   | grep -v "\.mdx$" \

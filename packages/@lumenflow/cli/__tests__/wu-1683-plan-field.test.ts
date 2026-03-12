@@ -169,7 +169,7 @@ describe('plan:link linkPlanToWU sets wu.plan (WU-1683)', () => {
 
   function setupTempWU(wuId: string, fields: Record<string, unknown> = {}) {
     const dir = mkdtempSync(join(tmpdir(), 'wu-1683-test-'));
-    const wuDir = join(dir, 'docs', '04-operations', 'tasks', 'wu');
+    const wuDir = join(dir, 'docs', 'operations', 'tasks', 'wu');
     mkdirSync(wuDir, { recursive: true });
     const wuContent = {
       id: wuId,
@@ -190,7 +190,7 @@ describe('plan:link linkPlanToWU sets wu.plan (WU-1683)', () => {
 
   function readWUYaml(dir: string, wuId: string) {
     const content = readFileSync(
-      join(dir, 'docs', '04-operations', 'tasks', 'wu', `${wuId}.yaml`),
+      join(dir, 'docs', 'operations', 'tasks', 'wu', `${wuId}.yaml`),
       'utf-8',
     );
     return parseYaml(content);

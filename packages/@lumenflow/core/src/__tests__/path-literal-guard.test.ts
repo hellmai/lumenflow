@@ -162,8 +162,8 @@ const TEST_FILE_ALLOWLIST = [
 
 const BANNED_RULES: BannedRule[] = [
   {
-    token: 'docs/04-operations',
-    matches: (value) => value.includes('docs/04-operations'),
+    token: 'docs/operations',
+    matches: (value) => value.includes('docs/operations'),
   },
   {
     token: '.lumenflow/state',
@@ -674,7 +674,7 @@ function persistEnvVarBaseline(count: number): void {
 describe('WU-2093: AST path literal guard foundations', () => {
   it('detects banned literals in string and template literals', () => {
     const source = [
-      "const docsPath = 'docs/04-operations/tasks/backlog.md';",
+      "const docsPath = 'docs/operations/tasks/backlog.md';",
       'const worktreePath = `worktrees/${lane}`;',
       "const laneInference = '.lumenflow.lane-inference.yaml';",
       "const gitDir = '.git';",
@@ -683,7 +683,7 @@ describe('WU-2093: AST path literal guard foundations', () => {
     const violations = scanSourceTextForBannedPathLiterals(source, 'fixtures/violation.ts');
     const tokens = violations.map((v) => v.token);
 
-    expect(tokens).toContain('docs/04-operations');
+    expect(tokens).toContain('docs/operations');
     expect(tokens).toContain('worktrees/');
     expect(tokens).toContain('.lumenflow.lane-inference.yaml');
     expect(tokens).toContain('.git');
@@ -711,7 +711,7 @@ describe('WU-2093: AST path literal guard foundations', () => {
   });
 
   it('respects explicit allowlisted file contexts', () => {
-    const source = "const pathToken = 'docs/04-operations/tasks/wu';";
+    const source = "const pathToken = 'docs/operations/tasks/wu';";
     const allowlistedFile = path.join(
       REPO_ROOT,
       'packages',
@@ -1162,7 +1162,7 @@ describe('WU-2114: file extension literal guard foundations', () => {
       "const readme = 'README.md';",
       "const script = 'index.ts';",
       "const module = 'app.module.js';",
-      "const fullPath = 'docs/04-operations/tasks/wu/WU-123.yaml';",
+      "const fullPath = 'docs/operations/tasks/wu/WU-123.yaml';",
     ].join('\n');
 
     const violations = scanSourceTextForFileExtLiterals(source, 'fixtures/ext-paths.ts');

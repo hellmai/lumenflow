@@ -15,7 +15,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // vi.hoisted ensures these are available before vi.mock factories run
 const { WU_DIR, BACKLOG_PATH, STATUS_PATH, STATE_DIR, WU_EVENTS } = vi.hoisted(() => {
   // Inline the arc42 tasks path to avoid importing @lumenflow/core in hoisted scope
-  const arc42Tasks = 'docs/04-operations/tasks';
+  const arc42Tasks = 'docs/operations/tasks';
   return {
     WU_DIR: `${arc42Tasks}/wu`,
     BACKLOG_PATH: `${arc42Tasks}/backlog.md`,

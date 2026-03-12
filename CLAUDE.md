@@ -80,7 +80,7 @@ See the **File Ownership Model** table in LUMENFLOW.md for which files are fully
 - **LUMENFLOW.local.md** - Project-specific additions (user-owned, never overwritten)
 - **.lumenflow/constraints.md** - Non-negotiable rules (fully managed)
 - **.lumenflow/rules/** - Workflow rules
-- **docs/04-operations/\_frameworks/lumenflow/agent/onboarding/** - Agent onboarding docs
+- **docs/operations/\_frameworks/lumenflow/agent/onboarding/** - Agent onboarding docs
 - **apps/docs/src/content/docs/kernel/** - Kernel docs source
 - **apps/docs/src/content/docs/packs/software-delivery/** - Software Delivery Pack docs source
 - **apps/docs/src/content/docs/packs/software-delivery/languages/** - Pack-scoped language guides
@@ -95,6 +95,6 @@ See the **File Ownership Model** table in LUMENFLOW.md for which files are fully
 
 - [LUMENFLOW.md](LUMENFLOW.md) - Main workflow documentation
 - [.lumenflow/constraints.md](.lumenflow/constraints.md) - Constraints capsule
-- [docs/04-operations/\_frameworks/lumenflow/agent/onboarding/](docs/04-operations/_frameworks/lumenflow/agent/onboarding/) - Agent onboarding
-- [LumenFlow Agent Capsule](docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)
-- [Release Process](docs/04-operations/_frameworks/lumenflow/agent/onboarding/release-process.md) - Versioning, npm publish, Starlight docs
+- [docs/operations/\_frameworks/lumenflow/agent/onboarding/](docs/operations/_frameworks/lumenflow/agent/onboarding/) - Agent onboarding
+- [LumenFlow Agent Capsule](docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)
+- [Release Process](docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md) - Versioning, npm publish, Starlight docs

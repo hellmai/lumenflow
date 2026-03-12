@@ -31,9 +31,9 @@ declare -A LUMENFLOW_PATHS=(
 
 # quick-ref-commands.md path relative to vendor config location
 declare -A QUICK_REF_PATHS=(
-  ["cursor"]="../../docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md"
-  ["windsurf"]="../../docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md"
-  ["cline"]="docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md"
+  ["cursor"]="../../docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md"
+  ["windsurf"]="../../docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md"
+  ["cline"]="docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md"
 )
 
 # Vendor display names

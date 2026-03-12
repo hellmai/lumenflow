@@ -50,9 +50,9 @@ Start with initiative tooling to determine the next runnable work:
 
 **Primary Framework:**
 
-- `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` — Complete workflow (WU Lifecycle, Bug-Handling)
-- `docs/04-operations/tasks/backlog.md` — Source of truth for work queue
-- `docs/04-operations/tasks/status.md` — Current active/blocked work
+- `docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` — Complete workflow (WU Lifecycle, Bug-Handling)
+- `docs/operations/tasks/backlog.md` — Source of truth for work queue
+- `docs/operations/tasks/status.md` — Current active/blocked work
 
 **Tools:**
 

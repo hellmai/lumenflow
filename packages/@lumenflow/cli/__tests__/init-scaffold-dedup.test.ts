@@ -301,7 +301,7 @@ describe('WU-1965: Init scaffold dedup and output fixes', () => {
       const onboardingDir = path.join(
         tempDir,
         'docs',
-        '04-operations',
+        'operations',
         '_frameworks',
         'lumenflow',
         'agent',

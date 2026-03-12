@@ -2,7 +2,7 @@
 name: library-first
 description: Validate well-known libraries solve your problem before custom code. Use when implementing parsing, dates, validation, or any non-trivial logic.
 version: 1.0.0
-source: docs/04-operations/_frameworks/lumenflow/agent/onboarding/library-first-toolkit.md
+source: docs/operations/_frameworks/lumenflow/agent/onboarding/library-first-toolkit.md
 source_sections: Validation Protocol, Decision Tree, Context7 Query Templates
 last_updated: 2026-01-22
 allowed-tools: Read, mcp__context7__*
@@ -10,7 +10,7 @@ allowed-tools: Read, mcp__context7__*
 
 # Library-First Skill
 
-**Source**: `docs/04-operations/_frameworks/lumenflow/agent/onboarding/library-first-toolkit.md` (canonical)
+**Source**: `docs/operations/_frameworks/lumenflow/agent/onboarding/library-first-toolkit.md` (canonical)
 
 Search for libraries BEFORE writing custom code. Custom implementations create debt, violate DRY/SOLID, and introduce bugs that libraries have already solved.
 

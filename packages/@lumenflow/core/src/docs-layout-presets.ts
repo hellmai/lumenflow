@@ -31,7 +31,7 @@ function buildDocsLayout(operations: string, tasks: string, adrDir: string) {
 const DOCS_ROOT = 'docs';
 const SIMPLE_TASKS_PATH = `${DOCS_ROOT}/tasks`;
 const SIMPLE_ADR_PATH = `${DOCS_ROOT}/architecture-decisions`;
-const ARC42_OPERATIONS_PATH = [DOCS_ROOT, '04-operations'].join('/');
+const ARC42_OPERATIONS_PATH = [DOCS_ROOT, 'operations'].join('/');
 const ARC42_TASKS_PATH = [ARC42_OPERATIONS_PATH, 'tasks'].join('/');
 const ARC42_ADR_PATH = [DOCS_ROOT, '09-architecture-decisions'].join('/');
 

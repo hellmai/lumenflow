@@ -37,7 +37,7 @@ Before ANY task execution, you MUST read these files in order:
 2. `LUMENFLOW.md` — Workflow fundamentals
 3. `.lumenflow/constraints.md` — Non-negotiable rules
 4. `README.md` — Project structure and tech stack
-5. The WU YAML at `docs/04-operations/tasks/wu/WU-<id>.yaml` if a WU-ID is mentioned
+5. The WU YAML at `docs/operations/tasks/wu/WU-<id>.yaml` if a WU-ID is mentioned
 
 ## Command Discovery (MANDATORY)
 

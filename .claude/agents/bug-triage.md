@@ -41,7 +41,7 @@ Before using ANY CLI command:
 
 **Bug Classification:**
 
-- `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (Bug-Handling)
+- `docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (Bug-Handling)
 - `.claude/skills/bug-classification/SKILL.md` — Detailed classification criteria
 
 ## Severity Classification

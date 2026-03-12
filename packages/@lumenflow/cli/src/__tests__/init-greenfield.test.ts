@@ -55,7 +55,7 @@ describe('greenfield onboarding (WU-1364)', () => {
     return path.join(
       tempDir,
       'docs',
-      '04-operations',
+      'operations',
       '_frameworks',
       'lumenflow',
       'agent',

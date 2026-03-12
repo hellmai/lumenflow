@@ -102,7 +102,7 @@ Documentation WUs (`type: documentation`) have relaxed file count thresholds bec
 id: WU-XXX
 type: documentation
 code_paths:
-  - docs/04-operations/_frameworks/lumenflow/*.md
+  - docs/operations/_frameworks/lumenflow/*.md
   - docs/01-product/*.md
 ```
 
@@ -234,7 +234,7 @@ The tooling operates in two modes:
 ```
 [wu:create] WARNING (WU-100): sizing: estimated_files (30) exceeds Simple
 threshold (20). Consider adding exception_type/exception_reason or splitting
-the WU. See docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md.
+the WU. See docs/operations/_frameworks/lumenflow/wu-sizing-guide.md.
 ```
 
 **Strict mode (`--strict-sizing`):** `wu:brief` supports a `--strict-sizing` flag that blocks when:

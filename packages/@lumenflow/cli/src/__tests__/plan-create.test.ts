@@ -56,7 +56,7 @@ describe('plan:create command', () => {
     it('should create a plan file in repo plansDir', async () => {
       const { createPlan } = await import('../plan-create.js');
 
-      const plansDir = join(tempDir, 'docs', '04-operations', 'plans');
+      const plansDir = join(tempDir, 'docs', 'operations', 'plans');
       mkdirSync(plansDir, { recursive: true });
 
       const planPath = createPlan(tempDir, 'WU-1313', 'Implement plan tooling');
@@ -77,13 +77,13 @@ describe('plan:create command', () => {
       const planPath = createPlan(tempDir, 'WU-1313', 'Test Plan');
 
       expect(existsSync(planPath)).toBe(true);
-      expect(planPath).toContain('docs/04-operations/plans');
+      expect(planPath).toContain('docs/operations/plans');
     });
 
     it('should not overwrite existing plan file', async () => {
       const { createPlan } = await import('../plan-create.js');
 
-      const plansDir = join(tempDir, 'docs', '04-operations', 'plans');
+      const plansDir = join(tempDir, 'docs', 'operations', 'plans');
       mkdirSync(plansDir, { recursive: true });
 
       // Create existing file

@@ -47,7 +47,7 @@ describe('wu-create-validators', () => {
     });
 
     it('should accept repo-relative paths', () => {
-      const result = validateSpecRefs(['docs/04-operations/plans/WU-1062-plan.md']);
+      const result = validateSpecRefs(['docs/operations/plans/WU-1062-plan.md']);
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
@@ -112,7 +112,7 @@ describe('wu-create-validators', () => {
       });
 
       it('should still accept docs/ paths (without ./)', () => {
-        const result = validateSpecRefs(['docs/04-operations/plans/WU-1069-plan.md']);
+        const result = validateSpecRefs(['docs/operations/plans/WU-1069-plan.md']);
         expect(result.valid).toBe(true);
         expect(result.errors).toHaveLength(0);
       });

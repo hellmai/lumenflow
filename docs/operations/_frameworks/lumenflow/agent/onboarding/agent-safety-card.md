@@ -96,7 +96,7 @@ If same error happens 3 times:
 
 ```bash
 # Check lane availability
-cat docs/04-operations/tasks/status.md
+cat docs/operations/tasks/status.md
 
 # Claim a WU
 pnpm wu:claim --id WU-XXX --lane <Lane>

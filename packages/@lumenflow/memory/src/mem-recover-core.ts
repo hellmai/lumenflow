@@ -248,7 +248,7 @@ async function loadCompactConstraints(baseDir: string): Promise<string> {
  * Loads WU metadata (acceptance criteria, code_paths) from YAML spec (WU-2157)
  */
 async function loadWuMetadata(baseDir: string, wuId: string): Promise<WuMetadata | null> {
-  const wuYamlPath = path.join(baseDir, 'docs', '04-operations', 'tasks', 'wu', `${wuId}.yaml`);
+  const wuYamlPath = path.join(baseDir, 'docs', 'operations', 'tasks', 'wu', `${wuId}.yaml`);
 
   try {
     // eslint-disable-next-line security/detect-non-literal-fs-filename

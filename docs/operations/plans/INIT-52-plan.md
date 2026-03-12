@@ -83,7 +83,7 @@ The following architecture guidance is intentionally reflected in the WU breakdo
 
 ## WU Sizing Strategy
 
-This initiative is deliberately split by independently shippable outcomes, not by artifact type or implementation step. The sizing below follows `docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md`.
+This initiative is deliberately split by independently shippable outcomes, not by artifact type or implementation step. The sizing below follows `docs/operations/_frameworks/lumenflow/wu-sizing-guide.md`.
 
 - Documentation-only ADR work stays a small single-session WU.
 - Kernel cross-cutting changes are mostly medium WUs using `checkpoint-resume`.
@@ -435,8 +435,8 @@ status: ready
 priority: P1
 created: <YYYY-MM-DD>
 code_paths:
-  - docs/04-operations/adr/
-  - docs/04-operations/tasks/initiatives/
+  - docs/operations/adr/
+  - docs/operations/tasks/initiatives/
 tests:
   manual:
     - ADR reviewed and approved
@@ -1165,7 +1165,7 @@ created: <YYYY-MM-DD>
 code_paths:
   - apps/docs/src/content/docs/kernel/
   - packages/@lumenflow/packs/agent-runtime/README.md
-  - docs/04-operations/adr/
+  - docs/operations/adr/
 tests:
   manual:
     - Build or preview docs and verify installation, configuration, orchestration, and example links resolve correctly

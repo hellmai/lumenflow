@@ -2,7 +2,7 @@
 name: lumenflow-gates
 description: Quality gates troubleshooting (format, lint, typecheck, tests). Use when gates fail, debugging format/lint/typecheck errors, or determining if failure is from your changes vs pre-existing.
 version: 2.1.0
-source: docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source: docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: Validation & Gates
 last_updated: 2026-01-22
 allowed-tools: Read, Bash, Grep
@@ -10,7 +10,7 @@ allowed-tools: Read, Bash, Grep
 
 # LumenFlow Gates Skill
 
-**Source**: `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
+**Source**: `docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
 
 ## When to Use
 
@@ -89,4 +89,4 @@ pnpm tasks:validate       # WU YAML validation
 
 ---
 
-**Full spec**: [LumenFlow Agent Capsule](../../../docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)
+**Full spec**: [LumenFlow Agent Capsule](../../../docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)

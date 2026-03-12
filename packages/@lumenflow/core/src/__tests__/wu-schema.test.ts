@@ -55,11 +55,11 @@ describe('WU Schema: plan field (WU-1683)', () => {
 
     it('should accept a WU with plan field set to a string path', () => {
       const wu = makeValidWU({
-        plan: 'docs/04-operations/plans/WU-1683-plan.md',
+        plan: 'docs/operations/plans/WU-1683-plan.md',
       });
       const result = validateWU(wu);
       expect(result.success).toBe(true);
-      expect(result.data?.plan).toBe('docs/04-operations/plans/WU-1683-plan.md');
+      expect(result.data?.plan).toBe('docs/operations/plans/WU-1683-plan.md');
     });
 
     it('should accept a WU with plan field using lumenflow:// protocol', () => {
@@ -79,11 +79,11 @@ describe('WU Schema: plan field (WU-1683)', () => {
 
     it('should preserve plan field through BaseWUSchema (ReadyWU) validation', () => {
       const wu = makeValidWU({
-        plan: 'docs/04-operations/plans/WU-1683-plan.md',
+        plan: 'docs/operations/plans/WU-1683-plan.md',
       });
       const result = validateReadyWU(wu);
       expect(result.success).toBe(true);
-      expect(result.data?.plan).toBe('docs/04-operations/plans/WU-1683-plan.md');
+      expect(result.data?.plan).toBe('docs/operations/plans/WU-1683-plan.md');
     });
 
     it('should reject non-string plan values', () => {

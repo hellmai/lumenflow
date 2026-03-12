@@ -2,7 +2,7 @@
 name: tdd-workflow
 description: Test-driven development workflow. RED-GREEN-REFACTOR applies to all code; 5-step ports-first for hex architecture. Use when implementing new features, writing tests, or working with hexagonal architecture.
 version: 2.1.0
-source: docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
+source: docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: AI-TDD 5-Step Workflow, Hexagonal Architecture
 last_updated: 2026-01-22
 allowed-tools: Read, Write, Edit, Bash, Grep
@@ -10,7 +10,7 @@ allowed-tools: Read, Write, Edit, Bash, Grep
 
 # TDD Workflow Skill
 
-**Source**: `docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
+**Source**: `docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md` (canonical)
 
 ## When to Use
 
@@ -138,4 +138,4 @@ pnpm test:coverage           # Check coverage
 
 ---
 
-**Full spec**: [LumenFlow Agent Capsule](../../../docs/04-operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)
+**Full spec**: [LumenFlow Agent Capsule](../../../docs/operations/_frameworks/lumenflow/lumenflow-agent-capsule.md)

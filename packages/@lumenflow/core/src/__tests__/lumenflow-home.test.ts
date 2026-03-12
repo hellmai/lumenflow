@@ -100,7 +100,7 @@ describe('lumenflow-home', () => {
     });
 
     it('should return false for relative paths', () => {
-      expect(isExternalPath('docs/04-operations/plans/plan.md')).toBe(false);
+      expect(isExternalPath('docs/operations/plans/plan.md')).toBe(false);
     });
 
     it('should return false for repo-relative paths', () => {
@@ -127,8 +127,8 @@ describe('lumenflow-home', () => {
     });
 
     it('should return repo-relative paths unchanged', () => {
-      const result = normalizeSpecRef('docs/04-operations/plans/plan.md');
-      expect(result).toBe('docs/04-operations/plans/plan.md');
+      const result = normalizeSpecRef('docs/operations/plans/plan.md');
+      expect(result).toBe('docs/operations/plans/plan.md');
     });
   });
 });

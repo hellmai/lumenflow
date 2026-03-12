@@ -180,7 +180,7 @@ const wuStateReader = new InMemoryWuStateReader([
     status: 'in_progress',
     lane: 'Content: Documentation',
     title: 'Test WU',
-    yamlPath: '/repo/docs/04-operations/tasks/wu/WU-1095.yaml',
+    yamlPath: '/repo/docs/operations/tasks/wu/WU-1095.yaml',
     isConsistent: true,
     inconsistencyReason: null,
   },

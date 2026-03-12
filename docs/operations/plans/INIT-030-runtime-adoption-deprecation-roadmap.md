@@ -101,7 +101,7 @@ Phase 4 is auditable and complete when all are true:
 
 ## Audit References
 
-- Initiative spec: `docs/04-operations/tasks/initiatives/INIT-030.yaml`
+- Initiative spec: `docs/operations/tasks/initiatives/INIT-030.yaml`
 - WUs:
   - `WU-1793` (parity closure metrics)
   - `WU-1795` (shell-out budget guardrail)

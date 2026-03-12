@@ -124,7 +124,7 @@ describe('init:plan command', () => {
     it('should format plan path as lumenflow:// URI', async () => {
       const { formatPlanUri } = await import('../initiative-plan.js');
 
-      expect(formatPlanUri('docs/04-operations/plans/my-plan.md')).toBe(
+      expect(formatPlanUri('docs/operations/plans/my-plan.md')).toBe(
         'lumenflow://plans/my-plan.md',
       );
     });
@@ -132,7 +132,7 @@ describe('init:plan command', () => {
     it('should handle nested paths', async () => {
       const { formatPlanUri } = await import('../initiative-plan.js');
 
-      expect(formatPlanUri('docs/04-operations/plans/subdir/nested-plan.md')).toBe(
+      expect(formatPlanUri('docs/operations/plans/subdir/nested-plan.md')).toBe(
         'lumenflow://plans/subdir/nested-plan.md',
       );
     });
@@ -152,7 +152,7 @@ describe('init:plan command', () => {
       const { checkInitiativeExists } = await import('../initiative-plan.js');
 
       // Create a mock initiative file
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       const initDoc = {
@@ -182,7 +182,7 @@ describe('init:plan command', () => {
       const { updateInitiativeWithPlan } = await import('../initiative-plan.js');
 
       // Setup mock initiative
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       const initDoc = {
@@ -212,7 +212,7 @@ describe('init:plan command', () => {
       const { updateInitiativeWithPlan } = await import('../initiative-plan.js');
 
       // Setup mock initiative with existing plan
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       const initDoc = {
@@ -240,7 +240,7 @@ describe('init:plan command', () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       // Setup mock initiative with different plan
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       const initDoc = {
@@ -271,7 +271,7 @@ describe('init:plan command', () => {
     it('should fail with clear error when related_plan has invalid type', async () => {
       const { updateInitiativeWithPlan } = await import('../initiative-plan.js');
 
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       writeFileSync(
@@ -296,7 +296,7 @@ describe('init:plan command', () => {
     it('should fail with clear error when initiative payload is not an object', async () => {
       const { updateInitiativeWithPlan } = await import('../initiative-plan.js');
 
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       writeFileSync(initPath, '- not-an-initiative-object\n');
@@ -368,7 +368,7 @@ describe('init:plan command', () => {
       const { updateInitiativeWithPlan } = await import('../initiative-plan.js');
 
       // Setup mock initiative with different ID
-      const initDir = join(tempDir, 'docs', '04-operations', 'tasks', 'initiatives');
+      const initDir = join(tempDir, 'docs', 'operations', 'tasks', 'initiatives');
       mkdirSync(initDir, { recursive: true });
       const initPath = join(initDir, 'INIT-001.yaml');
       const initDoc = {

@@ -43,7 +43,7 @@ describe('quick-ref commands', () => {
     return path.join(
       tempDir,
       'docs',
-      '04-operations',
+      'operations',
       '_frameworks',
       'lumenflow',
       'agent',
@@ -131,7 +131,7 @@ describe('quick-ref commands', () => {
 
       // Should point to arc42 path
       expect(agentsContent).toContain(
-        'docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
+        'docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
       );
     });
 
@@ -146,11 +146,11 @@ describe('quick-ref commands', () => {
 
       const agentsContent = fs.readFileSync(path.join(tempDir, 'AGENTS.md'), 'utf-8');
 
-      // Should point to simple path (without 04-operations)
+      // Should point to simple path (without operations)
       expect(agentsContent).toContain(
         'docs/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
       );
-      expect(agentsContent).not.toContain('04-operations');
+      expect(agentsContent).not.toContain('operations');
     });
   });
 

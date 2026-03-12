@@ -17,7 +17,7 @@ describe('wu:create spec validation (WU-1043)', () => {
       testPathsManual: ['Manual test: verify wu:create validation output'],
       testPathsUnit: ['packages/@lumenflow/cli/__tests__/wu-create.test.ts'],
       exposure: 'backend-only',
-      specRefs: ['docs/04-operations/plans/WU-9999-plan.md'],
+      specRefs: ['docs/operations/plans/WU-9999-plan.md'],
       // WU-1329: Disable strict validation for unit tests that use non-existent paths
       strict: false,
     },

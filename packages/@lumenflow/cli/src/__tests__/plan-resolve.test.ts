@@ -14,7 +14,7 @@ import { tmpdir } from 'node:os';
 
 /** Test constants */
 const TEST_PLANS_DIR = 'docs/plans';
-const TEST_INIT_DIR = 'docs/04-operations/tasks/initiatives';
+const TEST_INIT_DIR = 'docs/operations/tasks/initiatives';
 
 // Mock WU_PATHS to use test directories
 vi.mock('@lumenflow/core/wu-paths', () => ({

@@ -111,7 +111,7 @@ describe('doctor CLI (WU-1386) - Agent Friction Checks', () => {
       expect(result.workflowHealth?.managedFilesDirty.files).toContain(WORKSPACE_CONFIG_FILE_NAME);
     });
 
-    it('should detect uncommitted changes to docs/04-operations/tasks/**', async () => {
+    it('should detect uncommitted changes to docs/operations/tasks/**', async () => {
       setupMinimalProject(testDir);
       initGit(testDir);
 

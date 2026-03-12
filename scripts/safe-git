@@ -66,7 +66,7 @@ block_command() {
     echo "" >&2
     echo "REASON: ${reason}" >&2
     echo "" >&2
-    echo "See 'docs/04-operations/plans/WU-1170-safety-alignment.md' for details." >&2
+    echo "See 'docs/operations/plans/WU-1170-safety-alignment.md' for details." >&2
     echo "" >&2
     echo "To bypass (emergency only):" >&2
     echo "  LUMENFLOW_FORCE_REASON=\"reason\" LUMENFLOW_FORCE=1 git ..." >&2
