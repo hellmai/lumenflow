@@ -3415,3 +3415,4 @@
 {"type":"checkpoint","wuId":"WU-2435","timestamp":"2026-03-12T20:14:36.816Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2435","timestamp":"2026-03-12T20:14:43.021Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2435","timestamp":"2026-03-12T20:27:13.715Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2435.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"checkpoint","wuId":"WU-2435","timestamp":"2026-03-12T20:27:43.467Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2435.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
