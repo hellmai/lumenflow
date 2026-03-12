@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml)
+- [WU-2431 — Add Discord CI notifications to ci.yml](wu/WU-2431.yaml)
 
 ## Completed
 

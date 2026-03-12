@@ -2,14 +2,15 @@ id: WU-2431
 title: Add Discord CI notifications to ci.yml
 lane: 'Operations: Automation'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
   - .github/workflows/ci.yml
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -27,7 +28,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Add notify-failure and notify-success jobs to ci.yml. Posts embed messages to Discord via the DISCORD_WEBHOOK org secret. Failure notifies on all events, success only on push to main.
+description: Add notify-failure and notify-success jobs to ci.yml. Posts embed messages to Discord
+  via the DISCORD_WEBHOOK org secret. Failure notifies on all events, success only on push to main.
 acceptance:
   - ci.yml has notify-failure job that posts to Discord on gate failure
   - ci.yml has notify-success job that posts to Discord on push success only
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2431
+claimed_at: 2026-03-12T18:09:16.410Z
+baseline_main_sha: ee4db1c4f7fcba321338b2472271bab9b882c339
+session_id: 488f6a53-4b0c-4f45-9df4-f991d485a681
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T18:09:16.415Z
