@@ -7,8 +7,6 @@ priority: P1
 created: 2026-03-12
 code_paths:
   - docs/09-architecture-decisions/
-  - docs/04-operations/plans/
-  - docs/04-operations/tasks/initiatives/
 tests:
   manual:
     - ADR reviewed and approved
@@ -22,10 +20,15 @@ phase: 1
 spec_refs:
   - lumenflow://plans/INIT-52-plan.md
 risks: []
-notes: |-
+notes: >-
   Architecture-first WU. Verify the target repo ADR path before implementation starts.
 
+
   Verified local ADR path for this repo is docs/09-architecture-decisions/.
+
+
+  Narrowed code_paths to the actual ADR directory after preflight confirmed no plan or initiative
+  file changes were required.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
