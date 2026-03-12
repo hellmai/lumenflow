@@ -21,9 +21,16 @@ artifacts:
   - .lumenflow/stamps/WU-2399.done
 dependencies: []
 risks: []
-notes: ''
+notes: Fixed --force flag being a no-op for prettier/scripts, fixed gitignore String.includes()
+  false-positive on comments by parsing non-comment lines, extracted 3 sub-modules from init.ts
+  (init-docs-scaffolder.ts, init-package-config.ts, init-safety-scripts.ts). All 84 init tests pass
+  including 7 new regression tests.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T09:51:58.575Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2399
+session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
 exposure: backend-only
 sizing_estimate:
   estimated_files: 8
@@ -31,6 +38,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:51:58.582Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -45,11 +55,3 @@ acceptance:
   - scaffoldProject() delegates to extracted sub-modules (docs, package config, safety scripts)
   - gitignore deduplication ignores comments and partial matches
   - All existing init tests pass
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2399
-claimed_at: 2026-03-12T09:51:58.575Z
-baseline_main_sha: e2db5f0ba0f28367aebdf843e582cd3c2fd09bd0
-session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T09:51:58.582Z
