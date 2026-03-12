@@ -8,7 +8,7 @@
 
 LumenFlow is a vendor-agnostic workflow framework for AI-native software development.
 
-> **Context Safety**: When approaching context limits (80% usage, 50+ tool calls), spawn a fresh agent instead of continuing after compaction. See [wu-sizing-guide.md](docs/_frameworks/lumenflow/agent/onboarding/wu-sizing-guide.md).
+> **Context Safety**: When approaching context limits (80% usage, 50+ tool calls), spawn a fresh agent instead of continuing after compaction. See [wu-sizing-guide.md](docs/_frameworks/lumenflow/wu-sizing-guide.md).
 
 ---
 
@@ -358,6 +358,6 @@ Supported clients: `claude-code`, `codex-cli`, `cursor`, `gemini-cli`, `windsurf
 - [Quick Reference: Commands](docs/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md) -- Complete CLI reference (100+ commands)
 - [Troubleshooting wu:done](docs/_frameworks/lumenflow/agent/onboarding/troubleshooting-wu-done.md) -- Most common completion mistakes
 - [.lumenflow/constraints.md](.lumenflow/constraints.md) -- Non-negotiable rules and forbidden commands
-- [WU Sizing Guide](docs/_frameworks/lumenflow/agent/onboarding/wu-sizing-guide.md) -- Scoping work without needless fragmentation
+- [WU Sizing Guide](docs/_frameworks/lumenflow/wu-sizing-guide.md) -- Scoping work without needless fragmentation
 - [Skills Index](.claude/skills/INDEX.md)
 - [Agents README](.claude/agents/README.md)

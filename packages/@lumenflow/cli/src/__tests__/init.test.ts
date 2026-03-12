@@ -1042,75 +1042,9 @@ describe('lumenflow init', () => {
     });
   });
 
-  // WU-1385: Include wu-sizing-guide.md in lumenflow init onboarding docs
-  describe('WU-1385: wu-sizing-guide.md scaffolding', () => {
-    describe('wu-sizing-guide.md creation with --full', () => {
-      it('should scaffold wu-sizing-guide.md in onboarding docs with --full', async () => {
-        const options: ScaffoldOptions = {
-          force: false,
-          full: true,
-          docsStructure: 'arc42',
-        };
-
-        await scaffoldProject(tempDir, options);
-
-        const onboardingDir = path.join(tempDir, ONBOARDING_DOCS_PATH);
-        const sizingGuidePath = path.join(onboardingDir, 'wu-sizing-guide.md');
-        expect(fs.existsSync(sizingGuidePath)).toBe(true);
-      });
-
-      it('should include key sizing guide content', async () => {
-        const options: ScaffoldOptions = {
-          force: false,
-          full: true,
-          docsStructure: 'arc42',
-        };
-
-        await scaffoldProject(tempDir, options);
-
-        const onboardingDir = path.join(tempDir, ONBOARDING_DOCS_PATH);
-        const sizingGuidePath = path.join(onboardingDir, 'wu-sizing-guide.md');
-        const content = fs.readFileSync(sizingGuidePath, 'utf-8');
-
-        // Should have key content from the sizing guide
-        expect(content).toContain('Complexity');
-        expect(content).toContain('Tool Calls');
-        expect(content).toContain('Context');
-      });
-
-      it('should not scaffold wu-sizing-guide.md with --minimal (full=false)', async () => {
-        const options: ScaffoldOptions = {
-          force: false,
-          full: false,
-        };
-
-        await scaffoldProject(tempDir, options);
-
-        const onboardingDir = path.join(tempDir, ONBOARDING_DOCS_PATH);
-        const sizingGuidePath = path.join(onboardingDir, 'wu-sizing-guide.md');
-        expect(fs.existsSync(sizingGuidePath)).toBe(false);
-      });
-    });
-
-    describe('starting-prompt.md references sizing guide', () => {
-      it('should reference wu-sizing-guide.md in starting-prompt.md', async () => {
-        const options: ScaffoldOptions = {
-          force: false,
-          full: true,
-          docsStructure: 'arc42',
-        };
-
-        await scaffoldProject(tempDir, options);
-
-        const onboardingDir = path.join(tempDir, ONBOARDING_DOCS_PATH);
-        const startingPromptPath = path.join(onboardingDir, 'starting-prompt.md');
-        const content = fs.readFileSync(startingPromptPath, 'utf-8');
-
-        // Should reference the sizing guide
-        expect(content).toContain('wu-sizing-guide.md');
-      });
-    });
-  });
+  // WU-1385 / WU-2398: wu-sizing-guide.md is no longer scaffolded as an onboarding
+  // template. The canonical doc lives at docs/04-operations/_frameworks/lumenflow/wu-sizing-guide.md.
+  // The starting-prompt.md template still references wu-sizing-guide.md (via LUMENFLOW.md link).
 
   // WU-1408: safe-git and pre-commit hook scaffolding
   describe('WU-1408: safe-git and pre-commit scaffolding', () => {

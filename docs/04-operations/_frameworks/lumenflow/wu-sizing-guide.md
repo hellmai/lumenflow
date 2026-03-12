@@ -59,6 +59,21 @@ Split a WU only when one of these is true:
 - "Endpoint first, tests second, docs third" for one API change
 - "Backend WU" and "frontend WU" when neither is independently shippable
 - "Refactor step 1", "refactor step 2", and "refactor step 3" for one atomic fix
+- "Metrics tests WU", "Memory tests WU", "Runtime tests WU" for closing one test coverage gap -- one outcome, one WU
+- "Fix bug WU" and "Clean up file where bug was found WU" -- if the cleanup is in the same file, one WU
+
+### 1.0.1 Consolidation Checklist (Mandatory Before Splitting)
+
+Agents consistently under-apply the cohesion rule, defaulting to micro-splitting. Before proposing more than 2 WUs for any body of work, run this checklist:
+
+1. **Same lane?** If two proposed WUs are in the same lane and the same outcome, merge them.
+2. **Same file or module?** If two WUs touch the same file, they are almost certainly one WU.
+3. **Can either ship alone?** If WU-A is meaningless without WU-B, they are one WU.
+4. **Is the split by phase, not outcome?** "Step 1" and "Step 2" of the same fix = one WU.
+5. **Is the split by artifact type?** "Tests WU" and "Code WU" for the same feature = one WU.
+6. **Would a reviewer see these as one PR?** If yes, one WU.
+
+**Apply this checklist iteratively.** After your first pass at splitting, re-run the checklist. If any merges are possible, merge and re-run again. Stop only when no further merges pass the checklist. Real-world experience shows the first pass typically over-splits by 2-3x.
 
 ### 1.1 Documentation-Only Exception
 
@@ -526,12 +541,13 @@ This is a case study in genuinely non-atomic work. Do not generalize it into "mu
 
 ---
 
-**Version:** 1.4 (2026-03-10)
-**Last Updated:** 2026-03-10
+**Version:** 1.5 (2026-03-12)
+**Last Updated:** 2026-03-12
 **Contributors:** Claude (research), Codex (pragmatic framing), Gemini (trigger enforcement)
 
 **Changelog:**
 
+- v1.5 (2026-03-12): Consolidated from two files into single canonical doc. Added consolidation checklist (1.0.1) to counter systematic agent over-splitting. Strengthened anti-patterns with additional examples.
 - v1.3 (2026-02-25): Added sizing contract section (1.4) documenting tooling-backed enforcement via `sizing_estimate` metadata, advisory warnings in `wu:create`, and `--strict-sizing` mode in `wu:brief` (WU-2141, WU-2143).
 - v1.4 (2026-03-10): Tightened anti-fragmentation guidance. Complex and oversized heuristics now force a cohesion re-check before decomposition, added explicit anti-patterns for backend/tests/docs micro-splitting, and replaced `/clear`-centric recovery advice with checkpoint + `wu:brief` handoff guidance.
 - v1.2 (2026-02-01): Added documentation-only exception (section 1.1), shallow multi-file exception with single-session override criteria (section 1.2), and examples summary table (section 1.3). Updated deviation protocol to reference exceptions.

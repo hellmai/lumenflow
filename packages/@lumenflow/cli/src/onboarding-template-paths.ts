@@ -15,5 +15,4 @@ export const SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS: Record<string, string> = {
   'troubleshooting-wu-done.md': 'core/ai/onboarding/troubleshooting-wu-done.md.template',
   'agent-safety-card.md': 'core/ai/onboarding/agent-safety-card.md.template',
   'wu-create-checklist.md': 'core/ai/onboarding/wu-create-checklist.md.template',
-  'wu-sizing-guide.md': 'core/ai/onboarding/wu-sizing-guide.md.template',
 };

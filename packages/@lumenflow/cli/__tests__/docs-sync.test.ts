@@ -62,7 +62,6 @@ describe('lumenflow docs:sync command (WU-1083)', () => {
       expect(fs.existsSync(path.join(onboardingDir, 'first-15-mins.md'))).toBe(true);
       expect(fs.existsSync(path.join(onboardingDir, 'local-only.md'))).toBe(true);
       expect(fs.existsSync(path.join(onboardingDir, 'wu-create-checklist.md'))).toBe(true);
-      expect(fs.existsSync(path.join(onboardingDir, 'wu-sizing-guide.md'))).toBe(true);
       expect(result.created.length).toBeGreaterThan(0);
     });
 
