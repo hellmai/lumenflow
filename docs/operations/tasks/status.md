@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml)
 
 ## Completed
 
