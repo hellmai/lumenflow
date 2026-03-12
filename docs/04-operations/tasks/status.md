@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1322,3 +1322,4 @@ _Last updated: 2026-03-12_
 - [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml) — 2026-03-12
 - [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml) — 2026-03-12
 - [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml) — 2026-03-12
+- [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml) — 2026-03-12

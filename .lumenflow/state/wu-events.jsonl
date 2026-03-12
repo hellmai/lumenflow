@@ -3261,14 +3261,14 @@
 {"type":"checkpoint","wuId":"WU-2403","timestamp":"2026-03-12T10:37:57.323Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2403.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2403","timestamp":"2026-03-12T10:39:42.200Z"}
 {"type":"claim","wuId":"WU-2404","timestamp":"2026-03-12T10:56:31.299Z","lane":"Framework: Core Lifecycle","title":"Pack manifest resolution returns empty config_key map in consumer installs"}
-{"type":"claim","wuId":"WU-2405","timestamp":"2026-03-12T11:01:10.144Z","lane":"Content: Specs Governance","title":"Arc42 compliance: proper section structure, ADR location, and docs index"}
 {"type":"checkpoint","wuId":"WU-2404","timestamp":"2026-03-12T10:56:45.976Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2404","timestamp":"2026-03-12T10:57:23.923Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"claim","wuId":"WU-2405","timestamp":"2026-03-12T11:01:10.144Z","lane":"Content: Specs Governance","title":"Arc42 compliance: proper section structure, ADR location, and docs index"}
+{"type":"checkpoint","wuId":"WU-2405","timestamp":"2026-03-12T11:01:23.814Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2405","timestamp":"2026-03-12T11:01:42.012Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2404","timestamp":"2026-03-12T11:03:37.210Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2404.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2404","timestamp":"2026-03-12T11:04:07.806Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2404.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2404","timestamp":"2026-03-12T11:07:13.256Z"}
-{"type":"checkpoint","wuId":"WU-2405","timestamp":"2026-03-12T11:01:23.814Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2405","timestamp":"2026-03-12T11:01:42.012Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"delegation","wuId":"WU-1604","timestamp":"2026-03-12T11:13:26.174Z","parentWuId":"WU-1600","delegationId":"dlg-188e"}
 {"type":"checkpoint","wuId":"WU-2405","timestamp":"2026-03-12T11:28:13.105Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2405.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2405","timestamp":"2026-03-12T11:32:49.135Z"}

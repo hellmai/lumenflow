@@ -20,31 +20,31 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
-- [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — Content: Framework Docs
-- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
-- [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml) — Framework: Core Lifecycle
-- [WU-2416 — Add multi-provider adapter support](wu/WU-2416.yaml) — Framework: Core Lifecycle
-- [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml) — Framework: Core Lifecycle
-- [WU-2414 — Add policy-aware tool filtering and auto-discovery](wu/WU-2414.yaml) — Framework: Core Lifecycle
-- [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml) — Framework: Core Lifecycle
-- [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml) — Framework: Core Lifecycle
-- [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml) — Framework: Core Lifecycle
-- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
-- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
-- [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — Framework: Core Lifecycle
-- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
-- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml) — Content: Framework Docs
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
+- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml) — Content: Framework Docs
+- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
+- [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — Framework: Core Lifecycle
+- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
+- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
+- [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml) — Framework: Core Lifecycle
+- [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml) — Framework: Core Lifecycle
+- [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml) — Framework: Core Lifecycle
+- [WU-2414 — Add policy-aware tool filtering and auto-discovery](wu/WU-2414.yaml) — Framework: Core Lifecycle
+- [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml) — Framework: Core Lifecycle
+- [WU-2416 — Add multi-provider adapter support](wu/WU-2416.yaml) — Framework: Core Lifecycle
+- [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml) — Framework: Core Lifecycle
+- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
+- [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — Content: Framework Docs
+- [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
-- [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml) — Content: Specs Governance
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1366,6 +1366,7 @@ sections:
 - [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml)
 - [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml)
 - [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml)
+- [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
