@@ -1,0 +1,49 @@
+id: WU-2410
+title: Scaffold the agent-runtime pack
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-03-12
+code_paths:
+  - packages/@lumenflow/packs/
+  - packages/@lumenflow/kernel/src/pack/
+  - apps/docs/src/content/docs/kernel/
+tests:
+  manual:
+    - Validate pack scaffold integrity and manifest loading
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2410.done
+dependencies: []
+initiative: INIT-52
+phase: 2
+blocked_by:
+  - WU-2406
+  - WU-2407
+  - WU-2408
+  - WU-2409
+spec_refs:
+  - lumenflow://plans/INIT-52-plan.md
+risks: []
+notes: Core scaffold only. Leave turn execution behavior to the next WU.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 12
+  estimated_tool_calls: 45
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Create the agent-runtime pack skeleton with manifest, config schema, types, tool implementation layout, and the initial static provider capability baseline.
+acceptance:
+  - agent-runtime pack exists with manifest, config schema, constants, types, and tool implementation layout
+  - Manifest declares task_types limited to agent-session
+  - Initial provider network scopes use static manifest allowlists
+  - Pack integrity and import-boundary checks remain valid

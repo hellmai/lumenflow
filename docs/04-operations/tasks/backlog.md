@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
 - [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
 - [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — Framework: Core Lifecycle
 - [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
