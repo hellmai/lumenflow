@@ -2,7 +2,7 @@ id: WU-2431
 title: Add Discord CI notifications to ci.yml
 lane: 'Operations: Automation'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -45,3 +45,6 @@ description: Add notify-failure and notify-success jobs to ci.yml. Posts embed m
 acceptance:
   - ci.yml has notify-failure job that posts to Discord on gate failure
   - ci.yml has notify-success job that posts to Discord on push success only
+locked: true
+completed_at: 2026-03-12T18:11:52.287Z
+completed: 2026-03-12
