@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml) — Content: Specs Governance
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
