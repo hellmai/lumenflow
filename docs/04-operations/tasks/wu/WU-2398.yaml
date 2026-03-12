@@ -18,12 +18,22 @@ artifacts:
   - .lumenflow/stamps/WU-2398.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Consolidated two duplicate wu-sizing-guide.md files into one canonical doc. Deleted
+  onboarding copy and template. Updated all references. Added consolidation checklist (1.0.1) and
+  additional anti-patterns to strengthen cohesion messaging. tdd-exception: documentation-only WU,
+  no code logic changes.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T09:34:45.836Z
+worktree_path: worktrees/content-specs-governance-wu-2398
+session_id: 13ff0fe8-1619-4a70-8ae4-a1ea0ac66872
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:34:45.845Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +43,3 @@ description: Delete the condensed onboarding copy at agent/onboarding/wu-sizing-
 acceptance:
   - Only one wu-sizing-guide.md exists (the comprehensive version)
   - All references to the deleted onboarding copy are updated
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2398
-claimed_at: 2026-03-12T09:34:45.836Z
-baseline_main_sha: fffd3d1eb9520dd1fce00b341f797f1b174c27f7
-session_id: 13ff0fe8-1619-4a70-8ae4-a1ea0ac66872
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T09:34:45.845Z

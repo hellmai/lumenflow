@@ -3222,3 +3222,4 @@
 {"type":"complete","wuId":"WU-2396","timestamp":"2026-03-11T22:47:20.327Z"}
 {"type":"claim","wuId":"WU-2398","timestamp":"2026-03-12T09:34:45.879Z","lane":"Content: Specs Governance","title":"Consolidate duplicate wu-sizing-guide into single comprehensive doc"}
 {"type":"checkpoint","wuId":"WU-2398","timestamp":"2026-03-12T09:34:58.268Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2398","timestamp":"2026-03-12T09:40:00.601Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2398.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
