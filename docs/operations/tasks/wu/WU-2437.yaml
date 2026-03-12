@@ -2,7 +2,7 @@ id: WU-2437
 title: 'BUG: gate-co-change crashes with require() in ESM context'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -41,3 +41,6 @@ session_id: 152011e2-94ac-4390-93d5-bb325d0a8fca
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T21:50:06.035Z
+locked: true
+completed_at: 2026-03-12T21:54:57.027Z
+completed: 2026-03-12

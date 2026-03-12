@@ -4,7 +4,6 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml)
 - [WU-2439 — Validate MCP example payloads against live tool schemas](wu/WU-2439.yaml)
 
 ## Completed
@@ -1355,3 +1354,4 @@ _Last updated: 2026-03-12_
 - [WU-2435 — Broaden docs example parity coverage](wu/WU-2435.yaml) — 2026-03-12
 - [WU-2438 — BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects](wu/WU-2438.yaml) — 2026-03-12
 - [WU-2436 — Generate MCP reference and tighten docs command policy](wu/WU-2436.yaml) — 2026-03-12
+- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml) — 2026-03-12

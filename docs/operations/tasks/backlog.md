@@ -30,7 +30,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml) — Framework: CLI WU Commands
 - [WU-2439 — Validate MCP example payloads against live tool schemas](wu/WU-2439.yaml) — Content: Framework Docs
 
 ## ⛔ Blocked
@@ -1385,6 +1384,7 @@ sections:
 - [WU-2435 — Broaden docs example parity coverage](wu/WU-2435.yaml)
 - [WU-2438 — BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects](wu/WU-2438.yaml)
 - [WU-2436 — Generate MCP reference and tighten docs command policy](wu/WU-2436.yaml)
+- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
