@@ -1,7 +1,7 @@
 id: WU-2429
 title: Audit and align command, MCP, and pack docs surfaces
 lane: 'Content: Site Comms'
-type: documentation
+type: refactor
 status: in_progress
 priority: P1
 created: 2026-03-12
