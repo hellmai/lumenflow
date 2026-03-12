@@ -2,7 +2,7 @@ id: WU-2406
 title: Write ADR for governed agent-runtime pack
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -35,9 +35,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Create the architecture decision record for the governed agent-runtime pack. Define the kernel-versus-pack boundary, provider-neutrality, the governed turn surface, and the orchestration cut-line for agent-session execution.
+description: Create the architecture decision record for the governed agent-runtime pack. Define the
+  kernel-versus-pack boundary, provider-neutrality, the governed turn surface, and the orchestration
+  cut-line for agent-session execution.
 acceptance:
   - ADR created for the agent-runtime pack in the verified ADR location of the target repo
   - ADR defines the kernel-versus-pack boundary and host-versus-pack orchestration split
   - ADR defines agent-session as the only task model for scheduled and resumed execution
   - ADR cross-links the initiative plan and target docs location
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2406
+claimed_at: 2026-03-12T11:43:36.326Z
+baseline_main_sha: aaea1e9536299de1609d201b7dce3303c8848426
+session_id: bac69047-75bf-4882-9cd3-0b5eb179744f
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:43:36.332Z

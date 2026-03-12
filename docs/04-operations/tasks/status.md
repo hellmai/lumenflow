@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml)
 
 ## Completed
 

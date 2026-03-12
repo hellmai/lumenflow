@@ -5,7 +5,7 @@ description: Deliver a governed agent-runtime pack for LumenFlow with kernel-bac
   runtime pack-config plumbing, sandboxed credential handling, provider-neutral turn execution,
   policy-aware tool filtering, streaming and evidence support, and pack-owned agent-session
   orchestration including suspend/resume, branching, and scheduled routines.
-status: open
+status: in_progress
 priority: P1
 owner: tom
 created: 2026-03-12
@@ -34,7 +34,3 @@ success_metrics:
   - Public docs and examples describe the pack accurately without coupling it to private
     implementation details.
 labels: []
-related_plan: lumenflow://plans/INIT-52-plan.md
-lanes:
-  - 'Framework: Core Lifecycle'
-  - 'Content: Framework Docs'

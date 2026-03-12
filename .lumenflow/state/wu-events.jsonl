@@ -3272,3 +3272,4 @@
 {"type":"delegation","wuId":"WU-1604","timestamp":"2026-03-12T11:13:26.174Z","parentWuId":"WU-1600","delegationId":"dlg-188e"}
 {"type":"checkpoint","wuId":"WU-2405","timestamp":"2026-03-12T11:28:13.105Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2405.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2405","timestamp":"2026-03-12T11:32:49.135Z"}
+{"type":"claim","wuId":"WU-2406","timestamp":"2026-03-12T11:43:36.361Z","lane":"Content: Framework Docs","title":"Write ADR for governed agent-runtime pack"}
