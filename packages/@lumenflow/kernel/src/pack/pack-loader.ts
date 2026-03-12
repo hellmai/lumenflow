@@ -131,6 +131,10 @@ function isRuntimeSourceFile(relativePath: string): boolean {
     return false;
   }
 
+  if (/\.config\.[cm]?[jt]sx?$/.test(normalizedPath)) {
+    return false;
+  }
+
   return !/\.(test|spec)\.[cm]?[jt]sx?$/.test(normalizedPath);
 }
 
