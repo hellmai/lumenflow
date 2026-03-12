@@ -2,7 +2,7 @@ id: WU-2428
 title: Fix published docs navigation and release metadata
 lane: 'Content: Site Comms'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -37,9 +37,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: Published Starlight docs are live, but the pack sidebar omits published pack pages and the release surfaces still advertise v3.9.6 as latest. Problem: users cannot discover all published pack docs from navigation, and /releases plus the changelog contradict the actual published stable version 3.18.0. Solution: update docs site navigation, release index content, and changelog latest markers so the public site matches the published docs and release state.'
+description: 'Context: Published Starlight docs are live, but the pack sidebar omits published pack
+  pages and the release surfaces still advertise v3.9.6 as latest. Problem: users cannot discover
+  all published pack docs from navigation, and /releases plus the changelog contradict the actual
+  published stable version 3.18.0. Solution: update docs site navigation, release index content, and
+  changelog latest markers so the public site matches the published docs and release state.'
 acceptance:
-  - Packs sidebar includes the published Agent Runtime pack and routes to its overview/configuration/workflows pages.
-  - Release index reflects 3.18.0 as the latest stable release and links to current release notes or changelog entries consistently.
-  - Reference changelog latest marker and release metadata are updated to 3.18.0 and no longer claim v3.9.6 as latest.
+  - Packs sidebar includes the published Agent Runtime pack and routes to its
+    overview/configuration/workflows pages.
+  - Release index reflects 3.18.0 as the latest stable release and links to current release notes or
+    changelog entries consistently.
+  - Reference changelog latest marker and release metadata are updated to 3.18.0 and no longer claim
+    v3.9.6 as latest.
   - Docs verification covers the updated navigation and release pages via docs build/gates.
+claimed_mode: worktree
+worktree_path: worktrees/content-site-comms-wu-2428
+claimed_at: 2026-03-12T17:41:52.672Z
+baseline_main_sha: ce8b4cee11fa4265a70913f27de6935fc6b8fca5
+session_id: 86f794ba-63e6-49a1-84ac-28d0ea6948da
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T17:41:52.678Z

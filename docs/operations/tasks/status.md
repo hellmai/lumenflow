@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2427 — Migrate CI workflows from GitHub-hosted to self-hosted runners](wu/WU-2427.yaml)
+- [WU-2428 — Fix published docs navigation and release metadata](wu/WU-2428.yaml)
 
 ## Completed
 

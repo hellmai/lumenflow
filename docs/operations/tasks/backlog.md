@@ -27,11 +27,11 @@ sections:
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
-- [WU-2428 — Fix published docs navigation and release metadata](wu/WU-2428.yaml) — Content: Site Comms
 
 ## 🔧 In progress
 
 - [WU-2427 — Migrate CI workflows from GitHub-hosted to self-hosted runners](wu/WU-2427.yaml) — Operations: Automation
+- [WU-2428 — Fix published docs navigation and release metadata](wu/WU-2428.yaml) — Content: Site Comms
 
 ## ⛔ Blocked
 
