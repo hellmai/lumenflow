@@ -835,4 +835,4 @@ For a complete picture of how all WU commands, memory tools, and orchestration t
 - **[Failure-Mode Runbook](../../lumenflow-agent-capsule.md)** -- Concrete remediation for main-behind-origin, partial-claim state, spawn-provenance enforcement, and wu:recover usage
 - **[Troubleshooting wu:done](./troubleshooting-wu-done.md)** -- Most common agent mistake (two-step wu:prep + wu:done workflow)
 - **[First WU Mistakes](./first-wu-mistakes.md)** -- Common first-time pitfalls and how to avoid them
-- **[WU Sizing Guide](./wu-sizing-guide.md)** -- Context safety triggers, complexity assessment, and session strategies
+- **[WU Sizing Guide](../../wu-sizing-guide.md)** -- Context safety triggers, complexity assessment, and session strategies

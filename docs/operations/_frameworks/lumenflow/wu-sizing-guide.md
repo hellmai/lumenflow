@@ -151,7 +151,90 @@ A WU touching 30 files where each requires unique logic changes, test updates, o
 
 ---
 
-### 1.4 Sizing Contract (Tooling-Backed Enforcement) (WU-2141)
+### 1.4 Review, Audit, and Exploration WUs
+
+Some WUs are inherently wide and parallel: codebase reviews, security audits, migration assessments, dependency health checks. These don't follow the linear "investigate → implement → test" pattern. They follow a "fan out → gather → synthesise" pattern.
+
+**The multiple-passes problem:** Agents consistently under-scope review WUs on the first attempt, producing a modest plan that requires the user to say "no, go wider" or "use all sub-agents." This wastes a round-trip and often an entire session restart. The guidance below eliminates that by telling agents to go wide from the start.
+
+#### When This Section Applies
+
+A WU qualifies as a review/audit/exploration WU when ALL of these are true:
+
+- The outcome is a **report, assessment, or findings list** — not a code change
+- The work is **read-heavy**: the agent reads far more than it writes
+- Coverage matters more than depth on any single file
+- The codebase area under review exceeds what one agent can explore in a single session
+
+#### Default to Maximum Parallelism
+
+**Do not start with one agent and escalate.** For review WUs, the correct first move is to decompose the review into independent sub-agent scopes and launch them all in parallel.
+
+**Minimum sub-agent count for review WUs:**
+
+| Codebase Size | Files Under Review | Minimum Parallel Agents |
+| :------------ | :----------------- | :---------------------- |
+| Small         | <50                | 2-3                     |
+| Medium        | 50-200             | 4-6                     |
+| Large         | 200+               | 6-8                     |
+
+Each sub-agent should have a **distinct, non-overlapping scope** defined by one of:
+
+- **Domain boundary**: security, performance, accessibility, architecture
+- **Package/directory boundary**: `apps/web`, `packages/shared`, `lib/llm`
+- **Concern boundary**: string literals, dead code, missing tests, broken routes
+
+#### Sub-Agent Scope Template
+
+When spawning a review sub-agent, give it:
+
+1. **Exactly what to look for** — not "review code quality" but "find components using inline styles instead of Tailwind tokens, missing loading states, missing error boundaries, and components that should be server components but are marked 'use client'"
+2. **Where to look** — specific directories or file patterns
+3. **Output format** — severity-ranked table with file paths, line numbers, and concrete findings
+4. **What NOT to report** — issues already caught by existing tooling (linters, type checks)
+
+**Bad prompt** (causes multiple passes):
+> "Do a code review of the frontend"
+
+**Good prompt** (complete in one pass):
+> "Review all components in `apps/web/src/components/` for: (1) inline styles that should use Tailwind tokens, (2) missing loading/empty/error states, (3) 'use client' directives on components that could be server components, (4) components rendered in loops without React.memo, (5) lists over 50 items without virtualisation. Report as severity-ranked table with file:line references."
+
+#### Synthesising Results
+
+The orchestrating agent (or the user) synthesises sub-agent reports into a single findings document. The orchestrator should:
+
+- De-duplicate findings that multiple agents flagged
+- Resolve contradictions (e.g., one agent says "add error boundary" and another says "component is dead code")
+- Rank by severity across all sub-reports
+- Group actionable items into potential follow-up WUs
+
+#### Sizing Metadata for Review WUs
+
+```yaml
+# WU-XXX.yaml
+id: WU-XXX
+type: documentation  # Review output is a report, not code
+sizing_estimate:
+  estimated_files: 200    # Files READ, not modified
+  estimated_tool_calls: 150
+  strategy: orchestrator-worker
+  exception_type: review-audit
+  exception_reason: >
+    Read-only codebase review. 8 parallel sub-agents each
+    covering a distinct concern. No code modifications.
+```
+
+#### Anti-Patterns for Review WUs
+
+- **Starting with one agent** and only parallelising after it runs out of context — go wide from the start
+- **Overlapping scopes** where two agents review the same files for the same concerns — waste of tokens
+- **Vague scope** like "review everything" — each agent needs a concrete checklist
+- **Missing output format** — agents produce narrative instead of actionable tables, requiring a second pass to extract findings
+- **Treating findings as implementation** — a review WU produces a report; fixes are separate WUs
+
+---
+
+### 1.5 Sizing Contract (Tooling-Backed Enforcement) (WU-2141)
 
 The sizing thresholds in sections 1.0-1.2 are now enforced by CLI tooling. The `sizing_estimate` metadata contract lets agents declare their sizing intent at WU creation time, and the tooling validates compliance.
 
@@ -180,6 +263,7 @@ WU YAML specs support an optional `sizing_estimate` field. When present, `wu:cre
 
 - `docs-only` -- Documentation-only exception (section 1.1)
 - `shallow-multi-file` -- Shallow multi-file exception (section 1.2)
+- `review-audit` -- Review/audit/exploration exception (section 1.4)
 
 #### Example: Compliant WU with sizing metadata
 
@@ -496,6 +580,8 @@ pnpm wu:brief --id WU-XXX --client <client>
 | New integration, uncertain complexity            | Tracer Bullet       | WU-A: Prove skeleton works → WU-B: Real implementation        |
 | Docs-only, 30 markdown files                     | Simple (exception)  | Single session, document in notes, monitor for degradation    |
 | Rename import across 45 files (uniform)          | Simple (override)   | Document justification, proceed if all 4 criteria met         |
+| Full codebase code review, 200+ files            | Orchestrator-Worker | 6-8 parallel sub-agents, each with distinct concern scope     |
+| Security audit of auth flows                     | Orchestrator-Worker | 3-4 agents: RLS, auth middleware, secrets, API exposure       |
 
 ---
 
@@ -541,12 +627,13 @@ This is a case study in genuinely non-atomic work. Do not generalize it into "mu
 
 ---
 
-**Version:** 1.5 (2026-03-12)
+**Version:** 1.6 (2026-03-12)
 **Last Updated:** 2026-03-12
 **Contributors:** Claude (research), Codex (pragmatic framing), Gemini (trigger enforcement)
 
 **Changelog:**
 
+- v1.6 (2026-03-12): Added section 1.4 (Review, Audit, and Exploration WUs) addressing multi-agent parallelism for read-heavy WUs. Fixes the "multiple passes" problem where agents under-scope review WUs. Deleted stale CLI docs shadow copy missed by WU-2398. Fixed broken relative links. Renumbered sizing contract to section 1.5.
 - v1.5 (2026-03-12): Consolidated from two files into single canonical doc. Added consolidation checklist (1.0.1) to counter systematic agent over-splitting. Strengthened anti-patterns with additional examples.
 - v1.3 (2026-02-25): Added sizing contract section (1.4) documenting tooling-backed enforcement via `sizing_estimate` metadata, advisory warnings in `wu:create`, and `--strict-sizing` mode in `wu:brief` (WU-2141, WU-2143).
 - v1.4 (2026-03-10): Tightened anti-fragmentation guidance. Complex and oversized heuristics now force a cohesion re-check before decomposition, added explicit anti-patterns for backend/tests/docs micro-splitting, and replaced `/clear`-centric recovery advice with checkpoint + `wu:brief` handoff guidance.

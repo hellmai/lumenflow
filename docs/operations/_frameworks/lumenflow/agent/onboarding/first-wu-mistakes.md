@@ -339,7 +339,7 @@ sizing_estimate:
 pnpm wu:brief --id WU-XXX --client claude-code --strict-sizing
 ```
 
-See the [WU Sizing Guide](./wu-sizing-guide.md) section 1.4 for the full contract specification.
+See the [WU Sizing Guide](../../wu-sizing-guide.md) section 1.5 for the full contract specification.
 
 ---
 

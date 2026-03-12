@@ -330,7 +330,7 @@ sizing_estimate:
   strategy: checkpoint-resume
 ```
 
-3. **Split the WU** only if the work is no longer atomic or should land independently (see [wu-sizing-guide.md](./wu-sizing-guide.md) section 3 for splitting patterns).
+3. **Split the WU** only if the work is no longer atomic or should land independently (see [wu-sizing-guide.md](../../wu-sizing-guide.md) section 3 for splitting patterns).
 
 **Strict mode:** Teams can enforce sizing compliance for delegated work with `--strict-sizing` on `wu:brief`. In strict mode, missing or non-compliant sizing metadata blocks the operation.
 
@@ -339,7 +339,7 @@ sizing_estimate:
 pnpm wu:brief --id WU-XXX --client claude-code --strict-sizing
 ```
 
-See the [WU Sizing Guide](./wu-sizing-guide.md) section 1.4 for the full contract specification.
+See the [WU Sizing Guide](../../wu-sizing-guide.md) section 1.5 for the full contract specification.
 
 ---
 
