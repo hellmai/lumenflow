@@ -3287,3 +3287,4 @@
 {"type":"checkpoint","wuId":"WU-2408","timestamp":"2026-03-12T12:20:28.645Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2408","timestamp":"2026-03-12T12:20:42.319Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2408","timestamp":"2026-03-12T12:36:08.843Z"}
+{"type":"claim","wuId":"WU-2409","timestamp":"2026-03-12T12:38:32.306Z","lane":"Framework: Core Lifecycle","title":"Harden sandbox credential passthrough with env allowlisting"}

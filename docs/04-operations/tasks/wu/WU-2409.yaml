@@ -2,7 +2,7 @@ id: WU-2409
 title: Harden sandbox credential passthrough with env allowlisting
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -39,9 +39,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Make provider credentials compatible with sandboxed execution by adding manifest-declared env allowlisting and removing ambient environment inheritance.
+description: Make provider credentials compatible with sandboxed execution by adding
+  manifest-declared env allowlisting and removing ambient environment inheritance.
 acceptance:
   - required_env is supported on pack tool declarations
   - Sandbox uses clear-environment execution with explicit env re-add only
   - Runtime cross-validates pack-config env references against declared required_env entries
   - Tests prove undeclared environment variables do not pass through
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2409
+claimed_at: 2026-03-12T12:38:32.277Z
+baseline_main_sha: 6bc28b87cb9c22a2ee8457a916eee98c8ccbb747
+session_id: 01a07572-3391-4feb-8cd2-80c9e307e260
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T12:38:32.283Z
