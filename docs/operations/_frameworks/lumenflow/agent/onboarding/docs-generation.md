@@ -32,6 +32,8 @@ snippets:
 - Strict CLI shell examples are additionally validated against the live `pnpm <command> --help`
   surface for each referenced public command. Unknown flags, retired option names, and missing
   required option values fail docs parity.
+- Strict YAML and JSON config examples are additionally validated against the live configuration
+  schemas. Unknown keys, invalid shapes, and stale config forms fail docs parity.
 - Strict MCP JSON payload examples with `"name"` and `"arguments"` are additionally validated
   against the live MCP registry and the target tool's input schema. Required fields, enum values,
   and payload shapes must all remain valid.
@@ -61,6 +63,18 @@ pnpm wu:create --lane "Framework: Core" --title "Add feature" \
   --code-paths "src/file.ts" \
   --test-paths-unit "src/__tests__/file.test.ts" \
   --exposure backend-only
+```
+````
+
+For strict config examples, prefer a real schema-backed snippet instead of pseudocode:
+
+````md
+<!-- lumenflow-example: strict -->
+
+```yaml
+software_delivery:
+  gates:
+    minCoverage: 90
 ```
 ````
 

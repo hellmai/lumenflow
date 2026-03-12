@@ -4,6 +4,8 @@ import { relative, resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { LumenFlowConfigSchema } from '../../../packages/@lumenflow/core/src/lumenflow-config-schema.ts';
+import { parseYAML } from '../../../packages/@lumenflow/core/src/wu-yaml.ts';
 import { PUBLIC_MANIFEST } from '../../../packages/@lumenflow/cli/src/public-manifest.ts';
 import {
   allTools,
@@ -172,6 +174,12 @@ type McpPayloadExample = {
   tag: ExampleTag;
 };
 
+type ConfigExample = {
+  config: unknown;
+  line: number;
+  tag: ExampleTag;
+};
+
 type CodeBlock = {
   content: string;
   filePath: string;
@@ -179,6 +187,29 @@ type CodeBlock = {
   line: number;
   tag: ExampleTag;
 };
+
+const CONFIG_BLOCK_LANGUAGES = new Set(['yaml', 'yml', 'json']);
+const CONFIG_ROOT_KEYS = new Set([
+  'directories',
+  'state',
+  'git',
+  'wu',
+  'gates',
+  'memory',
+  'ui',
+  'yaml',
+  'agents',
+  'experimental',
+  'cleanup',
+  'telemetry',
+  'methodology',
+  'cloud',
+  'lanes',
+  'escalation',
+  'package_manager',
+  'test_runner',
+  'build_command',
+]);
 
 function readText(filePath: string): string {
   return readFileSync(filePath, 'utf8');
@@ -313,6 +344,53 @@ function extractMcpPayloadExamples(_blocks: CodeBlock[]): McpPayloadExample[] {
     examples.push({
       name: candidate.name,
       arguments: args,
+      line: block.line,
+      tag: block.tag,
+    });
+  }
+
+  return examples;
+}
+
+function normalizeConfigCandidate(parsed: unknown): unknown {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return null;
+  }
+
+  const candidate = parsed as Record<string, unknown>;
+  if ('software_delivery' in candidate) {
+    return candidate.software_delivery;
+  }
+
+  const hasConfigRootKey = Object.keys(candidate).some((key) => CONFIG_ROOT_KEYS.has(key));
+  return hasConfigRootKey ? candidate : null;
+}
+
+function extractConfigExamples(blocks: CodeBlock[]): ConfigExample[] {
+  const examples: ConfigExample[] = [];
+
+  for (const block of blocks) {
+    if (!CONFIG_BLOCK_LANGUAGES.has(block.language)) {
+      continue;
+    }
+
+    let parsed: unknown;
+    try {
+      parsed =
+        block.language === 'json'
+          ? JSON.parse(block.content)
+          : (parseYAML(block.content) as unknown);
+    } catch {
+      continue;
+    }
+
+    const config = normalizeConfigCandidate(parsed);
+    if (config === null) {
+      continue;
+    }
+
+    examples.push({
+      config,
       line: block.line,
       tag: block.tag,
     });
@@ -811,6 +889,47 @@ describe('public docs parity', () => {
     });
   });
 
+  it('parses strict config examples for schema validation', () => {
+    const filePath = resolve(DOCS_CONTENT_ROOT, 'fixtures/config-example.mdx');
+    const blocks = parseCodeBlocks(
+      [
+        '<!-- lumenflow-example: strict -->',
+        '```yaml',
+        'software_delivery:',
+        '  gates:',
+        '    minCoverage: 90',
+        '```',
+        '<!-- lumenflow-example: illustrative -->',
+        '```yaml',
+        'gates:',
+        '  minCoverage: 90',
+        '```',
+      ].join('\n'),
+      filePath,
+    );
+
+    expect(extractConfigExamples(blocks)).toEqual([
+      {
+        config: {
+          gates: {
+            minCoverage: 90,
+          },
+        },
+        line: 2,
+        tag: 'strict',
+      },
+      {
+        config: {
+          gates: {
+            minCoverage: 90,
+          },
+        },
+        line: 8,
+        tag: 'illustrative',
+      },
+    ]);
+  });
+
   it('lists the public Sidekick pack in the sidebar', () => {
     const astroConfig = readText(ASTRO_CONFIG_PATH);
 
@@ -1007,6 +1126,33 @@ describe('public docs parity', () => {
           const issuePath = issue?.path?.length ? issue.path.join('.') : '(root)';
           failures.push(
             `${repoRelativePath}:${example.line} invalid strict MCP payload for \`${example.name}\` at \`${issuePath}\`: ${issue?.message ?? 'schema validation failed'}`,
+          );
+        }
+      }
+    }
+
+    expect(failures).toEqual([]);
+  });
+
+  it('keeps strict config examples aligned with live config schemas', () => {
+    const docsFiles = [resolve(DOCS_CONTENT_ROOT, 'getting-started/quickstart.mdx')];
+    const failures: string[] = [];
+
+    for (const filePath of docsFiles) {
+      const text = readText(filePath);
+      const repoRelativePath = getRepoRelativePath(filePath);
+
+      for (const example of extractConfigExamples(parseCodeBlocks(text, filePath))) {
+        if (example.tag !== 'strict') {
+          continue;
+        }
+
+        const validation = LumenFlowConfigSchema.safeParse(example.config);
+        if (!validation.success) {
+          const issue = validation.error.issues[0];
+          const issuePath = issue?.path?.length ? issue.path.join('.') : '(root)';
+          failures.push(
+            `${repoRelativePath}:${example.line} invalid strict config example at \`${issuePath}\`: ${issue?.message ?? 'schema validation failed'}`,
           );
         }
       }

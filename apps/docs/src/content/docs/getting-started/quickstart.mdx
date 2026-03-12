@@ -198,6 +198,17 @@ command instead of guessing older executable aliases.
     This is the canonical bootstrap-all path. It writes `workspace.yaml` and bootstraps Software
     Delivery settings under `workspace.yaml > software_delivery`.
 
+    <!-- lumenflow-example: strict -->
+
+    ```yaml
+    software_delivery:
+      gates:
+        minCoverage: 90
+    ```
+
+    Treat this as a shape reference for the generated config. Manage it through the CLI and init
+    flow; do not hand-edit `workspace.yaml` during setup.
+
         <Aside type="note" title="Enforcement hooks (automatic for Claude Code)">
 
     When using `--client claude`, init automatically runs `lumenflow-integrate` and includes
