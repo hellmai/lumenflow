@@ -56,8 +56,6 @@ These are the architecture assumptions this initiative currently depends on. The
 
 ## Initiative Outcome
 
-When all WUs in this initiative are complete, LumenFlow will have:
-
 - a documented architecture decision for the governed agent runtime
 - a new `agent-runtime` pack with `agent:execute-turn`
 - runtime-visible validated pack config
@@ -69,7 +67,8 @@ When all WUs in this initiative are complete, LumenFlow will have:
 - multi-provider adapter support
 - pack-owned workflow state, suspend/resume, branching, and scheduled routines
 - a smaller, domain-focused Sidekick boundary that does not absorb generic model-turn runtime concerns
-- public docs and examples that fit the repo's arc42 layout
+- kernel docs updates for runtime pack config, policy-aware filtering, env allowlisting, and evidence/orchestration semantics
+- agent-runtime pack docs and examples that fit the repo's docs layout
 
 ## OSS Guidance Incorporated Into This Initiative
 
