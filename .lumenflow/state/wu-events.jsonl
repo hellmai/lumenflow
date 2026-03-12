@@ -3302,5 +3302,9 @@
 {"type":"claim","wuId":"WU-2410","timestamp":"2026-03-12T13:06:19.101Z","lane":"Framework: Core Lifecycle","title":"Scaffold the agent-runtime pack"}
 {"type":"claim","wuId":"WU-2424","timestamp":"2026-03-12T13:08:51.695Z","lane":"Content: Specs Governance","title":"Delete stale CLI sizing guide copy and add review/audit sizing patterns"}
 {"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:02:29.057Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"complete","wuId":"WU-2409","timestamp":"2026-03-12T13:05:05.316Z"}
 {"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:06:16.162Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"claim","wuId":"WU-2410","timestamp":"2026-03-12T13:06:19.101Z","lane":"Framework: Core Lifecycle","title":"Scaffold the agent-runtime pack"}
+{"type":"claim","wuId":"WU-2424","timestamp":"2026-03-12T13:08:51.695Z","lane":"Content: Specs Governance","title":"Delete stale CLI sizing guide copy and add review/audit sizing patterns"}
 {"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:13:35.189Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2423.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2423","timestamp":"2026-03-12T13:15:39.571Z"}

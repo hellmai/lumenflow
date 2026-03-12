@@ -2,7 +2,7 @@ id: WU-2423
 title: Add --title flag to wu:edit
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -48,3 +48,6 @@ acceptance:
   - wu:edit --id WU-XXX --title 'New title' updates the title field
   - Title changes blocked on done WUs with clear error message
   - --help output includes --title
+locked: true
+completed_at: 2026-03-12T13:15:34.575Z
+completed: 2026-03-12
