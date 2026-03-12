@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2434 — BUG: initiative:edit reads from stale local main, drops fields added via origin](wu/WU-2434.yaml)
 
 ## Completed
 

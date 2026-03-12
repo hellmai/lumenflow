@@ -2,7 +2,7 @@ id: WU-2434
 title: 'BUG: initiative:edit reads from stale local main, drops fields added via origin'
 lane: 'Framework: Initiatives'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -27,8 +27,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'initiative:edit loads the initiative YAML from local main (loadInitiative at line 656), applies edits in-memory, then writes the result into a micro-worktree checked out from origin/main. If local main is behind origin (ensureMainUpToDate was removed in WU-1497), any fields added to origin since last pull (e.g. wus: list from initiative:add-wu) are silently dropped. Fix: re-read initiative from micro-worktree path inside execute callback.'
+description: 'initiative:edit loads the initiative YAML from local main (loadInitiative at line
+  656), applies edits in-memory, then writes the result into a micro-worktree checked out from
+  origin/main. If local main is behind origin (ensureMainUpToDate was removed in WU-1497), any
+  fields added to origin since last pull (e.g. wus: list from initiative:add-wu) are silently
+  dropped. Fix: re-read initiative from micro-worktree path inside execute callback.'
 acceptance:
   - 'Failing test demonstrates wus: dropped when local is stale'
   - Fix reads initiative from micro-worktree path inside execute callback
   - Existing fields preserved through edit round-trip
+claimed_mode: worktree
+worktree_path: worktrees/framework-initiatives-wu-2434
+claimed_at: 2026-03-12T20:09:46.342Z
+baseline_main_sha: 42fd175b26584476ac1a4a86eac3eaf2f768eacf
+session_id: e8d5d725-652f-442c-8ae5-ef53f7d7fb22
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T20:09:46.349Z
