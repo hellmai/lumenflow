@@ -18,10 +18,17 @@ artifacts:
   - .lumenflow/stamps/WU-2424.done
 dependencies: []
 risks: []
-notes: 'Deleted stale shadow copy at packages/@lumenflow/cli/docs/.../wu-sizing-guide.md missed by
+notes: >-
+  Deleted stale shadow copy at packages/@lumenflow/cli/docs/.../wu-sizing-guide.md missed by
   WU-2398. Added section 1.4 (Review, Audit, and Exploration WUs) to canonical sizing guide. Fixed
   broken relative links in onboarding docs and templates. tdd-exception: documentation-only WU, no
-  code logic changes.'
+  code logic changes.
+
+
+  Deleted stale shadow copy at packages/@lumenflow/cli/docs/.../wu-sizing-guide.md missed by
+  WU-2398. Added section 1.4 (Review, Audit, and Exploration WUs) to canonical sizing guide. Fixed
+  broken relative links in onboarding docs and templates. tdd-exception: documentation-only WU, no
+  code logic changes.
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
