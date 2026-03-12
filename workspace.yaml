@@ -415,7 +415,8 @@ software_delivery:
     definitions:
       - name: 'Framework: Core Lifecycle'
         wip_limit: 2
-        wip_justification: Lifecycle work can parallelize when code_paths are disjoint and non-overlapping
+        wip_justification: Lifecycle work can parallelize when code_paths are disjoint
+          and non-overlapping
         lock_policy: none
         code_paths:
           - packages/@lumenflow/kernel/**
@@ -438,7 +439,8 @@ software_delivery:
           - packages/@lumenflow/core/src/wu-spawn*.ts
       - name: 'Framework: Core Validation'
         wip_limit: 2
-        wip_justification: Validation/schema work can parallelize across separate validator families
+        wip_justification: Validation/schema work can parallelize across separate
+          validator families
         lock_policy: none
         code_paths:
           - packages/@lumenflow/core/src/validation/**
@@ -494,7 +496,8 @@ software_delivery:
           - packages/@lumenflow/cli/src/__tests__/state-*.test.ts
       - name: 'Framework: CLI Orchestration'
         wip_limit: 2
-        wip_justification: Initiative/spawn/orchestration commands can run in parallel with disjoint files
+        wip_justification: Initiative/spawn/orchestration commands can run in parallel
+          with disjoint files
         lock_policy: none
         code_paths:
           - packages/@lumenflow/cli/src/task-*.ts
@@ -588,7 +591,8 @@ software_delivery:
           - actions/**
       - name: 'Content: Specs Governance'
         wip_limit: 2
-        wip_justification: Spec/governance work can parallelize when targeting different docs and config files
+        wip_justification: Spec/governance work can parallelize when targeting different
+          docs and config files
         lock_policy: none
         code_paths:
           - docs/04-operations/**
