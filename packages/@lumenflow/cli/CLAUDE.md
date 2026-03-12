@@ -1,4 +1,5 @@
 <!-- LUMENFLOW:START -->
+
 # Claude Code Configuration
 
 **Last updated:** 2026-03-12
@@ -42,22 +43,24 @@ See [LUMENFLOW.md](../LUMENFLOW.md) and [ai/onboarding/troubleshooting-wu-done.m
 
 Essential commands for multi-agent coordination and context management:
 
-| Command                                    | Description                       |
-| ------------------------------------------ | --------------------------------- |
-| `pnpm orchestrate:init-status -i INIT-XXX` | View initiative progress          |
-| `pnpm orchestrate:monitor`                 | Monitor spawn/agent activity      |
-| `pnpm mem:checkpoint --wu WU-XXX`          | Save progress checkpoint          |
-| `pnpm mem:inbox --since 30m`               | Check coordination signals        |
-| `pnpm mem:signal "msg" --wu WU-XXX`        | Broadcast signal to other agents  |
-| `pnpm mem:create "msg" --wu WU-XXX`        | Create memory node (bug capture)  |
+| Command                                          | Description                                              |
+| ------------------------------------------------ | -------------------------------------------------------- |
+| `pnpm orchestrate:init-status -i INIT-XXX`       | View initiative progress                                 |
+| `pnpm orchestrate:monitor`                       | Monitor spawn/agent activity                             |
+| `pnpm mem:checkpoint --wu WU-XXX`                | Save progress checkpoint                                 |
+| `pnpm mem:inbox --since 30m`                     | Check coordination signals                               |
+| `pnpm mem:signal "msg" --wu WU-XXX`              | Broadcast signal to other agents                         |
+| `pnpm mem:create "msg" --wu WU-XXX`              | Create memory node (bug capture)                         |
 | `pnpm wu:brief --id WU-XXX --client claude-code` | **MANDATORY after wu:claim.** Generate prompt + evidence |
 
 **When to checkpoint:**
+
 - After each acceptance criterion completed
 - Before running gates
 - Every 30+ tool calls
 
 **When to check inbox:**
+
 - Before starting complex work (parallel agents may have signals)
 - When blocked (other agents may have completed dependencies)
 
