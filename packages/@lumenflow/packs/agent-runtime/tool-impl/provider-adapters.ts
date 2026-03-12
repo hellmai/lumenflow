@@ -398,8 +398,7 @@ export async function runProviderAdapterConformanceHarness(): Promise<
         }),
       verify: (result: ProviderTurnResult): ProviderAdapterConformanceResult => ({
         scenario: CONFORMANCE_SCENARIOS.MALFORMED_RESPONSE,
-        passed:
-          !result.ok && result.error.code === PROVIDER_ERROR_CODES.MALFORMED_RESPONSE,
+        passed: !result.ok && result.error.code === PROVIDER_ERROR_CODES.MALFORMED_RESPONSE,
         ...(!result.ok ? { normalized_error: result.error } : {}),
       }),
     },
@@ -458,9 +457,7 @@ function buildSystemInstruction(
   const intents =
     intentCatalog.length === 0
       ? 'No explicit intents were supplied.'
-      : intentCatalog
-          .map((intent) => `- ${intent.id}: ${intent.description}`)
-          .join('\n');
+      : intentCatalog.map((intent) => `- ${intent.id}: ${intent.description}`).join('\n');
   const tools =
     toolCatalog.length === 0
       ? 'No tools are available.'
@@ -568,9 +565,7 @@ function normalizeTurnStatus(
   requestedToolValue: unknown,
 ): AgentRuntimeTurnStatus | null {
   if (isTurnStatus(statusValue)) {
-    return requestedToolValue
-      ? AGENT_RUNTIME_TURN_STATUSES.TOOL_REQUEST
-      : statusValue;
+    return requestedToolValue ? AGENT_RUNTIME_TURN_STATUSES.TOOL_REQUEST : statusValue;
   }
 
   if (requestedToolValue) {
@@ -603,9 +598,7 @@ function normalizeProviderDescriptor(
   };
 }
 
-function normalizeUsage(
-  value: unknown,
-): AgentRuntimeExecuteTurnOutput['usage'] | undefined {
+function normalizeUsage(value: unknown): AgentRuntimeExecuteTurnOutput['usage'] | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -730,7 +723,8 @@ function normalizeHttpError(
   responseText: string,
 ): ProviderTurnError {
   const parsedResponse = safeParseJsonRecord(responseText);
-  const providerErrorRecord = parsedResponse && isRecord(parsedResponse.error) ? parsedResponse.error : null;
+  const providerErrorRecord =
+    parsedResponse && isRecord(parsedResponse.error) ? parsedResponse.error : null;
   const providerMessage = asNonEmptyString(providerErrorRecord?.message);
   const providerCode = asNonEmptyString(providerErrorRecord?.code);
 
@@ -782,10 +776,7 @@ function createMalformedResponseError(message: string): ProviderTurnError {
   };
 }
 
-function createTransportError(
-  request: ProviderTurnRequest,
-  error: unknown,
-): ProviderTurnError {
+function createTransportError(request: ProviderTurnRequest, error: unknown): ProviderTurnError {
   const detail =
     error instanceof Error
       ? error.message

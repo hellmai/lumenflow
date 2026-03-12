@@ -1,15 +1,8 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  TOOL_ERROR_CODES,
-  type ExecutionContext,
-  type ToolOutput,
-} from '@lumenflow/kernel';
-import {
-  AGENT_RUNTIME_API_KEY_ENV,
-  AGENT_RUNTIME_BASE_URL_ENV,
-} from '../constants.js';
+import { TOOL_ERROR_CODES, type ExecutionContext, type ToolOutput } from '@lumenflow/kernel';
+import { AGENT_RUNTIME_API_KEY_ENV, AGENT_RUNTIME_BASE_URL_ENV } from '../constants.js';
 import type {
   AgentRuntimeExecuteTurnInput,
   AgentRuntimeIntentCatalogEntry,
@@ -17,10 +10,7 @@ import type {
   AgentRuntimeMessage,
   AgentRuntimeToolCatalogEntry,
 } from '../types.js';
-import {
-  STATIC_PROVIDER_CAPABILITY_BASELINE,
-  executeProviderTurn,
-} from './provider-adapters.js';
+import { STATIC_PROVIDER_CAPABILITY_BASELINE, executeProviderTurn } from './provider-adapters.js';
 
 const LIMIT_EXCEEDED_ERROR_CODE = 'LIMIT_EXCEEDED';
 const MISSING_ENVIRONMENT_ERROR_CODE = 'MISSING_ENVIRONMENT';
@@ -104,15 +94,17 @@ function validateExecuteTurnInput(
     return { ok: false, message: 'Input must be an object.' };
   }
 
-  if (hasUnexpectedKeys(record, [
-    'session_id',
-    'model_profile',
-    'url',
-    'messages',
-    'tool_catalog',
-    'intent_catalog',
-    'limits',
-  ])) {
+  if (
+    hasUnexpectedKeys(record, [
+      'session_id',
+      'model_profile',
+      'url',
+      'messages',
+      'tool_catalog',
+      'intent_catalog',
+      'limits',
+    ])
+  ) {
     return { ok: false, message: 'Input contains unknown properties.' };
   }
 
@@ -262,7 +254,9 @@ function validateToolCatalog(
     toolCatalog.push({
       name,
       description,
-      ...(inputSchema !== undefined ? { input_schema: inputSchema as Record<string, unknown> } : {}),
+      ...(inputSchema !== undefined
+        ? { input_schema: inputSchema as Record<string, unknown> }
+        : {}),
     });
   }
 
@@ -315,11 +309,13 @@ function validateLimits(
   if (!record) {
     return { ok: false, message: 'limits must be an object when provided.' };
   }
-  if (hasUnexpectedKeys(record, [
-    'max_turns_per_session',
-    'max_tool_calls_per_session',
-    'max_input_bytes',
-  ])) {
+  if (
+    hasUnexpectedKeys(record, [
+      'max_turns_per_session',
+      'max_tool_calls_per_session',
+      'max_input_bytes',
+    ])
+  ) {
     return { ok: false, message: 'limits contains unknown properties.' };
   }
 
@@ -493,17 +489,15 @@ function createToolMetadata(extra?: Record<string, unknown>): Record<string, unk
   };
 }
 
-function hasUnexpectedKeys(record: Record<string, unknown>, allowedKeys: readonly string[]): boolean {
+function hasUnexpectedKeys(
+  record: Record<string, unknown>,
+  allowedKeys: readonly string[],
+): boolean {
   return Object.keys(record).some((key) => !allowedKeys.includes(key));
 }
 
 function isMessageRole(value: string | null): value is AgentRuntimeMessage['role'] {
-  return (
-    value === 'system' ||
-    value === 'user' ||
-    value === 'assistant' ||
-    value === 'tool'
-  );
+  return value === 'system' || value === 'user' || value === 'assistant' || value === 'tool';
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -538,10 +532,7 @@ function readOptionalPositiveInteger(value: unknown): number | null {
   return value;
 }
 
-function readMetadataNonNegativeInteger(
-  ctx: ExecutionContext,
-  key: string,
-): number | null {
+function readMetadataNonNegativeInteger(ctx: ExecutionContext, key: string): number | null {
   if (!ctx.metadata) {
     return null;
   }
