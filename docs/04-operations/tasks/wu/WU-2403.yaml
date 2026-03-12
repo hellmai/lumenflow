@@ -12,6 +12,7 @@ tests:
     - Run pnpm test 3 times consecutively with no failures
   unit:
     - packages/@lumenflow/initiatives/src/__tests__
+    - packages/@lumenflow/initiatives/__tests__
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2403.done
