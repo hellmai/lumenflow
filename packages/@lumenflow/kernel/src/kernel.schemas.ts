@@ -194,6 +194,8 @@ export const WorkspaceControlPlaneConfigSchema = z
   })
   .strict();
 
+// Pack-owned config roots are validated from raw workspace YAML during runtime
+// initialization; WorkspaceSpec keeps only the well-known compatibility roots.
 export const WorkspaceSpecSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
