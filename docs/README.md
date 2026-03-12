@@ -1,93 +1,66 @@
 # Documentation Index
 
-Welcome to the LumenFlow documentation. Organized by **concern and audience** following arc42 + C4 model best practices.
+Internal documentation for LumenFlow, organized by concern. Uses arc42 section numbering where applicable.
+
+> **Note:** The public-facing documentation lives at [lumenflow.dev](https://www.lumenflow.dev) (source: `apps/docs/`). This `docs/` directory contains internal architecture, operations, and decision records.
 
 ---
 
 ## Quick Start by Role
 
-| Role                 | Start Here                       | Key Documents                          |
-| -------------------- | -------------------------------- | -------------------------------------- |
-| **Product/Business** | [01-product/](01-product/)       | Vision, product lines, tiers           |
-| **Engineering**      | [02-technical/](02-technical/)   | Architecture, packages, implementation |
-| **Operations**       | [04-operations/](04-operations/) | Tasks, WU management                   |
-| **Distribution**     | [plans/](plans/)                 | Distribution plan, npm publishing      |
+| Role | Start Here | Key Documents |
+|------|-----------|---------------|
+| **Product/Business** | [01-introduction-and-goals/](01-introduction-and-goals/) | Vision, quality goals, stakeholders |
+| **Engineering** | [02-technical/](02-technical/) | Package architecture, implementation guides |
+| **Operations** | [04-operations/](04-operations/) | Tasks, WU management, framework docs |
+| **Architecture** | [09-architecture-decisions/](09-architecture-decisions/) | ADRs, migration guides |
 
 ---
 
 ## Documentation Structure
 
-### [01-product/](01-product/) - WHAT We're Building
+### [01-introduction-and-goals/](01-introduction-and-goals/) — arc42 section 01
 
-Product vision, specifications, and go-to-market.
+Product vision, quality goals, and stakeholder map.
 
-**Key Files:**
-
-- [vision.md](01-product/vision.md) - Product vision statement
-- [product-lines.md](01-product/product-lines.md) - Distribution channels, tiers, customer journeys
+- [vision.md](01-introduction-and-goals/vision.md) — what LumenFlow is and why it exists
+- [quality-goals.md](01-introduction-and-goals/quality-goals.md) — top 5 quality goals driving architectural decisions
+- [stakeholders.md](01-introduction-and-goals/stakeholders.md) — key stakeholder groups and their concerns
 
 ---
 
-### [02-technical/](02-technical/) - HOW It's Built
+### [02-technical/](02-technical/) — Package Architecture
 
 Technical architecture, package documentation, implementation guides.
 
-**Subdirectories:**
-
-- [architecture/](02-technical/architecture/) - System design, package relationships
-
-**Packages:**
-
-| Package                  | Description                              |
-| ------------------------ | ---------------------------------------- |
-| `@lumenflow/core`        | Core WU types, validation, configuration |
-| `@lumenflow/cli`         | 30+ CLI commands (wu-_, mem-_, gates)    |
-| `@lumenflow/memory`      | Session tracking, context recovery       |
-| `@lumenflow/agent`       | Agent coordination primitives            |
-| `@lumenflow/metrics`     | Flow metrics and reporting               |
-| `@lumenflow/initiatives` | Multi-WU project tracking                |
-| `@lumenflow/shims`       | Git safety shims                         |
+> **Migration note:** This directory will be renamed to `05-building-block-view/` (proper arc42 section 05) in a future initiative. The content is correct; only the directory name needs updating.
 
 ---
 
-### [04-operations/](04-operations/) - HOW We Work
+### [04-operations/](04-operations/) — Operations
 
-Task management, WU tracking, and operational procedures.
+Task management, WU tracking, framework docs, and operational procedures.
 
-**Subdirectories:**
+> **Migration note:** This directory contains operational tooling content (WU management, backlog, onboarding) which does not map to arc42 section 04 ("Solution Strategy"). It will be reorganized in a future initiative.
 
-- [tasks/](04-operations/tasks/) - WU management (backlog, status, WU YAML files)
+**Key paths:**
 
-**Key Files:**
-
-- [tasks/backlog.md](04-operations/tasks/backlog.md) - Master backlog (single source of truth)
-- [tasks/status.md](04-operations/tasks/status.md) - Current WU status
-
----
-
-### [05-business/](05-business/) - Strategic Direction
-
-Go-to-market strategy, pricing, metrics.
+- [tasks/backlog.md](04-operations/tasks/backlog.md) — master backlog
+- [tasks/status.md](04-operations/tasks/status.md) — current WU status
+- [_frameworks/lumenflow/](04-operations/_frameworks/lumenflow/) — framework reference documentation
 
 ---
 
-### [plans/](plans/) - Execution Plans
+### [09-architecture-decisions/](09-architecture-decisions/) — arc42 section 09
 
-Active plans for major initiatives.
+Architecture Decision Records (ADRs) and companion migration guides.
 
-**Key Files:**
-
-- [distribution-dogfooding.md](plans/distribution-dogfooding.md) - npm publishing and dogfooding plan
-
----
-
-### [lumenflow/](lumenflow/) - Framework Reference
-
-LumenFlow methodology documentation.
+- [ADR index](09-architecture-decisions/README.md) — full listing of all decisions
+- [ADR template](09-architecture-decisions/ADR-000-template.md) — template for new ADRs
 
 ---
 
-### [templates/](templates/) - Templates
+### [templates/](templates/) — Templates
 
 Reusable templates for WUs, PRs, etc.
 
@@ -95,17 +68,19 @@ Reusable templates for WUs, PRs, etc.
 
 ## Documentation Principles
 
-1. **Single Source of Truth** - Each concept documented once, referenced everywhere
-2. **Audience-Driven** - Organized by who needs it, not what it describes
-3. **Self-Contained** - Each document usable standalone with clear cross-references
-4. **Living Documentation** - Updated as part of WU Definition of Done
+1. **Single Source of Truth** — each concept documented once, referenced everywhere
+2. **Audience-Driven** — organized by who needs it, not what it describes
+3. **Self-Contained** — each document usable standalone with clear cross-references
+4. **Living Documentation** — updated as part of WU Definition of Done
 
 ---
 
 ## Related Documentation
 
-- **Root README:** See [/README.md](../README.md) for quickstart and tech stack overview
+- **Root README:** [/README.md](../README.md) — quickstart and tech stack overview
+- **Public docs site:** [lumenflow.dev](https://www.lumenflow.dev) — source in `apps/docs/`
+- **Workflow:** [LUMENFLOW.md](../LUMENFLOW.md) — canonical workflow documentation
 
 ---
 
-**Last Updated:** 2026-01-18
+**Last Updated:** 2026-03-12

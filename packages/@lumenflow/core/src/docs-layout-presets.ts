@@ -10,13 +10,18 @@
  * - runtime prompt/path helpers
  */
 
-function buildDocsLayout(operations: string, tasks: string) {
+function buildDocsLayout(
+  operations: string,
+  tasks: string,
+  adrDir: string,
+) {
   const frameworkRoot = `${operations}/_frameworks/lumenflow`;
   const onboarding = `${frameworkRoot}/agent/onboarding`;
 
   return {
     operations,
     tasks,
+    adrDir,
     onboarding,
     quickRefLink: `${onboarding}/quick-ref-commands.md`,
     completeGuidePath: `${frameworkRoot}/lumenflow-complete.md`,
@@ -29,12 +34,18 @@ function buildDocsLayout(operations: string, tasks: string) {
 
 const DOCS_ROOT = 'docs';
 const SIMPLE_TASKS_PATH = `${DOCS_ROOT}/tasks`;
+const SIMPLE_ADR_PATH = `${DOCS_ROOT}/architecture-decisions`;
 const ARC42_OPERATIONS_PATH = [DOCS_ROOT, '04-operations'].join('/');
 const ARC42_TASKS_PATH = [ARC42_OPERATIONS_PATH, 'tasks'].join('/');
+const ARC42_ADR_PATH = [DOCS_ROOT, '09-architecture-decisions'].join('/');
 
 export const DOCS_LAYOUT_PRESETS = {
-  simple: buildDocsLayout(DOCS_ROOT, SIMPLE_TASKS_PATH),
-  arc42: buildDocsLayout(ARC42_OPERATIONS_PATH, ARC42_TASKS_PATH),
+  simple: buildDocsLayout(DOCS_ROOT, SIMPLE_TASKS_PATH, SIMPLE_ADR_PATH),
+  arc42: buildDocsLayout(
+    ARC42_OPERATIONS_PATH,
+    ARC42_TASKS_PATH,
+    ARC42_ADR_PATH,
+  ),
 } as const;
 
 export type DocsLayoutType = keyof typeof DOCS_LAYOUT_PRESETS;

@@ -23,7 +23,7 @@
  * @see {@link packages/@lumenflow/cli/src/lib/__tests__/delegation-monitor.test.ts} - Signal handler tests
  * @see {@link packages/@lumenflow/cli/src/orchestrate-monitor.ts} - CLI entry point
  * @see {@link packages/@lumenflow/cli/src/lib/delegation-registry-store.ts} - Registry storage
- * @see {@link ../../../../docs/04-operations/adr/ADR-006-delegation-package-extraction.md} - Extraction decision record
+ * @see {@link ../../../../docs/09-architecture-decisions/ADR-006-delegation-package-extraction.md} - Extraction decision record
  */
 
 import fs from 'node:fs/promises';

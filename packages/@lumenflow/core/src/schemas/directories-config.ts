@@ -83,6 +83,9 @@ export const DirectoriesSchema = z.object({
   /** Agents directory (default: '.claude/agents') */
   agentsDir: z.string().default('.claude/agents'),
 
+  /** Architecture decisions directory (default: docs-layout simple preset adrDir) */
+  adrDir: z.string().default(DEFAULT_LAYOUT.adrDir),
+
   /** Plans directory (default: docs-layout simple preset + '/plans') */
   plansDir: z.string().default(`${DEFAULT_LAYOUT.operations}/plans`),
 

@@ -45,7 +45,7 @@ This package follows **hexagonal architecture** (ports and adapters) to enable d
 - **Maintainability**: Clear separation of concerns
 - **Backwards Compatible**: Original functions still work unchanged
 
-See [ADR-001: Hexagonal Architecture](../../docs/04-operations/adr/ADR-001-hexagonal-architecture.md) for the full decision record.
+See [ADR-001: Hexagonal Architecture](../../docs/09-architecture-decisions/ADR-001-hexagonal-architecture.md) for the full decision record.
 
 ## Usage
 
@@ -478,7 +478,7 @@ const useCase = createComputeContextUseCase({
 
 ## Further Reading
 
-- [ADR-001: Hexagonal Architecture](../../docs/04-operations/adr/ADR-001-hexagonal-architecture.md)
+- [ADR-001: Hexagonal Architecture](../../docs/09-architecture-decisions/ADR-001-hexagonal-architecture.md)
 - [Port Interfaces Reference](https://lumenflow.dev/reference/ports/)
 
 ## Status
