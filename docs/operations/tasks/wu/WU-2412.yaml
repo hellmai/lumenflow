@@ -2,7 +2,7 @@ id: WU-2412
 title: Integrate governed orchestration with intent-based tool gating
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -55,3 +55,6 @@ acceptance:
   - A host composition example provides memory and task context without a hard dependency on
     sidekick internals
   - End-to-end tests prove denied-tool recovery and approval flow behavior
+locked: true
+completed_at: 2026-03-12T14:26:13.716Z
+completed: 2026-03-12
