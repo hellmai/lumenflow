@@ -3385,3 +3385,5 @@
 {"type":"checkpoint","wuId":"WU-2430","timestamp":"2026-03-12T18:03:14.759Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2430","timestamp":"2026-03-12T18:06:48.640Z"}
 {"type":"claim","wuId":"WU-2431","timestamp":"2026-03-12T18:09:16.434Z","lane":"Operations: Automation","title":"Add Discord CI notifications to ci.yml"}
+{"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:09:27.313Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:09:54.400Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

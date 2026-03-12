@@ -80,3 +80,41 @@ jobs:
 
       - name: Check template drift
         run: pnpm sync:templates --check-drift
+
+  notify-failure:
+    name: Notify Discord on Failure
+    if: failure()
+    runs-on: self-hosted
+    needs:
+      - gates
+    steps:
+      - name: Send Discord notification
+        run: |
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"❌ CI Failed — lumenflow-dev\",
+                \"description\": \"**Branch:** \`${{ github.ref_name }}\`\n**Commit:** \`${{ github.sha }}\`\n**[View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})**\",
+                \"color\": 15158332
+              }]
+            }"
+
+  notify-success:
+    name: Notify Discord on Success
+    if: success() && github.event_name == 'push'
+    runs-on: self-hosted
+    needs:
+      - gates
+    steps:
+      - name: Send Discord notification
+        run: |
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"✅ CI Passed — lumenflow-dev\",
+                \"description\": \"**Branch:** \`${{ github.ref_name }}\`\n**Commit:** \`${{ github.sha }}\`\n**[View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})**\",
+                \"color\": 3066993
+              }]
+            }"
