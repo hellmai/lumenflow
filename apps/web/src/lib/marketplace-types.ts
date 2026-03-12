@@ -42,7 +42,7 @@ export interface MarketplaceToolView {
 export interface MarketplacePolicyView {
   readonly id: string;
   readonly trigger: string;
-  readonly decision: 'allow' | 'deny';
+  readonly decision: 'allow' | 'deny' | 'approval_required';
   readonly reason?: string;
 }
 

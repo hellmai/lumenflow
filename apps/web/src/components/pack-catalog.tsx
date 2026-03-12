@@ -15,6 +15,7 @@ const PERMISSION_BADGE_COLORS = new Map<string, string>([
 const DECISION_BADGE_COLORS = new Map<string, string>([
   ['allow', 'bg-green-100 text-green-700'],
   ['deny', 'bg-red-100 text-red-700'],
+  ['approval_required', 'bg-amber-100 text-amber-700'],
 ]);
 
 const SOURCE_BADGE_COLORS = new Map<string, string>([
