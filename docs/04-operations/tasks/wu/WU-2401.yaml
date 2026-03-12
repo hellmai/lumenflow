@@ -9,7 +9,7 @@ code_paths:
   - packages/@lumenflow/metrics/src
   - packages/@lumenflow/memory/src
   - packages/@lumenflow/runtime/src
-  - apps/web/src/server
+  - apps/web/__tests__
 tests:
   manual:
     - Verify pnpm test passes with no regressions
@@ -29,7 +29,11 @@ notes: 'Checkpoint-resume with 3 phases: (1) metrics + runtime tests ~50 calls, 
   calls, (3) web tests ~50 calls. Each phase is a natural checkpoint boundary. All changes are
   additive test files — no production code changes.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T09:53:24.036Z
+worktree_path: worktrees/framework-core-validation-wu-2401
+session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
 exposure: backend-only
 sizing_estimate:
   estimated_files: 41
@@ -37,6 +41,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:53:24.044Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -54,11 +61,3 @@ acceptance:
   - runtime package has tests for socket lifecycle and session management
   - apps/web has tests for input-validation.ts server handlers
   - All new tests pass in CI
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2401
-claimed_at: 2026-03-12T09:53:24.036Z
-baseline_main_sha: ecedc07127b5df62445968c843cc85a52a176c0c
-session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T09:53:24.044Z
