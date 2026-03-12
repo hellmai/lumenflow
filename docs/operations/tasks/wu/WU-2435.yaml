@@ -1,7 +1,7 @@
 id: WU-2435
 title: Broaden docs example parity coverage
 lane: 'Content: Framework Docs'
-type: documentation
+type: refactor
 status: in_progress
 priority: P1
 created: 2026-03-12
@@ -22,7 +22,11 @@ spec_refs:
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T20:14:23.085Z
+worktree_path: worktrees/content-framework-docs-wu-2435
+session_id: e8d5d725-652f-442c-8ae5-ef53f7d7fb22
 exposure: documentation
 sizing_estimate:
   estimated_files: 8
@@ -30,6 +34,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T20:14:23.093Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -46,11 +53,3 @@ acceptance:
   - Validate MCP tool examples across the expanded doc scope and fail on unknown tools outside
     allowed historical/compatibility sections.
   - Document example tagging conventions and when strict versus illustrative tags are required.
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2435
-claimed_at: 2026-03-12T20:14:23.085Z
-baseline_main_sha: 6db0f2ccaa29dda28d958a60c82878d52c112791
-session_id: e8d5d725-652f-442c-8ae5-ef53f7d7fb22
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T20:14:23.093Z
