@@ -2,7 +2,7 @@ id: WU-2403
 title: Fix flaky timeout failures in @lumenflow/initiatives test suite
 lane: 'Framework: Initiatives'
 type: bug
-status: in_progress
+status: done
 priority: P3
 created: 2026-03-12
 code_paths:
@@ -46,3 +46,6 @@ description: The @lumenflow/initiatives test suite has flaky timeout failures th
 acceptance:
   - All @lumenflow/initiatives tests pass consistently without timeouts
   - pnpm test passes on main without --skip-gates
+locked: true
+completed_at: 2026-03-12T10:39:37.224Z
+completed: 2026-03-12

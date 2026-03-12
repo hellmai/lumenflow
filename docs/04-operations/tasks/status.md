@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1320,3 +1320,4 @@ _Last updated: 2026-03-12_
 - [WU-2399 — Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching](wu/WU-2399.yaml) — 2026-03-12
 - [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml) — 2026-03-12
 - [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml) — 2026-03-12
+- [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml) — 2026-03-12
