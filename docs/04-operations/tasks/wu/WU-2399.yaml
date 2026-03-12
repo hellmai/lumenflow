@@ -7,9 +7,10 @@ priority: P2
 created: 2026-03-12
 code_paths:
   - packages/@lumenflow/cli/src/init.ts
-  - packages/@lumenflow/cli/src/init-templates.ts
-  - packages/@lumenflow/cli/src/init-detection.ts
-  - packages/@lumenflow/cli/src/init-scaffolding.ts
+  - packages/@lumenflow/cli/src/init-docs-scaffolder.ts
+  - packages/@lumenflow/cli/src/init-package-config.ts
+  - packages/@lumenflow/cli/src/init-safety-scripts.ts
+  - packages/@lumenflow/cli/src/__tests__/init.test.ts
 tests:
   manual:
     - Verify lumenflow init --force updates existing prettier version
