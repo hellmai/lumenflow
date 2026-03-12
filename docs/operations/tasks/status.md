@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml)
 
 ## Completed
 
