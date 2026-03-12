@@ -97,6 +97,20 @@ function resolveMetadata(context: ExecutionContext): Record<string, unknown> {
   return context.metadata;
 }
 
+function attachCapabilityPackConfig(
+  context: ExecutionContext,
+  capability: ToolCapability,
+): ExecutionContext {
+  if (capability.pack_config === undefined) {
+    return context;
+  }
+
+  return ExecutionContextSchema.parse({
+    ...context,
+    pack_config: capability.pack_config,
+  });
+}
+
 function parseScopeList(candidate: unknown, fallback: ToolScope[]): ToolScope[] {
   const parsed = ToolScopeSchema.array().safeParse(candidate);
   if (parsed.success) {
@@ -601,13 +615,14 @@ export class ToolHost {
     scopeEnforced: ToolScope[],
   ): Promise<ToolOutput> {
     try {
+      const executionContext = attachCapabilityPackConfig(context, capability);
       if (capability.handler.kind === TOOL_HANDLER_KINDS.IN_PROCESS) {
-        return await capability.handler.fn(input, context);
+        return await capability.handler.fn(input, executionContext);
       }
       return await this.subprocessDispatcher.dispatch({
         capability,
         input,
-        context,
+        context: executionContext,
         scopeEnforced,
       });
     } catch (error) {

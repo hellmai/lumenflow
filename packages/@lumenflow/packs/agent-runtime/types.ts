@@ -9,6 +9,7 @@ import {
 
 export const AGENT_RUNTIME_PROVIDER_KINDS = {
   OPENAI_COMPATIBLE: 'openai_compatible',
+  MESSAGES_COMPATIBLE: 'messages_compatible',
 } as const;
 
 export const AGENT_RUNTIME_TURN_STATUSES = {

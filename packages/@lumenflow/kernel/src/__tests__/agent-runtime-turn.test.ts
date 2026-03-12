@@ -5,11 +5,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ExecutionContext } from '../kernel.schemas.js';
 import { TOOL_OUTPUT_METADATA_KEYS } from '../shared-constants.js';
 import { agentExecuteTurnTool } from '../../../packs/agent-runtime/tool-impl/agent-turn-tools.js';
-import { runProviderAdapterConformanceHarness } from '../../../packs/agent-runtime/tool-impl/provider-adapters.js';
+import {
+  executeProviderTurn,
+  runProviderAdapterConformanceHarness,
+} from '../../../packs/agent-runtime/tool-impl/provider-adapters.js';
 
 const TEST_API_KEY = 'test-agent-runtime-api-key';
+const TEST_MESSAGES_API_KEY = 'test-agent-runtime-messages-api-key';
 const TEST_URL = 'https://model-provider.invalid/';
 const TEST_MODEL = 'demo-model';
+const TEST_MESSAGES_MODEL = 'messages-demo-model';
 const TEST_RUN_ID = 'run-agent-runtime-turn';
 const TEST_TASK_ID = 'task-agent-runtime-turn';
 const TEST_SESSION_ID = 'session-agent-runtime-turn';
@@ -21,8 +26,21 @@ const TEST_EXECUTION_CONTEXT: ExecutionContext = {
   allowed_scopes: TEST_ALLOWED_SCOPES,
 };
 
-function createExecutionContext(metadata?: Record<string, unknown>): ExecutionContext {
-  return metadata ? { ...TEST_EXECUTION_CONTEXT, metadata } : TEST_EXECUTION_CONTEXT;
+function createExecutionContext(options?: {
+  metadata?: Record<string, unknown>;
+  packConfig?: Record<string, unknown>;
+}): ExecutionContext {
+  const context = options?.metadata
+    ? { ...TEST_EXECUTION_CONTEXT, metadata: options.metadata }
+    : { ...TEST_EXECUTION_CONTEXT };
+
+  if (options?.packConfig === undefined) {
+    return context;
+  }
+
+  return Object.assign(context, {
+    pack_config: options.packConfig,
+  });
 }
 
 function createTurnInput(overrides?: Record<string, unknown>): Record<string, unknown> {
@@ -79,15 +97,23 @@ function createStreamingResponse(events: readonly string[], status = 200): Respo
   );
 }
 
+function createMessagesCompatibleResponse(body: unknown, status = 200): Response {
+  return createJsonResponse(body, status);
+}
+
 describe('agent-runtime execute turn tool', () => {
   const originalApiKey = process.env.AGENT_RUNTIME_API_KEY;
   const originalBaseUrl = process.env.AGENT_RUNTIME_BASE_URL;
+  const originalMessagesApiKey = process.env.MESSAGES_PROVIDER_API_KEY;
+  const originalMessagesBaseUrl = process.env.MESSAGES_PROVIDER_BASE_URL;
 
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     process.env.AGENT_RUNTIME_API_KEY = TEST_API_KEY;
     process.env.AGENT_RUNTIME_BASE_URL = TEST_URL;
+    process.env.MESSAGES_PROVIDER_API_KEY = TEST_MESSAGES_API_KEY;
+    process.env.MESSAGES_PROVIDER_BASE_URL = TEST_URL;
   });
 
   afterEach(() => {
@@ -102,6 +128,16 @@ describe('agent-runtime execute turn tool', () => {
       delete process.env.AGENT_RUNTIME_BASE_URL;
     } else {
       process.env.AGENT_RUNTIME_BASE_URL = originalBaseUrl;
+    }
+    if (originalMessagesApiKey === undefined) {
+      delete process.env.MESSAGES_PROVIDER_API_KEY;
+    } else {
+      process.env.MESSAGES_PROVIDER_API_KEY = originalMessagesApiKey;
+    }
+    if (originalMessagesBaseUrl === undefined) {
+      delete process.env.MESSAGES_PROVIDER_BASE_URL;
+    } else {
+      process.env.MESSAGES_PROVIDER_BASE_URL = originalMessagesBaseUrl;
     }
   });
 
@@ -253,7 +289,9 @@ describe('agent-runtime execute turn tool', () => {
         },
       }),
       createExecutionContext({
-        agent_turn_index: 2,
+        metadata: {
+          agent_turn_index: 2,
+        },
       }),
     );
 
@@ -274,7 +312,9 @@ describe('agent-runtime execute turn tool', () => {
         },
       }),
       createExecutionContext({
-        agent_tool_call_count: 1,
+        metadata: {
+          agent_tool_call_count: 1,
+        },
       }),
     );
 
@@ -307,6 +347,75 @@ describe('agent-runtime execute turn tool', () => {
     expect(result.metadata?.provider_call_count).toBe(1);
   });
 
+  it('selects the configured provider adapter family from pack_config model profiles', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      createMessagesCompatibleResponse({
+        type: 'message',
+        model: TEST_MESSAGES_MODEL,
+        stop_reason: 'end_turn',
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              status: 'reply',
+              intent: 'scheduling',
+              assistant_message: 'Messages-compatible provider completed the turn.',
+            }),
+          },
+        ],
+        usage: {
+          input_tokens: 14,
+          output_tokens: 6,
+        },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await agentExecuteTurnTool(
+      createTurnInput({
+        model_profile: 'messages-default',
+      }),
+      createExecutionContext({
+        packConfig: {
+          default_model: 'messages-default',
+          models: {
+            'messages-default': {
+              provider: 'messages_compatible',
+              model: TEST_MESSAGES_MODEL,
+              api_key_env: 'MESSAGES_PROVIDER_API_KEY',
+              base_url_env: 'MESSAGES_PROVIDER_BASE_URL',
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      TEST_URL,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          authorization: `Bearer ${TEST_MESSAGES_API_KEY}`,
+        }),
+      }),
+    );
+    expect(result.data).toEqual({
+      status: 'reply',
+      intent: 'scheduling',
+      assistant_message: 'Messages-compatible provider completed the turn.',
+      provider: {
+        kind: 'messages_compatible',
+        model: TEST_MESSAGES_MODEL,
+      },
+      usage: {
+        input_tokens: 14,
+        output_tokens: 6,
+      },
+      finish_reason: 'end_turn',
+    });
+  });
+
   it('runs the deterministic provider adapter conformance harness', async () => {
     const results = await runProviderAdapterConformanceHarness();
 
@@ -328,5 +437,83 @@ describe('agent-runtime execute turn tool', () => {
         }),
       }),
     ]);
+  });
+
+  it('normalizes a messages-compatible provider against the shared turn contract', async () => {
+    const result = await executeProviderTurn(
+      {
+        kind: 'messages_compatible',
+        model: TEST_MESSAGES_MODEL,
+        url: TEST_URL,
+        apiKey: TEST_MESSAGES_API_KEY,
+        messages: [{ role: 'user', content: 'Schedule a follow-up.' }],
+        toolCatalog: [
+          {
+            name: 'calendar:create-event',
+            description: 'Create a calendar event',
+          },
+        ],
+        intentCatalog: [{ id: 'scheduling', description: 'Schedule work' }],
+      },
+      {
+        transport: async () =>
+          createMessagesCompatibleResponse({
+            type: 'message',
+            model: TEST_MESSAGES_MODEL,
+            stop_reason: 'tool_use',
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify({
+                  status: 'tool_request',
+                  intent: 'scheduling',
+                  assistant_message: 'Creating the event now.',
+                }),
+              },
+              {
+                type: 'tool_use',
+                name: 'calendar:create-event',
+                input: {
+                  title: 'Reminder',
+                },
+              },
+            ],
+            usage: {
+              input_tokens: 12,
+              output_tokens: 5,
+            },
+          }),
+      },
+    );
+
+    expect(result).toEqual({
+      ok: true,
+      output: {
+        status: 'tool_request',
+        intent: 'scheduling',
+        assistant_message: 'Creating the event now.',
+        requested_tool: {
+          name: 'calendar:create-event',
+          input: {
+            title: 'Reminder',
+          },
+        },
+        provider: {
+          kind: 'messages_compatible',
+          model: TEST_MESSAGES_MODEL,
+        },
+        usage: {
+          input_tokens: 12,
+          output_tokens: 5,
+        },
+        finish_reason: 'tool_use',
+      },
+      metadata: {
+        provider_kind: 'messages_compatible',
+        request_url: TEST_URL,
+        response_status: 200,
+        response_mode: 'non_streaming',
+      },
+    });
   });
 });

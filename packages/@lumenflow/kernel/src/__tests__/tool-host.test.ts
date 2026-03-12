@@ -151,6 +151,75 @@ describe('tool host', () => {
     }
   });
 
+  it('passes capability pack_config through to in-process tool execution context', async () => {
+    const registry = new ToolRegistry();
+    registry.register({
+      ...makeInProcessCapability(),
+      output_schema: z.object({
+        pack_config: z.object({
+          default_model: z.string(),
+          models: z.record(
+            z.string(),
+            z.object({
+              provider: z.string(),
+              model: z.string(),
+              api_key_env: z.string(),
+            }),
+          ),
+        }),
+      }),
+      pack_config: {
+        default_model: 'messages-default',
+        models: {
+          'messages-default': {
+            provider: 'messages_compatible',
+            model: 'messages-demo-model',
+            api_key_env: 'MESSAGES_PROVIDER_API_KEY',
+          },
+        },
+      },
+      handler: {
+        kind: 'in-process',
+        fn: async (_input, context) => ({
+          success: true,
+          data: {
+            pack_config: Reflect.get(context, 'pack_config'),
+          },
+        }),
+      },
+    });
+
+    const evidenceStore = new EvidenceStore({ evidenceRoot });
+    const host = new ToolHost({
+      registry,
+      evidenceStore,
+      policyHook: allowAllPolicyHook,
+    });
+
+    const result = await host.execute(
+      'fs:write',
+      {
+        path: 'packages/@lumenflow/kernel/src/tool-host/index.ts',
+        content: 'ok',
+      },
+      makeExecutionContext(),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({
+      pack_config: {
+        default_model: 'messages-default',
+        models: {
+          'messages-default': {
+            provider: 'messages_compatible',
+            model: 'messages-demo-model',
+            api_key_env: 'MESSAGES_PROVIDER_API_KEY',
+          },
+        },
+      },
+    });
+  });
+
   it('denies execution when scope intersection resolves to empty', async () => {
     const registry = new ToolRegistry();
     registry.register(makeInProcessCapability());

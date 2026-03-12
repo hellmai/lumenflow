@@ -562,6 +562,7 @@ export const ExecutionContextSchema = z.object({
   session_id: z.string().min(1),
   allowed_scopes: z.array(ToolScopeSchema),
   metadata: z.record(z.string(), z.unknown()).optional(),
+  pack_config: z.unknown().optional(),
 });
 
 export type ExecutionContext = z.infer<typeof ExecutionContextSchema>;
@@ -609,6 +610,7 @@ export const ToolCapabilitySchema = z.object({
   handler: ToolHandlerSchema,
   description: z.string().min(1),
   pack: z.string().min(1).optional(),
+  pack_config: z.unknown().optional(),
 });
 
 export type ToolCapability = z.infer<typeof ToolCapabilitySchema>;

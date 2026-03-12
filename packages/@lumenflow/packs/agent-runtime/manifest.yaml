@@ -149,6 +149,7 @@ tools:
               type: string
               enum:
                 - openai_compatible
+                - messages_compatible
             model:
               type: string
               minLength: 1

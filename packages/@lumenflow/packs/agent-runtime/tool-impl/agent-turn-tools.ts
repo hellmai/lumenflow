@@ -18,6 +18,8 @@ import type {
   AgentRuntimeIntentCatalogEntry,
   AgentRuntimeLimitsConfig,
   AgentRuntimeMessage,
+  AgentRuntimeModelProfileConfig,
+  AgentRuntimeProviderKind,
   AgentRuntimeToolCatalogEntry,
 } from '../types.js';
 import { STATIC_PROVIDER_CAPABILITY_BASELINE, executeProviderTurn } from './provider-adapters.js';
@@ -36,8 +38,13 @@ interface ValidatedTurnInput extends AgentRuntimeExecuteTurnInput {
 }
 
 interface ResolvedProviderEnvironment {
+  kind: AgentRuntimeProviderKind;
+  model: string;
   apiKey: string;
   baseUrl: string;
+  requiredEnv: string[];
+  networkAllowlist: string[];
+  allowedUrls: string[];
 }
 
 export async function agentExecuteTurnTool(
@@ -55,14 +62,14 @@ export async function agentExecuteTurnTool(
     return limitFailure;
   }
 
-  const environmentResult = resolveProviderEnvironment(validatedInput);
+  const environmentResult = resolveProviderEnvironment(validatedInput, ctx);
   if (!environmentResult.ok) {
     return environmentResult.output;
   }
 
   const providerResult = await executeProviderTurn({
-    kind: STATIC_PROVIDER_CAPABILITY_BASELINE.kind,
-    model: validatedInput.model_profile,
+    kind: environmentResult.value.kind,
+    model: environmentResult.value.model,
     url: validatedInput.url,
     apiKey: environmentResult.value.apiKey,
     stream: validatedInput.stream ?? false,
@@ -72,6 +79,10 @@ export async function agentExecuteTurnTool(
   });
 
   const metadata = createToolMetadata({
+    provider_kind: environmentResult.value.kind,
+    network_allowlist: [...environmentResult.value.networkAllowlist],
+    allowed_urls: [...environmentResult.value.allowedUrls],
+    required_env: [...environmentResult.value.requiredEnv],
     provider_call_count: PROVIDER_CALL_COUNT_ONE,
     request_url: validatedInput.url,
     configured_base_url: environmentResult.value.baseUrl,
@@ -142,12 +153,6 @@ function validateExecuteTurnInput(
   const url = readNonEmptyString(record.url);
   if (!url) {
     return { ok: false, message: 'url is required.' };
-  }
-  if (!STATIC_PROVIDER_CAPABILITY_BASELINE.allowed_urls.includes(url)) {
-    return {
-      ok: false,
-      message: `url must match one of the declared agent-runtime provider URLs: ${STATIC_PROVIDER_CAPABILITY_BASELINE.allowed_urls.join(', ')}`,
-    };
   }
 
   const stream = validateBoolean(record.stream, 'stream');
@@ -446,7 +451,16 @@ function enforceExecutionLimits(
 
 function resolveProviderEnvironment(
   input: ValidatedTurnInput,
+  ctx: ExecutionContext,
 ): { ok: true; value: ResolvedProviderEnvironment } | { ok: false; output: ToolOutput } {
+  const packConfig = normalizePackConfig(Reflect.get(ctx, 'pack_config'));
+  const configuredProfile =
+    packConfig && isRecord(packConfig.models) ? packConfig.models[input.model_profile] : undefined;
+
+  if (configuredProfile !== undefined) {
+    return resolveConfiguredProviderEnvironment(input, input.model_profile, configuredProfile);
+  }
+
   const apiKey = readNonEmptyString(process.env.AGENT_RUNTIME_API_KEY);
   if (!apiKey) {
     return {
@@ -498,8 +512,13 @@ function resolveProviderEnvironment(
   return {
     ok: true,
     value: {
+      kind: STATIC_PROVIDER_CAPABILITY_BASELINE.kind,
+      model: input.model_profile,
       apiKey,
       baseUrl: normalizedBaseUrl,
+      requiredEnv: [...STATIC_PROVIDER_CAPABILITY_BASELINE.required_env],
+      networkAllowlist: [...STATIC_PROVIDER_CAPABILITY_BASELINE.network_allowlist],
+      allowedUrls: [...STATIC_PROVIDER_CAPABILITY_BASELINE.allowed_urls],
     },
   };
 }
@@ -529,6 +548,177 @@ function createToolMetadata(extra?: Record<string, unknown>): Record<string, unk
   };
 }
 
+function resolveConfiguredProviderEnvironment(
+  input: ValidatedTurnInput,
+  profileName: string,
+  profileValue: unknown,
+): { ok: true; value: ResolvedProviderEnvironment } | { ok: false; output: ToolOutput } {
+  const profile = normalizeModelProfile(profileValue);
+  if (!profile) {
+    return {
+      ok: false,
+      output: createFailureOutput(
+        CONFIGURATION_ERROR_CODE,
+        `agent_runtime.models.${profileName} must define provider, model, and api_key_env.`,
+      ),
+    };
+  }
+
+  const apiKey = readNonEmptyString(process.env[profile.api_key_env]);
+  if (!apiKey) {
+    return {
+      ok: false,
+      output: createFailureOutput(
+        MISSING_ENVIRONMENT_ERROR_CODE,
+        `${profile.api_key_env} must be set for agent-runtime provider profile "${profileName}".`,
+      ),
+    };
+  }
+
+  const baseUrlResult = resolveProfileBaseUrl(profileName, profile);
+  if (!baseUrlResult.ok) {
+    return {
+      ok: false,
+      output: baseUrlResult.output,
+    };
+  }
+
+  const normalizedInputUrl = normalizeUrlForComparison(input.url);
+  const normalizedBaseUrl = normalizeUrlForComparison(baseUrlResult.value);
+  if (!normalizedInputUrl || !normalizedBaseUrl) {
+    return {
+      ok: false,
+      output: createFailureOutput(
+        CONFIGURATION_ERROR_CODE,
+        'Agent-runtime provider URLs must be valid absolute URLs.',
+      ),
+    };
+  }
+
+  if (normalizedInputUrl !== normalizedBaseUrl) {
+    return {
+      ok: false,
+      output: createFailureOutput(
+        TOOL_ERROR_CODES.INVALID_INPUT,
+        `input.url must match the resolved base URL for provider profile "${profileName}".`,
+        {
+          configured_base_url: normalizedBaseUrl,
+          requested_url: normalizedInputUrl,
+        },
+      ),
+    };
+  }
+
+  return {
+    ok: true,
+    value: {
+      kind: profile.provider,
+      model: profile.model,
+      apiKey,
+      baseUrl: normalizedBaseUrl,
+      requiredEnv: [
+        profile.api_key_env,
+        ...(profile.base_url_env ? [profile.base_url_env] : []),
+      ],
+      networkAllowlist: [toNetworkAllowlistEntry(profileName, normalizedBaseUrl)],
+      allowedUrls: [normalizedBaseUrl],
+    },
+  };
+}
+
+function normalizePackConfig(
+  value: unknown,
+): { models: Record<string, unknown> } | null {
+  if (!isRecord(value) || !isRecord(value.models)) {
+    return null;
+  }
+
+  return {
+    models: value.models,
+  };
+}
+
+function normalizeModelProfile(value: unknown): AgentRuntimeModelProfileConfig | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const provider = readNonEmptyString(value.provider);
+  const model = readNonEmptyString(value.model);
+  const apiKeyEnv = readNonEmptyString(value.api_key_env);
+  if (!provider || !isProviderKind(provider) || !model || !apiKeyEnv) {
+    return null;
+  }
+
+  const baseUrl = readOptionalNonEmptyString(value.base_url);
+  const baseUrlEnv = readOptionalNonEmptyString(value.base_url_env);
+
+  return {
+    provider,
+    model,
+    api_key_env: apiKeyEnv,
+    ...(baseUrl ? { base_url: baseUrl } : {}),
+    ...(baseUrlEnv ? { base_url_env: baseUrlEnv } : {}),
+  };
+}
+
+function resolveProfileBaseUrl(
+  profileName: string,
+  profile: AgentRuntimeModelProfileConfig,
+): { ok: true; value: string } | { ok: false; output: ToolOutput } {
+  if (profile.base_url) {
+    return {
+      ok: true,
+      value: profile.base_url,
+    };
+  }
+
+  if (!profile.base_url_env) {
+    return {
+      ok: false,
+      output: createFailureOutput(
+        CONFIGURATION_ERROR_CODE,
+        `agent_runtime.models.${profileName} must define base_url or base_url_env.`,
+      ),
+    };
+  }
+
+  const environmentValue = readNonEmptyString(process.env[profile.base_url_env]);
+  if (!environmentValue) {
+    return {
+      ok: false,
+      output: createFailureOutput(
+        MISSING_ENVIRONMENT_ERROR_CODE,
+        `${profile.base_url_env} must be set for agent-runtime provider profile "${profileName}".`,
+      ),
+    };
+  }
+
+  return {
+    ok: true,
+    value: environmentValue,
+  };
+}
+
+function toNetworkAllowlistEntry(profileName: string, baseUrl: string): string {
+  try {
+    const parsed = new URL(baseUrl);
+    const port =
+      parsed.port ||
+      (parsed.protocol === 'https:' ? '443' : parsed.protocol === 'http:' ? '80' : '');
+    if (!port) {
+      throw new Error(`Unsupported protocol "${parsed.protocol}".`);
+    }
+
+    return `${parsed.hostname}:${port}`;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'unknown parsing error';
+    throw new Error(
+      `agent_runtime.models.${profileName} must resolve to a valid absolute base URL: ${message}`,
+    );
+  }
+}
+
 function hasUnexpectedKeys(
   record: Record<string, unknown>,
   allowedKeys: readonly string[],
@@ -544,6 +734,10 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return asRecord(value) !== null;
 }
 
 function readString(value: unknown): string | null {
@@ -570,6 +764,10 @@ function readOptionalPositiveInteger(value: unknown): number | null {
     return null;
   }
   return value;
+}
+
+function isProviderKind(value: string): value is AgentRuntimeProviderKind {
+  return value === 'openai_compatible' || value === 'messages_compatible';
 }
 
 function readAgentTurnIndex(ctx: ExecutionContext): number | null {

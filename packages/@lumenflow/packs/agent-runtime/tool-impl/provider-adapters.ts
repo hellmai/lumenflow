@@ -13,6 +13,7 @@ import {
   type AgentRuntimeExecuteTurnOutput,
   type AgentRuntimeIntentCatalogEntry,
   type AgentRuntimeMessage,
+  type AgentRuntimeProviderKind,
   type AgentRuntimeRequestedTool,
   type AgentRuntimeStreamSnapshot,
   type AgentRuntimeToolCatalogEntry,
@@ -37,6 +38,9 @@ const FIXTURE_TOOL_NAME = 'calendar:create-event';
 const FIXTURE_INPUT_TOKEN_KEY = 'prompt_tokens';
 const FIXTURE_OUTPUT_TOKEN_KEY = 'completion_tokens';
 const FIXTURE_TOTAL_TOKEN_KEY = 'total_tokens';
+const MESSAGES_RESPONSE_KIND = 'message';
+const MESSAGES_CONTENT_KIND_TEXT = 'text';
+const MESSAGES_CONTENT_KIND_TOOL_USE = 'tool_use';
 
 const PROVIDER_ERROR_CODES = {
   AUTHENTICATION_FAILED: 'PROVIDER_AUTHENTICATION_FAILED',
@@ -55,14 +59,14 @@ const CONFORMANCE_SCENARIOS = {
 } as const;
 
 export interface ProviderCapabilityBaseline {
-  kind: typeof AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE;
+  kind: AgentRuntimeProviderKind;
   required_env: readonly string[];
   network_allowlist: readonly string[];
   allowed_urls: readonly string[];
 }
 
 export interface ProviderTurnRequest {
-  kind: typeof AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE;
+  kind: AgentRuntimeProviderKind;
   model: string;
   url: string;
   apiKey: string;
@@ -217,13 +221,11 @@ export async function executeProviderTurn(
     transport?: ProviderTransport;
   },
 ): Promise<ProviderTurnResult> {
-  if (request.kind !== AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE) {
+  const requestPayloadResult = buildProviderRequestPayload(request);
+  if (!requestPayloadResult.ok) {
     return {
       ok: false,
-      error: {
-        code: PROVIDER_ERROR_CODES.UNSUPPORTED_PROVIDER,
-        message: `Provider kind "${request.kind}" is not supported by agent-runtime. Use openai_compatible for this work unit.`,
-      },
+      error: requestPayloadResult.error,
       metadata: {
         provider_kind: request.kind,
         request_url: request.url,
@@ -233,7 +235,6 @@ export async function executeProviderTurn(
   }
 
   const transport = options?.transport ?? defaultTransport;
-  const requestPayload = buildOpenAiCompatibleRequestPayload(request);
 
   let response: Pick<Response, 'ok' | 'status' | 'text' | 'body'>;
   try {
@@ -243,7 +244,7 @@ export async function executeProviderTurn(
         [HEADER_AUTHORIZATION]: `Bearer ${request.apiKey}`,
         [HEADER_CONTENT_TYPE]: CONTENT_TYPE_JSON,
       },
-      body: JSON.stringify(requestPayload),
+      body: JSON.stringify(requestPayloadResult.value),
     });
   } catch (error) {
     return {
@@ -273,7 +274,7 @@ export async function executeProviderTurn(
     };
   }
 
-  if (request.stream) {
+  if (request.stream && request.kind === AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE) {
     return executeStreamingProviderTurn(request, response, metadata);
   }
 
@@ -291,7 +292,7 @@ export async function executeProviderTurn(
     };
   }
 
-  const normalizedOutput = normalizeOpenAiCompatibleResponse(parsedBody.value, request);
+  const normalizedOutput = normalizeProviderResponse(parsedBody.value, request);
   if (!normalizedOutput.ok) {
     return {
       ok: false,
@@ -452,6 +453,32 @@ export async function runProviderAdapterConformanceHarness(): Promise<
   return results;
 }
 
+function buildProviderRequestPayload(
+  request: ProviderTurnRequest,
+): { ok: true; value: Record<string, unknown> } | { ok: false; error: ProviderTurnError } {
+  if (request.kind === AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE) {
+    return {
+      ok: true,
+      value: buildOpenAiCompatibleRequestPayload(request),
+    };
+  }
+
+  if (request.kind === AGENT_RUNTIME_PROVIDER_KINDS.MESSAGES_COMPATIBLE) {
+    return {
+      ok: true,
+      value: buildMessagesCompatibleRequestPayload(request),
+    };
+  }
+
+  return {
+    ok: false,
+    error: {
+      code: PROVIDER_ERROR_CODES.UNSUPPORTED_PROVIDER,
+      message: `Provider kind "${request.kind}" is not supported by agent-runtime. Configure a supported provider family.`,
+    },
+  };
+}
+
 function buildOpenAiCompatibleRequestPayload(
   request: ProviderTurnRequest,
 ): Record<string, unknown> {
@@ -468,6 +495,17 @@ function buildOpenAiCompatibleRequestPayload(
     response_format: {
       type: RESPONSE_FORMAT_TYPE,
     },
+  };
+}
+
+function buildMessagesCompatibleRequestPayload(
+  request: ProviderTurnRequest,
+): Record<string, unknown> {
+  return {
+    model: request.model,
+    ...(request.stream ? { stream: true } : {}),
+    system: buildSystemInstruction(request.intentCatalog, request.toolCatalog),
+    messages: request.messages.map((message) => normalizeOutboundMessage(message)),
   };
 }
 
@@ -508,6 +546,27 @@ function normalizeOutboundMessage(message: AgentRuntimeMessage): Record<string, 
   }
 
   return normalized;
+}
+
+function normalizeProviderResponse(
+  payload: Record<string, unknown>,
+  request: ProviderTurnRequest,
+): { ok: true; value: AgentRuntimeExecuteTurnOutput } | { ok: false; error: ProviderTurnError } {
+  if (request.kind === AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE) {
+    return normalizeOpenAiCompatibleResponse(payload, request);
+  }
+
+  if (request.kind === AGENT_RUNTIME_PROVIDER_KINDS.MESSAGES_COMPATIBLE) {
+    return normalizeMessagesCompatibleResponse(payload, request);
+  }
+
+  return {
+    ok: false,
+    error: {
+      code: PROVIDER_ERROR_CODES.UNSUPPORTED_PROVIDER,
+      message: `Provider kind "${request.kind}" is not supported by agent-runtime. Configure a supported provider family.`,
+    },
+  };
 }
 
 function normalizeOpenAiCompatibleResponse(
@@ -572,6 +631,103 @@ function normalizeOpenAiCompatibleResponse(
     rawOutput.requested_tool = requestedTool;
   } else if (shapedRequestedTool.value) {
     rawOutput.requested_tool = shapedRequestedTool.value;
+  }
+
+  const usage = normalizeUsage(payload.usage);
+  if (usage) {
+    rawOutput.usage = usage;
+  }
+
+  return validateNormalizedTurnOutput(rawOutput);
+}
+
+function normalizeMessagesCompatibleResponse(
+  payload: Record<string, unknown>,
+  request: ProviderTurnRequest,
+): { ok: true; value: AgentRuntimeExecuteTurnOutput } | { ok: false; error: ProviderTurnError } {
+  const responseType = asNonEmptyString(payload.type);
+  if (responseType !== MESSAGES_RESPONSE_KIND) {
+    return {
+      ok: false,
+      error: createMalformedResponseError(
+        'Provider response did not include type "message". Ensure the provider returns a message-style payload.',
+      ),
+    };
+  }
+
+  const contentBlocks = asArray(payload.content);
+  if (!contentBlocks || contentBlocks.length === 0) {
+    return {
+      ok: false,
+      error: createMalformedResponseError(
+        'Provider response did not include content blocks. Ensure the provider returns message content.',
+      ),
+    };
+  }
+
+  let contentText = '';
+  let shapedRequestedTool: AgentRuntimeRequestedTool | undefined;
+  for (const blockCandidate of contentBlocks) {
+    const block = asRecord(blockCandidate);
+    if (!block) {
+      continue;
+    }
+
+    const blockType = asNonEmptyString(block.type);
+    if (blockType === MESSAGES_CONTENT_KIND_TEXT) {
+      const blockText = asNonEmptyString(block.text);
+      if (blockText) {
+        contentText += blockText;
+      }
+      continue;
+    }
+
+    if (blockType === MESSAGES_CONTENT_KIND_TOOL_USE) {
+      const name = asNonEmptyString(block.name);
+      const input = asRecord(block.input);
+      if (!name || !input) {
+        return {
+          ok: false,
+          error: createMalformedResponseError(
+            'Provider tool_use content must include a non-empty name and object input payload.',
+          ),
+        };
+      }
+
+      shapedRequestedTool = {
+        name,
+        input,
+      };
+    }
+  }
+
+  const contentRecord = parseJsonRecord(
+    contentText,
+    'Provider text content was not valid JSON. Ensure the provider returns a JSON object that matches the governed turn schema.',
+  );
+  if (!contentRecord.ok) {
+    return {
+      ok: false,
+      error: contentRecord.error,
+    };
+  }
+
+  const rawOutput: Record<string, unknown> = {
+    status: contentRecord.value.status,
+    intent: contentRecord.value.intent,
+    assistant_message: contentRecord.value.assistant_message ?? DEFAULT_ASSISTANT_MESSAGE,
+    provider: {
+      kind: request.kind,
+      model: asNonEmptyString(payload.model) ?? request.model,
+    },
+    finish_reason: asNonEmptyString(payload.stop_reason) ?? DEFAULT_FINISH_REASON,
+  };
+
+  const requestedTool = normalizeRequestedTool(contentRecord.value.requested_tool);
+  if (requestedTool) {
+    rawOutput.requested_tool = requestedTool;
+  } else if (shapedRequestedTool) {
+    rawOutput.requested_tool = shapedRequestedTool;
   }
 
   const usage = normalizeUsage(payload.usage);
@@ -747,7 +903,7 @@ function normalizeProviderDescriptor(
     return null;
   }
 
-  if (kind !== AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE) {
+  if (!isProviderKind(kind)) {
     return null;
   }
 
@@ -775,6 +931,13 @@ function normalizeUsage(value: unknown): AgentRuntimeExecuteTurnOutput['usage'] 
     ...(outputTokens !== null ? { output_tokens: outputTokens } : {}),
     ...(totalTokens !== null ? { total_tokens: totalTokens } : {}),
   };
+}
+
+function isProviderKind(value: string): value is AgentRuntimeProviderKind {
+  return (
+    value === AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE ||
+    value === AGENT_RUNTIME_PROVIDER_KINDS.MESSAGES_COMPATIBLE
+  );
 }
 
 function normalizeRequestedTool(value: unknown): AgentRuntimeRequestedTool | null {

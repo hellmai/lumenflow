@@ -12,7 +12,7 @@
         "properties": {
           "provider": {
             "type": "string",
-            "enum": ["openai_compatible"]
+            "enum": ["openai_compatible", "messages_compatible"]
           },
           "model": {
             "type": "string",

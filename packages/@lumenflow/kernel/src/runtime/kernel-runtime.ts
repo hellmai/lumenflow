@@ -1237,6 +1237,9 @@ export async function defaultRuntimeToolCapabilityResolver(
     },
     description: buildPackToolDescription(input.tool.name, input.loadedPack.manifest.id),
     pack: input.loadedPack.pin.id,
+    ...(input.loadedPack.resolvedConfig !== undefined
+      ? { pack_config: input.loadedPack.resolvedConfig }
+      : {}),
   };
 }
 
