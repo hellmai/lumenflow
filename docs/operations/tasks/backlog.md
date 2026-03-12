@@ -36,7 +36,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml) — Framework: Core Lifecycle
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1372,6 +1372,7 @@ sections:
 - [WU-2426 — cli-entry.mjs triggers full build on --help flag](wu/WU-2426.yaml)
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml)
 - [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml)
+- [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
