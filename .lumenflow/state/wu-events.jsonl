@@ -3333,3 +3333,5 @@
 {"type":"checkpoint","wuId":"WU-2412","timestamp":"2026-03-12T14:24:58.465Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2412.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2412","timestamp":"2026-03-12T14:26:18.844Z"}
 {"type":"claim","wuId":"WU-2413","timestamp":"2026-03-12T14:27:35.223Z","lane":"Framework: Core Lifecycle","title":"Add config-aware provider capability resolution"}
+{"type":"checkpoint","wuId":"WU-2413","timestamp":"2026-03-12T14:27:49.437Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2413","timestamp":"2026-03-12T14:28:01.540Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
