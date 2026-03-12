@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2436 — Generate MCP reference and tighten docs command policy](wu/WU-2436.yaml)
 
 ## Completed
 

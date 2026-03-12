@@ -2,7 +2,7 @@ id: WU-2436
 title: Generate MCP reference and tighten docs command policy
 lane: 'Content: Framework Docs'
 type: refactor
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -12,8 +12,11 @@ code_paths:
   - docs/operations/_frameworks/lumenflow
 tests:
   manual:
-    - Run pnpm exec vitest run apps/docs/__tests__/docs-parity.test.ts packages/@lumenflow/cli/__tests__/docs-generate.test.ts and confirm MCP/reference generation coverage passes.
-    - Run pnpm --filter @lumenflow/docs build and confirm the generated MCP reference builds successfully.
+    - Run pnpm exec vitest run apps/docs/__tests__/docs-parity.test.ts
+      packages/@lumenflow/cli/__tests__/docs-generate.test.ts and confirm MCP/reference generation
+      coverage passes.
+    - Run pnpm --filter @lumenflow/docs build and confirm the generated MCP reference builds
+      successfully.
     - Run pnpm gates --docs-only and confirm docs-only gates pass.
   unit:
     - apps/docs/__tests__/docs-parity.test.ts
@@ -25,7 +28,8 @@ dependencies: []
 spec_refs:
   - /home/tom/source/hellmai/lumenflow-dev/docs/operations/_frameworks/lumenflow/agent/onboarding/docs-generation.md
 risks: []
-notes: Follow-on from WU-2435 breadth pass. This WU should focus on reference-generation and policy consistency, not a full-site prose rewrite.
+notes: Follow-on from WU-2435 breadth pass. This WU should focus on reference-generation and policy
+  consistency, not a full-site prose rewrite.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
@@ -38,9 +42,26 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: docs parity is stronger after WU-2435, but the MCP reference remains curated rather than generated, command-policy guidance between pnpm and npx is still inconsistent, and example validation does not yet check MCP payload shapes. Problem: docs can still drift in high-value reference and setup surfaces even when command-name parity passes. Solution: generate the MCP reference from the live registry, document a clear command policy for repo-local versus external-project examples, and extend docs validation to cover the richer example surface.'
+description: 'Context: docs parity is stronger after WU-2435, but the MCP reference remains curated
+  rather than generated, command-policy guidance between pnpm and npx is still inconsistent, and
+  example validation does not yet check MCP payload shapes. Problem: docs can still drift in
+  high-value reference and setup surfaces even when command-name parity passes. Solution: generate
+  the MCP reference from the live registry, document a clear command policy for repo-local versus
+  external-project examples, and extend docs validation to cover the richer example surface.'
 acceptance:
-  - Generate the public MCP reference from the live MCP registry so tool inventory and tool sections stay synchronized with code.
-  - Document and apply a clear command policy for repo-local examples versus external-project setup examples across public and internal docs.
-  - Extend docs/example validation to cover the newly generated MCP reference and selected MCP/example payload structure where practical.
-  - Keep historical and compatibility content explicitly excluded rather than weakening parity checks for live docs.
+  - Generate the public MCP reference from the live MCP registry so tool inventory and tool sections
+    stay synchronized with code.
+  - Document and apply a clear command policy for repo-local examples versus external-project setup
+    examples across public and internal docs.
+  - Extend docs/example validation to cover the newly generated MCP reference and selected
+    MCP/example payload structure where practical.
+  - Keep historical and compatibility content explicitly excluded rather than weakening parity
+    checks for live docs.
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2436
+claimed_at: 2026-03-12T21:04:46.105Z
+baseline_main_sha: 0d014b6dd60f73ab61bca333bb40567f50f59990
+session_id: a8f8bfa5-d299-4855-9940-a5dad48f5586
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T21:04:46.113Z
