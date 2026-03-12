@@ -3384,3 +3384,4 @@
 {"type":"complete","wuId":"WU-2428","timestamp":"2026-03-12T17:51:04.884Z"}
 {"type":"complete","wuId":"WU-2427","timestamp":"2026-03-12T17:52:37.049Z"}
 {"type":"claim","wuId":"WU-2429","timestamp":"2026-03-12T17:56:00.750Z","lane":"Content: Site Comms","title":"Audit and align command, MCP, and pack docs surfaces"}
+{"type":"claim","wuId":"WU-2430","timestamp":"2026-03-12T18:02:34.656Z","lane":"Operations: Automation","title":"Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows"}
