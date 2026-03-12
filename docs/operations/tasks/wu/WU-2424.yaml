@@ -18,12 +18,22 @@ artifacts:
   - .lumenflow/stamps/WU-2424.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Deleted stale shadow copy at packages/@lumenflow/cli/docs/.../wu-sizing-guide.md missed by
+  WU-2398. Added section 1.4 (Review, Audit, and Exploration WUs) to canonical sizing guide. Fixed
+  broken relative links in onboarding docs and templates. tdd-exception: documentation-only WU, no
+  code logic changes.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T13:08:51.655Z
+worktree_path: worktrees/content-specs-governance-wu-2424
+session_id: 872ebb2a-eebe-42f9-abee-15c818a6f6a3
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T13:08:51.662Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -36,11 +46,3 @@ acceptance:
   - Shadow copy at packages/@lumenflow/cli/docs/ deleted
   - Canonical sizing guide has a section on review/audit/exploration WU patterns
   - Guide addresses multi-agent parallelism from first pass (no multiple-passes needed)
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2424
-claimed_at: 2026-03-12T13:08:51.655Z
-baseline_main_sha: cffba200bc5d93c6e67c87353b2b118127c4eb0d
-session_id: 872ebb2a-eebe-42f9-abee-15c818a6f6a3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T13:08:51.662Z
