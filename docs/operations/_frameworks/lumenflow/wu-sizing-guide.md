@@ -194,9 +194,11 @@ When spawning a review sub-agent, give it:
 4. **What NOT to report** — issues already caught by existing tooling (linters, type checks)
 
 **Bad prompt** (causes multiple passes):
+
 > "Do a code review of the frontend"
 
 **Good prompt** (complete in one pass):
+
 > "Review all components in `apps/web/src/components/` for: (1) inline styles that should use Tailwind tokens, (2) missing loading/empty/error states, (3) 'use client' directives on components that could be server components, (4) components rendered in loops without React.memo, (5) lists over 50 items without virtualisation. Report as severity-ranked table with file:line references."
 
 #### Synthesising Results
@@ -213,9 +215,9 @@ The orchestrating agent (or the user) synthesises sub-agent reports into a singl
 ```yaml
 # WU-XXX.yaml
 id: WU-XXX
-type: documentation  # Review output is a report, not code
+type: documentation # Review output is a report, not code
 sizing_estimate:
-  estimated_files: 200    # Files READ, not modified
+  estimated_files: 200 # Files READ, not modified
   estimated_tool_calls: 150
   strategy: orchestrator-worker
   exception_type: review-audit
