@@ -657,9 +657,7 @@ function formatZodIssuePath(pathSegments: (string | number)[]): string {
 }
 
 function formatZodIssues(issues: z.ZodIssue[]): string {
-  return issues
-    .map((issue) => `${formatZodIssuePath(issue.path)}: ${issue.message}`)
-    .join('; ');
+  return issues.map((issue) => `${formatZodIssuePath(issue.path)}: ${issue.message}`).join('; ');
 }
 
 function parsePackConfigJsonSchema(
