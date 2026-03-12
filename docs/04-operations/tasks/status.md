@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml)
+- [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml)
 
 ## Completed
 

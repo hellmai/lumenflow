@@ -1,8 +1,9 @@
 id: WU-2421
-title: 'Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations'
+title: 'Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view,
+  04-operations to operations'
 lane: 'Content: Specs Governance'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -31,10 +32,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Phase 2 of arc42 compliance. Rename 02-technical to 05-building-block-view (arc42 section 05) and remove misleading 04- prefix from 04-operations (operational infra, not arc42 section 04).
+description: Phase 2 of arc42 compliance. Rename 02-technical to 05-building-block-view (arc42
+  section 05) and remove misleading 04- prefix from 04-operations (operational infra, not arc42
+  section 04).
 acceptance:
   - docs/02-technical renamed to docs/05-building-block-view
-  - docs/04-operations renamed to docs/operations (no arc42 number since content is not an arc42 section)
+  - docs/04-operations renamed to docs/operations (no arc42 number since content is not an arc42
+    section)
   - All cross-references updated across source code, tests, config, docs, agents, skills, scripts, CI
   - pnpm typecheck passes
   - pnpm test passes (excluding pre-existing failures)
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2421
+claimed_at: 2026-03-12T11:53:12.786Z
+baseline_main_sha: 229e8a8da25ebbfe18809fe3329d886745daa71a
+session_id: bac69047-75bf-4882-9cd3-0b5eb179744f
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:53:12.793Z
