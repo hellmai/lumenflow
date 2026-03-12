@@ -2,7 +2,7 @@ id: WU-2417
 title: Add workflow state and linear suspend-resume for agent-session
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -53,3 +53,6 @@ acceptance:
   - Suspended and resumed runs remain agent-session executions rather than a new task type
   - Resumptions and approval pauses preserve evidence lineage and policy behavior
   - The evidence model records resumptions and approval-driven continuation coherently
+locked: true
+completed_at: 2026-03-12T16:39:17.453Z
+completed: 2026-03-12

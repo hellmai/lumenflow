@@ -21,7 +21,7 @@ phases:
     status: done
   - id: 4
     title: 'Phase 4: Full agent-session orchestration'
-    status: pending
+    status: in_progress
 success_metrics:
   - ADR defines the agent-runtime architecture boundary, task model, and orchestration cut-line.
   - Kernel runtime supports resolved pack config, manifest-level env allowlisting, and
