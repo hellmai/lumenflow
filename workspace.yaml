@@ -232,7 +232,7 @@ software_delivery:
     statusPath: docs/04-operations/tasks/status.md
     skillsDir: .claude/skills
     agentsDir: .claude/agents
-    plansDir: docs/operations/plans
+    plansDir: docs/04-operations/plans
     templatesDir: .lumenflow/templates
     onboardingDir: docs/operations/_frameworks/lumenflow/agent/onboarding
     completeGuidePath: docs/operations/_frameworks/lumenflow/lumenflow-complete.md
