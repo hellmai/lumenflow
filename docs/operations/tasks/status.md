@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml)
+- [WU-2425 — Write wu:brief output to file to survive Bash tool truncation](wu/WU-2425.yaml)
 
 ## Completed
 

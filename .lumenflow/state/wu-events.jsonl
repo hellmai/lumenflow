@@ -3316,3 +3316,4 @@
 {"type":"checkpoint","wuId":"WU-2410","timestamp":"2026-03-12T13:27:32.125Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2410.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2410","timestamp":"2026-03-12T13:30:26.838Z"}
 {"type":"claim","wuId":"WU-2411","timestamp":"2026-03-12T13:32:08.736Z","lane":"Framework: Core Lifecycle","title":"Implement agent:execute-turn core tool and adapter harness"}
+{"type":"claim","wuId":"WU-2425","timestamp":"2026-03-12T13:44:36.901Z","lane":"Framework: CLI WU Commands","title":"Write wu:brief output to file to survive Bash tool truncation"}
