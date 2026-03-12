@@ -229,7 +229,7 @@ software_delivery:
     wuDir: docs/operations/tasks/wu
     initiativesDir: docs/operations/tasks/initiatives
     backlogPath: docs/operations/tasks/backlog.md
-    statusPath: docs/04-operations/tasks/status.md
+    statusPath: docs/operations/tasks/status.md
     skillsDir: .claude/skills
     agentsDir: .claude/agents
     plansDir: docs/04-operations/plans
