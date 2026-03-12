@@ -3226,7 +3226,9 @@
 {"type":"checkpoint","wuId":"WU-2398","timestamp":"2026-03-12T09:40:17.676Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2398.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2398","timestamp":"2026-03-12T09:44:51.916Z"}
 {"type":"claim","wuId":"WU-2399","timestamp":"2026-03-12T09:51:58.609Z","lane":"Framework: CLI WU Commands","title":"Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching"}
+{"type":"checkpoint","wuId":"WU-2399","timestamp":"2026-03-12T09:52:11.495Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"claim","wuId":"WU-2400","timestamp":"2026-03-12T09:52:56.045Z","lane":"Framework: CLI WU Commands","title":"Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity"}
+{"type":"checkpoint","wuId":"WU-2400","timestamp":"2026-03-12T09:53:07.770Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"claim","wuId":"WU-2401","timestamp":"2026-03-12T09:53:24.085Z","lane":"Framework: Core Validation","title":"Close test coverage gaps: add tests for metrics, memory, runtime, and web packages"}
 {"type":"claim","wuId":"WU-2402","timestamp":"2026-03-12T09:53:50.425Z","lane":"Framework: Core Validation","title":"Align test config: coverage threshold mismatch and passWithNoTests masking gaps"}
 {"type":"checkpoint","wuId":"WU-2400","timestamp":"2026-03-12T09:53:07.770Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
@@ -3246,8 +3248,16 @@
 {"type":"complete","wuId":"WU-2400","timestamp":"2026-03-12T10:10:57.129Z"}
 {"type":"complete","wuId":"WU-2399","timestamp":"2026-03-12T10:12:36.431Z"}
 {"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T09:53:35.811Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"claim","wuId":"WU-2402","timestamp":"2026-03-12T09:53:50.425Z","lane":"Framework: Core Validation","title":"Align test config: coverage threshold mismatch and passWithNoTests masking gaps"}
+{"type":"checkpoint","wuId":"WU-2399","timestamp":"2026-03-12T09:54:15.214Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2400","timestamp":"2026-03-12T09:54:17.395Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T09:54:31.421Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:04:53.327Z","note":"WU-2401"}
 {"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:09:29.607Z","note":"WU-2401"}
+{"type":"checkpoint","wuId":"WU-2399","timestamp":"2026-03-12T10:10:25.249Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2399.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"checkpoint","wuId":"WU-2399","timestamp":"2026-03-12T10:10:45.642Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2399.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:10:50.974Z","note":"WU-2401"}
+{"type":"complete","wuId":"WU-2400","timestamp":"2026-03-12T10:10:57.129Z"}
 {"type":"checkpoint","wuId":"WU-2401","timestamp":"2026-03-12T10:11:55.618Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2401.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2399","timestamp":"2026-03-12T10:12:36.431Z"}
+{"type":"complete","wuId":"WU-2401","timestamp":"2026-03-12T10:15:12.408Z"}

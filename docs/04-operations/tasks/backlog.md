@@ -29,7 +29,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml) — Framework: Core Validation
 - [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
@@ -1348,6 +1347,7 @@ sections:
 - [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml)
 - [WU-2400 — Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity](wu/WU-2400.yaml)
 - [WU-2399 — Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching](wu/WU-2399.yaml)
+- [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

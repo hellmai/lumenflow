@@ -2,7 +2,7 @@ id: WU-2401
 title: 'Close test coverage gaps: add tests for metrics, memory, runtime, and web packages'
 lane: 'Framework: Core Validation'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -61,3 +61,6 @@ acceptance:
   - runtime package has tests for socket lifecycle and session management
   - apps/web has tests for input-validation.ts server handlers
   - All new tests pass in CI
+locked: true
+completed_at: 2026-03-12T10:15:07.365Z
+completed: 2026-03-12
