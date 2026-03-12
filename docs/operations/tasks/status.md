@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml)
 
 ## Completed
 

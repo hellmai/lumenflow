@@ -2,7 +2,7 @@ id: WU-2413
 title: Add config-aware provider capability resolution
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/packs/
 tests:
   manual:
-    - Verify provider hosts and related capabilities resolve from config without widening final scope intersection
+    - Verify provider hosts and related capabilities resolve from config without widening final
+      scope intersection
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
     - packages/@lumenflow/runtime/src/
@@ -41,9 +42,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Extend capability resolution so provider hosts and related runtime capabilities can be derived from resolved model profiles rather than only from static manifest entries.
+description: Extend capability resolution so provider hosts and related runtime capabilities can be
+  derived from resolved model profiles rather than only from static manifest entries.
 acceptance:
   - Tool capability resolution can merge config-derived scopes
   - Provider hosts can come from resolved model profiles
   - Config-derived env allowlists are supported where appropriate
   - Workspace and lane scope intersection still tightens final network access
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2413
+claimed_at: 2026-03-12T14:27:35.182Z
+baseline_main_sha: 6e0cbc0f24aa533f2f162837f687b91cb0ccddaf
+session_id: 82f5753a-f26b-45be-bdea-ab50bb6d4c5c
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T14:27:35.194Z
