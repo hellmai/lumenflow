@@ -11,6 +11,7 @@ code_paths:
   - packages/@lumenflow/packs/software-delivery/vitest.config.ts
   - packages/@lumenflow/packs/software-delivery/__tests__/bridge-regression.test.ts
   - packages/@lumenflow/packs/software-delivery/__tests__/git-tools.test.ts
+  - packages/@lumenflow/kernel/src/pack/pack-loader.ts
 tests:
   manual:
     - Verify pnpm test passes in CI with updated config
