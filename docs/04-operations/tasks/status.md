@@ -5,7 +5,6 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2399 — Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching](wu/WU-2399.yaml)
-- [WU-2400 — Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity](wu/WU-2400.yaml)
 - [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml)
 - [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml)
 
@@ -1319,3 +1318,4 @@ _Last updated: 2026-03-12_
 - [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml) — 2026-03-11
 - [WU-2396 — Restore Prettier-validated YAML formatting for wu:done metadata](wu/WU-2396.yaml) — 2026-03-11
 - [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml) — 2026-03-12
+- [WU-2400 — Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity](wu/WU-2400.yaml) — 2026-03-12

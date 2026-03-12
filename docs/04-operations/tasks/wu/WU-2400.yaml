@@ -2,7 +2,7 @@ id: WU-2400
 title: 'Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity'
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: in_progress
+status: done
 priority: P3
 created: 2026-03-12
 code_paths:
@@ -55,3 +55,6 @@ session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T09:52:56.018Z
+locked: true
+completed_at: 2026-03-12T10:10:52.215Z
+completed: 2026-03-12
