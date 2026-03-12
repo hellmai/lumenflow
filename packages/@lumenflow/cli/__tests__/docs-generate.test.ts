@@ -25,8 +25,9 @@ const DOCS_GENERATE_CMD = 'pnpm docs:generate';
 const DOCS_VALIDATE_CMD = 'pnpm docs:validate';
 const CLI_MDX_PATH = 'apps/docs/src/content/docs/reference/cli.mdx';
 const CONFIG_MDX_PATH = 'apps/docs/src/content/docs/reference/config.mdx';
+const MCP_MDX_PATH = 'apps/docs/src/content/docs/reference/mcp.mdx';
 const README_PATH = 'packages/@lumenflow/cli/README.md';
-const GENERATED_TRACKED_FILES = [CLI_MDX_PATH, CONFIG_MDX_PATH, README_PATH] as const;
+const GENERATED_TRACKED_FILES = [CLI_MDX_PATH, CONFIG_MDX_PATH, MCP_MDX_PATH, README_PATH] as const;
 
 interface FileSnapshot {
   existed: boolean;
@@ -130,7 +131,7 @@ describe('docs:generate', () => {
       const result = execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       expect(result).toContain('Documentation generated successfully');
@@ -176,7 +177,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       // Check output file exists
@@ -211,13 +212,43 @@ describe('docs:generate', () => {
     });
   });
 
+  describe('MCP reference generation', () => {
+    it(
+      'should run docs:generate and create mcp.mdx from the live registry',
+      { timeout: 60000 },
+      async () => {
+        execSync(DOCS_GENERATE_CMD, {
+          cwd: ROOT,
+          encoding: 'utf-8',
+          timeout: 60000,
+        });
+
+        const mcpPath = join(ROOT, MCP_MDX_PATH);
+        expect(existsSync(mcpPath)).toBe(true);
+
+        const content = readFileSync(mcpPath, 'utf-8');
+        const { registeredTools, allTools, runtimeTaskTools } =
+          await import('../../../../packages/@lumenflow/mcp/dist/tools.js');
+
+        expect(content).toContain('title: MCP Server Reference');
+        expect(content).toContain('AUTO-GENERATED FILE');
+        expect(content).toContain(`**${registeredTools.length} tools**`);
+        expect(content).toContain(
+          `(${allTools.length} in the core \`allTools\` registry plus ${runtimeTaskTools.length} runtime task tools)`,
+        );
+        expect(content).toContain('### context_get');
+        expect(content).toContain('### task_complete');
+      },
+    );
+  });
+
   describe('docs:validate', () => {
     it('should detect drift when generated differs from committed', { timeout: 60000 }, () => {
       // First ensure we have fresh generated docs
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       // Now modify the file to create drift
@@ -232,7 +263,7 @@ describe('docs:generate', () => {
         execSync(DOCS_VALIDATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
         // If we get here, validation didn't fail as expected
         expect.fail('docs:validate should have exited with code 1');
@@ -251,14 +282,14 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       // Validate should pass (exit 0)
       const result = execSync(DOCS_VALIDATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       expect(result).toContain('up to date');
@@ -282,7 +313,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       const cliPath = join(ROOT, CLI_MDX_PATH);
@@ -305,7 +336,7 @@ describe('docs:generate', () => {
         execSync(DOCS_GENERATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
 
         const cliPath = join(ROOT, CLI_MDX_PATH);
@@ -352,7 +383,7 @@ describe('docs:generate', () => {
         execSync(DOCS_GENERATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
 
         const cliPath = join(ROOT, CLI_MDX_PATH);
@@ -381,7 +412,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       const cliPath = join(ROOT, CLI_MDX_PATH);
@@ -416,7 +447,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       // Check README.md exists
@@ -435,7 +466,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       // Read package.json for bin entries
@@ -482,7 +513,7 @@ describe('docs:generate', () => {
         execSync(DOCS_GENERATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
 
         const readmePath = join(ROOT, README_PATH);
@@ -501,7 +532,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       // Now modify the README to create drift
@@ -516,7 +547,7 @@ describe('docs:generate', () => {
         execSync(DOCS_VALIDATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
         // If we get here, validation didn't fail as expected
         expect.fail('docs:validate should have exited with code 1 for README drift');
@@ -538,7 +569,7 @@ describe('docs:generate', () => {
         execSync(DOCS_GENERATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
 
         const readmePath = join(ROOT, README_PATH);
@@ -564,7 +595,7 @@ describe('docs:generate', () => {
       execSync(DOCS_GENERATE_CMD, {
         cwd: ROOT,
         encoding: 'utf-8',
-        timeout: 30000,
+        timeout: 60000,
       });
 
       const cliPath = join(ROOT, CLI_MDX_PATH);
@@ -595,7 +626,7 @@ describe('docs:generate', () => {
         execSync(DOCS_GENERATE_CMD, {
           cwd: ROOT,
           encoding: 'utf-8',
-          timeout: 30000,
+          timeout: 60000,
         });
 
         const cliPath = join(ROOT, CLI_MDX_PATH);

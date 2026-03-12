@@ -19,7 +19,6 @@ import { join, dirname } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { execSync } from 'child_process';
 import * as ts from 'typescript';
-import escapeHtml from 'escape-html';
 // Note: Using Zod 4's native .toJSONSchema() instead of zod-to-json-schema library
 // which doesn't support Zod 4
 
@@ -46,6 +45,12 @@ import {
   getDocsVisibleManifest,
   type PublicCommand,
 } from '../packages/@lumenflow/cli/src/public-manifest.ts';
+import {
+  allTools,
+  registeredTools,
+  runtimeTaskTools,
+} from '../packages/@lumenflow/mcp/dist/tools.js';
+import type { ToolDefinition } from '../packages/@lumenflow/mcp/dist/tools-shared.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -78,6 +83,12 @@ interface ConfigSection {
   fields: ConfigField[];
 }
 
+interface McpCategory {
+  title: string;
+  description: string;
+  matcher: (tool: ToolDefinition) => boolean;
+}
+
 function pickExampleFlag(opt: WUOption): string {
   const parts = opt.flags.split(',').map((part) => part.trim());
   const longFlag = parts.find((part) => part.startsWith('--'));
@@ -96,6 +107,14 @@ function buildExampleCommand(cmd: CommandMetadata): string {
 
   const suffix = requiredFlags.length ? ` ${requiredFlags.join(' ')}` : '';
   return `pnpm ${cmd.pnpmCommand}${suffix}`;
+}
+
+function escapeMdxTableCell(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\|/g, '\\|');
 }
 
 // ============================================================================
@@ -658,15 +677,239 @@ function extractConfigSchema(): ConfigSection[] {
   return sections;
 }
 
+function getToolCategoryDefinitions(): McpCategory[] {
+  const runtimeToolNames = new Set(runtimeTaskTools.map((tool) => tool.name));
+
+  return [
+    {
+      title: 'Core WU Operations',
+      description: 'Context and primary WU lifecycle operations.',
+      matcher: (tool) =>
+        runtimeToolNames.has(tool.name) === false &&
+        [
+          'context_get',
+          'wu_list',
+          'wu_status',
+          'wu_create',
+          'wu_claim',
+          'wu_done',
+          'gates_run',
+        ].includes(tool.name),
+    },
+    {
+      title: 'Extended WU Lifecycle',
+      description: 'WU maintenance, recovery, prep, and cleanup flows.',
+      matcher: (tool) =>
+        runtimeToolNames.has(tool.name) === false &&
+        tool.name.startsWith('wu_') &&
+        !['wu_list', 'wu_status', 'wu_create', 'wu_claim', 'wu_done'].includes(tool.name),
+    },
+    {
+      title: 'Initiatives',
+      description: 'Initiative planning, assignment, and status operations.',
+      matcher: (tool) => tool.name.startsWith('initiative_'),
+    },
+    {
+      title: 'Memory',
+      description: 'Session memory, checkpoints, recovery, and coordination flows.',
+      matcher: (tool) => tool.name.startsWith('mem_'),
+    },
+    {
+      title: 'Agent',
+      description: 'Agent session lifecycle and issue capture operations.',
+      matcher: (tool) => tool.name.startsWith('agent_'),
+    },
+    {
+      title: 'Orchestration & Delegation',
+      description: 'Initiative orchestration, monitoring, and delegation helpers.',
+      matcher: (tool) =>
+        tool.name.startsWith('orchestrate_') || tool.name.startsWith('delegation_'),
+    },
+    {
+      title: 'Flow & Metrics',
+      description: 'Flow analysis and metrics tooling.',
+      matcher: (tool) =>
+        tool.name.startsWith('flow_') ||
+        tool.name.startsWith('metrics') ||
+        tool.name === 'lumenflow_metrics',
+    },
+    {
+      title: 'Validation',
+      description: 'Validation and health-check operations.',
+      matcher: (tool) => tool.name.startsWith('validate'),
+    },
+    {
+      title: 'Setup & Bootstrap',
+      description: 'Initialization, onboarding, and environment setup flows.',
+      matcher: (tool) =>
+        tool.name.startsWith('lumenflow_') ||
+        ['lumenflow', 'onboard', 'workspace_init', 'cloud_connect'].includes(tool.name),
+    },
+    {
+      title: 'Parity & Utilities',
+      description: 'File, git, plan, state, config, and parity helpers.',
+      matcher: (tool) =>
+        runtimeToolNames.has(tool.name) === false &&
+        ![
+          'context_get',
+          'wu_list',
+          'wu_status',
+          'wu_create',
+          'wu_claim',
+          'wu_done',
+          'gates_run',
+        ].includes(tool.name) &&
+        !tool.name.startsWith('wu_') &&
+        !tool.name.startsWith('initiative_') &&
+        !tool.name.startsWith('mem_') &&
+        !tool.name.startsWith('agent_') &&
+        !tool.name.startsWith('orchestrate_') &&
+        !tool.name.startsWith('delegation_') &&
+        !tool.name.startsWith('flow_') &&
+        !tool.name.startsWith('metrics') &&
+        tool.name !== 'lumenflow_metrics' &&
+        !tool.name.startsWith('validate') &&
+        !tool.name.startsWith('lumenflow_') &&
+        !['lumenflow', 'onboard', 'workspace_init', 'cloud_connect'].includes(tool.name),
+    },
+    {
+      title: 'Runtime Task Tools',
+      description: 'Kernel runtime task lifecycle tools.',
+      matcher: (tool) => runtimeToolNames.has(tool.name),
+    },
+  ];
+}
+
+function extractToolInputFields(tool: ToolDefinition): Array<{
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+}> {
+  const schema = tool.inputSchema as unknown as { toJSONSchema?: () => Record<string, unknown> };
+  const jsonSchema = schema.toJSONSchema?.();
+
+  if (!jsonSchema || typeof jsonSchema !== 'object' || !('properties' in jsonSchema)) {
+    return [];
+  }
+
+  const properties = jsonSchema.properties as Record<string, unknown>;
+  const requiredFields = new Set(
+    Array.isArray((jsonSchema as { required?: unknown }).required)
+      ? (((jsonSchema as { required?: unknown }).required as string[]) ?? [])
+      : [],
+  );
+
+  return Object.entries(properties).map(([name, rawField]) => {
+    const field = rawField as {
+      type?: string;
+      description?: string;
+      enum?: string[];
+      items?: { type?: string };
+      anyOf?: Array<{ type?: string }>;
+    };
+
+    let type = field.type ?? 'unknown';
+    if (Array.isArray(field.enum) && field.enum.length > 0) {
+      type = field.enum.map((value) => `"${value}"`).join(' | ');
+    } else if (type === 'array' && field.items?.type) {
+      type = `${field.items.type}[]`;
+    } else if (Array.isArray(field.anyOf) && field.anyOf.length > 0) {
+      type = field.anyOf.map((entry) => entry.type ?? 'unknown').join(' | ');
+    }
+
+    return {
+      name,
+      type,
+      required: requiredFields.has(name),
+      description: field.description ?? '',
+    };
+  });
+}
+
+function generateMcpMdx(tools: ToolDefinition[]): string {
+  const categoryDefinitions = getToolCategoryDefinitions();
+  const groupedTools = categoryDefinitions
+    .map((category) => ({
+      ...category,
+      tools: tools.filter(category.matcher).sort((a, b) => a.name.localeCompare(b.name)),
+    }))
+    .filter((category) => category.tools.length > 0);
+
+  const lines: string[] = [
+    '---',
+    'title: MCP Server Reference',
+    'description: Generated reference for the LumenFlow MCP tool surface',
+    '---',
+    '',
+    '{/* AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY */}',
+    '{/* Run `pnpm docs:generate` to regenerate from source */}',
+    '',
+    "import { Aside } from '@astrojs/starlight/components';",
+    '',
+    `The MCP server exposes **${registeredTools.length} tools** from the live registry.`,
+    '',
+    `<Aside type="tip">`,
+    `The inventory below is generated from \`packages/@lumenflow/mcp/src/tools.ts\` and stays aligned with the runtime tool registry.`,
+    `</Aside>`,
+    '',
+    '## Registry Summary',
+    '',
+    `The current registry contains **${registeredTools.length} tools** (${allTools.length} in the core \`allTools\` registry plus ${runtimeTaskTools.length} runtime task tools).`,
+    '',
+    '| Category | Count | Description |',
+    '| --- | ---: | --- |',
+  ];
+
+  for (const category of groupedTools) {
+    lines.push(
+      `| ${category.title} | ${category.tools.length} | ${escapeMdxTableCell(category.description)} |`,
+    );
+  }
+
+  lines.push('', '## Tool Reference', '');
+
+  for (const category of groupedTools) {
+    lines.push(`## ${category.title}`, '');
+    lines.push(category.description, '');
+
+    for (const tool of category.tools) {
+      lines.push(`### ${tool.name}`, '');
+      lines.push(tool.description, '');
+
+      const inputFields = extractToolInputFields(tool);
+      if (inputFields.length === 0) {
+        lines.push('**Input:** None', '');
+      } else {
+        lines.push('**Input:**', '');
+        lines.push('| Parameter | Type | Required | Description |');
+        lines.push('| --- | --- | --- | --- |');
+        for (const field of inputFields) {
+          lines.push(
+            `| \`${escapeMdxTableCell(field.name)}\` | ${escapeMdxTableCell(field.type)} | ${
+              field.required ? 'Yes' : 'No'
+            } | ${escapeMdxTableCell(field.description)} |`,
+          );
+        }
+        lines.push('');
+      }
+    }
+  }
+
+  lines.push('---', '', '## Next Steps', '');
+  lines.push('- [CLI Commands](/reference/cli) – Public command reference');
+  lines.push('- [Kernel Runtime](/kernel/runtime) – Tool execution pipeline');
+  lines.push('- [Tool Execution](/kernel/tool-execution) – Dispatch and sandboxing');
+  lines.push('');
+
+  return lines.join('\n');
+}
+
 // ============================================================================
 // Generate CLI Reference MDX
 // ============================================================================
 
 export function generateCliMdx(commands: CommandMetadata[]): string {
-  function escapeMdxTableCell(value: string): string {
-    return escapeHtml(value).replace(/\|/g, '\\|');
-  }
-
   const lines: string[] = [
     '---',
     'title: CLI Commands',
@@ -754,10 +997,6 @@ export function generateCliMdx(commands: CommandMetadata[]): string {
 // ============================================================================
 
 function generateConfigMdx(sections: ConfigSection[]): string {
-  function escapeMdxTableCell(value: string): string {
-    return value.replace(/\|/g, '\\|');
-  }
-
   const lines: string[] = [
     '---',
     'title: Configuration',
@@ -1257,9 +1496,9 @@ function formatGeneratedFiles(...filePaths: string[]) {
   }
 }
 
-function formatContent(content: string): string {
+function formatContent(content: string, filePath: string): string {
   try {
-    const result = execSync('npx prettier --stdin --stdin-filepath=.mdx', {
+    const result = execSync(`npx prettier --stdin --stdin-filepath="${filePath}"`, {
       cwd: ROOT,
       input: content,
       encoding: 'utf-8',
@@ -1306,6 +1545,9 @@ async function main() {
   console.log('📝 Generating config reference...');
   const configMdx = generateConfigMdx(configSections);
 
+  console.log('📝 Generating MCP reference...');
+  const mcpMdx = generateMcpMdx(registeredTools);
+
   // WU-1371: Generate README.md from same data
   console.log('📝 Generating CLI README.md...');
   const readmeMd = generateReadmeMd(allCommands);
@@ -1313,13 +1555,15 @@ async function main() {
   // Output paths
   const cliPath = join(ROOT, 'apps/docs/src/content/docs/reference/cli.mdx');
   const configPath = join(ROOT, 'apps/docs/src/content/docs/reference/config.mdx');
+  const mcpPath = join(ROOT, 'apps/docs/src/content/docs/reference/mcp.mdx');
   const readmePath = join(ROOT, 'packages/@lumenflow/cli/README.md');
 
   if (validateOnly) {
     // Format the generated content to match what would be written to files
-    const formattedCliMdx = formatContent(cliMdx);
-    const formattedConfigMdx = formatContent(configMdx);
-    const formattedReadmeMd = formatContent(readmeMd);
+    const formattedCliMdx = formatContent(cliMdx, cliPath);
+    const formattedConfigMdx = formatContent(configMdx, configPath);
+    const formattedMcpMdx = formatContent(mcpMdx, mcpPath);
+    const formattedReadmeMd = formatContent(readmeMd, readmePath);
 
     // Compare with existing files
     let hasChanges = false;
@@ -1347,6 +1591,19 @@ async function main() {
       }
     } else {
       console.log('❌ Config docs file does not exist');
+      hasChanges = true;
+    }
+
+    if (existsSync(mcpPath)) {
+      const existing = readFileSync(mcpPath, 'utf-8');
+      if (existing !== formattedMcpMdx) {
+        console.log('❌ MCP docs are out of sync');
+        hasChanges = true;
+      } else {
+        console.log('✅ MCP docs are up to date');
+      }
+    } else {
+      console.log('❌ MCP docs file does not exist');
       hasChanges = true;
     }
 
@@ -1381,12 +1638,15 @@ async function main() {
   writeFileSync(configPath, configMdx);
   console.log(`   ✅ Written: ${configPath}`);
 
+  writeFileSync(mcpPath, mcpMdx);
+  console.log(`   ✅ Written: ${mcpPath}`);
+
   // WU-1371: Write README.md
   writeFileSync(readmePath, readmeMd);
   console.log(`   ✅ Written: ${readmePath}`);
 
   // Format generated files to prevent format:check failures
-  formatGeneratedFiles(cliPath, configPath, readmePath);
+  formatGeneratedFiles(cliPath, configPath, mcpPath, readmePath);
 
   console.log('\n✅ Documentation generated successfully\n');
   console.log('Next steps:');

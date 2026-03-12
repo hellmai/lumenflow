@@ -14,6 +14,7 @@ LumenFlow automatically generates CLI and configuration reference documentation 
 | ---------------- | --------------------------------------------------------- | ------------------------------------------------- |
 | CLI Reference    | `packages/@lumenflow/cli/src/**`                          | `apps/docs/src/content/docs/reference/cli.mdx`    |
 | Config Reference | `packages/@lumenflow/core/src/lumenflow-config-schema.ts` | `apps/docs/src/content/docs/reference/config.mdx` |
+| MCP Reference    | `packages/@lumenflow/mcp/src/tools.ts`                    | `apps/docs/src/content/docs/reference/mcp.mdx`    |
 
 ## Example Tagging Conventions
 
@@ -144,8 +145,9 @@ This runs `tools/generate-cli-docs.ts` which:
 1. Extracts command metadata from CLI package.json bin entries
 2. Imports WU_OPTIONS from `@lumenflow/core` for option definitions
 3. Extracts config schemas using Zod 4's native `toJSONSchema()`
-4. Generates MDX files with tables and code blocks
-5. Formats output with Prettier
+4. Reads the built MCP tool registry from `packages/@lumenflow/mcp/dist/tools.js`
+5. Generates MDX files with tables and code blocks
+6. Formats output with Prettier
 
 ### Validate Documentation
 
@@ -176,7 +178,8 @@ The generator is integrated into Turbo for caching:
   ],
   "outputs": [
     "apps/docs/src/content/docs/reference/cli.mdx",
-    "apps/docs/src/content/docs/reference/config.mdx"
+    "apps/docs/src/content/docs/reference/config.mdx",
+    "apps/docs/src/content/docs/reference/mcp.mdx"
   ]
 }
 ```
@@ -191,7 +194,7 @@ The generator is integrated into Turbo for caching:
 
 ## Output Files
 
-The generator produces two MDX files:
+The generator produces three MDX files:
 
 ### CLI Reference (`cli.mdx`)
 
@@ -206,6 +209,13 @@ The generator produces two MDX files:
 - Each config section documented with fields, types, defaults
 - Environment variable overrides documented
 - Validation command shown
+
+### MCP Reference (`mcp.mdx`)
+
+- Generated from the live MCP tool registry in `packages/@lumenflow/mcp/src/tools.ts`
+- Category counts derived from the registered tool set at generation time
+- Per-tool headings and input parameter tables generated from tool schemas
+- Validation fails if the committed MCP reference drifts from the registry
 
 ---
 

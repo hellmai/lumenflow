@@ -498,6 +498,7 @@ describe('public docs parity', () => {
     const coreToolCount = allTools.length;
     const runtimeToolCount = runtimeTaskTools.length;
 
+    expect(publicMcpReference).toContain('{/* AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY */}');
     expect(publicMcpReference).toContain(`**${registeredToolCount} tools**`);
     expect(publicMcpReference).toContain(
       `(${coreToolCount} in the core \`allTools\` registry plus ${runtimeToolCount} runtime task tools)`,
