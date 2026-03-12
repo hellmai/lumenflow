@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml) — Content: Specs Governance
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -42,6 +41,7 @@ sections:
 
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml) — Framework: CLI WU Commands
 - [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
+- [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml) — Content: Specs Governance
 
 ## ⛔ Blocked
 

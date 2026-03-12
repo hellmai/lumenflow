@@ -2,7 +2,7 @@ id: WU-2424
 title: Delete stale CLI sizing guide copy and add review/audit sizing patterns
 lane: 'Content: Specs Governance'
 type: refactor
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - docs/operations/_frameworks/lumenflow/wu-sizing-guide.md
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -26,8 +27,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Two items: (1) WU-2398 missed the shadow copy at packages/@lumenflow/cli/docs/_frameworks/lumenflow/agent/onboarding/wu-sizing-guide.md - delete it. (2) The canonical sizing guide lacks patterns for exploration/audit WUs that need massive parallelism from the first pass (e.g. 8-agent code reviews). Add a section addressing multi-agent review patterns, agent ambition calibration, and how to avoid the multiple-passes problem.'
+description: 'Two items: (1) WU-2398 missed the shadow copy at
+  packages/@lumenflow/cli/docs/_frameworks/lumenflow/agent/onboarding/wu-sizing-guide.md - delete
+  it. (2) The canonical sizing guide lacks patterns for exploration/audit WUs that need massive
+  parallelism from the first pass (e.g. 8-agent code reviews). Add a section addressing multi-agent
+  review patterns, agent ambition calibration, and how to avoid the multiple-passes problem.'
 acceptance:
   - Shadow copy at packages/@lumenflow/cli/docs/ deleted
   - Canonical sizing guide has a section on review/audit/exploration WU patterns
   - Guide addresses multi-agent parallelism from first pass (no multiple-passes needed)
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2424
+claimed_at: 2026-03-12T13:08:51.655Z
+baseline_main_sha: cffba200bc5d93c6e67c87353b2b118127c4eb0d
+session_id: 872ebb2a-eebe-42f9-abee-15c818a6f6a3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T13:08:51.662Z

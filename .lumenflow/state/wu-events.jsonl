@@ -3300,3 +3300,4 @@
 {"type":"claim","wuId":"WU-2423","timestamp":"2026-03-12T13:02:17.853Z","lane":"Framework: CLI WU Commands","title":"Add --title flag to wu:edit"}
 {"type":"complete","wuId":"WU-2409","timestamp":"2026-03-12T13:05:05.316Z"}
 {"type":"claim","wuId":"WU-2410","timestamp":"2026-03-12T13:06:19.101Z","lane":"Framework: Core Lifecycle","title":"Scaffold the agent-runtime pack"}
+{"type":"claim","wuId":"WU-2424","timestamp":"2026-03-12T13:08:51.695Z","lane":"Content: Specs Governance","title":"Delete stale CLI sizing guide copy and add review/audit sizing patterns"}
