@@ -3380,15 +3380,6 @@
 {"type":"complete","wuId":"WU-2428","timestamp":"2026-03-12T17:51:04.884Z"}
 {"type":"complete","wuId":"WU-2427","timestamp":"2026-03-12T17:52:37.049Z"}
 {"type":"claim","wuId":"WU-2429","timestamp":"2026-03-12T17:56:00.750Z","lane":"Content: Site Comms","title":"Audit and align command, MCP, and pack docs surfaces"}
-{"type":"claim","wuId":"WU-2430","timestamp":"2026-03-12T18:02:34.656Z","lane":"Operations: Automation","title":"Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows"}
-{"type":"checkpoint","wuId":"WU-2430","timestamp":"2026-03-12T18:02:45.657Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2430","timestamp":"2026-03-12T18:03:14.759Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
-{"type":"complete","wuId":"WU-2430","timestamp":"2026-03-12T18:06:48.640Z"}
-{"type":"claim","wuId":"WU-2431","timestamp":"2026-03-12T18:09:16.434Z","lane":"Operations: Automation","title":"Add Discord CI notifications to ci.yml"}
-{"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:09:27.313Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:09:54.400Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
-{"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:10:51.844Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2431.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"complete","wuId":"WU-2431","timestamp":"2026-03-12T18:11:57.079Z"}
 {"type":"checkpoint","wuId":"WU-2429","timestamp":"2026-03-12T17:56:11.753Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2429","timestamp":"2026-03-12T17:56:17.993Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"claim","wuId":"WU-2430","timestamp":"2026-03-12T18:02:34.656Z","lane":"Operations: Automation","title":"Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows"}
@@ -3409,3 +3400,4 @@
 {"type":"checkpoint","wuId":"WU-2432","timestamp":"2026-03-12T18:35:29.834Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2432","timestamp":"2026-03-12T18:39:20.251Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2432.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2432","timestamp":"2026-03-12T18:39:39.658Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2432.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2432","timestamp":"2026-03-12T18:40:41.778Z"}
