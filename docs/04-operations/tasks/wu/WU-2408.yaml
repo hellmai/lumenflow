@@ -2,7 +2,7 @@ id: WU-2408
 title: Expose policy substrate for governed agent turns
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/kernel/src/pack/
 tests:
   manual:
-    - Validate approval-required, execution metadata, and factory-load failure behavior during runtime startup
+    - Validate approval-required, execution metadata, and factory-load failure behavior during
+      runtime startup
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
   e2e: []
@@ -39,9 +40,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Add the runtime policy capabilities required for intent-gated agent execution, including manifest support and resolved pack config delivery into policy evaluation.
+description: Add the runtime policy capabilities required for intent-gated agent execution,
+  including manifest support and resolved pack config delivery into policy evaluation.
 acceptance:
   - Manifest-authored policies support approval_required
   - execution_metadata is propagated into PolicyEvaluationContext
   - Manifest supports policy_factory with startup-blocking validation
   - policy_factory receives resolved pack config
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2408
+claimed_at: 2026-03-12T12:20:15.130Z
+baseline_main_sha: df7ee16547f2b292858d7217910984863fbdfda9
+session_id: 601fa753-0706-400d-b283-7ad21e244a4f
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T12:20:15.139Z
