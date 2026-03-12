@@ -1,0 +1,188 @@
+id: agent-runtime
+version: 0.1.0
+config_key: agent_runtime
+config_schema: config.schema.json
+task_types:
+  - agent-session
+tools:
+  - name: agent:execute-turn
+    entry: tool-impl/agent-turn-tools.ts#agentExecuteTurnTool
+    permission: write
+    required_scopes:
+      - type: path
+        pattern: .agent-runtime/**
+        access: read
+      - type: path
+        pattern: .agent-runtime/**
+        access: write
+      - type: network
+        posture: allowlist
+        allowlist_entries:
+          - model-provider.invalid:443
+    required_env:
+      - AGENT_RUNTIME_API_KEY
+      - AGENT_RUNTIME_BASE_URL
+    input_schema:
+      type: object
+      properties:
+        session_id:
+          type: string
+          minLength: 1
+        model_profile:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          enum:
+            - https://model-provider.invalid/
+        messages:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum:
+                  - system
+                  - user
+                  - assistant
+                  - tool
+              content:
+                type: string
+              tool_name:
+                type: string
+              tool_call_id:
+                type: string
+            required:
+              - role
+              - content
+            additionalProperties: false
+        tool_catalog:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 1
+              description:
+                type: string
+                minLength: 1
+              input_schema:
+                type: object
+                additionalProperties: true
+            required:
+              - name
+              - description
+            additionalProperties: false
+        intent_catalog:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                minLength: 1
+              description:
+                type: string
+                minLength: 1
+            required:
+              - id
+              - description
+            additionalProperties: false
+        limits:
+          type: object
+          properties:
+            max_turns_per_session:
+              type: integer
+              minimum: 1
+            max_tool_calls_per_session:
+              type: integer
+              minimum: 1
+            max_input_bytes:
+              type: integer
+              minimum: 1
+          additionalProperties: false
+      required:
+        - session_id
+        - model_profile
+        - url
+        - messages
+      additionalProperties: false
+    output_schema:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - reply
+            - tool_request
+            - complete
+            - escalate
+        intent:
+          type: string
+          minLength: 1
+        assistant_message:
+          type: string
+        requested_tool:
+          type: object
+          properties:
+            name:
+              type: string
+              minLength: 1
+            input:
+              type: object
+              additionalProperties: true
+          required:
+            - name
+            - input
+          additionalProperties: false
+        provider:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum:
+                - openai_compatible
+            model:
+              type: string
+              minLength: 1
+          required:
+            - kind
+            - model
+          additionalProperties: false
+        usage:
+          type: object
+          properties:
+            input_tokens:
+              type: integer
+              minimum: 0
+            output_tokens:
+              type: integer
+              minimum: 0
+            total_tokens:
+              type: integer
+              minimum: 0
+          additionalProperties: false
+        finish_reason:
+          type: string
+          minLength: 1
+      required:
+        - status
+        - intent
+        - assistant_message
+        - provider
+        - finish_reason
+      additionalProperties: false
+policies:
+  - id: agent-runtime.policy.default
+    trigger: on_tool_request
+    decision: allow
+    reason: Scaffold baseline until agent-runtime policy rules are enabled.
+evidence_types:
+  - agent-runtime.turn
+  - agent-runtime.provider-call
+state_aliases:
+  paused: waiting
+lane_templates: []

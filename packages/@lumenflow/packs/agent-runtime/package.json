@@ -1,0 +1,57 @@
+{
+  "name": "@lumenflow/packs-agent-runtime",
+  "version": "3.17.7",
+  "description": "Agent runtime pack scaffold for LumenFlow — governed model-turn execution, pack config, and provider capability baselines",
+  "keywords": [
+    "lumenflow",
+    "pack",
+    "agent-runtime",
+    "orchestration",
+    "policy"
+  ],
+  "homepage": "https://github.com/hellmai/lumenflow-dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hellmai/lumenflow-dev.git",
+    "directory": "packages/@lumenflow/packs/agent-runtime"
+  },
+  "license": "AGPL-3.0-only",
+  "author": {
+    "name": "HellmAI",
+    "url": "https://hellm.ai"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./tools": "./dist/tools/index.js",
+    "./tool-impl": "./dist/tool-impl/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "manifest.yaml",
+    "config.schema.json",
+    "LICENSE.md",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist *.tgz",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@lumenflow/kernel": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

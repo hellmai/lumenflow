@@ -7,7 +7,7 @@ import { Aside, FileTree } from '@astrojs/starlight/components';
 
 A **pack** is a self-contained plugin that teaches the [kernel](/kernel/runtime) how to work in a specific domain. The kernel itself is domain-agnostic — it provides scope enforcement, policy evaluation, evidence recording, and tool dispatch. Packs provide the actual tools, policies, and evidence types for a particular workflow.
 
-## Software Delivery Pack (Pack #1)
+## Shipped Pack: Software Delivery
 
 LumenFlow ships with the **Software Delivery Pack** built in. It provides 90+ tools for software development workflows:
 
@@ -109,9 +109,14 @@ LumenFlow is pack-first. The shipped production pack is:
 | Pack                | Domain                         | Status               |
 | ------------------- | ------------------------------ | -------------------- |
 | `software-delivery` | Software development workflows | Production (pack #1) |
+| `agent-runtime`     | Governed `agent-session` turns | In development       |
 
 Additional domains are expected to be delivered as fully implemented packs from the same manifest
 contract, loaded from local paths, git sources, or registries.
+
+The `agent-runtime` pack currently exists as a scaffold in the monorepo. It establishes the
+configuration namespace, the `agent:execute-turn` tool contract, static provider network scopes,
+and the pack loading surface that later work units expand into full provider-backed execution.
 
 ## Tool Implementation Pattern
 

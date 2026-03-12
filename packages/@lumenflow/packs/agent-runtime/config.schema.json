@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "default_model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "intents": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "max_turns_per_session": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tool_calls_per_session": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_input_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["default_model", "models"],
+  "additionalProperties": false
+}

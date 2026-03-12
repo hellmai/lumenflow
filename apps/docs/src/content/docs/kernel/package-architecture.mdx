@@ -43,7 +43,7 @@ kernel: "@lumenflow/kernel" {
   style.stroke: "#e65100"
 }
 
-pack: "software-delivery pack" {
+pack: "domain packs" {
   style.fill: "#f3e5f5"
   style.stroke: "#7b1fa2"
 }
@@ -79,7 +79,7 @@ pack -> cli: "runtime import\n(via adapter)" {
 }
 ```
 
-The CLI package sits at the top of the dependency graph. Leaf packages (core, memory, agent, metrics, initiatives) are independently buildable. The kernel is standalone with minimal external dependencies. The pack has a unique dual relationship: it imports kernel types at compile time, but loads CLI modules at runtime via the [runtime CLI adapter](/kernel/tool-execution#runtime-cli-adapter-deep-dive).
+The CLI package sits at the top of the dependency graph. Leaf packages (core, memory, agent, metrics, initiatives) are independently buildable. The kernel is standalone with minimal external dependencies. Domain packs have a unique dual relationship: they import kernel types at compile time, but can also load runtime helpers via pack-specific adapters when needed.
 
 ## Package Reference
 
@@ -96,6 +96,7 @@ The CLI package sits at the top of the dependency graph. Leaf packages (core, me
 | `@lumenflow/mcp`         | `packages/@lumenflow/mcp`                     | MCP (Model Context Protocol) server for AI agent integration                                 | kernel                                            |
 | `@lumenflow/shims`       | `packages/@lumenflow/shims`                   | Git safety shims (pre-commit, pre-push hooks)                                                | (none)                                            |
 | `software-delivery`      | `packages/@lumenflow/packs/software-delivery` | 90+ tool implementations for software development workflows                                  | kernel (types only)                               |
+| `agent-runtime`          | `packages/@lumenflow/packs/agent-runtime`     | Governed model-turn runtime scaffold for `agent-session` execution                           | kernel (types only)                               |
 
 <Aside type="note">
   The leaf packages (core, memory, agent, metrics, initiatives) have minimal external dependencies
