@@ -2,7 +2,7 @@ id: WU-2422
 title: Remove leftover docs/04-operations shadow directory
 lane: 'Content: Specs Governance'
 type: chore
-status: in_progress
+status: done
 priority: P3
 created: 2026-03-12
 code_paths:
@@ -38,3 +38,6 @@ description: WU-2421 left behind a shadow docs/04-operations/ with 3 stale files
   docs/operations/, these should be removed.
 acceptance:
   - docs/04-operations directory no longer exists on main
+locked: true
+completed_at: 2026-03-12T12:47:00.058Z
+completed: 2026-03-12

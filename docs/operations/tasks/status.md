@@ -5,7 +5,6 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml)
-- [WU-2422 — Remove leftover docs/04-operations shadow directory](wu/WU-2422.yaml)
 
 ## Completed
 
@@ -1328,3 +1327,4 @@ _Last updated: 2026-03-12_
 - [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — 2026-03-12
 - [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — 2026-03-12
 - [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml) — 2026-03-12
+- [WU-2422 — Remove leftover docs/04-operations shadow directory](wu/WU-2422.yaml) — 2026-03-12
