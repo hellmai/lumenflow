@@ -2,7 +2,7 @@ id: WU-2416
 title: Add multi-provider adapter support
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -39,9 +39,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Support multiple provider adapter families behind stable pack contracts while keeping request and response normalization internal to the pack.
+description: Support multiple provider adapter families behind stable pack contracts while keeping
+  request and response normalization internal to the pack.
 acceptance:
   - The pack supports more than one provider adapter family
   - Adapter selection is config-driven
   - Request and response normalization remains internal to the pack
   - Tests cover provider-specific edge cases and shared contract invariants
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2416
+claimed_at: 2026-03-12T16:01:02.967Z
+baseline_main_sha: f303597af18c771959c9494774d3a45734169253
+session_id: 1a44e830-af12-4d32-8a62-5827da56bacb
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T16:01:02.974Z

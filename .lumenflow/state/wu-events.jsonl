@@ -3349,3 +3349,4 @@
 {"type":"checkpoint","wuId":"WU-2415","timestamp":"2026-03-12T15:37:24.036Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2415.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2415","timestamp":"2026-03-12T15:38:30.569Z"}
 {"type":"checkpoint","wuId":"WU-2419","timestamp":"2026-03-12T15:58:58.587Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2419.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"claim","wuId":"WU-2416","timestamp":"2026-03-12T16:01:02.996Z","lane":"Framework: Core Lifecycle","title":"Add multi-provider adapter support"}
