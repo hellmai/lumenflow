@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
 - [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — Framework: Core Lifecycle
 - [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
 - [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml) — Content: Framework Docs
