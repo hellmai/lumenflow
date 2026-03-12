@@ -5,7 +5,7 @@ description: Deliver a governed agent-runtime pack for LumenFlow with kernel-bac
   runtime pack-config plumbing, sandboxed credential handling, provider-neutral turn execution,
   policy-aware tool filtering, streaming and evidence support, and pack-owned agent-session
   orchestration including suspend/resume, branching, and scheduled routines.
-status: in_progress
+status: done
 priority: P1
 owner: tom
 created: 2026-03-12
@@ -21,7 +21,7 @@ phases:
     status: done
   - id: 4
     title: 'Phase 4: Full agent-session orchestration'
-    status: in_progress
+    status: done
 success_metrics:
   - ADR defines the agent-runtime architecture boundary, task model, and orchestration cut-line.
   - Kernel runtime supports resolved pack config, manifest-level env allowlisting, and

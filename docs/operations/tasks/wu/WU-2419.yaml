@@ -2,7 +2,7 @@ id: WU-2419
 title: Publish final docs, examples, and positioning for agent-runtime
 lane: 'Content: Framework Docs'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -60,3 +60,6 @@ acceptance:
   - Positioning language stays technical and describes governed execution without external
     comparisons
   - ADR and final docs cross-link correctly in the target arc42 layout
+locked: true
+completed_at: 2026-03-12T17:22:44.107Z
+completed: 2026-03-12
