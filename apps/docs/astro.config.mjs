@@ -132,6 +132,27 @@ export default defineConfig({
           label: 'Packs',
           items: [
             {
+              label: 'Agent Runtime Pack',
+              items: [
+                {
+                  label: 'Overview',
+                  slug: 'packs/agent-runtime',
+                },
+                {
+                  label: 'Runtime Boundary',
+                  slug: 'packs/agent-runtime/overview',
+                },
+                {
+                  label: 'Configuration',
+                  slug: 'packs/agent-runtime/configuration',
+                },
+                {
+                  label: 'Workflows & Examples',
+                  slug: 'packs/agent-runtime/workflows',
+                },
+              ],
+            },
+            {
               label: 'Software Delivery Pack',
               items: [
                 {

@@ -14,7 +14,8 @@ tests:
     - Open /packs/agent-runtime/ from the Packs sidebar on the built docs site.
     - Open /releases/ and verify latest stable is 3.18.0.
     - Open /reference/changelog/ and verify 3.18.0 is marked latest.
-  unit: []
+  unit:
+    - apps/docs/__tests__/site-docs.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2428.done
@@ -24,7 +25,11 @@ phase: 4
 spec_refs:
   - docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md
 risks: []
-notes: ''
+notes: 'Implements public docs discoverability and release metadata fixes for the
+  post-INIT-52 release surface. Work is limited to docs navigation and release/changelog
+  content; deployment follows the standard docs release flow after the WU is merged.
+  Verification includes a focused docs test at apps/docs/__tests__/site-docs.test.ts
+  plus docs build and docs-only gates.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
