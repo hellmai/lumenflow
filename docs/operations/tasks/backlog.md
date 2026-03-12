@@ -40,7 +40,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
@@ -1369,6 +1368,7 @@ sections:
 - [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml)
 - [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml)
 - [WU-2422 — Remove leftover docs/04-operations shadow directory](wu/WU-2422.yaml)
+- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

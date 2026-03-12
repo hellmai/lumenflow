@@ -2,7 +2,7 @@ id: WU-2409
 title: Harden sandbox credential passthrough with env allowlisting
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -54,3 +54,6 @@ session_id: 01a07572-3391-4feb-8cd2-80c9e307e260
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T12:38:32.283Z
+locked: true
+completed_at: 2026-03-12T13:05:00.494Z
+completed: 2026-03-12
