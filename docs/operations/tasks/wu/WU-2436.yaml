@@ -2,7 +2,7 @@ id: WU-2436
 title: Generate MCP reference and tighten docs command policy
 lane: 'Content: Framework Docs'
 type: refactor
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -65,3 +65,6 @@ session_id: a8f8bfa5-d299-4855-9940-a5dad48f5586
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T21:04:46.113Z
+locked: true
+completed_at: 2026-03-12T21:44:02.119Z
+completed: 2026-03-12

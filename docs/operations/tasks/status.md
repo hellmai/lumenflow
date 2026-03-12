@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2436 — Generate MCP reference and tighten docs command policy](wu/WU-2436.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1353,3 +1353,4 @@ _Last updated: 2026-03-12_
 - [WU-2434 — BUG: initiative:edit reads from stale local main, drops fields added via origin](wu/WU-2434.yaml) — 2026-03-12
 - [WU-2435 — Broaden docs example parity coverage](wu/WU-2435.yaml) — 2026-03-12
 - [WU-2438 — BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects](wu/WU-2438.yaml) — 2026-03-12
+- [WU-2436 — Generate MCP reference and tighten docs command policy](wu/WU-2436.yaml) — 2026-03-12
