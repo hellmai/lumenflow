@@ -10,7 +10,6 @@ code_paths:
   - apps/docs/src/content/docs
   - docs/operations/_frameworks/lumenflow
   - packages/@lumenflow/mcp/src
-  - packages/@lumenflow/cli
 tests:
   manual:
     - Open public docs sidebar and verify Agent Runtime, Sidekick, and Software Delivery packs are
