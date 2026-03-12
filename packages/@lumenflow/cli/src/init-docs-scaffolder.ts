@@ -15,12 +15,7 @@ import * as path from 'node:path';
 import { createError, ErrorCodes } from '@lumenflow/core';
 import type { ScaffoldOptions } from './init.js';
 import type { ScaffoldResult } from './init-scaffolding.js';
-import {
-  processTemplate,
-  loadTemplate,
-  createFile,
-  createDirectory,
-} from './init-scaffolding.js';
+import { processTemplate, loadTemplate, createFile, createDirectory } from './init-scaffolding.js';
 import {
   BACKLOG_TEMPLATE,
   STATUS_TEMPLATE,
