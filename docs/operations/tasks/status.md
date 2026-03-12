@@ -5,7 +5,6 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml)
-- [WU-2430 — Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows](wu/WU-2430.yaml)
 
 ## Completed
 
@@ -1346,3 +1345,4 @@ _Last updated: 2026-03-12_
 - [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — 2026-03-12
 - [WU-2428 — Fix published docs navigation and release metadata](wu/WU-2428.yaml) — 2026-03-12
 - [WU-2427 — Migrate CI workflows from GitHub-hosted to self-hosted runners](wu/WU-2427.yaml) — 2026-03-12
+- [WU-2430 — Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows](wu/WU-2430.yaml) — 2026-03-12

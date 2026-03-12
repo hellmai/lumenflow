@@ -3370,10 +3370,6 @@
 {"type":"checkpoint","wuId":"WU-2419","timestamp":"2026-03-12T17:22:07.753Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2419.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2419","timestamp":"2026-03-12T17:22:49.426Z"}
 {"type":"claim","wuId":"WU-2427","timestamp":"2026-03-12T17:40:49.277Z","lane":"Operations: Automation","title":"Migrate CI workflows from GitHub-hosted to self-hosted runners"}
-{"type":"claim","wuId":"WU-2428","timestamp":"2026-03-12T17:41:52.714Z","lane":"Content: Site Comms","title":"Fix published docs navigation and release metadata"}
-{"type":"checkpoint","wuId":"WU-2428","timestamp":"2026-03-12T17:42:05.833Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2428","timestamp":"2026-03-12T17:42:15.945Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
-{"type":"complete","wuId":"WU-2428","timestamp":"2026-03-12T17:51:04.884Z"}
 {"type":"checkpoint","wuId":"WU-2427","timestamp":"2026-03-12T17:41:02.488Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"claim","wuId":"WU-2428","timestamp":"2026-03-12T17:41:52.714Z","lane":"Content: Site Comms","title":"Fix published docs navigation and release metadata"}
 {"type":"checkpoint","wuId":"WU-2428","timestamp":"2026-03-12T17:42:05.833Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
@@ -3387,3 +3383,4 @@
 {"type":"claim","wuId":"WU-2430","timestamp":"2026-03-12T18:02:34.656Z","lane":"Operations: Automation","title":"Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows"}
 {"type":"checkpoint","wuId":"WU-2430","timestamp":"2026-03-12T18:02:45.657Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2430","timestamp":"2026-03-12T18:03:14.759Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"complete","wuId":"WU-2430","timestamp":"2026-03-12T18:06:48.640Z"}

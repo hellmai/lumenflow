@@ -2,7 +2,7 @@ id: WU-2430
 title: Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows
 lane: 'Operations: Automation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -45,3 +45,6 @@ session_id: 13cc4628-9d0f-498e-aa7e-a45b561451bc
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T18:02:34.630Z
+locked: true
+completed_at: 2026-03-12T18:06:43.779Z
+completed: 2026-03-12
