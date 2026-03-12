@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2441 — Validate config examples against live schemas](wu/WU-2441.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1357,3 +1357,4 @@ _Last updated: 2026-03-12_
 - [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml) — 2026-03-12
 - [WU-2439 — Validate MCP example payloads against live tool schemas](wu/WU-2439.yaml) — 2026-03-12
 - [WU-2440 — Validate CLI example flags against live command schemas](wu/WU-2440.yaml) — 2026-03-12
+- [WU-2441 — Validate config examples against live schemas](wu/WU-2441.yaml) — 2026-03-12

@@ -2,7 +2,7 @@ id: WU-2441
 title: Validate config examples against live schemas
 lane: 'Content: Framework Docs'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -53,3 +53,6 @@ session_id: 46fd0cd0-14dc-410e-bb19-2ab6bb46ccda
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T22:22:34.980Z
+locked: true
+completed_at: 2026-03-12T22:28:39.586Z
+completed: 2026-03-12
