@@ -6,7 +6,7 @@ status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
-  - docs/04-operations/adr/
+  - docs/09-architecture-decisions/
   - docs/04-operations/plans/
   - docs/04-operations/tasks/initiatives/
 tests:
@@ -22,9 +22,16 @@ phase: 1
 spec_refs:
   - lumenflow://plans/INIT-52-plan.md
 risks: []
-notes: Architecture-first WU. Verify the target repo ADR path before implementation starts.
+notes: |-
+  Architecture-first WU. Verify the target repo ADR path before implementation starts.
+
+  Verified local ADR path for this repo is docs/09-architecture-decisions/.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T11:43:36.326Z
+worktree_path: worktrees/content-framework-docs-wu-2406
+session_id: bac69047-75bf-4882-9cd3-0b5eb179744f
 exposure: documentation
 sizing_estimate:
   estimated_files: 6
@@ -32,6 +39,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:43:36.332Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -43,11 +53,3 @@ acceptance:
   - ADR defines the kernel-versus-pack boundary and host-versus-pack orchestration split
   - ADR defines agent-session as the only task model for scheduled and resumed execution
   - ADR cross-links the initiative plan and target docs location
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2406
-claimed_at: 2026-03-12T11:43:36.326Z
-baseline_main_sha: aaea1e9536299de1609d201b7dce3303c8848426
-session_id: bac69047-75bf-4882-9cd3-0b5eb179744f
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T11:43:36.332Z
