@@ -17,12 +17,21 @@ artifacts:
   - .lumenflow/stamps/WU-2426.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'WU-2426: Added help-flag fast path in cli-entry.mjs runCliEntry. When --help/-h is in args,
+  uses selectCliEntryPath (existing dist only) instead of ensureCliDist (which can trigger a full
+  build).'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T13:49:24.731Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2426
+session_id: 1fbcad49-d77c-43f8-94de-7ddd4950c135
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T13:49:24.738Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -31,11 +40,3 @@ description: pnpm gates --help runs ensureCliDist which triggers a full pnpm bui
 acceptance:
   - pnpm gates --help shows help without triggering build
   - pnpm gates (no --help) still builds dist if missing
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2426
-claimed_at: 2026-03-12T13:49:24.731Z
-baseline_main_sha: b7d9486725eb286f43caa145b9b77dc881cd7414
-session_id: 1fbcad49-d77c-43f8-94de-7ddd4950c135
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T13:49:24.738Z

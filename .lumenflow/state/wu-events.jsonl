@@ -3321,3 +3321,6 @@
 {"type":"checkpoint","wuId":"WU-2425","timestamp":"2026-03-12T13:45:16.798Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2425","timestamp":"2026-03-12T13:49:10.683Z"}
 {"type":"claim","wuId":"WU-2426","timestamp":"2026-03-12T13:49:24.770Z","lane":"Framework: CLI WU Commands","title":"cli-entry.mjs triggers full build on --help flag"}
+{"type":"checkpoint","wuId":"WU-2426","timestamp":"2026-03-12T13:49:37.466Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2426","timestamp":"2026-03-12T13:50:07.994Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2426","timestamp":"2026-03-12T13:53:19.736Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2426.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
