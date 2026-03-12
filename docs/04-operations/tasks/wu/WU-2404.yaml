@@ -2,7 +2,7 @@ id: WU-2404
 title: Pack manifest resolution returns empty config_key map in consumer installs
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -48,3 +48,6 @@ acceptance:
   - config:set software_delivery keys work in simulated consumer layout
   - Existing monorepo resolution path unchanged
   - Tests cover registry source, local source without path, and missing manifest graceful skip
+locked: true
+completed_at: 2026-03-12T11:07:08.519Z
+completed: 2026-03-12

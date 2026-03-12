@@ -29,7 +29,6 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml) — Framework: Core Lifecycle
 - [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml) — Content: Specs Governance
 
 ## ⛔ Blocked
@@ -1351,6 +1350,7 @@ sections:
 - [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml)
 - [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml)
 - [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml)
+- [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
