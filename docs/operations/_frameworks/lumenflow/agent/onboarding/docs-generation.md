@@ -15,6 +15,32 @@ LumenFlow automatically generates CLI and configuration reference documentation 
 | CLI Reference    | `packages/@lumenflow/cli/src/**`                          | `apps/docs/src/content/docs/reference/cli.mdx`    |
 | Config Reference | `packages/@lumenflow/core/src/lumenflow-config-schema.ts` | `apps/docs/src/content/docs/reference/config.mdx` |
 
+## Example Tagging Conventions
+
+Docs example parity now distinguishes between copy-paste workflow examples and illustrative
+snippets:
+
+- `<!-- lumenflow-example: strict -->` marks a code block as a copy-paste example. Use this when
+  the block is intended to reflect the current command surface and full workflow ordering.
+- `<!-- lumenflow-example: illustrative -->` marks a block as explanatory only. It is still
+  scanned for obvious command drift where practical, but it is excluded from strict workflow checks
+  such as `wu:claim` → `wu:brief` → `wu:prep` → `wu:done`.
+- `<!-- lumenflow-example: historical -->`, `legacy`, and `placeholder` are reserved for
+  compatibility, migration, or incomplete examples that intentionally do not match the current
+  live command surface.
+
+Place the comment immediately above the fenced code block it applies to:
+
+````md
+<!-- lumenflow-example: illustrative -->
+
+```bash
+pnpm wu:status --id WU-123
+```
+````
+
+If no tag is present, shell code blocks are treated as strict by default.
+
 ---
 
 ## Single-Source-of-Truth Pattern

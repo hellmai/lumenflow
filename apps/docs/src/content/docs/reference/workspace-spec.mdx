@@ -256,8 +256,8 @@ The kernel validates `workspace.yaml` against `WorkspaceSpecSchema` (defined in 
 
 ```bash
 # The kernel validates automatically during initialization.
-# For manual validation, use the task:inspect command:
-pnpm task:inspect --workspace-root .
+# There is no separate public CLI validation command for kernel-only workspace specs.
+# Validate by booting the kernel runtime with your workspace.yaml in place.
 ```
 
 ## Relationship to `software_delivery`

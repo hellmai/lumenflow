@@ -22,6 +22,7 @@ git push origin main
 ```bash
 # Claim first, then work in worktree
 pnpm wu:claim --id WU-123 --lane Core
+pnpm wu:brief --id WU-123 --client <client>
 cd worktrees/core-wu-123
 vim src/feature.ts
 git commit -m "feat: add feature"

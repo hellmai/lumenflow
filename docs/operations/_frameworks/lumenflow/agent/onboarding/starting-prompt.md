@@ -124,6 +124,7 @@ cat docs/operations/tasks/wu/WU-XXXX.yaml
 
 # 2. Claim the WU (creates isolated worktree)
 pnpm wu:claim --id WU-XXXX --lane "Lane Name"
+pnpm wu:brief --id WU-XXXX --client <client>
 
 # 3. IMMEDIATELY cd to worktree (CRITICAL!)
 cd worktrees/<lane>-wu-xxxx
@@ -152,6 +153,7 @@ cat docs/operations/tasks/wu/WU-XXXX.yaml
 # 2. Claim in cloud mode (no worktree, sets claimed_mode: branch-pr)
 pnpm wu:claim --id WU-XXXX --lane "Lane Name" --cloud
 # Or: LUMENFLOW_CLOUD=1 pnpm wu:claim --id WU-XXXX --lane "Lane Name"
+pnpm wu:brief --id WU-XXXX --client <client>
 
 # 3. Work on the lane branch (lane/<lane>/wu-xxxx)
 

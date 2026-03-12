@@ -27,6 +27,7 @@ pnpm wu:create \
 
 # Use the generated ID from the output (example: WU-999)
 pnpm wu:claim --id WU-999 --lane "Framework: Core"
+pnpm wu:brief --id WU-999 --client <client>
 cd worktrees/framework-core-wu-999
 
 # Make fix, test, complete
@@ -43,11 +44,13 @@ Work on multiple WUs simultaneously using different lanes:
 ```bash
 # Terminal 1: Framework work
 pnpm wu:claim --id WU-100 --lane "Framework: Core"
+pnpm wu:brief --id WU-100 --client <client>
 cd worktrees/framework-core-wu-100
 # Work here...
 
 # Terminal 2: Documentation work
 pnpm wu:claim --id WU-101 --lane "Content: Documentation"
+pnpm wu:brief --id WU-101 --client <client>
 cd worktrees/content-documentation-wu-101
 # Work here...
 

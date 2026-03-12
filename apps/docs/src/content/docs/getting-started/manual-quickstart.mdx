@@ -260,18 +260,18 @@ LumenFlow manages certain files automatically. Understand which files you own.
 
 Avoid these errors. The left column shows correct behavior. The right column shows mistakes.
 
-| Correct                                     | Mistake                                |
-| ------------------------------------------- | -------------------------------------- |
-| `pnpm wu:create --title "..."`              | Manually creating WU YAML files        |
-| `pnpm wu:claim --id WU-123`                 | Using `git worktree add` directly      |
-| `cd worktrees/experience-ui-wu-123`         | Editing files on main branch           |
-| `pnpm wu:prep --id WU-123` (from worktree)  | Skipping gates                         |
-| `pnpm wu:done --id WU-123` (from main)      | Running `wu:done` from inside worktree |
-| Use relative paths inside worktree          | Using absolute paths to main checkout  |
-| Fix hook failures                           | Using `--no-verify` to skip hooks      |
-| `pnpm wu:edit --id WU-123 --status blocked` | Manually editing WU YAML status field  |
-| Let CLI manage backlog.md                   | Manually editing backlog.md            |
-| Let CLI manage stamps                       | Manually creating `.done` stamp files  |
+| Correct                                        | Mistake                                |
+| ---------------------------------------------- | -------------------------------------- |
+| `pnpm wu:create --title "..."`                 | Manually creating WU YAML files        |
+| `pnpm wu:claim --id WU-123`                    | Using `git worktree add` directly      |
+| `cd worktrees/experience-ui-wu-123`            | Editing files on main branch           |
+| `pnpm wu:prep --id WU-123` (from worktree)     | Skipping gates                         |
+| `pnpm wu:done --id WU-123` (from main)         | Running `wu:done` from inside worktree |
+| Use relative paths inside worktree             | Using absolute paths to main checkout  |
+| Fix hook failures                              | Using `--no-verify` to skip hooks      |
+| `pnpm wu:block --id WU-123 --reason "Blocked"` | Manually editing WU YAML status field  |
+| Let CLI manage backlog.md                      | Manually editing backlog.md            |
+| Let CLI manage stamps                          | Manually creating `.done` stamp files  |
 
 ---
 

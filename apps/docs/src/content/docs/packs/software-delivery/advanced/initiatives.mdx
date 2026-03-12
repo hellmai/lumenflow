@@ -460,7 +460,7 @@ When issues are detected, use these commands to recover:
 pnpm wu:block --id WU-100 --reason "Spawn stuck for 45 minutes"
 
 # For zombie lane locks -- unlock and re-delegate
-pnpm lane:unlock "Framework: Core" --reason "Zombie lock (PID 12345 not running)"
+pnpm wu:unlock-lane --lane "Framework: Core" --reason "Zombie lock (PID 12345 not running)"
 
 # Check the orchestrator inbox for failure signals
 pnpm mem:inbox --wu WU-100 --type spawn_failure

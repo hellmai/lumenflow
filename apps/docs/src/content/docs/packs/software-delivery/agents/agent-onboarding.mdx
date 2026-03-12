@@ -102,10 +102,12 @@ git push origin main
 ```bash
 # Claim first, then work in worktree
 pnpm wu:claim --id WU-123 --lane Core
+pnpm wu:brief --id WU-123 --client <client>
 cd worktrees/core-wu-123
 vim src/feature.ts
 git commit -m "feat: add feature"
 git push origin lane/core/wu-123
+pnpm wu:prep --id WU-123
 cd /path/to/main
 pnpm wu:done --id WU-123
 ```
@@ -369,6 +371,7 @@ cat docs/operations/tasks/status.md
 
 # Claim a WU
 pnpm wu:claim --id WU-XXX --lane <Lane>
+pnpm wu:brief --id WU-XXX --client <client>
 
 # Work in worktree
 cd worktrees/<lane>-wu-xxx

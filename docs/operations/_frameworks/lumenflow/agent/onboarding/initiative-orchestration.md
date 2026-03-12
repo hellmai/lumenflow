@@ -270,7 +270,7 @@ pnpm wu:brief --id WU-100 --client claude-code
 pnpm orchestrate:monitor  # Shows "Zombie lock (PID XXXXX not running)"
 
 # 2. Unlock the lane
-pnpm lane:unlock "Framework: Core" --reason "Zombie lock (PID 12345 not running)"
+pnpm wu:unlock-lane --lane "Framework: Core" --reason "Zombie lock (PID 12345 not running)"
 
 # 3. Release and re-claim the WU
 pnpm wu:release --id WU-100

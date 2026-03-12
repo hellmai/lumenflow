@@ -471,7 +471,7 @@ After setup, verify everything works:
 
 ```bash
 # 1. Create a test WU
-pnpm exec wu-create \
+pnpm wu:create \
   --title "Test LumenFlow setup" \
   --lane "Operations: Infrastructure" \
   --type documentation \
@@ -481,18 +481,19 @@ pnpm exec wu-create \
 
 # 2. Claim it
 # Use the generated ID from the output (example: WU-123)
-pnpm exec wu-claim --id WU-123 --lane "Operations: Infrastructure"
+pnpm wu:claim --id WU-123 --lane "Operations: Infrastructure"
+pnpm wu:brief --id WU-123 --client <client>
 
 # 3. Make a trivial change in worktree
 cd worktrees/operations-infrastructure-wu-123
 echo "# LumenFlow works" >> README.md
 
 # 4. Run gates in worktree
-pnpm exec wu-prep --id WU-123
+pnpm wu:prep --id WU-123
 
 # 5. Complete (from main checkout)
 cd /path/to/main
-pnpm exec wu-done --id WU-123
+pnpm wu:done --id WU-123
 
 # 6. Check results
 ls .lumenflow/stamps/WU-123.done  # Should exist

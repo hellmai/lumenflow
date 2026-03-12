@@ -100,6 +100,7 @@ cat docs/operations/tasks/status.md
 
 # Claim a WU
 pnpm wu:claim --id WU-XXX --lane <Lane>
+pnpm wu:brief --id WU-XXX --client <client>
 
 # Work in worktree
 cd worktrees/<lane>-wu-xxx

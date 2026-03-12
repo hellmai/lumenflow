@@ -16,17 +16,19 @@ MCP standardizes how AI systems integrate with external data sources and tools, 
 
 Without MCP, AI agents must learn CLI command syntax and parse text output:
 
+<!-- lumenflow-example: illustrative -->
+
 ```
-AI thinks: "I need to list WUs... the command is probably pnpm wu:list?"
-AI calls:  Bash("pnpm wu:list --status ready")
-Result:    "Unknown command: wu:list"  (it's wu:status, not wu:list)
+AI thinks: "I need to inspect a WU... the command is probably pnpm wu:status?"
+AI calls:  Bash("pnpm wu:status --id WU-123")
+Result:    "Status: ready, lane: Framework: Core"  (text output still needs parsing)
 ```
 
 With MCP, AI agents see structured tool definitions:
 
 ```json
 {
-  "name": "lumenflow_wu_list",
+  "name": "wu_list",
   "description": "List Work Units by status, lane, or initiative",
   "inputSchema": {
     "type": "object",
@@ -60,13 +62,13 @@ The AI knows exactly what parameters are valid and gets typed responses back.
 2. LIST TOOLS
    Client → Server: { method: "tools/list" }
    Server → Client: { result: { tools: [
-     { name: "lumenflow_wu_list", inputSchema: {...} },
-     { name: "lumenflow_wu_claim", inputSchema: {...} }
+     { name: "wu_list", inputSchema: {...} },
+     { name: "wu_claim", inputSchema: {...} }
    ]}}
 
 3. CALL TOOL
    Client → Server: { method: "tools/call", params: {
-     name: "lumenflow_wu_list",
+     name: "wu_list",
      arguments: { status: "ready" }
    }}
    Server → Client: { result: { content: [{ type: "text", text: "[...]" }] } }
@@ -84,7 +86,7 @@ MCP servers expose three types of capabilities:
 
 | Primitive     | Purpose                    | Example                                 |
 | ------------- | -------------------------- | --------------------------------------- |
-| **Tools**     | Actions the AI can take    | `lumenflow_wu_claim` - claim a WU       |
+| **Tools**     | Actions the AI can take    | `wu_claim` - claim a WU                 |
 | **Resources** | Data the AI can read       | `lumenflow://backlog` - backlog content |
 | **Prompts**   | Reusable message templates | (LumenFlow doesn't use these)           |
 
@@ -155,15 +157,15 @@ LumenFlow projects can use external MCP servers:
 
 The `@lumenflow/mcp` package exposes LumenFlow as an MCP server:
 
-| Tool                    | What It Does                            |
-| ----------------------- | --------------------------------------- |
-| `lumenflow_context_get` | Get location, git state, valid commands |
-| `lumenflow_wu_list`     | List WUs by status/lane                 |
-| `lumenflow_wu_status`   | Detailed WU status                      |
-| `lumenflow_wu_create`   | Create new WU                           |
-| `lumenflow_wu_claim`    | Claim WU, create worktree               |
-| `lumenflow_wu_done`     | Complete WU                             |
-| `lumenflow_gates_run`   | Run quality gates                       |
+| Tool          | What It Does                            |
+| ------------- | --------------------------------------- |
+| `context_get` | Get location, git state, valid commands |
+| `wu_list`     | List WUs by status/lane                 |
+| `wu_status`   | Detailed WU status                      |
+| `wu_create`   | Create new WU                           |
+| `wu_claim`    | Claim WU, create worktree               |
+| `wu_done`     | Complete WU                             |
+| `gates_run`   | Run quality gates                       |
 
 See [mcp-server.md](mcp-server.md) for full tool reference.
 

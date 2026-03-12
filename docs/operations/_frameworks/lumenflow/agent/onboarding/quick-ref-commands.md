@@ -64,7 +64,7 @@ Run `--help` first, then run the real command with explicit flags.
 | `pnpm build:dist`                                  | Build distribution packages                                                             |
 | `pnpm dev`                                         | Start development mode                                                                  |
 | `pnpm clean`                                       | Clean build artifacts and caches                                                        |
-| `pnpm pack:all`                                    | Pack all packages for distribution                                                      |
+| `pnpm pack:validate`                               | Validate a pack manifest and implementation surface                                     |
 | `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                                         |
 | `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
 | `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/operations`)                                            |
@@ -562,6 +562,7 @@ pnpm wu:create --lane "Framework: Core" --title "Add feature" \
 
 # 2. Claim (creates worktree) -- use the ID from wu:create output
 pnpm wu:claim --id WU-1990 --lane "Framework: Core"
+pnpm wu:brief --id WU-1990 --client <client>
 cd worktrees/framework-core-wu-1990
 
 # 2b. Bootstrap (build CLI for dist-backed commands)
@@ -775,6 +776,7 @@ For cloud agents that cannot use local worktrees:
 # 1. Claim in cloud mode
 pnpm wu:claim --id WU-XXX --lane "<Lane>" --cloud
 # Or: LUMENFLOW_CLOUD=1 pnpm wu:claim --id WU-XXX --lane "<Lane>"
+pnpm wu:brief --id WU-XXX --client <client>
 
 # 2. Work on lane branch, push commits
 
