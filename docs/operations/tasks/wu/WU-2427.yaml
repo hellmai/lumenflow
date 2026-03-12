@@ -1,0 +1,32 @@
+id: WU-2427
+title: Migrate CI workflows from GitHub-hosted to self-hosted runners
+lane: 'Operations: Automation'
+type: refactor
+status: ready
+priority: P2
+created: 2026-03-12
+code_paths:
+  - .github/workflows/ci.yml
+  - .github/workflows/docs.yml
+  - .github/workflows/publish.yml
+tests:
+  manual:
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2427.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Migrate all 3 GitHub Actions workflow files from ubuntu-latest to org-level self-hosted runners. 5 runners (hellmai-runner-1 through hellmai-runner-5) are already registered and online at github.com/hellmai. Zero-cost change: replace runs-on: ubuntu-latest with runs-on: self-hosted in ci.yml, docs.yml, and publish.yml.'
+acceptance:
+  - 'All 3 workflow files (.github/workflows/ci.yml, docs.yml, publish.yml) use runs-on: self-hosted instead of runs-on: ubuntu-latest'
