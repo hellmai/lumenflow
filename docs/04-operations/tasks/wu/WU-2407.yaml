@@ -1,0 +1,46 @@
+id: WU-2407
+title: Add runtime pack-config plumbing for pinned pack config roots
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-03-12
+code_paths:
+  - packages/@lumenflow/kernel/src/runtime/
+  - packages/@lumenflow/kernel/src/pack/
+  - packages/@lumenflow/kernel/src/kernel.schemas.ts
+tests:
+  manual:
+    - Start runtime with valid and invalid pack config roots and verify startup behavior matches validation outcome
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2407.done
+dependencies: []
+initiative: INIT-52
+phase: 1
+blocked_by:
+  - WU-2406
+spec_refs:
+  - lumenflow://plans/INIT-52-plan.md
+risks: []
+notes: Keep this WU cohesive around runtime pack-config preservation and validation only.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 14
+  estimated_tool_calls: 70
+  strategy: checkpoint-resume
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Preserve and validate non-kernel pack config during runtime initialization so resolved pack config is available to loaded packs for later policy and capability decisions.
+acceptance:
+  - Runtime extracts config for pinned packs with config_key from raw workspace YAML
+  - config_schema validation runs during runtime startup
+  - Resolved pack config is attached to loaded pack state for later policy and capability resolution
+  - Invalid pack config fails startup while packs without config_key remain unaffected
