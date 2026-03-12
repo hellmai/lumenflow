@@ -9,6 +9,7 @@ code_paths:
   - .github/workflows/ci.yml
   - .github/workflows/docs.yml
   - .github/workflows/publish.yml
+  - .github/workflows/codeql.yml
 tests:
   manual:
     - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
@@ -44,3 +45,7 @@ description: 'Migrate all 3 GitHub Actions workflow files from ubuntu-latest to 
 acceptance:
   - 'All 3 workflow files (.github/workflows/ci.yml, docs.yml, publish.yml) use runs-on: self-hosted
     instead of runs-on: ubuntu-latest'
+  - CodeQL SAST workflow added with javascript-typescript analysis, self-hosted runner,
+    push/PR/weekly cron triggers
+  - pnpm/action-setup and actions/setup-node steps removed from all 3 workflows
+  - 'ci.yml has PNPM_STORE_DIR env and timeout-minutes: 10'
