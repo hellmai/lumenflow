@@ -39,7 +39,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml) — Framework: Core Lifecycle
-- [WU-2426 — cli-entry.mjs triggers full build on --help flag](wu/WU-2426.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1372,6 +1371,7 @@ sections:
 - [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml)
 - [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml)
 - [WU-2425 — Write wu:brief output to file to survive Bash tool truncation](wu/WU-2425.yaml)
+- [WU-2426 — cli-entry.mjs triggers full build on --help flag](wu/WU-2426.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

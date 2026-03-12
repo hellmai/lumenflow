@@ -2,7 +2,7 @@ id: WU-2426
 title: cli-entry.mjs triggers full build on --help flag
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -40,3 +40,6 @@ description: pnpm gates --help runs ensureCliDist which triggers a full pnpm bui
 acceptance:
   - pnpm gates --help shows help without triggering build
   - pnpm gates (no --help) still builds dist if missing
+locked: true
+completed_at: 2026-03-12T13:55:01.574Z
+completed: 2026-03-12
