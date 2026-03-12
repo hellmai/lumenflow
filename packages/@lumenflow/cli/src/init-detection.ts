@@ -199,11 +199,13 @@ export function detectDocsStructure(targetDir: string): DocsStructureType {
     return 'simple';
   }
 
-  // Check for arc42 numbered directories (01-*, 02-*, ..., operations, etc.)
+  // Check for arc42 indicators: numbered directories (01-*, 09-*, etc.)
+  // or the operations directory (unique to arc42 layout)
   const entries = fs.readdirSync(docsDir);
   const hasNumberedDir = entries.some((entry) => /^\d{2}-/.test(entry));
+  const hasOperationsDir = entries.includes('operations');
 
-  if (hasNumberedDir) {
+  if (hasNumberedDir || hasOperationsDir) {
     return 'arc42';
   }
 
