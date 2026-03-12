@@ -2,7 +2,7 @@ id: WU-2405
 title: 'Arc42 compliance: proper section structure, ADR location, and docs index'
 lane: 'Content: Specs Governance'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -32,10 +32,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Move ADRs from docs/04-operations/adr/ to docs/09-architecture-decisions/ (proper arc42 section 09). Create docs/01-introduction-and-goals/ with vision, quality goals, and stakeholders. Add ADR index and template. Fix docs/README.md. Add adrDir to tooling config.
+description: Move ADRs from docs/04-operations/adr/ to docs/09-architecture-decisions/ (proper arc42
+  section 09). Create docs/01-introduction-and-goals/ with vision, quality goals, and stakeholders.
+  Add ADR index and template. Fix docs/README.md. Add adrDir to tooling config.
 acceptance:
   - ADRs moved to docs/09-architecture-decisions/ with index and template
   - docs/01-introduction-and-goals/ created with vision.md, quality-goals.md, stakeholders.md
   - docs/README.md only references directories that exist on disk
   - adrDir added to docs-layout-presets.ts and DirectoriesSchema
   - Cross-references updated in core README and delegation-monitor.ts
+claimed_mode: worktree
+worktree_path: worktrees/content-specs-governance-wu-2405
+claimed_at: 2026-03-12T11:01:10.082Z
+baseline_main_sha: f8cde0237a7b7e0ae6d6b4676d69bbf4a34882ba
+session_id: ecaa89ea-0177-4692-85fb-77137376271a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:01:10.091Z

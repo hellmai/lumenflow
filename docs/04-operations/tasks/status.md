@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml)
+- [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml)
 
 ## Completed
 
