@@ -43,7 +43,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml) — Content: Specs Governance
-- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 
@@ -1367,6 +1366,7 @@ sections:
 - [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml)
 - [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml)
 - [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml)
+- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
