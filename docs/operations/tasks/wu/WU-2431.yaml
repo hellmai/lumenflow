@@ -19,12 +19,24 @@ dependencies: []
 spec_refs:
   - user-provided-spec
 risks: []
-notes: DISCORD_WEBHOOK org secret is already configured. Single dependency on gates job.
+notes: >-
+  DISCORD_WEBHOOK org secret is already configured. Single dependency on gates job.
+
+
+  tdd-exception: CI workflow YAML changes only — no application code to test. DISCORD_WEBHOOK org
+  secret already configured.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T18:09:16.410Z
+worktree_path: worktrees/operations-automation-wu-2431
+session_id: 488f6a53-4b0c-4f45-9df4-f991d485a681
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T18:09:16.415Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +45,3 @@ description: Add notify-failure and notify-success jobs to ci.yml. Posts embed m
 acceptance:
   - ci.yml has notify-failure job that posts to Discord on gate failure
   - ci.yml has notify-success job that posts to Discord on push success only
-claimed_mode: worktree
-worktree_path: worktrees/operations-automation-wu-2431
-claimed_at: 2026-03-12T18:09:16.410Z
-baseline_main_sha: ee4db1c4f7fcba321338b2472271bab9b882c339
-session_id: 488f6a53-4b0c-4f45-9df4-f991d485a681
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T18:09:16.415Z
