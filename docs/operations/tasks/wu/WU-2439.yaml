@@ -8,7 +8,6 @@ created: 2026-03-12
 code_paths:
   - apps/docs/__tests__/docs-parity.test.ts
   - docs/operations/_frameworks/lumenflow/agent/onboarding/docs-generation.md
-  - apps/docs/src/content/docs/reference/mcp.mdx
   - docs/operations/_frameworks/lumenflow/mcp-server.md
 tests:
   manual: []
@@ -21,10 +20,17 @@ dependencies: []
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T21:53:29.885Z
+worktree_path: worktrees/content-framework-docs-wu-2439
+session_id: 152011e2-94ac-4390-93d5-bb325d0a8fca
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T21:53:29.897Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +47,3 @@ acceptance:
     explicitly tagged and documented.
   - Docs authoring guidance explains how to mark MCP examples as strict versus illustrative and how
     schema validation is applied.
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2439
-claimed_at: 2026-03-12T21:53:29.885Z
-baseline_main_sha: 9d7366e5d81117c60a137d715497a55ce0ddde01
-session_id: 152011e2-94ac-4390-93d5-bb325d0a8fca
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T21:53:29.897Z
