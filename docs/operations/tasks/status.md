@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2414 — Add policy-aware tool filtering and auto-discovery](wu/WU-2414.yaml)
 
 ## Completed
 

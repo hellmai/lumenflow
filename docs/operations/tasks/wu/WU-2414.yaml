@@ -2,7 +2,7 @@ id: WU-2414
 title: Add policy-aware tool filtering and auto-discovery
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/packs/
 tests:
   manual:
-    - Compare raw registry listings against policy-aware filtered results under tighter scopes and intents
+    - Compare raw registry listings against policy-aware filtered results under tighter scopes and
+      intents
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
   e2e: []
@@ -40,9 +41,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Expose a kernel API that returns only the tools allowed for a given execution context and intent so the pack can build a governed tool catalog without trusting a host-supplied list.
+description: Expose a kernel API that returns only the tools allowed for a given execution context
+  and intent so the pack can build a governed tool catalog without trusting a host-supplied list.
 acceptance:
   - Kernel exposes a policy-aware tool-filtering API
   - Filtering applies scope intersection and policy evaluation for an execution context and intent
   - The pack can build its own governed tool catalog without trusting a host-supplied list
   - Tests prove filtered tool lists differ from raw registry results when policies tighten access
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2414
+claimed_at: 2026-03-12T14:45:57.294Z
+baseline_main_sha: 421cfae78c85349447c213358ed1857914cea2af
+session_id: b0fa06fb-763f-4abe-915a-ee8cad6505b1
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T14:45:57.300Z
