@@ -14,6 +14,7 @@ import {
   AGENT_RUNTIME_AGENT_INTENT_METADATA_KEY,
   AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY,
   AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY,
+  AGENT_RUNTIME_AGENT_WORKFLOW_NODE_ID_METADATA_KEY,
 } from './constants.js';
 import {
   AGENT_RUNTIME_TOOL_NAMES,
@@ -36,6 +37,9 @@ const AGENT_RUNTIME_WORKFLOW_DIRECTORY = path.join('.agent-runtime', 'workflow')
 const WORKFLOW_SUSPEND_REASON = 'Invocation turn budget reached.';
 const WORKFLOW_WAITING_REASON = 'Waiting for approval-driven continuation.';
 const WORKFLOW_COMPLETED_REASON = 'Session reached a terminal turn.';
+const WORKFLOW_SCHEDULED_REASON = 'Waiting for the scheduled wake time.';
+const WORKFLOW_JOIN_READY_REASON = 'Join dependencies completed.';
+const WORKFLOW_WAKEUP_REASON = 'Scheduled wake time reached.';
 
 type LoopRuntime = Pick<KernelRuntime, 'executeTool'>;
 type GovernedToolCatalogHost = Pick<ToolHost, 'listGovernedTools'>;
@@ -44,6 +48,7 @@ export const AGENT_RUNTIME_WORKFLOW_STATUSES = {
   ACTIVE: 'active',
   SUSPENDED: 'suspended',
   WAITING_APPROVAL: 'waiting_approval',
+  SCHEDULED: 'scheduled',
   COMPLETED: 'completed',
   ERROR: 'error',
 } as const;
@@ -53,6 +58,20 @@ export const AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS = {
   RESUMED: 'resumed',
   SUSPENDED: 'suspended',
   APPROVAL_REQUIRED: 'approval_required',
+  SCHEDULED: 'scheduled',
+  WAKEUP: 'wakeup',
+  BRANCH_COMPLETED: 'branch_completed',
+  JOIN_READY: 'join_ready',
+  COMPLETED: 'completed',
+  ERROR: 'error',
+} as const;
+
+export const AGENT_RUNTIME_WORKFLOW_NODE_STATUSES = {
+  PENDING: 'pending',
+  READY: 'ready',
+  SCHEDULED: 'scheduled',
+  WAITING_APPROVAL: 'waiting_approval',
+  SUSPENDED: 'suspended',
   COMPLETED: 'completed',
   ERROR: 'error',
 } as const;
@@ -95,6 +114,41 @@ export interface AgentRuntimeWorkflowContinuation {
   timestamp: string;
   reason?: string;
   request_id?: string;
+  node_id?: string;
+}
+
+export type AgentRuntimeWorkflowNodeStatus =
+  (typeof AGENT_RUNTIME_WORKFLOW_NODE_STATUSES)[keyof typeof AGENT_RUNTIME_WORKFLOW_NODE_STATUSES];
+
+export interface AgentRuntimeWorkflowNodeDefinition {
+  id: string;
+  execute_turn_input: AgentRuntimeExecuteTurnInput;
+  depends_on?: string[];
+  wake_at?: string;
+}
+
+export interface AgentRuntimeWorkflowNodeState {
+  node_id: string;
+  status: AgentRuntimeWorkflowNodeStatus;
+  execute_turn_input: AgentRuntimeExecuteTurnInput;
+  depends_on: string[];
+  wake_at?: string;
+  messages: AgentRuntimeMessage[];
+  history: AgentRuntimeLoopHistoryEntry[];
+  turn_count: number;
+  tool_call_count: number;
+  pending_request_id?: string;
+  requested_tool?: AgentRuntimeRequestedTool;
+  last_turn?: AgentRuntimeExecuteTurnOutput;
+}
+
+export interface AgentRuntimeWorkflowGraphState {
+  nodes: AgentRuntimeWorkflowNodeState[];
+}
+
+export interface AgentRuntimeWorkflowDefinition {
+  session_id: string;
+  nodes: AgentRuntimeWorkflowNodeDefinition[];
 }
 
 export interface AgentRuntimeWorkflowState {
@@ -114,6 +168,8 @@ export interface AgentRuntimeWorkflowState {
   pending_request_id?: string;
   requested_tool?: AgentRuntimeRequestedTool;
   last_turn?: AgentRuntimeExecuteTurnOutput;
+  workflow?: AgentRuntimeWorkflowGraphState;
+  next_wake_at?: string;
 }
 
 export interface AgentRuntimeWorkflowStateStore {
@@ -129,6 +185,7 @@ export interface CreateAgentRuntimeWorkflowStateStoreInput {
 export interface StartGovernedAgentSessionInput extends RunGovernedAgentLoopInput {
   storageRoot: string;
   maxTurnsPerInvocation?: number;
+  now?: () => string;
 }
 
 export interface ResumeGovernedAgentSessionInput {
@@ -138,6 +195,26 @@ export interface ResumeGovernedAgentSessionInput {
   createContext: (metadata: Record<string, unknown>) => ExecutionContext;
   maxTurnsPerInvocation?: number;
   continuationMessages?: readonly AgentRuntimeMessage[];
+  now?: () => string;
+}
+
+export interface StartGovernedAgentWorkflowInput {
+  runtime: LoopRuntime;
+  storageRoot: string;
+  workflow: AgentRuntimeWorkflowDefinition;
+  createContext: (metadata: Record<string, unknown>) => ExecutionContext;
+  maxTurnsPerInvocation?: number;
+  now?: () => string;
+}
+
+export interface ResumeGovernedAgentWorkflowInput {
+  runtime: LoopRuntime;
+  storageRoot: string;
+  sessionId: string;
+  createContext: (metadata: Record<string, unknown>) => ExecutionContext;
+  maxTurnsPerInvocation?: number;
+  continuationMessagesByNodeId?: Record<string, readonly AgentRuntimeMessage[]>;
+  now?: () => string;
 }
 
 export interface AgentRuntimeLoopCompletedResult {
@@ -167,6 +244,46 @@ export interface AgentRuntimeLoopSuspendedResult {
   tool_call_count: number;
   history: AgentRuntimeLoopHistoryEntry[];
 }
+
+export interface AgentRuntimeWorkflowCompletedResult {
+  kind: 'completed';
+  completed_node_ids: string[];
+}
+
+export interface AgentRuntimeWorkflowScheduledResult {
+  kind: 'scheduled';
+  next_wake_at: string;
+  scheduled_node_ids: string[];
+  completed_node_ids: string[];
+}
+
+export interface AgentRuntimeWorkflowApprovalRequiredResult {
+  kind: 'approval_required';
+  node_id: string;
+  pending_request_id: string;
+  requested_tool: AgentRuntimeRequestedTool;
+}
+
+export interface AgentRuntimeWorkflowSuspendedResult {
+  kind: 'suspended';
+  node_id: string;
+}
+
+export interface AgentRuntimeWorkflowErrorResult {
+  kind: 'error';
+  node_id: string;
+  error: {
+    code: string;
+    message: string;
+  };
+}
+
+export type AgentRuntimeWorkflowAdvanceResult =
+  | AgentRuntimeWorkflowCompletedResult
+  | AgentRuntimeWorkflowScheduledResult
+  | AgentRuntimeWorkflowApprovalRequiredResult
+  | AgentRuntimeWorkflowSuspendedResult
+  | AgentRuntimeWorkflowErrorResult;
 
 export interface AgentRuntimeLoopErrorResult {
   kind: 'error';
@@ -277,7 +394,7 @@ export async function startGovernedAgentSession(
   const store = createAgentRuntimeWorkflowStateStore({
     workspaceRoot: input.storageRoot,
   });
-  const now = new Date().toISOString();
+  const now = resolveCurrentTimestamp(input.now);
   const baseContext = input.createContext({});
   const initialState: AgentRuntimeWorkflowState = {
     schema_version: AGENT_RUNTIME_WORKFLOW_SCHEMA_VERSION,
@@ -330,7 +447,7 @@ export async function resumeGovernedAgentSession(
     );
   }
 
-  const resumedAt = new Date().toISOString();
+  const resumedAt = resolveCurrentTimestamp(input.now);
   const resumedState: AgentRuntimeWorkflowState = {
     ...existing,
     status: AGENT_RUNTIME_WORKFLOW_STATUSES.ACTIVE,
@@ -362,6 +479,320 @@ export async function resumeGovernedAgentSession(
 
   await store.save(materializeWorkflowState(resumedState, result, resumedAt));
   return result;
+}
+
+export async function startGovernedAgentWorkflow(
+  input: StartGovernedAgentWorkflowInput,
+): Promise<AgentRuntimeWorkflowAdvanceResult> {
+  const timestamp = resolveCurrentTimestamp(input.now);
+  const baseContext = input.createContext({});
+  const workflowState: AgentRuntimeWorkflowState = {
+    schema_version: AGENT_RUNTIME_WORKFLOW_SCHEMA_VERSION,
+    session_id: input.workflow.session_id,
+    task_id: baseContext.task_id,
+    run_id: baseContext.run_id,
+    status: AGENT_RUNTIME_WORKFLOW_STATUSES.ACTIVE,
+    created_at: timestamp,
+    updated_at: timestamp,
+    execute_turn_input: cloneExecuteTurnInput(input.workflow.nodes[0]?.execute_turn_input ?? {
+      session_id: input.workflow.session_id,
+      model_profile: 'default',
+      url: 'https://model-provider.invalid/',
+      messages: [],
+    }),
+    messages: [],
+    history: [],
+    turn_count: 0,
+    tool_call_count: 0,
+    continuations: [
+      {
+        sequence: 0,
+        kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.CREATED,
+        timestamp,
+      },
+    ],
+    workflow: {
+      nodes: input.workflow.nodes.map((node) => ({
+        node_id: node.id,
+        status: AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.PENDING,
+        execute_turn_input: cloneExecuteTurnInput(node.execute_turn_input),
+        depends_on: [...(node.depends_on ?? [])],
+        ...(node.wake_at ? { wake_at: node.wake_at } : {}),
+        messages: [...node.execute_turn_input.messages],
+        history: [],
+        turn_count: 0,
+        tool_call_count: 0,
+      })),
+    },
+  };
+
+  const workflowNodes = workflowState.workflow?.nodes;
+  if (!workflowNodes) {
+    throw new Error(
+      `Workflow session "${input.workflow.session_id}" could not be initialized because no workflow nodes were materialized.`,
+    );
+  }
+  assertWorkflowDefinitions(workflowNodes);
+
+  const result = await advanceGovernedAgentWorkflowState({
+    runtime: input.runtime,
+    state: workflowState,
+    createContext: input.createContext,
+    maxTurnsPerInvocation: input.maxTurnsPerInvocation,
+    timestamp,
+  });
+
+  const store = createAgentRuntimeWorkflowStateStore({
+    workspaceRoot: input.storageRoot,
+  });
+  await store.save(result.state);
+  return result.result;
+}
+
+export async function resumeGovernedAgentWorkflow(
+  input: ResumeGovernedAgentWorkflowInput,
+): Promise<AgentRuntimeWorkflowAdvanceResult> {
+  const store = createAgentRuntimeWorkflowStateStore({
+    workspaceRoot: input.storageRoot,
+  });
+  const existing = await store.load(input.sessionId);
+  if (!existing?.workflow) {
+    throw new Error(
+      `No persisted workflow graph found for session "${input.sessionId}". Start the workflow before attempting to resume it.`,
+    );
+  }
+
+  const timestamp = resolveCurrentTimestamp(input.now);
+  const resumedNodes = existing.workflow.nodes.map((node) => {
+    const continuationMessages = input.continuationMessagesByNodeId?.[node.node_id] ?? [];
+    if (continuationMessages.length === 0) {
+      return node;
+    }
+
+    return {
+      ...node,
+      messages: [...node.messages, ...continuationMessages],
+      pending_request_id: undefined,
+      requested_tool: undefined,
+    };
+  });
+
+  const resumedState: AgentRuntimeWorkflowState = {
+    ...existing,
+    status: AGENT_RUNTIME_WORKFLOW_STATUSES.ACTIVE,
+    updated_at: timestamp,
+    workflow: {
+      nodes: resumedNodes,
+    },
+    continuations: appendWorkflowContinuation(existing.continuations, {
+      kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.RESUMED,
+      timestamp,
+    }),
+    next_wake_at: undefined,
+  };
+
+  const result = await advanceGovernedAgentWorkflowState({
+    runtime: input.runtime,
+    state: resumedState,
+    createContext: input.createContext,
+    maxTurnsPerInvocation: input.maxTurnsPerInvocation,
+    timestamp,
+  });
+
+  await store.save(result.state);
+  return result.result;
+}
+
+async function advanceGovernedAgentWorkflowState(input: {
+  runtime: LoopRuntime;
+  state: AgentRuntimeWorkflowState;
+  createContext: (metadata: Record<string, unknown>) => ExecutionContext;
+  maxTurnsPerInvocation?: number;
+  timestamp: string;
+}): Promise<{ state: AgentRuntimeWorkflowState; result: AgentRuntimeWorkflowAdvanceResult }> {
+  const workflow = input.state.workflow;
+  if (!workflow) {
+    throw new Error(
+      `Workflow state for session "${input.state.session_id}" is missing the workflow graph payload.`,
+    );
+  }
+
+  let state: AgentRuntimeWorkflowState = {
+    ...input.state,
+    workflow: {
+      nodes: workflow.nodes.map((node) => ({
+        ...node,
+        messages: [...node.messages],
+        history: [...node.history],
+      })),
+    },
+    next_wake_at: undefined,
+  };
+
+  while (true) {
+    const currentWorkflow = state.workflow;
+    if (!currentWorkflow) {
+      throw new Error(
+        `Workflow state for session "${state.session_id}" is missing workflow nodes during advancement.`,
+      );
+    }
+
+    const readyNodes = getReadyWorkflowNodes(state, input.timestamp);
+    if (readyNodes.length === 0) {
+      const scheduledNodes = getScheduledWorkflowNodes(state, input.timestamp);
+      if (scheduledNodes.length > 0) {
+        const nextWakeAt = scheduledNodes
+          .map((node) => node.wake_at)
+          .filter((value): value is string => typeof value === 'string')
+          .sort()[0];
+
+        const scheduledNodeIds = new Set(scheduledNodes.map((node) => node.node_id));
+
+        const scheduledState: AgentRuntimeWorkflowState = {
+          ...state,
+          status: AGENT_RUNTIME_WORKFLOW_STATUSES.SCHEDULED,
+          updated_at: input.timestamp,
+          next_wake_at: nextWakeAt,
+          workflow: {
+            nodes: currentWorkflow.nodes.map((node) =>
+              scheduledNodeIds.has(node.node_id)
+                ? { ...node, status: AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.SCHEDULED }
+                : node,
+            ),
+          },
+          continuations: scheduledNodes.reduce(
+            (continuations, node) =>
+              hasContinuationForNode(
+                continuations,
+                AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.SCHEDULED,
+                node.node_id,
+              )
+                ? continuations
+                : appendWorkflowContinuation(continuations, {
+                    kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.SCHEDULED,
+                    timestamp: input.timestamp,
+                    reason: WORKFLOW_SCHEDULED_REASON,
+                    node_id: node.node_id,
+                  }),
+            state.continuations,
+          ),
+        };
+
+        return {
+          state: scheduledState,
+          result: {
+            kind: 'scheduled',
+            next_wake_at: nextWakeAt ?? input.timestamp,
+            scheduled_node_ids: scheduledNodes.map((node) => node.node_id),
+            completed_node_ids: getCompletedNodeIds(scheduledState),
+          },
+        };
+      }
+
+      if (allWorkflowNodesCompleted(state)) {
+        const completedState: AgentRuntimeWorkflowState = {
+          ...state,
+          status: AGENT_RUNTIME_WORKFLOW_STATUSES.COMPLETED,
+          updated_at: input.timestamp,
+          continuations: appendWorkflowContinuation(state.continuations, {
+            kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.COMPLETED,
+            timestamp: input.timestamp,
+            reason: WORKFLOW_COMPLETED_REASON,
+          }),
+        };
+
+        return {
+          state: completedState,
+          result: {
+            kind: 'completed',
+            completed_node_ids: getCompletedNodeIds(completedState),
+          },
+        };
+      }
+
+      return {
+        state: {
+          ...state,
+          status: AGENT_RUNTIME_WORKFLOW_STATUSES.ERROR,
+          updated_at: input.timestamp,
+          continuations: appendWorkflowContinuation(state.continuations, {
+            kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.ERROR,
+            timestamp: input.timestamp,
+            reason: 'Workflow has incomplete nodes but no ready or scheduled work.',
+          }),
+        },
+        result: {
+          kind: 'error',
+          node_id: 'workflow',
+          error: {
+            code: 'AGENT_RUNTIME_WORKFLOW_STALLED',
+            message: 'Workflow cannot make progress because no nodes are ready or scheduled.',
+          },
+        },
+      };
+    }
+
+    const node = readyNodes[0];
+    if (!node) {
+      continue;
+    }
+
+    const nodeResult = await runGovernedAgentLoopInternal({
+      runtime: input.runtime,
+      executeTurnInput: {
+        ...cloneExecuteTurnInput(node.execute_turn_input),
+        messages: [...node.messages],
+      },
+      createContext: (metadata) =>
+        input.createContext({
+          ...metadata,
+          [AGENT_RUNTIME_AGENT_WORKFLOW_NODE_ID_METADATA_KEY]: node.node_id,
+        }),
+      maxTurns: input.maxTurnsPerInvocation,
+      turnBudgetBehavior: 'suspend',
+      initialCursor: {
+        messages: node.messages,
+        history: node.history,
+        turnCount: node.turn_count,
+        toolCallCount: node.tool_call_count,
+      },
+    });
+
+    state = updateWorkflowStateForNodeResult(state, node.node_id, nodeResult, input.timestamp);
+
+    if (nodeResult.kind === 'approval_required') {
+      return {
+        state,
+        result: {
+          kind: 'approval_required',
+          node_id: node.node_id,
+          pending_request_id: nodeResult.pending_request_id,
+          requested_tool: nodeResult.requested_tool,
+        },
+      };
+    }
+
+    if (nodeResult.kind === 'suspended') {
+      return {
+        state,
+        result: {
+          kind: 'suspended',
+          node_id: node.node_id,
+        },
+      };
+    }
+
+    if (nodeResult.kind === 'error') {
+      return {
+        state,
+        result: {
+          kind: 'error',
+          node_id: node.node_id,
+          error: nodeResult.error,
+        },
+      };
+    }
+  }
 }
 
 async function runGovernedAgentLoopInternal(
@@ -797,6 +1228,10 @@ function parseWorkflowState(value: unknown, filePath: string): AgentRuntimeWorkf
       : {}),
     ...(requestedTool ? { requested_tool: requestedTool } : {}),
     ...(lastTurn ? { last_turn: lastTurn } : {}),
+    ...(isRecord(value.workflow)
+      ? { workflow: parseWorkflowGraphState(value.workflow, `${filePath}.workflow`) }
+      : {}),
+    ...(typeof value.next_wake_at === 'string' ? { next_wake_at: value.next_wake_at } : {}),
   };
 }
 
@@ -952,8 +1387,65 @@ function parseWorkflowContinuations(
       timestamp: readWorkflowTimestamp(entry.timestamp, `${filePath}[${index}].timestamp`),
       ...(typeof entry.reason === 'string' ? { reason: entry.reason } : {}),
       ...(typeof entry.request_id === 'string' ? { request_id: entry.request_id } : {}),
+      ...(typeof entry.node_id === 'string' ? { node_id: entry.node_id } : {}),
     };
   });
+}
+
+function parseWorkflowGraphState(
+  value: Record<string, unknown>,
+  filePath: string,
+): AgentRuntimeWorkflowGraphState {
+  if (!Array.isArray(value.nodes)) {
+    throw new Error(
+      `Failed to parse workflow state at ${filePath}.nodes: expected an array of workflow nodes.`,
+    );
+  }
+
+  return {
+    nodes: value.nodes.map((entry, index) =>
+      parseWorkflowNodeState(entry, `${filePath}.nodes[${index}]`),
+    ),
+  };
+}
+
+function parseWorkflowNodeState(
+  value: unknown,
+  filePath: string,
+): AgentRuntimeWorkflowNodeState {
+  if (!isRecord(value)) {
+    throw new Error(`Failed to parse workflow state at ${filePath}: workflow node is invalid.`);
+  }
+
+  const requestedTool = parseWorkflowRequestedTool(value.requested_tool);
+  const lastTurn = normalizeTurnOutput(value.last_turn);
+
+  return {
+    node_id: readRequiredString(value.node_id, `${filePath}.node_id`),
+    status: readRequiredString(
+      value.status,
+      `${filePath}.status`,
+    ) as AgentRuntimeWorkflowNodeStatus,
+    execute_turn_input: parseWorkflowExecuteTurnInput(
+      value.execute_turn_input,
+      `${filePath}.execute_turn_input`,
+    ),
+    depends_on: Array.isArray(value.depends_on)
+      ? value.depends_on.map((entry, index) =>
+          readRequiredString(entry, `${filePath}.depends_on[${index}]`),
+        )
+      : [],
+    ...(typeof value.wake_at === 'string' ? { wake_at: value.wake_at } : {}),
+    messages: parseWorkflowMessages(value.messages, `${filePath}.messages`),
+    history: parseWorkflowHistory(value.history, `${filePath}.history`),
+    turn_count: readWorkflowCount(value.turn_count, `${filePath}.turn_count`),
+    tool_call_count: readWorkflowCount(value.tool_call_count, `${filePath}.tool_call_count`),
+    ...(typeof value.pending_request_id === 'string'
+      ? { pending_request_id: value.pending_request_id }
+      : {}),
+    ...(requestedTool ? { requested_tool: requestedTool } : {}),
+    ...(lastTurn ? { last_turn: lastTurn } : {}),
+  };
 }
 
 function parseWorkflowRequestedTool(value: unknown): AgentRuntimeRequestedTool | undefined {
@@ -1020,4 +1512,277 @@ function readWorkflowCount(value: unknown, filePath: string): number {
   }
 
   return Number(value);
+}
+
+function resolveCurrentTimestamp(now?: () => string): string {
+  return now ? now() : new Date().toISOString();
+}
+
+function assertWorkflowDefinitions(nodes: readonly AgentRuntimeWorkflowNodeState[]): void {
+  const ids = new Set(nodes.map((node) => node.node_id));
+  if (ids.size !== nodes.length) {
+    throw new Error(
+      'Workflow definition contains duplicate node IDs. Each workflow node must declare a unique id.',
+    );
+  }
+
+  for (const node of nodes) {
+    for (const dependencyId of node.depends_on) {
+      if (!ids.has(dependencyId)) {
+        throw new Error(
+          `Workflow node "${node.node_id}" depends on "${dependencyId}", but that node is not defined.`,
+        );
+      }
+    }
+  }
+}
+
+function getReadyWorkflowNodes(
+  state: AgentRuntimeWorkflowState,
+  timestamp: string,
+): AgentRuntimeWorkflowNodeState[] {
+  const workflow = state.workflow;
+  if (!workflow) {
+    return [];
+  }
+
+  return workflow.nodes.filter((node) => isWorkflowNodeReady(node, workflow.nodes, timestamp));
+}
+
+function getScheduledWorkflowNodes(
+  state: AgentRuntimeWorkflowState,
+  timestamp: string,
+): AgentRuntimeWorkflowNodeState[] {
+  const workflow = state.workflow;
+  if (!workflow) {
+    return [];
+  }
+
+  return workflow.nodes.filter(
+    (node) =>
+      node.status !== AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED &&
+      node.status !== AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.ERROR &&
+      node.status !== AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.WAITING_APPROVAL &&
+      typeof node.wake_at === 'string' &&
+      node.wake_at > timestamp &&
+      areWorkflowDependenciesCompleted(node, workflow.nodes),
+  );
+}
+
+function isWorkflowNodeReady(
+  node: AgentRuntimeWorkflowNodeState,
+  allNodes: readonly AgentRuntimeWorkflowNodeState[],
+  timestamp: string,
+): boolean {
+  if (
+    node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED ||
+    node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.ERROR ||
+    node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.WAITING_APPROVAL
+  ) {
+    return false;
+  }
+
+  if (!areWorkflowDependenciesCompleted(node, allNodes)) {
+    return false;
+  }
+
+  if (typeof node.wake_at === 'string' && node.wake_at > timestamp) {
+    return false;
+  }
+
+  return true;
+}
+
+function areWorkflowDependenciesCompleted(
+  node: AgentRuntimeWorkflowNodeState,
+  allNodes: readonly AgentRuntimeWorkflowNodeState[],
+): boolean {
+  return node.depends_on.every((dependencyId) =>
+    allNodes.some(
+      (candidate) =>
+        candidate.node_id === dependencyId &&
+        candidate.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED,
+    ),
+  );
+}
+
+function updateWorkflowStateForNodeResult(
+  state: AgentRuntimeWorkflowState,
+  nodeId: string,
+  result: AgentRuntimePersistedSessionResult,
+  timestamp: string,
+): AgentRuntimeWorkflowState {
+  const workflow = state.workflow;
+  if (!workflow) {
+    return state;
+  }
+
+  const updatedNodes = workflow.nodes.map((node) => {
+    if (node.node_id !== nodeId) {
+      return node;
+    }
+
+    const baseNode = {
+      ...node,
+      messages: result.messages,
+      history: result.history,
+      turn_count: result.turn_count,
+      tool_call_count: result.tool_call_count,
+      pending_request_id: undefined,
+      requested_tool: undefined,
+    };
+
+    if (result.kind === 'completed') {
+      return {
+        ...baseNode,
+        status: AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED,
+        last_turn: result.final_turn,
+      };
+    }
+
+    if (result.kind === 'approval_required') {
+      return {
+        ...baseNode,
+        status: AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.WAITING_APPROVAL,
+        pending_request_id: result.pending_request_id,
+        requested_tool: result.requested_tool,
+        last_turn: result.last_turn,
+      };
+    }
+
+    if (result.kind === 'suspended') {
+      return {
+        ...baseNode,
+        status: AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.SUSPENDED,
+      };
+    }
+
+    return {
+      ...baseNode,
+      status: AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.ERROR,
+    };
+  });
+
+  let continuations = state.continuations;
+  if (result.kind === 'completed') {
+    continuations = appendWorkflowContinuation(continuations, {
+      kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.BRANCH_COMPLETED,
+      timestamp,
+      node_id: nodeId,
+    });
+  } else if (result.kind === 'approval_required') {
+    continuations = appendWorkflowContinuation(continuations, {
+      kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.APPROVAL_REQUIRED,
+      timestamp,
+      reason: WORKFLOW_WAITING_REASON,
+      request_id: result.pending_request_id,
+      node_id: nodeId,
+    });
+  } else if (result.kind === 'suspended') {
+    continuations = appendWorkflowContinuation(continuations, {
+      kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.SUSPENDED,
+      timestamp,
+      reason: WORKFLOW_SUSPEND_REASON,
+      node_id: nodeId,
+    });
+  } else {
+    continuations = appendWorkflowContinuation(continuations, {
+      kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.ERROR,
+      timestamp,
+      reason: result.error.message,
+      node_id: nodeId,
+    });
+  }
+
+  for (const node of updatedNodes) {
+    if (
+      node.depends_on.length > 1 &&
+      isWorkflowNodeReady(node, updatedNodes, timestamp) &&
+      !hasContinuationForNode(
+        continuations,
+        AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.JOIN_READY,
+        node.node_id,
+      )
+    ) {
+      continuations = appendWorkflowContinuation(continuations, {
+        kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.JOIN_READY,
+        timestamp,
+        reason: WORKFLOW_JOIN_READY_REASON,
+        node_id: node.node_id,
+      });
+    }
+
+    if (
+      typeof node.wake_at === 'string' &&
+      node.wake_at <= timestamp &&
+      !hasContinuationForNode(
+        continuations,
+        AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.WAKEUP,
+        node.node_id,
+      ) &&
+      areWorkflowDependenciesCompleted(node, updatedNodes)
+    ) {
+      continuations = appendWorkflowContinuation(continuations, {
+        kind: AGENT_RUNTIME_WORKFLOW_CONTINUATION_KINDS.WAKEUP,
+        timestamp,
+        reason: WORKFLOW_WAKEUP_REASON,
+        node_id: node.node_id,
+      });
+    }
+  }
+
+  return {
+    ...state,
+    status: deriveWorkflowStatus(updatedNodes),
+    updated_at: timestamp,
+    workflow: {
+      nodes: updatedNodes,
+    },
+    continuations,
+    next_wake_at: undefined,
+  };
+}
+
+function deriveWorkflowStatus(
+  nodes: readonly AgentRuntimeWorkflowNodeState[],
+): AgentRuntimeWorkflowStatus {
+  if (nodes.every((node) => node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED)) {
+    return AGENT_RUNTIME_WORKFLOW_STATUSES.COMPLETED;
+  }
+  if (nodes.some((node) => node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.WAITING_APPROVAL)) {
+    return AGENT_RUNTIME_WORKFLOW_STATUSES.WAITING_APPROVAL;
+  }
+  if (nodes.some((node) => node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.ERROR)) {
+    return AGENT_RUNTIME_WORKFLOW_STATUSES.ERROR;
+  }
+  if (nodes.some((node) => node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.SUSPENDED)) {
+    return AGENT_RUNTIME_WORKFLOW_STATUSES.SUSPENDED;
+  }
+  return AGENT_RUNTIME_WORKFLOW_STATUSES.ACTIVE;
+}
+
+function allWorkflowNodesCompleted(state: AgentRuntimeWorkflowState): boolean {
+  return (
+    state.workflow?.nodes.every(
+      (node) => node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED,
+    ) ?? false
+  );
+}
+
+function getCompletedNodeIds(state: AgentRuntimeWorkflowState): string[] {
+  return (
+    state.workflow?.nodes
+      .filter((node) => node.status === AGENT_RUNTIME_WORKFLOW_NODE_STATUSES.COMPLETED)
+      .map((node) => node.node_id) ?? []
+  );
+}
+
+function hasContinuationForNode(
+  continuations: readonly AgentRuntimeWorkflowContinuation[],
+  kind: AgentRuntimeWorkflowContinuationKind,
+  nodeId: string,
+): boolean {
+  return continuations.some(
+    (continuation) => continuation.kind === kind && continuation.node_id === nodeId,
+  );
 }

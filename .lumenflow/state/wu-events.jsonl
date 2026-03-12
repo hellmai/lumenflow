@@ -3359,3 +3359,5 @@
 {"type":"checkpoint","wuId":"WU-2417","timestamp":"2026-03-12T16:37:38.852Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2417.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2417","timestamp":"2026-03-12T16:39:22.283Z"}
 {"type":"claim","wuId":"WU-2418","timestamp":"2026-03-12T16:40:09.572Z","lane":"Framework: Core Lifecycle","title":"Add DAG branching and routine scheduling for agent-session"}
+{"type":"checkpoint","wuId":"WU-2418","timestamp":"2026-03-12T16:40:21.344Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2418","timestamp":"2026-03-12T16:40:31.280Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
