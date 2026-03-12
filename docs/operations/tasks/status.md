@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2434 — BUG: initiative:edit reads from stale local main, drops fields added via origin](wu/WU-2434.yaml)
+- [WU-2435 — Broaden docs example parity coverage](wu/WU-2435.yaml)
 
 ## Completed
 

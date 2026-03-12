@@ -2,7 +2,7 @@ id: WU-2435
 title: Broaden docs example parity coverage
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -33,9 +33,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: the current docs example parity guard covers public docs and a narrow LumenFlow onboarding subset. Problem: stale CLI and MCP examples can still drift in the wider internal operations docs and in inline/table examples without being caught. Solution: broaden scanning to docs/operations/**, keep tag-gated enforcement, add broader stale-command detection, and update docs authoring guidance so strict versus illustrative examples are explicit.'
+description: 'Context: the current docs example parity guard covers public docs and a narrow
+  LumenFlow onboarding subset. Problem: stale CLI and MCP examples can still drift in the wider
+  internal operations docs and in inline/table examples without being caught. Solution: broaden
+  scanning to docs/operations/**, keep tag-gated enforcement, add broader stale-command detection,
+  and update docs authoring guidance so strict versus illustrative examples are explicit.'
 acceptance:
-  - Broaden docs example parity scanning to include docs/operations/** with explicit historical/compatibility allowlists.
-  - Validate CLI commands in inline, callout, and table-style examples where they are clearly command usage, while keeping tag-gated workflow enforcement.
-  - Validate MCP tool examples across the expanded doc scope and fail on unknown tools outside allowed historical/compatibility sections.
+  - Broaden docs example parity scanning to include docs/operations/** with explicit
+    historical/compatibility allowlists.
+  - Validate CLI commands in inline, callout, and table-style examples where they are clearly
+    command usage, while keeping tag-gated workflow enforcement.
+  - Validate MCP tool examples across the expanded doc scope and fail on unknown tools outside
+    allowed historical/compatibility sections.
   - Document example tagging conventions and when strict versus illustrative tags are required.
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2435
+claimed_at: 2026-03-12T20:14:23.085Z
+baseline_main_sha: 6db0f2ccaa29dda28d958a60c82878d52c112791
+session_id: e8d5d725-652f-442c-8ae5-ef53f7d7fb22
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T20:14:23.093Z
