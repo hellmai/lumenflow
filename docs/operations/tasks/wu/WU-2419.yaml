@@ -7,8 +7,9 @@ priority: P1
 created: 2026-03-12
 code_paths:
   - apps/docs/src/content/docs/kernel/
-  - docs/04-operations/plans/
-  - docs/04-operations/tasks/initiatives/
+  - apps/docs/src/content/docs/packs/
+  - docs/operations/plans/
+  - docs/operations/tasks/initiatives/
 tests:
   manual:
     - Review published docs and examples for completeness, cross-links, and terminology consistency
@@ -42,9 +43,15 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Publish the final pack story, usage guidance, and example flows after the implementation stabilizes, including installation, configuration, orchestration, governance, and limitations.
+description: Publish the final kernel and pack documentation set for agent-runtime after
+  implementation stabilizes, including installation, configuration, governance, evidence,
+  orchestration, and example flows.
 acceptance:
-  - Public docs explain installation, configuration, provider setup, orchestration, governance, and limitations
+  - Public pack docs explain installation, configuration, provider setup, orchestration, governance,
+    and limitations
+  - Kernel docs explain the runtime pack-config, policy-aware filtering, env allowlisting, streaming
+    evidence, and orchestration semantics introduced by this initiative
   - Examples cover host-driven turns, auto-discovery, streaming, and workflows
-  - Positioning language stays technical and describes governed execution without external comparisons
+  - Positioning language stays technical and describes governed execution without external
+    comparisons
   - ADR and final docs cross-link correctly in the target arc42 layout
