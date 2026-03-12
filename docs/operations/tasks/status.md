@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml)
 
 ## Completed
 

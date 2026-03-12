@@ -2,7 +2,7 @@ id: WU-2415
 title: Add streaming turns with explicit evidence support
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/runtime/src/
 tests:
   manual:
-    - Verify partial and final streaming traces are recorded coherently and non-streaming behavior does not regress
+    - Verify partial and final streaming traces are recorded coherently and non-streaming behavior
+      does not regress
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
     - packages/@lumenflow/runtime/src/
@@ -40,9 +41,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Add streaming provider turn support and extend the evidence model so partial and final turn output remain auditable through the streaming lifecycle.
+description: Add streaming provider turn support and extend the evidence model so partial and final
+  turn output remain auditable through the streaming lifecycle.
 acceptance:
   - Streaming provider turns are supported for agent:execute-turn
-  - The evidence model can represent streaming lifecycle events safely, including partial and final turn traces
+  - The evidence model can represent streaming lifecycle events safely, including partial and final
+    turn traces
   - Partial and final streaming outputs remain auditable
   - Non-streaming behavior remains unchanged
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2415
+claimed_at: 2026-03-12T15:03:21.420Z
+baseline_main_sha: d7d89af70f6a26f67a79f559106b08cab9814602
+session_id: 6f6b3a14-3e57-4f71-b952-9035eb909615
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T15:03:21.427Z
