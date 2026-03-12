@@ -345,6 +345,14 @@ describe('validateGlobPattern', () => {
     expect(validateGlobPattern('*.{js,ts}').ok).toBe(true);
     expect(validateGlobPattern('docs/api/**/*.md').ok).toBe(true);
   });
+
+  // WU-2437: Verify micromatch is importable (was require() which crashes in ESM)
+  it('uses micromatch without ESM ReferenceError', () => {
+    // validateGlobPattern calls micromatch.makeRe internally.
+    // If the ESM import is broken, this would throw ReferenceError.
+    const result = validateGlobPattern('src/**/*.ts');
+    expect(result.ok).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------

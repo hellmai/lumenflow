@@ -3425,3 +3425,5 @@
 {"type":"complete","wuId":"WU-2436","timestamp":"2026-03-12T21:44:07.027Z"}
 {"type":"claim","wuId":"WU-2437","timestamp":"2026-03-12T21:50:06.064Z","lane":"Framework: CLI WU Commands","title":"BUG: gate-co-change crashes with require() in ESM context"}
 {"type":"claim","wuId":"WU-2439","timestamp":"2026-03-12T21:53:29.928Z","lane":"Content: Framework Docs","title":"Validate MCP example payloads against live tool schemas"}
+{"type":"checkpoint","wuId":"WU-2437","timestamp":"2026-03-12T21:50:20.528Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2437","timestamp":"2026-03-12T21:50:32.212Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

@@ -31,13 +31,16 @@ import { createError, ErrorCodes } from '@lumenflow/core/error-handler';
 import { die } from '@lumenflow/core/error-handler';
 import { FILE_SYSTEM } from '@lumenflow/core/wu-constants';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
+import { createRequire } from 'node:module';
 import { runCLI } from './cli-entry-point.js';
 import { asRecord } from './object-guards.js';
 import { DEFAULT_DB_CO_CHANGE_RULES } from './gates-runners.js';
 import type { CoChangeRuleConfig } from '@lumenflow/core/config-schema';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const micromatch = require('micromatch') as {
+// WU-2437: micromatch has no ESM export and no @types. Use createRequire
+// instead of bare require() which throws ReferenceError in ESM context.
+const esmRequire = createRequire(import.meta.url);
+const micromatch = esmRequire('micromatch') as {
   isMatch: (str: string, pattern: string | string[]) => boolean;
   makeRe: (pattern: string) => RegExp | null;
 };
