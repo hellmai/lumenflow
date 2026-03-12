@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — Content: Framework Docs
 - [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
 - [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml) — Framework: Core Lifecycle
