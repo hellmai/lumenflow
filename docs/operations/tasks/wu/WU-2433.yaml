@@ -2,7 +2,7 @@ id: WU-2433
 title: Docs example parity validator for CLI and MCP usage
 lane: 'Content: Framework Docs'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - docs/operations/_frameworks/lumenflow
 tests:
   manual:
-    - Run docs parity tests and confirm strict examples fail on stale commands while tagged illustrative examples remain allowed.
+    - Run docs parity tests and confirm strict examples fail on stale commands while tagged
+      illustrative examples remain allowed.
   unit:
     - apps/docs/__tests__/docs-parity.test.ts
   e2e: []
@@ -22,7 +23,8 @@ plan: lumenflow://plans/WU-2433-plan.md
 spec_refs:
   - lumenflow://plans/WU-2433-plan.md
 risks: []
-notes: Implement with TDD. Prefer a shared docs-parity validator in apps/docs tests so public and internal guidance drift is caught in one place.
+notes: Implement with TDD. Prefer a shared docs-parity validator in apps/docs tests so public and
+  internal guidance drift is caught in one place.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
@@ -35,10 +37,27 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: command references in docs are partially protected by CLI/MCP parity tests, but copy-paste command examples and workflow sequences across public/internal docs can drift while still building successfully. Problem: stale command names, outdated MCP tool identifiers, and invalid lifecycle ordering can remain in docs examples without failing CI. Solution: add a docs example parity validator that scans public and internal docs, classifies strict vs illustrative examples, validates CLI commands against the public manifest, validates MCP tools against the registry, and enforces workflow ordering rules for strict command examples.'
+description: 'Context: command references in docs are partially protected by CLI/MCP parity tests,
+  but copy-paste command examples and workflow sequences across public/internal docs can drift while
+  still building successfully. Problem: stale command names, outdated MCP tool identifiers, and
+  invalid lifecycle ordering can remain in docs examples without failing CI. Solution: add a docs
+  example parity validator that scans public and internal docs, classifies strict vs illustrative
+  examples, validates CLI commands against the public manifest, validates MCP tools against the
+  registry, and enforces workflow ordering rules for strict command examples.'
 acceptance:
-  - Docs example validator scans public and internal docs for CLI and MCP examples and fails on nonexistent commands or tools.
+  - Docs example validator scans public and internal docs for CLI and MCP examples and fails on
+    nonexistent commands or tools.
   - Strict workflow examples fail when mandatory lifecycle steps are missing or ordered incorrectly.
-  - Illustrative examples can be explicitly tagged to bypass strict workflow validation while remaining discoverable and auditable.
+  - Illustrative examples can be explicitly tagged to bypass strict workflow validation while
+    remaining discoverable and auditable.
   - Public and internal docs are updated to use the new example-tagging conventions where needed.
-  - Targeted tests cover command extraction, MCP tool extraction, lifecycle validation, and allowlist behavior.
+  - Targeted tests cover command extraction, MCP tool extraction, lifecycle validation, and
+    allowlist behavior.
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2433
+claimed_at: 2026-03-12T19:11:52.541Z
+baseline_main_sha: 1b69e440a017c266e73f2aae124d57a3a05bc7b0
+session_id: 388350ed-8535-45f5-878b-b59c5994c8e4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T19:11:52.548Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2433 — Docs example parity validator for CLI and MCP usage](wu/WU-2433.yaml)
 
 ## Completed
 
