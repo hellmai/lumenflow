@@ -2,7 +2,7 @@ id: WU-2425
 title: Write wu:brief output to file to survive Bash tool truncation
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -60,3 +60,6 @@ session_id: 1fbcad49-d77c-43f8-94de-7ddd4950c135
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T13:44:36.879Z
+locked: true
+completed_at: 2026-03-12T13:49:05.575Z
+completed: 2026-03-12

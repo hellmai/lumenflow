@@ -36,11 +36,11 @@ sections:
 - [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
 - [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — Content: Framework Docs
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
+- [WU-2426 — cli-entry.mjs triggers full build on --help flag](wu/WU-2426.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml) — Framework: Core Lifecycle
-- [WU-2425 — Write wu:brief output to file to survive Bash tool truncation](wu/WU-2425.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1372,6 +1372,7 @@ sections:
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml)
 - [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml)
 - [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml)
+- [WU-2425 — Write wu:brief output to file to survive Bash tool truncation](wu/WU-2425.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

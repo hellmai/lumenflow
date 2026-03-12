@@ -3317,3 +3317,6 @@
 {"type":"complete","wuId":"WU-2410","timestamp":"2026-03-12T13:30:26.838Z"}
 {"type":"claim","wuId":"WU-2411","timestamp":"2026-03-12T13:32:08.736Z","lane":"Framework: Core Lifecycle","title":"Implement agent:execute-turn core tool and adapter harness"}
 {"type":"claim","wuId":"WU-2425","timestamp":"2026-03-12T13:44:36.901Z","lane":"Framework: CLI WU Commands","title":"Write wu:brief output to file to survive Bash tool truncation"}
+{"type":"checkpoint","wuId":"WU-2425","timestamp":"2026-03-12T13:44:48.814Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2425","timestamp":"2026-03-12T13:45:16.798Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"complete","wuId":"WU-2425","timestamp":"2026-03-12T13:49:10.683Z"}

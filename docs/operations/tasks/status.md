@@ -5,7 +5,6 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml)
-- [WU-2425 — Write wu:brief output to file to survive Bash tool truncation](wu/WU-2425.yaml)
 
 ## Completed
 
@@ -1333,3 +1332,4 @@ _Last updated: 2026-03-12_
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml) — 2026-03-12
 - [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml) — 2026-03-12
 - [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — 2026-03-12
+- [WU-2425 — Write wu:brief output to file to survive Bash tool truncation](wu/WU-2425.yaml) — 2026-03-12
