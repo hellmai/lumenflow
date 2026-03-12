@@ -30,7 +30,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml) — Content: Site Comms
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1377,6 +1377,7 @@ sections:
 - [WU-2427 — Migrate CI workflows from GitHub-hosted to self-hosted runners](wu/WU-2427.yaml)
 - [WU-2430 — Add PNPM_STORE_DIR and timeout-minutes to remaining CI workflows](wu/WU-2430.yaml)
 - [WU-2431 — Add Discord CI notifications to ci.yml](wu/WU-2431.yaml)
+- [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
