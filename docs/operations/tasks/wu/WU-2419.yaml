@@ -8,8 +8,6 @@ created: 2026-03-12
 code_paths:
   - apps/docs/src/content/docs/kernel/
   - apps/docs/src/content/docs/packs/
-  - docs/operations/plans/
-  - docs/operations/tasks/initiatives/
 tests:
   manual:
     - Review published docs and examples for completeness, cross-links, and terminology consistency
@@ -32,7 +30,11 @@ spec_refs:
 risks: []
 notes: Docs-only closeout WU. Keep examples aligned with the implemented surfaces and terminology.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T17:08:24.160Z
+worktree_path: worktrees/content-framework-docs-wu-2419
+session_id: 5c60160f-9369-46d2-92f8-c769035ec69b
 exposure: documentation
 sizing_estimate:
   estimated_files: 16
@@ -40,6 +42,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T17:08:24.165Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -55,11 +60,3 @@ acceptance:
   - Positioning language stays technical and describes governed execution without external
     comparisons
   - ADR and final docs cross-link correctly in the target arc42 layout
-claimed_mode: worktree
-worktree_path: worktrees/content-framework-docs-wu-2419
-claimed_at: 2026-03-12T17:08:24.160Z
-baseline_main_sha: b78d9141ed25cdc456e927529bc2edc88081fb82
-session_id: 5c60160f-9369-46d2-92f8-c769035ec69b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T17:08:24.165Z
