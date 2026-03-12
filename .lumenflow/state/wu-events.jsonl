@@ -3281,3 +3281,4 @@
 {"type":"complete","wuId":"WU-2399","timestamp":"2026-03-12T10:12:36.431Z"}
 {"type":"complete","wuId":"WU-2401","timestamp":"2026-03-12T10:15:12.408Z"}
 {"type":"complete","wuId":"WU-2402","timestamp":"2026-03-12T10:19:21.039Z"}
+{"type":"claim","wuId":"WU-2403","timestamp":"2026-03-12T10:21:33.569Z","lane":"Framework: Initiatives","title":"Fix flaky timeout failures in @lumenflow/initiatives test suite"}

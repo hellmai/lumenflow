@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml)
 
 ## Completed
 
