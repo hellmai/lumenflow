@@ -39,20 +39,14 @@ on:
 jobs:
   gates:
     name: Gates
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    timeout-minutes: 10
     steps:
+      - name: Configure pnpm store
+        run: echo "PNPM_STORE_DIR=$HOME/.local/share/pnpm/store/v10" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        # Uses packageManager field from package.json
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
