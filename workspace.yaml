@@ -234,7 +234,7 @@ software_delivery:
     agentsDir: .claude/agents
     plansDir: docs/operations/plans
     templatesDir: .lumenflow/templates
-    onboardingDir: docs/04-operations/_frameworks/lumenflow/agent/onboarding
+    onboardingDir: docs/operations/_frameworks/lumenflow/agent/onboarding
     completeGuidePath: docs/04-operations/_frameworks/lumenflow/lumenflow-complete.md
     quickRefPath: docs/04-operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
     startingPromptPath: docs/04-operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
