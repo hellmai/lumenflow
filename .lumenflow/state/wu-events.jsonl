@@ -3325,3 +3325,4 @@
 {"type":"checkpoint","wuId":"WU-2426","timestamp":"2026-03-12T13:50:07.994Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2426","timestamp":"2026-03-12T13:53:19.736Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2426.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2426","timestamp":"2026-03-12T13:55:06.699Z"}
+{"type":"checkpoint","wuId":"WU-2411","timestamp":"2026-03-12T14:03:48.690Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
