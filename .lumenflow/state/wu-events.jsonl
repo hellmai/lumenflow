@@ -3278,6 +3278,8 @@
 {"type":"checkpoint","wuId":"WU-2406","timestamp":"2026-03-12T11:46:06.864Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2406.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2406","timestamp":"2026-03-12T11:48:30.989Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2406.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"claim","wuId":"WU-2421","timestamp":"2026-03-12T11:53:12.823Z","lane":"Content: Specs Governance","title":"Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations"}
+{"type":"checkpoint","wuId":"WU-2421","timestamp":"2026-03-12T11:53:24.888Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2421","timestamp":"2026-03-12T11:53:33.565Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2406","timestamp":"2026-03-12T11:58:24.388Z"}
 {"type":"claim","wuId":"WU-2407","timestamp":"2026-03-12T11:59:36.720Z","lane":"Framework: Core Lifecycle","title":"Add runtime pack-config plumbing for pinned pack config roots"}
 {"type":"checkpoint","wuId":"WU-2407","timestamp":"2026-03-12T11:59:52.192Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
@@ -3286,9 +3288,8 @@
 {"type":"claim","wuId":"WU-2408","timestamp":"2026-03-12T12:20:15.179Z","lane":"Framework: Core Lifecycle","title":"Expose policy substrate for governed agent turns"}
 {"type":"checkpoint","wuId":"WU-2408","timestamp":"2026-03-12T12:20:28.645Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2408","timestamp":"2026-03-12T12:20:42.319Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
-{"type":"complete","wuId":"WU-2408","timestamp":"2026-03-12T12:36:08.843Z"}
-{"type":"claim","wuId":"WU-2409","timestamp":"2026-03-12T12:38:32.306Z","lane":"Framework: Core Lifecycle","title":"Harden sandbox credential passthrough with env allowlisting"}
-{"type":"checkpoint","wuId":"WU-2421","timestamp":"2026-03-12T11:53:24.888Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2421","timestamp":"2026-03-12T11:53:33.565Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2421","timestamp":"2026-03-12T12:23:38.811Z","note":"[wu:done] force ownership override claimed_session=bac69047-75bf-4882-9cd3-0b5eb179744f active_session=601fa753-0706-400d-b283-7ad21e244a4f","progress":"wu:done ownership override","nextSteps":"pre-existing format:check failures (.gitkeep, mjs-refs.txt no prettier parser) and pre-existing test failures"}
 {"type":"checkpoint","wuId":"WU-2421","timestamp":"2026-03-12T12:24:37.366Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2421.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2408","timestamp":"2026-03-12T12:36:08.843Z"}
+{"type":"claim","wuId":"WU-2409","timestamp":"2026-03-12T12:38:32.306Z","lane":"Framework: Core Lifecycle","title":"Harden sandbox credential passthrough with env allowlisting"}
+{"type":"complete","wuId":"WU-2421","timestamp":"2026-03-12T12:39:50.514Z"}

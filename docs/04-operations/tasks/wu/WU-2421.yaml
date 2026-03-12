@@ -3,7 +3,7 @@ title: 'Rename docs directories to proper arc42 names: 02-technical to 05-buildi
   04-operations to operations'
 lane: 'Content: Specs Governance'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -45,3 +45,6 @@ acceptance:
   - All cross-references updated across source code, tests, config, docs, agents, skills, scripts, CI
   - pnpm typecheck passes
   - pnpm test passes (excluding pre-existing failures)
+locked: true
+completed_at: 2026-03-12T12:39:45.624Z
+completed: 2026-03-12
