@@ -27,10 +27,10 @@ const HTTP_STATUS_RATE_LIMITED = 429;
 const RESPONSE_FORMAT_TYPE = 'json_object';
 const DEFAULT_FINISH_REASON = 'stop';
 const DEFAULT_ASSISTANT_MESSAGE = '';
-const DEFAULT_INPUT_TOKENS = 'prompt_tokens';
-const DEFAULT_OUTPUT_TOKENS = 'completion_tokens';
-const DEFAULT_TOTAL_TOKENS = 'total_tokens';
-const CHOICE_INDEX_ZERO = 0;
+const FIXTURE_TOOL_NAME = 'calendar:create-event';
+const FIXTURE_INPUT_TOKEN_KEY = 'prompt_tokens';
+const FIXTURE_OUTPUT_TOKEN_KEY = 'completion_tokens';
+const FIXTURE_TOTAL_TOKEN_KEY = 'total_tokens';
 
 const PROVIDER_ERROR_CODES = {
   AUTHENTICATION_FAILED: 'PROVIDER_AUTHENTICATION_FAILED',
@@ -291,15 +291,16 @@ export async function executeProviderTurn(
 export async function runProviderAdapterConformanceHarness(): Promise<
   readonly ProviderAdapterConformanceResult[]
 > {
+  const [staticProviderUrl] = AGENT_RUNTIME_STATIC_PROVIDER_URLS;
   const baseRequest: ProviderTurnRequest = {
     kind: AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE,
     model: 'fixture-model',
-    url: AGENT_RUNTIME_STATIC_PROVIDER_URLS[CHOICE_INDEX_ZERO],
+    url: staticProviderUrl,
     apiKey: 'fixture-token',
     messages: [{ role: 'user', content: 'Create a reminder.' }],
     toolCatalog: [
       {
-        name: 'calendar:create-event',
+        name: FIXTURE_TOOL_NAME,
         description: 'Create a calendar event',
       },
     ],
@@ -330,9 +331,9 @@ export async function runProviderAdapterConformanceHarness(): Promise<
             },
           ],
           usage: {
-            [DEFAULT_INPUT_TOKENS]: 10,
-            [DEFAULT_OUTPUT_TOKENS]: 4,
-            [DEFAULT_TOTAL_TOKENS]: 14,
+            [FIXTURE_INPUT_TOKEN_KEY]: 10,
+            [FIXTURE_OUTPUT_TOKEN_KEY]: 4,
+            [FIXTURE_TOTAL_TOKEN_KEY]: 14,
           },
         }),
       verify: (result: ProviderTurnResult): ProviderAdapterConformanceResult => ({
@@ -362,7 +363,7 @@ export async function runProviderAdapterConformanceHarness(): Promise<
                   {
                     type: 'function',
                     function: {
-                      name: 'calendar:create-event',
+                      name: FIXTURE_TOOL_NAME,
                       arguments: JSON.stringify({
                         title: 'Reminder',
                       }),
@@ -378,7 +379,7 @@ export async function runProviderAdapterConformanceHarness(): Promise<
         passed:
           result.ok &&
           result.output.status === AGENT_RUNTIME_TURN_STATUSES.TOOL_REQUEST &&
-          result.output.requested_tool?.name === 'calendar:create-event',
+          result.output.requested_tool?.name === FIXTURE_TOOL_NAME,
         ...(result.ok ? { normalized_output: result.output } : {}),
       }),
     },
@@ -494,7 +495,8 @@ function normalizeOpenAiCompatibleResponse(
   request: ProviderTurnRequest,
 ): { ok: true; value: AgentRuntimeExecuteTurnOutput } | { ok: false; error: ProviderTurnError } {
   const choices = asArray(payload.choices);
-  const firstChoice = choices && choices.length > 0 ? asRecord(choices[CHOICE_INDEX_ZERO]) : null;
+  const [firstChoiceCandidate] = choices ?? [];
+  const firstChoice = asRecord(firstChoiceCandidate);
   if (!firstChoice) {
     return {
       ok: false,
@@ -603,9 +605,9 @@ function normalizeUsage(value: unknown): AgentRuntimeExecuteTurnOutput['usage'] 
     return undefined;
   }
 
-  const inputTokens = asInteger(value.input_tokens ?? value[DEFAULT_INPUT_TOKENS]);
-  const outputTokens = asInteger(value.output_tokens ?? value[DEFAULT_OUTPUT_TOKENS]);
-  const totalTokens = asInteger(value.total_tokens ?? value[DEFAULT_TOTAL_TOKENS]);
+  const inputTokens = asInteger(value.input_tokens ?? value.prompt_tokens);
+  const outputTokens = asInteger(value.output_tokens ?? value.completion_tokens);
+  const totalTokens = asInteger(value.total_tokens ?? value.total_tokens);
 
   if (inputTokens === null && outputTokens === null && totalTokens === null) {
     return undefined;
@@ -640,7 +642,8 @@ function shapeRequestedTool(
     return { ok: true, value: null };
   }
 
-  const firstToolCall = asRecord(toolCalls[CHOICE_INDEX_ZERO]);
+  const [firstToolCallCandidate] = toolCalls;
+  const firstToolCall = asRecord(firstToolCallCandidate);
   const functionRecord = firstToolCall ? asRecord(firstToolCall.function) : null;
   const name = functionRecord ? asNonEmptyString(functionRecord.name) : null;
   if (!functionRecord || !name) {

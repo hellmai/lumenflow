@@ -371,7 +371,7 @@ function enforceExecutionLimits(
 
   const maxTurnsPerSession = input.limits?.max_turns_per_session;
   if (maxTurnsPerSession !== undefined) {
-    const turnIndex = readMetadataNonNegativeInteger(ctx, AGENT_TURN_INDEX_METADATA_KEY);
+    const turnIndex = readAgentTurnIndex(ctx);
     if (turnIndex !== null && turnIndex >= maxTurnsPerSession) {
       return createFailureOutput(
         LIMIT_EXCEEDED_ERROR_CODE,
@@ -387,7 +387,7 @@ function enforceExecutionLimits(
 
   const maxToolCallsPerSession = input.limits?.max_tool_calls_per_session;
   if (maxToolCallsPerSession !== undefined) {
-    const toolCallCount = readMetadataNonNegativeInteger(ctx, AGENT_TOOL_CALL_COUNT_METADATA_KEY);
+    const toolCallCount = readAgentToolCallCount(ctx);
     if (toolCallCount !== null && toolCallCount >= maxToolCallsPerSession) {
       return createFailureOutput(
         LIMIT_EXCEEDED_ERROR_CODE,
@@ -407,7 +407,7 @@ function enforceExecutionLimits(
 function resolveProviderEnvironment(
   input: ValidatedTurnInput,
 ): { ok: true; value: ResolvedProviderEnvironment } | { ok: false; output: ToolOutput } {
-  const apiKey = readNonEmptyString(process.env[AGENT_RUNTIME_API_KEY_ENV]);
+  const apiKey = readNonEmptyString(process.env.AGENT_RUNTIME_API_KEY);
   if (!apiKey) {
     return {
       ok: false,
@@ -418,7 +418,7 @@ function resolveProviderEnvironment(
     };
   }
 
-  const baseUrl = readNonEmptyString(process.env[AGENT_RUNTIME_BASE_URL_ENV]);
+  const baseUrl = readNonEmptyString(process.env.AGENT_RUNTIME_BASE_URL);
   if (!baseUrl) {
     return {
       ok: false,
@@ -532,11 +532,19 @@ function readOptionalPositiveInteger(value: unknown): number | null {
   return value;
 }
 
-function readMetadataNonNegativeInteger(ctx: ExecutionContext, key: string): number | null {
+function readAgentTurnIndex(ctx: ExecutionContext): number | null {
   if (!ctx.metadata) {
     return null;
   }
-  const value = ctx.metadata[key];
+  const value = ctx.metadata.agent_turn_index;
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null;
+}
+
+function readAgentToolCallCount(ctx: ExecutionContext): number | null {
+  if (!ctx.metadata) {
+    return null;
+  }
+  const value = ctx.metadata.agent_tool_call_count;
   return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null;
 }
 
