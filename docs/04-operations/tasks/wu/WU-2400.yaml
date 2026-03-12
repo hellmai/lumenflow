@@ -2,7 +2,7 @@ id: WU-2400
 title: 'Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity'
 lane: 'Framework: CLI WU Commands'
 type: refactor
-status: ready
+status: in_progress
 priority: P3
 created: 2026-03-12
 code_paths:
@@ -18,7 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2400.done
 dependencies: []
 risks: []
-notes: Related to WU-1215 case study in wu-sizing-guide.md. This is helper extraction, not a rewrite of main() logic — lower risk than WU-1215. Use checkpoint-resume if tool calls exceed 50.
+notes: Related to WU-1215 case study in wu-sizing-guide.md. This is helper extraction, not a rewrite
+  of main() logic — lower risk than WU-1215. Use checkpoint-resume if tool calls exceed 50.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -31,7 +32,14 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Code review found wu-done.ts (2,087 lines) has several decomposition opportunities: (1) executePreFlightChecks is 428 LOC with eslint-disable for cognitive complexity — extract validateYamlSchema, validateApprovalGates, validateCodePathsConsistency, etc; (2) main() is 512 LOC — extract executeAlreadyMergedPath() and executeNormalWuDonePath(); (3) rollbackTransaction is 137 LOC with nested try/catch — extract resetGitStaging, restoreFilesFromSnapshot, resetMainBranchIfNeeded; (4) DRY violations: validateClaimMetadataBeforeGates and _assertWorktreeWUInProgressInStateStore duplicate state store logic; auditSkipGates and auditSkipCosGates are 95% identical.'
+description: 'Code review found wu-done.ts (2,087 lines) has several decomposition opportunities:
+  (1) executePreFlightChecks is 428 LOC with eslint-disable for cognitive complexity — extract
+  validateYamlSchema, validateApprovalGates, validateCodePathsConsistency, etc; (2) main() is 512
+  LOC — extract executeAlreadyMergedPath() and executeNormalWuDonePath(); (3) rollbackTransaction is
+  137 LOC with nested try/catch — extract resetGitStaging, restoreFilesFromSnapshot,
+  resetMainBranchIfNeeded; (4) DRY violations: validateClaimMetadataBeforeGates and
+  _assertWorktreeWUInProgressInStateStore duplicate state store logic; auditSkipGates and
+  auditSkipCosGates are 95% identical.'
 acceptance:
   - executePreFlightChecks delegates to named validator functions
   - main() delegates to extracted path-specific handlers
@@ -39,3 +47,11 @@ acceptance:
   - Duplicate validation/audit functions consolidated
   - No eslint-disable comments for cognitive complexity remain
   - All existing wu-done tests pass
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2400
+claimed_at: 2026-03-12T09:52:56.011Z
+baseline_main_sha: cfb18805b86f9405a52cb156e8140c80f2060c01
+session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:52:56.018Z
