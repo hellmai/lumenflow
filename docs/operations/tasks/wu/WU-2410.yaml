@@ -7,7 +7,7 @@ priority: P1
 created: 2026-03-12
 code_paths:
   - packages/@lumenflow/packs/
-  - packages/@lumenflow/kernel/src/pack/
+  - packages/@lumenflow/kernel/src/
   - apps/docs/src/content/docs/kernel/
 tests:
   manual:
@@ -30,7 +30,11 @@ spec_refs:
 risks: []
 notes: Core scaffold only. Leave turn execution behavior to the next WU.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T13:06:19.068Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2410
+session_id: 872ebb2a-eebe-42f9-abee-15c818a6f6a3
 exposure: backend-only
 sizing_estimate:
   estimated_files: 12
@@ -38,6 +42,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T13:06:19.075Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -49,11 +56,3 @@ acceptance:
   - Manifest declares task_types limited to agent-session
   - Initial provider network scopes use static manifest allowlists
   - Pack integrity and import-boundary checks remain valid
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2410
-claimed_at: 2026-03-12T13:06:19.068Z
-baseline_main_sha: 24933438b8049411af3a80d13c558c965a2792b2
-session_id: 872ebb2a-eebe-42f9-abee-15c818a6f6a3
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T13:06:19.075Z
