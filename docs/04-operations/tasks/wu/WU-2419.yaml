@@ -1,0 +1,50 @@
+id: WU-2419
+title: Publish final docs, examples, and positioning for agent-runtime
+lane: 'Content: Framework Docs'
+type: documentation
+status: ready
+priority: P1
+created: 2026-03-12
+code_paths:
+  - apps/docs/src/content/docs/kernel/
+  - docs/04-operations/plans/
+  - docs/04-operations/tasks/initiatives/
+tests:
+  manual:
+    - Review published docs and examples for completeness, cross-links, and terminology consistency
+  unit:
+    - apps/docs/src/content/docs/kernel/
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2419.done
+dependencies: []
+initiative: INIT-52
+phase: 4
+blocked_by:
+  - WU-2412
+  - WU-2414
+  - WU-2415
+  - WU-2416
+  - WU-2418
+spec_refs:
+  - lumenflow://plans/INIT-52-plan.md
+risks: []
+notes: Docs-only closeout WU. Keep examples aligned with the implemented surfaces and terminology.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+sizing_estimate:
+  estimated_files: 16
+  estimated_tool_calls: 45
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Publish the final pack story, usage guidance, and example flows after the implementation stabilizes, including installation, configuration, orchestration, governance, and limitations.
+acceptance:
+  - Public docs explain installation, configuration, provider setup, orchestration, governance, and limitations
+  - Examples cover host-driven turns, auto-discovery, streaming, and workflows
+  - Positioning language stays technical and describes governed execution without external comparisons
+  - ADR and final docs cross-link correctly in the target arc42 layout
