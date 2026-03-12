@@ -2,7 +2,7 @@ id: WU-2427
 title: Migrate CI workflows from GitHub-hosted to self-hosted runners
 lane: 'Operations: Automation'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -49,3 +49,6 @@ acceptance:
     push/PR/weekly cron triggers
   - pnpm/action-setup and actions/setup-node steps removed from all 3 workflows
   - 'ci.yml has PNPM_STORE_DIR env and timeout-minutes: 10'
+locked: true
+completed_at: 2026-03-12T17:52:32.245Z
+completed: 2026-03-12
