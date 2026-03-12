@@ -6,16 +6,15 @@ status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
-  - packages/@lumenflow/packs/
-  - packages/@lumenflow/runtime/src/
-  - packages/@lumenflow/kernel/src/runtime/
+  - packages/@lumenflow/packs/agent-runtime/
 tests:
   manual:
     - Run branching and scheduled routine scenarios and verify evidence, wakeups, and finalization
       remain coherent
   unit:
-    - packages/@lumenflow/kernel/src/__tests__/
-    - packages/@lumenflow/runtime/src/
+    - packages/@lumenflow/packs/agent-runtime/__tests__/workflow-dag.test.ts
+    - packages/@lumenflow/packs/agent-runtime/__tests__/resume.test.ts
+    - packages/@lumenflow/packs/agent-runtime/__tests__/workflow-state.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2418.done
@@ -30,7 +29,11 @@ spec_refs:
 risks: []
 notes: This WU completes pack-owned orchestration on top of the earlier linear state model.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T16:40:09.544Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2418
+session_id: 3a2e5a6d-0fbd-495e-bbc7-86c662b5a836
 exposure: backend-only
 sizing_estimate:
   estimated_files: 18
@@ -38,6 +41,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T16:40:09.549Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -51,11 +57,3 @@ acceptance:
   - Scheduled wakeups and workflow finalization are represented coherently in evidence and state
     transitions
   - Documentation defines what remains kernel-owned versus pack-owned in orchestration
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2418
-claimed_at: 2026-03-12T16:40:09.544Z
-baseline_main_sha: c8499f724e8028d7633e75d6b23993ab953f7fb9
-session_id: 3a2e5a6d-0fbd-495e-bbc7-86c662b5a836
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T16:40:09.549Z
