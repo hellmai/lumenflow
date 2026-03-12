@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml)
 
 ## Completed
 
