@@ -87,7 +87,7 @@ export const DomainPackPolicySchema = z.object({
     POLICY_TRIGGERS.ON_COMPLETION,
     POLICY_TRIGGERS.ON_EVIDENCE_ADDED,
   ]),
-  decision: z.enum(['allow', 'deny']),
+  decision: z.enum(['allow', 'deny', 'approval_required']),
   reason: z.string().min(1).optional(),
 });
 
@@ -110,6 +110,8 @@ export const DomainPackManifestSchema = z.object({
   config_key: z.string().min(1).optional(),
   /** Path to a JSON Schema file (relative to pack root) describing the pack config shape. */
   config_schema: z.string().optional(),
+  /** Optional module entry (path[#export]) that returns dynamic PolicyRule[] during runtime init. */
+  policy_factory: z.string().min(1).optional(),
 });
 
 export type DomainPackManifest = z.infer<typeof DomainPackManifestSchema>;

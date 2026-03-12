@@ -177,6 +177,38 @@ describe('DomainPackManifestSchema config_key and config_schema fields', () => {
     expect(manifest.config_key).toBe('software_delivery');
     expect(manifest.config_schema).toBe('schemas/sd-config.json');
   });
+
+  describe('policy fields', () => {
+    it('accepts approval_required in manifest-authored policies', () => {
+      const manifest = DomainPackManifestSchema.parse(
+        minimalManifestInput({
+          policies: [
+            {
+              id: 'workspace.default',
+              trigger: 'on_tool_request',
+              decision: 'approval_required',
+            },
+          ],
+        }),
+      );
+
+      expect(manifest.policies[0]?.decision).toBe('approval_required');
+    });
+
+    it('accepts a manifest with policy_factory present', () => {
+      const manifest = DomainPackManifestSchema.parse(
+        minimalManifestInput({ policy_factory: 'policies/factory.ts#policyFactory' }),
+      );
+
+      expect(manifest.policy_factory).toBe('policies/factory.ts#policyFactory');
+    });
+
+    it('rejects policy_factory that is not a string', () => {
+      expect(() =>
+        DomainPackManifestSchema.parse(minimalManifestInput({ policy_factory: 42 })),
+      ).toThrow();
+    });
+  });
 });
 
 // AC4: Pack loader reads and exposes config_key from loaded manifests

@@ -143,16 +143,19 @@ function isRuntimeSourceFile(relativePath: string): boolean {
   return !/\.(test|spec)\.[cm]?[jt]sx?$/.test(normalizedPath);
 }
 
-function parseToolEntry(entry: string): { modulePath: string; exportName?: string } {
+function parsePackModuleEntry(
+  entry: string,
+  entryLabel: string,
+): { modulePath: string; exportName?: string } {
   const separator = entry.indexOf('#');
   const modulePath = separator < 0 ? entry : entry.slice(0, separator);
   const exportName = separator < 0 ? undefined : entry.slice(separator + 1);
 
   if (modulePath.trim().length === 0) {
-    throw new Error(`Pack tool entry "${entry}" is missing a module path.`);
+    throw new Error(`${entryLabel} "${entry}" is missing a module path.`);
   }
   if (exportName !== undefined && exportName.trim().length === 0) {
-    throw new Error(`Pack tool entry "${entry}" has an empty export fragment.`);
+    throw new Error(`${entryLabel} "${entry}" has an empty export fragment.`);
   }
 
   return {
@@ -161,16 +164,35 @@ function parseToolEntry(entry: string): { modulePath: string; exportName?: strin
   };
 }
 
-export function resolvePackToolEntryPath(packRoot: string, entry: string): string {
+export interface ResolvedPackModuleEntry {
+  modulePath: string;
+  exportName?: string;
+}
+
+export function resolvePackModuleEntry(
+  packRoot: string,
+  entry: string,
+  entryLabel = 'Pack module entry',
+): ResolvedPackModuleEntry {
   const absolutePackRoot = path.resolve(packRoot);
-  const { modulePath, exportName } = parseToolEntry(entry);
+  const { modulePath, exportName } = parsePackModuleEntry(entry, entryLabel);
   const absoluteModulePath = path.resolve(absolutePackRoot, modulePath);
 
   if (!isWithinRoot(absolutePackRoot, absoluteModulePath)) {
-    throw new Error(`Pack tool entry "${entry}" resolves outside pack root.`);
+    throw new Error(`${entryLabel} "${entry}" resolves outside pack root.`);
   }
 
-  return exportName ? `${absoluteModulePath}#${exportName}` : absoluteModulePath;
+  return {
+    modulePath: absoluteModulePath,
+    exportName,
+  };
+}
+
+export function resolvePackToolEntryPath(packRoot: string, entry: string): string {
+  const resolvedEntry = resolvePackModuleEntry(packRoot, entry, 'Pack tool entry');
+  return resolvedEntry.exportName
+    ? `${resolvedEntry.modulePath}#${resolvedEntry.exportName}`
+    : resolvedEntry.modulePath;
 }
 
 function extractImportSpecifiers(sourceCode: string): string[] {
@@ -405,6 +427,9 @@ export class PackLoader {
 
     for (const tool of manifest.tools) {
       resolvePackToolEntryPath(packRoot, tool.entry);
+    }
+    if (manifest.policy_factory) {
+      resolvePackModuleEntry(packRoot, manifest.policy_factory, 'Pack policy_factory entry');
     }
 
     await validatePackImportBoundaries(packRoot, this.hashExclusions);

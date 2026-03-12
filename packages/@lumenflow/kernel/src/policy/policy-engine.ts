@@ -23,6 +23,8 @@ export interface PolicyEvaluationContext {
   pack_id?: string;
   /** Parsed tool input arguments, available for argument-level policy matching. */
   tool_arguments?: Record<string, unknown>;
+  /** Execution metadata propagated from the runtime execution context. */
+  execution_metadata?: Record<string, unknown>;
 }
 
 export interface PolicyRule {
@@ -32,6 +34,17 @@ export interface PolicyRule {
   reason?: string;
   when?: (context: PolicyEvaluationContext) => boolean;
 }
+
+export interface PackPolicyFactoryInput {
+  workspaceRoot: string;
+  packId: string;
+  packRoot: string;
+  packConfig?: unknown;
+}
+
+export type PackPolicyFactory =
+  | ((input: PackPolicyFactoryInput) => PolicyRule[])
+  | ((input: PackPolicyFactoryInput) => Promise<PolicyRule[]>);
 
 export interface PolicyLayer {
   level: PolicyLayerLevel;

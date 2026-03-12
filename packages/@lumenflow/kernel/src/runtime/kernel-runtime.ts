@@ -4,7 +4,7 @@
 import { randomBytes } from 'node:crypto';
 import { access, mkdir, open, readFile, readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import YAML from 'yaml';
 import { z } from 'zod';
 import { canonical_json } from '../canonical-json.js';
@@ -59,13 +59,21 @@ import {
   type ToolTraceEntry,
   type WorkspaceSpec,
 } from '../kernel.schemas.js';
-import { PackLoader, resolvePackToolEntryPath, type LoadedDomainPack } from '../pack/index.js';
+import {
+  PackLoader,
+  resolvePackModuleEntry,
+  resolvePackToolEntryPath,
+  type LoadedDomainPack,
+} from '../pack/index.js';
 import {
   POLICY_TRIGGERS,
+  type PackPolicyFactory,
+  type PackPolicyFactoryInput,
   PolicyEngine,
   type PolicyEvaluationContext,
   type PolicyEvaluationResult,
   type PolicyLayer,
+  type PolicyRule,
 } from '../policy/index.js';
 import {
   SandboxSubprocessDispatcher,
@@ -101,6 +109,8 @@ const CLI_PACKS_ROOT_CANDIDATE = path.resolve(
 const DEFAULT_PACK_TOOL_INPUT_SCHEMA = z.record(z.string(), z.unknown());
 const DEFAULT_PACK_TOOL_OUTPUT_SCHEMA = z.record(z.string(), z.unknown());
 const JSON_SCHEMA_MAX_DEPTH = 12;
+const PACK_POLICY_FACTORY_DEFAULT_EXPORT = 'default';
+const PACK_POLICY_FACTORY_NAMED_EXPORT = 'policyFactory';
 const RUNTIME_LOAD_STAGE_ERROR_PREFIX = 'Runtime load stage failed for pack';
 const RUNTIME_REGISTRATION_STAGE_ERROR_PREFIX = 'Runtime registration stage failed for tool';
 const WORKSPACE_UPDATED_INIT_SUMMARY = 'Workspace config hash initialized during runtime startup.';
@@ -750,6 +760,183 @@ async function attachResolvedPackConfig(
   };
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isPolicyTrigger(value: unknown): value is PolicyRule['trigger'] {
+  return (
+    value === POLICY_TRIGGERS.ON_TOOL_REQUEST ||
+    value === POLICY_TRIGGERS.ON_CLAIM ||
+    value === POLICY_TRIGGERS.ON_COMPLETION ||
+    value === POLICY_TRIGGERS.ON_EVIDENCE_ADDED
+  );
+}
+
+function isPolicyEffect(value: unknown): value is PolicyRule['decision'] {
+  return value === 'allow' || value === 'deny' || value === 'approval_required';
+}
+
+function isPackPolicyFactory(value: unknown): value is PackPolicyFactory {
+  return typeof value === 'function';
+}
+
+function isPolicyWhenPredicate(value: unknown): value is NonNullable<PolicyRule['when']> {
+  return typeof value === 'function';
+}
+
+function selectPackPolicyFactory(options: {
+  loadedModule: unknown;
+  exportName?: string;
+  policyFactoryEntry: string;
+  packId: string;
+}): PackPolicyFactory {
+  const { loadedModule, exportName, policyFactoryEntry, packId } = options;
+
+  if (exportName) {
+    if (!isRecord(loadedModule) || !isPackPolicyFactory(loadedModule[exportName])) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" must export function "${exportName}".`,
+      );
+    }
+    return loadedModule[exportName];
+  }
+
+  if (isPackPolicyFactory(loadedModule)) {
+    return loadedModule;
+  }
+
+  if (isRecord(loadedModule)) {
+    const defaultExport = loadedModule[PACK_POLICY_FACTORY_DEFAULT_EXPORT];
+    if (isPackPolicyFactory(defaultExport)) {
+      return defaultExport;
+    }
+
+    const namedExport = loadedModule[PACK_POLICY_FACTORY_NAMED_EXPORT];
+    if (isPackPolicyFactory(namedExport)) {
+      return namedExport;
+    }
+  }
+
+  throw new Error(
+    `policy_factory "${policyFactoryEntry}" for pack "${packId}" must export a function via default export, policyFactory, or an explicit #export.`,
+  );
+}
+
+function validatePackPolicyFactoryRules(
+  rulesValue: unknown,
+  packId: string,
+  policyFactoryEntry: string,
+): PolicyRule[] {
+  if (!Array.isArray(rulesValue)) {
+    throw new Error(
+      `policy_factory "${policyFactoryEntry}" for pack "${packId}" must return an array of policy rules.`,
+    );
+  }
+
+  return rulesValue.map((ruleValue, index) => {
+    if (!isRecord(ruleValue)) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" returned rule ${index} that is not an object.`,
+      );
+    }
+
+    const id = ruleValue.id;
+    if (typeof id !== 'string' || id.trim().length === 0) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" returned rule ${index} with an invalid id.`,
+      );
+    }
+
+    const trigger = ruleValue.trigger;
+    if (!isPolicyTrigger(trigger)) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" returned rule "${id}" with an invalid trigger.`,
+      );
+    }
+
+    const decision = ruleValue.decision;
+    if (!isPolicyEffect(decision)) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" returned rule "${id}" with an invalid decision.`,
+      );
+    }
+
+    const reason = ruleValue.reason;
+    if (reason !== undefined && (typeof reason !== 'string' || reason.trim().length === 0)) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" returned rule "${id}" with an invalid reason.`,
+      );
+    }
+
+    const when = ruleValue.when;
+    if (when !== undefined && !isPolicyWhenPredicate(when)) {
+      throw new Error(
+        `policy_factory "${policyFactoryEntry}" for pack "${packId}" returned rule "${id}" with a non-function when predicate.`,
+      );
+    }
+
+    return {
+      id,
+      trigger,
+      decision,
+      ...(reason ? { reason } : {}),
+      ...(when ? { when } : {}),
+    };
+  });
+}
+
+async function resolvePackPolicyFactoryRules(
+  workspaceRoot: string,
+  loadedPack: LoadedDomainPack,
+): Promise<PolicyRule[]> {
+  const policyFactoryEntry = loadedPack.manifest.policy_factory;
+  if (!policyFactoryEntry) {
+    return [];
+  }
+
+  const resolvedEntry = resolvePackModuleEntry(
+    loadedPack.packRoot,
+    policyFactoryEntry,
+    'Pack policy_factory entry',
+  );
+
+  let loadedModule: unknown;
+  try {
+    loadedModule = await import(pathToFileURL(resolvedEntry.modulePath).href);
+  } catch (error) {
+    throw new Error(
+      `Failed to load policy_factory "${policyFactoryEntry}" for pack "${loadedPack.manifest.id}".`,
+      { cause: error },
+    );
+  }
+
+  const policyFactory = selectPackPolicyFactory({
+    loadedModule,
+    exportName: resolvedEntry.exportName,
+    policyFactoryEntry,
+    packId: loadedPack.manifest.id,
+  });
+
+  let rulesValue: unknown;
+  try {
+    const factoryInput: PackPolicyFactoryInput = {
+      workspaceRoot,
+      packId: loadedPack.manifest.id,
+      packRoot: loadedPack.packRoot,
+      packConfig: loadedPack.resolvedConfig,
+    };
+    rulesValue = await policyFactory(factoryInput);
+  } catch (error) {
+    throw new Error(
+      `policy_factory "${policyFactoryEntry}" for pack "${loadedPack.manifest.id}" failed during runtime startup.`,
+      { cause: error },
+    );
+  }
+
+  return validatePackPolicyFactoryRules(rulesValue, loadedPack.manifest.id, policyFactoryEntry);
+}
+
 export async function defaultRuntimeToolCapabilityResolver(
   input: RuntimeToolCapabilityResolverInput,
 ): Promise<ToolCapability | null> {
@@ -933,15 +1120,22 @@ async function resolveWorkspaceSpec(
   };
 }
 
-function buildDefaultPolicyLayers(loadedPacks: LoadedDomainPack[]): PolicyLayer[] {
-  const packRules = loadedPacks.flatMap((loadedPack) => {
-    return loadedPack.manifest.policies.map((policy) => ({
-      id: policy.id,
-      trigger: policy.trigger,
-      decision: policy.decision,
-      reason: policy.reason,
-    }));
-  });
+async function buildDefaultPolicyLayers(
+  workspaceRoot: string,
+  loadedPacks: LoadedDomainPack[],
+): Promise<PolicyLayer[]> {
+  const packRules: PolicyRule[] = [];
+  for (const loadedPack of loadedPacks) {
+    packRules.push(
+      ...loadedPack.manifest.policies.map((policy) => ({
+        id: policy.id,
+        trigger: policy.trigger,
+        decision: policy.decision,
+        reason: policy.reason,
+      })),
+    );
+    packRules.push(...(await resolvePackPolicyFactoryRules(workspaceRoot, loadedPack)));
+  }
 
   return [
     {
@@ -981,6 +1175,7 @@ function createRuntimePolicyHook(policyEngine: PolicyEngine): PolicyHook {
       tool_name: input.capability.name,
       pack_id: input.capability.pack,
       tool_arguments: input.tool_arguments,
+      execution_metadata: resolveExecutionMetadata(input.context),
     };
 
     const evaluation = await policyEngine.evaluate(context);
@@ -1559,7 +1754,8 @@ export async function initializeKernelRuntime(
   }
 
   const policyEngine = new PolicyEngine({
-    layers: options.policyLayers ?? buildDefaultPolicyLayers(resolvedLoadedPacks),
+    layers:
+      options.policyLayers ?? (await buildDefaultPolicyLayers(workspaceRoot, resolvedLoadedPacks)),
   });
   const evidenceStore = new EvidenceStore({ evidenceRoot });
 

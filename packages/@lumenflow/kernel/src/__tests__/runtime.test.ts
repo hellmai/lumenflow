@@ -68,6 +68,7 @@ function createExecutionContext(
   taskId: string,
   runId: string,
   workspaceConfigHash: string,
+  extraMetadata: Record<string, unknown> = {},
 ): ExecutionContext {
   return {
     run_id: runId,
@@ -80,6 +81,7 @@ function createExecutionContext(
       task_declared_scopes: [WORKSPACE_SCOPE],
       workspace_config_hash: workspaceConfigHash,
       runtime_version: '2.21.0',
+      ...extraMetadata,
     },
   };
 }
@@ -1185,6 +1187,126 @@ describe('kernel runtime facade', () => {
     expect(output.error?.message).toContain('approval');
   });
 
+  it('returns approval_required when a manifest-authored policy uses approval_required', async () => {
+    const packRoot = join(tempRoot, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+    await writeFile(
+      join(packRoot, PACK_MANIFEST_FILE_NAME),
+      [
+        `id: ${SOFTWARE_DELIVERY_PACK_ID}`,
+        'version: 1.0.0',
+        'task_types:',
+        '  - work-unit',
+        'tools:',
+        `  - name: ${PACK_ECHO_TOOL_NAME}`,
+        '    entry: tools/echo.ts',
+        '    required_scopes:',
+        '      - type: path',
+        '        pattern: "**"',
+        '        access: read',
+        'policies:',
+        '  - id: runtime.echo.approval',
+        '    trigger: on_tool_request',
+        '    decision: approval_required',
+        'state_aliases:',
+        '  active: in_progress',
+        'evidence_types: []',
+        'lane_templates: []',
+        'config_key: software_delivery',
+      ].join('\n'),
+      UTF8_ENCODING,
+    );
+
+    const runtime = await createRuntime();
+    const taskSpec = createTaskSpec('WU-2408-manifest-approval');
+    await runtime.createTask(taskSpec);
+    const claim = await runtime.claimTask({
+      task_id: taskSpec.id,
+      by: 'tom@hellm.ai',
+      session_id: 'session-2408-manifest-approval',
+    });
+
+    const output = await runtime.executeTool(
+      PACK_ECHO_TOOL_NAME,
+      { message: 'needs-manifest-approval' },
+      createExecutionContext(taskSpec.id, claim.run.run_id, workspaceConfigHash),
+    );
+
+    expect(output.success).toBe(false);
+    expect(output.error?.code).toBe('APPROVAL_REQUIRED');
+  });
+
+  it('propagates execution_metadata into PolicyEvaluationContext during tool requests', async () => {
+    const runtime = await initializeKernelRuntime({
+      workspaceRoot: tempRoot,
+      packsRoot: join(tempRoot, PACKS_DIR_NAME),
+      taskSpecRoot: join(tempRoot, 'tasks'),
+      eventsFilePath: join(tempRoot, 'events.jsonl'),
+      eventLockFilePath: join(tempRoot, 'events.lock'),
+      evidenceRoot: join(tempRoot, 'evidence'),
+      policyLayers: [
+        {
+          level: 'workspace',
+          default_decision: 'allow',
+          allow_loosening: true,
+          rules: [],
+        },
+        {
+          level: 'lane',
+          rules: [
+            {
+              id: 'lane.deny.scheduling-intent',
+              trigger: 'on_tool_request' as const,
+              decision: 'deny' as const,
+              reason: 'Scheduling intent blocks the echo tool',
+              when: (context) =>
+                context.tool_name === PACK_ECHO_TOOL_NAME &&
+                context.execution_metadata?.agent_intent === 'scheduling',
+            },
+          ],
+        },
+        { level: 'pack', rules: [] },
+        { level: 'task', rules: [] },
+      ],
+      toolCapabilityResolver: async ({ loadedPack, tool }) => ({
+        name: tool.name,
+        domain: loadedPack.manifest.id,
+        version: loadedPack.manifest.version,
+        input_schema: z.object({ message: z.string().min(1) }),
+        output_schema: z.object({ echo: z.string().min(1) }),
+        permission: 'read',
+        required_scopes: [WORKSPACE_SCOPE],
+        handler: {
+          kind: 'in-process',
+          fn: async (input) => ({
+            success: true,
+            data: { echo: (input as { message: string }).message },
+          }),
+        },
+        description: 'Echo tool',
+        pack: loadedPack.pin.id,
+      }),
+    });
+
+    const taskSpec = createTaskSpec('WU-2408-execution-metadata');
+    await runtime.createTask(taskSpec);
+    const claim = await runtime.claimTask({
+      task_id: taskSpec.id,
+      by: 'tom@hellm.ai',
+      session_id: 'session-2408-execution-metadata',
+    });
+
+    const output = await runtime.executeTool(
+      PACK_ECHO_TOOL_NAME,
+      { message: 'blocked-by-metadata' },
+      createExecutionContext(taskSpec.id, claim.run.run_id, workspaceConfigHash, {
+        agent_intent: 'scheduling',
+      }),
+    );
+
+    expect(output.success).toBe(false);
+    expect(output.error?.code).toBe('POLICY_DENIED');
+  });
+
   it('resolveApproval resumes a tool blocked by approval_required', async () => {
     const runtime = await initializeKernelRuntime({
       workspaceRoot: tempRoot,
@@ -1388,8 +1510,19 @@ describe('kernel runtime facade', () => {
       );
     }
 
-    async function writeManifestWithConfigKey(root: string, configKey: string): Promise<void> {
+    async function writeManifestWithConfigKey(
+      root: string,
+      configKey: string,
+      options: {
+        policyId?: string;
+        policyTrigger?: 'on_tool_request' | 'on_claim' | 'on_completion' | 'on_evidence_added';
+        policyDecision?: 'allow' | 'deny' | 'approval_required';
+      } = {},
+    ): Promise<void> {
       const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+      const policyId = options.policyId ?? 'runtime.completion.allow';
+      const policyTrigger = options.policyTrigger ?? 'on_completion';
+      const policyDecision = options.policyDecision ?? 'allow';
       await writeFile(
         join(packRoot, PACK_MANIFEST_FILE_NAME),
         [
@@ -1405,9 +1538,9 @@ describe('kernel runtime facade', () => {
           '        pattern: "**"',
           '        access: read',
           'policies:',
-          '  - id: runtime.completion.allow',
-          '    trigger: on_completion',
-          '    decision: allow',
+          `  - id: ${policyId}`,
+          `    trigger: ${policyTrigger}`,
+          `    decision: ${policyDecision}`,
           'state_aliases:',
           '  active: in_progress',
           'evidence_types: []',
@@ -1457,8 +1590,20 @@ describe('kernel runtime facade', () => {
       );
     }
 
-    async function writeManifestWithConfigSchema(root: string, configKey: string): Promise<void> {
+    async function writeManifestWithConfigSchema(
+      root: string,
+      configKey: string,
+      options: {
+        policyFactory?: string;
+        policyId?: string;
+        policyTrigger?: 'on_tool_request' | 'on_claim' | 'on_completion' | 'on_evidence_added';
+        policyDecision?: 'allow' | 'deny' | 'approval_required';
+      } = {},
+    ): Promise<void> {
       const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+      const policyId = options.policyId ?? 'runtime.completion.allow';
+      const policyTrigger = options.policyTrigger ?? 'on_completion';
+      const policyDecision = options.policyDecision ?? 'allow';
       await mkdir(join(packRoot, 'schemas'), { recursive: true });
       await writeFile(
         join(packRoot, PACK_MANIFEST_FILE_NAME),
@@ -1475,15 +1620,16 @@ describe('kernel runtime facade', () => {
           '        pattern: "**"',
           '        access: read',
           'policies:',
-          '  - id: runtime.completion.allow',
-          '    trigger: on_completion',
-          '    decision: allow',
+          `  - id: ${policyId}`,
+          `    trigger: ${policyTrigger}`,
+          `    decision: ${policyDecision}`,
           'state_aliases:',
           '  active: in_progress',
           'evidence_types: []',
           'lane_templates: []',
           `config_key: ${configKey}`,
           'config_schema: schemas/config.schema.json',
+          ...(options.policyFactory ? [`policy_factory: ${options.policyFactory}`] : []),
         ].join('\n'),
         UTF8_ENCODING,
       );
@@ -1510,6 +1656,12 @@ describe('kernel runtime facade', () => {
         ),
         UTF8_ENCODING,
       );
+    }
+
+    async function writePolicyFactoryModule(root: string, source: string): Promise<void> {
+      const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+      await mkdir(join(packRoot, 'policies'), { recursive: true });
+      await writeFile(join(packRoot, 'policies', 'factory.ts'), source, UTF8_ENCODING);
     }
 
     it('rejects workspace with unknown root keys during initializeKernelRuntime', async () => {
@@ -1629,6 +1781,76 @@ describe('kernel runtime facade', () => {
 
       await expect(createRuntime()).rejects.toThrow(/software_delivery/i);
       await expect(createRuntime()).rejects.toThrow(/mode/i);
+    });
+
+    it('applies policy_factory rules using resolved pack config during runtime initialization', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, ['  mode: strict']);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery', {
+        policyFactory: 'policies/factory.ts#policyFactory',
+      });
+      await writePolicyFactoryModule(
+        tempRoot,
+        [
+          `export function policyFactory(input) {`,
+          `  const config = input && typeof input === "object" ? input.packConfig : undefined;`,
+          `  const mode = config && typeof config === "object" ? config.mode : undefined;`,
+          `  if (mode !== "strict") {`,
+          `    return [];`,
+          `  }`,
+          `  return [`,
+          `    {`,
+          `      id: "factory.approval.echo",`,
+          `      trigger: "on_tool_request",`,
+          `      decision: "approval_required",`,
+          `      reason: "Strict mode requires approval",`,
+          `      when: (context) => context.tool_name === "${PACK_ECHO_TOOL_NAME}",`,
+          `    },`,
+          `  ];`,
+          `}`,
+        ].join('\n'),
+      );
+
+      const runtime = await createRuntime();
+      const taskSpec = createTaskSpec('WU-2408-policy-factory');
+      await runtime.createTask(taskSpec);
+      const claim = await runtime.claimTask({
+        task_id: taskSpec.id,
+        by: 'tom@hellm.ai',
+        session_id: 'session-2408-policy-factory',
+      });
+
+      const output = await runtime.executeTool(
+        PACK_ECHO_TOOL_NAME,
+        { message: 'strict-mode-tool-call' },
+        createExecutionContext(taskSpec.id, claim.run.run_id, workspaceConfigHash),
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error?.code).toBe('APPROVAL_REQUIRED');
+    });
+
+    it('fails runtime startup when policy_factory returns invalid rules', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, ['  mode: strict']);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery', {
+        policyFactory: 'policies/factory.ts#policyFactory',
+      });
+      await writePolicyFactoryModule(
+        tempRoot,
+        [
+          `export function policyFactory() {`,
+          `  return [`,
+          `    {`,
+          `      id: "factory.invalid.echo",`,
+          `      trigger: "on_tool_request",`,
+          `      decision: "maybe",`,
+          `    },`,
+          `  ];`,
+          `}`,
+        ].join('\n'),
+      );
+
+      await expect(createRuntime()).rejects.toThrow(/policy_factory/i);
+      await expect(createRuntime()).rejects.toThrow(/decision/i);
     });
 
     it('keeps packs without config_key unaffected during runtime initialization', async () => {
