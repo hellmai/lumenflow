@@ -2,7 +2,7 @@ id: WU-2432
 title: Fix Sidekick workflows docs build regression
 lane: 'Content: Site Comms'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -26,8 +26,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: production docs deploy is blocked because the new Sidekick workflows page has malformed MDX in its Steps block. Problem: vercel build for apps/docs fails, so Starlight cannot be published. Solution: fix the MDX structure, validate the docs build, and publish the corrected Starlight output to Vercel.'
+description: 'Context: production docs deploy is blocked because the new Sidekick workflows page has
+  malformed MDX in its Steps block. Problem: vercel build for apps/docs fails, so Starlight cannot
+  be published. Solution: fix the MDX structure, validate the docs build, and publish the corrected
+  Starlight output to Vercel.'
 acceptance:
   - Sidekick workflows docs render without MDX parse errors.
   - Vercel production build for apps/docs succeeds from main.
-  - Production docs are deployed to Vercel and the live Sidekick workflows page responds successfully.
+  - Production docs are deployed to Vercel and the live Sidekick workflows page responds
+    successfully.
+claimed_mode: worktree
+worktree_path: worktrees/content-site-comms-wu-2432
+claimed_at: 2026-03-12T18:34:59.517Z
+baseline_main_sha: da69463623be892328966ebff04e3b8b782112ff
+session_id: 6dd38895-7b95-43aa-b5ca-8ecef187cd75
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T18:34:59.528Z

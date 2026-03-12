@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2432 — Fix Sidekick workflows docs build regression](wu/WU-2432.yaml)
 
 ## Completed
 
