@@ -3260,3 +3260,4 @@
 {"type":"checkpoint","wuId":"WU-2403","timestamp":"2026-03-12T10:37:27.714Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2403.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2403","timestamp":"2026-03-12T10:37:57.323Z","note":"[wu:edit] path=docs/04-operations/tasks/wu/WU-2403.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2403","timestamp":"2026-03-12T10:39:42.200Z"}
+{"type":"claim","wuId":"WU-2404","timestamp":"2026-03-12T10:56:31.299Z","lane":"Framework: Core Lifecycle","title":"Pack manifest resolution returns empty config_key map in consumer installs"}

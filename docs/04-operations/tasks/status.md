@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml)
 
 ## Completed
 
