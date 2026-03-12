@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1331,3 +1331,4 @@ _Last updated: 2026-03-12_
 - [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — 2026-03-12
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml) — 2026-03-12
 - [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml) — 2026-03-12
+- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — 2026-03-12

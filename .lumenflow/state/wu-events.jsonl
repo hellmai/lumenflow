@@ -3302,14 +3302,9 @@
 {"type":"complete","wuId":"WU-2409","timestamp":"2026-03-12T13:05:05.316Z"}
 {"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:06:16.162Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"claim","wuId":"WU-2410","timestamp":"2026-03-12T13:06:19.101Z","lane":"Framework: Core Lifecycle","title":"Scaffold the agent-runtime pack"}
+{"type":"checkpoint","wuId":"WU-2410","timestamp":"2026-03-12T13:06:32.758Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2410","timestamp":"2026-03-12T13:06:42.699Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"claim","wuId":"WU-2424","timestamp":"2026-03-12T13:08:51.695Z","lane":"Content: Specs Governance","title":"Delete stale CLI sizing guide copy and add review/audit sizing patterns"}
-{"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:02:29.057Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"complete","wuId":"WU-2409","timestamp":"2026-03-12T13:05:05.316Z"}
-{"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:06:16.162Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
-{"type":"claim","wuId":"WU-2410","timestamp":"2026-03-12T13:06:19.101Z","lane":"Framework: Core Lifecycle","title":"Scaffold the agent-runtime pack"}
-{"type":"claim","wuId":"WU-2424","timestamp":"2026-03-12T13:08:51.695Z","lane":"Content: Specs Governance","title":"Delete stale CLI sizing guide copy and add review/audit sizing patterns"}
-{"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:13:35.189Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2423.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
-{"type":"complete","wuId":"WU-2423","timestamp":"2026-03-12T13:15:39.571Z"}
 {"type":"checkpoint","wuId":"WU-2424","timestamp":"2026-03-12T13:09:03.733Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2424","timestamp":"2026-03-12T13:09:33.109Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2423","timestamp":"2026-03-12T13:13:35.189Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2423.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
@@ -3318,6 +3313,5 @@
 {"type":"checkpoint","wuId":"WU-2424","timestamp":"2026-03-12T13:14:22.369Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2424.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2423","timestamp":"2026-03-12T13:15:39.571Z"}
 {"type":"complete","wuId":"WU-2424","timestamp":"2026-03-12T13:16:20.423Z"}
-{"type":"checkpoint","wuId":"WU-2410","timestamp":"2026-03-12T13:06:32.758Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2410","timestamp":"2026-03-12T13:06:42.699Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2410","timestamp":"2026-03-12T13:27:32.125Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2410.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2410","timestamp":"2026-03-12T13:30:26.838Z"}

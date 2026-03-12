@@ -2,7 +2,7 @@ id: WU-2410
 title: Scaffold the agent-runtime pack
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -56,3 +56,6 @@ acceptance:
   - Manifest declares task_types limited to agent-session
   - Initial provider network scopes use static manifest allowlists
   - Pack integrity and import-boundary checks remain valid
+locked: true
+completed_at: 2026-03-12T13:30:21.887Z
+completed: 2026-03-12

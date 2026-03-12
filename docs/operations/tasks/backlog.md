@@ -39,7 +39,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1370,6 +1370,7 @@ sections:
 - [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml)
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml)
 - [WU-2424 — Delete stale CLI sizing guide copy and add review/audit sizing patterns](wu/WU-2424.yaml)
+- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

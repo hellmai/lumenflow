@@ -15,7 +15,7 @@ phases:
     status: done
   - id: 2
     title: 'Phase 2: Core pack delivery'
-    status: pending
+    status: in_progress
   - id: 3
     title: 'Phase 3: Runtime expansion'
     status: pending
