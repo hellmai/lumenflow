@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml)
 
 ## Completed
 

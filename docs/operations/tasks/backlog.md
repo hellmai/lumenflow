@@ -27,11 +27,10 @@ sections:
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
-- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
