@@ -1,0 +1,64 @@
+---
+title: Sidekick Pack
+description: Workspace-local productivity tools for tasks, memory, routines, channels, and status
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+The Sidekick Pack adds a compact, workspace-local productivity surface to the kernel. It manages tasks, memory, named channels, routines, and status data under `.sidekick/`, while keeping every tool call inside the normal kernel policy, scope, and evidence pipeline.
+
+## What It Adds
+
+<CardGrid>
+  <Card title="Tasks" icon="checklist">
+    Create, list, complete, and schedule personal or team-local tasks without leaving the governed
+    runtime.
+  </Card>
+  <Card title="Memory" icon="document">
+    Store and recall workspace knowledge, notes, and lightweight context that agents can reuse
+    later.
+  </Card>
+  <Card title="Routines" icon="setting">
+    Define reusable multi-step sequences and inspect the execution plan before anything runs.
+  </Card>
+  <Card title="Channels" icon="comment">
+    Use named channels for lightweight communication and inbox-style coordination inside the
+    workspace.
+  </Card>
+</CardGrid>
+
+## Tool Surface
+
+The pack currently exposes **16 tools** across five groups:
+
+| Group   | Tools                                                        |
+| ------- | ------------------------------------------------------------ |
+| Task    | `task:create`, `task:list`, `task:complete`, `task:schedule` |
+| Memory  | `memory:store`, `memory:recall`, `memory:forget`             |
+| Channel | `channel:configure`, `channel:send`, `channel:receive`       |
+| Routine | `routine:create`, `routine:list`, `routine:run`              |
+| System  | `sidekick:init`, `sidekick:status`, `sidekick:export`        |
+
+<Aside type="tip">
+  Sidekick stays intentionally small. It covers domain primitives for workspace productivity rather
+  than trying to become a generic connector catalog.
+</Aside>
+
+## Storage Model
+
+All Sidekick state stays under `.sidekick/` in the workspace root. The pack treats that directory as its owned state boundary and keeps the data model simple enough to inspect and export.
+
+```text
+.sidekick/
+  tasks.json
+  memories.json
+  channels.json
+  messages.json
+  routines.json
+  audit.jsonl
+```
+
+## Read Next
+
+- [Overview](/packs/sidekick/overview) for the contract, boundaries, and behavior rules
+- [Workflows & Examples](/packs/sidekick/workflows) for setup, smoke flow, and routine examples

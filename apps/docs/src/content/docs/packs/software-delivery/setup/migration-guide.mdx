@@ -13,7 +13,7 @@ If you're already on LumenFlow v2.x, see below for what changed in v3.0.0.
 
 ### What's New in v3.0
 
-- **Kernel + Pack architecture**: The runtime is now a domain-agnostic kernel that loads pluggable packs. The Software Delivery Pack provides the 90+ tools you already use.
+- **Kernel + Pack architecture**: The runtime is now a domain-agnostic kernel that loads pluggable packs. Software Delivery remains the delivery workflow surface, while additional first-party packs extend workspace productivity and governed agent execution.
 - **`workspace.yaml`**: Kernel-level workspace spec plus CLI/tooling config in `software_delivery`. Defines packs, lanes, security boundaries, namespaces, and delivery workflow settings. See [Workspace Spec](/reference/workspace-spec).
 - **5 new packages**: `@lumenflow/kernel`, `@lumenflow/runtime`, `@lumenflow/packs`, `@lumenflow/mcp`, `@lumenflow/control-plane-sdk`.
 - **14 granular lanes**: Framework lanes split from 2 (Core, CLI) into 7 (Core Lifecycle, Core Validation, Core State Recovery, CLI WU Commands, CLI Memory State, CLI Orchestration, CLI Enforcement). Variable WIP limits with `wip_justification`.

@@ -3389,3 +3389,5 @@
 {"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:09:54.400Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2431","timestamp":"2026-03-12T18:10:51.844Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2431.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2431","timestamp":"2026-03-12T18:11:57.079Z"}
+{"type":"checkpoint","wuId":"WU-2429","timestamp":"2026-03-12T17:56:11.753Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2429","timestamp":"2026-03-12T17:56:17.993Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}

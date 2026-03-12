@@ -32,7 +32,7 @@ Directory paths configuration
 
 | Field                | Type   | Default                          | Description |
 | -------------------- | ------ | -------------------------------- | ----------- |
-| `appsWeb`            | string | `"apps/web/"`                    |             |
+| `appsWeb`            | string | `""`                             |             |
 | `worktrees`          | string | `"worktrees/"`                   |             |
 | `ai`                 | string | `"ai/"`                          |             |
 | `claude`             | string | `".claude/"`                     |             |
@@ -46,6 +46,7 @@ Directory paths configuration
 | `statusPath`         | string | `"docs/tasks/status.md"`         |             |
 | `skillsDir`          | string | `".claude/skills"`               |             |
 | `agentsDir`          | string | `".claude/agents"`               |             |
+| `adrDir`             | string | `"docs/architecture-decisions"`  |             |
 | `plansDir`           | string | `"docs/plans"`                   |             |
 | `templatesDir`       | string | `".lumenflow/templates"`         |             |
 | `onboardingDir`      | string | `"docs/_frameworks/lumenflow...` |             |
@@ -112,18 +113,19 @@ WU (Work Unit) configuration
 
 Quality gates configuration
 
-| Field                       | Type                       | Default           | Description |
-| --------------------------- | -------------------------- | ----------------- | ----------- |
-| `maxEslintWarnings`         | integer                    | `100`             |             |
-| `enableCoverage`            | boolean                    | `true`            |             |
-| `minCoverage`               | number                     | `90`              |             |
-| `enableSafetyCriticalTests` | boolean                    | `true`            |             |
-| `enableInvariants`          | boolean                    | `true`            |             |
-| `execution`                 | object                     | `-`               |             |
-| `commands`                  | object                     | `[object Object]` |             |
-| `ignore_patterns`           | string[]                   | `-`               |             |
-| `lane_health`               | "warn" \| "error" \| "off" | `"warn"`          |             |
-| `co_change`                 | object[]                   | `[]`              |             |
+| Field                                | Type                       | Default           | Description |
+| ------------------------------------ | -------------------------- | ----------------- | ----------- |
+| `maxEslintWarnings`                  | integer                    | `100`             |             |
+| `enableCoverage`                     | boolean                    | `true`            |             |
+| `minCoverage`                        | number                     | `90`              |             |
+| `enableSafetyCriticalTests`          | boolean                    | `true`            |             |
+| `enableInvariants`                   | boolean                    | `true`            |             |
+| `execution`                          | object                     | `-`               |             |
+| `commands`                           | object                     | `[object Object]` |             |
+| `ignore_patterns`                    | string[]                   | `-`               |             |
+| `lane_health`                        | "warn" \| "error" \| "off" | `"warn"`          |             |
+| `co_change`                          | object[]                   | `[]`              |             |
+| `include_builtin_co_change_defaults` | boolean                    | `true`            |             |
 
 ### memory
 

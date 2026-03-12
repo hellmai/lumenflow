@@ -46,17 +46,15 @@ The kernel provides four guarantees:
 3. **Evidence receipts** — every tool call produces an immutable, content-addressed audit record
 4. **OS-enforced isolation** — bwrap sandbox with write confinement and secret deny overlays
 
-Packs are self-contained plugins that declare tools, policies, and evidence types. The **Software Delivery Pack** (pack #1) adds:
+Packs are self-contained plugins that declare tools, policies, and evidence types. The first-party pack set currently includes:
 
-- Work Units (WUs) — testable task specifications with acceptance criteria
-- Lanes — parallel work streams with WIP limits and scope boundaries
-- Gates — automated quality checks enforced as pack policies
-- Worktree isolation — each WU gets its own git worktree
-- Memory — context recovery for long-running agent sessions
+- **Software Delivery** — Work Units, lanes, gates, worktree isolation, and memory for software teams
+- **Sidekick** — workspace-local tasks, memory, routines, channels, and status under `.sidekick/`
+- **Agent Runtime** — governed model turns, tool gating, and `agent-session` orchestration
 
 <Aside type="tip">
-  LumenFlow ships with the Software Delivery Pack built in. If you are a software team, everything
-  works out of the box. The pack system lets you extend LumenFlow to any domain — infrastructure,
+  LumenFlow ships with first-party packs for software delivery, workspace productivity, and governed
+  model turns. The pack system also lets you extend LumenFlow to any domain — infrastructure,
   compliance, data pipelines, or anything else agents need to govern.
 </Aside>
 
@@ -117,4 +115,4 @@ cd /path/to/repo && pnpm wu:done --id WU-123
 - [Packs](/kernel/packs) — The extension mechanism for domain-specific tooling
 - [Get Started (Humans)](/getting-started/manual-quickstart) — Step-by-step setup for developers
 - [Get Started (Agents)](/getting-started/quickstart) — Canonical setup for AI coding assistants
-- [Software Delivery Pack](/pack/overview) — The built-in pack for software teams
+- [Software Delivery Pack](/packs/software-delivery) — The built-in pack for software teams

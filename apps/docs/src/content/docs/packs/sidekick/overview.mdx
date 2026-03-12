@@ -1,0 +1,49 @@
+---
+title: Sidekick Runtime Boundary
+description: Contract, storage, and execution semantics for the Sidekick Pack
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The Sidekick Pack is a first-party pack for lightweight workspace productivity. It does not replace the kernel, and it does not own framework-level orchestration. Instead, it contributes a narrow set of tools and evidence-bearing state transitions within its own `.sidekick/` data boundary.
+
+## Design Rules
+
+- `.sidekick/` is the pack-owned storage root.
+- `routine:run` is plan-only. It resolves and returns the ordered routine steps but does not execute them.
+- `sidekick:export` is read-only. It returns stored data as JSON and does not write export artifacts.
+- Every write-capable tool supports `dry_run` so callers can validate the action without persistence.
+- The manifest is the public contract for tools, scopes, evidence types, and policies.
+
+## Scope and Evidence
+
+Like every other pack, Sidekick tools still pass through:
+
+1. scope intersection
+2. policy evaluation
+3. tool execution
+4. evidence recording
+
+That means task creation, memory writes, channel updates, and routine definitions all receive the same governance treatment as any other kernel tool call.
+
+## What Sidekick Does Not Do
+
+- It does not execute autonomous workflow DAGs.
+- It does not bypass kernel policy enforcement.
+- It does not expand into every possible provider or external integration.
+- It does not move generic agent-turn execution into Sidekick; that belongs to the Agent Runtime Pack.
+
+<Aside type="note">
+  Sidekick and Agent Runtime are complementary. Sidekick owns workspace-local task, memory, and
+  routine primitives; Agent Runtime owns governed model turns and `agent-session` orchestration.
+</Aside>
+
+## Typical Usage
+
+Use Sidekick when you need a compact, governed workspace productivity layer:
+
+- track local tasks
+- keep reusable notes and memories
+- exchange small messages through named channels
+- define repeatable routines and inspect the resulting plan
+- export the current workspace-local state for debugging or handoff

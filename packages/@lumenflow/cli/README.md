@@ -150,52 +150,53 @@ This package provides CLI commands for the LumenFlow workflow framework, includi
 
 ### Verification & Gates
 
-| Command                      | Description                                      |
-| ---------------------------- | ------------------------------------------------ |
-| `gates`                      | Run all quality gates                            |
-| `lumenflow-gates`            | Run all quality gates (alias)                    |
-| `lumenflow-pre-commit-check` | Run enforcement checks used by pre-commit and CI |
-| `lumenflow-validate`         | Run validation checks (alias)                    |
-| `validate`                   | Run validation checks                            |
+| Command                      | Description                                           |
+| ---------------------------- | ----------------------------------------------------- |
+| `gate-co-change`             | Manage co-change gate rules (add, remove, edit, list) |
+| `gates`                      | Run all quality gates                                 |
+| `lumenflow-gates`            | Run all quality gates (alias)                         |
+| `lumenflow-pre-commit-check` | Run enforcement checks used by pre-commit and CI      |
+| `lumenflow-validate`         | Run validation checks (alias)                         |
+| `validate`                   | Run validation checks                                 |
 
 ### System & Setup
 
-| Command                    | Description                                                            |
-| -------------------------- | ---------------------------------------------------------------------- |
-| `backlog-prune`            | Clean stale backlog entries                                            |
-| `cloud-connect`            | Connect workspace.yaml to cloud control plane                          |
-| `config-get`               | Read and display a value from workspace.yaml software_delivery         |
-| `config-set`               | Safely update workspace.yaml software_delivery via micro-worktree      |
-| `init-plan`                | Link plan to initiative (alias)                                        |
-| `lumenflow`                | Initialize LumenFlow in a project                                      |
-| `lumenflow-commands`       | List all available CLI commands                                        |
-| `lumenflow-docs-sync`      | Refresh scaffolded onboarding docs and supported vendor assets (alias) |
-| `lumenflow-doctor`         | Diagnose LumenFlow configuration                                       |
-| `lumenflow-init`           | Initialize LumenFlow in a project (alias)                              |
-| `lumenflow-integrate`      | Generate enforcement hooks for client                                  |
-| `lumenflow-onboard`        | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding    |
-| `lumenflow-release`        | Run release workflow                                                   |
-| `lumenflow-sync-templates` | Sync templates to project                                              |
-| `lumenflow-upgrade`        | Upgrade LumenFlow packages                                             |
-| `onboard`                  | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding    |
-| `pack-author`              | Author a secure domain pack from templates                             |
-| `pack-hash`                | Compute integrity hash for a domain pack                               |
-| `pack-install`             | Install a domain pack into workspace                                   |
-| `pack-publish`             | Publish a domain pack to a registry                                    |
-| `pack-scaffold`            | Scaffold a new domain pack                                             |
-| `pack-search`              | Search for domain packs in a registry                                  |
-| `pack-validate`            | Validate a domain pack for integrity                                   |
-| `plan-create`              | Create a new plan                                                      |
-| `plan-edit`                | Edit plan content                                                      |
-| `plan-link`                | Link plan to WU or initiative                                          |
-| `plan-promote`             | Promote plan to WU                                                     |
-| `state-bootstrap`          | Bootstrap state store                                                  |
-| `state-cleanup`            | Clean up stale state data                                              |
-| `state-doctor`             | Diagnose state store issues                                            |
-| `state-emit`               | Emit corrective event to state store (WU-2241)                         |
-| `sync-templates`           | Sync templates to project (alias)                                      |
-| `templates-sync`           | Sync templates to project (alias)                                      |
-| `workspace-init`           | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding    |
+| Command                    | Description                                                             |
+| -------------------------- | ----------------------------------------------------------------------- |
+| `backlog-prune`            | Clean stale backlog entries                                             |
+| `cloud-connect`            | Connect workspace.yaml to cloud control plane                           |
+| `config-get`               | Read and display a value from workspace.yaml software_delivery          |
+| `config-set`               | Safely update workspace.yaml software_delivery via micro-worktree       |
+| `init-plan`                | Link plan to initiative (alias)                                         |
+| `lumenflow`                | Initialize LumenFlow in a project                                       |
+| `lumenflow-commands`       | List all available CLI commands                                         |
+| `lumenflow-docs-sync`      | Refresh core docs, onboarding docs, and supported vendor assets (alias) |
+| `lumenflow-doctor`         | Diagnose LumenFlow configuration                                        |
+| `lumenflow-init`           | Initialize LumenFlow in a project (alias)                               |
+| `lumenflow-integrate`      | Generate enforcement hooks for client                                   |
+| `lumenflow-onboard`        | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding     |
+| `lumenflow-release`        | Run release workflow                                                    |
+| `lumenflow-sync-templates` | Sync templates to project                                               |
+| `lumenflow-upgrade`        | Upgrade LumenFlow packages                                              |
+| `onboard`                  | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding     |
+| `pack-author`              | Author a secure domain pack from templates                              |
+| `pack-hash`                | Compute integrity hash for a domain pack                                |
+| `pack-install`             | Install a domain pack into workspace                                    |
+| `pack-publish`             | Publish a domain pack to a registry                                     |
+| `pack-scaffold`            | Scaffold a new domain pack                                              |
+| `pack-search`              | Search for domain packs in a registry                                   |
+| `pack-validate`            | Validate a domain pack for integrity                                    |
+| `plan-create`              | Create a new plan                                                       |
+| `plan-edit`                | Edit plan content                                                       |
+| `plan-link`                | Link plan to WU or initiative                                           |
+| `plan-promote`             | Promote plan to WU                                                      |
+| `state-bootstrap`          | Bootstrap state store                                                   |
+| `state-cleanup`            | Clean up stale state data                                               |
+| `state-doctor`             | Diagnose state store issues                                             |
+| `state-emit`               | Emit corrective event to state store (WU-2241)                          |
+| `sync-templates`           | Sync templates to project (alias)                                       |
+| `templates-sync`           | Sync templates to project (alias)                                       |
+| `workspace-init`           | Legacy entrypoint; use "npx lumenflow" for bootstrap-all onboarding     |
 
 ### File & Git Operations
 

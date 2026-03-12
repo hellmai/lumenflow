@@ -20,7 +20,7 @@ LumenFlow provides a curated public CLI surface for everyday workflows.
 
 | Category            | Commands                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Gates & Quality     | [`gates`](#gates), [`lane:create`](#lanecreate), [`lane:edit`](#laneedit), [`lane:health`](#lanehealth), [`lane:lock`](#lanelock), [`lane:setup`](#lanesetup), [`lane:status`](#lanestatus), [`lane:suggest`](#lanesuggest), [`lane:validate`](#lanevalidate), [`lumenflow:pre-commit-check`](#lumenflowpre-commit-check), [`validate`](#validate)                                                                                                                                                                                                                                                                                                                                                    |
+| Gates & Quality     | [`gate:co-change`](#gateco-change), [`gates`](#gates), [`lane:create`](#lanecreate), [`lane:edit`](#laneedit), [`lane:health`](#lanehealth), [`lane:lock`](#lanelock), [`lane:setup`](#lanesetup), [`lane:status`](#lanestatus), [`lane:suggest`](#lanesuggest), [`lane:validate`](#lanevalidate), [`lumenflow:pre-commit-check`](#lumenflowpre-commit-check), [`validate`](#validate)                                                                                                                                                                                                                                                                                                                |
 | Initiatives         | [`initiative:add-wu`](#initiativeadd-wu), [`initiative:bulk-assign`](#initiativebulk-assign), [`initiative:create`](#initiativecreate), [`initiative:edit`](#initiativeedit), [`initiative:list`](#initiativelist), [`initiative:plan`](#initiativeplan), [`initiative:remove-wu`](#initiativeremove-wu), [`initiative:status`](#initiativestatus)                                                                                                                                                                                                                                                                                                                                                    |
 | Memory & Sessions   | [`mem:checkpoint`](#memcheckpoint), [`mem:cleanup`](#memcleanup), [`mem:context`](#memcontext), [`mem:create`](#memcreate), [`mem:delete`](#memdelete), [`mem:export`](#memexport), [`mem:inbox`](#meminbox), [`mem:init`](#meminit), [`mem:ready`](#memready), [`mem:recover`](#memrecover), [`mem:signal`](#memsignal), [`mem:start`](#memstart), [`mem:summarize`](#memsummarize), [`mem:triage`](#memtriage), [`signal:cleanup`](#signalcleanup)                                                                                                                                                                                                                                                  |
 | Metrics & Flow      | [`cost:summary`](#costsummary), [`flow:bottlenecks`](#flowbottlenecks), [`flow:report`](#flowreport), [`metrics`](#metrics), [`metrics:snapshot`](#metricssnapshot)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -33,6 +33,14 @@ LumenFlow provides a curated public CLI surface for everyday workflows.
 | WU Maintenance      | [`wu:cleanup`](#wucleanup), [`wu:delete`](#wudelete), [`wu:deps`](#wudeps), [`wu:infer-lane`](#wuinfer-lane), [`wu:preflight`](#wupreflight), [`wu:proto`](#wuproto), [`wu:prune`](#wuprune), [`wu:repair`](#wurepair), [`wu:unlock-lane`](#wuunlock-lane)                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## Gates & Quality
+
+### gate:co-change
+
+Manage co-change gate rules (add, remove, edit, list)
+
+```bash
+pnpm gate:co-change
+```
 
 ### gates
 
@@ -833,23 +841,17 @@ pnpm plan:create --id <wuId> --title <title>
 
 ### plan:edit
 
-Edit plan content. Resolves plan file from initiative `related_plan` metadata, glob matching, or explicit `--file` flag.
+Edit plan content
 
 ```bash
-pnpm plan:edit --id <wuId> --section <name> --content <text>
-pnpm plan:edit --id INIT-040 --section Goal --content "Updated goal"
-pnpm plan:edit --id WU-100 --file my-plan.md --section Goal --content "..."
+pnpm plan:edit --id <wuId>
 ```
 
 **Options:**
 
-| Flag                     | Description                                           | Required |
-| ------------------------ | ----------------------------------------------------- | -------- |
-| `-i, --id &lt;wuId&gt;`  | Work Unit or Initiative ID (e.g., WU-123, INIT-040).  | Yes      |
-| `--section &lt;name&gt;` | Section name to edit (Goal, Scope, Approach, etc.)    | Yes      |
-| `--content &lt;text&gt;` | New content for the section                           | No       |
-| `--append &lt;text&gt;`  | Content to append to the section (instead of replace) | No       |
-| `--file &lt;path&gt;`    | Plan filename or path (resolves relative to plansDir) | No       |
+| Flag                    | Description                                                                      | Required |
+| ----------------------- | -------------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
 
 ### plan:link
 
@@ -867,21 +869,17 @@ pnpm plan:link --id <wuId>
 
 ### plan:promote
 
-Promote plan to approved status. Resolves plan file from initiative `related_plan` metadata, glob matching, or explicit `--file` flag.
+Promote plan to WU
 
 ```bash
 pnpm plan:promote --id <wuId>
-pnpm plan:promote --id INIT-040
-pnpm plan:promote --id WU-100 --file my-plan.md
 ```
 
 **Options:**
 
-| Flag                    | Description                                           | Required |
-| ----------------------- | ----------------------------------------------------- | -------- |
-| `-i, --id &lt;wuId&gt;` | Work Unit or Initiative ID (e.g., WU-123, INIT-040).  | Yes      |
-| `-f, --force`           | Skip validation and promote anyway                    | No       |
-| `--file &lt;path&gt;`   | Plan filename or path (resolves relative to plansDir) | No       |
+| Flag                    | Description                                                                      | Required |
+| ----------------------- | -------------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
 
 ## Setup & Development
 
@@ -999,7 +997,7 @@ pnpm lumenflow:commands
 
 ### lumenflow:docs-sync
 
-Refresh scaffolded onboarding docs and supported vendor assets
+Refresh core docs, onboarding docs, and supported vendor assets
 
 ```bash
 pnpm lumenflow:docs-sync
@@ -1147,10 +1145,10 @@ pnpm wu:block --id <wuId>
 
 ### wu:brief
 
-Generate handoff prompt for sub-agent WU execution. **Mandatory after `wu:claim`** — `wu:done` rejects the auto-recorded `claim-auto` evidence and requires an explicit `wu:brief` run that generates the full prompt, checks lane occupation, and validates sizing.
+Generate handoff prompt for sub-agent WU execution
 
 ```bash
-pnpm wu:brief --id WU-XXX --client <client>
+pnpm wu:brief
 ```
 
 ### wu:claim
@@ -1262,6 +1260,7 @@ pnpm wu:edit --id <wuId>
 | `--exposure &lt;type&gt;`           | Exposure level (ui, api, backend-only, documentation)                                                                 | No       |
 | `--no-strict`                       | Bypass strict validation (skip code_paths/test_paths existence checks, treat warnings as advisory). Logged when used. | No       |
 | `--spec-file &lt;path&gt;`          | Path to YAML file with updated spec content                                                                           | No       |
+| `--title &lt;text&gt;`              | New title text (replaces existing)                                                                                    | No       |
 | `--description &lt;text&gt;`        | New description text (replaces existing)                                                                              | No       |
 | `--acceptance &lt;criterion&gt;`    | Acceptance criterion (repeatable, appends to existing; use --replace-acceptance to overwrite)                         | No       |
 | `--notes &lt;text&gt;`              | Notes text (appends to existing; use --replace-notes to overwrite)                                                    | No       |
@@ -1272,6 +1271,9 @@ pnpm wu:edit --id <wuId>
 | `--risks &lt;risk&gt;`              | Risk entry (repeatable, appends to existing; use --replace-risks to overwrite)                                        | No       |
 | `--replace-risks`                   | Replace existing risks instead of appending                                                                           | No       |
 | `--append`                          | [DEPRECATED] Arrays now append by default. Use --replace-\* flags to replace.                                         | No       |
+| `--replace-test-paths-unit`         | Replace existing unit test paths instead of appending                                                                 | No       |
+| `--replace-test-paths-e2e`          | Replace existing e2e test paths instead of appending                                                                  | No       |
+| `--replace-test-paths-manual`       | Replace existing manual test descriptions instead of appending                                                        | No       |
 | `--lane &lt;lane&gt;`               | New lane assignment (e.g., &quot;Operations: Tooling&quot;)                                                           | No       |
 | `--type &lt;type&gt;`               | New WU type (feature, bug, refactor, documentation)                                                                   | No       |
 | `--priority &lt;priority&gt;`       | New priority (P0, P1, P2, P3)                                                                                         | No       |

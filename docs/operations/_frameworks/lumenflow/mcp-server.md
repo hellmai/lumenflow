@@ -16,7 +16,7 @@ The `@lumenflow/mcp` package exposes LumenFlow as an MCP (Model Context Protocol
         │ "Call lumenflow_wu_list"              │
         │ ─────────────────────────────────→    │
         │                                       │ reads from
-        │ { wus: [...] }                        │ @lumenflow/core
+        │ { wus: [...] }                        │ LumenFlow runtime modules
         │ ←─────────────────────────────────    │
 ```
 
@@ -55,29 +55,30 @@ claude mcp list
 
 ## Tools Model
 
-The MCP server currently exposes 98 tools organized into 12 categories.
-The source of truth is `packages/@lumenflow/mcp/src/tools.ts` (`allTools` export).
+The MCP server currently exposes 114 tools organized into 13 categories.
+The source of truth is `packages/@lumenflow/mcp/src/tools.ts` (`allTools`, `runtimeTaskTools`, and `registeredTools` exports).
 
 | Category                      | Count | Purpose                                          |
 | ----------------------------- | ----- | ------------------------------------------------ |
-| Core WU Operations            | 7     | Context + primary WU lifecycle commands          |
+| Core WU Operations            | 8     | Context + primary WU lifecycle commands          |
 | Public Parity Operations (W1) | 15    | Ops/setup parity commands from public CLI        |
-| Public Parity Operations (W2) | 15    | File/git/plan/signal parity commands             |
-| Additional WU Operations      | 16    | Extended WU management and recovery operations   |
+| Public Parity Operations (W2) | 17    | File/git/plan/signal/config parity commands      |
+| Additional WU Operations      | 17    | Extended WU management and recovery operations   |
 | Initiative Operations         | 8     | Initiative creation/planning/assignment commands |
-| Memory Operations             | 13    | Session memory, checkpoints, inbox/signals       |
+| Memory Operations             | 14    | Session memory, checkpoints, inbox/signals       |
 | Agent Operations              | 4     | Agent session + issue logging                    |
 | Orchestration Operations      | 3     | Initiative orchestration/monitoring              |
-| Spawn Operations              | 1     | Spawn registry listing                           |
+| Delegation Operations         | 1     | Delegation tree management                       |
 | Flow/Metrics Operations       | 3     | Bottlenecks, reports, metrics snapshot           |
 | Validation Operations         | 5     | Skills/backlog/agent validation commands         |
 | Setup Operations              | 8     | Init/doctor/integrate/release/template sync      |
+| Runtime Task Tools            | 7     | Kernel runtime task lifecycle tools              |
 
-Public CLI parity uses normalized command names (`:`/`-` -> `_`) and targets
-90 public CLI commands. Total MCP tool count is higher (98) because 8 tools are
-intentionally MCP-only extras:
-`context_get`, `gates_run`, `initiative_remove_wu`, `validate_agent_skills`,
-`validate_agent_sync`, `validate_backlog_sync`, `validate_skills_spec`, `wu_list`.
+Public CLI parity uses normalized command names (`:`/`-` -> `_`) and targets the current public command manifest where that surface maps cleanly into MCP. The registry also includes MCP-only convenience tools and 7 runtime task tools. Current inventory totals:
+
+- `allTools`: 107
+- `runtimeTaskTools`: 7
+- `registeredTools`: 114
 
 Wave-2 parity families now available in MCP include:
 `file_read`, `file_write`, `file_edit`, `file_delete`, `git_status`, `git_diff`,
@@ -97,39 +98,32 @@ For full per-tool parameter and response reference, see:
 
 ## Architecture
 
-### Hybrid Execution Model
+### Execution Model
 
 ```
 ┌────────────────────────────────────────────────────────────┐
 │                    @lumenflow/mcp                          │
 ├────────────────────────────────────────────────────────────┤
-│  Read Operations          │  Write Operations              │
+│  Native MCP Tools         │  Compatibility Adapters        │
 │  ─────────────────────    │  ────────────────────────      │
-│  Import @lumenflow/core   │  Shell out to CLI              │
-│  - Fast, typed responses  │  - Preserves hooks/enforcement │
-│  - Direct state access    │  - Same behavior as manual     │
-│                           │  - Audit trail maintained      │
+│  Runtime-first handlers   │  Canonical command wrappers    │
+│  - Typed responses        │  - Preserve existing behavior  │
+│  - Direct module access   │  - Keep public command parity  │
+│  - Structured errors      │  - Reuse command validation    │
 └────────────────────────────────────────────────────────────┘
 ```
 
-**Why CLI for writes?**
-
-1. **Hooks preserved:** Pre-commit hooks, validation, enforcement all trigger
-2. **Audit trail:** Same commits and state changes as manual operation
-3. **Single source of truth:** CLI is authoritative for write operations
-4. **Safety:** Dangerous operations go through same gates as human users
+The current MCP server is runtime-first. It uses native handlers where the runtime already has a strong typed surface, and uses compatibility wrappers where parity with public commands is still the right path.
 
 ### Core APIs Used
 
-The MCP server imports these from `@lumenflow/core`:
+The MCP server uses shared runtime modules and public command definitions:
 
-| API              | Purpose                           |
-| ---------------- | --------------------------------- |
-| `computeContext` | Location, git state, WU detection |
-| `WUStateStore`   | Event-sourced WU state            |
-| `readWURaw`      | WU YAML parsing                   |
-| `listWUs`        | Merged state + YAML listing       |
-| `toJSONSchema`   | Convert Zod schemas to MCP format |
+| API / Module      | Purpose                                                      |
+| ----------------- | ------------------------------------------------------------ |
+| `PUBLIC_MANIFEST` | Public command metadata and parity mapping                   |
+| Runtime handlers  | Native MCP execution for context, tasks, and lifecycle flows |
+| Zod schemas       | Tool input validation and JSON Schema generation             |
 
 ### Transport
 
@@ -147,9 +141,9 @@ The MCP server runs locally with same permissions as the user. No additional aut
 
 ### Enforcement Preserved
 
-- Write operations go through CLI, triggering all hooks
-- `skip_gates` is **not exposed** via MCP (enforcement is non-negotiable)
-- Lane locks and state validation enforced by underlying CLI
+- Tool execution still routes through the normal runtime enforcement layers
+- `skip_gates` remains a controlled escape hatch rather than a default MCP path
+- Lane locks, state validation, and command policy still apply through the underlying runtime and command modules
 
 ### Publish Authentication (`lumenflow_release`)
 
@@ -205,7 +199,7 @@ packages/@lumenflow/mcp/
 │   ├── bin.ts                # stdio entrypoint
 │   ├── index.ts              # package exports
 │   ├── server.ts             # MCP server factory/handlers
-│   ├── tools.ts              # all 98 tool definitions + allTools registry
+│   ├── tools.ts              # tool definitions + allTools/runtimeTaskTools registries
 │   ├── resources.ts          # 3 MCP resources + templates
 │   ├── cli-runner.ts         # CLI shell-out adapter for write operations
 │   └── __tests__/            # tool/resource/server integration tests
@@ -216,11 +210,10 @@ packages/@lumenflow/mcp/
 
 ## Version History
 
-### v2.11 (February 2026) - Launch-Readiness Alignment
+### v3.18 (March 2026) - Public Parity And Runtime Expansion
 
-Updated documentation for the current 98-tool / 12-category model, including
-wave-1/wave-2 public parity additions and parity accounting (90 normalized
-public commands + 8 MCP-only extras).
+Updated documentation for the current 114-tool / 13-category model, including
+107 core tools, 7 runtime task tools, and the current public parity accounting.
 
 ### v1.0 (February 2026) - Initial Architecture
 

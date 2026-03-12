@@ -7,9 +7,19 @@ import { Aside, FileTree } from '@astrojs/starlight/components';
 
 A **pack** is a self-contained plugin that teaches the [kernel](/kernel/runtime) how to work in a specific domain. The kernel itself is domain-agnostic — it provides scope enforcement, policy evaluation, evidence recording, and tool dispatch. Packs provide the actual tools, policies, and evidence types for a particular workflow.
 
-## Shipped Pack: Software Delivery
+## First-Party Packs
 
-LumenFlow ships with the **Software Delivery Pack** built in. It provides 90+ tools for software development workflows:
+LumenFlow currently ships three first-party packs:
+
+| Pack                | Domain                        | Current role                                                         |
+| ------------------- | ----------------------------- | -------------------------------------------------------------------- |
+| `software-delivery` | Software development workflow | Work Units, lanes, gates, memory, CLI-driven delivery lifecycle      |
+| `sidekick`          | Workspace-local productivity  | Tasks, memory, channels, routines, and status under `.sidekick/`     |
+| `agent-runtime`     | Governed model turns          | `agent-session` turns, policy-aware tool gating, orchestration state |
+
+### Software Delivery Pack
+
+The **Software Delivery Pack** provides 90+ tools for software development workflows:
 
 | Namespace       | Tools | Purpose                                                            |
 | --------------- | ----- | ------------------------------------------------------------------ |
@@ -26,10 +36,25 @@ LumenFlow ships with the **Software Delivery Pack** built in. It provides 90+ to
 
 Every one of these tools routes through the kernel's execution pipeline — scope intersection, policy evaluation, and evidence recording happen on every call.
 
+### Sidekick Pack
+
+The **Sidekick Pack** adds a compact 16-tool workspace productivity surface:
+
+| Namespace    | Tools | Purpose                               |
+| ------------ | ----- | ------------------------------------- |
+| `task:*`     | 4     | Personal and team-local task tracking |
+| `memory:*`   | 3     | Workspace-local memory and notes      |
+| `channel:*`  | 3     | Named message channels                |
+| `routine:*`  | 3     | Plan-only routine definitions         |
+| `sidekick:*` | 3     | Initialization, status, and export    |
+
+### Agent Runtime Pack
+
+The **Agent Runtime Pack** provides the governed `agent:execute-turn` contract, policy-aware tool gating, provider normalization, and pack-owned `agent-session` orchestration.
+
 <Aside type="tip">
-  If you are a software team, the Software Delivery Pack gives you everything out of the box. You
-  only need to think about packs if you want to extend LumenFlow to a new domain or customize its
-  behavior.
+  If you are a software team, Software Delivery gives you the main delivery workflow, Sidekick adds
+  workspace-local productivity primitives, and Agent Runtime adds governed model turns.
 </Aside>
 
 ## Pack Structure
@@ -116,20 +141,13 @@ For each pack pin, the kernel:
 
 ## The Pack Ecosystem
 
-LumenFlow is pack-first. The shipped production pack is:
+LumenFlow is pack-first. First-party packs share the same manifest contract and are loaded from local paths, monorepo packages, bundled installs, or external sources such as git and registries.
 
-| Pack                | Domain                         | Status               |
-| ------------------- | ------------------------------ | -------------------- |
-| `software-delivery` | Software development workflows | Production (pack #1) |
-| `agent-runtime`     | Governed `agent-session` turns | Implemented          |
+See:
 
-Additional domains are expected to be delivered as fully implemented packs from the same manifest
-contract, loaded from local paths, git sources, or registries.
-
-The `agent-runtime` pack is the second implemented pack. It provides the governed
-`agent:execute-turn` contract, config-driven capability augmentation, intent-aware policy rules,
-provider adapter normalization, and pack-owned `agent-session` orchestration. See the
-[Agent Runtime Pack](/packs/agent-runtime) docs for the public surface.
+- [Software Delivery Pack](/packs/software-delivery)
+- [Sidekick Pack](/packs/sidekick)
+- [Agent Runtime Pack](/packs/agent-runtime)
 
 ## Tool Implementation Pattern
 

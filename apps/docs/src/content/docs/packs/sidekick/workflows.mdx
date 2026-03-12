@@ -1,0 +1,102 @@
+---
+title: Sidekick Workflows & Examples
+description: Setup, validation, and practical Sidekick Pack examples
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Quick Setup
+
+<Steps>
+1. Validate that the pack is available:
+
+```bash
+pnpm pack:validate --id sidekick
+```
+
+2. Initialize workspace-local storage:
+
+   ```text
+   tool: sidekick:init
+   input: {}
+   ```
+
+3. Confirm the pack state:
+
+   ```text
+   tool: sidekick:status
+   input: {}
+   ```
+
+   </Steps>
+
+## Smoke Flow
+
+### Create and inspect a task
+
+```text
+tool: task:create
+input: { "title": "Review docs", "priority": "P1", "tags": ["docs"] }
+```
+
+```text
+tool: task:list
+input: { "status": "pending" }
+```
+
+### Store and recall workspace memory
+
+```text
+tool: memory:store
+input: { "type": "note", "content": "Sidekick pack validated", "tags": ["smoke-test"] }
+```
+
+```text
+tool: memory:recall
+input: { "query": "validated", "type": "note" }
+```
+
+### Create a plan-only routine
+
+```text
+tool: routine:create
+input: {
+  "name": "daily-review",
+  "steps": [
+    { "tool": "task:list", "input": { "status": "pending" } },
+    { "tool": "sidekick:status", "input": {} }
+  ]
+}
+```
+
+```text
+tool: routine:run
+input: { "id": "<routine-id>" }
+```
+
+`routine:run` returns the ordered plan. It does not execute the steps.
+
+## Dry Run Pattern
+
+Write-capable tools support `dry_run`. Use it when you want validation and preview without persistence:
+
+```text
+tool: task:create
+input: { "title": "Draft only", "priority": "P2", "dry_run": true }
+```
+
+The response should include `dry_run: true`, and `task:list` should not show a persisted task.
+
+## Export and Handoff
+
+```text
+tool: sidekick:export
+input: { "include_audit": true }
+```
+
+Use export when you need a full snapshot of Sidekick-managed state for debugging, migration, or handoff.
+
+<Aside type="tip">
+  Pair Sidekick with the Agent Runtime Pack when you want governed model turns to read from or write
+  to workspace-local task and memory primitives.
+</Aside>

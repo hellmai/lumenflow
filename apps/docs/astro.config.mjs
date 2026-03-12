@@ -132,6 +132,23 @@ export default defineConfig({
           label: 'Packs',
           items: [
             {
+              label: 'Sidekick Pack',
+              items: [
+                {
+                  label: 'Overview',
+                  slug: 'packs/sidekick',
+                },
+                {
+                  label: 'Runtime Boundary',
+                  slug: 'packs/sidekick/overview',
+                },
+                {
+                  label: 'Workflows & Examples',
+                  slug: 'packs/sidekick/workflows',
+                },
+              ],
+            },
+            {
               label: 'Agent Runtime Pack',
               items: [
                 {
