@@ -270,9 +270,7 @@ describe('wu-paths', () => {
 
     it('should return correct ONBOARDING_DIR path (WU-1310)', () => {
       const paths = createWuPaths();
-      expect(paths.ONBOARDING_DIR()).toBe(
-        'docs/operations/_frameworks/lumenflow/agent/onboarding',
-      );
+      expect(paths.ONBOARDING_DIR()).toBe('docs/operations/_frameworks/lumenflow/agent/onboarding');
     });
 
     it('should return correct SIZING_GUIDE_PATH', () => {

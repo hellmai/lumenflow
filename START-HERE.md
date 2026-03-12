@@ -6,11 +6,11 @@ Welcome to the LumenFlow repository. This document helps you find the right star
 
 ## Quick Navigation
 
-| I am...                              | Read this first                                                                                 |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| An AI agent working in this repo     | [AGENTS.md](AGENTS.md)                                                                          |
-| A developer setting up LumenFlow     | [Getting Started](#getting-started)                                                             |
-| Debugging an issue                   | [Troubleshooting](#troubleshooting)                                                             |
+| I am...                              | Read this first                                                                              |
+| ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| An AI agent working in this repo     | [AGENTS.md](AGENTS.md)                                                                       |
+| A developer setting up LumenFlow     | [Getting Started](#getting-started)                                                          |
+| Debugging an issue                   | [Troubleshooting](#troubleshooting)                                                          |
 | A maintainer releasing a new version | [Release Process](docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md) |
 
 ---

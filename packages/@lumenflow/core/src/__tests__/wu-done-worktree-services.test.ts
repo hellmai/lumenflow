@@ -126,10 +126,7 @@ function createTempWorktree() {
     '  manual: []',
     'exposure: backend-only',
   ].join('\n');
-  writeFileSync(
-    join(root, 'docs', 'operations', 'tasks', 'wu', `${TEST_WU_ID}.yaml`),
-    wuContent,
-  );
+  writeFileSync(join(root, 'docs', 'operations', 'tasks', 'wu', `${TEST_WU_ID}.yaml`), wuContent);
 
   // Create state store events file with a claim event
   writeFileSync(

@@ -120,7 +120,7 @@ INIT-51 is complete when all of the following are true:
 1. Generic lifecycle command portability
 
 - No generic lifecycle path still hardcodes `pnpm workspace-init --yes` or `pnpm turbo
-  docs:generate` when that behavior should be resolved from config/capability helpers.
+docs:generate` when that behavior should be resolved from config/capability helpers.
 
 2. Repo-shape portability
 

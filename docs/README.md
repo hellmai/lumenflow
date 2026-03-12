@@ -12,7 +12,7 @@ Internal documentation for LumenFlow, organized by concern. Uses arc42 section n
 | -------------------- | -------------------------------------------------------- | ------------------------------------------- |
 | **Product/Business** | [01-introduction-and-goals/](01-introduction-and-goals/) | Vision, quality goals, stakeholders         |
 | **Engineering**      | [02-technical/](02-technical/)                           | Package architecture, implementation guides |
-| **Operations**       | [operations/](operations/)                         | Tasks, WU management, framework docs        |
+| **Operations**       | [operations/](operations/)                               | Tasks, WU management, framework docs        |
 | **Architecture**     | [09-architecture-decisions/](09-architecture-decisions/) | ADRs, migration guides                      |
 
 ---

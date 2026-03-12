@@ -67,7 +67,7 @@ Run `--help` first, then run the real command with explicit flags.
 | `pnpm pack:all`                                    | Pack all packages for distribution                                                      |
 | `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                                         |
 | `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
-| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/operations`)                                         |
+| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/operations`)                                            |
 | `pnpm docs:sync`                                   | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
 | `pnpm sync:templates`                              | Sync repo docs into bundled templates                                                   |
 | `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                                              |
@@ -730,13 +730,13 @@ When `requireRemote: true` (default):
 
 ## Key File Paths
 
-| Path                                      | Description          |
-| ----------------------------------------- | -------------------- |
+| Path                                   | Description          |
+| -------------------------------------- | -------------------- |
 | `docs/operations/tasks/wu/WU-XXX.yaml` | WU specification     |
 | `docs/operations/tasks/status.md`      | Current status board |
 | `docs/operations/tasks/backlog.md`     | Backlog summary      |
-| `.lumenflow/stamps/WU-XXX.done`           | Completion stamp     |
-| `worktrees/<lane>-wu-xxx/`                | Worktree directory   |
+| `.lumenflow/stamps/WU-XXX.done`        | Completion stamp     |
+| `worktrees/<lane>-wu-xxx/`             | Worktree directory   |
 
 ---
 
