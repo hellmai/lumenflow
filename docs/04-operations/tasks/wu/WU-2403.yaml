@@ -17,10 +17,8 @@ artifacts:
   - .lumenflow/stamps/WU-2403.done
 dependencies: []
 risks: []
-notes: 'Root cause: Tests use dynamic await import(...) to ensure process.cwd() is set before module
-  loading. The first import per file compiles the full dependency tree (~3-4s), which can exceed the
-  default 5s Vitest timeout under CI load. Fix: Set testTimeout to 15s in
-  packages/@lumenflow/initiatives/vitest.config.ts.'
+notes: 'tdd-exception: Fix is a vitest config change (testTimeout), not application or test code.
+  The existing 237 tests validate the behavior.'
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
