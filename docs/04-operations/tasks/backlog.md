@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
 - [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml) — Framework: Core Lifecycle
 - [WU-2416 — Add multi-provider adapter support](wu/WU-2416.yaml) — Framework: Core Lifecycle
 - [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml) — Framework: Core Lifecycle
