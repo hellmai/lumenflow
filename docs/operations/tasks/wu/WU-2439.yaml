@@ -2,7 +2,7 @@ id: WU-2439
 title: Validate MCP example payloads against live tool schemas
 lane: 'Content: Framework Docs'
 type: documentation
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -28,8 +28,24 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: MCP docs now validate tool names and generated reference drift, but payload examples can still silently diverge from live tool schemas. Problem: stale or incomplete MCP example arguments in public and internal docs can remain plausible while teaching invalid tool usage. Solution: extend docs parity validation to parse MCP payload examples, validate strict examples against the live MCP registry and tool schemas, and document the tagging/allowlist rules for illustrative or historical examples.'
+description: 'Context: MCP docs now validate tool names and generated reference drift, but payload
+  examples can still silently diverge from live tool schemas. Problem: stale or incomplete MCP
+  example arguments in public and internal docs can remain plausible while teaching invalid tool
+  usage. Solution: extend docs parity validation to parse MCP payload examples, validate strict
+  examples against the live MCP registry and tool schemas, and document the tagging/allowlist rules
+  for illustrative or historical examples.'
 acceptance:
-  - Strict MCP examples fail when they reference unknown tools, omit required fields, or provide invalid payload shapes against live tool schemas.
-  - Illustrative, historical, legacy, or placeholder MCP examples remain supported only when explicitly tagged and documented.
-  - Docs authoring guidance explains how to mark MCP examples as strict versus illustrative and how schema validation is applied.
+  - Strict MCP examples fail when they reference unknown tools, omit required fields, or provide
+    invalid payload shapes against live tool schemas.
+  - Illustrative, historical, legacy, or placeholder MCP examples remain supported only when
+    explicitly tagged and documented.
+  - Docs authoring guidance explains how to mark MCP examples as strict versus illustrative and how
+    schema validation is applied.
+claimed_mode: worktree
+worktree_path: worktrees/content-framework-docs-wu-2439
+claimed_at: 2026-03-12T21:53:29.885Z
+baseline_main_sha: 9d7366e5d81117c60a137d715497a55ce0ddde01
+session_id: 152011e2-94ac-4390-93d5-bb325d0a8fca
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T21:53:29.897Z

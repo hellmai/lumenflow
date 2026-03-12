@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml)
+- [WU-2439 — Validate MCP example payloads against live tool schemas](wu/WU-2439.yaml)
 
 ## Completed
 
