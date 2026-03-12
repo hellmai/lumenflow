@@ -13,7 +13,11 @@ jobs:
   starlight:
     name: Build Starlight docs
     runs-on: self-hosted
+    timeout-minutes: 10
     steps:
+      - name: Configure pnpm store
+        run: echo "PNPM_STORE_DIR=$HOME/.local/share/pnpm/store/v10" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v4
 
