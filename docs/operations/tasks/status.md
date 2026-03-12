@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2440 — Validate CLI example flags against live command schemas](wu/WU-2440.yaml)
 
 ## Completed
 

@@ -3439,3 +3439,4 @@
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T22:00:07.423Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2439.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2439","timestamp":"2026-03-12T22:01:39.328Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2439.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2439","timestamp":"2026-03-12T22:02:13.896Z"}
+{"type":"claim","wuId":"WU-2440","timestamp":"2026-03-12T22:05:30.984Z","lane":"Content: Framework Docs","title":"Validate CLI example flags against live command schemas"}
