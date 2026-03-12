@@ -547,6 +547,8 @@ pnpm gates              # Now works
 
 ## Workflow Sequence (Quick Reference)
 
+<!-- lumenflow-example: strict -->
+
 ```bash
 # 0. Check available options (do this before first use of any command)
 pnpm wu:create --help

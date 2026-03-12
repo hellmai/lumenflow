@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 
@@ -30,6 +31,7 @@ const QUICK_REF_COMMANDS_PATH = resolve(
 );
 const LEGACY_PACK_OVERVIEW_PATH = resolve(DOCS_CONTENT_ROOT, 'pack/overview.mdx');
 const ALL_PUBLIC_COMMANDS = new Set(PUBLIC_MANIFEST.map((command) => command.name));
+const PUBLIC_COMMAND_MAP = new Map(PUBLIC_MANIFEST.map((command) => [command.name, command]));
 const PRIMARY_COMMANDS = new Set(
   PUBLIC_MANIFEST.filter((command) => (command.surface ?? 'primary') === 'primary').map(
     (command) => command.name,
@@ -149,6 +151,18 @@ type CommandExample = {
 type MappedToolExample = {
   tool: string;
   line: number;
+};
+
+type CliInvocation = {
+  command: string;
+  normalizedCommand: string;
+  tokens: string[];
+  line: number;
+};
+
+type CliOptionSpec = {
+  flag: string;
+  expectsValue: boolean;
 };
 
 type McpPayloadExample = {
@@ -383,6 +397,268 @@ function parseCodeBlocks(text: string, filePath: string): CodeBlock[] {
   return blocks;
 }
 
+function splitShellTokens(commandText: string): string[] {
+  const tokens: string[] = [];
+  let current = '';
+  let quote: '"' | "'" | null = null;
+  let escaped = false;
+
+  for (const char of commandText) {
+    if (escaped) {
+      current += char;
+      escaped = false;
+      continue;
+    }
+
+    if (char === '\\') {
+      escaped = true;
+      continue;
+    }
+
+    if (quote) {
+      if (char === quote) {
+        quote = null;
+      } else {
+        current += char;
+      }
+      continue;
+    }
+
+    if (char === '"' || char === "'") {
+      quote = char;
+      continue;
+    }
+
+    if (/\s/.test(char)) {
+      if (current) {
+        tokens.push(current);
+        current = '';
+      }
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current) {
+    tokens.push(current);
+  }
+
+  return tokens;
+}
+
+function extractExecutableSegment(line: string): string | null {
+  const match = line.match(/\b(?:pnpm|npx|lumenflow)\b.*$/);
+  return match?.[0] ?? null;
+}
+
+function extractCliInvocations(block: CodeBlock): CliInvocation[] {
+  if (!COMMAND_BLOCK_LANGUAGES.has(block.language)) {
+    return [];
+  }
+
+  const invocations: CliInvocation[] = [];
+  const lines = block.content.split('\n');
+  let buffer = '';
+  let bufferLine = block.line;
+
+  const flush = () => {
+    const segment = extractExecutableSegment(buffer.trim());
+    buffer = '';
+    if (!segment) {
+      return;
+    }
+
+    const tokens = splitShellTokens(segment);
+    if (tokens.length === 0) {
+      return;
+    }
+
+    let commandToken: string | undefined;
+    let offset = 0;
+
+    if (tokens[0] === 'pnpm') {
+      commandToken = tokens[1];
+      offset = 2;
+    } else if (tokens[0] === 'npx' && tokens[1] === 'lumenflow') {
+      commandToken = 'lumenflow';
+      offset = 2;
+    } else if (tokens[0] === 'lumenflow') {
+      commandToken = 'lumenflow';
+      offset = 1;
+    }
+
+    if (!commandToken) {
+      return;
+    }
+
+    const normalizedCommand = normalizeExampleCommand(commandToken);
+    invocations.push({
+      command: commandToken,
+      normalizedCommand,
+      tokens: tokens.slice(offset),
+      line: bufferLine,
+    });
+  };
+
+  lines.forEach((line, index) => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine || trimmedLine.startsWith('#')) {
+      return;
+    }
+
+    if (!buffer) {
+      bufferLine = block.line + index;
+    }
+
+    const continuation = trimmedLine.endsWith('\\');
+    buffer += `${trimmedLine.replace(/\\$/, '').trim()} `;
+
+    if (!continuation) {
+      flush();
+    }
+  });
+
+  if (buffer.trim()) {
+    flush();
+  }
+
+  return invocations;
+}
+
+function parseCliOptionsFromHelp(helpText: string): Map<string, CliOptionSpec> {
+  const optionMap = new Map<string, CliOptionSpec>();
+  const usageLine = helpText.split('\n').find((line) => line.startsWith('Usage: '));
+  if (usageLine) {
+    const usageTokens = splitShellTokens(usageLine.replace(/^Usage:\s+/, ''));
+    for (let index = 0; index < usageTokens.length; index += 1) {
+      const token = usageTokens[index];
+      if (!token.startsWith('-')) {
+        continue;
+      }
+
+      const nextToken = usageTokens[index + 1];
+      optionMap.set(token, {
+        flag: token,
+        expectsValue: Boolean(
+          nextToken && !nextToken.startsWith('-') && !nextToken.startsWith('['),
+        ),
+      });
+    }
+  }
+
+  const optionsSection = helpText.split(/\nOptions:\n/, 2)[1];
+
+  if (!optionsSection) {
+    return optionMap;
+  }
+
+  for (const line of optionsSection.split('\n')) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine.startsWith('-')) {
+      continue;
+    }
+
+    const flagsSegment = trimmedLine.split(/\s{2,}/, 1)[0] ?? trimmedLine;
+    for (const flagMatch of flagsSegment.matchAll(
+      /(?<flag>--[a-z0-9-]+|-[a-z0-9])(?:(?:[ =])(?<value><[^>]+>|\[[^\]]+\]))?/gi,
+    )) {
+      const flag = flagMatch.groups?.flag;
+      if (!flag) {
+        continue;
+      }
+
+      optionMap.set(flag, {
+        flag,
+        expectsValue: Boolean(flagMatch.groups?.value),
+      });
+    }
+  }
+
+  return optionMap;
+}
+
+const CLI_HELP_CACHE = new Map<string, Map<string, CliOptionSpec>>();
+
+function getCliOptionSpecs(command: string): Map<string, CliOptionSpec> {
+  const cached = CLI_HELP_CACHE.get(command);
+  if (cached) {
+    return cached;
+  }
+
+  const manifestEntry = PUBLIC_COMMAND_MAP.get(command);
+  if (!manifestEntry) {
+    return new Map();
+  }
+
+  const cliEntryPath = resolve(
+    DOCS_APP_ROOT,
+    '../../packages/@lumenflow/cli',
+    manifestEntry.binPath,
+  );
+  const helpOutput = execFileSync('node', [cliEntryPath, '--help'], {
+    cwd: resolve(DOCS_APP_ROOT, '../..'),
+    encoding: 'utf8',
+  });
+  const optionSpecs = parseCliOptionsFromHelp(helpOutput);
+  CLI_HELP_CACHE.set(command, optionSpecs);
+  return optionSpecs;
+}
+
+function validateCliInvocationFlags(
+  invocation: CliInvocation,
+  optionSpecs: Map<string, CliOptionSpec>,
+): string[] {
+  const failures: string[] = [];
+  const tokens = invocation.tokens;
+
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (token === '--') {
+      break;
+    }
+
+    if (!token.startsWith('-')) {
+      continue;
+    }
+
+    const [flag, assignedValue] = token.split('=', 2);
+    const spec = optionSpecs.get(flag);
+
+    if (!spec) {
+      failures.push(`uses unknown flag \`${flag}\` for \`${invocation.normalizedCommand}\``);
+      continue;
+    }
+
+    if (!spec.expectsValue && assignedValue !== undefined) {
+      failures.push(
+        `uses invalid value form for \`${flag}\` on \`${invocation.normalizedCommand}\`: flag does not accept a value`,
+      );
+      continue;
+    }
+
+    if (!spec.expectsValue) {
+      continue;
+    }
+
+    if (assignedValue !== undefined) {
+      continue;
+    }
+
+    const nextToken = tokens[index + 1];
+    if (!nextToken || nextToken.startsWith('-')) {
+      failures.push(
+        `uses invalid value form for \`${flag}\` on \`${invocation.normalizedCommand}\`: missing required value`,
+      );
+      continue;
+    }
+
+    index += 1;
+  }
+
+  return failures;
+}
+
 function isStrictWorkflowBlock(block: CodeBlock): boolean {
   const hasExecutableClaim =
     block.content.includes(WORKFLOW_STEP_CLAIM) &&
@@ -487,6 +763,52 @@ describe('public docs parity', () => {
         'Use `pnpm validate` instead of `pnpm exec lumenflow validate`.',
       ]),
     );
+  });
+
+  it('parses CLI invocations and validates flags against live option specs', () => {
+    const block = parseCodeBlocks(
+      [
+        '<!-- lumenflow-example: strict -->',
+        '```bash',
+        'pnpm wu:create --lane "Framework: Core" --title "Add thing" --bogus',
+        'pnpm wu:claim --id WU-100 --lane "Framework: Core"',
+        'pnpm wu:brief --id WU-100 --client codex-cli',
+        'pnpm wu:prep --id WU-100',
+        'cd <project-root> && pnpm wu:done --id WU-100',
+        '```',
+      ].join('\n'),
+      resolve(DOCS_CONTENT_ROOT, 'fixtures/cli-flags.mdx'),
+    )[0]!;
+
+    const invocations = extractCliInvocations(block);
+
+    expect(invocations.map((invocation) => invocation.normalizedCommand)).toEqual([
+      'wu:create',
+      'wu:claim',
+      'wu:brief',
+      'wu:prep',
+      'wu:done',
+    ]);
+
+    const failures = validateCliInvocationFlags(invocations[0]!, getCliOptionSpecs('wu:create'));
+    expect(failures).toContain('uses unknown flag `--bogus` for `wu:create`');
+  });
+
+  it('parses flags that only appear in command usage lines', () => {
+    const optionSpecs = parseCliOptionsFromHelp(
+      [
+        'Usage: pnpm wu:done --id WU-334 [OPTIONS]',
+        '',
+        'Options:',
+        '  --docs-only         Run docs-only gates',
+        '  --help, -h          Show this help',
+      ].join('\n'),
+    );
+
+    expect(optionSpecs.get('--id')).toEqual({
+      flag: '--id',
+      expectsValue: true,
+    });
   });
 
   it('lists the public Sidekick pack in the sidebar', () => {
@@ -596,6 +918,19 @@ describe('public docs parity', () => {
       }
 
       for (const block of parseCodeBlocks(text, filePath)) {
+        if (block.tag === 'strict' && COMMAND_BLOCK_LANGUAGES.has(block.language)) {
+          for (const invocation of extractCliInvocations(block)) {
+            if (!ALL_PUBLIC_COMMANDS.has(invocation.normalizedCommand)) {
+              continue;
+            }
+
+            const optionSpecs = getCliOptionSpecs(invocation.normalizedCommand);
+            for (const issue of validateCliInvocationFlags(invocation, optionSpecs)) {
+              failures.push(`${repoRelativePath}:${invocation.line} ${issue}`);
+            }
+          }
+        }
+
         if (!isStrictWorkflowBlock(block)) {
           continue;
         }
@@ -607,7 +942,7 @@ describe('public docs parity', () => {
     }
 
     expect(failures).toEqual([]);
-  });
+  }, 20_000);
 
   it('keeps MCP tool examples aligned with the registered MCP tool surface', () => {
     const docsFiles = [

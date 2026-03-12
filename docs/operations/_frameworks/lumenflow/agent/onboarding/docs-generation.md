@@ -29,6 +29,9 @@ snippets:
 - `<!-- lumenflow-example: historical -->`, `legacy`, and `placeholder` are reserved for
   compatibility, migration, or incomplete examples that intentionally do not match the current
   live command surface.
+- Strict CLI shell examples are additionally validated against the live `pnpm <command> --help`
+  surface for each referenced public command. Unknown flags, retired option names, and missing
+  required option values fail docs parity.
 - Strict MCP JSON payload examples with `"name"` and `"arguments"` are additionally validated
   against the live MCP registry and the target tool's input schema. Required fields, enum values,
   and payload shapes must all remain valid.
@@ -45,6 +48,21 @@ pnpm wu:status --id WU-123
 
 If no tag is present, shell code blocks are treated as illustrative by default. Add a `strict` tag
 whenever readers are expected to copy-paste a current workflow or command sequence.
+
+For strict CLI examples, prefer complete commands that reflect the live flag surface:
+
+````md
+<!-- lumenflow-example: strict -->
+
+```bash
+pnpm wu:create --lane "Framework: Core" --title "Add feature" \
+  --description "Context: ... Problem: ... Solution: ..." \
+  --acceptance "Criterion 1" \
+  --code-paths "src/file.ts" \
+  --test-paths-unit "src/__tests__/file.test.ts" \
+  --exposure backend-only
+```
+````
 
 For MCP payload examples, prefer:
 
