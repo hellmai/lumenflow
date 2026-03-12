@@ -3364,3 +3364,5 @@
 {"type":"checkpoint","wuId":"WU-2418","timestamp":"2026-03-12T17:02:52.062Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2418.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2418","timestamp":"2026-03-12T17:07:17.942Z"}
 {"type":"claim","wuId":"WU-2419","timestamp":"2026-03-12T17:08:24.205Z","lane":"Content: Framework Docs","title":"Publish final docs, examples, and positioning for agent-runtime"}
+{"type":"checkpoint","wuId":"WU-2419","timestamp":"2026-03-12T17:08:36.401Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2419","timestamp":"2026-03-12T17:08:41.696Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
