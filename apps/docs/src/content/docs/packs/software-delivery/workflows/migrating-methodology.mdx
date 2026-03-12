@@ -524,12 +524,12 @@ methodology:
 2. If missing, regenerate agent files:
 
    ```bash
-   pnpm exec lumenflow docs:sync
+   pnpm lumenflow:docs-sync
    ```
 
 3. Verify `workspace.yaml` is readable:
    ```bash
-   pnpm exec lumenflow validate
+   pnpm validate
    ```
 
 #### Agent ignoring coverage_mode
@@ -595,7 +595,7 @@ If a methodology change caused problems:
 git checkout HEAD~1 -- workspace.yaml
 
 # 2. Regenerate docs
-pnpm exec lumenflow docs:sync
+pnpm lumenflow:docs-sync
 
 # 3. Notify team
 git add . && git commit -m "revert: methodology change caused coverage drop"
@@ -605,10 +605,10 @@ git add . && git commit -m "revert: methodology change caused coverage drop"
 
 ```bash
 # 1. Validate current config
-pnpm exec lumenflow validate
+pnpm validate
 
 # 2. If invalid, reset to defaults
-pnpm exec lumenflow init --force
+pnpm lumenflow --force
 
 # 3. Reconfigure manually
 ```

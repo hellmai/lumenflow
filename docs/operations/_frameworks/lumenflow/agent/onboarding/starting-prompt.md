@@ -670,19 +670,19 @@ When initializing LumenFlow, use the `--client` flag to generate client-specific
 pnpm add -D @lumenflow/cli
 
 # Universal setup (AGENTS.md only)
-pnpm exec lumenflow
+pnpm lumenflow
 
 # Claude-specific setup
-pnpm exec lumenflow --client claude
+pnpm lumenflow --client claude
 
 # Cursor-specific setup
-pnpm exec lumenflow --client cursor
+pnpm lumenflow --client cursor
 
 # Windsurf-specific setup
-pnpm exec lumenflow --client windsurf
+pnpm lumenflow --client windsurf
 
 # All clients
-pnpm exec lumenflow --client all
+pnpm lumenflow --client all
 ```
 
 ### Adding LumenFlow to Existing Projects
@@ -694,10 +694,10 @@ Use `--merge` mode to safely add LumenFlow configuration to existing files witho
 pnpm add -D @lumenflow/cli
 
 # Merge into existing AGENTS.md (preserves your content)
-pnpm exec lumenflow --merge
+pnpm lumenflow --merge
 
 # Merge with client overlay
-pnpm exec lumenflow --merge --client claude
+pnpm lumenflow --merge --client claude
 ```
 
 The merge mode uses bounded markers (`<!-- LUMENFLOW:START -->` and `<!-- LUMENFLOW:END -->`) to safely insert and update the LumenFlow block while preserving everything else.
@@ -717,7 +717,7 @@ cp -rn /tmp/nextjs-scaffold/.* . 2>/dev/null || true
 # 3. Install and initialize LumenFlow
 pnpm install
 pnpm add -D @lumenflow/cli
-pnpm exec lumenflow --client claude --full
+pnpm lumenflow --client claude --full
 
 # 4. Clean up
 rm -rf /tmp/nextjs-scaffold

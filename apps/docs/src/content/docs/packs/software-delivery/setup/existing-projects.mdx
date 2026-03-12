@@ -65,13 +65,13 @@ The CLI provides the fastest path to adoption.
 2. **Initialize LumenFlow**
 
    ```bash
-   pnpm exec lumenflow
+   pnpm lumenflow
    ```
 
    Answer the prompts or use flags for non-interactive setup:
 
    ```bash
-   pnpm exec lumenflow \
+   pnpm lumenflow \
      --framework nextjs \
      --main-branch main \
      --docs-structure simple
@@ -82,7 +82,7 @@ The CLI provides the fastest path to adoption.
    **Adding to existing config files?** Use `--merge` mode to safely insert LumenFlow configuration into your existing `AGENTS.md` or other files without overwriting your content:
 
    ```bash
-   pnpm exec lumenflow --merge
+   pnpm lumenflow --merge
    ```
 
    The merge mode uses bounded markers (`<!-- LUMENFLOW:START -->` and `<!-- LUMENFLOW:END -->`) to safely insert and update the LumenFlow block. Running `--merge` twice produces no changes on the second run (idempotent).
@@ -91,16 +91,16 @@ The CLI provides the fastest path to adoption.
 
    ```bash
    # Claude Code / Claude in IDE
-   pnpm exec lumenflow --client claude
+   pnpm lumenflow --client claude
 
    # Cursor IDE
-   pnpm exec lumenflow --client cursor
+   pnpm lumenflow --client cursor
 
    # Windsurf IDE
-   pnpm exec lumenflow --client windsurf
+   pnpm lumenflow --client windsurf
 
    # All clients
-   pnpm exec lumenflow --client all
+   pnpm lumenflow --client all
    ```
 
 3. **Review generated files**
@@ -407,7 +407,7 @@ to the exclusion list. For example, if your `.gitignore` is missing entries for
 `.lumenflow/checkpoints/` or `.lumenflow/locks/`, re-running init will add them:
 
 ```bash
-pnpm exec lumenflow
+pnpm lumenflow
 ```
 
 If ephemeral files are already tracked in git (e.g., checkpoint files committed by an

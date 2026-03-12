@@ -37,10 +37,10 @@ Add to your project's `.mcp.json`:
 }
 ```
 
-Or use `lumenflow init` which scaffolds this automatically:
+Or use `lumenflow` which scaffolds this automatically:
 
 ```bash
-pnpm lumenflow init --client claude
+pnpm lumenflow --client claude
 ```
 
 ### Verification

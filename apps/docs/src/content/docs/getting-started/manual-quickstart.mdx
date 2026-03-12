@@ -51,7 +51,7 @@ pnpm add -D @lumenflow/cli
 Run this command. It creates all required configuration files.
 
 ```bash
-pnpm exec lumenflow
+pnpm lumenflow
 ```
 
 This creates:
@@ -84,12 +84,12 @@ pnpm wu:create --help
 If this command works, scripts are correctly installed. If not, re-run initialization.
 
 ```bash
-pnpm exec lumenflow --force
+pnpm lumenflow --force
 ```
 
 <Aside type="tip" title="Scripts are auto-managed">
-  You do not need to manually add scripts. LumenFlow injects them during `pnpm exec lumenflow`.
-  Re-run with `--force` if scripts are missing.
+  You do not need to manually add scripts. LumenFlow injects them during `pnpm lumenflow`. Re-run
+  with `--force` if scripts are missing.
 </Aside>
 
 ---
@@ -279,7 +279,7 @@ Avoid these errors. The left column shows correct behavior. The right column sho
 
 | Command                                  | Description                    |
 | ---------------------------------------- | ------------------------------ |
-| `pnpm exec lumenflow`                    | Initialize LumenFlow           |
+| `pnpm lumenflow`                         | Initialize LumenFlow           |
 | `pnpm wu:create --title "..." ...`       | Create a new Work Unit         |
 | `pnpm wu:claim --id WU-XXX --lane "..."` | Claim WU and create worktree   |
 | `pnpm wu:prep --id WU-XXX`               | Run gates in worktree          |

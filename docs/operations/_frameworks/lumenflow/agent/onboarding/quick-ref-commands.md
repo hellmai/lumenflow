@@ -56,25 +56,25 @@ Run `--help` first, then run the real command with explicit flags.
 
 **For this monorepo (development):**
 
-| Command                                            | Description                                                                             |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `pnpm setup`                                       | Install deps and build CLI (first time)                                                 |
-| `pnpm bootstrap`                                   | Build CLI with dependency closure (worktree-safe)                                       |
-| `pnpm build`                                       | Build all packages                                                                      |
-| `pnpm build:dist`                                  | Build distribution packages                                                             |
-| `pnpm dev`                                         | Start development mode                                                                  |
-| `pnpm clean`                                       | Clean build artifacts and caches                                                        |
-| `pnpm pack:validate`                               | Validate a pack manifest and implementation surface                                     |
-| `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                                         |
-| `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
-| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`docs/operations`)                                            |
-| `pnpm docs:sync`                                   | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
-| `pnpm sync:templates`                              | Sync repo docs into bundled templates                                                   |
-| `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                                              |
-| `pnpm lumenflow:doctor`                            | Diagnose LumenFlow configuration                                                        |
-| `pnpm lumenflow:integrate`                         | Generate enforcement hooks for client                                                   |
-| `pnpm cloud:connect`                               | Configure cloud control-plane access                                                    |
-| `npx lumenflow commands`                           | List all available CLI commands                                                         |
+| Command                                  | Description                                                                             |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm setup`                             | Install deps and build CLI (first time)                                                 |
+| `pnpm bootstrap`                         | Build CLI with dependency closure (worktree-safe)                                       |
+| `pnpm build`                             | Build all packages                                                                      |
+| `pnpm build:dist`                        | Build distribution packages                                                             |
+| `pnpm dev`                               | Start development mode                                                                  |
+| `pnpm clean`                             | Clean build artifacts and caches                                                        |
+| `pnpm pack:validate`                     | Validate a pack manifest and implementation surface                                     |
+| `pnpm lumenflow`                         | Scaffold LumenFlow in a project                                                         |
+| `pnpm lumenflow --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
+| `pnpm lumenflow --docs-structure arc42`  | Use arc42 docs structure (`docs/operations`)                                            |
+| `pnpm docs:sync`                         | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
+| `pnpm sync:templates`                    | Sync repo docs into bundled templates                                                   |
+| `pnpm lumenflow:upgrade`                 | Upgrade LumenFlow packages                                                              |
+| `pnpm lumenflow:doctor`                  | Diagnose LumenFlow configuration                                                        |
+| `pnpm lumenflow:integrate`               | Generate enforcement hooks for client                                                   |
+| `pnpm cloud:connect`                     | Configure cloud control-plane access                                                    |
+| `npx lumenflow commands`                 | List all available CLI commands                                                         |
 
 **For external projects (end users):**
 
@@ -83,12 +83,12 @@ Run `--help` first, then run the real command with explicit flags.
 pnpm add -D @lumenflow/cli  # or: npm install -D @lumenflow/cli
 
 # Initialize LumenFlow
-pnpm exec lumenflow init
+pnpm lumenflow
 
 # With client-specific overlays
-pnpm exec lumenflow init --client claude   # Claude Code
-pnpm exec lumenflow init --client cursor   # Cursor IDE
-pnpm exec lumenflow init --client all      # All clients
+pnpm lumenflow --client claude   # Claude Code
+pnpm lumenflow --client cursor   # Cursor IDE
+pnpm lumenflow --client all      # All clients
 ```
 
 ---

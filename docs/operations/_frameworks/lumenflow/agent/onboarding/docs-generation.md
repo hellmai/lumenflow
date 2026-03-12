@@ -39,7 +39,8 @@ pnpm wu:status --id WU-123
 ```
 ````
 
-If no tag is present, shell code blocks are treated as strict by default.
+If no tag is present, shell code blocks are treated as illustrative by default. Add a `strict` tag
+whenever readers are expected to copy-paste a current workflow or command sequence.
 
 ---
 
