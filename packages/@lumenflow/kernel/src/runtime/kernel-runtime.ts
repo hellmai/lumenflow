@@ -652,8 +652,10 @@ function isWithinDirectory(root: string, candidatePath: string): boolean {
   return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
 }
 
-function formatZodIssuePath(pathSegments: (string | number)[]): string {
-  return pathSegments.length === 0 ? '<root>' : pathSegments.join('.');
+function formatZodIssuePath(pathSegments: readonly PropertyKey[]): string {
+  return pathSegments.length === 0
+    ? '<root>'
+    : pathSegments.map((segment) => String(segment)).join('.');
 }
 
 function formatZodIssues(issues: z.ZodIssue[]): string {
