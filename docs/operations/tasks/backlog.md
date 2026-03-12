@@ -26,7 +26,6 @@ sections:
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
-- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml) — Framework: Core Lifecycle
 - [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml) — Framework: Core Lifecycle
 - [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml) — Framework: Core Lifecycle
@@ -41,6 +40,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml) — Framework: CLI WU Commands
+- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 

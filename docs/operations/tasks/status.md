@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml)
+- [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml)
 
 ## Completed
 
