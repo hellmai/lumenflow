@@ -647,6 +647,109 @@ function parsePackToolJsonSchema(
   }
 }
 
+function isWithinDirectory(root: string, candidatePath: string): boolean {
+  const relative = path.relative(root, candidatePath);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function formatZodIssuePath(pathSegments: (string | number)[]): string {
+  return pathSegments.length === 0 ? '<root>' : pathSegments.join('.');
+}
+
+function formatZodIssues(issues: z.ZodIssue[]): string {
+  return issues
+    .map((issue) => `${formatZodIssuePath(issue.path)}: ${issue.message}`)
+    .join('; ');
+}
+
+function parsePackConfigJsonSchema(
+  schemaValue: unknown,
+  packId: string,
+  configKey: string,
+): z.ZodTypeAny {
+  const context = `config_schema for pack "${packId}" (workspace root "${configKey}")`;
+  try {
+    return buildZodSchemaFromJsonSchema(schemaValue, context, 0);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'unknown schema parsing error';
+    throw new Error(`Invalid ${context}: ${message}`, {
+      cause: error,
+    });
+  }
+}
+
+async function resolvePackConfigSchema(loadedPack: LoadedDomainPack): Promise<unknown> {
+  const configSchemaEntry = loadedPack.manifest.config_schema;
+  if (!configSchemaEntry) {
+    return undefined;
+  }
+
+  const packRoot = path.resolve(loadedPack.packRoot);
+  const configSchemaPath = path.resolve(packRoot, configSchemaEntry);
+  if (!isWithinDirectory(packRoot, configSchemaPath)) {
+    throw new Error(
+      `Pack "${loadedPack.manifest.id}" config_schema "${configSchemaEntry}" resolves outside pack root.`,
+    );
+  }
+
+  let schemaRaw: string;
+  try {
+    schemaRaw = await readFile(configSchemaPath, UTF8_ENCODING);
+  } catch (error) {
+    throw new Error(
+      `Unable to read config_schema "${configSchemaEntry}" for pack "${loadedPack.manifest.id}".`,
+      { cause: error },
+    );
+  }
+
+  try {
+    return JSON.parse(schemaRaw);
+  } catch (error) {
+    throw new Error(
+      `Invalid config_schema "${configSchemaEntry}" for pack "${loadedPack.manifest.id}": expected valid JSON.`,
+      { cause: error },
+    );
+  }
+}
+
+async function attachResolvedPackConfig(
+  loadedPack: LoadedDomainPack,
+  rawWorkspaceData: Record<string, unknown>,
+): Promise<LoadedDomainPack> {
+  const configKey = loadedPack.manifest.config_key;
+  if (!configKey || !(configKey in rawWorkspaceData)) {
+    return loadedPack;
+  }
+
+  const rawPackConfig = rawWorkspaceData[configKey];
+  if (!loadedPack.manifest.config_schema) {
+    return {
+      ...loadedPack,
+      resolvedConfig: rawPackConfig,
+    };
+  }
+
+  const configSchemaValue = await resolvePackConfigSchema(loadedPack);
+  const configSchema = parsePackConfigJsonSchema(
+    configSchemaValue,
+    loadedPack.manifest.id,
+    configKey,
+  );
+  const validation = configSchema.safeParse(rawPackConfig);
+
+  if (!validation.success) {
+    throw new Error(
+      `Invalid workspace config for "${configKey}" in pack "${loadedPack.manifest.id}": ${formatZodIssues(validation.error.issues)}`,
+      { cause: validation.error },
+    );
+  }
+
+  return {
+    ...loadedPack,
+    resolvedConfig: validation.data,
+  };
+}
+
 export async function defaultRuntimeToolCapabilityResolver(
   input: RuntimeToolCapabilityResolverInput,
 ): Promise<ToolCapability | null> {
@@ -1418,6 +1521,13 @@ export async function initializeKernelRuntime(
     throw new Error(`Workspace root-key validation failed:\n  - ${keyList}`);
   }
 
+  const resolvedLoadedPacks: LoadedDomainPack[] = [];
+  for (const loadedPack of loadedPacks) {
+    resolvedLoadedPacks.push(
+      await attachResolvedPackConfig(loadedPack, resolvedWorkspace.raw_workspace_data),
+    );
+  }
+
   const registry = new ToolRegistry();
   if (options.includeBuiltinTools !== false) {
     registerBuiltinToolCapabilities(registry, {
@@ -1427,7 +1537,7 @@ export async function initializeKernelRuntime(
 
   const toolCapabilityResolver =
     options.toolCapabilityResolver ?? defaultRuntimeToolCapabilityResolver;
-  for (const loadedPack of loadedPacks) {
+  for (const loadedPack of resolvedLoadedPacks) {
     for (const tool of loadedPack.manifest.tools) {
       let capability: ToolCapability | null;
       try {
@@ -1449,7 +1559,7 @@ export async function initializeKernelRuntime(
   }
 
   const policyEngine = new PolicyEngine({
-    layers: options.policyLayers ?? buildDefaultPolicyLayers(loadedPacks),
+    layers: options.policyLayers ?? buildDefaultPolicyLayers(resolvedLoadedPacks),
   });
   const evidenceStore = new EvidenceStore({ evidenceRoot });
 
@@ -1486,13 +1596,13 @@ export async function initializeKernelRuntime(
     workspace_spec: workspaceSpec,
     workspace_file_path: resolvedWorkspace.workspace_file_path,
     workspace_config_hash: resolvedWorkspace.workspace_config_hash,
-    loaded_packs: loadedPacks,
+    loaded_packs: resolvedLoadedPacks,
     task_spec_root: taskSpecRoot,
     event_store: eventStore,
     evidence_store: evidenceStore,
     tool_host: toolHost,
     policy_engine: policyEngine,
-    state_aliases: mergeStateAliases(loadedPacks),
+    state_aliases: mergeStateAliases(resolvedLoadedPacks),
     now,
     run_id_factory: options.runIdFactory,
   });

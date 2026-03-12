@@ -3281,3 +3281,5 @@
 {"type":"claim","wuId":"WU-2421","timestamp":"2026-03-12T11:53:12.823Z","lane":"Content: Specs Governance","title":"Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations"}
 {"type":"complete","wuId":"WU-2406","timestamp":"2026-03-12T11:58:24.388Z"}
 {"type":"claim","wuId":"WU-2407","timestamp":"2026-03-12T11:59:36.720Z","lane":"Framework: Core Lifecycle","title":"Add runtime pack-config plumbing for pinned pack config roots"}
+{"type":"checkpoint","wuId":"WU-2407","timestamp":"2026-03-12T11:59:52.192Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2407","timestamp":"2026-03-12T12:00:02.316Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}

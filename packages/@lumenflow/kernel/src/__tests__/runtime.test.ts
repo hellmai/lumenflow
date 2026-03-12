@@ -1418,6 +1418,100 @@ describe('kernel runtime facade', () => {
       );
     }
 
+    async function writeWorkspaceWithPackConfigLines(
+      root: string,
+      configLines: string[],
+      options: { includePackConfigRoot?: boolean } = {},
+    ): Promise<void> {
+      const packConfigLines =
+        options.includePackConfigRoot === false ? [] : ['software_delivery:', ...configLines];
+      await writeFile(
+        join(root, WORKSPACE_FILE_NAME),
+        [
+          'id: workspace-kernel-runtime',
+          'name: Kernel Runtime Workspace',
+          'packs:',
+          `  - id: ${SOFTWARE_DELIVERY_PACK_ID}`,
+          '    version: 1.0.0',
+          '    integrity: dev',
+          '    source: local',
+          'lanes:',
+          '  - id: framework-core-lifecycle',
+          '    title: Framework Core Lifecycle',
+          '    allowed_scopes:',
+          '      - type: path',
+          '        pattern: "**"',
+          '        access: read',
+          'security:',
+          '  allowed_scopes:',
+          '    - type: path',
+          '      pattern: "**"',
+          '      access: read',
+          '  network_default: off',
+          '  deny_overlays: []',
+          ...packConfigLines,
+          'memory_namespace: mem',
+          'event_namespace: evt',
+        ].join('\n'),
+        UTF8_ENCODING,
+      );
+    }
+
+    async function writeManifestWithConfigSchema(root: string, configKey: string): Promise<void> {
+      const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+      await mkdir(join(packRoot, 'schemas'), { recursive: true });
+      await writeFile(
+        join(packRoot, PACK_MANIFEST_FILE_NAME),
+        [
+          `id: ${SOFTWARE_DELIVERY_PACK_ID}`,
+          'version: 1.0.0',
+          'task_types:',
+          '  - work-unit',
+          'tools:',
+          `  - name: ${PACK_ECHO_TOOL_NAME}`,
+          '    entry: tools/echo.ts',
+          '    required_scopes:',
+          '      - type: path',
+          '        pattern: "**"',
+          '        access: read',
+          'policies:',
+          '  - id: runtime.completion.allow',
+          '    trigger: on_completion',
+          '    decision: allow',
+          'state_aliases:',
+          '  active: in_progress',
+          'evidence_types: []',
+          'lane_templates: []',
+          `config_key: ${configKey}`,
+          'config_schema: schemas/config.schema.json',
+        ].join('\n'),
+        UTF8_ENCODING,
+      );
+      await writeFile(
+        join(packRoot, 'schemas', 'config.schema.json'),
+        JSON.stringify(
+          {
+            type: 'object',
+            required: ['mode'],
+            properties: {
+              mode: {
+                type: 'string',
+                enum: ['strict', 'relaxed'],
+              },
+              retries: {
+                type: 'integer',
+                minimum: 0,
+              },
+            },
+            additionalProperties: false,
+          },
+          null,
+          2,
+        ),
+        UTF8_ENCODING,
+      );
+    }
+
     it('rejects workspace with unknown root keys during initializeKernelRuntime', async () => {
       await writeWorkspaceWithExtraKey(tempRoot, { bogus_key: 'true' });
 
@@ -1483,6 +1577,92 @@ describe('kernel runtime facade', () => {
       await writeWorkspaceWithExtraKey(tempRoot, { observability: '{}' });
 
       await expect(createRuntime()).rejects.toThrow(/pack.*manifest/i);
+    });
+
+    it('attaches validated pack config to loaded packs during runtime initialization', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, ['  mode: strict', '  retries: 2']);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery');
+
+      let observedPackConfig: unknown;
+      const runtime = await initializeKernelRuntime({
+        workspaceRoot: tempRoot,
+        packsRoot: join(tempRoot, PACKS_DIR_NAME),
+        taskSpecRoot: join(tempRoot, 'tasks'),
+        eventsFilePath: join(tempRoot, 'events.jsonl'),
+        eventLockFilePath: join(tempRoot, 'events.lock'),
+        evidenceRoot: join(tempRoot, 'evidence'),
+        toolCapabilityResolver: async ({ loadedPack, tool }) => {
+          observedPackConfig = loadedPack.resolvedConfig;
+          return {
+            name: tool.name,
+            domain: loadedPack.manifest.id,
+            version: loadedPack.manifest.version,
+            input_schema: z.object({ message: z.string().min(1) }),
+            output_schema: z.object({ echo: z.string().min(1) }),
+            permission: 'read',
+            required_scopes: [WORKSPACE_SCOPE],
+            handler: {
+              kind: 'in-process',
+              fn: async (input) => ({
+                success: true,
+                data: {
+                  echo: (input as { message: string }).message,
+                },
+              }),
+            },
+            description: 'Observed pack config tool',
+            pack: loadedPack.pin.id,
+          };
+        },
+      });
+
+      expect(runtime).toBeDefined();
+      expect(observedPackConfig).toEqual({
+        mode: 'strict',
+        retries: 2,
+      });
+    });
+
+    it('rejects invalid pack config during runtime initialization', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, ['  mode: 42']);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery');
+
+      await expect(createRuntime()).rejects.toThrow(/software_delivery/i);
+      await expect(createRuntime()).rejects.toThrow(/mode/i);
+    });
+
+    it('keeps packs without config_key unaffected during runtime initialization', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, [], { includePackConfigRoot: false });
+
+      const packRoot = join(tempRoot, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+      await writeFile(
+        join(packRoot, PACK_MANIFEST_FILE_NAME),
+        [
+          `id: ${SOFTWARE_DELIVERY_PACK_ID}`,
+          'version: 1.0.0',
+          'task_types:',
+          '  - work-unit',
+          'tools:',
+          `  - name: ${PACK_ECHO_TOOL_NAME}`,
+          '    entry: tools/echo.ts',
+          '    required_scopes:',
+          '      - type: path',
+          '        pattern: "**"',
+          '        access: read',
+          'policies:',
+          '  - id: runtime.completion.allow',
+          '    trigger: on_completion',
+          '    decision: allow',
+          'state_aliases:',
+          '  active: in_progress',
+          'evidence_types: []',
+          'lane_templates: []',
+        ].join('\n'),
+        UTF8_ENCODING,
+      );
+
+      const runtime = await createRuntime();
+      expect(runtime).toBeDefined();
     });
 
     // --- Legacy workspace migration tests (WU-2196) ---

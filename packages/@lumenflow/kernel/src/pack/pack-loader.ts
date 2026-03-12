@@ -96,6 +96,11 @@ export interface LoadedDomainPack {
   manifest: DomainPackManifest;
   packRoot: string;
   integrity: string;
+  /**
+   * Runtime-resolved pack configuration sourced from the workspace root key
+   * declared by manifest.config_key. Attached during runtime initialization.
+   */
+  resolvedConfig?: unknown;
 }
 
 const NODE_BUILTINS = new Set(builtinModules.map((moduleName) => moduleName.replace(/^node:/, '')));
