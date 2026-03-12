@@ -2,7 +2,7 @@ id: WU-2424
 title: Delete stale CLI sizing guide copy and add review/audit sizing patterns
 lane: 'Content: Specs Governance'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -55,3 +55,6 @@ acceptance:
   - Shadow copy at packages/@lumenflow/cli/docs/ deleted
   - Canonical sizing guide has a section on review/audit/exploration WU patterns
   - Guide addresses multi-agent parallelism from first pass (no multiple-passes needed)
+locked: true
+completed_at: 2026-03-12T13:16:15.536Z
+completed: 2026-03-12
