@@ -13,6 +13,10 @@
  * WU-1644: Extracted detection helpers into init-detection.ts,
  *           scaffolding helpers into init-scaffolding.ts
  * WU-1748: Deferred lane lifecycle - init no longer finalizes lane artifacts
+ * WU-2399: Extracted docs scaffolding into init-docs-scaffolder.ts,
+ *           package config into init-package-config.ts,
+ *           safety scripts into init-safety-scripts.ts.
+ *           Fixed --force flag for prettier/scripts, fixed gitignore comment matching.
  */
 
 import * as fs from 'node:fs';
@@ -40,12 +44,12 @@ import { runDoctorForInit } from './doctor.js';
 import { generateSessionStartRecoveryScript } from './hooks/enforcement-generator.js';
 // WU-1576: Import integrate to fold enforcement hooks into init for Claude
 import { integrateClaudeCode, type IntegrateEnforcementConfig } from './commands/integrate.js';
-// WU-1433: Import public manifest to derive scripts (no hardcoded subset)
-import { getPublicManifest } from './public-manifest.js';
 import { runCLI } from './cli-entry-point.js';
 import { buildInitLaneLifecycleMessage, LANE_LIFECYCLE_STATUS } from './lane-lifecycle-process.js';
 import { syncCoreDocs } from './docs-sync.js';
 // WU-1643: Import template constants from dedicated data module
+// WU-2399: Most template imports moved to sub-modules (init-docs-scaffolder, init-package-config,
+// init-safety-scripts). Only imports still used directly in init.ts remain here.
 import {
   CLAUDE_MD_TEMPLATE,
   CLAUDE_SETTINGS_TEMPLATE,
@@ -54,24 +58,22 @@ import {
   CLINE_RULES_TEMPLATE,
   AIDER_CONF_TEMPLATE,
   MCP_JSON_TEMPLATE,
-  BACKLOG_TEMPLATE,
-  STATUS_TEMPLATE,
-  WU_TEMPLATE_YAML,
-  FRAMEWORK_HINT_TEMPLATE,
-  FRAMEWORK_OVERLAY_TEMPLATE,
-  WU_LIFECYCLE_SKILL_TEMPLATE,
-  WORKTREE_DISCIPLINE_SKILL_TEMPLATE,
-  LUMENFLOW_GATES_SKILL_TEMPLATE,
-  GITIGNORE_TEMPLATE,
-  REQUIRED_GITIGNORE_EXCLUSIONS,
-  PRETTIERIGNORE_TEMPLATE,
-  SAFE_GIT_TEMPLATE,
-  PRE_COMMIT_TEMPLATE,
-  GATE_STUB_SCRIPTS,
-  SCRIPT_ARG_OVERRIDES,
   DEFAULT_LANE_DEFINITIONS,
 } from './init-templates.js';
-import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
+// WU-2399: Import extracted sub-modules for decomposed scaffolding
+import {
+  scaffoldFullDocs,
+  scaffoldAgentOnboardingDocs,
+  scaffoldClaudeSkills,
+  scaffoldFrameworkOverlay,
+} from './init-docs-scaffolder.js';
+import { injectPackageJsonScripts } from './init-package-config.js';
+import {
+  scaffoldGitignore,
+  scaffoldPrettierignore,
+  scaffoldSafetyScripts,
+  getFileMode,
+} from './init-safety-scripts.js';
 // WU-1644: Import detection helpers from dedicated module
 import {
   getDocsPath,
@@ -322,7 +324,6 @@ const SOFTWARE_DELIVERY_CONFIG_KEYS = {
   CLIENTS: 'clients',
   ENFORCEMENT: 'enforcement',
 } as const;
-const FRAMEWORK_HINT_FILE = '.lumenflow.framework.yaml';
 const LUMENFLOW_DIR = '.lumenflow';
 const LUMENFLOW_AGENTS_DIR = `${LUMENFLOW_DIR}/agents`;
 const CLAUDE_DIR = '.claude';
@@ -647,26 +648,6 @@ function getCurrentDate(): string {
 }
 
 /**
- * Normalize a framework name into display + slug
- */
-function normalizeFrameworkName(framework: string): { name: string; slug: string } {
-  const name = framework.trim();
-  const slug = name
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, '-')
-    // Remove leading dashes and trailing dashes separately (explicit precedence)
-    .replace(/^-+/, '')
-
-    .replace(/-+$/, '');
-
-  if (!slug) {
-    throw createError(ErrorCodes.INVALID_ARGUMENT, `Invalid framework name: "${framework}"`);
-  }
-
-  return { name, slug };
-}
-
-/**
  * WU-1171: Resolve client type from options
  * --client takes precedence over --vendor (backwards compat)
  */
@@ -684,19 +665,6 @@ function resolveClientType(
   }
   // Default based on environment
   return defaultClient === DEFAULT_CLIENT_CLAUDE ? 'claude' : 'none';
-}
-
-/**
- * WU-1171: Determine file mode from options
- */
-function getFileMode(options: ScaffoldOptions): import('./init-scaffolding.js').FileMode {
-  if (options.force) {
-    return 'force';
-  }
-  if (options.merge) {
-    return 'merge';
-  }
-  return 'skip';
 }
 
 /**
@@ -981,254 +949,12 @@ export async function scaffoldProject(
   return result;
 }
 
-/** Gitignore file name constant to avoid duplicate string lint error */
-const GITIGNORE_FILE_NAME = '.gitignore';
-
-/**
- * WU-1342: Scaffold .gitignore file with LumenFlow exclusions
- * Supports merge mode to add exclusions to existing .gitignore
- */
-async function scaffoldGitignore(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-): Promise<void> {
-  const gitignorePath = path.join(targetDir, GITIGNORE_FILE_NAME);
-  const fileMode = getFileMode(options);
-
-  // WU-1965: Auto-merge lumenflow entries when .gitignore exists, regardless of mode.
-  // Previously only merge mode triggered merging; skip mode would skip the entire file,
-  // risking accidental commits of .lumenflow/telemetry, worktrees, etc.
-  if ((fileMode === 'merge' || fileMode === 'skip') && fs.existsSync(gitignorePath)) {
-    // Merge mode or skip mode with existing file: append LumenFlow exclusions if not already present
-    const existingContent = fs.readFileSync(gitignorePath, 'utf-8');
-    const linesToAdd: string[] = [];
-
-    // WU-1969: Use shared constant so merge path and full template cannot drift
-    for (const { pattern, line } of REQUIRED_GITIGNORE_EXCLUSIONS) {
-      if (!existingContent.includes(pattern)) {
-        linesToAdd.push(line);
-      }
-    }
-
-    if (linesToAdd.length > 0) {
-      const separator = existingContent.endsWith('\n') ? '' : '\n';
-      const lumenflowBlock = `${separator}
-# LumenFlow (auto-added)
-${linesToAdd.join('\n')}
-`;
-      fs.writeFileSync(gitignorePath, existingContent + lumenflowBlock);
-      result.merged = result.merged ?? [];
-      result.merged.push(GITIGNORE_FILE_NAME);
-    } else {
-      result.skipped.push(GITIGNORE_FILE_NAME);
-    }
-    return;
-  }
-
-  // Force mode or file doesn't exist: write full template
-  await createFile(gitignorePath, GITIGNORE_TEMPLATE, fileMode, result, targetDir);
-}
-
-/** Prettierignore file name constant to avoid duplicate string lint error */
-const PRETTIERIGNORE_FILE_NAME = '.prettierignore';
-
-/**
- * WU-1517: Scaffold .prettierignore file with sane defaults
- * This is a core file scaffolded in all modes (full and minimal)
- * because it's required for format:check gate to pass.
- */
-async function scaffoldPrettierignore(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-): Promise<void> {
-  const prettierignorePath = path.join(targetDir, PRETTIERIGNORE_FILE_NAME);
-  const fileMode = getFileMode(options);
-
-  await createFile(prettierignorePath, PRETTIERIGNORE_TEMPLATE, fileMode, result, targetDir);
-}
-
-/**
- * WU-1307: LumenFlow scripts to inject into package.json
- * WU-1342: Expanded to include essential commands
- * WU-1433: Now derived from the public CLI manifest (WU-1432) instead of
- * hardcoded list. Ensures all public commands are exposed and avoids drift.
- */
-function generateLumenflowScripts(): Record<string, string> {
-  const scripts: Record<string, string> = {};
-  const manifest = getPublicManifest();
-
-  for (const cmd of manifest) {
-    // Use override if defined, otherwise map to the binary name
-    scripts[cmd.name] = SCRIPT_ARG_OVERRIDES[cmd.name] ?? cmd.binName;
-  }
-
-  return scripts;
-}
-
-/** WU-1408: Safety script path constants */
-const SCRIPTS_DIR = 'scripts';
-const SAFE_GIT_FILE = 'safe-git';
-const HUSKY_DIR = '.husky';
-const PRE_COMMIT_FILE = 'pre-commit';
-const SAFE_GIT_TEMPLATE_PATH = 'core/scripts/safe-git.template';
-const PRE_COMMIT_TEMPLATE_PATH = 'core/.husky/pre-commit.template';
-
-/**
- * WU-1408: Scaffold safety scripts (safe-git wrapper and pre-commit hook)
- * These are core safety components needed for LumenFlow enforcement:
- * - scripts/safe-git: Blocks dangerous git operations (e.g., manual worktree remove)
- * - .husky/pre-commit: Blocks direct commits to main/master, enforces WU workflow
- *
- * Both scripts are scaffolded in all modes (full and minimal) because they are
- * required for lumenflow-doctor to pass.
- */
-async function scaffoldSafetyScripts(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-): Promise<void> {
-  const fileMode = getFileMode(options);
-
-  // Scaffold scripts/safe-git
-  const safeGitPath = path.join(targetDir, SCRIPTS_DIR, SAFE_GIT_FILE);
-  try {
-    const safeGitTemplate = loadTemplate(SAFE_GIT_TEMPLATE_PATH);
-    await createExecutableScript(safeGitPath, safeGitTemplate, fileMode, result, targetDir);
-  } catch {
-    // Fallback to hardcoded template if template file not found
-    await createExecutableScript(safeGitPath, SAFE_GIT_TEMPLATE, fileMode, result, targetDir);
-  }
-
-  // Scaffold .husky/pre-commit
-  const preCommitPath = path.join(targetDir, HUSKY_DIR, PRE_COMMIT_FILE);
-  try {
-    const preCommitTemplate = loadTemplate(PRE_COMMIT_TEMPLATE_PATH);
-    await createExecutableScript(preCommitPath, preCommitTemplate, fileMode, result, targetDir);
-  } catch {
-    // Fallback to hardcoded template if template file not found
-    await createExecutableScript(preCommitPath, PRE_COMMIT_TEMPLATE, fileMode, result, targetDir);
-  }
-}
-
-/**
- * WU-1517: Prettier version to add to devDependencies.
- * Uses caret range to allow minor/patch updates.
- */
-const PRETTIER_VERSION = '^3.8.0';
-
-/** WU-1517: Prettier package name constant */
-const PRETTIER_PACKAGE_NAME = 'prettier';
-
-/**
- * WU-1963: @lumenflow/cli version to add to devDependencies.
- * Uses caret range to allow minor/patch updates within the major version.
- * This ensures `pnpm wu:create`, `pnpm gates`, etc. resolve after `pnpm install`.
- */
-const CLI_PACKAGE_VERSION = '^3.0.0';
-
-/** WU-1963: CLI package name constant */
-const CLI_PACKAGE_NAME = '@lumenflow/cli';
-
-/**
- * WU-1300: Inject LumenFlow scripts into package.json
- * WU-1517: Also adds prettier devDependency
- * WU-1518: Also adds gate stub scripts (spec:linter, lint, typecheck)
- * WU-1747: format and format:check are now part of GATE_STUB_SCRIPTS
- * WU-1963: Also adds @lumenflow/cli devDependency so binary scripts resolve
- * - Creates package.json if it doesn't exist
- * - Preserves existing scripts (doesn't overwrite unless --force)
- * - Adds missing LumenFlow scripts
- * - Adds @lumenflow/cli to devDependencies (provides wu-create, gates, etc. binaries)
- * - Adds prettier to devDependencies
- * - Adds gate stub scripts for spec:linter, lint, typecheck, format, format:check
- */
-async function injectPackageJsonScripts(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-): Promise<void> {
-  const packageJsonPath = path.join(targetDir, 'package.json');
-  let packageJson: Record<string, unknown>;
-
-  if (fs.existsSync(packageJsonPath)) {
-    // Read existing package.json
-    const content = fs.readFileSync(packageJsonPath, 'utf-8');
-    packageJson = JSON.parse(content) as Record<string, unknown>;
-  } else {
-    // Create minimal package.json
-    packageJson = {
-      name: path.basename(targetDir),
-      version: '0.0.1',
-      private: true,
-    };
-  }
-
-  // Ensure scripts object exists
-  if (!packageJson.scripts || typeof packageJson.scripts !== 'object') {
-    packageJson.scripts = {};
-  }
-
-  const scripts = packageJson.scripts as Record<string, string>;
-  let modified = false;
-
-  // WU-1433: Derive scripts from public manifest (not hardcoded)
-  const lumenflowScripts = generateLumenflowScripts();
-  for (const [scriptName, scriptCommand] of Object.entries(lumenflowScripts)) {
-    if (options.force || !(scriptName in scripts)) {
-      if (!(scriptName in scripts)) {
-        scripts[scriptName] = scriptCommand;
-        modified = true;
-      }
-    }
-  }
-
-  // WU-1518: Add gate stub scripts (spec:linter, lint, typecheck, format, format:check)
-  // WU-1747: format and format:check are now part of GATE_STUB_SCRIPTS with
-  // auto-detection of prettier availability, so they pass immediately after init.
-  // These stubs let `pnpm gates` pass on a fresh project without manual script additions.
-  // Projects replace them with real tooling when ready.
-  for (const [scriptName, scriptCommand] of Object.entries(GATE_STUB_SCRIPTS)) {
-    if (options.force) {
-      scripts[scriptName] = scriptCommand;
-      modified = true;
-    } else if (!(scriptName in scripts)) {
-      scripts[scriptName] = scriptCommand;
-      modified = true;
-    }
-  }
-
-  // Ensure devDependencies object exists
-  if (!packageJson.devDependencies || typeof packageJson.devDependencies !== 'object') {
-    packageJson.devDependencies = {};
-  }
-  const devDeps = packageJson.devDependencies as Record<string, string>;
-
-  // WU-1963: Add @lumenflow/cli to devDependencies so binary scripts resolve after pnpm install
-  if (options.force || !(CLI_PACKAGE_NAME in devDeps)) {
-    if (options.force && CLI_PACKAGE_NAME in devDeps) {
-      devDeps[CLI_PACKAGE_NAME] = CLI_PACKAGE_VERSION;
-      modified = true;
-    } else if (!(CLI_PACKAGE_NAME in devDeps)) {
-      devDeps[CLI_PACKAGE_NAME] = CLI_PACKAGE_VERSION;
-      modified = true;
-    }
-  }
-
-  // WU-1517: Add prettier to devDependencies
-  if (options.force || !(PRETTIER_PACKAGE_NAME in devDeps)) {
-    if (!(PRETTIER_PACKAGE_NAME in devDeps)) {
-      devDeps[PRETTIER_PACKAGE_NAME] = PRETTIER_VERSION;
-      modified = true;
-    }
-  }
-
-  if (modified) {
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
-    result.created.push('package.json (scripts updated)');
-  }
-}
+// WU-2399: scaffoldGitignore, scaffoldPrettierignore, scaffoldSafetyScripts,
+// getFileMode, and their constants are now in init-safety-scripts.ts.
+// generateLumenflowScripts, injectPackageJsonScripts, and dependency constants
+// are now in init-package-config.ts.
+// scaffoldFullDocs, scaffoldAgentOnboardingDocs, scaffoldClaudeSkills,
+// scaffoldFrameworkOverlay, and normalizeFrameworkName are now in init-docs-scaffolder.ts.
 
 /**
  * WU-2230: Detect the project's package manager and return the install command.
@@ -1307,157 +1033,8 @@ export async function runPostScaffoldInstall(
   }
 }
 
-async function scaffoldFullDocs(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-  tokens: Record<string, string>,
-): Promise<void> {
-  // WU-1309: Use config-derived docs paths from tokens (computed in scaffoldProject)
-  const wuDir = path.join(targetDir, tokens.DOCS_WU_DIR_PATH);
-  const templatesDir = path.join(targetDir, tokens.DOCS_TEMPLATES_DIR_PATH);
-
-  await createDirectory(wuDir, result, targetDir);
-  await createDirectory(templatesDir, result, targetDir);
-  await createFile(path.join(wuDir, '.gitkeep'), '', options.force, result, targetDir);
-
-  await createFile(
-    path.join(targetDir, tokens.DOCS_BACKLOG_PATH),
-    BACKLOG_TEMPLATE,
-    true,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(targetDir, tokens.DOCS_STATUS_PATH),
-    STATUS_TEMPLATE,
-    true,
-    result,
-    targetDir,
-  );
-
-  await createFile(
-    path.join(templatesDir, 'wu-template.yaml'),
-    processTemplate(WU_TEMPLATE_YAML, tokens),
-    true,
-    result,
-    targetDir,
-  );
-
-  // WU-1083: Scaffold agent onboarding docs with --full
-  await scaffoldAgentOnboardingDocs(targetDir, options, result, tokens);
-}
-
-/**
- * WU-1083: Scaffold agent onboarding documentation
- * WU-1300: Added starting-prompt.md
- * WU-1309: Added onboarding docs scaffold with dynamic docs path resolution
- */
-async function scaffoldAgentOnboardingDocs(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-  tokens: Record<string, string>,
-): Promise<void> {
-  // WU-1309: Use dynamic onboarding path from tokens
-  const onboardingDir = path.join(targetDir, tokens.DOCS_ONBOARDING_PATH);
-
-  await createDirectory(onboardingDir, result, targetDir);
-
-  for (const [outputFile, templatePath] of Object.entries(SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS)) {
-    await createFile(
-      path.join(onboardingDir, outputFile),
-      processTemplate(loadTemplate(templatePath), tokens),
-      options.force,
-      result,
-      targetDir,
-    );
-  }
-}
-
-/**
- * WU-1083: Scaffold Claude skills
- */
-async function scaffoldClaudeSkills(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-  tokens: Record<string, string>,
-): Promise<void> {
-  const skillsDir = path.join(targetDir, '.claude', 'skills');
-
-  // wu-lifecycle skill
-  const wuLifecycleDir = path.join(skillsDir, 'wu-lifecycle');
-  await createDirectory(wuLifecycleDir, result, targetDir);
-  await createFile(
-    path.join(wuLifecycleDir, 'SKILL.md'),
-    processTemplate(WU_LIFECYCLE_SKILL_TEMPLATE, tokens),
-    true,
-    result,
-    targetDir,
-  );
-
-  // worktree-discipline skill
-  const worktreeDir = path.join(skillsDir, 'worktree-discipline');
-  await createDirectory(worktreeDir, result, targetDir);
-  await createFile(
-    path.join(worktreeDir, 'SKILL.md'),
-    processTemplate(WORKTREE_DISCIPLINE_SKILL_TEMPLATE, tokens),
-    true,
-    result,
-    targetDir,
-  );
-
-  // lumenflow-gates skill
-  const gatesDir = path.join(skillsDir, 'lumenflow-gates');
-  await createDirectory(gatesDir, result, targetDir);
-  await createFile(
-    path.join(gatesDir, 'SKILL.md'),
-    processTemplate(LUMENFLOW_GATES_SKILL_TEMPLATE, tokens),
-    true,
-    result,
-    targetDir,
-  );
-}
-
-async function scaffoldFrameworkOverlay(
-  targetDir: string,
-  options: ScaffoldOptions,
-  result: import('./init-scaffolding.js').ScaffoldResult,
-  tokens: Record<string, string>,
-): Promise<void> {
-  if (!options.framework) {
-    return;
-  }
-
-  const { name, slug } = normalizeFrameworkName(options.framework);
-  const frameworkTokens = {
-    ...tokens,
-    FRAMEWORK_NAME: name,
-    FRAMEWORK_SLUG: slug,
-  };
-
-  await createFile(
-    path.join(targetDir, FRAMEWORK_HINT_FILE),
-    processTemplate(FRAMEWORK_HINT_TEMPLATE, frameworkTokens),
-    options.force,
-    result,
-    targetDir,
-  );
-
-  // WU-1309: Use dynamic operations path from tokens
-  const overlayDir = path.join(targetDir, tokens.DOCS_OPERATIONS_PATH, '_frameworks', slug);
-  await createDirectory(overlayDir, result, targetDir);
-
-  await createFile(
-    path.join(overlayDir, 'README.md'),
-    processTemplate(FRAMEWORK_OVERLAY_TEMPLATE, frameworkTokens),
-    options.force,
-    result,
-    targetDir,
-  );
-}
+// WU-2399: scaffoldFullDocs, scaffoldAgentOnboardingDocs, scaffoldClaudeSkills,
+// and scaffoldFrameworkOverlay are now in init-docs-scaffolder.ts.
 
 /**
  * WU-1171: Scaffold client-specific files based on --client option

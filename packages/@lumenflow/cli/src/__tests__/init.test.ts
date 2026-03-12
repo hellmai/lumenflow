@@ -1390,6 +1390,7 @@ describe('lumenflow init', () => {
       });
     });
 
+    // WU-2399: Verify .mcp.json file mode behavior
     describe('.mcp.json file modes', () => {
       it('should skip .mcp.json if it already exists (skip mode)', async () => {
         // Create existing .mcp.json
@@ -1427,6 +1428,197 @@ describe('lumenflow init', () => {
         const mcpConfig = JSON.parse(content);
         expect(mcpConfig.mcpServers.lumenflow).toBeDefined();
       });
+    });
+  });
+
+  // WU-2399: --force flag should correctly overwrite existing prettier version
+  describe('WU-2399: --force flag updates existing dependencies', () => {
+    it('should overwrite existing prettier version when --force is used', async () => {
+      // Create package.json with an older prettier version
+      const existingPackageJson = {
+        name: 'test-project',
+        version: '1.0.0',
+        devDependencies: {
+          prettier: '^2.0.0',
+        },
+      };
+      fs.writeFileSync(
+        path.join(tempDir, PACKAGE_JSON_FILE),
+        JSON.stringify(existingPackageJson, null, 2),
+      );
+
+      const options: ScaffoldOptions = {
+        force: true,
+        full: false,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const content = fs.readFileSync(path.join(tempDir, PACKAGE_JSON_FILE), 'utf-8');
+      const pkg = JSON.parse(content) as Record<string, unknown>;
+      const devDeps = pkg.devDependencies as Record<string, string>;
+
+      // --force should have overwritten the old version
+      expect(devDeps.prettier).not.toBe('^2.0.0');
+      expect(devDeps.prettier).toMatch(/^\^3\./);
+    });
+
+    it('should overwrite existing lumenflow scripts when --force is used', async () => {
+      // Create package.json with an existing lumenflow script at a stale value
+      const existingPackageJson = {
+        name: 'test-project',
+        version: '1.0.0',
+        scripts: {
+          'wu:create': 'echo stale',
+        },
+      };
+      fs.writeFileSync(
+        path.join(tempDir, PACKAGE_JSON_FILE),
+        JSON.stringify(existingPackageJson, null, 2),
+      );
+
+      const options: ScaffoldOptions = {
+        force: true,
+        full: false,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const content = fs.readFileSync(path.join(tempDir, PACKAGE_JSON_FILE), 'utf-8');
+      const pkg = JSON.parse(content) as Record<string, unknown>;
+      const scripts = pkg.scripts as Record<string, string>;
+
+      // --force should have overwritten the stale script
+      expect(scripts['wu:create']).not.toBe('echo stale');
+    });
+
+    it('should NOT overwrite existing prettier version without --force', async () => {
+      const existingPackageJson = {
+        name: 'test-project',
+        version: '1.0.0',
+        devDependencies: {
+          prettier: '^2.0.0',
+        },
+      };
+      fs.writeFileSync(
+        path.join(tempDir, PACKAGE_JSON_FILE),
+        JSON.stringify(existingPackageJson, null, 2),
+      );
+
+      const options: ScaffoldOptions = {
+        force: false,
+        full: false,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const content = fs.readFileSync(path.join(tempDir, PACKAGE_JSON_FILE), 'utf-8');
+      const pkg = JSON.parse(content) as Record<string, unknown>;
+      const devDeps = pkg.devDependencies as Record<string, string>;
+
+      // Without --force, should preserve existing version
+      expect(devDeps.prettier).toBe('^2.0.0');
+    });
+  });
+
+  // WU-2399: gitignore deduplication should ignore comments and partial matches
+  describe('WU-2399: gitignore deduplication ignores comments', () => {
+    const GITIGNORE_FILE = '.gitignore';
+
+    it('should add pattern even if a comment mentions it', async () => {
+      // Create .gitignore with a comment that contains the pattern text
+      const existingContent = '# ignore node_modules for faster builds\n';
+      fs.writeFileSync(path.join(tempDir, GITIGNORE_FILE), existingContent);
+
+      const options: ScaffoldOptions = {
+        force: false,
+        full: false,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const content = fs.readFileSync(path.join(tempDir, GITIGNORE_FILE), 'utf-8');
+      // The comment mentions 'node_modules' but the actual pattern 'node_modules/' should still be added
+      // because comments should not count as matching lines
+      const nonCommentLines = content
+        .split('\n')
+        .filter((line) => !line.startsWith('#') && line.trim().length > 0);
+      expect(nonCommentLines).toContain('node_modules/');
+    });
+
+    it('should not duplicate a pattern that already exists as a non-comment line', async () => {
+      // Create .gitignore with the actual pattern already present
+      const existingContent = 'node_modules/\n.lumenflow/telemetry/\n';
+      fs.writeFileSync(path.join(tempDir, GITIGNORE_FILE), existingContent);
+
+      const options: ScaffoldOptions = {
+        force: false,
+        full: false,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const content = fs.readFileSync(path.join(tempDir, GITIGNORE_FILE), 'utf-8');
+      // Count occurrences of 'node_modules/' as standalone lines
+      const nodeModulesCount = content
+        .split('\n')
+        .filter((line) => line.trim() === 'node_modules/').length;
+      expect(nodeModulesCount).toBe(1);
+    });
+
+    it('should handle inline comments correctly', async () => {
+      // Some gitignore implementations allow inline comments after patterns
+      // but the standard gitignore format does not support inline comments.
+      // A line like "# .lumenflow/telemetry/ should be ignored" is a pure comment.
+      const existingContent = '# .lumenflow/telemetry/ should be ignored\n';
+      fs.writeFileSync(path.join(tempDir, GITIGNORE_FILE), existingContent);
+
+      const options: ScaffoldOptions = {
+        force: false,
+        full: false,
+      };
+
+      await scaffoldProject(tempDir, options);
+
+      const content = fs.readFileSync(path.join(tempDir, GITIGNORE_FILE), 'utf-8');
+      // The actual pattern should still be added because the comment doesn't count
+      const nonCommentLines = content
+        .split('\n')
+        .filter((line) => !line.startsWith('#') && line.trim().length > 0);
+      expect(nonCommentLines).toContain('.lumenflow/telemetry/');
+    });
+  });
+
+  // WU-2399: scaffoldProject delegates to extracted sub-modules
+  describe('WU-2399: sub-module delegation', () => {
+    it('should produce the same output regardless of internal delegation', async () => {
+      // This test verifies the end-to-end behavior remains consistent
+      // after extracting sub-modules. The full scaffold should still create
+      // all expected files.
+      const options: ScaffoldOptions = {
+        force: false,
+        full: true,
+        client: 'claude',
+      };
+
+      const result = await scaffoldProject(tempDir, options);
+
+      // Core files from package config
+      expect(fs.existsSync(path.join(tempDir, PACKAGE_JSON_FILE))).toBe(true);
+
+      // Safety scripts
+      expect(fs.existsSync(path.join(tempDir, 'scripts', 'safe-git'))).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, '.husky', 'pre-commit'))).toBe(true);
+
+      // Docs
+      expect(fs.existsSync(path.join(tempDir, 'AGENTS.md'))).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, LUMENFLOW_MD))).toBe(true);
+
+      // Client files
+      expect(fs.existsSync(path.join(tempDir, 'CLAUDE.md'))).toBe(true);
+
+      // Result should have all expected arrays
+      expect(result.created.length).toBeGreaterThan(0);
     });
   });
 });
