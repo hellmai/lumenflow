@@ -429,6 +429,127 @@ describe('cli-entry.mjs fallback behavior (WU-1366)', () => {
       }
     });
 
+    it('should skip build and use existing dist when --help is in args', () => {
+      const tempRepo = mkdtempSync(path.join(tmpdir(), 'cli-entry-help-'));
+      try {
+        const distDir = path.join(tempRepo, 'packages', '@lumenflow', 'cli', 'dist');
+        mkdirSync(distDir, { recursive: true });
+        const distPath = path.join(distDir, 'gates.js');
+        writeFileSync(distPath, 'process.exit(0);\n');
+
+        const spawn = vi.fn().mockReturnValue({ status: 0 });
+        const exit = vi.fn();
+        const logger = { log: vi.fn(), warn: vi.fn(), error: vi.fn() };
+
+        runCliEntry({
+          entry: 'gates',
+          args: ['--help'],
+          cwd: tempRepo,
+          spawn,
+          exit,
+          logger,
+        });
+
+        // Should call spawn exactly once (to run gates.js --help),
+        // NOT twice (build + run). Build spawn uses 'pnpm', run spawn uses 'node'.
+        expect(spawn).toHaveBeenCalledTimes(1);
+        expect(spawn).toHaveBeenCalledWith('node', [distPath, '--help'], {
+          cwd: tempRepo,
+          stdio: 'inherit',
+        });
+        expect(exit).toHaveBeenCalledWith(0);
+      } finally {
+        rmSync(tempRepo, { recursive: true, force: true });
+      }
+    });
+
+    it('should skip build when -h is in args', () => {
+      const tempRepo = mkdtempSync(path.join(tmpdir(), 'cli-entry-help-h-'));
+      try {
+        const distDir = path.join(tempRepo, 'packages', '@lumenflow', 'cli', 'dist');
+        mkdirSync(distDir, { recursive: true });
+        const distPath = path.join(distDir, 'wu-prep.js');
+        writeFileSync(distPath, 'process.exit(0);\n');
+
+        const spawn = vi.fn().mockReturnValue({ status: 0 });
+        const exit = vi.fn();
+        const logger = { log: vi.fn(), warn: vi.fn(), error: vi.fn() };
+
+        runCliEntry({
+          entry: 'wu-prep',
+          args: ['-h'],
+          cwd: tempRepo,
+          spawn,
+          exit,
+          logger,
+        });
+
+        // Only one spawn call (run), no build
+        expect(spawn).toHaveBeenCalledTimes(1);
+        expect(spawn).toHaveBeenCalledWith('node', [distPath, '-h'], {
+          cwd: tempRepo,
+          stdio: 'inherit',
+        });
+      } finally {
+        rmSync(tempRepo, { recursive: true, force: true });
+      }
+    });
+
+    it('should error with bootstrap hint when --help requested but no dist exists', () => {
+      const spawn = vi.fn();
+      const exit = vi.fn();
+      const logger = { log: vi.fn(), warn: vi.fn(), error: vi.fn() };
+
+      runCliEntry({
+        entry: 'gates',
+        args: ['--help'],
+        cwd: '/nonexistent/repo',
+        spawn,
+        exit,
+        logger,
+      });
+
+      // Should NOT attempt build
+      expect(spawn).not.toHaveBeenCalled();
+      // Should error with bootstrap guidance
+      const output = logger.error.mock.calls.map((call) => call.join(' ')).join('\n');
+      expect(output).toContain('pnpm bootstrap');
+      expect(exit).toHaveBeenCalledWith(1);
+    });
+
+    it('should skip build for strict lifecycle entries when --help is in args', () => {
+      const tempRepo = mkdtempSync(path.join(tmpdir(), 'cli-entry-help-strict-'));
+      try {
+        const distDir = path.join(tempRepo, 'packages', '@lumenflow', 'cli', 'dist');
+        mkdirSync(distDir, { recursive: true });
+        const distPath = path.join(distDir, 'wu-claim.js');
+        writeFileSync(distPath, 'process.exit(0);\n');
+
+        const spawn = vi.fn().mockReturnValue({ status: 0 });
+        const exit = vi.fn();
+        const logger = { log: vi.fn(), warn: vi.fn(), error: vi.fn() };
+
+        runCliEntry({
+          entry: 'wu-claim',
+          args: ['--help'],
+          cwd: tempRepo,
+          spawn,
+          exit,
+          logger,
+        });
+
+        // Even strict lifecycle entries should skip build for --help
+        // (one spawn call: run only, no build)
+        expect(spawn).toHaveBeenCalledTimes(1);
+        expect(spawn).toHaveBeenCalledWith('node', [distPath, '--help'], {
+          cwd: tempRepo,
+          stdio: 'inherit',
+        });
+      } finally {
+        rmSync(tempRepo, { recursive: true, force: true });
+      }
+    });
+
     it('should default exit code to 1 when command status is undefined', () => {
       const tempRepo = mkdtempSync(path.join(tmpdir(), 'cli-entry-run-'));
       try {

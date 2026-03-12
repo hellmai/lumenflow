@@ -343,6 +343,12 @@ export function ensureCliDist({
   return buildCliDist({ repoRoot, entryPath, exists, spawn });
 }
 
+const HELP_FLAGS = new Set(['--help', '-h']);
+
+function isHelpRequest(args) {
+  return args.some((arg) => HELP_FLAGS.has(arg));
+}
+
 export function runCliEntry({
   entry = DEFAULT_ENTRY,
   args = process.argv.slice(3),
@@ -353,7 +359,21 @@ export function runCliEntry({
 }) {
   const repoRoot = path.resolve(cwd);
   const mainRepoPath = resolveMainRepoFromWorktree(repoRoot);
-  const result = ensureCliDist({ repoRoot, entry, mainRepoPath, spawn, logger });
+
+  // WU-2426: Skip expensive build when only requesting help.
+  // Use existing dist if available; error with bootstrap hint otherwise.
+  let result;
+  if (isHelpRequest(args)) {
+    const entryPath = selectCliEntryPath({
+      repoRoot,
+      entry,
+      mainRepoPath,
+      exists: existsSync,
+    });
+    result = entryPath ? { path: entryPath } : { path: null };
+  } else {
+    result = ensureCliDist({ repoRoot, entry, mainRepoPath, spawn, logger });
+  }
 
   if (!result.path) {
     logger.error(`[cli-entry] Unable to locate CLI dist for ${entry}.`);
