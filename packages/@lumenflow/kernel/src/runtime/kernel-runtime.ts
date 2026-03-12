@@ -44,6 +44,7 @@ import {
   ExecutionContextSchema,
   RUN_STATUSES,
   RunSchema,
+  ToolScopeSchema,
   TOOL_ERROR_CODES,
   TOOL_HANDLER_KINDS,
   TaskSpecSchema,
@@ -57,6 +58,7 @@ import {
   type TaskState,
   type ToolCapability,
   type ToolOutput,
+  type ToolScope,
   type ToolTraceEntry,
   type WorkspaceSpec,
 } from '../kernel.schemas.js';
@@ -110,6 +112,8 @@ const CLI_PACKS_ROOT_CANDIDATE = path.resolve(
 const DEFAULT_PACK_TOOL_INPUT_SCHEMA = z.record(z.string(), z.unknown());
 const DEFAULT_PACK_TOOL_OUTPUT_SCHEMA = z.record(z.string(), z.unknown());
 const JSON_SCHEMA_MAX_DEPTH = 12;
+const PACK_CAPABILITY_FACTORY_DEFAULT_EXPORT = 'default';
+const PACK_CAPABILITY_FACTORY_NAMED_EXPORT = 'capabilityFactory';
 const PACK_POLICY_FACTORY_DEFAULT_EXPORT = 'default';
 const PACK_POLICY_FACTORY_NAMED_EXPORT = 'policyFactory';
 const RUNTIME_LOAD_STAGE_ERROR_PREFIX = 'Runtime load stage failed for pack';
@@ -145,6 +149,23 @@ interface PendingApproval {
   tool_name: string;
   requested_at: string;
 }
+
+export interface PackCapabilityAugmentation {
+  required_scopes?: ToolScope[];
+  required_env?: string[];
+}
+
+export interface PackCapabilityFactoryInput {
+  workspaceRoot: string;
+  packId: string;
+  packRoot: string;
+  packConfig?: unknown;
+  tool: LoadedDomainPack['manifest']['tools'][number];
+}
+
+export type PackCapabilityFactory =
+  | ((input: PackCapabilityFactoryInput) => PackCapabilityAugmentation | null | undefined)
+  | ((input: PackCapabilityFactoryInput) => Promise<PackCapabilityAugmentation | null | undefined>);
 
 export interface RuntimeToolCapabilityResolverInput {
   workspaceSpec: WorkspaceSpec;
@@ -809,9 +830,7 @@ function validatePackConfigEnvReferences(loadedPack: LoadedDomainPack): void {
     return;
   }
 
-  const declaredEnvNames = new Set(
-    loadedPack.manifest.tools.flatMap((tool) => tool.required_env ?? []),
-  );
+  const declaredEnvNames = collectDeclaredEnvNames(loadedPack);
   const envReferences = collectPackConfigEnvReferences(loadedPack.resolvedConfig, [
     loadedPack.manifest.config_key,
   ]);
@@ -829,6 +848,193 @@ function validatePackConfigEnvReferences(loadedPack: LoadedDomainPack): void {
       );
     }
   }
+}
+
+function collectDeclaredEnvNames(loadedPack: LoadedDomainPack): Set<string> {
+  const manifestEnvNames = loadedPack.manifest.tools.flatMap((tool) => tool.required_env ?? []);
+  const capabilityEnvNames = Object.values(
+    loadedPack.resolvedCapabilityAugmentations ?? {},
+  ).flatMap((augmentation) => augmentation.required_env ?? []);
+
+  return new Set([...manifestEnvNames, ...capabilityEnvNames]);
+}
+
+function isCapabilityFactory(value: unknown): value is PackCapabilityFactory {
+  return typeof value === 'function';
+}
+
+function selectPackCapabilityFactory(options: {
+  loadedModule: unknown;
+  exportName?: string;
+  capabilityFactoryEntry: string;
+  packId: string;
+}): PackCapabilityFactory {
+  const { loadedModule, exportName, capabilityFactoryEntry, packId } = options;
+
+  if (exportName) {
+    if (!isRecord(loadedModule) || !isCapabilityFactory(loadedModule[exportName])) {
+      throw new Error(
+        `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" must export function "${exportName}".`,
+      );
+    }
+    return loadedModule[exportName];
+  }
+
+  if (isCapabilityFactory(loadedModule)) {
+    return loadedModule;
+  }
+
+  if (isRecord(loadedModule)) {
+    const defaultExport = loadedModule[PACK_CAPABILITY_FACTORY_DEFAULT_EXPORT];
+    if (isCapabilityFactory(defaultExport)) {
+      return defaultExport;
+    }
+
+    const namedExport = loadedModule[PACK_CAPABILITY_FACTORY_NAMED_EXPORT];
+    if (isCapabilityFactory(namedExport)) {
+      return namedExport;
+    }
+  }
+
+  throw new Error(
+    `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" must export a function via default export, capabilityFactory, or an explicit #export.`,
+  );
+}
+
+function validateCapabilityAugmentation(
+  augmentationValue: unknown,
+  packId: string,
+  capabilityFactoryEntry: string,
+  toolName: string,
+): PackCapabilityAugmentation {
+  if (augmentationValue === undefined || augmentationValue === null) {
+    return {};
+  }
+  if (!isRecord(augmentationValue)) {
+    throw new Error(
+      `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" returned a non-object augmentation for tool "${toolName}".`,
+    );
+  }
+
+  const requiredScopesValue = augmentationValue.required_scopes;
+  const requiredEnvValue = augmentationValue.required_env;
+  const extraKeys = Object.keys(augmentationValue).filter(
+    (key) => key !== 'required_scopes' && key !== 'required_env',
+  );
+  if (extraKeys.length > 0) {
+    throw new Error(
+      `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" returned unsupported fields for tool "${toolName}": ${extraKeys.join(', ')}.`,
+    );
+  }
+
+  const requiredScopes = (() => {
+    if (requiredScopesValue === undefined) {
+      return undefined;
+    }
+    if (!Array.isArray(requiredScopesValue)) {
+      throw new Error(
+        `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" must return required_scopes as an array for tool "${toolName}".`,
+      );
+    }
+
+    return requiredScopesValue.map((scopeValue, index) => {
+      const parsed = ToolScopeSchema.safeParse(scopeValue);
+      if (!parsed.success) {
+        throw new Error(
+          `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" returned invalid required_scopes[${index}] for tool "${toolName}": ${formatZodIssues(parsed.error.issues)}`,
+        );
+      }
+      return parsed.data;
+    });
+  })();
+
+  const requiredEnv = (() => {
+    if (requiredEnvValue === undefined) {
+      return undefined;
+    }
+    if (
+      !Array.isArray(requiredEnvValue) ||
+      requiredEnvValue.some(
+        (envName) =>
+          typeof envName !== 'string' || !ENVIRONMENT_VARIABLE_NAME_PATTERN.test(envName),
+      )
+    ) {
+      throw new Error(
+        `capability_factory "${capabilityFactoryEntry}" for pack "${packId}" must return required_env as uppercase environment variable names for tool "${toolName}".`,
+      );
+    }
+
+    return [...new Set(requiredEnvValue)];
+  })();
+
+  return {
+    ...(requiredScopes ? { required_scopes: requiredScopes } : {}),
+    ...(requiredEnv ? { required_env: requiredEnv } : {}),
+  };
+}
+
+async function resolvePackCapabilityAugmentations(
+  workspaceRoot: string,
+  loadedPack: LoadedDomainPack,
+): Promise<Record<string, PackCapabilityAugmentation>> {
+  const capabilityFactoryEntry = loadedPack.manifest.capability_factory;
+  if (!capabilityFactoryEntry) {
+    return {};
+  }
+
+  const resolvedEntry = resolvePackModuleEntry(
+    loadedPack.packRoot,
+    capabilityFactoryEntry,
+    'Pack capability_factory entry',
+  );
+
+  let loadedModule: unknown;
+  try {
+    loadedModule = await import(pathToFileURL(resolvedEntry.modulePath).href);
+  } catch (error) {
+    throw new Error(
+      `Failed to load capability_factory "${capabilityFactoryEntry}" for pack "${loadedPack.manifest.id}".`,
+      { cause: error },
+    );
+  }
+
+  const capabilityFactory = selectPackCapabilityFactory({
+    loadedModule,
+    exportName: resolvedEntry.exportName,
+    capabilityFactoryEntry,
+    packId: loadedPack.manifest.id,
+  });
+
+  const augmentations: Record<string, PackCapabilityAugmentation> = {};
+  for (const tool of loadedPack.manifest.tools) {
+    let augmentationValue: unknown;
+    try {
+      augmentationValue = await capabilityFactory({
+        workspaceRoot,
+        packId: loadedPack.manifest.id,
+        packRoot: loadedPack.packRoot,
+        packConfig: loadedPack.resolvedConfig,
+        tool,
+      });
+    } catch (error) {
+      throw new Error(
+        `capability_factory "${capabilityFactoryEntry}" for pack "${loadedPack.manifest.id}" failed while resolving tool "${tool.name}".`,
+        { cause: error },
+      );
+    }
+
+    const augmentation = validateCapabilityAugmentation(
+      augmentationValue,
+      loadedPack.manifest.id,
+      capabilityFactoryEntry,
+      tool.name,
+    );
+    if (augmentation.required_env || augmentation.required_scopes) {
+      augmentations[tool.name] = augmentation;
+    }
+  }
+
+  return augmentations;
 }
 
 function isPolicyTrigger(value: unknown): value is PolicyRule['trigger'] {
@@ -1014,6 +1220,7 @@ export async function defaultRuntimeToolCapabilityResolver(
   const resolvedOutputSchema = input.tool.output_schema
     ? parsePackToolJsonSchema(input.tool.output_schema, input.tool.name, 'output_schema')
     : DEFAULT_PACK_TOOL_OUTPUT_SCHEMA;
+  const augmentation = input.loadedPack.resolvedCapabilityAugmentations?.[input.tool.name];
 
   return {
     name: input.tool.name,
@@ -1022,8 +1229,8 @@ export async function defaultRuntimeToolCapabilityResolver(
     input_schema: resolvedInputSchema,
     output_schema: resolvedOutputSchema,
     permission: input.tool.permission,
-    required_scopes: input.tool.required_scopes,
-    required_env: input.tool.required_env,
+    required_scopes: mergeToolScopes(input.tool.required_scopes, augmentation?.required_scopes),
+    required_env: mergeRequiredEnvNames(input.tool.required_env, augmentation?.required_env),
     handler: {
       kind: TOOL_HANDLER_KINDS.SUBPROCESS,
       entry: resolvedEntry,
@@ -1031,6 +1238,31 @@ export async function defaultRuntimeToolCapabilityResolver(
     description: buildPackToolDescription(input.tool.name, input.loadedPack.manifest.id),
     pack: input.loadedPack.pin.id,
   };
+}
+
+function mergeRequiredEnvNames(
+  manifestRequiredEnv: readonly string[] | undefined,
+  augmentedRequiredEnv: readonly string[] | undefined,
+): string[] | undefined {
+  const merged = [...(manifestRequiredEnv ?? []), ...(augmentedRequiredEnv ?? [])];
+  if (merged.length === 0) {
+    return undefined;
+  }
+  return [...new Set(merged)];
+}
+
+function mergeToolScopes(
+  manifestScopes: readonly ToolScope[],
+  augmentedScopes: readonly ToolScope[] | undefined,
+): ToolScope[] {
+  const merged = [...manifestScopes, ...(augmentedScopes ?? [])];
+  const uniqueScopes = new Map<string, ToolScope>();
+
+  for (const scope of merged) {
+    uniqueScopes.set(JSON.stringify(scope), scope);
+  }
+
+  return [...uniqueScopes.values()];
 }
 
 async function fileExists(targetPath: string): Promise<boolean> {
@@ -1790,8 +2022,16 @@ export async function initializeKernelRuntime(
       loadedPack,
       resolvedWorkspace.raw_workspace_data,
     );
-    validatePackConfigEnvReferences(resolvedLoadedPack);
-    resolvedLoadedPacks.push(resolvedLoadedPack);
+    const resolvedCapabilityAugmentations = await resolvePackCapabilityAugmentations(
+      workspaceRoot,
+      resolvedLoadedPack,
+    );
+    const augmentedLoadedPack: LoadedDomainPack = {
+      ...resolvedLoadedPack,
+      resolvedCapabilityAugmentations,
+    };
+    validatePackConfigEnvReferences(augmentedLoadedPack);
+    resolvedLoadedPacks.push(augmentedLoadedPack);
   }
 
   const registry = new ToolRegistry();

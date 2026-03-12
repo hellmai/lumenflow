@@ -23,6 +23,7 @@ import {
   UTF8_ENCODING,
   WORKSPACE_FILE_NAME,
 } from '../shared-constants.js';
+import { intersectToolScopes } from '../tool-host/scope-intersection.js';
 import { ToolRegistry } from '../tool-host/tool-registry.js';
 
 const WORKSPACE_SCOPE = {
@@ -1639,6 +1640,7 @@ describe('kernel runtime facade', () => {
       configKey: string,
       options: {
         policyFactory?: string;
+        capabilityFactory?: string;
         policyId?: string;
         policyTrigger?: 'on_tool_request' | 'on_claim' | 'on_completion' | 'on_evidence_added';
         policyDecision?: 'allow' | 'deny' | 'approval_required';
@@ -1678,6 +1680,9 @@ describe('kernel runtime facade', () => {
           `config_key: ${configKey}`,
           'config_schema: schemas/config.schema.json',
           ...(options.policyFactory ? [`policy_factory: ${options.policyFactory}`] : []),
+          ...(options.capabilityFactory
+            ? [`capability_factory: ${options.capabilityFactory}`]
+            : []),
         ].join('\n'),
         UTF8_ENCODING,
       );
@@ -1699,6 +1704,9 @@ describe('kernel runtime facade', () => {
               token_env: {
                 type: 'string',
               },
+              provider_host: {
+                type: 'string',
+              },
             },
             additionalProperties: false,
           },
@@ -1713,6 +1721,12 @@ describe('kernel runtime facade', () => {
       const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
       await mkdir(join(packRoot, 'policies'), { recursive: true });
       await writeFile(join(packRoot, 'policies', 'factory.ts'), source, UTF8_ENCODING);
+    }
+
+    async function writeCapabilityFactoryModule(root: string, source: string): Promise<void> {
+      const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
+      await mkdir(join(packRoot, 'capabilities'), { recursive: true });
+      await writeFile(join(packRoot, 'capabilities', 'factory.ts'), source, UTF8_ENCODING);
     }
 
     it('rejects workspace with unknown root keys during initializeKernelRuntime', async () => {
@@ -1853,6 +1867,103 @@ describe('kernel runtime facade', () => {
 
       await expect(createRuntime()).rejects.toThrow(/UNDECLARED_TOKEN/);
       await expect(createRuntime()).rejects.toThrow(/required_env/i);
+    });
+
+    it('accepts config-derived env references declared by capability_factory', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, [
+        '  mode: strict',
+        '  token_env: DERIVED_TOKEN',
+      ]);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery', {
+        capabilityFactory: 'capabilities/factory.ts#capabilityFactory',
+      });
+      await writeCapabilityFactoryModule(
+        tempRoot,
+        [
+          `export function capabilityFactory(input) {`,
+          `  const config = input && typeof input === "object" ? input.packConfig : undefined;`,
+          `  const tokenEnv = config && typeof config === "object" ? config.token_env : undefined;`,
+          `  return {`,
+          `    required_env: typeof tokenEnv === "string" ? [tokenEnv] : [],`,
+          `  };`,
+          `}`,
+        ].join('\n'),
+      );
+
+      const runtime = await createRuntimeWithDefaultResolver({
+        sandboxSubprocessDispatcherOptions: {
+          commandExists: () => false,
+        },
+      });
+
+      expect(runtime).toBeDefined();
+    });
+
+    it('merges capability_factory env and network scopes without bypassing final scope intersection', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, [
+        '  mode: strict',
+        '  token_env: DERIVED_TOKEN',
+        '  provider_host: api.example.com:443',
+      ]);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery', {
+        capabilityFactory: 'capabilities/factory.ts#capabilityFactory',
+      });
+      await writeCapabilityFactoryModule(
+        tempRoot,
+        [
+          `export function capabilityFactory(input) {`,
+          `  const config = input && typeof input === "object" ? input.packConfig : undefined;`,
+          `  const tokenEnv = config && typeof config === "object" ? config.token_env : undefined;`,
+          `  const providerHost = config && typeof config === "object" ? config.provider_host : undefined;`,
+          `  return {`,
+          `    required_env: typeof tokenEnv === "string" ? [tokenEnv] : [],`,
+          `    required_scopes: typeof providerHost === "string" ? [`,
+          `      { type: "network", posture: "allowlist", allowlist_entries: [providerHost] },`,
+          `    ] : [],`,
+          `  };`,
+          `}`,
+        ].join('\n'),
+      );
+
+      const registerSpy = vi.spyOn(ToolRegistry.prototype, 'register');
+      try {
+        await createRuntimeWithDefaultResolver({
+          sandboxSubprocessDispatcherOptions: {
+            commandExists: () => false,
+          },
+        });
+        const registeredPackCapability = registerSpy.mock.calls
+          .map((call) => call[0])
+          .find((capability) => capability.name === PACK_ECHO_TOOL_NAME);
+
+        expect(registeredPackCapability?.required_env).toEqual(['DERIVED_TOKEN']);
+        expect(registeredPackCapability?.required_scopes).toContainEqual({
+          type: 'network',
+          posture: 'allowlist',
+          allowlist_entries: ['api.example.com:443'],
+        });
+
+        const narrowedScopes = intersectToolScopes({
+          workspaceAllowed: [
+            { type: 'network', posture: 'allowlist', allowlist_entries: ['api.example.com:443'] },
+          ],
+          laneAllowed: [
+            { type: 'network', posture: 'allowlist', allowlist_entries: ['api.example.com:443'] },
+          ],
+          taskDeclared: [
+            { type: 'network', posture: 'allowlist', allowlist_entries: ['api.example.com:443'] },
+          ],
+          toolRequired: registeredPackCapability?.required_scopes ?? [],
+        });
+
+        expect(narrowedScopes).toContainEqual({
+          type: 'network',
+          posture: 'allowlist',
+          allowlist_entries: ['api.example.com:443'],
+        });
+      } finally {
+        registerSpy.mockRestore();
+      }
     });
 
     it('rejects invalid pack config during runtime initialization', async () => {

@@ -26,6 +26,7 @@ import {
 } from './types.js';
 
 const EXECUTE_TURN_TOOL_ENTRY = 'tool-impl/agent-turn-tools.ts#agentExecuteTurnTool';
+const CAPABILITY_FACTORY_ENTRY = 'capability-factory.ts#createAgentRuntimeCapabilityFactory';
 const POLICY_FACTORY_ENTRY = 'policy-factory.ts#createAgentRuntimePolicyFactory';
 
 const EXECUTE_TURN_INPUT_SCHEMA: Record<string, unknown> = {
@@ -170,6 +171,7 @@ export const AGENT_RUNTIME_MANIFEST = DomainPackManifestSchema.parse({
   version: AGENT_RUNTIME_PACK_VERSION,
   config_key: AGENT_RUNTIME_CONFIG_KEY,
   config_schema: AGENT_RUNTIME_CONFIG_SCHEMA_FILE,
+  capability_factory: CAPABILITY_FACTORY_ENTRY,
   policy_factory: POLICY_FACTORY_ENTRY,
   task_types: ['agent-session'],
   tools: MANIFEST_TOOL_DEFINITIONS,

@@ -117,6 +117,8 @@ export const DomainPackManifestSchema = z.object({
   config_key: z.string().min(1).optional(),
   /** Path to a JSON Schema file (relative to pack root) describing the pack config shape. */
   config_schema: z.string().optional(),
+  /** Optional module entry (path[#export]) that returns capability augmentations during runtime init. */
+  capability_factory: z.string().min(1).optional(),
   /** Optional module entry (path[#export]) that returns dynamic PolicyRule[] during runtime init. */
   policy_factory: z.string().min(1).optional(),
 });

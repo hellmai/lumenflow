@@ -23,6 +23,9 @@ describe('agent-runtime manifest scaffold', () => {
     expect(AGENT_RUNTIME_MANIFEST.id).toBe(AGENT_RUNTIME_PACK_ID);
     expect(AGENT_RUNTIME_MANIFEST.version).toBe(AGENT_RUNTIME_PACK_VERSION);
     expect(AGENT_RUNTIME_MANIFEST.config_key).toBe(AGENT_RUNTIME_CONFIG_KEY);
+    expect(AGENT_RUNTIME_MANIFEST.capability_factory).toBe(
+      'capability-factory.ts#createAgentRuntimeCapabilityFactory',
+    );
     expect(AGENT_RUNTIME_MANIFEST.policy_factory).toBe(
       'policy-factory.ts#createAgentRuntimePolicyFactory',
     );
@@ -60,6 +63,9 @@ describe('agent-runtime manifest scaffold', () => {
 
     expect(manifestRaw).toContain('id: agent-runtime');
     expect(manifestRaw).toContain('config_key: agent_runtime');
+    expect(manifestRaw).toContain(
+      'capability_factory: capability-factory.ts#createAgentRuntimeCapabilityFactory',
+    );
     expect(manifestRaw).toContain(
       'policy_factory: policy-factory.ts#createAgentRuntimePolicyFactory',
     );

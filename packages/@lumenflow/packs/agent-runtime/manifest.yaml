@@ -2,6 +2,7 @@ id: agent-runtime
 version: 0.1.0
 config_key: agent_runtime
 config_schema: config.schema.json
+capability_factory: capability-factory.ts#createAgentRuntimeCapabilityFactory
 policy_factory: policy-factory.ts#createAgentRuntimePolicyFactory
 task_types:
   - agent-session

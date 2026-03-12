@@ -249,6 +249,22 @@ describe('DomainPackManifestSchema config_key and config_schema fields', () => {
   });
 });
 
+describe('DomainPackManifestSchema capability_factory field', () => {
+  it('accepts a manifest with capability_factory present', () => {
+    const manifest = DomainPackManifestSchema.parse(
+      minimalManifestInput({ capability_factory: 'capabilities/factory.ts#capabilityFactory' }),
+    );
+
+    expect(manifest.capability_factory).toBe('capabilities/factory.ts#capabilityFactory');
+  });
+
+  it('rejects capability_factory that is not a string', () => {
+    expect(() =>
+      DomainPackManifestSchema.parse(minimalManifestInput({ capability_factory: 42 })),
+    ).toThrow();
+  });
+});
+
 // AC4: Pack loader reads and exposes config_key from loaded manifests
 describe('PackLoader exposes config_key from loaded manifests', () => {
   it('exposes config_key on the loaded manifest when declared in YAML', async () => {

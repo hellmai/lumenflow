@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export * from './constants.js';
+export * from './capability-factory.js';
 export * from './manifest.js';
 export * from './orchestration.js';
 export * from './pack-registration.js';

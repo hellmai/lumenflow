@@ -34,6 +34,7 @@ export interface AgentRuntimeModelProfileConfig {
   provider: AgentRuntimeProviderKind;
   model: string;
   api_key_env: string;
+  base_url?: string;
   base_url_env?: string;
 }
 

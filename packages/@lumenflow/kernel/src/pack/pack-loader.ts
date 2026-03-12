@@ -7,7 +7,7 @@ import { access, mkdir, readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import YAML from 'yaml';
 import { KERNEL_EVENT_KINDS } from '../event-kinds.js';
-import type { PackPin, WorkspaceSpec } from '../kernel.schemas.js';
+import type { PackPin, ToolScope, WorkspaceSpec } from '../kernel.schemas.js';
 import {
   LUMENFLOW_DIR_NAME,
   PACK_MANIFEST_FILE_NAME,
@@ -101,6 +101,17 @@ export interface LoadedDomainPack {
    * declared by manifest.config_key. Attached during runtime initialization.
    */
   resolvedConfig?: unknown;
+  /**
+   * Runtime-resolved capability augmentations keyed by tool name. These merge with
+   * manifest-declared required_scopes and required_env during capability registration.
+   */
+  resolvedCapabilityAugmentations?: Record<
+    string,
+    {
+      required_scopes?: ToolScope[];
+      required_env?: string[];
+    }
+  >;
 }
 
 const NODE_BUILTINS = new Set(builtinModules.map((moduleName) => moduleName.replace(/^node:/, '')));
