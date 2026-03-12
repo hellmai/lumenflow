@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2436 — Generate MCP reference and tighten docs command policy](wu/WU-2436.yaml)
+- [WU-2438 — BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects](wu/WU-2438.yaml)
 
 ## Completed
 

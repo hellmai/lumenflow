@@ -2,7 +2,7 @@ id: WU-2438
 title: 'BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -10,7 +10,8 @@ code_paths:
   - packages/@lumenflow/cli/src/config-set.ts
 tests:
   manual:
-    - 'On a project with packs: [], run pack:install for software-delivery and verify config:set works'
+    - 'On a project with packs: [], run pack:install for software-delivery and verify config:set
+      works'
   unit:
     - packages/@lumenflow/cli/src/__tests__/config-set.test.ts
   e2e: []
@@ -18,7 +19,9 @@ artifacts:
   - .lumenflow/stamps/WU-2438.done
 dependencies: []
 risks: []
-notes: 'Discovered in lumenflow-cloud where packs: [] caused config:set to reject software_delivery as unknown root key. pack:install --source local --pack-root ... fails validation even with --force.'
+notes: 'Discovered in lumenflow-cloud where packs: [] caused config:set to reject software_delivery
+  as unknown root key. pack:install --source local --pack-root ... fails validation even with
+  --force.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -27,8 +30,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Consumer projects initialized before the pack system have packs: [] in workspace.yaml. pack:install --source local fails validation for the bundled software-delivery pack at node_modules/@lumenflow/cli/packs/software-delivery. This means config:set cannot resolve software_delivery as a valid root key, making all software_delivery.* config writes impossible. lumenflow init/upgrade should auto-register built-in packs.'
+description: 'Consumer projects initialized before the pack system have packs: [] in workspace.yaml.
+  pack:install --source local fails validation for the bundled software-delivery pack at
+  node_modules/@lumenflow/cli/packs/software-delivery. This means config:set cannot resolve
+  software_delivery as a valid root key, making all software_delivery.* config writes impossible.
+  lumenflow init/upgrade should auto-register built-in packs.'
 acceptance:
   - pack:install succeeds for bundled software-delivery pack from node_modules
   - lumenflow:upgrade on pre-pack projects auto-registers built-in packs
   - config:set --key software_delivery.* works after upgrade
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2438
+claimed_at: 2026-03-12T21:22:40.098Z
+baseline_main_sha: 7550548eeda06647a5ad0ad34fe49e4b195f3b87
+session_id: a8f8bfa5-d299-4855-9940-a5dad48f5586
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T21:22:40.104Z
