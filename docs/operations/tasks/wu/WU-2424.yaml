@@ -6,8 +6,10 @@ status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
-  - packages/@lumenflow/cli/docs/_frameworks/lumenflow/agent/onboarding/wu-sizing-guide.md
   - docs/operations/_frameworks/lumenflow/wu-sizing-guide.md
+  - docs/operations/_frameworks/lumenflow/agent/onboarding/first-wu-mistakes.md
+  - packages/@lumenflow/cli/docs/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+  - packages/@lumenflow/cli/docs/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
 tests:
   manual:
     - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
