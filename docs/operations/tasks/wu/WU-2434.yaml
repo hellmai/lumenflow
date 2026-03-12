@@ -18,12 +18,21 @@ artifacts:
   - .lumenflow/stamps/WU-2434.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'WU-2434: Moved initiative read from local main into micro-worktree execute callback. Root
+  cause: WU-1497 removed ensureMainUpToDate but loadInitiative still read from local main, so fields
+  pushed by other commands (e.g. initiative:add-wu) to origin/main were silently dropped on write.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T20:09:46.342Z
+worktree_path: worktrees/framework-initiatives-wu-2434
+session_id: e8d5d725-652f-442c-8ae5-ef53f7d7fb22
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T20:09:46.349Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -36,11 +45,3 @@ acceptance:
   - 'Failing test demonstrates wus: dropped when local is stale'
   - Fix reads initiative from micro-worktree path inside execute callback
   - Existing fields preserved through edit round-trip
-claimed_mode: worktree
-worktree_path: worktrees/framework-initiatives-wu-2434
-claimed_at: 2026-03-12T20:09:46.342Z
-baseline_main_sha: 42fd175b26584476ac1a4a86eac3eaf2f768eacf
-session_id: e8d5d725-652f-442c-8ae5-ef53f7d7fb22
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T20:09:46.349Z
