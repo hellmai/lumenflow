@@ -595,9 +595,9 @@ software_delivery:
           docs and config files
         lock_policy: none
         code_paths:
-          - docs/04-operations/**
           - .lumenflow.lane-inference.yaml
           - .lumenflow/**
+          - docs/operations/**
       - name: 'Content: Framework Docs'
         wip_limit: 2
         wip_justification: Framework docs are generally low-conflict and can run in parallel
