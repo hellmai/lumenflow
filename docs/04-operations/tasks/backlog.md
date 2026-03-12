@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml) — Framework: Core Lifecycle
 - [WU-2414 — Add policy-aware tool filtering and auto-discovery](wu/WU-2414.yaml) — Framework: Core Lifecycle
 - [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml) — Framework: Core Lifecycle
 - [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml) — Framework: Core Lifecycle
