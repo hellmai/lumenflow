@@ -7,7 +7,6 @@ priority: P1
 created: 2026-03-12
 code_paths:
   - packages/@lumenflow/kernel/src/tool-host/
-  - packages/@lumenflow/kernel/src/policy/
   - packages/@lumenflow/packs/
 tests:
   manual:
@@ -30,7 +29,11 @@ spec_refs:
 risks: []
 notes: This is a kernel capability boundary, not a workflow-state WU.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T14:45:57.294Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2414
+session_id: b0fa06fb-763f-4abe-915a-ee8cad6505b1
 exposure: backend-only
 sizing_estimate:
   estimated_files: 11
@@ -38,6 +41,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T14:45:57.300Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -48,11 +54,3 @@ acceptance:
   - Filtering applies scope intersection and policy evaluation for an execution context and intent
   - The pack can build its own governed tool catalog without trusting a host-supplied list
   - Tests prove filtered tool lists differ from raw registry results when policies tighten access
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2414
-claimed_at: 2026-03-12T14:45:57.294Z
-baseline_main_sha: 421cfae78c85349447c213358ed1857914cea2af
-session_id: b0fa06fb-763f-4abe-915a-ee8cad6505b1
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T14:45:57.300Z
