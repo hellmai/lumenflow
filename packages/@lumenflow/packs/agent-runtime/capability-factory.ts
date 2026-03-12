@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { PackCapabilityFactory, PackCapabilityFactoryInput } from '@lumenflow/kernel';
+import type { PackCapabilityFactory } from '@lumenflow/kernel';
 import { AGENT_RUNTIME_TOOL_NAMES } from './types.js';
 import type { AgentRuntimeModelProfileConfig, AgentRuntimePackConfig } from './types.js';
 
