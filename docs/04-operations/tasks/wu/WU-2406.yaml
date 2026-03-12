@@ -2,7 +2,7 @@ id: WU-2406
 title: Write ADR for governed agent-runtime pack
 lane: 'Content: Framework Docs'
 type: documentation
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -56,3 +56,6 @@ acceptance:
   - ADR defines the kernel-versus-pack boundary and host-versus-pack orchestration split
   - ADR defines agent-session as the only task model for scheduled and resumed execution
   - ADR cross-links the initiative plan and target docs location
+locked: true
+completed_at: 2026-03-12T11:58:19.347Z
+completed: 2026-03-12
