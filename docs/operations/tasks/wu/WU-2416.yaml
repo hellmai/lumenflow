@@ -2,7 +2,7 @@ id: WU-2416
 title: Add multi-provider adapter support
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -54,3 +54,6 @@ session_id: 1a44e830-af12-4d32-8a62-5827da56bacb
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-12T16:01:02.974Z
+locked: true
+completed_at: 2026-03-12T16:20:36.223Z
+completed: 2026-03-12

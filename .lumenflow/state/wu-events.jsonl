@@ -3352,3 +3352,4 @@
 {"type":"claim","wuId":"WU-2416","timestamp":"2026-03-12T16:01:02.996Z","lane":"Framework: Core Lifecycle","title":"Add multi-provider adapter support"}
 {"type":"checkpoint","wuId":"WU-2416","timestamp":"2026-03-12T16:01:15.035Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2416","timestamp":"2026-03-12T16:01:26.920Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2416","timestamp":"2026-03-12T16:20:41.349Z"}

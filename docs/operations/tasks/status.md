@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2416 — Add multi-provider adapter support](wu/WU-2416.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1339,3 +1339,4 @@ _Last updated: 2026-03-12_
 - [WU-2413 — Add config-aware provider capability resolution](wu/WU-2413.yaml) — 2026-03-12
 - [WU-2414 — Add policy-aware tool filtering and auto-discovery](wu/WU-2414.yaml) — 2026-03-12
 - [WU-2415 — Add streaming turns with explicit evidence support](wu/WU-2415.yaml) — 2026-03-12
+- [WU-2416 — Add multi-provider adapter support](wu/WU-2416.yaml) — 2026-03-12
