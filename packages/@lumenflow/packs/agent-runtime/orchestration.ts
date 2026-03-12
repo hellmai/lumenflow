@@ -494,12 +494,14 @@ export async function startGovernedAgentWorkflow(
     status: AGENT_RUNTIME_WORKFLOW_STATUSES.ACTIVE,
     created_at: timestamp,
     updated_at: timestamp,
-    execute_turn_input: cloneExecuteTurnInput(input.workflow.nodes[0]?.execute_turn_input ?? {
-      session_id: input.workflow.session_id,
-      model_profile: 'default',
-      url: 'https://model-provider.invalid/',
-      messages: [],
-    }),
+    execute_turn_input: cloneExecuteTurnInput(
+      input.workflow.nodes[0]?.execute_turn_input ?? {
+        session_id: input.workflow.session_id,
+        model_profile: 'default',
+        url: 'https://model-provider.invalid/',
+        messages: [],
+      },
+    ),
     messages: [],
     history: [],
     turn_count: 0,
@@ -1409,10 +1411,7 @@ function parseWorkflowGraphState(
   };
 }
 
-function parseWorkflowNodeState(
-  value: unknown,
-  filePath: string,
-): AgentRuntimeWorkflowNodeState {
+function parseWorkflowNodeState(value: unknown, filePath: string): AgentRuntimeWorkflowNodeState {
   if (!isRecord(value)) {
     throw new Error(`Failed to parse workflow state at ${filePath}: workflow node is invalid.`);
   }
