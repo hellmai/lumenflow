@@ -11,7 +11,7 @@ tests:
   manual:
     - Run pnpm config:set --key software_delivery.gates.minCoverage --value 85 and verify it succeeds
   unit:
-    - packages/@lumenflow/kernel/src/pack/__tests__/pack-manifest-resolver.test.ts
+    - packages/@lumenflow/kernel/src/__tests__/pack-manifest-resolver.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2404.done
