@@ -19,12 +19,21 @@ artifacts:
   - .lumenflow/stamps/WU-2427.done
 dependencies: []
 risks: []
-notes: ''
+notes: Self-hosted runners hellmai-runner-1 through hellmai-runner-5 are org-level at
+  github.com/hellmai. Node 22 and pnpm are pre-installed so setup actions removed. CodeQL SAST added
+  for weekly security scanning.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T17:40:49.164Z
+worktree_path: worktrees/operations-automation-wu-2427
+session_id: 86f794ba-63e6-49a1-84ac-28d0ea6948da
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T17:40:49.176Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +44,3 @@ description: 'Migrate all 3 GitHub Actions workflow files from ubuntu-latest to 
 acceptance:
   - 'All 3 workflow files (.github/workflows/ci.yml, docs.yml, publish.yml) use runs-on: self-hosted
     instead of runs-on: ubuntu-latest'
-claimed_mode: worktree
-worktree_path: worktrees/operations-automation-wu-2427
-claimed_at: 2026-03-12T17:40:49.164Z
-baseline_main_sha: da7455b68ef18dca60075ff74bfd5c3af7872e31
-session_id: 86f794ba-63e6-49a1-84ac-28d0ea6948da
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T17:40:49.176Z
