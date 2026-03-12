@@ -266,6 +266,60 @@ describe('initiative:edit dependency_model flag (WU-2354)', () => {
   });
 });
 
+describe('initiative:edit stale-read bug (WU-2434)', () => {
+  it('execute callback must read initiative from worktreePath, not use pre-computed value', () => {
+    // WU-2434: initiative:edit reads from local main (potentially stale) then writes
+    // the result to the micro-worktree (fresh from origin/main). If local main is behind,
+    // fields added to origin (e.g. wus: list) are silently dropped.
+    //
+    // The fix: the execute callback must read the initiative from worktreePath
+    // so the base document reflects origin/main, not stale local main.
+    const sourceFile = fs.readFileSync(new URL('../initiative-edit.ts', import.meta.url), 'utf-8');
+
+    // Find the execute callback body inside withMicroWorktree
+    const executeMatch = sourceFile.match(
+      /execute:\s*async\s*\(\s*\{[^}]*worktreePath[^}]*\}\s*(?::[^)]+)?\)\s*=>\s*\{([\s\S]*?)\n\s{6}\}/,
+    );
+    expect(executeMatch).not.toBeNull();
+    const executeBody = executeMatch![1];
+
+    // The callback MUST read from the worktree path (not use a captured variable from outside)
+    expect(executeBody).toMatch(/readFileSync\s*\(/);
+    expect(executeBody).toMatch(/parseYAML\s*\(/);
+    expect(executeBody).toMatch(/applyEdits\s*\(/);
+  });
+
+  it('applyEdits preserves unknown fields like wus through round-trip', () => {
+    // Regression test: initiative files may contain fields not in InitiativeDoc interface
+    // (e.g. wus, owner, target_date). These must survive the spread copy in applyEdits.
+    const original = {
+      id: 'INIT-042',
+      status: 'in_progress',
+      wus: [
+        { id: 'WU-100', lane: 'Framework: CLI' },
+        { id: 'WU-101', lane: 'Framework: Core' },
+      ],
+      owner: 'team-alpha',
+      target_date: '2026-04-01',
+    };
+
+    const updated = applyEdits(original, {
+      id: 'INIT-042',
+      notes: 'Phase 2 started',
+    });
+
+    // All unknown fields must be preserved
+    expect(updated.wus).toEqual([
+      { id: 'WU-100', lane: 'Framework: CLI' },
+      { id: 'WU-101', lane: 'Framework: Core' },
+    ]);
+    expect(updated.owner).toBe('team-alpha');
+    expect(updated.target_date).toBe('2026-04-01');
+    // And the edit was applied
+    expect(updated.notes).toEqual(['Phase 2 started']);
+  });
+});
+
 describe('initiative:edit retry handling (WU-1621)', () => {
   it('exports operation-level push retry override', () => {
     expect(INITIATIVE_EDIT_PUSH_RETRY_OVERRIDE).toEqual({

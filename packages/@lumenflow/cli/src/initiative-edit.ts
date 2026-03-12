@@ -693,9 +693,6 @@ export async function main() {
     die(buildNoEditsMessage());
   }
 
-  // Apply edits to get updated Initiative
-  const updatedInit = applyEdits(originalInit, opts);
-
   // Pre-flight checks for micro-worktree mode
   // WU-1497: Removed ensureMainUpToDate - withMicroWorktree already handles
   // origin sync and respects git.requireRemote=false (local-only mode)
@@ -715,8 +712,15 @@ export async function main() {
       pushOnly: true, // WU-1435: Push directly to origin/main without touching local main
       pushRetryOverride: INITIATIVE_EDIT_PUSH_RETRY_OVERRIDE,
       execute: async ({ worktreePath }: { worktreePath: string }) => {
-        // Write updated Initiative to micro-worktree
+        // WU-2434: Read initiative from micro-worktree (origin/main), not local main.
+        // Local main may be behind origin, causing fields added via other commands
+        // (e.g. wus: list from initiative:add-wu) to be silently dropped.
         const initPath = join(worktreePath, INIT_PATHS.INITIATIVE(id));
+        const freshContent = readFileSync(initPath, {
+          encoding: FILE_SYSTEM.ENCODING as BufferEncoding,
+        });
+        const freshInit = parseYAML(freshContent as string) as InitiativeDoc;
+        const updatedInit = applyEdits(freshInit, opts);
         const yamlContent = stringifyYAML(updatedInit);
 
         writeFileSync(initPath, yamlContent, { encoding: FILE_SYSTEM.ENCODING as BufferEncoding });
