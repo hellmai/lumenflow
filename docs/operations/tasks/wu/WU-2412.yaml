@@ -7,15 +7,12 @@ priority: P1
 created: 2026-03-12
 code_paths:
   - packages/@lumenflow/packs/
-  - packages/@lumenflow/kernel/src/policy/
-  - packages/@lumenflow/runtime/src/
   - apps/docs/src/content/docs/kernel/
 tests:
   manual:
     - Exercise the reference loop through allowed, denied, and approval-gated tool requests
   unit:
-    - packages/@lumenflow/kernel/src/__tests__/
-    - packages/@lumenflow/runtime/src/
+    - packages/@lumenflow/packs/agent-runtime/__tests__/
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2412.done
@@ -31,7 +28,11 @@ risks: []
 notes: This WU keeps the orchestration loop host-driven while exercising kernel-enforced policy
   boundaries.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T14:07:01.196Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2412
+session_id: c091bfd3-cdb4-47e5-9fec-4956d8e21ca5
 exposure: backend-only
 sizing_estimate:
   estimated_files: 15
@@ -39,6 +40,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T14:07:01.206Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -51,11 +55,3 @@ acceptance:
   - A host composition example provides memory and task context without a hard dependency on
     sidekick internals
   - End-to-end tests prove denied-tool recovery and approval flow behavior
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2412
-claimed_at: 2026-03-12T14:07:01.196Z
-baseline_main_sha: 410321fa7f212e8816fa0f19ce9de82cb9dcf3e2
-session_id: c091bfd3-cdb4-47e5-9fec-4956d8e21ca5
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T14:07:01.206Z
