@@ -2,7 +2,7 @@ id: WU-2399
 title: 'Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -34,9 +34,22 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Code review found three issues in init.ts: (1) BUG: --force flag is a no-op for prettier — inner condition makes force irrelevant at line 1221-1225; (2) scaffoldProject() orchestrates 13 sequential operations with mixed concerns — extract init-docs-scaffolder.ts, init-package-config.ts, init-safety-scripts.ts; (3) naive gitignore pattern matching uses String.includes() which matches comments and partial strings — should parse lines and compare trimmed non-comment entries.'
+description: 'Code review found three issues in init.ts: (1) BUG: --force flag is a no-op for
+  prettier — inner condition makes force irrelevant at line 1221-1225; (2) scaffoldProject()
+  orchestrates 13 sequential operations with mixed concerns — extract init-docs-scaffolder.ts,
+  init-package-config.ts, init-safety-scripts.ts; (3) naive gitignore pattern matching uses
+  String.includes() which matches comments and partial strings — should parse lines and compare
+  trimmed non-comment entries.'
 acceptance:
   - --force flag correctly overwrites existing prettier version
   - scaffoldProject() delegates to extracted sub-modules (docs, package config, safety scripts)
   - gitignore deduplication ignores comments and partial matches
   - All existing init tests pass
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2399
+claimed_at: 2026-03-12T09:51:58.575Z
+baseline_main_sha: e2db5f0ba0f28367aebdf843e582cd3c2fd09bd0
+session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:51:58.582Z
