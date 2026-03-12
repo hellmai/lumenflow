@@ -80,9 +80,16 @@ export interface AgentRuntimeExecuteTurnInput {
   messages: AgentRuntimeMessage[];
   model_profile: string;
   url: string;
+  stream?: boolean;
   tool_catalog?: AgentRuntimeToolCatalogEntry[];
   intent_catalog?: AgentRuntimeIntentCatalogEntry[];
   limits?: AgentRuntimeLimitsConfig;
+}
+
+export interface AgentRuntimeStreamSnapshot {
+  sequence: number;
+  state: 'partial' | 'final';
+  data: Record<string, unknown>;
 }
 
 export interface AgentRuntimeRequestedTool {

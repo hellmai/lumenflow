@@ -515,7 +515,7 @@ describe('kernel schemas', () => {
   });
 
   describe('ToolTraceEntrySchema', () => {
-    it('accepts tool_call_started and tool_call_finished entries', () => {
+    it('accepts tool_call_started, tool_call_progress, and tool_call_finished entries', () => {
       const started = ToolTraceEntrySchema.safeParse({
         schema_version: 1,
         kind: 'tool_call_started',
@@ -536,6 +536,17 @@ describe('kernel schemas', () => {
         runtime_version: '0.1.0',
       });
 
+      const progress = ToolTraceEntrySchema.safeParse({
+        schema_version: 1,
+        kind: 'tool_call_progress',
+        receipt_id: 'receipt-1',
+        timestamp: '2026-02-16T12:00:00.500Z',
+        sequence: 0,
+        state: 'partial',
+        snapshot_hash: '4'.repeat(64),
+        snapshot_ref: '.lumenflow/evidence/inputs/4444',
+      });
+
       const finished = ToolTraceEntrySchema.safeParse({
         schema_version: 1,
         kind: 'tool_call_finished',
@@ -552,6 +563,7 @@ describe('kernel schemas', () => {
       });
 
       expect(started.success).toBe(true);
+      expect(progress.success).toBe(true);
       expect(finished.success).toBe(true);
     });
 

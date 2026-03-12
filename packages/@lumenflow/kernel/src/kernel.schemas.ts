@@ -493,6 +493,29 @@ export const ToolCallStartedSchema = z.object({
   runtime_version: z.string().min(1),
 });
 
+export const ToolProgressSnapshotStateSchema = z.enum(['partial', 'final']);
+
+export type ToolProgressSnapshotState = z.infer<typeof ToolProgressSnapshotStateSchema>;
+
+export const ToolProgressSnapshotMetadataSchema = z.object({
+  sequence: z.number().int().nonnegative(),
+  state: ToolProgressSnapshotStateSchema,
+  data: z.unknown(),
+});
+
+export type ToolProgressSnapshotMetadata = z.infer<typeof ToolProgressSnapshotMetadataSchema>;
+
+export const ToolCallProgressSchema = z.object({
+  schema_version: z.literal(1),
+  kind: z.literal(TOOL_TRACE_KINDS.TOOL_CALL_PROGRESS),
+  receipt_id: z.string().min(1),
+  timestamp: ISO_DATETIME_SCHEMA,
+  sequence: z.number().int().nonnegative(),
+  state: ToolProgressSnapshotStateSchema,
+  snapshot_hash: z.string().regex(SHA256_HEX_REGEX),
+  snapshot_ref: z.string().min(1),
+});
+
 export const ToolCallFinishedSchema = z.object({
   schema_version: z.literal(1),
   kind: z.literal(TOOL_TRACE_KINDS.TOOL_CALL_FINISHED),
@@ -510,6 +533,7 @@ export const ToolCallFinishedSchema = z.object({
 
 export const ToolTraceEntrySchema = z.discriminatedUnion('kind', [
   ToolCallStartedSchema,
+  ToolCallProgressSchema,
   ToolCallFinishedSchema,
 ]);
 

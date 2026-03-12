@@ -158,6 +158,26 @@ export function mapToolTraceEntryToAgUiEvents(entry: ToolTraceEntry): AgUiEvent[
     ];
   }
 
+  if (entry.kind === TOOL_TRACE_KINDS.TOOL_CALL_PROGRESS) {
+    return [
+      {
+        type: AG_UI_EVENT_TYPES.TOOL_CALL_RESULT,
+        timestamp: entry.timestamp,
+        payload: {
+          receipt_id: entry.receipt_id,
+          state: entry.state,
+          sequence: entry.sequence,
+          snapshot_hash: entry.snapshot_hash,
+          snapshot_ref: entry.snapshot_ref,
+          streaming: true,
+        },
+        metadata: {
+          source: SOURCE.TOOL_TRACE,
+        },
+      },
+    ];
+  }
+
   const common: AgUiEvent = {
     type: AG_UI_EVENT_TYPES.TOOL_CALL_END,
     timestamp: entry.timestamp,

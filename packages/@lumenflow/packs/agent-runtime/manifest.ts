@@ -38,6 +38,9 @@ const EXECUTE_TURN_INPUT_SCHEMA: Record<string, unknown> = {
       type: 'string',
       enum: [...AGENT_RUNTIME_STATIC_PROVIDER_URLS],
     },
+    stream: {
+      type: 'boolean',
+    },
     messages: {
       type: 'array',
       minItems: 1,

@@ -15,6 +15,7 @@ import {
   type PolicyHookInput,
   type ToolHostOptions,
 } from '../tool-host/index.js';
+import { TOOL_OUTPUT_METADATA_KEYS } from '../shared-constants.js';
 
 describe('tool host', () => {
   let tempDir: string;
@@ -1489,6 +1490,67 @@ describe('tool host', () => {
           decision: 'approval_required',
           reason: 'Deleting calendar events needs a human check.',
         },
+      ]);
+    });
+
+    it('appends progress traces before the finished trace when tool metadata includes stream snapshots', async () => {
+      const registry = new ToolRegistry();
+      registry.register({
+        ...makeInProcessCapability(),
+        handler: {
+          kind: 'in-process',
+          fn: async () => ({
+            success: true,
+            data: {
+              written: true,
+            },
+            metadata: {
+              [TOOL_OUTPUT_METADATA_KEYS.PROGRESS_SNAPSHOTS]: [
+                {
+                  sequence: 0,
+                  state: 'partial',
+                  data: {
+                    assistant_message: '{"status":"reply"',
+                  },
+                },
+                {
+                  sequence: 1,
+                  state: 'final',
+                  data: {
+                    assistant_message:
+                      '{"status":"reply","intent":"scheduling","assistant_message":"Done."}',
+                  },
+                },
+              ],
+            },
+          }),
+        },
+      });
+
+      const evidenceStore = new EvidenceStore({ evidenceRoot });
+      const host = new ToolHost({
+        registry,
+        evidenceStore,
+        policyHook: allowAllPolicyHook,
+      });
+
+      const result = await host.execute(
+        'fs:write',
+        {
+          path: 'packages/@lumenflow/kernel/src/tool-host/index.ts',
+          content: 'ok',
+        },
+        makeExecutionContext(),
+      );
+
+      expect(result.success).toBe(true);
+
+      const traces = await evidenceStore.readTraces();
+      expect(traces.map((trace) => trace.kind)).toEqual([
+        'tool_call_started',
+        'tool_call_progress',
+        'tool_call_progress',
+        'tool_call_finished',
       ]);
     });
   });

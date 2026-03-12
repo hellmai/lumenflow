@@ -37,6 +37,8 @@ tools:
           type: string
           enum:
             - https://model-provider.invalid/
+        stream:
+          type: boolean
         messages:
           type: array
           minItems: 1

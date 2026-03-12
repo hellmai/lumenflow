@@ -58,7 +58,7 @@ export class EvidenceStore {
   private orderedTraces: ToolTraceEntry[] = [];
   private tracesByTaskId = new Map<string, ToolTraceEntry[]>();
   private taskIdByReceiptId = new Map<string, string>();
-  /** Dedup guard: tracks `receipt_id:kind` keys already indexed (WU-1881). */
+  /** Dedup guard: tracks stable trace identity keys already indexed (WU-1881). */
   private seenTraceKeys = new Set<string>();
 
   /** Byte offset cursor into the active trace file for incremental reads. */
@@ -332,7 +332,10 @@ export class EvidenceStore {
   }
 
   private applyTraceToIndexes(entry: ToolTraceEntry): void {
-    const traceKey = `${entry.receipt_id}:${entry.kind}`;
+    const traceKey =
+      entry.kind === TOOL_TRACE_KINDS.TOOL_CALL_PROGRESS
+        ? `${entry.receipt_id}:${entry.kind}:${entry.sequence}`
+        : `${entry.receipt_id}:${entry.kind}`;
     if (this.seenTraceKeys.has(traceKey)) {
       return; // Dedup: already indexed (WU-1881)
     }
@@ -397,7 +400,7 @@ export class EvidenceStore {
     for (const trace of traces) {
       if (trace.kind === TOOL_TRACE_KINDS.TOOL_CALL_STARTED) {
         started.set(trace.receipt_id, trace);
-      } else {
+      } else if (trace.kind === TOOL_TRACE_KINDS.TOOL_CALL_FINISHED) {
         finished.add(trace.receipt_id);
       }
     }

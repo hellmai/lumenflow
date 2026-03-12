@@ -47,6 +47,24 @@ describe('evidence store', () => {
     };
   }
 
+  function makeProgressEntry(
+    receiptId: string,
+    sequence: number,
+    state: 'partial' | 'final' = 'partial',
+  ): ToolTraceEntry {
+    const snapshotHash = String(sequence).padStart(64, '0');
+    return {
+      schema_version: 1,
+      kind: 'tool_call_progress',
+      receipt_id: receiptId,
+      timestamp: '2026-02-16T23:00:00.500Z',
+      sequence,
+      state,
+      snapshot_hash: snapshotHash,
+      snapshot_ref: `${evidenceRoot}/inputs/${snapshotHash}`,
+    };
+  }
+
   it('appends and replays JSONL trace entries', async () => {
     const store = new EvidenceStore({ evidenceRoot });
     const started = makeStartedEntry('receipt-1');
@@ -132,6 +150,44 @@ describe('evidence store', () => {
     expect(orphanFinished?.kind).toBe('tool_call_finished');
     if (orphanFinished?.kind === 'tool_call_finished') {
       expect(orphanFinished.result).toBe('crashed');
+    }
+  });
+
+  it('retains multiple progress traces for one receipt when sequence numbers differ', async () => {
+    const store = new EvidenceStore({ evidenceRoot });
+
+    await store.appendTrace(makeStartedEntry('receipt-stream'));
+    await store.appendTrace(makeProgressEntry('receipt-stream', 0));
+    await store.appendTrace(makeProgressEntry('receipt-stream', 1));
+
+    const traces = await store.readTracesByTaskId('WU-1729');
+
+    expect(traces.map((trace) => trace.kind)).toEqual([
+      'tool_call_started',
+      'tool_call_progress',
+      'tool_call_progress',
+    ]);
+  });
+
+  it('still reconciles orphaned starts when only progress traces exist', async () => {
+    const store = new EvidenceStore({ evidenceRoot });
+    const orphanReceipt = 'receipt-progress-orphan';
+
+    await store.appendTrace(makeStartedEntry(orphanReceipt));
+    await store.appendTrace(makeProgressEntry(orphanReceipt, 0));
+    await store.appendTrace(makeProgressEntry(orphanReceipt, 1, 'final'));
+
+    const reconciled = await store.reconcileOrphanedStarts();
+    expect(reconciled).toBe(1);
+
+    const traces = await store.readTracesByTaskId('WU-1729');
+    const crashedFinish = traces.find(
+      (trace) => trace.kind === 'tool_call_finished' && trace.receipt_id === orphanReceipt,
+    );
+
+    expect(crashedFinish?.kind).toBe('tool_call_finished');
+    if (crashedFinish?.kind === 'tool_call_finished') {
+      expect(crashedFinish.result).toBe('crashed');
     }
   });
 

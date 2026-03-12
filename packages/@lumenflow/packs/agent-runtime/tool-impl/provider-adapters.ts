@@ -14,6 +14,7 @@ import {
   type AgentRuntimeIntentCatalogEntry,
   type AgentRuntimeMessage,
   type AgentRuntimeRequestedTool,
+  type AgentRuntimeStreamSnapshot,
   type AgentRuntimeToolCatalogEntry,
   type AgentRuntimeTurnStatus,
 } from '../types.js';
@@ -27,6 +28,11 @@ const HTTP_STATUS_RATE_LIMITED = 429;
 const RESPONSE_FORMAT_TYPE = 'json_object';
 const DEFAULT_FINISH_REASON = 'stop';
 const DEFAULT_ASSISTANT_MESSAGE = '';
+const RESPONSE_MODE_NON_STREAMING = 'non_streaming';
+const RESPONSE_MODE_STREAMING = 'streaming';
+const STREAM_DONE_SENTINEL = '[DONE]';
+const STREAM_LINE_PREFIX = 'data:';
+const STREAM_DELIMITER = '\n\n';
 const FIXTURE_TOOL_NAME = 'calendar:create-event';
 const FIXTURE_INPUT_TOKEN_KEY = 'prompt_tokens';
 const FIXTURE_OUTPUT_TOKEN_KEY = 'completion_tokens';
@@ -60,6 +66,7 @@ export interface ProviderTurnRequest {
   model: string;
   url: string;
   apiKey: string;
+  stream?: boolean;
   messages: readonly AgentRuntimeMessage[];
   toolCatalog: readonly AgentRuntimeToolCatalogEntry[];
   intentCatalog: readonly AgentRuntimeIntentCatalogEntry[];
@@ -69,6 +76,8 @@ export interface ProviderTurnMetadata {
   provider_kind: ProviderCapabilityBaseline['kind'];
   request_url: string;
   response_status?: number;
+  response_mode?: typeof RESPONSE_MODE_NON_STREAMING | typeof RESPONSE_MODE_STREAMING;
+  stream_snapshot_count?: number;
 }
 
 export interface ProviderTurnError {
@@ -81,6 +90,7 @@ export interface ProviderTurnSuccess {
   ok: true;
   output: AgentRuntimeExecuteTurnOutput;
   metadata: ProviderTurnMetadata;
+  stream_snapshots?: readonly AgentRuntimeStreamSnapshot[];
 }
 
 export interface ProviderTurnFailure {
@@ -101,7 +111,7 @@ export interface ProviderAdapterConformanceResult {
 export type ProviderTransport = (
   url: string,
   init: RequestInit,
-) => Promise<Pick<Response, 'ok' | 'status' | 'text'>>;
+) => Promise<Pick<Response, 'ok' | 'status' | 'text' | 'body'>>;
 
 export const STATIC_PROVIDER_CAPABILITY_BASELINE: ProviderCapabilityBaseline = {
   kind: AGENT_RUNTIME_PROVIDER_KINDS.OPENAI_COMPATIBLE,
@@ -217,6 +227,7 @@ export async function executeProviderTurn(
       metadata: {
         provider_kind: request.kind,
         request_url: request.url,
+        response_mode: request.stream ? RESPONSE_MODE_STREAMING : RESPONSE_MODE_NON_STREAMING,
       },
     };
   }
@@ -224,7 +235,7 @@ export async function executeProviderTurn(
   const transport = options?.transport ?? defaultTransport;
   const requestPayload = buildOpenAiCompatibleRequestPayload(request);
 
-  let response: Pick<Response, 'ok' | 'status' | 'text'>;
+  let response: Pick<Response, 'ok' | 'status' | 'text' | 'body'>;
   try {
     response = await transport(request.url, {
       method: REQUEST_METHOD_POST,
@@ -241,24 +252,32 @@ export async function executeProviderTurn(
       metadata: {
         provider_kind: request.kind,
         request_url: request.url,
+        response_mode: request.stream ? RESPONSE_MODE_STREAMING : RESPONSE_MODE_NON_STREAMING,
       },
     };
   }
 
-  const responseText = await response.text();
   const metadata: ProviderTurnMetadata = {
     provider_kind: request.kind,
     request_url: request.url,
     response_status: response.status,
+    response_mode: request.stream ? RESPONSE_MODE_STREAMING : RESPONSE_MODE_NON_STREAMING,
   };
 
   if (!response.ok) {
+    const responseText = await response.text();
     return {
       ok: false,
       error: normalizeHttpError(request, response.status, responseText),
       metadata,
     };
   }
+
+  if (request.stream) {
+    return executeStreamingProviderTurn(request, response, metadata);
+  }
+
+  const responseText = await response.text();
 
   const parsedBody = parseJsonRecord(
     responseText,
@@ -438,6 +457,7 @@ function buildOpenAiCompatibleRequestPayload(
 ): Record<string, unknown> {
   return {
     model: request.model,
+    ...(request.stream ? { stream: true } : {}),
     messages: [
       {
         role: 'system',
@@ -560,6 +580,143 @@ function normalizeOpenAiCompatibleResponse(
   }
 
   return validateNormalizedTurnOutput(rawOutput);
+}
+
+async function executeStreamingProviderTurn(
+  request: ProviderTurnRequest,
+  response: Pick<Response, 'body'>,
+  metadata: ProviderTurnMetadata,
+): Promise<ProviderTurnResult> {
+  const streamParse = await parseOpenAiCompatibleStream(response.body, request);
+  if (!streamParse.ok) {
+    return {
+      ok: false,
+      error: streamParse.error,
+      metadata,
+    };
+  }
+
+  const normalizedOutput = normalizeOpenAiCompatibleResponse(streamParse.payload, request);
+  if (!normalizedOutput.ok) {
+    return {
+      ok: false,
+      error: normalizedOutput.error,
+      metadata,
+    };
+  }
+
+  return {
+    ok: true,
+    output: normalizedOutput.value,
+    metadata: {
+      ...metadata,
+      stream_snapshot_count: streamParse.snapshots.length + 1,
+    },
+    stream_snapshots: [
+      ...streamParse.snapshots,
+      {
+        sequence: streamParse.snapshots.length,
+        state: 'final',
+        data: {
+          ...normalizedOutput.value,
+        },
+      },
+    ],
+  };
+}
+
+async function parseOpenAiCompatibleStream(
+  body: ReadableStream<Uint8Array> | null | undefined,
+  request: ProviderTurnRequest,
+): Promise<
+  | {
+      ok: true;
+      payload: Record<string, unknown>;
+      snapshots: AgentRuntimeStreamSnapshot[];
+    }
+  | { ok: false; error: ProviderTurnError }
+> {
+  const events = await readStreamEvents(body);
+  let accumulatedContent = '';
+  let finishReason: string | null = null;
+  let model = request.model;
+  let usage: AgentRuntimeExecuteTurnOutput['usage'];
+  const snapshots: AgentRuntimeStreamSnapshot[] = [];
+
+  for (const event of events) {
+    if (event === STREAM_DONE_SENTINEL) {
+      continue;
+    }
+
+    const parsedEvent = parseJsonRecord(
+      event,
+      'Streaming provider event was not valid JSON. Ensure the provider emits JSON data events.',
+    );
+    if (!parsedEvent.ok) {
+      return parsedEvent;
+    }
+
+    const choice = asRecord(asArray(parsedEvent.value.choices)?.[0]);
+    if (!choice) {
+      return {
+        ok: false,
+        error: createMalformedResponseError(
+          'Streaming provider event did not include choices[0]. Ensure the provider emits chat-completion-style stream chunks.',
+        ),
+      };
+    }
+
+    const streamedFinishReason = asNonEmptyString(choice.finish_reason);
+    const delta = asRecord(choice.delta);
+    const contentDelta = extractMessageContentText(delta?.content);
+    if (contentDelta.length > 0) {
+      accumulatedContent += contentDelta;
+      if (!streamedFinishReason) {
+        snapshots.push({
+          sequence: snapshots.length,
+          state: 'partial',
+          data: {
+            assistant_message: accumulatedContent,
+            provider: {
+              kind: request.kind,
+              model,
+            },
+          },
+        });
+      }
+    }
+
+    if (streamedFinishReason) {
+      finishReason = streamedFinishReason;
+    }
+
+    const streamedModel = asNonEmptyString(parsedEvent.value.model);
+    if (streamedModel) {
+      model = streamedModel;
+    }
+
+    const streamedUsage = normalizeUsage(parsedEvent.value.usage);
+    if (streamedUsage) {
+      usage = streamedUsage;
+    }
+  }
+
+  return {
+    ok: true,
+    payload: {
+      model,
+      choices: [
+        {
+          finish_reason: finishReason ?? DEFAULT_FINISH_REASON,
+          message: {
+            content: accumulatedContent,
+          },
+        },
+      ],
+      ...(usage ? { usage } : {}),
+    },
+    snapshots,
+  };
 }
 
 function normalizeTurnStatus(
@@ -720,6 +877,60 @@ function extractMessageContentText(value: unknown): string {
   return textParts.join('\n');
 }
 
+async function readStreamEvents(
+  body: ReadableStream<Uint8Array> | null | undefined,
+): Promise<string[]> {
+  if (!body) {
+    return [];
+  }
+
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  const events: string[] = [];
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
+    buffer = buffer.replaceAll('\r\n', '\n');
+
+    let delimiterIndex = buffer.indexOf(STREAM_DELIMITER);
+    while (delimiterIndex >= 0) {
+      const event = parseStreamEvent(buffer.slice(0, delimiterIndex));
+      if (event) {
+        events.push(event);
+      }
+      buffer = buffer.slice(delimiterIndex + STREAM_DELIMITER.length);
+      delimiterIndex = buffer.indexOf(STREAM_DELIMITER);
+    }
+
+    if (done) {
+      break;
+    }
+  }
+
+  const trailingEvent = parseStreamEvent(buffer);
+  if (trailingEvent) {
+    events.push(trailingEvent);
+  }
+
+  return events;
+}
+
+function parseStreamEvent(chunk: string): string | null {
+  const dataLines = chunk
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith(STREAM_LINE_PREFIX))
+    .map((line) => line.slice(STREAM_LINE_PREFIX.length).trimStart());
+
+  if (dataLines.length === 0) {
+    return null;
+  }
+
+  return dataLines.join('\n');
+}
+
 function normalizeHttpError(
   request: ProviderTurnRequest,
   status: number,
@@ -857,7 +1068,7 @@ function asInteger(value: unknown): number | null {
 async function defaultTransport(
   url: string,
   init: RequestInit,
-): Promise<Pick<Response, 'ok' | 'status' | 'text'>> {
+): Promise<Pick<Response, 'ok' | 'status' | 'text' | 'body'>> {
   return globalThis.fetch(url, init);
 }
 

@@ -6,6 +6,7 @@ import { intersectToolScopes } from './scope-intersection.js';
 import { TOOL_TRACE_KINDS } from '../event-kinds.js';
 import {
   ExecutionContextSchema,
+  ToolProgressSnapshotMetadataSchema,
   ToolOutputSchema,
   ToolScopeSchema,
   TOOL_ERROR_CODES,
@@ -25,6 +26,7 @@ import {
   RESERVED_FRAMEWORK_SCOPE_PREFIX,
   RESERVED_FRAMEWORK_SCOPE_ROOT,
   SHA256_HEX_REGEX,
+  TOOL_OUTPUT_METADATA_KEYS,
 } from '../shared-constants.js';
 import { EvidenceStore } from '../evidence/evidence-store.js';
 import { ToolRegistry } from './tool-registry.js';
@@ -111,6 +113,17 @@ function parseToolArguments(input: unknown): Record<string, unknown> | undefined
   return input !== null && typeof input === 'object' && !Array.isArray(input)
     ? (input as Record<string, unknown>)
     : undefined;
+}
+
+function parseToolProgressSnapshots(output: ToolOutput) {
+  if (!output.metadata || typeof output.metadata !== 'object') {
+    return [];
+  }
+
+  const parsed = ToolProgressSnapshotMetadataSchema.array().safeParse(
+    output.metadata[TOOL_OUTPUT_METADATA_KEYS.PROGRESS_SNAPSHOTS],
+  );
+  return parsed.success ? parsed.data : [];
 }
 
 function normalizeScopePattern(pattern: string): string {
@@ -668,6 +681,23 @@ export class ToolHost {
     policyDecisions: PolicyDecision[];
   }): Promise<void> {
     const { receiptId, startedAt, output, policyDecisions } = params;
+    const progressSnapshots = parseToolProgressSnapshots(output);
+
+    for (const snapshot of progressSnapshots) {
+      const snapshotRef = await this.evidenceStore.persistData(snapshot.data);
+      const progressEntry = {
+        schema_version: 1 as const,
+        kind: TOOL_TRACE_KINDS.TOOL_CALL_PROGRESS,
+        receipt_id: receiptId,
+        timestamp: this.now().toISOString(),
+        sequence: snapshot.sequence,
+        state: snapshot.state,
+        snapshot_hash: snapshotRef.dataHash,
+        snapshot_ref: snapshotRef.dataRef,
+      };
+      await this.evidenceStore.appendTrace(progressEntry);
+      this.onTraceAppended?.(progressEntry);
+    }
 
     const outputRef =
       output.data === undefined ? undefined : await this.evidenceStore.persistData(output.data);

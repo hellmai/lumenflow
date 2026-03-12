@@ -3,6 +3,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ExecutionContext } from '../kernel.schemas.js';
+import { TOOL_OUTPUT_METADATA_KEYS } from '../shared-constants.js';
 import { agentExecuteTurnTool } from '../../../packs/agent-runtime/tool-impl/agent-turn-tools.js';
 import { runProviderAdapterConformanceHarness } from '../../../packs/agent-runtime/tool-impl/provider-adapters.js';
 
@@ -56,6 +57,26 @@ function createJsonResponse(body: unknown, status = 200): Response {
       'content-type': 'application/json',
     },
   });
+}
+
+function createStreamingResponse(events: readonly string[], status = 200): Response {
+  const encoder = new TextEncoder();
+  return new Response(
+    new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (const event of events) {
+          controller.enqueue(encoder.encode(event));
+        }
+        controller.close();
+      },
+    }),
+    {
+      status,
+      headers: {
+        'content-type': 'text/event-stream',
+      },
+    },
+  );
 }
 
 describe('agent-runtime execute turn tool', () => {
@@ -154,6 +175,51 @@ describe('agent-runtime execute turn tool', () => {
       finish_reason: 'stop',
     });
     expect(result.metadata?.provider_call_count).toBe(1);
+  });
+
+  it('captures streaming partial snapshots while preserving the final normalized output', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        createStreamingResponse([
+          'data: {"model":"demo-model","choices":[{"index":0,"delta":{"content":"{\\"status\\":\\"reply\\",\\"intent\\":\\"sched"}}]}\n\n',
+          'data: {"model":"demo-model","choices":[{"index":0,"delta":{"content":"uling\\",\\"assistant_message\\":\\"Follow-up scheduled.\\""}}]}\n\n',
+          'data: {"model":"demo-model","choices":[{"index":0,"delta":{"content":"}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":18,"completion_tokens":7,"total_tokens":25}}\n\n',
+          'data: [DONE]\n\n',
+        ]),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await agentExecuteTurnTool(
+      createTurnInput({
+        stream: true,
+      }),
+      createExecutionContext(),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({
+      status: 'reply',
+      intent: 'scheduling',
+      assistant_message: 'Follow-up scheduled.',
+      provider: {
+        kind: 'openai_compatible',
+        model: TEST_MODEL,
+      },
+      usage: {
+        input_tokens: 18,
+        output_tokens: 7,
+        total_tokens: 25,
+      },
+      finish_reason: 'stop',
+    });
+    expect(result.metadata?.provider_call_count).toBe(1);
+    expect(result.metadata?.response_mode).toBe('streaming');
+    expect(result.metadata?.[TOOL_OUTPUT_METADATA_KEYS.PROGRESS_SNAPSHOTS]).toEqual([
+      expect.objectContaining({ sequence: 0, state: 'partial' }),
+      expect.objectContaining({ sequence: 1, state: 'partial' }),
+      expect.objectContaining({ sequence: 2, state: 'final' }),
+    ]);
   });
 
   it('enforces input byte limits before the provider is contacted', async () => {

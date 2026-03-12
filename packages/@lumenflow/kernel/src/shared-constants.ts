@@ -45,6 +45,15 @@ export const EXECUTION_METADATA_KEYS = {
   PACK_INTEGRITY: 'pack_integrity',
 } as const;
 
+export const TOOL_OUTPUT_METADATA_KEYS = {
+  PROGRESS_SNAPSHOTS: 'tool_progress_snapshots',
+} as const;
+
+export const TOOL_PROGRESS_SNAPSHOT_STATES = {
+  PARTIAL: 'partial',
+  FINAL: 'final',
+} as const;
+
 export const KERNEL_POLICY_IDS = {
   ALLOW_ALL: 'kernel.policy.allow-all',
   RUNTIME_FALLBACK: 'kernel.policy.runtime-fallback',

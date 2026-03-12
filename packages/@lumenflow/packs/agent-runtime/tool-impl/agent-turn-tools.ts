@@ -1,7 +1,12 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TOOL_ERROR_CODES, type ExecutionContext, type ToolOutput } from '@lumenflow/kernel';
+import {
+  TOOL_ERROR_CODES,
+  TOOL_OUTPUT_METADATA_KEYS,
+  type ExecutionContext,
+  type ToolOutput,
+} from '@lumenflow/kernel';
 import {
   AGENT_RUNTIME_AGENT_TOOL_CALL_COUNT_METADATA_KEY,
   AGENT_RUNTIME_AGENT_TURN_INDEX_METADATA_KEY,
@@ -60,6 +65,7 @@ export async function agentExecuteTurnTool(
     model: validatedInput.model_profile,
     url: validatedInput.url,
     apiKey: environmentResult.value.apiKey,
+    stream: validatedInput.stream ?? false,
     messages: validatedInput.messages,
     toolCatalog: validatedInput.tool_catalog,
     intentCatalog: validatedInput.intent_catalog,
@@ -69,6 +75,10 @@ export async function agentExecuteTurnTool(
     provider_call_count: PROVIDER_CALL_COUNT_ONE,
     request_url: validatedInput.url,
     configured_base_url: environmentResult.value.baseUrl,
+    response_mode: providerResult.metadata.response_mode ?? 'non_streaming',
+    ...(providerResult.metadata.stream_snapshot_count !== undefined
+      ? { stream_snapshot_count: providerResult.metadata.stream_snapshot_count }
+      : {}),
     ...(providerResult.metadata.response_status !== undefined
       ? { response_status: providerResult.metadata.response_status }
       : {}),
@@ -85,7 +95,14 @@ export async function agentExecuteTurnTool(
   return {
     success: true,
     data: providerResult.output,
-    metadata,
+    metadata: {
+      ...metadata,
+      ...(providerResult.stream_snapshots && providerResult.stream_snapshots.length > 0
+        ? {
+            [TOOL_OUTPUT_METADATA_KEYS.PROGRESS_SNAPSHOTS]: providerResult.stream_snapshots,
+          }
+        : {}),
+    },
   };
 }
 
@@ -102,6 +119,7 @@ function validateExecuteTurnInput(
       'session_id',
       'model_profile',
       'url',
+      'stream',
       'messages',
       'tool_catalog',
       'intent_catalog',
@@ -132,6 +150,11 @@ function validateExecuteTurnInput(
     };
   }
 
+  const stream = validateBoolean(record.stream, 'stream');
+  if (!stream.ok) {
+    return stream;
+  }
+
   const messages = validateMessages(record.messages);
   if (!messages.ok) {
     return messages;
@@ -158,6 +181,7 @@ function validateExecuteTurnInput(
       session_id: sessionId,
       model_profile: modelProfile,
       url,
+      ...(stream.value !== undefined ? { stream: stream.value } : {}),
       messages: messages.value,
       tool_catalog: toolCatalog.value,
       intent_catalog: intentCatalog.value,
@@ -350,6 +374,19 @@ function validateLimits(
       ...(maxInputBytes !== null ? { max_input_bytes: maxInputBytes } : {}),
     },
   };
+}
+
+function validateBoolean(
+  value: unknown,
+  field: string,
+): { ok: true; value: boolean | undefined } | { ok: false; message: string } {
+  if (value === undefined) {
+    return { ok: true, value: undefined };
+  }
+  if (typeof value !== 'boolean') {
+    return { ok: false, message: `${field} must be a boolean when provided.` };
+  }
+  return { ok: true, value };
 }
 
 function enforceExecutionLimits(

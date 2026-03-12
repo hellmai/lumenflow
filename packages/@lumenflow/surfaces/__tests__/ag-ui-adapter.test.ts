@@ -212,6 +212,19 @@ function makeToolTraceFinished(): ToolTraceEntry {
   };
 }
 
+function makeToolTraceProgress(): ToolTraceEntry {
+  return {
+    schema_version: 1,
+    kind: TOOL_TRACE_KINDS.TOOL_CALL_PROGRESS,
+    receipt_id: TOOL.RECEIPT_ID,
+    timestamp: TIMESTAMP.ONE,
+    sequence: 1,
+    state: 'partial',
+    snapshot_hash: HASH.OUTPUT,
+    snapshot_ref: TOOL.OUTPUT_REF,
+  };
+}
+
 describe('surfaces/http ag-ui adapter', () => {
   it('maps all 17 kernel event kinds to AG-UI events', () => {
     const kernelEvents = makeKernelEvents();
@@ -228,11 +241,26 @@ describe('surfaces/http ag-ui adapter', () => {
   it('maps ToolTraceEntry to TOOL_CALL_START/END/RESULT events', () => {
     const started = mapToolTraceEntryToAgUiEvents(makeToolTraceStarted());
     const finished = mapToolTraceEntryToAgUiEvents(makeToolTraceFinished());
-    const allTypes = [...started, ...finished].map((event) => event.type);
+    const progress = mapToolTraceEntryToAgUiEvents(makeToolTraceProgress());
+    const allTypes = [...started, ...progress, ...finished].map((event) => event.type);
 
     expect(allTypes).toContain(AG_UI_EVENT_TYPES.TOOL_CALL_START);
     expect(allTypes).toContain(AG_UI_EVENT_TYPES.TOOL_CALL_END);
     expect(allTypes).toContain(AG_UI_EVENT_TYPES.TOOL_CALL_RESULT);
+  });
+
+  it('maps tool_call_progress traces to a streaming tool result event', () => {
+    const [progressEvent] = mapToolTraceEntryToAgUiEvents(makeToolTraceProgress());
+
+    expect(progressEvent?.type).toBe(AG_UI_EVENT_TYPES.TOOL_CALL_RESULT);
+    expect(progressEvent?.payload).toMatchObject({
+      receipt_id: TOOL.RECEIPT_ID,
+      sequence: 1,
+      state: 'partial',
+      snapshot_hash: HASH.OUTPUT,
+      snapshot_ref: TOOL.OUTPUT_REF,
+      streaming: true,
+    });
   });
 
   it('ignores non-schema task/run identifiers on tool_call_finished entries', () => {

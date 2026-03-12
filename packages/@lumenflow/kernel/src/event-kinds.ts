@@ -59,6 +59,7 @@ export function isRunLifecycleEventKind(kind: string): kind is RunLifecycleEvent
 
 export const TOOL_TRACE_KINDS = {
   TOOL_CALL_STARTED: 'tool_call_started',
+  TOOL_CALL_PROGRESS: 'tool_call_progress',
   TOOL_CALL_FINISHED: 'tool_call_finished',
 } as const;
 
