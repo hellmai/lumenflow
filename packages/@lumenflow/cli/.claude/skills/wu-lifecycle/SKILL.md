@@ -4,7 +4,7 @@ description: Work Unit claim/block/done workflow automation. Use when claiming W
 version: 2.2.0
 source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: WU Lifecycle
-last_updated: 2026-03-10
+last_updated: 2026-03-12
 allowed-tools: Read, Bash, Grep
 ---
 

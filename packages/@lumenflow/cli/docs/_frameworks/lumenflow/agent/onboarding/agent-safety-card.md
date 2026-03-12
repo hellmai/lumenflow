@@ -1,6 +1,6 @@
 # Agent Safety Card
 
-**Last updated:** 2026-03-10
+**Last updated:** 2026-03-12
 
 Quick reference for AI agents working in LumenFlow projects.
 
@@ -199,7 +199,7 @@ ISO_TIMESTAMP|BYPASSED|COMMAND_OR_HOOK|USER|BRANCH|REASON|CWD
 Example:
 
 ```
-2026-03-10T12:34:56Z|BYPASSED|git reset --hard HEAD|tom|lane/core/wu-1172|user-approved: recovering state|<cwd>
+2026-03-12T12:34:56Z|BYPASSED|git reset --hard HEAD|tom|lane/core/wu-1172|user-approved: recovering state|<cwd>
 ```
 
 ### Warning When No Reason Provided

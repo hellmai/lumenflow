@@ -1,0 +1,81 @@
+<!-- LUMENFLOW:START -->
+# Claude Code Configuration
+
+**Last updated:** 2026-03-12
+
+This project uses LumenFlow workflow. For workflow documentation, see [LUMENFLOW.md](../LUMENFLOW.md).
+If `LUMENFLOW.local.md` exists, read it after LUMENFLOW.md for project-specific additions.
+
+---
+
+## Quick Start
+
+```bash
+# 1. Read workflow documentation
+# See LUMENFLOW.md for complete workflow
+
+# 2. Claim a WU
+pnpm wu:claim --id WU-XXXX --lane <Lane>
+cd worktrees/<lane>-wu-xxxx
+
+# 3. Work in worktree, run gates
+pnpm gates
+
+# 4. Complete (ALWAYS run this!)
+cd <project-root>
+pnpm wu:done --id WU-XXXX
+```
+
+> **Complete CLI reference:** See [quick-ref-commands.md](../ai/onboarding/quick-ref-commands.md)
+
+---
+
+## Critical: Always wu:done
+
+After completing work, ALWAYS run `pnpm wu:done --id WU-XXXX`.
+
+See [LUMENFLOW.md](../LUMENFLOW.md) and [ai/onboarding/troubleshooting-wu-done.md](../ai/onboarding/troubleshooting-wu-done.md).
+
+---
+
+## Orchestration & Memory Commands
+
+Essential commands for multi-agent coordination and context management:
+
+| Command                                    | Description                       |
+| ------------------------------------------ | --------------------------------- |
+| `pnpm orchestrate:init-status -i INIT-XXX` | View initiative progress          |
+| `pnpm orchestrate:monitor`                 | Monitor spawn/agent activity      |
+| `pnpm mem:checkpoint --wu WU-XXX`          | Save progress checkpoint          |
+| `pnpm mem:inbox --since 30m`               | Check coordination signals        |
+| `pnpm mem:signal "msg" --wu WU-XXX`        | Broadcast signal to other agents  |
+| `pnpm mem:create "msg" --wu WU-XXX`        | Create memory node (bug capture)  |
+| `pnpm wu:brief --id WU-XXX --client claude-code` | **MANDATORY after wu:claim.** Generate prompt + evidence |
+
+**When to checkpoint:**
+- After each acceptance criterion completed
+- Before running gates
+- Every 30+ tool calls
+
+**When to check inbox:**
+- Before starting complex work (parallel agents may have signals)
+- When blocked (other agents may have completed dependencies)
+
+---
+
+## Claude-Specific Settings
+
+This directory contains Claude Code-specific configuration:
+
+- `settings.json` - Permissions and hooks
+- `hooks/` - Pre-tool validation hooks
+
+---
+
+## References
+
+- [LUMENFLOW.md](../LUMENFLOW.md) - Main workflow documentation
+- [.lumenflow/constraints.md](../.lumenflow/constraints.md) - Non-negotiable rules
+- [ai/onboarding/](../ai/onboarding/) - Agent onboarding docs
+
+<!-- LUMENFLOW:END -->

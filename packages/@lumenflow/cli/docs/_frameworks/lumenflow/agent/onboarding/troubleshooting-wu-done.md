@@ -1,6 +1,6 @@
 # Troubleshooting: wu:prep and wu:done Workflow
 
-**Last updated:** 2026-03-11
+**Last updated:** 2026-03-12
 
 This is the most common mistake agents make. This document explains the two-step completion workflow introduced in WU-1223.
 

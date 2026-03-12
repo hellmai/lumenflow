@@ -1799,6 +1799,11 @@ describe('Manifest parity truth gate (WU-1481)', () => {
   // WU-2314: Explicitly track additional public-manifest commands still pending MCP parity.
   // The truth gate remains strict by requiring this list to be explicit.
   const EXPECTED_MISSING_COMMANDS: string[] = [
+    'approval_list',
+    'approval_request',
+    'approval_review',
+    'cost_summary',
+    'gate_co_change',
     'lumenflow_pre_commit_check',
     'pack_author',
     'pack_hash',
@@ -1809,6 +1814,7 @@ describe('Manifest parity truth gate (WU-1481)', () => {
     'state_emit',
     'templates_sync',
     'wu_escalate',
+    'wu_verify',
   ];
 
   const EXPECTED_ALLOWED_EXTRAS = [

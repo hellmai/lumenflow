@@ -90,6 +90,11 @@ describe('CLI integration (no mocks)', { timeout: CLI_INTEGRATION_TEST_TIMEOUT_M
   // WU-1983: Added MCP parity tools for cloud_connect, onboard aliases, and workspace_init.
   // WU-2314: Remaining gaps are explicitly tracked until MCP parity is implemented.
   const EXPECTED_MISSING_PARITY_TOOLS: string[] = [
+    'approval_list',
+    'approval_request',
+    'approval_review',
+    'cost_summary',
+    'gate_co_change',
     'lumenflow_pre_commit_check',
     'pack_author',
     'pack_hash',
@@ -100,6 +105,7 @@ describe('CLI integration (no mocks)', { timeout: CLI_INTEGRATION_TEST_TIMEOUT_M
     'state_emit',
     'templates_sync',
     'wu_escalate',
+    'wu_verify',
   ];
 
   describe('wu:status flags', () => {

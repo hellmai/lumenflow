@@ -1,6 +1,6 @@
 # LumenFlow Agent Starting Prompt
 
-**Last updated:** 2026-03-10
+**Last updated:** 2026-03-12
 
 This is the complete onboarding document for AI agents working with LumenFlow. Read this entire document before starting any work.
 
@@ -550,22 +550,22 @@ Domain-specific commands must come from local configuration, not core framework 
 
 ## WU Lifecycle Commands
 
-| Command                                        | Description                                              | When to Use                 |
-| ---------------------------------------------- | -------------------------------------------------------- | --------------------------- |
-| `pnpm wu:status --id WU-XXX`                   | Show WU state and valid commands                         | Check current state         |
-| `pnpm wu:claim --id WU-XXX --lane "Lane"`      | Claim WU and create worktree (default)                   | Start working (local)       |
-| `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree)                 | Start working (cloud)       |
-| `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                                      | Update notes/desc           |
+| Command                                        | Description                                      | When to Use                 |
+| ---------------------------------------------- | ------------------------------------------------ | --------------------------- |
+| `pnpm wu:status --id WU-XXX`                   | Show WU state and valid commands                 | Check current state         |
+| `pnpm wu:claim --id WU-XXX --lane "Lane"`      | Claim WU and create worktree (default)           | Start working (local)       |
+| `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree)         | Start working (cloud)       |
+| `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                              | Update notes/desc           |
 | `pnpm wu:brief --id WU-XXX --client <client>`  | **MANDATORY after wu:claim.** Generate prompt + evidence | Delegation or self-impl     |
-| `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation                      | Auditable delegation flows  |
-| `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion          | Before wu:done              |
-| `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)                       | After gates pass            |
-| `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)                           | After PR merge (cloud only) |
-| `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status                        | Escalation-triggered WUs    |
-| `pnpm wu:escalate --resolve --id WU-XXX`       | Resolve human escalation                                 | Before wu:done (escalation) |
-| `pnpm wu:verify --id WU-XXX`                   | Verify WU completion (stamp, commit, clean tree)         | After wu:done               |
-| `pnpm wu:delete --id WU-XXX`                   | Delete WU spec and cleanup                               | Cancel stale/throwaway WUs  |
-| `pnpm wu:recover --id WU-XXX`                  | Fix inconsistent WU state                                | When state is broken        |
+| `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation              | Auditable delegation flows  |
+| `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion  | Before wu:done              |
+| `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)               | After gates pass            |
+| `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)                   | After PR merge (cloud only) |
+| `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status                | Escalation-triggered WUs    |
+| `pnpm wu:escalate --resolve --id WU-XXX`       | Resolve human escalation                         | Before wu:done (escalation) |
+| `pnpm wu:verify --id WU-XXX`                   | Verify WU completion (stamp, commit, clean tree) | After wu:done               |
+| `pnpm wu:delete --id WU-XXX`                   | Delete WU spec and cleanup                       | Cancel stale/throwaway WUs  |
+| `pnpm wu:recover --id WU-XXX`                  | Fix inconsistent WU state                        | When state is broken        |
 
 ---
 

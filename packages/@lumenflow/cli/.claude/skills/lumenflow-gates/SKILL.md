@@ -4,7 +4,7 @@ description: Quality gates troubleshooting (format, lint, typecheck, tests). Use
 version: 2.1.0
 source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: Validation & Gates
-last_updated: 2026-03-10
+last_updated: 2026-03-12
 allowed-tools: Read, Bash, Grep
 ---
 
