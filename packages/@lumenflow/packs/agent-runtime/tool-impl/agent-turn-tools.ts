@@ -616,19 +616,14 @@ function resolveConfiguredProviderEnvironment(
       model: profile.model,
       apiKey,
       baseUrl: normalizedBaseUrl,
-      requiredEnv: [
-        profile.api_key_env,
-        ...(profile.base_url_env ? [profile.base_url_env] : []),
-      ],
+      requiredEnv: [profile.api_key_env, ...(profile.base_url_env ? [profile.base_url_env] : [])],
       networkAllowlist: [toNetworkAllowlistEntry(profileName, normalizedBaseUrl)],
       allowedUrls: [normalizedBaseUrl],
     },
   };
 }
 
-function normalizePackConfig(
-  value: unknown,
-): { models: Record<string, unknown> } | null {
+function normalizePackConfig(value: unknown): { models: Record<string, unknown> } | null {
   if (!isRecord(value) || !isRecord(value.models)) {
     return null;
   }
