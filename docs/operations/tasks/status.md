@@ -5,6 +5,7 @@ _Last updated: 2026-03-12_
 ## In Progress
 
 - [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml)
+- [WU-2423 — Add --title flag to wu:edit](wu/WU-2423.yaml)
 
 ## Completed
 

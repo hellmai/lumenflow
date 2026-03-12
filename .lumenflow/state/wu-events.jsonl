@@ -3297,3 +3297,4 @@
 {"type":"checkpoint","wuId":"WU-2422","timestamp":"2026-03-12T12:45:03.503Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2422","timestamp":"2026-03-12T12:46:12.462Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2422.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2422","timestamp":"2026-03-12T12:47:04.985Z"}
+{"type":"claim","wuId":"WU-2423","timestamp":"2026-03-12T13:02:17.853Z","lane":"Framework: CLI WU Commands","title":"Add --title flag to wu:edit"}

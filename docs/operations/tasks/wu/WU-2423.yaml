@@ -2,7 +2,7 @@ id: WU-2423
 title: Add --title flag to wu:edit
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -30,8 +30,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: wu:edit supports editing most WU spec fields (description, acceptance, notes, lane, type, priority, etc.) but is missing the --title flag. Agents attempting to update a WU title via wu:edit get 'error: unknown option --title' and must fall back to --spec-file workarounds. Solution: Add --title <text> option to wu:edit following the same pattern as --description (simple string replacement). Include in hasEdits check, ApplyEditsOpts, applyEdits(), and block title changes on done WUs."
+description: "Context: wu:edit supports editing most WU spec fields (description, acceptance, notes,
+  lane, type, priority, etc.) but is missing the --title flag. Agents attempting to update a WU
+  title via wu:edit get 'error: unknown option --title' and must fall back to --spec-file
+  workarounds. Solution: Add --title <text> option to wu:edit following the same pattern as
+  --description (simple string replacement). Include in hasEdits check, ApplyEditsOpts,
+  applyEdits(), and block title changes on done WUs."
 acceptance:
   - wu:edit --id WU-XXX --title 'New title' updates the title field
   - Title changes blocked on done WUs with clear error message
   - --help output includes --title
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2423
+claimed_at: 2026-03-12T13:02:17.824Z
+baseline_main_sha: 9c3cc68afd00a22a19aa13afadfa0eda083aa51b
+session_id: 863ece90-9fda-41d5-b487-b01ff5b1ceb6
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T13:02:17.832Z
