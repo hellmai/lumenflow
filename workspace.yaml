@@ -227,7 +227,7 @@ software_delivery:
     tools: tools/
     memoryBank: memory-bank/
     wuDir: docs/04-operations/tasks/wu
-    initiativesDir: docs/operations/tasks/initiatives
+    initiativesDir: docs/04-operations/tasks/initiatives
     backlogPath: docs/operations/tasks/backlog.md
     statusPath: docs/operations/tasks/status.md
     skillsDir: .claude/skills
