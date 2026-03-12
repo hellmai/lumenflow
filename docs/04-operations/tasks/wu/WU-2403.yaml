@@ -17,9 +17,16 @@ artifacts:
   - .lumenflow/stamps/WU-2403.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Root cause: Tests use dynamic await import(...) to ensure process.cwd() is set before module
+  loading. The first import per file compiles the full dependency tree (~3-4s), which can exceed the
+  default 5s Vitest timeout under CI load. Fix: Set testTimeout to 15s in
+  packages/@lumenflow/initiatives/vitest.config.ts.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T10:21:33.525Z
+worktree_path: worktrees/framework-initiatives-wu-2403
+session_id: 0b867815-2732-46ae-8386-ee944bdc38a6
 exposure: backend-only
 sizing_estimate:
   estimated_files: 5
@@ -27,6 +34,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T10:21:33.533Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -38,11 +48,3 @@ description: The @lumenflow/initiatives test suite has flaky timeout failures th
 acceptance:
   - All @lumenflow/initiatives tests pass consistently without timeouts
   - pnpm test passes on main without --skip-gates
-claimed_mode: worktree
-worktree_path: worktrees/framework-initiatives-wu-2403
-claimed_at: 2026-03-12T10:21:33.525Z
-baseline_main_sha: 3c78a995505a338dcad8ccde1c69b6482fef9720
-session_id: 0b867815-2732-46ae-8386-ee944bdc38a6
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T10:21:33.533Z
