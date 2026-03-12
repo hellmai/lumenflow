@@ -26,7 +26,6 @@ sections:
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
-- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
 - [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — Framework: Core Lifecycle
 - [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
 - [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
@@ -44,6 +43,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml) — Content: Specs Governance
+- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 

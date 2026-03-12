@@ -2,7 +2,7 @@ id: WU-2407
 title: Add runtime pack-config plumbing for pinned pack config roots
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/kernel/src/kernel.schemas.ts
 tests:
   manual:
-    - Start runtime with valid and invalid pack config roots and verify startup behavior matches validation outcome
+    - Start runtime with valid and invalid pack config roots and verify startup behavior matches
+      validation outcome
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
   e2e: []
@@ -38,9 +39,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Preserve and validate non-kernel pack config during runtime initialization so resolved pack config is available to loaded packs for later policy and capability decisions.
+description: Preserve and validate non-kernel pack config during runtime initialization so resolved
+  pack config is available to loaded packs for later policy and capability decisions.
 acceptance:
   - Runtime extracts config for pinned packs with config_key from raw workspace YAML
   - config_schema validation runs during runtime startup
   - Resolved pack config is attached to loaded pack state for later policy and capability resolution
   - Invalid pack config fails startup while packs without config_key remain unaffected
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2407
+claimed_at: 2026-03-12T11:59:36.691Z
+baseline_main_sha: 239486ad0deed55f883f9aa2db6e1815d089ddda
+session_id: 2710dd6c-b4c8-4929-8274-d1f0c0c91feb
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:59:36.697Z
