@@ -11,7 +11,8 @@
  * @module wu-spawn-strategy-resolver
  */
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 import { createWUParser, WU_OPTIONS } from '@lumenflow/core/arg-parser';
 import { WU_PATHS } from '@lumenflow/core/wu-paths';
 import { parseYAML } from '@lumenflow/core/wu-yaml';
@@ -346,6 +347,8 @@ interface SpawnOutputWithRegistryDependencies {
   createDelegationStore?: (stateDir: string) => {
     delegate: (childWuId: string, parentWuId: string, delegationId: string) => Promise<void>;
   };
+  /** WU-2425: Override cwd for .logs/ directory (defaults to process.cwd()) */
+  cwd?: string;
 }
 
 interface RecordWuBriefEvidenceOptions {
@@ -480,6 +483,18 @@ export async function emitSpawnOutputWithRegistry(
   const formatSpawnMessage = dependencies.formatSpawnMessage ?? formatSpawnRecordedMessage;
   const createDelegationStore =
     dependencies.createDelegationStore ?? ((stateDir: string) => new WUStateStore(stateDir));
+  const cwd = dependencies.cwd ?? process.cwd();
+
+  // WU-2425: Write full output to .logs/ to survive Bash tool truncation.
+  // Truncation cuts from the end, so the file path on line 1 always survives.
+  const filePrefix = prefix.includes('delegate') ? 'wu-delegate' : 'wu-brief';
+  const logsDir = path.join(cwd, '.logs');
+  const outputFilePath = path.join(logsDir, `${filePrefix}-${id}.md`);
+  mkdirSync(logsDir, { recursive: true });
+  writeFileSync(outputFilePath, output, 'utf8');
+  const lineCount = output.split('\n').length;
+  log(`${prefix} Full output saved to: .logs/${filePrefix}-${id}.md (${lineCount} lines)`);
+  log(`${prefix} If output below appears truncated, read the file above.`);
 
   if (isCodexClient) {
     log(`${prefix} Generated Codex/GPT prompt for ${id}`);
