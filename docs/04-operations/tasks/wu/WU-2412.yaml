@@ -1,0 +1,49 @@
+id: WU-2412
+title: Integrate governed orchestration with intent-based tool gating
+lane: 'Framework: Core Lifecycle'
+type: feature
+status: ready
+priority: P1
+created: 2026-03-12
+code_paths:
+  - packages/@lumenflow/packs/
+  - packages/@lumenflow/kernel/src/policy/
+  - packages/@lumenflow/runtime/src/
+  - apps/docs/src/content/docs/kernel/
+tests:
+  manual:
+    - Exercise the reference loop through allowed, denied, and approval-gated tool requests
+  unit:
+    - packages/@lumenflow/kernel/src/__tests__/
+    - packages/@lumenflow/runtime/src/
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2412.done
+dependencies: []
+initiative: INIT-52
+phase: 2
+blocked_by:
+  - WU-2408
+  - WU-2411
+spec_refs:
+  - lumenflow://plans/INIT-52-plan.md
+risks: []
+notes: This WU keeps the orchestration loop host-driven while exercising kernel-enforced policy boundaries.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+sizing_estimate:
+  estimated_files: 15
+  estimated_tool_calls: 85
+  strategy: checkpoint-resume
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: Connect the turn tool to dynamic policy gating and provide a reference host-driven orchestration loop that demonstrates governed tool requests, denied-tool recovery, and approval flows.
+acceptance:
+  - policy_factory implements intent-based allow, deny, and approval-required behavior
+  - A reference orchestration loop exists for command-line, HTTP, or programmatic callers
+  - A host composition example provides memory and task context without a hard dependency on sidekick internals
+  - End-to-end tests prove denied-tool recovery and approval flow behavior
