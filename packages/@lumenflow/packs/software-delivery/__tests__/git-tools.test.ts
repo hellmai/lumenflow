@@ -78,11 +78,12 @@ describe('software delivery git tool pack', () => {
   });
 
   it('keeps descriptor files free of fs/child_process imports', async () => {
+    const pkgRoot = path.resolve(import.meta.dirname, '..');
     const sourceFiles = [
-      path.resolve('packages/@lumenflow/packs/software-delivery/tools/git-tools.ts'),
-      path.resolve('packages/@lumenflow/packs/software-delivery/tools/lane-lock-tool.ts'),
-      path.resolve('packages/@lumenflow/packs/software-delivery/tools/delegation-tools.ts'),
-      path.resolve('packages/@lumenflow/packs/software-delivery/tools/worktree-tools.ts'),
+      path.join(pkgRoot, 'tools/git-tools.ts'),
+      path.join(pkgRoot, 'tools/lane-lock-tool.ts'),
+      path.join(pkgRoot, 'tools/delegation-tools.ts'),
+      path.join(pkgRoot, 'tools/worktree-tools.ts'),
     ];
 
     for (const sourceFile of sourceFiles) {

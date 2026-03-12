@@ -5,10 +5,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const TOOL_IMPL_DIR = path.resolve(
-  process.cwd(),
-  'packages/@lumenflow/packs/software-delivery/tool-impl',
-);
+const TOOL_IMPL_DIR = path.resolve(import.meta.dirname, '..', 'tool-impl');
 
 const BRIDGE_PATTERNS = ['spawnSync', 'packages/@lumenflow/cli/dist/'] as const;
 
