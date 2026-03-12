@@ -30,10 +30,14 @@ sections:
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
+- [WU-2399 — Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching](wu/WU-2399.yaml) — Framework: CLI WU Commands
+- [WU-2400 — Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity](wu/WU-2400.yaml) — Framework: CLI WU Commands
+- [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml) — Framework: Core Validation
+- [WU-2402 — Align test config: coverage threshold mismatch and passWithNoTests masking gaps](wu/WU-2402.yaml) — Framework: Core Validation
 
 ## 🔧 In progress
 
-- [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml) — Content: Specs Governance
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1348,6 +1352,7 @@ sections:
 - [WU-2394 — Fix cloud/branch-pr completion to be fail-closed and self-consistent](wu/WU-2394.yaml)
 - [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml)
 - [WU-2396 — Restore Prettier-validated YAML formatting for wu:done metadata](wu/WU-2396.yaml)
+- [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

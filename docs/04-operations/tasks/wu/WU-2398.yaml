@@ -2,7 +2,7 @@ id: WU-2398
 title: Consolidate duplicate wu-sizing-guide into single comprehensive doc
 lane: 'Content: Specs Governance'
 type: refactor
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -45,3 +45,6 @@ description: Delete the condensed onboarding copy at agent/onboarding/wu-sizing-
 acceptance:
   - Only one wu-sizing-guide.md exists (the comprehensive version)
   - All references to the deleted onboarding copy are updated
+locked: true
+completed_at: 2026-03-12T09:44:47.029Z
+completed: 2026-03-12

@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1315,3 +1315,4 @@ _Last updated: 2026-03-12_
 - [WU-2394 — Fix cloud/branch-pr completion to be fail-closed and self-consistent](wu/WU-2394.yaml) — 2026-03-11
 - [WU-2395 — Fix wu:done YAML formatting: use js-yaml serialization instead of shelling out to pnpm prettier](wu/WU-2395.yaml) — 2026-03-11
 - [WU-2396 — Restore Prettier-validated YAML formatting for wu:done metadata](wu/WU-2396.yaml) — 2026-03-11
+- [WU-2398 — Consolidate duplicate wu-sizing-guide into single comprehensive doc](wu/WU-2398.yaml) — 2026-03-12
