@@ -2,7 +2,7 @@ id: WU-2417
 title: Add workflow state and linear suspend-resume for agent-session
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/kernel/src/runtime/
 tests:
   manual:
-    - Suspend and resume a linear session through approval pauses and verify policy and evidence continuity
+    - Suspend and resume a linear session through approval pauses and verify policy and evidence
+      continuity
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
     - packages/@lumenflow/runtime/src/
@@ -39,10 +40,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Persist agent workflow state in scoped storage and support linear suspend and resume while preserving the host-driven loop and the single agent-session task model.
+description: Persist agent workflow state in scoped storage and support linear suspend and resume
+  while preserving the host-driven loop and the single agent-session task model.
 acceptance:
   - The pack persists agent workflow state in scoped storage
   - Suspend and resume work for linear multi-turn execution
   - Suspended and resumed runs remain agent-session executions rather than a new task type
   - Resumptions and approval pauses preserve evidence lineage and policy behavior
   - The evidence model records resumptions and approval-driven continuation coherently
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2417
+claimed_at: 2026-03-12T16:22:18.522Z
+baseline_main_sha: 7fca5b62f5bfb14126762e75d98c8df056bc3e47
+session_id: 0b305021-6afc-4c0d-9ca5-b8f1542621e5
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T16:22:18.529Z

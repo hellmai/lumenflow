@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2417 — Add workflow state and linear suspend-resume for agent-session](wu/WU-2417.yaml)
 
 ## Completed
 
