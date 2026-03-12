@@ -3293,3 +3293,4 @@
 {"type":"complete","wuId":"WU-2408","timestamp":"2026-03-12T12:36:08.843Z"}
 {"type":"claim","wuId":"WU-2409","timestamp":"2026-03-12T12:38:32.306Z","lane":"Framework: Core Lifecycle","title":"Harden sandbox credential passthrough with env allowlisting"}
 {"type":"complete","wuId":"WU-2421","timestamp":"2026-03-12T12:39:50.514Z"}
+{"type":"claim","wuId":"WU-2422","timestamp":"2026-03-12T12:44:52.512Z","lane":"Content: Specs Governance","title":"Remove leftover docs/04-operations shadow directory"}

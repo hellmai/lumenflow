@@ -20,16 +20,12 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2422 — Remove leftover docs/04-operations shadow directory](wu/WU-2422.yaml) — Content: Specs Governance
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
-- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml) — Framework: Core Lifecycle
-- [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml) — Framework: Core Lifecycle
-- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
 - [WU-2410 — Scaffold the agent-runtime pack](wu/WU-2410.yaml) — Framework: Core Lifecycle
 - [WU-2411 — Implement agent:execute-turn core tool and adapter harness](wu/WU-2411.yaml) — Framework: Core Lifecycle
 - [WU-2412 — Integrate governed orchestration with intent-based tool gating](wu/WU-2412.yaml) — Framework: Core Lifecycle
@@ -44,8 +40,8 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml) — Content: Framework Docs
-- [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, operations to operations](wu/WU-2421.yaml) — Content: Specs Governance
+- [WU-2409 — Harden sandbox credential passthrough with env allowlisting](wu/WU-2409.yaml) — Framework: Core Lifecycle
+- [WU-2422 — Remove leftover docs/04-operations shadow directory](wu/WU-2422.yaml) — Content: Specs Governance
 
 ## ⛔ Blocked
 
@@ -321,7 +317,7 @@ sections:
 - [WU-1310 — Centralize path defaults in core config (simple/arc42)](wu/WU-1310.yaml)
 - [WU-1312 — Update wu-sizing-guide with doc-only exception and tuning guidance](wu/WU-1312.yaml)
 - [WU-1309 — Fix init docs structure + portability + onboarding docs + quick-ref](wu/WU-1309.yaml)
-- [WU-1311 — Remove hardcoded docs/operations paths in CLI commands](wu/WU-1311.yaml)
+- [WU-1311 — Remove hardcoded docs/04-operations paths in CLI commands](wu/WU-1311.yaml)
 - [WU-1313 — Introduce first-class plan tooling (create/link/edit/promote)](wu/WU-1313.yaml)
 - [WU-1315 — Add onboarding smoke-test gate](wu/WU-1315.yaml)
 - [WU-1319 — Generate status.md from merged state during wu:done](wu/WU-1319.yaml)
@@ -1368,6 +1364,10 @@ sections:
 - [WU-2403 — Fix flaky timeout failures in @lumenflow/initiatives test suite](wu/WU-2403.yaml)
 - [WU-2404 — Pack manifest resolution returns empty config_key map in consumer installs](wu/WU-2404.yaml)
 - [WU-2405 — Arc42 compliance: proper section structure, ADR location, and docs index](wu/WU-2405.yaml)
+- [WU-2406 — Write ADR for governed agent-runtime pack](wu/WU-2406.yaml)
+- [WU-2407 — Add runtime pack-config plumbing for pinned pack config roots](wu/WU-2407.yaml)
+- [WU-2408 — Expose policy substrate for governed agent turns](wu/WU-2408.yaml)
+- [WU-2421 — Rename docs directories to proper arc42 names: 02-technical to 05-building-block-view, 04-operations to operations](wu/WU-2421.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
