@@ -101,4 +101,20 @@ describe('SandboxProfile with allowlist network posture', () => {
     expect(profile.network_posture).toBe('full');
     expect(profile.network_allowlist).toEqual([]);
   });
+
+  it('filters ambient env down to required_env entries only', () => {
+    const profile = buildSandboxProfileFromScopes([{ type: 'network', posture: 'off' }], {
+      workspaceRoot,
+      homeDir,
+      env: {
+        DECLARED_TOKEN: 'secret',
+        UNDECLARED_TOKEN: 'leak',
+      },
+      requiredEnv: ['DECLARED_TOKEN'],
+    });
+
+    expect(profile.env).toEqual({
+      DECLARED_TOKEN: 'secret',
+    });
+  });
 });

@@ -178,6 +178,44 @@ describe('DomainPackManifestSchema config_key and config_schema fields', () => {
     expect(manifest.config_schema).toBe('schemas/sd-config.json');
   });
 
+  describe('tool fields', () => {
+    it('accepts required_env on tool declarations', () => {
+      const manifest = DomainPackManifestSchema.parse(
+        minimalManifestInput({
+          tools: [
+            {
+              name: 'fs:read',
+              entry: 'tools/fs-read.ts',
+              permission: 'read',
+              required_scopes: [{ type: 'path', pattern: 'src/**', access: 'read' }],
+              required_env: ['AGENT_RUNTIME_TOKEN'],
+            },
+          ],
+        }),
+      );
+
+      expect(manifest.tools[0]?.required_env).toEqual(['AGENT_RUNTIME_TOKEN']);
+    });
+
+    it('rejects invalid required_env names on tool declarations', () => {
+      expect(() =>
+        DomainPackManifestSchema.parse(
+          minimalManifestInput({
+            tools: [
+              {
+                name: 'fs:read',
+                entry: 'tools/fs-read.ts',
+                permission: 'read',
+                required_scopes: [{ type: 'path', pattern: 'src/**', access: 'read' }],
+                required_env: ['agent_runtime_token'],
+              },
+            ],
+          }),
+        ),
+      ).toThrow();
+    });
+  });
+
   describe('policy fields', () => {
     it('accepts approval_required in manifest-authored policies', () => {
       const manifest = DomainPackManifestSchema.parse(

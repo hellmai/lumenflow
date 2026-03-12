@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { POLICY_TRIGGERS } from '../policy/policy-engine.js';
-import { ToolScopeSchema } from '../kernel.schemas.js';
+import { ENVIRONMENT_VARIABLE_NAME_PATTERN, ToolScopeSchema } from '../kernel.schemas.js';
 
 const SEMVER_REGEX = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?$/;
 const SEMVER_MESSAGE = 'Expected semantic version';
@@ -22,6 +22,13 @@ export const DomainPackToolSchema = z.object({
   entry: z.string().min(1),
   permission: z.enum(['read', 'write', 'admin']).default('read'),
   required_scopes: z.array(ToolScopeSchema).min(1),
+  required_env: z
+    .array(
+      z
+        .string()
+        .regex(ENVIRONMENT_VARIABLE_NAME_PATTERN, 'Expected uppercase environment variable name'),
+    )
+    .optional(),
   internal_only: z.boolean().optional(),
   /** Optional JSON Schema for tool input validation. */
   input_schema: JsonSchemaObjectSchema.optional(),

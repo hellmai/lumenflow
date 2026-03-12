@@ -9,6 +9,7 @@ import type { DomainPackManifest } from './pack/manifest.js';
 const ISO_DATETIME_SCHEMA = z.string().datetime();
 const SEMVER_REGEX = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?$/;
 const SEMVER_MESSAGE = 'Expected semantic version';
+export const ENVIRONMENT_VARIABLE_NAME_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 
 export const RUN_STATUSES = {
   PLANNED: 'planned',
@@ -173,13 +174,11 @@ export const WorkspaceControlPlanePolicyModeSchema = z.enum([
   'dev-override',
 ]);
 
-const CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
-
 export const WorkspaceControlPlaneAuthConfigSchema = z
   .object({
     token_env: z
       .string()
-      .regex(CONTROL_PLANE_AUTH_TOKEN_ENV_PATTERN, 'Expected uppercase environment variable name'),
+      .regex(ENVIRONMENT_VARIABLE_NAME_PATTERN, 'Expected uppercase environment variable name'),
   })
   .strict();
 
@@ -576,6 +575,13 @@ export const ToolCapabilitySchema = z.object({
   output_schema: ZodSchemaSchema.optional(),
   permission: z.enum(['read', 'write', 'admin']),
   required_scopes: z.array(ToolScopeSchema),
+  required_env: z
+    .array(
+      z
+        .string()
+        .regex(ENVIRONMENT_VARIABLE_NAME_PATTERN, 'Expected uppercase environment variable name'),
+    )
+    .optional(),
   handler: ToolHandlerSchema,
   description: z.string().min(1),
   pack: z.string().min(1).optional(),

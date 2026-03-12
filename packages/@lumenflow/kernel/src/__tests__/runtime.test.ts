@@ -411,6 +411,50 @@ describe('kernel runtime facade', () => {
     }
   });
 
+  it('threads manifest-declared required_env through the default resolver', async () => {
+    await writeManifest([
+      'id: software-delivery',
+      'version: 1.0.0',
+      'task_types:',
+      '  - work-unit',
+      'tools:',
+      `  - name: ${PACK_ECHO_TOOL_NAME}`,
+      '    entry: tools/echo.ts',
+      '    permission: read',
+      '    required_scopes:',
+      '      - type: path',
+      '        pattern: "**"',
+      '        access: read',
+      '    required_env:',
+      '      - DECLARED_TOKEN',
+      'policies:',
+      '  - id: runtime.completion.allow',
+      '    trigger: on_completion',
+      '    decision: allow',
+      'state_aliases:',
+      '  active: in_progress',
+      'evidence_types: []',
+      'lane_templates: []',
+      'config_key: software_delivery',
+    ]);
+
+    const registerSpy = vi.spyOn(ToolRegistry.prototype, 'register');
+    try {
+      await createRuntimeWithDefaultResolver({
+        sandboxSubprocessDispatcherOptions: {
+          commandExists: () => false,
+        },
+      });
+      const registeredPackCapability = registerSpy.mock.calls
+        .map((call) => call[0])
+        .find((capability) => capability.name === PACK_ECHO_TOOL_NAME);
+
+      expect(registeredPackCapability?.required_env).toEqual(['DECLARED_TOKEN']);
+    } finally {
+      registerSpy.mockRestore();
+    }
+  });
+
   it('emits workspace_updated with the computed workspace hash at runtime initialization', async () => {
     await createRuntime();
 
@@ -1598,6 +1642,7 @@ describe('kernel runtime facade', () => {
         policyId?: string;
         policyTrigger?: 'on_tool_request' | 'on_claim' | 'on_completion' | 'on_evidence_added';
         policyDecision?: 'allow' | 'deny' | 'approval_required';
+        requiredEnv?: string[];
       } = {},
     ): Promise<void> {
       const packRoot = join(root, PACKS_DIR_NAME, SOFTWARE_DELIVERY_PACK_ID);
@@ -1619,6 +1664,9 @@ describe('kernel runtime facade', () => {
           '      - type: path',
           '        pattern: "**"',
           '        access: read',
+          ...(options.requiredEnv
+            ? ['    required_env:', ...options.requiredEnv.map((envName) => `      - ${envName}`)]
+            : []),
           'policies:',
           `  - id: ${policyId}`,
           `    trigger: ${policyTrigger}`,
@@ -1647,6 +1695,9 @@ describe('kernel runtime facade', () => {
               retries: {
                 type: 'integer',
                 minimum: 0,
+              },
+              token_env: {
+                type: 'string',
               },
             },
             additionalProperties: false,
@@ -1773,6 +1824,35 @@ describe('kernel runtime facade', () => {
         mode: 'strict',
         retries: 2,
       });
+    });
+
+    it('accepts pack config env references declared in required_env', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, [
+        '  mode: strict',
+        '  token_env: DECLARED_TOKEN',
+      ]);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery', {
+        requiredEnv: ['DECLARED_TOKEN'],
+      });
+
+      const runtime = await createRuntimeWithDefaultResolver({
+        sandboxSubprocessDispatcherOptions: {
+          commandExists: () => false,
+        },
+      });
+
+      expect(runtime).toBeDefined();
+    });
+
+    it('rejects pack config env references that are not declared in required_env', async () => {
+      await writeWorkspaceWithPackConfigLines(tempRoot, [
+        '  mode: strict',
+        '  token_env: UNDECLARED_TOKEN',
+      ]);
+      await writeManifestWithConfigSchema(tempRoot, 'software_delivery');
+
+      await expect(createRuntime()).rejects.toThrow(/UNDECLARED_TOKEN/);
+      await expect(createRuntime()).rejects.toThrow(/required_env/i);
     });
 
     it('rejects invalid pack config during runtime initialization', async () => {

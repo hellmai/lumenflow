@@ -30,6 +30,31 @@ function collectArgs(args: string[]): string {
 }
 
 describe('buildBwrapInvocation with network allowlist', () => {
+  it('clears ambient env and re-adds only declared env vars', () => {
+    const profile = buildSandboxProfileFromScopes(
+      [{ type: 'path', pattern: 'sandbox/**', access: 'write' }],
+      {
+        workspaceRoot: '/tmp/workspace',
+        homeDir: '/tmp/home',
+        env: {
+          DECLARED_TOKEN: 'secret',
+          UNDECLARED_TOKEN: 'leak',
+        },
+        requiredEnv: ['DECLARED_TOKEN'],
+      },
+    );
+
+    const invocation = buildBwrapInvocation({
+      profile,
+      command: ['node', '/tmp/worker.js'],
+    });
+
+    const allArgs = collectArgs(invocation.args);
+    expect(invocation.args).toContain('--clearenv');
+    expect(allArgs).toContain('DECLARED_TOKEN');
+    expect(allArgs).not.toContain('UNDECLARED_TOKEN');
+  });
+
   it('emits --unshare-net when network_posture is allowlist', () => {
     const profile = makeAllowlistProfile(['registry.npmjs.org:443']);
     const invocation = buildBwrapInvocation({
@@ -179,6 +204,7 @@ describe('SandboxSubprocessDispatcher threads allowlist', () => {
         output_schema: {} as never,
         permission: 'admin',
         required_scopes: [],
+        required_env: ['DECLARED_TOKEN'],
         handler: {
           kind: 'subprocess',
           entry: '/tmp/adapter.mjs',

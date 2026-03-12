@@ -35,6 +35,7 @@ export interface BuildSandboxProfileFromScopesOptions {
   workspaceRoot?: string;
   homeDir?: string;
   env?: NodeJS.ProcessEnv;
+  requiredEnv?: readonly string[];
   denyOverlays?: SandboxDenyOverlay[];
 }
 
@@ -80,13 +81,21 @@ function dedupeMounts(mounts: SandboxBindMount[]): SandboxBindMount[] {
   });
 }
 
-function normalizeEnvironment(env: NodeJS.ProcessEnv | undefined): Record<string, string> {
+function normalizeEnvironment(
+  env: NodeJS.ProcessEnv | undefined,
+  requiredEnv: readonly string[] | undefined,
+): Record<string, string> {
   if (!env) {
     return {};
   }
 
+  const allowedEnvNames =
+    requiredEnv && requiredEnv.length > 0 ? new Set(requiredEnv) : new Set<string>();
   const normalized: Record<string, string> = {};
   for (const [key, value] of Object.entries(env)) {
+    if (allowedEnvNames.size > 0 && !allowedEnvNames.has(key)) {
+      continue;
+    }
     if (typeof value === 'string') {
       normalized[key] = value;
     }
@@ -160,6 +169,6 @@ export function buildSandboxProfileFromScopes(
         workspaceRoot,
         homeDir: options.homeDir,
       }),
-    env: normalizeEnvironment(options.env),
+    env: normalizeEnvironment(options.env, options.requiredEnv),
   };
 }

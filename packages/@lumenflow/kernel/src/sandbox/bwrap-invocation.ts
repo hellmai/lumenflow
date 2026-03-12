@@ -162,7 +162,7 @@ export function buildIptablesAllowlistScript(allowlist: string[], command: strin
 export function buildBwrapInvocation(input: BuildBwrapInvocationInput): SandboxInvocation {
   assertCommand(input.command);
 
-  const args: string[] = ['--die-with-parent', '--new-session', '--tmpfs', '/'];
+  const args: string[] = ['--die-with-parent', '--new-session', '--clearenv', '--tmpfs', '/'];
 
   for (const mount of collectReadonlyAllowlistMounts(input.profile, input.command)) {
     args.push('--ro-bind', mount.source, mount.target);

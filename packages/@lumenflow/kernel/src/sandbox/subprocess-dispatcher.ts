@@ -177,7 +177,10 @@ export class SandboxSubprocessDispatcher implements SubprocessDispatcher {
       receipt_id: randomUUID(),
     };
 
-    const profile = buildSandboxProfileFromScopes(request.scopeEnforced, this.profileOptions);
+    const profile = buildSandboxProfileFromScopes(request.scopeEnforced, {
+      ...this.profileOptions,
+      requiredEnv: request.capability.required_env ?? [],
+    });
     const sandboxInvocation = buildBwrapInvocation({
       profile,
       command: [this.nodeBinary, this.workerEntry],

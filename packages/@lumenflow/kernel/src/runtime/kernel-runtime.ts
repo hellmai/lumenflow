@@ -40,6 +40,7 @@ import {
 } from '../event-store/index.js';
 import { EvidenceStore } from '../evidence/evidence-store.js';
 import {
+  ENVIRONMENT_VARIABLE_NAME_PATTERN,
   ExecutionContextSchema,
   RUN_STATUSES,
   RunSchema,
@@ -114,6 +115,7 @@ const PACK_POLICY_FACTORY_NAMED_EXPORT = 'policyFactory';
 const RUNTIME_LOAD_STAGE_ERROR_PREFIX = 'Runtime load stage failed for pack';
 const RUNTIME_REGISTRATION_STAGE_ERROR_PREFIX = 'Runtime registration stage failed for tool';
 const WORKSPACE_UPDATED_INIT_SUMMARY = 'Workspace config hash initialized during runtime startup.';
+const PACK_CONFIG_ENV_REFERENCE_SUFFIX = '_env';
 const SPEC_TAMPERED_ERROR_CODE = 'SPEC_TAMPERED';
 const SPEC_TAMPERED_WORKSPACE_MESSAGE =
   'Workspace configuration hash mismatch detected; execution blocked.';
@@ -760,8 +762,73 @@ async function attachResolvedPackConfig(
   };
 }
 
+interface PackConfigEnvReference {
+  envName: string;
+  path: string;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function formatPackConfigPath(pathSegments: readonly string[]): string {
+  return pathSegments.join('.');
+}
+
+function collectPackConfigEnvReferences(
+  value: unknown,
+  pathSegments: readonly string[],
+): PackConfigEnvReference[] {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) =>
+      collectPackConfigEnvReferences(entry, [...pathSegments, String(index)]),
+    );
+  }
+
+  if (!isRecord(value)) {
+    return [];
+  }
+
+  const references: PackConfigEnvReference[] = [];
+  for (const [key, childValue] of Object.entries(value)) {
+    const childPath = [...pathSegments, key];
+    if (key.endsWith(PACK_CONFIG_ENV_REFERENCE_SUFFIX) && typeof childValue === 'string') {
+      references.push({
+        envName: childValue,
+        path: formatPackConfigPath(childPath),
+      });
+    }
+    references.push(...collectPackConfigEnvReferences(childValue, childPath));
+  }
+
+  return references;
+}
+
+function validatePackConfigEnvReferences(loadedPack: LoadedDomainPack): void {
+  if (!loadedPack.manifest.config_key || loadedPack.resolvedConfig === undefined) {
+    return;
+  }
+
+  const declaredEnvNames = new Set(
+    loadedPack.manifest.tools.flatMap((tool) => tool.required_env ?? []),
+  );
+  const envReferences = collectPackConfigEnvReferences(loadedPack.resolvedConfig, [
+    loadedPack.manifest.config_key,
+  ]);
+
+  for (const reference of envReferences) {
+    if (!ENVIRONMENT_VARIABLE_NAME_PATTERN.test(reference.envName)) {
+      throw new Error(
+        `Pack "${loadedPack.manifest.id}" workspace config reference "${reference.path}" must use an uppercase environment variable name, got "${reference.envName}".`,
+      );
+    }
+
+    if (!declaredEnvNames.has(reference.envName)) {
+      throw new Error(
+        `Pack "${loadedPack.manifest.id}" workspace config reference "${reference.path}" uses "${reference.envName}" but no manifest tool declares it in required_env.`,
+      );
+    }
+  }
 }
 
 function isPolicyTrigger(value: unknown): value is PolicyRule['trigger'] {
@@ -956,6 +1023,7 @@ export async function defaultRuntimeToolCapabilityResolver(
     output_schema: resolvedOutputSchema,
     permission: input.tool.permission,
     required_scopes: input.tool.required_scopes,
+    required_env: input.tool.required_env,
     handler: {
       kind: TOOL_HANDLER_KINDS.SUBPROCESS,
       entry: resolvedEntry,
@@ -1718,9 +1786,12 @@ export async function initializeKernelRuntime(
 
   const resolvedLoadedPacks: LoadedDomainPack[] = [];
   for (const loadedPack of loadedPacks) {
-    resolvedLoadedPacks.push(
-      await attachResolvedPackConfig(loadedPack, resolvedWorkspace.raw_workspace_data),
+    const resolvedLoadedPack = await attachResolvedPackConfig(
+      loadedPack,
+      resolvedWorkspace.raw_workspace_data,
     );
+    validatePackConfigEnvReferences(resolvedLoadedPack);
+    resolvedLoadedPacks.push(resolvedLoadedPack);
   }
 
   const registry = new ToolRegistry();
