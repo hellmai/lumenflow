@@ -2,7 +2,7 @@ id: WU-2414
 title: Add policy-aware tool filtering and auto-discovery
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -54,3 +54,6 @@ acceptance:
   - Filtering applies scope intersection and policy evaluation for an execution context and intent
   - The pack can build its own governed tool catalog without trusting a host-supplied list
   - Tests prove filtered tool lists differ from raw registry results when policies tighten access
+locked: true
+completed_at: 2026-03-12T15:01:48.674Z
+completed: 2026-03-12
