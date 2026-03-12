@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2438 — BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects](wu/WU-2438.yaml) — Framework: CLI WU Commands
 - [WU-2437 — BUG: gate-co-change crashes with require() in ESM context](wu/WU-2437.yaml) — Framework: CLI WU Commands
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
