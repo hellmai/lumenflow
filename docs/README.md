@@ -8,12 +8,12 @@ Internal documentation for LumenFlow, organized by concern. Uses arc42 section n
 
 ## Quick Start by Role
 
-| Role | Start Here | Key Documents |
-|------|-----------|---------------|
-| **Product/Business** | [01-introduction-and-goals/](01-introduction-and-goals/) | Vision, quality goals, stakeholders |
-| **Engineering** | [02-technical/](02-technical/) | Package architecture, implementation guides |
-| **Operations** | [04-operations/](04-operations/) | Tasks, WU management, framework docs |
-| **Architecture** | [09-architecture-decisions/](09-architecture-decisions/) | ADRs, migration guides |
+| Role                 | Start Here                                               | Key Documents                               |
+| -------------------- | -------------------------------------------------------- | ------------------------------------------- |
+| **Product/Business** | [01-introduction-and-goals/](01-introduction-and-goals/) | Vision, quality goals, stakeholders         |
+| **Engineering**      | [02-technical/](02-technical/)                           | Package architecture, implementation guides |
+| **Operations**       | [04-operations/](04-operations/)                         | Tasks, WU management, framework docs        |
+| **Architecture**     | [09-architecture-decisions/](09-architecture-decisions/) | ADRs, migration guides                      |
 
 ---
 
@@ -47,7 +47,7 @@ Task management, WU tracking, framework docs, and operational procedures.
 
 - [tasks/backlog.md](04-operations/tasks/backlog.md) — master backlog
 - [tasks/status.md](04-operations/tasks/status.md) — current WU status
-- [_frameworks/lumenflow/](04-operations/_frameworks/lumenflow/) — framework reference documentation
+- [\_frameworks/lumenflow/](04-operations/_frameworks/lumenflow/) — framework reference documentation
 
 ---
 

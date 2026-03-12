@@ -6,14 +6,14 @@ Architecture Decision Records (ADRs) for LumenFlow, following arc42 section 09.
 
 ## Index
 
-| ADR | Title | Status | Date |
-|-----|-------|--------|------|
-| [ADR-001](ADR-001-hexagonal-architecture.md) | Hexagonal Architecture for @lumenflow/core | Accepted | 2026-01-25 |
-| ADR-002 | _(retired)_ | — | — |
-| [ADR-003](ADR-003-methodology-templates.md) | Configurable Methodology Templates | Accepted | 2026-01-30 |
-| [ADR-004](ADR-004-error-return-contracts.md) | Standardized Error Return Contracts | Accepted | 2026-02-24 |
-| [ADR-005](ADR-005-main-branch-sync-semantics.md) | Main-Branch Sync Semantics and Consolidation Plan | Accepted | 2026-02-26 |
-| [ADR-006](ADR-006-delegation-package-extraction.md) | Delegation Package Extraction | Accepted | 2026-03-02 |
+| ADR                                                 | Title                                             | Status   | Date       |
+| --------------------------------------------------- | ------------------------------------------------- | -------- | ---------- |
+| [ADR-001](ADR-001-hexagonal-architecture.md)        | Hexagonal Architecture for @lumenflow/core        | Accepted | 2026-01-25 |
+| ADR-002                                             | _(retired)_                                       | —        | —          |
+| [ADR-003](ADR-003-methodology-templates.md)         | Configurable Methodology Templates                | Accepted | 2026-01-30 |
+| [ADR-004](ADR-004-error-return-contracts.md)        | Standardized Error Return Contracts               | Accepted | 2026-02-24 |
+| [ADR-005](ADR-005-main-branch-sync-semantics.md)    | Main-Branch Sync Semantics and Consolidation Plan | Accepted | 2026-02-26 |
+| [ADR-006](ADR-006-delegation-package-extraction.md) | Delegation Package Extraction                     | Accepted | 2026-03-02 |
 
 ---
 
