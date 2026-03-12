@@ -2,7 +2,7 @@ id: WU-2402
 title: 'Align test config: coverage threshold mismatch and passWithNoTests masking gaps'
 lane: 'Framework: Core Validation'
 type: bug
-status: ready
+status: in_progress
 priority: P3
 created: 2026-03-12
 code_paths:
@@ -17,7 +17,9 @@ artifacts:
   - .lumenflow/stamps/WU-2402.done
 dependencies: []
 risks: []
-notes: Config-only change. May need to coordinate with WU-2401 (test coverage gaps) — if passWithNoTests is disabled before test gaps are closed, CI will break. Consider landing WU-2401 first or landing together.
+notes: Config-only change. May need to coordinate with WU-2401 (test coverage gaps) — if
+  passWithNoTests is disabled before test gaps are closed, CI will break. Consider landing WU-2401
+  first or landing together.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -30,8 +32,20 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Code review found two test configuration issues: (1) workspace.yaml specifies 90% minimum coverage but vitest.config.ts enforces 80% — these should be aligned to one number; (2) passWithNoTests:true in vitest.config.ts allows packages with zero tests to pass CI silently, which is how the metrics and runtime test gaps went unnoticed. Fixing passWithNoTests may require adding placeholder tests or adjusting the include patterns.'
+description: 'Code review found two test configuration issues: (1) workspace.yaml specifies 90%
+  minimum coverage but vitest.config.ts enforces 80% — these should be aligned to one number; (2)
+  passWithNoTests:true in vitest.config.ts allows packages with zero tests to pass CI silently,
+  which is how the metrics and runtime test gaps went unnoticed. Fixing passWithNoTests may require
+  adding placeholder tests or adjusting the include patterns.'
 acceptance:
   - Coverage threshold is consistent between workspace.yaml and vitest.config.ts
   - passWithNoTests is disabled or scoped to only explicitly exempt packages
   - CI passes with the updated config
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2402
+claimed_at: 2026-03-12T09:53:50.387Z
+baseline_main_sha: 903f58890c78cc6fe478b30ea8be92c6e07c5922
+session_id: fd26d1b7-ddbc-450b-b60b-b430cca2f939
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T09:53:50.395Z

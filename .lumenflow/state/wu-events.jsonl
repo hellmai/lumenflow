@@ -3228,3 +3228,4 @@
 {"type":"claim","wuId":"WU-2399","timestamp":"2026-03-12T09:51:58.609Z","lane":"Framework: CLI WU Commands","title":"Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching"}
 {"type":"claim","wuId":"WU-2400","timestamp":"2026-03-12T09:52:56.045Z","lane":"Framework: CLI WU Commands","title":"Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity"}
 {"type":"claim","wuId":"WU-2401","timestamp":"2026-03-12T09:53:24.085Z","lane":"Framework: Core Validation","title":"Close test coverage gaps: add tests for metrics, memory, runtime, and web packages"}
+{"type":"claim","wuId":"WU-2402","timestamp":"2026-03-12T09:53:50.425Z","lane":"Framework: Core Validation","title":"Align test config: coverage threshold mismatch and passWithNoTests masking gaps"}
