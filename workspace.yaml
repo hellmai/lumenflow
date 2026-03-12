@@ -226,7 +226,7 @@ software_delivery:
     packages: packages/
     tools: tools/
     memoryBank: memory-bank/
-    wuDir: docs/operations/tasks/wu
+    wuDir: docs/04-operations/tasks/wu
     initiativesDir: docs/operations/tasks/initiatives
     backlogPath: docs/operations/tasks/backlog.md
     statusPath: docs/operations/tasks/status.md
