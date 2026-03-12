@@ -350,6 +350,7 @@ function loadSpecFile(
 /** Options for applyEdits - parsed from CLI flags */
 export interface ApplyEditsOpts {
   specFile?: string;
+  title?: string;
   description?: string;
   acceptance?: string[];
   replaceAcceptance?: boolean;
@@ -397,6 +398,11 @@ export function applyEdits(
   const updated = { ...wu };
 
   // Field-level updates
+  // WU-2423: Handle --title
+  if (opts.title) {
+    updated.title = opts.title;
+  }
+
   if (opts.description) {
     updated.description = opts.description;
   }

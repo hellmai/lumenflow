@@ -192,6 +192,8 @@ export function validateDoneWUEdits(opts: Record<string, unknown>): {
 
   // Check for disallowed edits on done WUs
   if (opts.specFile) disallowedEdits.push('--spec-file');
+  // WU-2423: Block title changes on done WUs
+  if (opts.title) disallowedEdits.push('--title');
   if (opts.description) disallowedEdits.push('--description');
   if (opts.acceptance && Array.isArray(opts.acceptance) && opts.acceptance.length > 0) {
     disallowedEdits.push('--acceptance');
@@ -534,6 +536,7 @@ const METADATA_ONLY_FIELDS: ReadonlySet<string> = new Set([
  */
 const STRUCTURAL_FIELDS: ReadonlySet<string> = new Set([
   'specFile',
+  'title',
   'description',
   'codePaths',
   'replaceCodePaths',

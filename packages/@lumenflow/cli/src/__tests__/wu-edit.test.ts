@@ -551,6 +551,36 @@ describe('WU-2386: metadata-only edit detection', () => {
   });
 });
 
+describe('WU-2423: --title flag support', () => {
+  it('updates title via applyEdits', () => {
+    const baseWU = { id: 'WU-2423', status: 'ready', title: 'Old title' };
+    const result = applyEdits(baseWU, { title: 'New title' });
+    expect(result.title).toBe('New title');
+  });
+
+  it('preserves title when not specified', () => {
+    const baseWU = { id: 'WU-2423', status: 'ready', title: 'Original' };
+    const result = applyEdits(baseWU, { description: 'new desc' });
+    expect(result.title).toBe('Original');
+  });
+
+  it('blocks title changes on done WUs', () => {
+    const result = validateDoneWUEdits({ title: 'New title' });
+    expect(result.valid).toBe(false);
+    expect(result.disallowedEdits).toContain('--title');
+  });
+
+  it('allows initiative edit alongside title block on done WUs', () => {
+    const result = validateDoneWUEdits({ initiative: 'INIT-001', title: 'New title' });
+    expect(result.valid).toBe(false);
+    expect(result.disallowedEdits).toContain('--title');
+  });
+
+  it('classifies title as structural (not metadata-only)', () => {
+    expect(isMetadataOnlyEdit({ title: 'New title' })).toBe(false);
+  });
+});
+
 describe('WU-2340: authoritative state mismatch guidance', () => {
   it('tells callers how to recover from stale local WU state', () => {
     const message = buildAuthoritativeStateMismatchMessage(

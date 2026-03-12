@@ -108,6 +108,7 @@ const PREFIX = LOG_PREFIX.EDIT;
 interface WuEditArgs extends Record<string, unknown> {
   id: string;
   specFile?: string;
+  title?: string;
   description?: string;
   acceptance?: string[];
   notes?: string;
@@ -143,6 +144,12 @@ const EDIT_OPTIONS = {
     name: 'specFile',
     flags: '--spec-file <path>',
     description: 'Path to YAML file with updated spec content',
+  },
+  // WU-2423: Add title edit support
+  title: {
+    name: 'title',
+    flags: '--title <text>',
+    description: 'New title text (replaces existing)',
   },
   description: {
     name: 'description',
@@ -291,6 +298,8 @@ function parseArgs(): WuEditArgs {
       options: [
         WU_OPTIONS.id,
         EDIT_OPTIONS.specFile,
+        // WU-2423: Add title edit
+        EDIT_OPTIONS.title,
         EDIT_OPTIONS.description,
         EDIT_OPTIONS.acceptance,
         EDIT_OPTIONS.notes,
@@ -400,6 +409,8 @@ export async function main() {
 
   const hasEdits =
     opts.specFile ||
+    // WU-2423: Add title to hasEdits check
+    opts.title ||
     opts.description ||
     (opts.acceptance && opts.acceptance.length > 0) ||
     opts.notes ||
@@ -429,6 +440,7 @@ export async function main() {
       'No edits specified.\n\n' +
         'Provide one of:\n' +
         '  --spec-file <path>        Replace full spec from YAML file\n' +
+        '  --title <text>            Update title field\n' +
         '  --description <text>      Update description field\n' +
         '  --acceptance <text>       Append acceptance criteria (repeatable; use --replace-acceptance to overwrite)\n' +
         '  --notes <text>            Append to notes (use --replace-notes to overwrite)\n' +
