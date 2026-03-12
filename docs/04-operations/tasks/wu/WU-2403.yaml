@@ -6,7 +6,7 @@ status: in_progress
 priority: P3
 created: 2026-03-12
 code_paths:
-  - packages/@lumenflow/initiatives/src/__tests__
+  - packages/@lumenflow/initiatives/vitest.config.ts
 tests:
   manual:
     - Run pnpm test 3 times consecutively with no failures
