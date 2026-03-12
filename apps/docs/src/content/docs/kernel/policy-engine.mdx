@@ -37,6 +37,10 @@ A rule has four parts:
 
 Rules in pack manifests are static — they apply unconditionally when their trigger fires. Packs can also register runtime-authored rules through a manifest `policy_factory`, and those rules can include a `when` predicate for conditional evaluation (see [Conditional Rules with `when()`](#conditional-rules-with-when) below).
 
+This split is useful when a pack needs runtime-aware governance. The `agent-runtime` pack, for
+example, keeps a static baseline `allow` rule in the manifest, then uses `policy_factory` to add
+intent-aware `deny` and `approval_required` rules after pack config has been resolved.
+
 ## Deny-Wins Evaluation
 
 The evaluation algorithm processes layers in order:
@@ -157,6 +161,27 @@ const rule: PolicyRule = {
   continue to work unchanged. The field is only populated for `on_tool_request` evaluations where
   the tool input is a plain object.
 </Aside>
+
+## Intent-Aware Governed Routing
+
+Conditional rules can inspect `execution_metadata` as well as tool arguments. This lets a host
+classify an intent during one governed turn, then attach the result to the real tool call that
+follows:
+
+```typescript
+const rule: PolicyRule = {
+  id: 'agent-runtime.intent.deny',
+  trigger: 'on_tool_request',
+  decision: 'deny',
+  reason: 'Scheduling intent does not permit outbound email.',
+  when: (context) =>
+    context.execution_metadata?.agent_intent === 'scheduling' && context.tool_name === 'email:send',
+};
+```
+
+The same rule set is also used by policy-aware governed tool discovery, so a host can filter the
+tool catalog before the turn runs and still get the same allow/deny/approval behavior at execution
+time.
 
 ## Evaluation Result
 

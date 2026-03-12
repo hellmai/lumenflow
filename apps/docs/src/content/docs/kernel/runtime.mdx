@@ -46,8 +46,9 @@ The kernel is created by calling `initializeKernelRuntime()` with a workspace ro
 
 1. The `workspace.yaml` spec is read and hashed (SHA-256). This hash is checked on every subsequent `executeTool` call — if the spec changes while the kernel is running, all tool calls return `SPEC_TAMPERED` until the kernel is restarted.
 2. All [packs](/kernel/packs) referenced in the workspace spec are loaded, validated, and their tools registered.
-3. The [policy engine](/kernel/policy-engine) is constructed with a four-layer stack built from pack-declared policies.
-4. The [evidence store](/kernel/evidence-store) is initialized and any orphaned traces from a previous crash are reconciled.
+3. Pack-specific workspace config is validated against each pack's declared `config_schema` and made available to runtime capability and policy factories.
+4. The [policy engine](/kernel/policy-engine) is constructed with a four-layer stack built from pack-declared policies plus any runtime-authored rules returned by pack `policy_factory` hooks.
+5. The [evidence store](/kernel/evidence-store) is initialized and any orphaned traces from a previous crash are reconciled.
 
 ## Task Lifecycle
 
@@ -85,6 +86,48 @@ Agent orchestration can stay above the kernel while still using kernel-enforced 
 4. feed the tool result back into the next `agent:execute-turn`
 
 This keeps the model-turn loop in host code, but the actual tool request still passes through scope enforcement, pack policies, approvals, and evidence recording. Hosts can also pass `agent_turn_index` and `agent_tool_call_count` in `execution_metadata` to enforce loop limits consistently across turns.
+
+## Runtime-Visible Pack Config
+
+Packs can declare a `config_key` and `config_schema` in their manifest. During runtime startup, the
+kernel validates the workspace config payload for that pack and threads the resolved value into:
+
+- **capability factories** — for config-aware `required_scopes` and `required_env`
+- **policy factories** — for runtime-authored conditional rules
+
+This is how the `agent-runtime` pack derives provider host allowlists, validates credential env
+references, and turns configured intents into kernel-enforced policy decisions.
+
+## Policy-Aware Tool Discovery
+
+Hosts do not need to reconstruct tool gating in application code. They can ask the runtime for the
+already-filtered tool set:
+
+```ts
+const governedTools = await runtime.getToolHost().listGovernedTools({
+  ...ctx,
+  metadata: {
+    agent_intent: 'scheduling',
+  },
+});
+```
+
+`listGovernedTools()` applies the same scope intersection and policy evaluation used during real
+execution. The result includes `allow` and `approval_required` entries but excludes denied and
+out-of-scope tools.
+
+## Pack-Owned Agent-Session Orchestration
+
+Framework orchestration can remain above the kernel, but packs can still own their domain runtime
+state. The `agent-runtime` pack uses this boundary to persist:
+
+- linear `agent-session` resume state
+- workflow branch and join readiness
+- scheduled wakeups
+- continuation records explaining why a session resumed
+
+Those orchestration records live in pack state under `.agent-runtime/workflow/`, while the kernel
+continues to own approval state, tool execution, and immutable evidence receipts.
 
 ## Filesystem Layout
 

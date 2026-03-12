@@ -330,6 +330,10 @@ The response on stdout is a JSON object with an `output` field containing the st
 
 The `bwrap` sandbox profile is constructed from the enforced scopes. Write-scoped paths get read-write bind mounts; read-scoped paths get read-only bind mounts. Paths outside the scope intersection are not mounted — the tool literally cannot see them.
 
+The sandbox profile also carries an explicit environment allowlist. Only variables declared through
+manifest `required_env` entries or capability-factory augmentations are passed into the tool
+process. Ambient credentials are cleared before the allowed variables are reintroduced.
+
 ## Platform-Specific Sandbox Backends
 
 The kernel dispatches tool execution through platform-specific sandbox backends. Each backend enforces the same `SandboxProfile` contract — scoped filesystem mounts, network posture, and deny overlays — but uses the native isolation primitive available on that OS.

@@ -1,0 +1,30 @@
+---
+title: Agent Runtime Pack
+description: Governed agent-session turns, provider adapters, and pack-owned orchestration on top of the kernel
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+The **Agent Runtime Pack** provides governed model turns and `agent-session` orchestration on top
+of the [kernel](/kernel/runtime). It keeps policy enforcement, scope enforcement, evidence, and
+sandboxing in the kernel while adding a pack-owned contract for agent execution.
+
+<Aside type="note">
+  The kernel remains the enforcement boundary. The pack adds agent-session semantics, provider
+  adapter normalization, and workflow state.
+</Aside>
+
+<CardGrid>
+  <Card title="Overview" icon="open-book">
+    Runtime boundary, task model, public surface, and limitations.
+    [Open](/packs/agent-runtime/overview)
+  </Card>
+  <Card title="Configuration" icon="seti:yaml">
+    Workspace pinning, model profiles, intent rules, limits, and sandboxed credentials.
+    [Open](/packs/agent-runtime/configuration)
+  </Card>
+  <Card title="Workflows & Examples" icon="list">
+    Host-driven turns, governed tool discovery, streaming, approvals, and workflow DAG helpers.
+    [Open](/packs/agent-runtime/workflows)
+  </Card>
+</CardGrid>

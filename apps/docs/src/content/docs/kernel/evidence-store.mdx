@@ -9,7 +9,7 @@ The **Evidence Store** records every tool call that passes through the [kernel](
 
 ## What Gets Recorded
 
-Every tool call generates two trace entries:
+Every tool call generates:
 
 ### 1. TOOL_CALL_STARTED
 
@@ -23,7 +23,16 @@ Written _before_ the tool executes. Contains:
 - `scope_enforced` — the computed scope intersection result
 - `timestamp` — when the call was initiated
 
-### 2. TOOL_CALL_FINISHED
+### 2. TOOL_CALL_PROGRESS (optional, repeatable)
+
+Written between the started and finished entries when a tool reports progress snapshots. Contains:
+
+- `receipt_id` — matches the started entry
+- `sequence` — monotonic snapshot order for this receipt
+- `payload` — partial progress data such as streaming turn snapshots
+- `timestamp` — when the snapshot was recorded
+
+### 3. TOOL_CALL_FINISHED
 
 Written _after_ the tool completes (or fails). Contains:
 
@@ -33,6 +42,9 @@ Written _after_ the tool completes (or fails). Contains:
 - `output_hash` — SHA-256 hash of the output
 - `policy_decisions` — every policy rule that was evaluated, with its decision
 - `artifacts_written` — files the tool reports having created or modified
+
+Non-streaming tools usually produce only started and finished entries. Streaming tools such as
+`agent:execute-turn` can emit multiple progress entries before the final result.
 
 <Aside type="note">
   Even denied tool calls produce evidence. If scope intersection fails or a policy denies the call,
@@ -85,7 +97,10 @@ The evidence store maintains an in-memory index for fast lookups. On first acces
 
 ## Crash Recovery
 
-If the kernel crashes mid-execution (between `TOOL_CALL_STARTED` and `TOOL_CALL_FINISHED`), the evidence store detects the orphaned started trace on next startup and synthesizes a finished trace with `result: crashed`. This ensures every started trace has a matching finished trace — the audit trail has no gaps.
+If the kernel crashes mid-execution (between `TOOL_CALL_STARTED` and `TOOL_CALL_FINISHED`), the
+evidence store detects the orphaned started trace on next startup and synthesizes a finished trace
+with `result: crashed`. This works even when progress traces already exist for the same receipt, so
+streaming calls still reconcile to a complete audit trail.
 
 ## Querying Evidence
 
@@ -106,6 +121,10 @@ The evidence store answers three questions that traditional logging cannot:
 3. **What actually happened?** — Success, failure, denial, and crash outcomes are all captured with timing.
 
 This is the foundation for compliance, audit, and post-incident analysis in agent-driven workflows.
+
+Pack-owned workflow continuations are a separate concern. For example, the `agent-runtime` pack
+stores session resume state and wakeup continuations under `.agent-runtime/workflow/`, while the
+evidence store remains the immutable record of actual tool executions.
 
 ## Next Steps
 

@@ -1,0 +1,192 @@
+---
+title: Workflows And Examples
+description: Host-driven turns, governed tool discovery, streaming, approvals, and workflow orchestration
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+The Agent Runtime Pack supports both host-driven loops and pack-owned `agent-session` orchestration.
+
+## Host-Driven Turn Loop
+
+Use `agent:execute-turn` for one normalized turn, then call the requested tool through the kernel.
+
+```ts
+const ctx = {
+  run_id: 'run-agent-session-1',
+  task_id: 'task-agent-session-1',
+  session_id: 'session-agent-session-1',
+  allowed_scopes: [],
+};
+
+const turn = await runtime.executeTool(
+  'agent:execute-turn',
+  {
+    session_id: ctx.session_id,
+    model_profile: 'operations',
+    url: 'https://models.internal.example/',
+    messages: [{ role: 'user', content: 'Reschedule the weekly review for tomorrow morning.' }],
+    tool_catalog: [
+      {
+        name: 'calendar:reschedule-event',
+        description: 'Move an existing calendar event to a new time.',
+      },
+    ],
+    intent_catalog: [{ id: 'scheduling', description: 'Schedule or reschedule work.' }],
+  },
+  ctx,
+);
+```
+
+If the governed turn returns `tool_request`, call the requested tool with the classified intent in
+`execution_metadata`:
+
+```ts
+const toolResult = await runtime.executeTool(
+  turn.data.requested_tool.name,
+  turn.data.requested_tool.input,
+  {
+    ...ctx,
+    metadata: {
+      agent_intent: turn.data.intent,
+      agent_turn_index: 0,
+      agent_tool_call_count: 1,
+    },
+  },
+);
+```
+
+Feed the `toolResult` back into the next `agent:execute-turn` call as a `tool` message.
+
+## Governed Tool Auto-Discovery
+
+Hosts can discover the tool set that is already filtered by scope and policy before they build a
+turn prompt:
+
+```ts
+const governedTools = await runtime.getToolHost().listGovernedTools({
+  ...ctx,
+  metadata: {
+    agent_intent: 'scheduling',
+  },
+});
+
+const toolCatalog = governedTools.map((entry) => ({
+  name: entry.capability.name,
+  description: entry.capability.description ?? 'No description provided.',
+}));
+```
+
+`listGovernedTools()` removes out-of-scope tools and excluded tools, and preserves
+`approval_required` decisions so the host can present them correctly.
+
+## Streaming Turns
+
+Set `stream: true` when you want the provider adapter to capture streaming partials:
+
+```ts
+const turn = await runtime.executeTool(
+  'agent:execute-turn',
+  {
+    session_id: ctx.session_id,
+    model_profile: 'operations',
+    url: 'https://models.internal.example/',
+    stream: true,
+    messages: [{ role: 'user', content: 'Draft the handoff summary.' }],
+  },
+  ctx,
+);
+```
+
+The final tool output remains normalized, but the kernel evidence store also records
+`tool_call_progress` entries for the intermediate snapshots before the final `tool_call_finished`
+receipt.
+
+## Approval-Driven Continuation
+
+When policy returns `APPROVAL_REQUIRED`, resolve it through the kernel, then feed a continuation
+message back into the next turn:
+
+```ts
+const resolution = await runtime.resolveApproval({
+  request_id: pendingRequestId,
+  approved: true,
+  approved_by: 'operator@example.com',
+});
+
+const approvalMessage = createApprovalResolutionMessage({
+  requestId: resolution.request_id,
+  approved: resolution.approved,
+  approvedBy: resolution.approved_by,
+  toolName: 'calendar:delete-event',
+});
+```
+
+Append `approvalMessage` to the next turn or resume call so the agent-session state remains
+coherent.
+
+## Pack-Owned Workflow Helpers
+
+The orchestration helpers keep long-running flows inside the same `agent-session` task model.
+
+<Steps>
+  1. Start a workflow with one or more nodes. 2. Let ready nodes execute governed turns. 3. Persist
+  waiting, scheduled, approval, and completion continuations under `.agent-runtime/workflow/`. 4.
+  Resume the same session when a wake time arrives or approval is resolved.
+</Steps>
+
+```ts
+const workflow = await startGovernedAgentWorkflow({
+  runtime,
+  storageRoot: workspaceRoot,
+  workflow: {
+    session_id: ctx.session_id,
+    nodes: [
+      {
+        id: 'collect-context',
+        execute_turn_input: {
+          session_id: ctx.session_id,
+          model_profile: 'operations',
+          url: 'https://models.internal.example/',
+          messages: [{ role: 'user', content: 'Collect the scheduling constraints.' }],
+        },
+      },
+      {
+        id: 'scheduled-follow-up',
+        depends_on: ['collect-context'],
+        wake_at: '2026-03-13T09:00:00.000Z',
+        execute_turn_input: {
+          session_id: ctx.session_id,
+          model_profile: 'operations',
+          url: 'https://models.internal.example/',
+          messages: [{ role: 'user', content: 'Run the approved follow-up.' }],
+        },
+      },
+    ],
+  },
+  createContext: (metadata) => ({ ...ctx, metadata }),
+});
+```
+
+Later, resume the same workflow:
+
+```ts
+await resumeGovernedAgentWorkflow({
+  runtime,
+  storageRoot: workspaceRoot,
+  sessionId: ctx.session_id,
+  createContext: (metadata) => ({ ...ctx, metadata }),
+});
+```
+
+<Aside type="tip">
+  Framework-level orchestration can still sit above the pack. The pack-owned helpers are only for
+  `agent-session` flows that need durable branching, joins, wakeups, and approvals.
+</Aside>
+
+## Next Steps
+
+- [Overview](/packs/agent-runtime/overview)
+- [Configuration](/packs/agent-runtime/configuration)
+- [Kernel Runtime](/kernel/runtime)
+- [Evidence Store](/kernel/evidence-store)

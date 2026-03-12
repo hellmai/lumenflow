@@ -1,0 +1,89 @@
+---
+title: Agent Runtime Pack
+description: Governed turn execution and agent-session orchestration
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **Agent Runtime Pack** is the pack-scoped runtime for governed agent execution. It is centered
+on one public tool, `agent:execute-turn`, plus library helpers for long-running `agent-session`
+orchestration.
+
+## What The Pack Adds
+
+| Surface                                                             | Purpose                                                                                                          |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `agent:execute-turn`                                                | Executes one governed model turn and returns a normalized reply, tool request, completion, or escalation payload |
+| `runGovernedAgentLoop()`                                            | Host helper for a multi-turn loop that keeps real tool calls in the kernel enforcement path                      |
+| `startGovernedAgentSession()` / `resumeGovernedAgentSession()`      | Persist and resume linear `agent-session` state                                                                  |
+| `startGovernedAgentWorkflow()` / `resumeGovernedAgentWorkflow()`    | Persist and resume branching, joins, and scheduled wakeups inside the same `agent-session` task model            |
+| `createHostContextMessages()` / `createApprovalResolutionMessage()` | Build host-supplied messages without depending on another pack's storage internals                               |
+
+The pack exports provider adapters, capability augmentation, and a policy factory, but those are
+internal pack plumbing rather than a separate public tool surface.
+
+## Task Model
+
+The pack owns one task type:
+
+```yaml
+task_types:
+  - agent-session
+```
+
+Scheduled wakeups, resumed sessions, and workflow branches all remain `agent-session` executions.
+The pack does not introduce a second execution class for routines or workflows.
+
+## Runtime Boundary
+
+| Layer              | Owns                                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Kernel             | Policy evaluation, scope intersection, sandbox execution, approval state, and evidence receipts                    |
+| Agent Runtime Pack | Turn normalization, provider adapter behavior, `agent-session` state, branch/join readiness, and scheduled wakeups |
+| Host               | External context injection, loop entry/exit, approval resolution timing, and integration with other systems        |
+
+<Aside type="tip">
+  This split keeps policy and evidence authoritative in the kernel while still letting the pack own
+  agent-session semantics.
+</Aside>
+
+## Governed Turn Contract
+
+Every `agent:execute-turn` response uses the same normalized output shape:
+
+```json
+{
+  "status": "reply | tool_request | complete | escalate",
+  "intent": "scheduling",
+  "assistant_message": "I can schedule that for tomorrow morning.",
+  "requested_tool": {
+    "name": "calendar:create-event",
+    "input": {
+      "title": "Weekly review"
+    }
+  },
+  "provider": {
+    "kind": "messages_compatible",
+    "model": "ops-assistant"
+  },
+  "finish_reason": "stop"
+}
+```
+
+The kernel still governs the real tool call that follows. A host reads the output, decides whether
+to call the requested tool, then sends the tool result back into the next governed turn.
+
+## Current Limits
+
+- The public tool surface is intentionally small: one turn tool plus pack library helpers.
+- Tool access is controlled by intent rules and kernel policy; the model never gets direct access to
+  undeclared tools.
+- Workflow state is pack-owned under `.agent-runtime/workflow/`, while the durable audit trail
+  remains in kernel evidence files.
+
+## Next Steps
+
+- [Configuration](/packs/agent-runtime/configuration)
+- [Workflows & Examples](/packs/agent-runtime/workflows)
+- [Kernel Runtime](/kernel/runtime)
+- [Policy Engine](/kernel/policy-engine)

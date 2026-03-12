@@ -38,18 +38,23 @@ A pack is a directory with a `manifest.yaml` at its root:
 
 <FileTree>
   - my-pack/ - manifest.yaml _(declares tools, policies, evidence types)_ - constants.ts _(pack id,
-  version, shared strings)_ - tools/ - types.ts _(shared type definitions)_ - tool-impl/ -
-  my-tool.ts _(runtime implementation)_
+  version, shared strings)_ - config.schema.json _(validates workspace config for the pack)_ -
+  capability-factory.ts _(derives runtime scopes/env from resolved pack config)_ - policy-factory.ts
+  _(returns conditional PolicyRule objects)_ - tools/ - types.ts _(shared type definitions)_ -
+  tool-impl/ - my-tool.ts _(runtime implementation)_
 </FileTree>
 
 The manifest is the contract between a pack and the kernel. It declares:
 
 - **Tools** — what the pack can do (name, entry point, permissions, required scopes)
-- **Policies** — rules the kernel evaluates at specific lifecycle triggers
+- **Policies** — static rules the kernel evaluates at specific lifecycle triggers
 - **Evidence types** — kinds of audit records the pack produces
 - **Task types** — what domain objects the pack manages (e.g., `work-unit`)
 - **State aliases** — friendly names for kernel state machine states
 - **Lane templates** — pre-defined lane configurations
+- **Config namespace** — `config_key` and `config_schema` for pack-specific workspace settings
+- **Capability factory** — runtime augmentation of `required_scopes` and `required_env`
+- **Policy factory** — runtime-authored rules that can inspect `PolicyEvaluationContext`
 
 ### Minimal manifest
 
@@ -62,10 +67,16 @@ tools:
   - name: my-pack:do-something
     entry: tool-impl/my-tool.ts#doSomethingTool
     permission: write
+    required_env:
+      - MY_PACK_TOKEN
     required_scopes:
       - type: path
         pattern: '**'
         access: write
+config_key: my_pack
+config_schema: config.schema.json
+capability_factory: capability-factory.ts#createMyPackCapabilityFactory
+policy_factory: policy-factory.ts#createMyPackPolicyFactory
 policies: []
 evidence_types: []
 state_aliases: {}
@@ -92,10 +103,11 @@ For each pack pin, the kernel:
    - bundled CLI packs (`@lumenflow/cli/packs/`) for end-user installs
    - a git repository (`source: git`) or registry cache (`source: registry`) when configured
 2. **Parses the manifest** — validates against the schema, checks that `id` and `version` match the pin.
-3. **Validates import boundaries** — scans all source files to ensure the pack only imports from allowed dependencies (`node:*` builtins, `@lumenflow/kernel`, and relative imports within the pack). No arbitrary npm packages allowed.
-4. **Verifies integrity** — computes a SHA-256 hash of all pack files and compares it to the pinned hash. A mismatch means the pack was modified and the kernel refuses to load it.
-5. **Registers tools** — each tool declared in the manifest becomes available in the kernel's tool registry.
-6. **Injects policies** — pack-declared policies are added to the `pack` layer of the [policy engine](/kernel/policy-engine).
+3. **Validates pack config** — if the manifest declares `config_key` and `config_schema`, the kernel validates the matching workspace config and makes the resolved payload available at runtime.
+4. **Validates import boundaries** — scans all source files to ensure the pack only imports from allowed dependencies (`node:*` builtins, `@lumenflow/kernel`, and relative imports within the pack). No arbitrary npm packages allowed.
+5. **Verifies integrity** — computes a SHA-256 hash of all pack files and compares it to the pinned hash. A mismatch means the pack was modified and the kernel refuses to load it.
+6. **Registers tools** — each tool declared in the manifest becomes available in the kernel's tool registry, then optional capability factories can augment `required_scopes` and `required_env` using the resolved pack config.
+7. **Injects policies** — pack-declared policies are added to the `pack` layer of the [policy engine](/kernel/policy-engine), and optional policy factories can add conditional rules such as intent-aware gating.
 
 <Aside type="caution">
   During development, you can use `integrity: dev` to skip hash verification. In production, the
@@ -109,14 +121,15 @@ LumenFlow is pack-first. The shipped production pack is:
 | Pack                | Domain                         | Status               |
 | ------------------- | ------------------------------ | -------------------- |
 | `software-delivery` | Software development workflows | Production (pack #1) |
-| `agent-runtime`     | Governed `agent-session` turns | In development       |
+| `agent-runtime`     | Governed `agent-session` turns | Implemented          |
 
 Additional domains are expected to be delivered as fully implemented packs from the same manifest
 contract, loaded from local paths, git sources, or registries.
 
-The `agent-runtime` pack currently exists as a scaffold in the monorepo. It establishes the
-configuration namespace, the `agent:execute-turn` tool contract, static provider network scopes,
-and the pack loading surface that later work units expand into full provider-backed execution.
+The `agent-runtime` pack is the second implemented pack. It provides the governed
+`agent:execute-turn` contract, config-driven capability augmentation, intent-aware policy rules,
+provider adapter normalization, and pack-owned `agent-session` orchestration. See the
+[Agent Runtime Pack](/packs/agent-runtime) docs for the public surface.
 
 ## Tool Implementation Pattern
 

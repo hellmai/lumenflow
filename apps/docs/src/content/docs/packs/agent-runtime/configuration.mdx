@@ -1,0 +1,124 @@
+---
+title: Configuration
+description: Enable the agent-runtime pack, configure model profiles, and declare governed intents
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The Agent Runtime Pack reads its configuration from the `agent_runtime` namespace in
+`workspace.yaml`.
+
+## Enable The Pack
+
+Add an `agent-runtime` pin to the workspace pack list:
+
+```yaml
+packs:
+  - id: agent-runtime
+    version: 0.1.0
+    integrity: dev
+    source: local
+```
+
+This example shows the monorepo or local-pack development path. The same pack manifest contract
+works with other pack sources once you publish and pin a verifiable integrity hash.
+
+## Workspace Config
+
+```yaml
+agent_runtime:
+  default_model: operations
+  models:
+    operations:
+      provider: messages_compatible
+      model: ops-assistant
+      api_key_env: AGENT_RUNTIME_API_KEY
+      base_url: https://models.internal.example/
+    planning:
+      provider: openai_compatible
+      model: planner
+      api_key_env: PLANNER_API_KEY
+      base_url_env: PLANNER_BASE_URL
+  intents:
+    scheduling:
+      description: Schedule or reschedule work
+      allow_tools:
+        - calendar:create-event
+        - calendar:reschedule-event
+      approval_required_tools:
+        - calendar:delete-event
+    notifications:
+      description: Notify stakeholders after an approved action
+      allow_tools:
+        - email:send
+  limits:
+    max_turns_per_session: 12
+    max_tool_calls_per_session: 6
+    max_input_bytes: 65536
+```
+
+## Model Profiles
+
+Each profile declares:
+
+| Field                       | Meaning                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `provider`                  | Adapter family used for request/response normalization                                      |
+| `model`                     | Provider-specific model identifier carried into the normalized response                     |
+| `api_key_env`               | Environment variable that holds the credential for the selected profile                     |
+| `base_url` / `base_url_env` | Absolute provider base URL used both for outbound requests and network allowlist derivation |
+
+`default_model` selects the profile a host should use when it does not supply a different
+`model_profile`.
+
+## Input URL Matching
+
+`agent:execute-turn` still receives a `url` field on each call. That `url` must match the resolved
+base URL for the selected model profile. This keeps the requested endpoint aligned with the
+profile-derived network allowlist and avoids drift between host input and pack config.
+
+## Intent Rules
+
+The `intents` map drives runtime-authored policy rules through the pack `policy_factory`:
+
+- `allow_tools` defines the only tools the classified intent may use.
+- `approval_required_tools` is a stricter subset that pauses execution with
+  `APPROVAL_REQUIRED`.
+
+At execution time, hosts pass `execution_metadata.agent_intent` on real tool calls. The kernel then
+evaluates the policy-factory rules before the tool executes.
+
+<Aside type="note">
+  Intent rules do not run inside the model prompt. They run in the kernel policy layer.
+</Aside>
+
+## Limits
+
+`limits` bounds host-driven loops and pack-owned orchestration:
+
+- `max_turns_per_session`
+- `max_tool_calls_per_session`
+- `max_input_bytes`
+
+Hosts can pass per-call overrides, but the runtime enforces the configured upper bounds.
+
+## Credentials And Network Allowlisting
+
+The pack uses two separate safeguards:
+
+1. **Manifest-declared and capability-derived `required_env`**
+   Only declared environment variable names are passed into the sandboxed tool process.
+2. **Capability-derived network allowlists**
+   Provider hosts are derived from the configured model profiles and intersected with workspace and
+   lane policy before the turn runs.
+
+This means a valid profile must declare both:
+
+- how the pack authenticates
+- which provider hosts the sandbox may contact
+
+## Next Steps
+
+- [Workflows & Examples](/packs/agent-runtime/workflows)
+- [Kernel Packs](/kernel/packs)
+- [Tool Execution](/kernel/tool-execution)
