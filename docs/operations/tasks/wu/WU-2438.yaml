@@ -2,7 +2,7 @@ id: WU-2438
 title: 'BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects'
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -48,3 +48,6 @@ acceptance:
   - pack:install succeeds for bundled software-delivery pack from node_modules
   - lumenflow:upgrade on pre-pack projects auto-registers built-in packs
   - config:set --key software_delivery.* works after upgrade
+locked: true
+completed_at: 2026-03-12T21:41:32.696Z
+completed: 2026-03-12
