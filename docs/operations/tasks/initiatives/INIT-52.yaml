@@ -31,6 +31,7 @@ success_metrics:
   - Runtime supports config-aware provider capability resolution and policy-aware tool filtering.
   - agent-runtime supports streaming, multi-provider adapters, suspend/resume, branching, and
     scheduled routines inside agent-session.
-  - Public docs and examples describe the pack accurately without coupling it to private
+  - Kernel docs and agent-runtime pack docs explain the new runtime, governance, evidence,
+    orchestration, and configuration surfaces accurately without coupling them to private
     implementation details.
 labels: []
