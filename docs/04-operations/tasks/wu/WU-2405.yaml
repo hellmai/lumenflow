@@ -1,7 +1,7 @@
 id: WU-2405
 title: 'Arc42 compliance: proper section structure, ADR location, and docs index'
 lane: 'Content: Specs Governance'
-type: documentation
+type: feature
 status: in_progress
 priority: P2
 created: 2026-03-12
@@ -12,8 +12,12 @@ code_paths:
   - packages/@lumenflow/core/src/docs-layout-presets.ts
   - packages/@lumenflow/core/README.md
 tests:
-  manual: []
-  unit: []
+  manual:
+    - Verify docs/09-architecture-decisions/ contains all ADR files
+    - Verify docs/01-introduction-and-goals/ has vision, quality-goals, stakeholders files
+    - Verify docs/README.md references only existing directories
+  unit:
+    - packages/@lumenflow/core/src/__tests__/lumenflow-config-schema.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2405.done
@@ -21,7 +25,11 @@ dependencies: []
 risks: []
 notes: ''
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T11:01:10.082Z
+worktree_path: worktrees/content-specs-governance-wu-2405
+session_id: ecaa89ea-0177-4692-85fb-77137376271a
 exposure: documentation
 sizing_estimate:
   estimated_files: 19
@@ -29,6 +37,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:01:10.091Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +52,3 @@ acceptance:
   - docs/README.md only references directories that exist on disk
   - adrDir added to docs-layout-presets.ts and DirectoriesSchema
   - Cross-references updated in core README and delegation-monitor.ts
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2405
-claimed_at: 2026-03-12T11:01:10.082Z
-baseline_main_sha: f8cde0237a7b7e0ae6d6b4676d69bbf4a34882ba
-session_id: ecaa89ea-0177-4692-85fb-77137376271a
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T11:01:10.091Z
