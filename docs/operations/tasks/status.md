@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml)
 
 ## Completed
 

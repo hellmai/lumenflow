@@ -26,13 +26,12 @@ sections:
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — Framework: CLI WU Commands
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
-- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
 - [WU-2419 — Publish final docs, examples, and positioning for agent-runtime](wu/WU-2419.yaml) — Content: Framework Docs
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2418 — Add DAG branching and routine scheduling for agent-session](wu/WU-2418.yaml) — Framework: Core Lifecycle
 
 ## ⛔ Blocked
 

@@ -2,7 +2,7 @@ id: WU-2418
 title: Add DAG branching and routine scheduling for agent-session
 lane: 'Framework: Core Lifecycle'
 type: feature
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/kernel/src/runtime/
 tests:
   manual:
-    - Run branching and scheduled routine scenarios and verify evidence, wakeups, and finalization remain coherent
+    - Run branching and scheduled routine scenarios and verify evidence, wakeups, and finalization
+      remain coherent
   unit:
     - packages/@lumenflow/kernel/src/__tests__/
     - packages/@lumenflow/runtime/src/
@@ -40,10 +41,21 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Complete the pack-owned orchestration layer with branching, joins, and scheduled routines while keeping scheduled execution inside the existing agent-session task model.
+description: Complete the pack-owned orchestration layer with branching, joins, and scheduled
+  routines while keeping scheduled execution inside the existing agent-session task model.
 acceptance:
   - The workflow model supports branching and joining
-  - Scheduled routines are supported as pack-owned agent-session orchestration rather than a separate execution class
+  - Scheduled routines are supported as pack-owned agent-session orchestration rather than a
+    separate execution class
   - Routine execution preserves kernel policy and evidence semantics
-  - Scheduled wakeups and workflow finalization are represented coherently in evidence and state transitions
+  - Scheduled wakeups and workflow finalization are represented coherently in evidence and state
+    transitions
   - Documentation defines what remains kernel-owned versus pack-owned in orchestration
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2418
+claimed_at: 2026-03-12T16:40:09.544Z
+baseline_main_sha: c8499f724e8028d7633e75d6b23993ab953f7fb9
+session_id: 3a2e5a6d-0fbd-495e-bbc7-86c662b5a836
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T16:40:09.549Z
