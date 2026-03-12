@@ -710,6 +710,9 @@ function toNetworkAllowlistEntry(profileName: string, baseUrl: string): string {
     const message = error instanceof Error ? error.message : 'unknown parsing error';
     throw new Error(
       `agent_runtime.models.${profileName} must resolve to a valid absolute base URL: ${message}`,
+      {
+        cause: error,
+      },
     );
   }
 }
