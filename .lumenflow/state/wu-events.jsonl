@@ -3423,3 +3423,5 @@
 {"type":"complete","wuId":"WU-2435","timestamp":"2026-03-12T20:28:25.456Z"}
 {"type":"claim","wuId":"WU-2436","timestamp":"2026-03-12T21:04:46.139Z","lane":"Content: Framework Docs","title":"Generate MCP reference and tighten docs command policy"}
 {"type":"claim","wuId":"WU-2438","timestamp":"2026-03-12T21:22:40.133Z","lane":"Framework: CLI WU Commands","title":"BUG: pack:install fails for bundled packs, config:set unusable on pre-pack projects"}
+{"type":"checkpoint","wuId":"WU-2438","timestamp":"2026-03-12T21:22:59.112Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2438","timestamp":"2026-03-12T21:23:18.463Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

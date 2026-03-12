@@ -855,7 +855,18 @@ export function loadPackConfigKeys(
   if (!Array.isArray(packs)) {
     return new Map();
   }
-  return resolvePackManifestPaths({ projectRoot, packs });
+  const result = resolvePackManifestPaths({ projectRoot, packs });
+
+  // WU-2438: Backward-compat fallback for pre-pack projects.
+  // When packs is empty (or the SD pack manifest is missing), but the workspace
+  // already has a software_delivery key, add the well-known SD pack mapping.
+  // This allows config:set to route software_delivery.* writes correctly on
+  // projects initialized before the pack system was introduced.
+  if (!result.has('software_delivery') && 'software_delivery' in workspace) {
+    result.set('software_delivery', SD_PACK_ID);
+  }
+
+  return result;
 }
 
 /**

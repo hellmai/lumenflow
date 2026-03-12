@@ -66,6 +66,7 @@ import {
   resolveTargetVersion,
   buildBootstrapCommand,
   checkDocsStaleness,
+  ensureBuiltinPacksRegistered,
 } from '../lumenflow-upgrade.js';
 
 // Cast mocks for TypeScript
@@ -662,6 +663,59 @@ describe('lumenflow-upgrade', () => {
       // (date difference should be ignored)
       const result = checkDocsStaleness(tempDir);
       expect(result.stale).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // WU-2438: ensureBuiltinPacksRegistered
+  // ---------------------------------------------------------------------------
+
+  describe('ensureBuiltinPacksRegistered (WU-2438)', () => {
+    it('adds SD pack when packs is empty and workspace has software_delivery', () => {
+      const workspace: Record<string, unknown> = {
+        id: 'ws-1',
+        packs: [],
+        software_delivery: { version: '1.0.0' },
+      };
+      const result = ensureBuiltinPacksRegistered(workspace, '3.18.0');
+      expect(result.modified).toBe(true);
+      expect(result.added).toEqual(['software-delivery']);
+      const packs = workspace.packs as Array<Record<string, unknown>>;
+      expect(packs).toHaveLength(1);
+      expect(packs[0].id).toBe('software-delivery');
+      expect(packs[0].version).toBe('3.18.0');
+    });
+
+    it('does not add SD pack when already registered', () => {
+      const workspace: Record<string, unknown> = {
+        id: 'ws-1',
+        packs: [{ id: 'software-delivery', version: '3.0.0', integrity: 'dev', source: 'local' }],
+        software_delivery: { version: '1.0.0' },
+      };
+      const result = ensureBuiltinPacksRegistered(workspace, '3.18.0');
+      expect(result.modified).toBe(false);
+      expect(result.added).toEqual([]);
+      expect((workspace.packs as unknown[]).length).toBe(1);
+    });
+
+    it('does not add SD pack when workspace has no software_delivery key', () => {
+      const workspace: Record<string, unknown> = {
+        id: 'ws-1',
+        packs: [],
+      };
+      const result = ensureBuiltinPacksRegistered(workspace, '3.18.0');
+      expect(result.modified).toBe(false);
+      expect(result.added).toEqual([]);
+    });
+
+    it('creates packs array when missing', () => {
+      const workspace: Record<string, unknown> = {
+        id: 'ws-1',
+        software_delivery: { version: '1.0.0' },
+      };
+      const result = ensureBuiltinPacksRegistered(workspace, '3.18.0');
+      expect(result.modified).toBe(true);
+      expect(Array.isArray(workspace.packs)).toBe(true);
     });
   });
 });

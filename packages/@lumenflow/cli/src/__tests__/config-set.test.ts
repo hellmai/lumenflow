@@ -26,6 +26,7 @@ import {
   applyConfigSet,
   getConfigValue,
   routeConfigKey,
+  loadPackConfigKeys,
   type ConfigSetOptions,
   type ConfigKeyRoute,
 } from '../config-set.js';
@@ -1080,5 +1081,87 @@ describe('WU-2197: findStrippedKeys scoped to write target sub-tree', () => {
     expect(getConfigValue(result.config!, 'software_delivery.methodology.testing')).toBe(
       'test-after',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WU-2438: Pre-pack project backward compatibility
+// ---------------------------------------------------------------------------
+
+describe('WU-2438: config:set on pre-pack projects (packs: [])', () => {
+  /** Pre-pack workspace: has software_delivery but packs: [] */
+  function createPrePackWorkspace(): Record<string, unknown> {
+    return {
+      id: 'workspace-id',
+      name: 'Pre-Pack Project',
+      packs: [],
+      software_delivery: createMinimalSoftwareDeliveryConfig(),
+      control_plane: {
+        sync_interval: 30,
+      },
+      memory_namespace: 'lumenflow',
+      event_namespace: 'lumenflow',
+    };
+  }
+
+  it('loadPackConfigKeys returns SD fallback when packs is empty but workspace has software_delivery', () => {
+    const workspace = createPrePackWorkspace();
+    const packConfigKeys = loadPackConfigKeys('.', workspace);
+    expect(packConfigKeys.get('software_delivery')).toBe('software-delivery');
+  });
+
+  it('routes software_delivery.* as pack-config even with empty packs', () => {
+    const workspace = createPrePackWorkspace();
+    const packConfigKeys = loadPackConfigKeys('.', workspace);
+    const route = routeConfigKey('software_delivery.gates.minCoverage', packConfigKeys);
+    expect(route.type).toBe('pack-config');
+    expect(route.rootKey).toBe('software_delivery');
+    expect(route.packId).toBe('software-delivery');
+  });
+
+  it('applyConfigSet succeeds for software_delivery.* on pre-pack workspace', () => {
+    const workspace = createPrePackWorkspace();
+    const packConfigKeys = loadPackConfigKeys('.', workspace);
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.methodology.testing',
+      'test-after',
+      packConfigKeys,
+    );
+    expect(result.ok).toBe(true);
+    expect(getConfigValue(result.config!, 'software_delivery.methodology.testing')).toBe(
+      'test-after',
+    );
+  });
+
+  it('applyConfigSet succeeds for software_delivery.gates.minCoverage on pre-pack workspace', () => {
+    const workspace = createPrePackWorkspace();
+    const packConfigKeys = loadPackConfigKeys('.', workspace);
+    const result = applyConfigSet(
+      workspace,
+      'software_delivery.gates.minCoverage',
+      '85',
+      packConfigKeys,
+    );
+    expect(result.ok).toBe(true);
+    expect(getConfigValue(result.config!, 'software_delivery.gates.minCoverage')).toBe(85);
+  });
+
+  it('still rejects unknown keys on pre-pack workspace', () => {
+    const workspace = createPrePackWorkspace();
+    const packConfigKeys = loadPackConfigKeys('.', workspace);
+    const result = applyConfigSet(workspace, 'completely_unknown.something', 'val', packConfigKeys);
+    expect(result.ok).toBe(false);
+    expect(result.error).toContain('completely_unknown');
+  });
+
+  it('does not add fallback when workspace has no software_delivery key', () => {
+    const workspace = {
+      id: 'workspace-id',
+      name: 'Bare Workspace',
+      packs: [],
+    };
+    const packConfigKeys = loadPackConfigKeys('.', workspace);
+    expect(packConfigKeys.has('software_delivery')).toBe(false);
   });
 });

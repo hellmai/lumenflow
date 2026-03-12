@@ -40,6 +40,8 @@ import {
 } from '@lumenflow/core/wu-constants';
 import { getGitForCwd } from '@lumenflow/core/git-adapter';
 import { withMicroWorktree } from '@lumenflow/core/micro-worktree';
+import YAML from 'yaml';
+import { WORKSPACE_CONFIG_FILE_NAME } from '@lumenflow/core/config';
 import { runCLI } from './cli-entry-point.js';
 import { generateScriptsFromManifest } from './public-manifest.js';
 import {
@@ -497,6 +499,52 @@ export function syncScriptsToPackageJson(dir: string): ScriptSyncResult {
 }
 
 /**
+ * WU-2438: Built-in SD pack pin for pre-pack project auto-registration.
+ */
+const BUILTIN_SD_PACK_ID = 'software-delivery';
+
+export interface PackRegistrationResult {
+  added: string[];
+  modified: boolean;
+}
+
+/**
+ * WU-2438: Ensure built-in packs are registered in workspace.yaml.
+ *
+ * Pre-pack projects (initialized before the pack system) have `packs: []` but
+ * use `software_delivery` config. This function adds the SD pack pin if missing,
+ * so `config:set` can resolve `software_delivery` via the normal pack routing.
+ *
+ * Pure function: takes workspace data, returns modified data + what was added.
+ */
+export function ensureBuiltinPacksRegistered(
+  workspace: Record<string, unknown>,
+  versionSpec: string,
+): PackRegistrationResult {
+  const packs = workspace.packs;
+  if (!Array.isArray(packs)) {
+    workspace.packs = [];
+  }
+
+  const packsArray = workspace.packs as Array<Record<string, unknown>>;
+  const added: string[] = [];
+
+  // Add SD pack if workspace has software_delivery but no SD pack pin
+  const hasSDPack = packsArray.some((p) => p.id === BUILTIN_SD_PACK_ID);
+  if (!hasSDPack && 'software_delivery' in workspace) {
+    packsArray.push({
+      id: BUILTIN_SD_PACK_ID,
+      version: versionSpec,
+      integrity: 'dev',
+      source: 'local',
+    });
+    added.push(BUILTIN_SD_PACK_ID);
+  }
+
+  return { added, modified: added.length > 0 };
+}
+
+/**
  * WU-1127: Execute the upgrade in a micro-worktree
  *
  * Uses the shared micro-worktree pattern (like wu:create, wu:edit) to:
@@ -547,6 +595,22 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
         console.log(`${LOG_PREFIX} All script entries already present`);
       }
 
+      // WU-2438: Auto-register built-in packs for pre-pack projects.
+      // Projects initialized before the pack system have packs: [] but use
+      // software_delivery config. Register the SD pack so config:set works.
+      const wsPath = path.join(worktreePath, WORKSPACE_CONFIG_FILE_NAME);
+      if (existsSync(wsPath)) {
+        const wsContent = readFileSync(wsPath, 'utf-8');
+        const wsData = YAML.parse(wsContent) as Record<string, unknown>;
+        const packReg = ensureBuiltinPacksRegistered(wsData, versionSpec);
+        if (packReg.modified) {
+          writeFileSync(wsPath, YAML.stringify(wsData, { lineWidth: 120 }), 'utf-8');
+          console.log(
+            `${LOG_PREFIX} Auto-registered built-in pack(s): ${packReg.added.join(', ')}`,
+          );
+        }
+      }
+
       // Write marker consumed by lumenflow:pre-commit-check when @lumenflow versions change.
       writeUpgradeMarker(worktreePath, versionSpec);
 
@@ -570,6 +634,7 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
         files: [
           'package.json',
           'pnpm-lock.yaml',
+          WORKSPACE_CONFIG_FILE_NAME,
           UPGRADE_MARKER_RELATIVE_PATH,
           ...docsSyncResult.allFiles,
         ],
