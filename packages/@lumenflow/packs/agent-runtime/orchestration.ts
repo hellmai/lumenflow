@@ -5,6 +5,7 @@ import {
   TOOL_ERROR_CODES,
   type ExecutionContext,
   type KernelRuntime,
+  type ToolHost,
   type ToolOutput,
 } from '@lumenflow/kernel';
 import {
@@ -19,14 +20,17 @@ import {
   type AgentRuntimeExecuteTurnOutput,
   type AgentRuntimeMessage,
   type AgentRuntimeRequestedTool,
+  type AgentRuntimeToolCatalogEntry,
 } from './types.js';
 
 const DEFAULT_MAX_ORCHESTRATION_TURNS = 12;
 const TOOL_CALL_ID_PREFIX = 'agent-runtime-tool-call';
 const APPROVAL_STATUS_TOOL_NAME = 'kernel:approval';
 const LOOP_LIMIT_EXCEEDED_CODE = 'AGENT_RUNTIME_LOOP_LIMIT_EXCEEDED';
+const DEFAULT_GOVERNED_TOOL_CATALOG_EXCLUSIONS = [AGENT_RUNTIME_TOOL_NAMES.EXECUTE_TURN] as const;
 
 type LoopRuntime = Pick<KernelRuntime, 'executeTool'>;
+type GovernedToolCatalogHost = Pick<ToolHost, 'listGovernedTools'>;
 
 export interface AgentRuntimeLoopHistoryEntry {
   turn_index: number;
@@ -39,6 +43,12 @@ export interface AgentRuntimeHostContextInput {
   task_summary?: string;
   memory_summary?: string;
   additional_context?: readonly string[];
+}
+
+export interface BuildGovernedToolCatalogInput {
+  toolHost: GovernedToolCatalogHost;
+  context: ExecutionContext;
+  excludeToolNames?: readonly string[];
 }
 
 export interface RunGovernedAgentLoopInput {
@@ -85,6 +95,22 @@ export type AgentRuntimeLoopResult =
   | AgentRuntimeLoopCompletedResult
   | AgentRuntimeLoopApprovalRequiredResult
   | AgentRuntimeLoopErrorResult;
+
+export async function buildGovernedToolCatalog(
+  input: BuildGovernedToolCatalogInput,
+): Promise<AgentRuntimeToolCatalogEntry[]> {
+  const excludedToolNames = new Set(
+    input.excludeToolNames ?? DEFAULT_GOVERNED_TOOL_CATALOG_EXCLUSIONS,
+  );
+  const governedTools = await input.toolHost.listGovernedTools(input.context);
+
+  return governedTools
+    .filter((entry) => !excludedToolNames.has(entry.capability.name))
+    .map((entry) => ({
+      name: entry.capability.name,
+      description: entry.capability.description,
+    }));
+}
 
 export async function runGovernedAgentLoop(
   input: RunGovernedAgentLoopInput,

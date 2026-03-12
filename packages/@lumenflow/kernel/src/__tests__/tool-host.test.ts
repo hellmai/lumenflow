@@ -1387,4 +1387,109 @@ describe('tool host', () => {
       expect(capturedInput!.tool_arguments).toBeUndefined();
     });
   });
+
+  describe('policy-aware governed tool filtering (WU-2414)', () => {
+    it('filters raw registry capabilities by scope intersection and policy decisions', async () => {
+      const registry = new ToolRegistry();
+      const allowedCapability: ToolCapability = {
+        ...makeInProcessCapability(),
+        name: 'calendar:create-event',
+        description: 'Create calendar events',
+      };
+      const approvalCapability: ToolCapability = {
+        ...makeInProcessCapability(),
+        name: 'calendar:delete-event',
+        description: 'Delete calendar events',
+      };
+      const deniedCapability: ToolCapability = {
+        ...makeInProcessCapability(),
+        name: 'email:send',
+        description: 'Send outbound email',
+      };
+      const outOfScopeCapability: ToolCapability = {
+        ...makeInProcessCapability(),
+        name: 'docs:write',
+        description: 'Write documentation files',
+        required_scopes: [
+          {
+            type: 'path',
+            pattern: 'docs/**',
+            access: 'write',
+          },
+        ],
+      };
+
+      registry.register(allowedCapability);
+      registry.register(approvalCapability);
+      registry.register(deniedCapability);
+      registry.register(outOfScopeCapability);
+
+      const evidenceStore = new EvidenceStore({ evidenceRoot });
+      const host = new ToolHost({
+        registry,
+        evidenceStore,
+        policyHook: async (hookInput) => {
+          if (
+            hookInput.capability.name === deniedCapability.name &&
+            hookInput.context.metadata?.agent_intent === 'scheduling'
+          ) {
+            return [
+              {
+                policy_id: 'test.intent.deny',
+                decision: 'deny' as const,
+                reason: 'Scheduling intent does not allow outbound email.',
+              },
+            ];
+          }
+
+          if (hookInput.capability.name === approvalCapability.name) {
+            return [
+              {
+                policy_id: 'test.intent.approval',
+                decision: 'approval_required' as const,
+                reason: 'Deleting calendar events needs a human check.',
+              },
+            ];
+          }
+
+          return [
+            {
+              policy_id: 'test.intent.allow',
+              decision: 'allow' as const,
+              reason: 'Allowed for governed discovery.',
+            },
+          ];
+        },
+      });
+
+      const rawNames = registry.list().map((capability) => capability.name);
+      const governed = await host.listGovernedTools(
+        makeExecutionContext({}, { agent_intent: 'scheduling' }),
+      );
+
+      expect(rawNames).toEqual([
+        'calendar:create-event',
+        'calendar:delete-event',
+        'email:send',
+        'docs:write',
+      ]);
+      expect(
+        governed.map((entry) => ({
+          name: entry.capability.name,
+          decision: entry.decision,
+        })),
+      ).toEqual([
+        { name: 'calendar:create-event', decision: 'allow' },
+        { name: 'calendar:delete-event', decision: 'approval_required' },
+      ]);
+      expect(governed[0]?.scope_enforced).toHaveLength(1);
+      expect(governed[1]?.policy_decisions).toEqual([
+        {
+          policy_id: 'test.intent.approval',
+          decision: 'approval_required',
+          reason: 'Deleting calendar events needs a human check.',
+        },
+      ]);
+    });
+  });
 });

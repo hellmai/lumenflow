@@ -54,11 +54,34 @@ export interface ToolHostOptions {
   onTraceAppended?: (entry: import('../kernel.schemas.js').ToolTraceEntry) => void;
 }
 
+export type GovernedToolDecision = 'allow' | 'approval_required';
+
+export interface GovernedToolCapability {
+  capability: ToolCapability;
+  decision: GovernedToolDecision;
+  policy_decisions: PolicyDecision[];
+  scope_requested: ToolScope[];
+  scope_allowed: ToolScope[];
+  scope_enforced: ToolScope[];
+}
+
 interface ScopeResolution {
   scopeRequested: ToolScope[];
   scopeAllowed: ToolScope[];
   scopeEnforced: ToolScope[];
   reservedFrameworkWriteScopes: string[];
+}
+
+type AccessEvaluationOutcome =
+  | 'allow'
+  | 'approval_required'
+  | 'policy_denied'
+  | 'reserved_scope_denied'
+  | 'scope_denied';
+
+interface AccessEvaluationResult {
+  outcome: AccessEvaluationOutcome;
+  policyDecisions: PolicyDecision[];
 }
 
 type AuthorizeResult =
@@ -82,6 +105,12 @@ function parseScopeList(candidate: unknown, fallback: ToolScope[]): ToolScope[] 
 
 function parseOptionalString(candidate: unknown): string | undefined {
   return typeof candidate === 'string' && candidate.trim().length > 0 ? candidate : undefined;
+}
+
+function parseToolArguments(input: unknown): Record<string, unknown> | undefined {
+  return input !== null && typeof input === 'object' && !Array.isArray(input)
+    ? (input as Record<string, unknown>)
+    : undefined;
 }
 
 function normalizeScopePattern(pattern: string): string {
@@ -152,6 +181,39 @@ export class ToolHost {
 
   async onShutdown(): Promise<number> {
     return this.evidenceStore.reconcileOrphanedStarts();
+  }
+
+  async listGovernedTools(ctx: ExecutionContext): Promise<GovernedToolCapability[]> {
+    const context = ExecutionContextSchema.parse(ctx);
+    const metadata = resolveMetadata(context);
+    const governedCapabilities: GovernedToolCapability[] = [];
+
+    for (const capability of this.registry.list()) {
+      const { scopeRequested, scopeAllowed, scopeEnforced, reservedFrameworkWriteScopes } =
+        this.resolveScope(capability, context, metadata);
+      const evaluation = await this.evaluateAccess({
+        capability,
+        input: undefined,
+        context,
+        scopeEnforced,
+        reservedFrameworkWriteScopes,
+      });
+
+      if (evaluation.outcome !== 'allow' && evaluation.outcome !== 'approval_required') {
+        continue;
+      }
+
+      governedCapabilities.push({
+        capability,
+        decision: evaluation.outcome,
+        policy_decisions: evaluation.policyDecisions,
+        scope_requested: scopeRequested,
+        scope_allowed: scopeAllowed,
+        scope_enforced: scopeEnforced,
+      });
+    }
+
+    return governedCapabilities;
   }
 
   async execute(name: string, input: unknown, ctx: ExecutionContext): Promise<ToolOutput> {
@@ -334,7 +396,15 @@ export class ToolHost {
       reservedFrameworkWriteScopes,
     } = params;
 
-    if (reservedFrameworkWriteScopes.length > 0) {
+    const evaluation = await this.evaluateAccess({
+      capability,
+      input,
+      context,
+      scopeEnforced,
+      reservedFrameworkWriteScopes,
+    });
+
+    if (evaluation.outcome === 'reserved_scope_denied') {
       const output: ToolOutput = {
         success: false,
         error: {
@@ -351,13 +421,7 @@ export class ToolHost {
           startedAt,
           result: 'denied',
           scopeEnforcementNote: `Denied by reserved framework boundary: ${RESERVED_FRAMEWORK_SCOPE_GLOB} is framework-owned.`,
-          policyDecisions: [
-            {
-              policy_id: KERNEL_POLICY_IDS.SCOPE_RESERVED_PATH,
-              decision: 'deny',
-              reason: `Pack/tool declared write scope targets reserved ${RESERVED_FRAMEWORK_SCOPE_GLOB} namespace`,
-            },
-          ],
+          policyDecisions: evaluation.policyDecisions,
         });
       } catch (error) {
         // Denied trace failure must not suppress the denial output.
@@ -366,7 +430,7 @@ export class ToolHost {
       return { denied: true, output };
     }
 
-    if (scopeEnforced.length === 0) {
+    if (evaluation.outcome === 'scope_denied') {
       const output: ToolOutput = {
         success: false,
         error: {
@@ -384,13 +448,7 @@ export class ToolHost {
           startedAt,
           result: 'denied',
           scopeEnforcementNote: 'Denied by hard boundary: empty scope intersection.',
-          policyDecisions: [
-            {
-              policy_id: KERNEL_POLICY_IDS.SCOPE_BOUNDARY,
-              decision: 'deny',
-              reason: 'No intersecting scopes after scope resolution',
-            },
-          ],
+          policyDecisions: evaluation.policyDecisions,
         });
       } catch (error) {
         // Denied trace failure must not suppress the denial output.
@@ -399,20 +457,7 @@ export class ToolHost {
       return { denied: true, output };
     }
 
-    const tool_arguments =
-      input !== null && typeof input === 'object' && !Array.isArray(input)
-        ? (input as Record<string, unknown>)
-        : undefined;
-
-    const policyDecisions = await this.policyHook({
-      capability,
-      input,
-      context,
-      scopeEnforced,
-      tool_arguments,
-    });
-
-    if (policyDecisions.some((decision) => decision.decision === 'deny')) {
+    if (evaluation.outcome === 'policy_denied') {
       const output: ToolOutput = {
         success: false,
         error: {
@@ -426,7 +471,7 @@ export class ToolHost {
           startedAt,
           result: 'denied',
           scopeEnforcementNote: 'Denied by policy hook decision.',
-          policyDecisions,
+          policyDecisions: evaluation.policyDecisions,
         });
       } catch (error) {
         // Denied trace failure must not suppress the denial output.
@@ -435,9 +480,9 @@ export class ToolHost {
       return { denied: true, output };
     }
 
-    if (policyDecisions.some((decision) => decision.decision === 'approval_required')) {
+    if (evaluation.outcome === 'approval_required') {
       const approvalRequestId = randomUUID();
-      const approvalReasons = policyDecisions
+      const approvalReasons = evaluation.policyDecisions
         .filter((decision) => decision.decision === 'approval_required')
         .map((decision) => decision.reason ?? decision.policy_id);
       const output: ToolOutput = {
@@ -450,7 +495,7 @@ export class ToolHost {
             tool_name: capability.name,
             task_id: context.task_id,
             run_id: context.run_id,
-            policy_decisions: policyDecisions.filter(
+            policy_decisions: evaluation.policyDecisions.filter(
               (decision) => decision.decision === 'approval_required',
             ),
           },
@@ -462,7 +507,7 @@ export class ToolHost {
           startedAt,
           result: 'denied',
           scopeEnforcementNote: 'Blocked pending human approval.',
-          policyDecisions,
+          policyDecisions: evaluation.policyDecisions,
         });
       } catch (error) {
         this.onTraceError?.(error as Error);
@@ -470,7 +515,70 @@ export class ToolHost {
       return { denied: true, output };
     }
 
-    return { denied: false, policyDecisions };
+    return { denied: false, policyDecisions: evaluation.policyDecisions };
+  }
+
+  private async evaluateAccess(params: {
+    capability: ToolCapability;
+    input: unknown;
+    context: ExecutionContext;
+    scopeEnforced: ToolScope[];
+    reservedFrameworkWriteScopes: string[];
+  }): Promise<AccessEvaluationResult> {
+    const { capability, input, context, scopeEnforced, reservedFrameworkWriteScopes } = params;
+
+    if (reservedFrameworkWriteScopes.length > 0) {
+      return {
+        outcome: 'reserved_scope_denied',
+        policyDecisions: [
+          {
+            policy_id: KERNEL_POLICY_IDS.SCOPE_RESERVED_PATH,
+            decision: 'deny',
+            reason: `Pack/tool declared write scope targets reserved ${RESERVED_FRAMEWORK_SCOPE_GLOB} namespace`,
+          },
+        ],
+      };
+    }
+
+    if (scopeEnforced.length === 0) {
+      return {
+        outcome: 'scope_denied',
+        policyDecisions: [
+          {
+            policy_id: KERNEL_POLICY_IDS.SCOPE_BOUNDARY,
+            decision: 'deny',
+            reason: 'No intersecting scopes after scope resolution',
+          },
+        ],
+      };
+    }
+
+    const policyDecisions = await this.policyHook({
+      capability,
+      input,
+      context,
+      scopeEnforced,
+      tool_arguments: parseToolArguments(input),
+    });
+
+    if (policyDecisions.some((decision) => decision.decision === 'deny')) {
+      return {
+        outcome: 'policy_denied',
+        policyDecisions,
+      };
+    }
+
+    if (policyDecisions.some((decision) => decision.decision === 'approval_required')) {
+      return {
+        outcome: 'approval_required',
+        policyDecisions,
+      };
+    }
+
+    return {
+      outcome: 'allow',
+      policyDecisions,
+    };
   }
 
   private async dispatch(

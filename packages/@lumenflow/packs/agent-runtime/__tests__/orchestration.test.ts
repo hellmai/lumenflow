@@ -1,9 +1,15 @@
 // Copyright (c) 2026 Hellmai Ltd
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TOOL_ERROR_CODES, type ExecutionContext, type ToolOutput } from '@lumenflow/kernel';
+import {
+  TOOL_ERROR_CODES,
+  type ExecutionContext,
+  type ToolCapability,
+  type ToolOutput,
+} from '@lumenflow/kernel';
 import { describe, expect, it } from 'vitest';
 import {
+  buildGovernedToolCatalog,
   createApprovalResolutionMessage,
   createHostContextMessages,
   runGovernedAgentLoop,
@@ -76,6 +82,29 @@ function createToolOutput(
         : {}),
       ...overrides,
     },
+  };
+}
+
+function createCatalogCapability(
+  name: string,
+  description: string,
+  pack = 'calendar-pack',
+): ToolCapability {
+  return {
+    name,
+    domain: pack,
+    version: '1.0.0',
+    input_schema: {
+      safeParse: () => ({ success: true, data: {} }),
+    } as ToolCapability['input_schema'],
+    permission: 'write',
+    required_scopes: [],
+    handler: {
+      kind: 'in-process',
+      fn: async () => ({ success: true }),
+    },
+    description,
+    pack,
   };
 }
 
@@ -261,5 +290,73 @@ describe('agent-runtime orchestration loop', () => {
         },
       }),
     });
+  });
+
+  it('builds a governed tool catalog from kernel filtering without trusting a host list', async () => {
+    const capturedContexts: ExecutionContext[] = [];
+    const toolHost = {
+      listGovernedTools: async (context: ExecutionContext) => {
+        capturedContexts.push(context);
+        return [
+          {
+            capability: createCatalogCapability(
+              AGENT_RUNTIME_TOOL_NAMES.EXECUTE_TURN,
+              'Internal governed turn entrypoint',
+              'agent-runtime',
+            ),
+            decision: 'allow' as const,
+            policy_decisions: [],
+            scope_requested: [],
+            scope_allowed: [],
+            scope_enforced: [],
+          },
+          {
+            capability: createCatalogCapability('calendar:create-event', 'Create calendar events'),
+            decision: 'allow' as const,
+            policy_decisions: [],
+            scope_requested: [],
+            scope_allowed: [],
+            scope_enforced: [],
+          },
+          {
+            capability: createCatalogCapability('calendar:delete-event', 'Delete calendar events'),
+            decision: 'approval_required' as const,
+            policy_decisions: [
+              {
+                policy_id: 'agent-runtime.intent.approval',
+                decision: 'approval_required',
+                reason: 'Deletion needs approval.',
+              },
+            ],
+            scope_requested: [],
+            scope_allowed: [],
+            scope_enforced: [],
+          },
+        ];
+      },
+    };
+
+    const catalog = await buildGovernedToolCatalog({
+      toolHost,
+      context: {
+        ...BASE_CONTEXT,
+        metadata: {
+          agent_intent: 'scheduling',
+        },
+      },
+    });
+
+    expect(capturedContexts).toHaveLength(1);
+    expect(capturedContexts[0]?.metadata?.agent_intent).toBe('scheduling');
+    expect(catalog).toEqual([
+      {
+        name: 'calendar:create-event',
+        description: 'Create calendar events',
+      },
+      {
+        name: 'calendar:delete-event',
+        description: 'Delete calendar events',
+      },
+    ]);
   });
 });
