@@ -7,11 +7,7 @@ status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
-  - docs/05-building-block-view/**
-  - docs/operations/**
   - packages/@lumenflow/core/src/docs-layout-presets.ts
-  - CLAUDE.md
-  - LUMENFLOW.md
 tests:
   manual:
     - Verify pnpm typecheck and pnpm test pass
@@ -25,10 +21,17 @@ dependencies: []
 risks: []
 notes: 'tdd-exception: pure directory rename and reference update, tests are updated not newly written'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T11:53:12.786Z
+worktree_path: worktrees/content-specs-governance-wu-2421
+session_id: bac69047-75bf-4882-9cd3-0b5eb179744f
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T11:53:12.793Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -42,11 +45,3 @@ acceptance:
   - All cross-references updated across source code, tests, config, docs, agents, skills, scripts, CI
   - pnpm typecheck passes
   - pnpm test passes (excluding pre-existing failures)
-claimed_mode: worktree
-worktree_path: worktrees/content-specs-governance-wu-2421
-claimed_at: 2026-03-12T11:53:12.786Z
-baseline_main_sha: 229e8a8da25ebbfe18809fe3329d886745daa71a
-session_id: bac69047-75bf-4882-9cd3-0b5eb179744f
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T11:53:12.793Z
