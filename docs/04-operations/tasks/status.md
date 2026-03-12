@@ -6,6 +6,7 @@ _Last updated: 2026-03-12_
 
 - [WU-2399 — Fix and clean up init.ts: --force bug, extract sub-modules, fix gitignore matching](wu/WU-2399.yaml)
 - [WU-2400 — Clean up wu-done.ts: extract helpers, remove DRY violations, reduce main() complexity](wu/WU-2400.yaml)
+- [WU-2401 — Close test coverage gaps: add tests for metrics, memory, runtime, and web packages](wu/WU-2401.yaml)
 
 ## Completed
 
