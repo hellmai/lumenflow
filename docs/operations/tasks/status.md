@@ -4,7 +4,7 @@ _Last updated: 2026-03-12_
 
 ## In Progress
 
-- [WU-2433 — Docs example parity validator for CLI and MCP usage](wu/WU-2433.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1349,3 +1349,4 @@ _Last updated: 2026-03-12_
 - [WU-2431 — Add Discord CI notifications to ci.yml](wu/WU-2431.yaml) — 2026-03-12
 - [WU-2429 — Audit and align command, MCP, and pack docs surfaces](wu/WU-2429.yaml) — 2026-03-12
 - [WU-2432 — Fix Sidekick workflows docs build regression](wu/WU-2432.yaml) — 2026-03-12
+- [WU-2433 — Docs example parity validator for CLI and MCP usage](wu/WU-2433.yaml) — 2026-03-12

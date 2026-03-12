@@ -3404,3 +3404,4 @@
 {"type":"claim","wuId":"WU-2433","timestamp":"2026-03-12T19:11:52.572Z","lane":"Content: Framework Docs","title":"Docs example parity validator for CLI and MCP usage"}
 {"type":"checkpoint","wuId":"WU-2433","timestamp":"2026-03-12T19:12:05.494Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2433","timestamp":"2026-03-12T19:12:16.755Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2433","timestamp":"2026-03-12T19:29:48.602Z"}
