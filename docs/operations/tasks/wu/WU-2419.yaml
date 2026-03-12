@@ -1,7 +1,7 @@
 id: WU-2419
 title: Publish final docs, examples, and positioning for agent-runtime
 lane: 'Content: Framework Docs'
-type: documentation
+type: feature
 status: in_progress
 priority: P1
 created: 2026-03-12
