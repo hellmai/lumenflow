@@ -6,16 +6,14 @@ status: in_progress
 priority: P1
 created: 2026-03-12
 code_paths:
-  - packages/@lumenflow/packs/
-  - packages/@lumenflow/runtime/src/
-  - packages/@lumenflow/kernel/src/runtime/
+  - packages/@lumenflow/packs/agent-runtime/
 tests:
   manual:
     - Suspend and resume a linear session through approval pauses and verify policy and evidence
       continuity
   unit:
-    - packages/@lumenflow/kernel/src/__tests__/
-    - packages/@lumenflow/runtime/src/
+    - packages/@lumenflow/packs/agent-runtime/__tests__/workflow-state.test.ts
+    - packages/@lumenflow/packs/agent-runtime/__tests__/resume.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2417.done
@@ -29,7 +27,11 @@ spec_refs:
 risks: []
 notes: Linear resumability only. Branching and routine scheduling remain separate.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-12T16:22:18.522Z
+worktree_path: worktrees/framework-core-lifecycle-wu-2417
+session_id: 0b305021-6afc-4c0d-9ca5-b8f1542621e5
 exposure: backend-only
 sizing_estimate:
   estimated_files: 16
@@ -37,6 +39,9 @@ sizing_estimate:
   strategy: checkpoint-resume
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-12T16:22:18.529Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -48,11 +53,3 @@ acceptance:
   - Suspended and resumed runs remain agent-session executions rather than a new task type
   - Resumptions and approval pauses preserve evidence lineage and policy behavior
   - The evidence model records resumptions and approval-driven continuation coherently
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-lifecycle-wu-2417
-claimed_at: 2026-03-12T16:22:18.522Z
-baseline_main_sha: 7fca5b62f5bfb14126762e75d98c8df056bc3e47
-session_id: 0b305021-6afc-4c0d-9ca5-b8f1542621e5
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-12T16:22:18.529Z
