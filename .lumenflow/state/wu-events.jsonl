@@ -3534,3 +3534,5 @@
 {"type":"complete","wuId":"WU-2465","timestamp":"2026-03-13T13:38:51.465Z"}
 {"type":"complete","wuId":"WU-2461","timestamp":"2026-03-13T13:48:41.408Z"}
 {"type":"claim","wuId":"WU-2466","timestamp":"2026-03-13T13:50:28.008Z","lane":"Framework: Core","title":"Update path-literal ratchet baseline after parallel WU merges"}
+{"type":"checkpoint","wuId":"WU-2466","timestamp":"2026-03-13T13:50:39.866Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2466","timestamp":"2026-03-13T13:50:47.460Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
