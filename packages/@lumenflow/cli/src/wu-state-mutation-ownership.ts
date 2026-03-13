@@ -152,9 +152,7 @@ export async function validateStateMutationOwnership(
       ? input.doc.session_id
       : null;
 
-  const allowOverride = async (
-    error: string,
-  ): Promise<StateMutationOwnershipResult> => {
+  const allowOverride = async (error: string): Promise<StateMutationOwnershipResult> => {
     if (!input.overrideOwner) {
       return { valid: false, error, auditEntry: null };
     }

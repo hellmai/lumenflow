@@ -155,7 +155,9 @@ describe('WU-2461: state mutation ownership guard', () => {
     );
     const claimSource = readFileSync(new URL('../wu-claim.ts', import.meta.url), 'utf-8');
 
-    expect(claimValidationSource).toContain("Do not use wu:block, wu:release, wu:recover, or wu:unblock");
+    expect(claimValidationSource).toContain(
+      'Do not use wu:block, wu:release, wu:recover, or wu:unblock',
+    );
     expect(claimSource).toContain('Do not modify');
   });
 });
