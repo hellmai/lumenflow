@@ -83,6 +83,7 @@ import {
   getMemoryContextMaxSize,
 } from '@lumenflow/core/wu-spawn-context';
 import { generateCompletionWorkflowSection as generateSharedCompletionWorkflowSection } from './wu-spawn-completion.js';
+import { getMatchingCoChangeRulesForPaths, getResolvedCoChangeRules } from './gates-runners.js';
 
 // Re-export core constants for backwards compatibility
 export {
@@ -1167,6 +1168,34 @@ If the co-change gate fails, create the required migration companion before retr
 }
 
 /**
+ * WU-2451: Generate project-specific co-change guidance for matching code paths.
+ */
+export function generateProjectSpecificCoChangeGuidance(
+  codePaths: string[],
+  projectRoot: string,
+): string {
+  if (codePaths.length === 0) return '';
+
+  const rules = getResolvedCoChangeRules(projectRoot, (message) => {
+    console.warn(`[wu:brief] ${message}`);
+  });
+  const matchingRules = getMatchingCoChangeRulesForPaths({
+    filePaths: codePaths,
+    rules,
+  }).filter((rule) => rule.guidance?.trim());
+
+  if (matchingRules.length === 0) return '';
+
+  const sections = matchingRules.map((rule) => `### ${rule.name}\n\n${rule.guidance?.trim()}`);
+
+  return `## Project-Specific Co-Change Guidance
+
+These guidance rules are configured in \`gates.co_change\` for the paths in this WU. Follow them before writing tests or implementation:
+
+${sections.join('\n\n')}`;
+}
+
+/**
  * Generate the Action section based on WU claim status (WU-1745).
  *
  * If WU is already claimed (has claimed_at and worktree_path), tells agent
@@ -1384,6 +1413,7 @@ export function generateTaskInvocation(
     .filter((section) => section.length > 0)
     .join('\n\n---\n\n');
   const testGuidance = resolveVerificationGuidanceSection(templates, testGuidanceFallback);
+  const coChangeGuidance = generateProjectSpecificCoChangeGuidance(codePaths, templateBaseDir);
 
   // WU-1288: Generate enforcement summary from resolved policy
   const enforcementSummary = generateEnforcementSummary(policy, {
@@ -1484,7 +1514,7 @@ ${preamble}
 
 ---
 
-${testGuidance}
+${testGuidance}${coChangeGuidance ? `\n\n---\n\n${coChangeGuidance}` : ''}
 
 ---
 
@@ -1668,6 +1698,7 @@ export function generateCodexPrompt(
     .filter((section) => section.length > 0)
     .join('\n\n---\n\n');
   const testGuidance = resolveVerificationGuidanceSection(templates, testGuidanceFallback);
+  const coChangeGuidance = generateProjectSpecificCoChangeGuidance(codePaths, templateBaseDir);
 
   const codeCraftGuidance = templates.get('code-craft') || generateCodeCraftGuidance();
   const readBeforeWrite = templates.get('read-before-write') || generateReadBeforeWriteDiscipline();
@@ -1706,7 +1737,7 @@ export function generateCodexPrompt(
   // WU-1142: Type-aware test guidance
   return `${TRUNCATION_WARNING_BANNER}# ${id}: ${doc.title || 'Untitled'}
 
-${testGuidance}
+${testGuidance}${coChangeGuidance ? `\n\n---\n\n${coChangeGuidance}` : ''}
 
 ---
 

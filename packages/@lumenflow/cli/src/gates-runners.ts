@@ -621,6 +621,39 @@ function hasPatternMatch(changedFiles: string[], patterns: string[]): boolean {
   return changedFiles.some((filePath) => micromatch.isMatch(filePath, patterns));
 }
 
+export function getResolvedCoChangeRules(
+  projectRoot: string,
+  logWarning: (msg: string) => void,
+): CoChangeRuleConfig[] {
+  const gatesSection = getGatesSection(projectRoot) as {
+    co_change?: unknown;
+    include_builtin_co_change_defaults?: boolean;
+  } | null;
+  const parsedRules = CoChangeRulesConfigSchema.safeParse(gatesSection?.co_change ?? []);
+
+  if (!parsedRules.success) {
+    logWarning('Invalid gates.co_change config; skipping co-change rules.');
+    return [];
+  }
+
+  const includeDefaults = gatesSection?.include_builtin_co_change_defaults !== false;
+  const userRules = parsedRules.data;
+  const mergedRules = includeDefaults ? [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules] : userRules;
+
+  return resolveGuidanceRefs(mergedRules, projectRoot, logWarning);
+}
+
+export function getMatchingCoChangeRulesForPaths(options: {
+  filePaths: string[];
+  rules: CoChangeRuleConfig[];
+}): CoChangeRuleConfig[] {
+  return options.rules.filter(
+    (rule) =>
+      rule.severity !== CO_CHANGE_SEVERITY.OFF &&
+      hasPatternMatch(options.filePaths, rule.trigger_patterns),
+  );
+}
+
 export function shouldRunMigrationVerifyForChanges(options: { changedFiles: string[] }): boolean {
   return hasPatternMatch(options.changedFiles, [...DEFAULT_MIGRATION_VERIFY_PATTERNS]);
 }
@@ -705,24 +738,7 @@ export async function runCoChangeGate({ agentLog, useAgentMode, cwd }: GateLogCo
   const effectiveCwd = cwd ?? process.cwd();
   const logLine = makeGateLogger({ agentLog, useAgentMode });
   logLine('\n> Co-change check\n');
-
-  const gatesSection = getGatesSection(effectiveCwd) as {
-    co_change?: unknown;
-    include_builtin_co_change_defaults?: boolean;
-  } | null;
-  const parsedRules = CoChangeRulesConfigSchema.safeParse(gatesSection?.co_change ?? []);
-  if (!parsedRules.success) {
-    logLine('⚠️  Invalid gates.co_change config; skipping check.');
-    return { ok: true, duration: Date.now() - start };
-  }
-
-  // WU-2368: Merge built-in DB defaults with user-configured rules
-  const includeDefaults = gatesSection?.include_builtin_co_change_defaults !== false;
-  const userRules = parsedRules.data;
-  const mergedRules = includeDefaults ? [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules] : userRules;
-
-  // WU-2446: Resolve guidance_ref file references
-  const rules = resolveGuidanceRefs(mergedRules, effectiveCwd, (msg) => logLine(`⚠️  ${msg}`));
+  const rules = getResolvedCoChangeRules(effectiveCwd, (msg) => logLine(`⚠️  ${msg}`));
 
   if (rules.length === 0) {
     logLine('ℹ️  No co-change rules configured; skipping.');

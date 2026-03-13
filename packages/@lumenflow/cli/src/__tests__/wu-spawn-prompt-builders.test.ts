@@ -8,6 +8,9 @@
  * frontmatter before including templates in the result map.
  */
 
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { SpawnStrategy } from '@lumenflow/core/spawn-strategy';
 import { LumenFlowConfigSchema } from '@lumenflow/core/config-schema';
@@ -828,6 +831,147 @@ describe('WU-2368: DB-risk verification guidance in spawn prompts', () => {
     const prompt = generateCodexPrompt(nonDbDoc, id, strategy, { config });
 
     expect(prompt).not.toContain('DB-Risk Verification');
+  });
+});
+
+describe('WU-2451: co-change guidance_ref injection in spawn prompts', () => {
+  const id = 'WU-2451';
+  const strategy: SpawnStrategy = {
+    getPreamble: () => 'Load context preamble',
+    getSkillLoadingInstruction: () => 'Load skills instruction',
+  };
+
+  const config = LumenFlowConfigSchema.parse({
+    directories: {
+      skillsDir: '.claude/skills',
+      agentsDir: '.claude/agents',
+    },
+  });
+
+  const matchingDoc = {
+    title: 'Dashboard page improvements',
+    lane: 'Experience: Sidekick',
+    type: 'feature',
+    status: 'ready',
+    code_paths: ['apps/web/src/pages/dashboard.tsx'],
+    acceptance: ['Dashboard renders updated layout'],
+    description: 'Exercise prompt-time co-change guidance',
+  };
+
+  const nonMatchingDoc = {
+    ...matchingDoc,
+    code_paths: ['packages/@lumenflow/cli/src/wu-brief.ts'],
+  };
+
+  const tmpDirs: string[] = [];
+
+  function makeTmpDir(): string {
+    const dir = mkdtempSync(path.join(tmpdir(), 'wu2451-'));
+    tmpDirs.push(dir);
+    return dir;
+  }
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    for (const dir of tmpDirs) {
+      rmSync(dir, { recursive: true, force: true });
+    }
+    tmpDirs.length = 0;
+  });
+
+  it('includes matching co-change guidance_ref content in the prompt', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const configModule = await import('@lumenflow/core/gates-config');
+    const templateLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    const gatesSectionMock = vi.spyOn(configModule, 'getGatesSection');
+    const tempDir = makeTmpDir();
+    const guidancePath = path.join(tempDir, 'dashboard-quality.md');
+
+    templateLoad.mockReturnValue(new Map<string, LoadedTemplate>());
+    writeFileSync(guidancePath, 'Avoid exact copy assertions. Prefer role-based selectors.\n');
+    gatesSectionMock.mockReturnValue({
+      co_change: [
+        {
+          name: 'dashboard-e2e',
+          trigger_patterns: ['apps/web/src/pages/**'],
+          require_patterns: ['apps/web/e2e/**'],
+          severity: 'error',
+          guidance: 'Add a dashboard E2E that covers the happy path.',
+          guidance_ref: guidancePath,
+        },
+      ],
+      include_builtin_co_change_defaults: false,
+    });
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(matchingDoc, id, strategy, { config });
+
+    expect(prompt).toContain('Project-Specific Co-Change Guidance');
+    expect(prompt).toContain('dashboard-e2e');
+    expect(prompt).toContain('Add a dashboard E2E that covers the happy path.');
+    expect(prompt).toContain('Avoid exact copy assertions. Prefer role-based selectors.');
+  });
+
+  it('does not include co-change guidance when code_paths do not match a trigger', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const configModule = await import('@lumenflow/core/gates-config');
+    const templateLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    const gatesSectionMock = vi.spyOn(configModule, 'getGatesSection');
+
+    templateLoad.mockReturnValue(new Map<string, LoadedTemplate>());
+    gatesSectionMock.mockReturnValue({
+      co_change: [
+        {
+          name: 'dashboard-e2e',
+          trigger_patterns: ['apps/web/src/pages/**'],
+          require_patterns: ['apps/web/e2e/**'],
+          severity: 'error',
+          guidance_ref: 'docs/testing/dashboard-quality.md',
+        },
+      ],
+      include_builtin_co_change_defaults: false,
+    });
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(nonMatchingDoc, id, strategy, { config });
+
+    expect(prompt).not.toContain('Project-Specific Co-Change Guidance');
+    expect(prompt).not.toContain('dashboard-e2e');
+  });
+
+  it('skips missing guidance_ref files without failing prompt generation', async () => {
+    const templateLoader = await import('@lumenflow/core/template-loader');
+    const configModule = await import('@lumenflow/core/gates-config');
+    const templateLoad = templateLoader.loadTemplatesWithOverrides as ReturnType<typeof vi.fn>;
+    const warnMock = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const gatesSectionMock = vi.spyOn(configModule, 'getGatesSection');
+    const tempDir = makeTmpDir();
+    const missingGuidancePath = path.join(tempDir, 'missing.md');
+
+    templateLoad.mockReturnValue(new Map<string, LoadedTemplate>());
+    gatesSectionMock.mockReturnValue({
+      co_change: [
+        {
+          name: 'dashboard-e2e',
+          trigger_patterns: ['apps/web/src/pages/**'],
+          require_patterns: ['apps/web/e2e/**'],
+          severity: 'error',
+          guidance: 'Inline guidance still applies.',
+          guidance_ref: missingGuidancePath,
+        },
+      ],
+      include_builtin_co_change_defaults: false,
+    });
+
+    const { generateCodexPrompt } = await import('../wu-spawn-prompt-builders.js');
+    const prompt = generateCodexPrompt(matchingDoc, id, strategy, { config });
+
+    expect(prompt).toContain('Project-Specific Co-Change Guidance');
+    expect(prompt).toContain('Inline guidance still applies.');
+    expect(prompt).not.toContain(missingGuidancePath);
+    expect(warnMock).toHaveBeenCalledWith(
+      expect.stringContaining(`guidance_ref "${missingGuidancePath}" not found`),
+    );
   });
 });
 
