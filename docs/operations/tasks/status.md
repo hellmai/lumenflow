@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-- [WU-2452 — Fix all CI test failures for ubuntu-latest open source runners](wu/WU-2452.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1365,3 +1365,4 @@ _Last updated: 2026-03-13_
 - [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml) — 2026-03-13
 - [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml) — 2026-03-13
 - [WU-2450 — Fix remaining test timeouts for ubuntu-latest CI](wu/WU-2450.yaml) — 2026-03-13
+- [WU-2452 — Fix all CI test failures for ubuntu-latest open source runners](wu/WU-2452.yaml) — 2026-03-13
