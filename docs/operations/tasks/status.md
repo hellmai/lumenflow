@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2454 — Fix initiatives test timeout for ubuntu-latest CI](wu/WU-2454.yaml)
 
 ## Completed
 
