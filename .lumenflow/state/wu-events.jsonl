@@ -3458,11 +3458,11 @@
 {"type":"checkpoint","wuId":"WU-2444","timestamp":"2026-03-13T09:23:08.359Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2444","timestamp":"2026-03-13T09:24:45.737Z"}
 {"type":"claim","wuId":"WU-2445","timestamp":"2026-03-13T09:30:27.994Z","lane":"Framework: Agent","title":"Strengthen UI smoke-test guidance with concrete anti-patterns"}
-{"type":"claim","wuId":"WU-2447","timestamp":"2026-03-13T09:35:32.685Z","lane":"Operations: Automation","title":"Add timeouts to slow tests for ubuntu-latest CI runners"}
 {"type":"checkpoint","wuId":"WU-2445","timestamp":"2026-03-13T09:30:40.997Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2445","timestamp":"2026-03-13T09:31:07.358Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"claim","wuId":"WU-2447","timestamp":"2026-03-13T09:35:32.685Z","lane":"Operations: Automation","title":"Add timeouts to slow tests for ubuntu-latest CI runners"}
-{"type":"complete","wuId":"WU-2445","timestamp":"2026-03-13T09:37:07.969Z"}
-{"type":"claim","wuId":"WU-2446","timestamp":"2026-03-13T09:38:33.080Z","lane":"Framework: Core Validation","title":"Add guidance_ref support to co-change rules for file-based test guidance"}
 {"type":"checkpoint","wuId":"WU-2447","timestamp":"2026-03-13T09:35:48.107Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2447","timestamp":"2026-03-13T09:35:58.115Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"complete","wuId":"WU-2445","timestamp":"2026-03-13T09:37:07.969Z"}
+{"type":"claim","wuId":"WU-2446","timestamp":"2026-03-13T09:38:33.080Z","lane":"Framework: Core Validation","title":"Add guidance_ref support to co-change rules for file-based test guidance"}
+{"type":"complete","wuId":"WU-2447","timestamp":"2026-03-13T09:41:52.344Z"}
