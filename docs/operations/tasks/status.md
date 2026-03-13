@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml)
 
 ## Completed
 
