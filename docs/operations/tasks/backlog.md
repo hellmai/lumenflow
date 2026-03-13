@@ -32,7 +32,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2450 — Fix remaining test timeouts for ubuntu-latest CI](wu/WU-2450.yaml) — Operations: Automation
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1396,6 +1396,7 @@ sections:
 - [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml)
 - [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml)
 - [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml)
+- [WU-2450 — Fix remaining test timeouts for ubuntu-latest CI](wu/WU-2450.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

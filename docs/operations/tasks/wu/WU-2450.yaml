@@ -2,7 +2,7 @@ id: WU-2450
 title: Fix remaining test timeouts for ubuntu-latest CI
 lane: 'Operations: Automation'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -40,3 +40,6 @@ session_id: f9277487-e0d7-4c19-9624-234f8480cd2d
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T09:52:02.324Z
+locked: true
+completed_at: 2026-03-13T09:57:19.595Z
+completed: 2026-03-13
