@@ -2,7 +2,7 @@ id: WU-2464
 title: Fix 18 pre-existing CLI test failures for green CI
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -54,3 +54,6 @@ acceptance:
   - All 18 pre-existing CLI test failures are fixed or correctly skipped
   - Full CLI test suite passes locally with 0 failures
   - CI on ubuntu-latest passes the Test step
+locked: true
+completed_at: 2026-03-13T12:58:43.042Z
+completed: 2026-03-13
