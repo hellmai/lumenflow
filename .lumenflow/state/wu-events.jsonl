@@ -3485,3 +3485,4 @@
 {"type":"checkpoint","wuId":"WU-2453","timestamp":"2026-03-13T10:42:55.766Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2453","timestamp":"2026-03-13T10:45:12.969Z"}
 {"type":"checkpoint","wuId":"WU-2451","timestamp":"2026-03-13T10:49:43.277Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2451","timestamp":"2026-03-13T10:51:33.583Z"}

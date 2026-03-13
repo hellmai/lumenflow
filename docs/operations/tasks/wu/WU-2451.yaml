@@ -2,7 +2,7 @@ id: WU-2451
 title: Inject co-change guidance_ref content into wu:brief prompts
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -54,3 +54,6 @@ session_id: 47861a89-3db7-49f3-b811-e27cc9a71870
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T10:38:20.083Z
+locked: true
+completed_at: 2026-03-13T10:51:28.757Z
+completed: 2026-03-13
