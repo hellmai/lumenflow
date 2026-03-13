@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2469 — Sync CLI docs after WU-2468 ownership guard changes](wu/WU-2469.yaml)
 
 ## Completed
 

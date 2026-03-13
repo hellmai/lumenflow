@@ -2,7 +2,7 @@ id: WU-2469
 title: Sync CLI docs after WU-2468 ownership guard changes
 lane: 'Framework: CLI WU Commands'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -28,7 +28,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: docs:validate fails because generated CLI docs drifted after the ownership guard and claim guidance text changed in WU-2468.
+description: docs:validate fails because generated CLI docs drifted after the ownership guard and
+  claim guidance text changed in WU-2468.
 acceptance:
   - pnpm docs:validate passes
   - Generated CLI docs reflect the new ownership guard and claim guidance
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2469
+claimed_at: 2026-03-13T21:49:09.583Z
+baseline_main_sha: 08721c7879cf99adf6d2417d38b863edc4731d44
+session_id: 6cd0a76d-95ba-4f4e-b607-694f146841a8
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T21:49:09.590Z
