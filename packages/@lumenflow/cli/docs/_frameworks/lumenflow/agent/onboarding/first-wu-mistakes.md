@@ -1,6 +1,6 @@
 # First WU Mistakes
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 Common mistakes agents make on their first WU, and how to avoid them.
 

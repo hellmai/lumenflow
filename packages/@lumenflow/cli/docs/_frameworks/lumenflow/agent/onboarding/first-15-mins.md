@@ -1,6 +1,6 @@
 # First 15 Minutes with LumenFlow
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 A fast start for agents entering an existing LumenFlow project.
 

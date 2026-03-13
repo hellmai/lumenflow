@@ -4,7 +4,7 @@ description: Prevents the "absolute path trap" in Write/Edit/Read tools. Use whe
 version: 2.0.0
 source: {{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/lumenflow-agent-capsule.md
 source_sections: Worktree Discipline, Tool Usage
-last_updated: 2026-03-12
+last_updated: 2026-03-13
 allowed-tools: Read, Bash, Grep
 ---
 
@@ -138,5 +138,5 @@ About to use Write/Edit/Read?
 
 ## Version History
 
-- **v2.0.0** (2026-03-12): Refactored to focus on absolute path trap (per Anthropic one-capability-per-skill guideline)
-- **v1.0.0** (2026-03-12): Initial skill from lumenflow-agent-capsule.md
+- **v2.0.0** (2026-03-13): Refactored to focus on absolute path trap (per Anthropic one-capability-per-skill guideline)
+- **v1.0.0** (2026-03-13): Initial skill from lumenflow-agent-capsule.md

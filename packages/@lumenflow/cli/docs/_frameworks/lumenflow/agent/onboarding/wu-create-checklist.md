@@ -1,6 +1,6 @@
 # WU Creation Checklist
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 Use this checklist before running `pnpm wu:create`.
 
