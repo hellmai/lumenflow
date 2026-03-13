@@ -2,7 +2,7 @@ id: WU-2460
 title: Make wu:done auto-rebase tolerate wu:brief evidence-only state drift
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -19,9 +19,9 @@ artifacts:
   - .lumenflow/stamps/WU-2460.done
 dependencies: []
 risks: []
-notes: 'Implementation scope corrected to the core auto-rebase helper because the failure occurs
+notes: Implementation scope corrected to the core auto-rebase helper because the failure occurs
   inside autoRebaseBranch. Regression coverage lives in no-process-chdir.test.ts for evidence-only
-  wu-events.jsonl drift and mixed dirty-tree cases.'
+  wu-events.jsonl drift and mixed dirty-tree cases.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -52,3 +52,6 @@ session_id: e2ecd66d-b24d-4cd1-9593-eec1c7fbdf3a
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T12:18:49.211Z
+locked: true
+completed_at: 2026-03-13T12:30:45.791Z
+completed: 2026-03-13
