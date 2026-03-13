@@ -2,7 +2,7 @@ id: WU-2445
 title: Strengthen UI smoke-test guidance with concrete anti-patterns
 lane: 'Framework: Agent'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -23,7 +23,10 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/WU-2445-plan.md
 risks: []
-notes: 'Motivated by lumenflow-cloud experience: 59 E2E tests broke because agents asserted exact copy, inline styles, and CSS hues. Both claude-code and codex agents independently identified this guidance gap. The template is the source of truth; the generator should read from it or mirror it exactly.'
+notes: 'Motivated by lumenflow-cloud experience: 59 E2E tests broke because agents asserted exact
+  copy, inline styles, and CSS hues. Both claude-code and codex agents independently identified this
+  guidance gap. The template is the source of truth; the generator should read from it or mirror it
+  exactly.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -32,11 +35,30 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: LumenFlow spawn guidance tells agents to prefer user-outcome verification over brittle DOM assertions, but the wording is too abstract. Downstream agents still write tests asserting exact copy, inline styles, and CSS hues because nothing names those as the exact anti-patterns to avoid. Problem: The guidance appears in four places (template, generator x3) and two test files lock the wording. A partial update will drift. Solution: Add a concrete anti-patterns subsection to visual-directive.md, mirror it in generateSmokeTestGuidance(), tighten the one-liners in generateMandatoryStandards() and generateEnforcementSummary(), and update the regression tests that lock the old wording.'
+description: 'Context: LumenFlow spawn guidance tells agents to prefer user-outcome verification
+  over brittle DOM assertions, but the wording is too abstract. Downstream agents still write tests
+  asserting exact copy, inline styles, and CSS hues because nothing names those as the exact
+  anti-patterns to avoid. Problem: The guidance appears in four places (template, generator x3) and
+  two test files lock the wording. A partial update will drift. Solution: Add a concrete
+  anti-patterns subsection to visual-directive.md, mirror it in generateSmokeTestGuidance(), tighten
+  the one-liners in generateMandatoryStandards() and generateEnforcementSummary(), and update the
+  regression tests that lock the old wording.'
 acceptance:
-  - 'visual-directive.md contains a new Anti-Patterns subsection naming: inline style values, CSS hue/color numbers, exact marketing copy, substring label matches, DOM shape snapshots'
+  - 'visual-directive.md contains a new Anti-Patterns subsection naming: inline style values, CSS
+    hue/color numbers, exact marketing copy, substring label matches, DOM shape snapshots'
   - generateSmokeTestGuidance() mirrors the same anti-patterns list from the template
-  - generateMandatoryStandards() smoke-test bullet references anti-patterns, not just prefer user-outcome
-  - generateEnforcementSummary() smoke-test line references behavioral verification with anti-pattern awareness
-  - wu-spawn.test.ts and wu-spawn-prompt-builders.test.ts assertions updated to match new wording and pass
+  - generateMandatoryStandards() smoke-test bullet references anti-patterns, not just prefer
+    user-outcome
+  - generateEnforcementSummary() smoke-test line references behavioral verification with
+    anti-pattern awareness
+  - wu-spawn.test.ts and wu-spawn-prompt-builders.test.ts assertions updated to match new wording
+    and pass
   - All four guidance sites use consistent language (no drift between template and generator)
+claimed_mode: worktree
+worktree_path: worktrees/framework-agent-wu-2445
+claimed_at: 2026-03-13T09:30:27.956Z
+baseline_main_sha: 29fc93a7915cc73e98e079b7a73d6af78ed36aa8
+session_id: 7a41a43c-a804-4f99-a6dc-9c9b169c46b7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:30:27.965Z

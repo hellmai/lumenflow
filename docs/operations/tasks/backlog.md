@@ -20,8 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml) — Framework: Core Validation
-- [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml) — Framework: Agent
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -29,10 +27,11 @@ sections:
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
+- [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml) — Framework: Core Validation
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml) — Framework: Agent
 
 ## ⛔ Blocked
 

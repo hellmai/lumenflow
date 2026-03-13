@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml)
 
 ## Completed
 
