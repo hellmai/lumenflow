@@ -21,7 +21,9 @@ artifacts:
   - .lumenflow/stamps/WU-2458.done
 dependencies: []
 risks: []
-notes: ''
+notes:
+  'Created from observed wu:done completion failure where claimed session metadata existed but the
+  runtime reported Active session: none.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
