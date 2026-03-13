@@ -132,6 +132,7 @@ describe('init:plan command', () => {
     it('should handle nested paths', async () => {
       const { formatPlanUri } = await import('../initiative-plan.js');
 
+      // WU-2464: formatPlanUri preserves subdirectory structure under plans/
       expect(formatPlanUri('docs/operations/plans/subdir/nested-plan.md')).toBe(
         'lumenflow://plans/subdir/nested-plan.md',
       );

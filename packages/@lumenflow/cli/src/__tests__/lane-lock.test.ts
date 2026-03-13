@@ -40,13 +40,8 @@ describe('lane:lock', () => {
     });
   });
 
-  describe('HELP_TEXT export', () => {
-    it('exports HELP_TEXT constant', async () => {
-      const mod = await import('../lane-lock.js');
-      expect(mod.LANE_LOCK_HELP_TEXT).toBeDefined();
-      expect(mod.LANE_LOCK_HELP_TEXT).toContain('lane:lock');
-    });
-  });
+  // WU-2464: getLaneLockHelpText is internal (not exported).
+  // Help text is rendered at runtime via the CLI's --help flag.
 
   describe('OPERATION_NAME export', () => {
     it('exports LANE_LOCK_OPERATION_NAME for micro-worktree', async () => {
@@ -80,13 +75,7 @@ describe('lane:validate', () => {
     });
   });
 
-  describe('HELP_TEXT export', () => {
-    it('exports HELP_TEXT constant', async () => {
-      const mod = await import('../lane-validate.js');
-      expect(mod.LANE_VALIDATE_HELP_TEXT).toBeDefined();
-      expect(mod.LANE_VALIDATE_HELP_TEXT).toContain('lane:validate');
-    });
-  });
+  // WU-2464: getLaneValidateHelpText is internal (not exported).
 
   describe('OPERATION_NAME export', () => {
     it('exports LANE_VALIDATE_OPERATION_NAME for micro-worktree', async () => {
@@ -130,13 +119,7 @@ describe('lane:setup', () => {
     });
   });
 
-  describe('HELP_TEXT export', () => {
-    it('exports HELP_TEXT constant', async () => {
-      const mod = await import('../lane-setup.js');
-      expect(mod.LANE_SETUP_HELP_TEXT).toBeDefined();
-      expect(mod.LANE_SETUP_HELP_TEXT).toContain('lane:setup');
-    });
-  });
+  // WU-2464: getLaneSetupHelpText is internal (not exported).
 
   describe('OPERATION_NAME export', () => {
     it('exports LANE_SETUP_OPERATION_NAME for micro-worktree', async () => {
@@ -170,11 +153,5 @@ describe('lane:status', () => {
     });
   });
 
-  describe('HELP_TEXT export', () => {
-    it('exports HELP_TEXT constant', async () => {
-      const mod = await import('../lane-status.js');
-      expect(mod.LANE_STATUS_HELP_TEXT).toBeDefined();
-      expect(mod.LANE_STATUS_HELP_TEXT).toContain('lane:status');
-    });
-  });
+  // WU-2464: getLaneStatusHelpText is internal (not exported).
 });

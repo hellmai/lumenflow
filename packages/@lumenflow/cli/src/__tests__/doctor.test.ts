@@ -322,7 +322,7 @@ describe('doctor CLI (WU-1386) - Agent Friction Checks', () => {
 
       expect(result.checks.lumenflowConfig.passed).toBe(false);
       expect(result.checks.lumenflowConfig.message).toContain(WORKSPACE_CONFIG_FILE_NAME);
-      expect(result.checks.lumenflowConfig.details).toContain('workspace-init');
+      expect(result.checks.lumenflowConfig.details).toContain('workspace:init');
       expect(result.exitCode).toBe(2);
     });
   });
@@ -378,7 +378,7 @@ describe('doctor auto-run after init (WU-1386)', () => {
 
     expect(result.errors).toBeGreaterThan(0);
     expect(result.output).toContain('workspace.yaml missing');
-    expect(result.output).toContain('workspace-init');
+    expect(result.output).toContain('workspace:init');
     expect(result.blocked).toBe(false);
   });
 });

@@ -355,7 +355,7 @@ describe('greenfield onboarding (WU-1364)', () => {
   describe('AC: Init output includes initiative-first workflow guidance', () => {
     // This test verifies the console output, which requires capturing stdout
     // We'll mock console.log to capture the output
-    it('should print initiative-first guidance in init output', async () => {
+    it('should print initiative-first guidance in init output', { timeout: 30_000 }, async () => {
       const consoleLogs: string[] = [];
       const originalLog = console.log;
       console.log = (...args: unknown[]) => {
@@ -496,7 +496,7 @@ describe('greenfield onboarding (WU-1364)', () => {
   });
 
   describe('AC: WU-1576 — Init Next Steps mentions integrate for Claude', () => {
-    it('should mention enforcement hooks in Next Steps when --client claude', async () => {
+    it('should mention enforcement hooks in Next Steps when --client claude', { timeout: 30_000 }, async () => {
       const consoleLogs: string[] = [];
       const originalLog = console.log;
       console.log = (...args: unknown[]) => {

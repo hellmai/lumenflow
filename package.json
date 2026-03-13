@@ -157,7 +157,8 @@
     "git:status": "node packages/@lumenflow/cli/dist/git-status.js",
     "git:diff": "node packages/@lumenflow/cli/dist/git-diff.js",
     "git:log": "node packages/@lumenflow/cli/dist/git-log.js",
-    "git:branch": "node packages/@lumenflow/cli/dist/git-branch.js"
+    "git:branch": "node packages/@lumenflow/cli/dist/git-branch.js",
+    "gate:co-change": "node packages/@lumenflow/cli/dist/gate-co-change.js"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
