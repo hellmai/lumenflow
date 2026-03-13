@@ -16,12 +16,19 @@ artifacts:
   - .lumenflow/stamps/WU-2471.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: template sync only, no runtime code'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T23:39:32.609Z
+worktree_path: worktrees/content-documentation-wu-2471
+session_id: a250c45a-a0f6-42ac-9708-c0beb6b651c1
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T23:39:32.614Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -29,11 +36,3 @@ description: pnpm sync:templates --check-drift fails in CI. 14 templates drifted
   Pre-existing on main.
 acceptance:
   - pnpm sync:templates --check-drift passes
-claimed_mode: worktree
-worktree_path: worktrees/content-documentation-wu-2471
-claimed_at: 2026-03-13T23:39:32.609Z
-baseline_main_sha: 38b23be1ab40775eb480b9adf7f542277b3aa4e0
-session_id: a250c45a-a0f6-42ac-9708-c0beb6b651c1
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T23:39:32.614Z
