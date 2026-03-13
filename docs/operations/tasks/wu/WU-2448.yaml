@@ -1,0 +1,38 @@
+id: WU-2448
+title: Conditional gate commands keyed to trigger patterns
+lane: 'Framework: Core Validation'
+type: feature
+status: ready
+priority: P2
+created: 2026-03-13
+code_paths:
+  - packages/@lumenflow/core/src/schemas/gates-section-config.ts
+  - packages/@lumenflow/cli/src/gates-runners.ts
+tests:
+  manual:
+    - Configure a conditional command triggered by migration file patterns, verify it runs only when those files are changed and skips otherwise
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2448.done
+dependencies: []
+spec_refs:
+  - lumenflow://plans/WU-2448-plan.md
+risks: []
+notes: Motivated by lumenflow-cloud needing scoped DB verification (db:verify) only for DB-touching WUs. Complements WU-2446 (guidance_ref) and WU-2445 (UI anti-patterns). The existing migration_verify in gates.commands is a partial solution but runs unconditionally.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: "Context: The co-change gate checks file pairings (if you changed X, you must also change Y) but cannot run a verification command. Projects need scoped enforcement like 'if the WU touches DB files, run db:verify' without slowing every WU. Problem: Today gates either run globally (migration_verify in gates.commands) or not at all. There is no way to trigger a command conditionally based on changed file patterns. This forces projects to either run expensive checks on every WU or skip them entirely. Solution: Add a conditional_commands section to gates config. Each entry has trigger_patterns (glob), a command to run, severity (warn/error/off), and optional guidance. The gates runner checks changed files against trigger_patterns and only runs the command when matched."
+acceptance:
+  - Gates config schema accepts a conditional_commands array with trigger_patterns, command, severity, and optional guidance/guidance_ref fields
+  - Gates runner evaluates trigger_patterns against changed files and only runs matched commands
+  - Unmatched conditional commands are skipped silently (no slowdown for unrelated WUs)
+  - 'Command failure respects severity: error blocks gates, warn logs and continues'
+  - gate:co-change CLI or a new gate:conditional CLI supports add/edit/remove/list for conditional commands
