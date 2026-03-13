@@ -2,7 +2,7 @@ id: WU-2445
 title: Strengthen UI smoke-test guidance with concrete anti-patterns
 lane: 'Framework: Agent'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -62,3 +62,6 @@ session_id: 7a41a43c-a804-4f99-a6dc-9c9b169c46b7
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T09:30:27.965Z
+locked: true
+completed_at: 2026-03-13T09:37:02.991Z
+completed: 2026-03-13

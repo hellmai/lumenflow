@@ -3461,3 +3461,5 @@
 {"type":"claim","wuId":"WU-2447","timestamp":"2026-03-13T09:35:32.685Z","lane":"Operations: Automation","title":"Add timeouts to slow tests for ubuntu-latest CI runners"}
 {"type":"checkpoint","wuId":"WU-2445","timestamp":"2026-03-13T09:30:40.997Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2445","timestamp":"2026-03-13T09:31:07.358Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"claim","wuId":"WU-2447","timestamp":"2026-03-13T09:35:32.685Z","lane":"Operations: Automation","title":"Add timeouts to slow tests for ubuntu-latest CI runners"}
+{"type":"complete","wuId":"WU-2445","timestamp":"2026-03-13T09:37:07.969Z"}

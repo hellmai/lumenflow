@@ -4,7 +4,6 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-- [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml)
 - [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml)
 
 ## Completed
@@ -1362,3 +1361,4 @@ _Last updated: 2026-03-13_
 - [WU-2442 — Fix CI workflows for open source: replace self-hosted with ubuntu-latest](wu/WU-2442.yaml) — 2026-03-13
 - [WU-2443 — Install D2 in CI workflow for docs build](wu/WU-2443.yaml) — 2026-03-13
 - [WU-2444 — Fix packaging-boundary test timeout on ubuntu-latest](wu/WU-2444.yaml) — 2026-03-13
+- [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml) — 2026-03-13
