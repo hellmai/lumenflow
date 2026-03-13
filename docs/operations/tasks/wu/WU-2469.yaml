@@ -19,8 +19,9 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/WU-2469-plan.md
 risks: []
-notes: Regenerates the CLI reference after WU-2468 added ownership-guard flags to multiple WU
-  commands; the CI failure is docs drift rather than a runtime regression.
+notes: 'Regenerates the CLI reference after WU-2468 added ownership-guard flags to multiple WU
+  commands; the CI failure is docs drift rather than a runtime regression. tdd-exception:
+  docs-only generated output sync verified with pnpm docs:validate.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: documentation
