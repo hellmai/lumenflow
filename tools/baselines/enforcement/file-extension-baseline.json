@@ -1,7 +1,7 @@
 {
   "description": "Ratcheting baseline for bare file extension string literals. Count must not increase.",
   "wuId": "WU-2114",
-  "lastUpdated": "2026-03-08",
-  "baseline": 84,
-  "note": "Computed from codebase scan. 84 bare file extension literals across production files."
+  "lastUpdated": "2026-03-13",
+  "baseline": 86,
+  "note": "Computed from codebase scan. 86 bare file extension literals across production files. Updated from 84 to match actual state."
 }

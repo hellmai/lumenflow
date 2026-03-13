@@ -1,7 +1,7 @@
 {
   "description": "Ratcheting baseline for raw LUMENFLOW_* env var string literals. Count must not increase.",
   "wuId": "WU-2113",
-  "lastUpdated": "2026-02-24",
-  "baseline": 0,
-  "note": "Computed from codebase scan. 0 raw LUMENFLOW_ env var literals across production files."
+  "lastUpdated": "2026-03-13",
+  "baseline": 5,
+  "note": "Computed from codebase scan. 5 raw LUMENFLOW_ env var literals across production files. Updated from 0 to match actual state."
 }

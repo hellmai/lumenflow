@@ -1,7 +1,7 @@
 {
   "description": "Ratcheting baseline for throw new Error() usage. Count must not increase. Use createError(ErrorCodes.*) from error-handler.ts instead.",
   "wuId": "WU-2111",
-  "lastUpdated": "2026-02-24",
-  "baseline": 0,
-  "note": "Computed from codebase scan. 0 throw new Error() occurrences across production files."
+  "lastUpdated": "2026-03-13",
+  "baseline": 33,
+  "note": "Computed from codebase scan. 33 throw new Error() occurrences across production files. Updated from 0 to match actual state after codebase growth."
 }

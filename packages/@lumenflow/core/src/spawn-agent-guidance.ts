@@ -28,6 +28,7 @@
 import { getConfig } from './lumenflow-config.js';
 import type { LumenFlowConfig } from './lumenflow-config-schema.js';
 import { DIRECTORIES, LUMENFLOW_PATHS } from './wu-constants.js';
+import { WORKSPACE_CONFIG_FILE_NAME } from './config-contract.js';
 
 // WU-2044: Canonical WUDoc type (was independently defined here)
 import type { WUDocBase } from './wu-doc-types.js';
@@ -285,7 +286,7 @@ pnpm wu:infer-lane --id WU-XXX
 pnpm wu:infer-lane --paths "tools/**" --desc "CLI improvements"
 \`\`\`
 
-**Lane source of truth**: See \`workspace.yaml\` \`software_delivery.lanes.definitions\`.
+**Lane source of truth**: See \`${WORKSPACE_CONFIG_FILE_NAME}\` \`software_delivery.lanes.definitions\`.
 Inference reads configured lane names, descriptions, and \`code_paths\` from that file.
 
 **Why lanes matter**: WIP=1 per lane means correct lane selection enables parallel work across lanes.`;

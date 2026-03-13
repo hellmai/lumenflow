@@ -25,6 +25,7 @@ import {
   PRETTIER_FLAGS,
   READINESS_UI,
   LUMENFLOW_PATHS,
+  WU_STATUS,
 } from '@lumenflow/core/wu-constants';
 import { validateLaneFormat } from '@lumenflow/core/lane-checker';
 // WU-1442: Import date normalization to fix date corruption from js-yaml
@@ -238,9 +239,9 @@ export function buildReadinessSummaryContent(
   id: string,
 ): ReadinessSummaryContent {
   const { valid, errors } = validateSpecCompleteness(wuDoc, id);
-  const status = typeof wuDoc.status === 'string' ? wuDoc.status : 'ready';
+  const status = typeof wuDoc.status === 'string' ? wuDoc.status : WU_STATUS.READY;
 
-  if (status === 'ready') {
+  if (status === WU_STATUS.READY) {
     if (valid) {
       return {
         headline: READINESS_UI.MESSAGES.READY_YES,
@@ -256,7 +257,7 @@ export function buildReadinessSummaryContent(
     };
   }
 
-  if (status === 'in_progress') {
+  if (status === WU_STATUS.IN_PROGRESS) {
     return {
       headline: '✅ Already claimed: YES',
       details: ['Current status: in_progress'],

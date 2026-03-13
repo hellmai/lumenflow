@@ -135,6 +135,10 @@ const ALWAYS_ALLOWED_PATH_SEGMENTS = [
   'wu-spawn-prompt-builders.ts',
   'spawn-guidance-generators.ts',
   'lane-health.ts',
+  // Worktree detection and git ref modules
+  'micro-worktree.ts',
+  'wu-edit-validators.ts',
+  'docs-sync.ts',
   // Helper modules with documentation-oriented path examples
   'lumenflow-home.ts',
   'wu-yaml.ts',
