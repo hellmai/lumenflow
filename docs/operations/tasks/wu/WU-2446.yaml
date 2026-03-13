@@ -2,7 +2,7 @@ id: WU-2446
 title: Add guidance_ref support to co-change rules for file-based test guidance
 lane: 'Framework: Core Validation'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -57,3 +57,6 @@ acceptance:
   - gate:co-change CLI supports --guidance-ref in add and edit subcommands
   - When guidance_ref file does not exist, gate runner emits a warning but does not fail
   - Existing inline guidance field continues to work unchanged (backward compatible)
+locked: true
+completed_at: 2026-03-13T09:46:17.251Z
+completed: 2026-03-13
