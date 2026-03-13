@@ -29,13 +29,12 @@ sections:
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — Framework: Core Validation
 - [WU-2449 — Update onboarding docs to reflect WU-2445 UI test anti-patterns](wu/WU-2449.yaml) — Content: Documentation
-- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — Framework: CLI WU Commands
-- [WU-2460 — Make wu:done auto-rebase tolerate wu:brief evidence-only state drift](wu/WU-2460.yaml) — Framework: CLI WU Commands
 - [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2465 — Fix 9 pre-existing @lumenflow/core test failures for green CI](wu/WU-2465.yaml) — Framework: Core
+- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1407,6 +1406,7 @@ sections:
 - [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml)
 - [WU-2462 — Increase CI job timeout from 10 to 20 minutes for ubuntu-latest](wu/WU-2462.yaml)
 - [WU-2463 — Fix pre-existing CLI test failures for green CI](wu/WU-2463.yaml)
+- [WU-2460 — Make wu:done auto-rebase tolerate wu:brief evidence-only state drift](wu/WU-2460.yaml)
 - [WU-2464 — Fix 18 pre-existing CLI test failures for green CI](wu/WU-2464.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)

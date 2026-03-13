@@ -2,7 +2,7 @@ id: WU-2458
 title: Relax wu:done claim ownership when no active session is present
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
 tests:
   manual:
-    - Claim and prep a WU, clear active session context, then run wu:done and verify normal completion still works without --force when no conflicting session is active
+    - Claim and prep a WU, clear active session context, then run wu:done and verify normal
+      completion still works without --force when no conflicting session is active
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done-ownership.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
@@ -21,9 +22,8 @@ artifacts:
   - .lumenflow/stamps/WU-2458.done
 dependencies: []
 risks: []
-notes:
-  'Created from observed wu:done completion failure where claimed session metadata existed but the
-  runtime reported Active session: none.'
+notes: 'Created from observed wu:done completion failure where claimed session metadata existed but
+  the runtime reported Active session: none.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -32,8 +32,26 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: wu:done enforces claim-session ownership to stop one agent from completing another agent's WU. Problem: after a legitimate claim, prep, and rebase flow, wu:done can still fail with CLAIM OWNERSHIP VIOLATION when the claimed session is recorded but the current environment has no active session attached (reported as Active session: none). This forces --force orphan-recovery usage even when the same operator is simply resuming completion in a new shell/session. Solution: distinguish missing active-session context from a true conflicting active session, and provide a safe non-force continuation path for legitimate same-WU completion resumes."
+description: "Context: wu:done enforces claim-session ownership to stop one agent from completing
+  another agent's WU. Problem: after a legitimate claim, prep, and rebase flow, wu:done can still
+  fail with CLAIM OWNERSHIP VIOLATION when the claimed session is recorded but the current
+  environment has no active session attached (reported as Active session: none). This forces --force
+  orphan-recovery usage even when the same operator is simply resuming completion in a new
+  shell/session. Solution: distinguish missing active-session context from a true conflicting active
+  session, and provide a safe non-force continuation path for legitimate same-WU completion
+  resumes."
 acceptance:
-  - wu:done does not raise CLAIM OWNERSHIP VIOLATION solely because active session context is missing while the WU remains legitimately claimed and otherwise valid for completion
-  - True cross-session conflicts with a different active session still block completion unless an audited override is used
-  - Unit tests cover missing-active-session, matching-session, and conflicting-session ownership outcomes
+  - wu:done does not raise CLAIM OWNERSHIP VIOLATION solely because active session context is
+    missing while the WU remains legitimately claimed and otherwise valid for completion
+  - True cross-session conflicts with a different active session still block completion unless an
+    audited override is used
+  - Unit tests cover missing-active-session, matching-session, and conflicting-session ownership
+    outcomes
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2458
+claimed_at: 2026-03-13T13:27:31.505Z
+baseline_main_sha: 3ea0f3c4665c177d92f80d1ca48c488541e4fa1c
+session_id: 95dfcef7-8ef0-427e-90a2-418243f921d3
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T13:27:31.510Z

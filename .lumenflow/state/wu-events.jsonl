@@ -3523,3 +3523,4 @@
 {"type":"checkpoint","wuId":"WU-2464","timestamp":"2026-03-13T12:57:46.428Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2464.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2464","timestamp":"2026-03-13T12:58:47.713Z"}
 {"type":"claim","wuId":"WU-2465","timestamp":"2026-03-13T13:19:08.587Z","lane":"Framework: Core","title":"Fix 9 pre-existing @lumenflow/core test failures for green CI"}
+{"type":"claim","wuId":"WU-2458","timestamp":"2026-03-13T13:27:31.534Z","lane":"Framework: CLI WU Commands","title":"Relax wu:done claim ownership when no active session is present"}
