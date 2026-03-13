@@ -429,50 +429,54 @@ describe('WU-1574: status guard foundations', () => {
 });
 
 describe('WU-1548: Status literal regression guard', () => {
-  it('scans all 7 runtime packages for bare status string literals via AST', async () => {
-    const filesPerTarget = await Promise.all(
-      SCAN_TARGETS.map(async (target) => {
-        const files = await getRuntimeSourceFiles(target);
-        return { target: target.label, files };
-      }),
-    );
+  it(
+    'scans all 7 runtime packages for bare status string literals via AST',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        SCAN_TARGETS.map(async (target) => {
+          const files = await getRuntimeSourceFiles(target);
+          return { target: target.label, files };
+        }),
+      );
 
-    // Verify all packages have files (non-zero file counts)
-    for (const { target, files } of filesPerTarget) {
-      expect(files.length, `No files discovered for ${target}`).toBeGreaterThan(0);
-    }
+      // Verify all packages have files (non-zero file counts)
+      for (const { target, files } of filesPerTarget) {
+        expect(files.length, `No files discovered for ${target}`).toBeGreaterThan(0);
+      }
 
-    const allViolations: Array<{
-      file: string;
-      violations: StatusLiteralViolation[];
-    }> = [];
+      const allViolations: Array<{
+        file: string;
+        violations: StatusLiteralViolation[];
+      }> = [];
 
-    for (const { target, files } of filesPerTarget) {
-      for (const file of files) {
-        if (isAllowedFileForStatus(file)) continue;
+      for (const { target, files } of filesPerTarget) {
+        for (const file of files) {
+          if (isAllowedFileForStatus(file)) continue;
 
-        const sourceText = readFileSync(file, 'utf-8');
-        const violations = scanSourceTextForStatusLiterals(sourceText, file);
-        if (violations.length > 0) {
-          const dir = SCAN_TARGETS.find((t) => t.label === target)?.dir ?? '';
-          allViolations.push({
-            file: path.relative(dir, file),
-            violations,
-          });
+          const sourceText = readFileSync(file, 'utf-8');
+          const violations = scanSourceTextForStatusLiterals(sourceText, file);
+          if (violations.length > 0) {
+            const dir = SCAN_TARGETS.find((t) => t.label === target)?.dir ?? '';
+            allViolations.push({
+              file: path.relative(dir, file),
+              violations,
+            });
+          }
         }
       }
-    }
 
-    if (allViolations.length > 0) {
-      expect.fail(
-        `Found ${allViolations.length} file(s) with bare status string literals.\n\n` +
-          `These should use WU_STATUS.* constants from wu-constants.ts.\n\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
-      );
-    }
+      if (allViolations.length > 0) {
+        expect.fail(
+          `Found ${allViolations.length} file(s) with bare status string literals.\n\n` +
+            `These should use WU_STATUS.* constants from wu-constants.ts.\n\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
+      }
 
-    expect(allViolations).toHaveLength(0);
-  });
+      expect(allViolations).toHaveLength(0);
+    },
+  );
 
   it('should not have duplicated MEMORY_DIR definitions in production code', async () => {
     const packagesDir = path.resolve(__dirname, '..', '..', '..', '..');

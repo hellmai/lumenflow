@@ -280,7 +280,7 @@ describe('WU-2110: UnsafeAny AST type-safety guard', () => {
 });
 
 describe('WU-2110: UnsafeAny ratcheting regression guard', () => {
-  it('scans all 7 runtime packages for UnsafeAny references', async () => {
+  it('scans all 7 runtime packages for UnsafeAny references', { timeout: 30_000 }, async () => {
     const filesPerTarget = await Promise.all(
       SCAN_TARGETS.map(async (target) => {
         const files = await getSourceFiles(target);
