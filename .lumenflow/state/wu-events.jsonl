@@ -3547,3 +3547,6 @@
 {"type":"complete","wuId":"WU-2467","timestamp":"2026-03-13T14:39:16.555Z"}
 {"type":"complete","wuId":"WU-2468","timestamp":"2026-03-13T14:40:33.696Z"}
 {"type":"claim","wuId":"WU-2469","timestamp":"2026-03-13T21:49:09.625Z","lane":"Framework: CLI WU Commands","title":"Sync CLI docs after WU-2468 ownership guard changes"}
+{"type":"checkpoint","wuId":"WU-2469","timestamp":"2026-03-13T21:49:20.883Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2469","timestamp":"2026-03-13T21:49:30.567Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2469","timestamp":"2026-03-13T21:57:59.343Z"}

@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-- [WU-2469 — Sync CLI docs after WU-2468 ownership guard changes](wu/WU-2469.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1380,3 +1380,4 @@ _Last updated: 2026-03-13_
 - [WU-2466 — Update path-literal ratchet baseline after parallel WU merges](wu/WU-2466.yaml) — 2026-03-13
 - [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml) — 2026-03-13
 - [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml) — 2026-03-13
+- [WU-2469 — Sync CLI docs after WU-2468 ownership guard changes](wu/WU-2469.yaml) — 2026-03-13
