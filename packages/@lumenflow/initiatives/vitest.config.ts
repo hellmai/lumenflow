@@ -12,7 +12,8 @@ export default defineConfig({
     // to a temp directory before module loading (modules resolve config paths
     // from cwd at import time). The first import per file compiles the full
     // dependency tree (~3s locally, potentially longer under CI load).
-    // Default 5s timeout is insufficient under load — 15s provides headroom.
-    testTimeout: 15000,
+    // Default 5s timeout is insufficient under load — 30s provides headroom
+    // for GitHub-hosted ubuntu-latest runners.
+    testTimeout: 30000,
   },
 });
