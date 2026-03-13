@@ -9,7 +9,6 @@ code_paths:
   - packages/@lumenflow/cli/__tests__/docs-sync.test.ts
   - packages/@lumenflow/cli/__tests__/init.test.ts
   - packages/@lumenflow/cli/__tests__/wu-edit.test.ts
-  - packages/@lumenflow/cli/__tests__/wu-recover.test.ts
   - packages/@lumenflow/cli/vitest.config.ts
 tests:
   manual:
