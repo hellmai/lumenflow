@@ -27,11 +27,11 @@ sections:
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2397 — Fix wu:done YAML formatting: use prettier Node.js API instead of yaml.stringify output](wu/WU-2397.yaml) — Framework: Core Lifecycle
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
-- [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml) — Framework: Core Validation
 
 ## 🔧 In progress
 
 - [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml) — Operations: Automation
+- [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml) — Framework: Core Validation
 
 ## ⛔ Blocked
 

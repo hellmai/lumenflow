@@ -5,6 +5,7 @@ _Last updated: 2026-03-13_
 ## In Progress
 
 - [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml)
+- [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml)
 
 ## Completed
 

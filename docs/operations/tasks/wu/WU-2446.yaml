@@ -2,7 +2,7 @@ id: WU-2446
 title: Add guidance_ref support to co-change rules for file-based test guidance
 lane: 'Framework: Core Validation'
 type: feature
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -11,7 +11,8 @@ code_paths:
   - packages/@lumenflow/cli/src/gate-co-change.ts
 tests:
   manual:
-    - Configure a co-change rule with guidance_ref pointing to a markdown file; trigger a violation and verify the file content appears in the output
+    - Configure a co-change rule with guidance_ref pointing to a markdown file; trigger a violation
+      and verify the file content appears in the output
   unit:
     - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
     - packages/@lumenflow/cli/src/__tests__/gate-co-change.test.ts
@@ -22,7 +23,9 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/WU-2446-plan.md
 risks: []
-notes: 'Companion to WU-2445 (concrete anti-patterns). Together they solve the downstream problem: WU-2445 improves the framework-level guidance, this WU lets projects inject project-specific quality criteria into co-change violations.'
+notes: 'Companion to WU-2445 (concrete anti-patterns). Together they solve the downstream problem:
+  WU-2445 improves the framework-level guidance, this WU lets projects inject project-specific
+  quality criteria into co-change violations.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -31,10 +34,26 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: "Context: Co-change rules in workspace.yaml can enforce that trigger file changes require companion files (e.g., page changes require E2E specs). The guidance field is an inline string limited to one sentence. Problem: Projects cannot reference a detailed style guide file, so agents see unhelpful guidance like 'Dashboard page changes should have a Playwright E2E spec' with no quality criteria. This causes agents to satisfy the gate with brittle assertions. Solution: Add an optional guidance_ref field to CoChangeRuleConfigSchema that references a file path. When present, the gate runner reads the file and appends its content alongside the inline guidance. The spawn prompt builder should also inject referenced guidance into the brief."
+description: "Context: Co-change rules in workspace.yaml can enforce that trigger file changes
+  require companion files (e.g., page changes require E2E specs). The guidance field is an inline
+  string limited to one sentence. Problem: Projects cannot reference a detailed style guide file, so
+  agents see unhelpful guidance like 'Dashboard page changes should have a Playwright E2E spec' with
+  no quality criteria. This causes agents to satisfy the gate with brittle assertions. Solution: Add
+  an optional guidance_ref field to CoChangeRuleConfigSchema that references a file path. When
+  present, the gate runner reads the file and appends its content alongside the inline guidance. The
+  spawn prompt builder should also inject referenced guidance into the brief."
 acceptance:
   - CoChangeRuleConfigSchema in gates-section-config.ts accepts an optional guidance_ref string field
-  - Gate runner in gates-runners.ts reads the referenced file and appends its content to the violation message when guidance_ref is set
+  - Gate runner in gates-runners.ts reads the referenced file and appends its content to the
+    violation message when guidance_ref is set
   - gate:co-change CLI supports --guidance-ref in add and edit subcommands
   - When guidance_ref file does not exist, gate runner emits a warning but does not fail
   - Existing inline guidance field continues to work unchanged (backward compatible)
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-validation-wu-2446
+claimed_at: 2026-03-13T09:38:33.019Z
+baseline_main_sha: 50f052d86ec7a21f1033aa904ba4f067cd3c1c83
+session_id: 4283fd24-3ed6-48c2-9dd4-39be6b6dbd13
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:38:33.030Z
