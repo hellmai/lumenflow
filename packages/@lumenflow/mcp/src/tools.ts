@@ -5,7 +5,7 @@
  * @file tools.ts
  * @description MCP tool barrel - re-exports all domain tool modules and assembles the allTools registry.
  *
- * WU-1642: Decomposed from monolithic tools.ts into domain-scoped modules:
+ * WU-1642: Decomposed from monolithic tools.ts into domain-scoped modules (co-change: WU-2464):
  *   - tools-shared.ts: Types, constants, helpers shared across domains
  *   - tools/context-tools.ts: context_get, wu_list
  *   - tools/wu-tools.ts: WU lifecycle (create, claim, done, block, edit, etc.)
