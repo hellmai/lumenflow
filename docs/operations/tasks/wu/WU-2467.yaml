@@ -2,7 +2,7 @@ id: WU-2467
 title: Fix formatPlanUri test to be cwd-independent
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -25,6 +25,15 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: formatPlanUri behaves differently based on cwd - returns basename on CI but preserves subdir locally. Test needs flexible assertion.
+description: formatPlanUri behaves differently based on cwd - returns basename on CI but preserves
+  subdir locally. Test needs flexible assertion.
 acceptance:
   - initiative-plan formatPlanUri nested path test passes on both CI and local
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2467
+claimed_at: 2026-03-13T14:34:50.621Z
+baseline_main_sha: fd089fc63c115d5e8ca818ef82435105449dd77c
+session_id: 33b14a29-ae80-4760-9e97-27f663f14f6b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T14:34:50.640Z

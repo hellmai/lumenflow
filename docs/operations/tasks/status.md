@@ -5,6 +5,7 @@ _Last updated: 2026-03-13_
 ## In Progress
 
 - [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml)
+- [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml)
 
 ## Completed
 

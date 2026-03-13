@@ -29,11 +29,11 @@ sections:
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — Framework: Core Validation
 - [WU-2449 — Update onboarding docs to reflect WU-2445 UI test anti-patterns](wu/WU-2449.yaml) — Content: Documentation
-- [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml) — Framework: CLI WU Commands
+- [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
