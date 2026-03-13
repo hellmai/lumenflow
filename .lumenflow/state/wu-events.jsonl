@@ -3444,3 +3444,5 @@
 {"type":"checkpoint","wuId":"WU-2441","timestamp":"2026-03-12T22:22:56.179Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2441","timestamp":"2026-03-12T22:28:44.620Z"}
 {"type":"claim","wuId":"WU-2442","timestamp":"2026-03-13T08:42:47.190Z","lane":"Operations: Automation","title":"Fix CI workflows for open source: replace self-hosted with ubuntu-latest"}
+{"type":"checkpoint","wuId":"WU-2442","timestamp":"2026-03-13T08:42:58.787Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2442","timestamp":"2026-03-13T08:43:05.998Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

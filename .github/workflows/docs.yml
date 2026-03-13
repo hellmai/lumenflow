@@ -12,12 +12,9 @@ permissions:
 jobs:
   starlight:
     name: Build Starlight docs
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Configure pnpm store
-        run: echo "PNPM_STORE_DIR=$HOME/.local/share/pnpm/store/v10" >> "$GITHUB_ENV"
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -26,6 +23,15 @@ jobs:
           curl -fsSL https://d2lang.com/install.sh | sh -s -- --prefix "$HOME/.local"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           d2 --version
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
