@@ -1,0 +1,30 @@
+id: WU-2449
+title: Update onboarding docs to reflect WU-2445 UI test anti-patterns
+lane: 'Content: Documentation'
+type: documentation
+status: ready
+priority: P3
+created: 2026-03-13
+code_paths:
+  - docs/operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
+tests:
+  manual:
+    - Verify starting-prompt.md UI verification text is consistent with visual-directive.md template
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2449.done
+dependencies: []
+risks: []
+notes: 'Follow-up from WU-2445. tdd-exception: docs-only change, no runtime code.'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: WU-2445 strengthened UI smoke-test guidance with concrete anti-patterns across the template, generators, and LUMENFLOW.md. Problem: The agent onboarding doc (starting-prompt.md) still uses the old soft wording: prefer smoke/manual/integration/E2E verification. Solution: Update starting-prompt.md to reference the concrete anti-patterns (no inline styles, CSS values, exact copy, DOM shape) consistent with the updated template and generators.'
+acceptance:
+  - starting-prompt.md UI verification bullet uses concrete anti-pattern language matching visual-directive.md
