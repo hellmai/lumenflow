@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2472 — Fix init-quick-ref tests after template sync](wu/WU-2472.yaml)
 
 ## Completed
 
