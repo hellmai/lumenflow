@@ -2,7 +2,7 @@ id: WU-2462
 title: Increase CI job timeout from 10 to 20 minutes for ubuntu-latest
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-03-13
 code_paths:
@@ -25,6 +25,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: CI job timeout of 10 minutes is insufficient for ubuntu-latest. All individual test timeouts are fixed but the overall job (format+lint+typecheck+test+build+docs) exceeds 10m on shared runners.
+description: CI job timeout of 10 minutes is insufficient for ubuntu-latest. All individual test
+  timeouts are fixed but the overall job (format+lint+typecheck+test+build+docs) exceeds 10m on
+  shared runners.
 acceptance:
   - CI job completes within 20 minute timeout on ubuntu-latest
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2462
+claimed_at: 2026-03-13T11:32:43.485Z
+baseline_main_sha: 61af84830e7708552e4f5bd219fb9dd1baa74e72
+session_id: 03e79f6b-064e-4fb4-bf2e-dd5ce9c42e65
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T11:32:43.491Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2462 — Increase CI job timeout from 10 to 20 minutes for ubuntu-latest](wu/WU-2462.yaml)
 
 ## Completed
 
