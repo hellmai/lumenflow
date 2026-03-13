@@ -29,13 +29,13 @@ sections:
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — Framework: Core Validation
 - [WU-2449 — Update onboarding docs to reflect WU-2445 UI test anti-patterns](wu/WU-2449.yaml) — Content: Documentation
-- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — Framework: CLI WU Commands
 - [WU-2460 — Make wu:done auto-rebase tolerate wu:brief evidence-only state drift](wu/WU-2460.yaml) — Framework: CLI WU Commands
 - [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2464 — Fix 18 pre-existing CLI test failures for green CI](wu/WU-2464.yaml) — Framework: CLI WU Commands
+- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
