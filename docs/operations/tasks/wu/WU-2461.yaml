@@ -9,21 +9,23 @@ code_paths:
   - packages/@lumenflow/cli/src/wu-done-memory-telemetry.ts
   - packages/@lumenflow/memory/src/mem-signal-core.ts
   - packages/@lumenflow/memory/src/__tests__/signal-schema-extension.test.ts
-  - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-done-memory-telemetry-extraction.test.ts
 tests:
   manual:
     - Seed a legacy signal record, run wu:done on an unrelated WU, and verify completion does not
       surface a legacy-signal inbox warning
   unit:
     - packages/@lumenflow/memory/src/__tests__/signal-schema-extension.test.ts
-    - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
+    - packages/@lumenflow/cli/src/__tests__/wu-done-memory-telemetry-extraction.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2461.done
 dependencies: []
 risks: []
 notes: Created from observed wu:done inbox telemetry warning caused by legacy signal records that
-  predate the strict signal contract.
+  predate the strict signal contract. Scoped CLI regression coverage to the extracted telemetry
+  helper so the fix stays focused on the non-blocking inbox path rather than the full wu:done
+  integration harness or a new standalone fixture-heavy test file.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

@@ -225,6 +225,8 @@ export interface LoadSignalsOptions {
   unreadOnly?: boolean;
   /** Only return signals created after this time */
   since?: Date | string;
+  /** Skip legacy pre-strict records while preserving strict parsing for valid lines */
+  compatibilityMode?: 'strict' | 'skip-legacy';
 }
 
 /**
@@ -429,7 +431,7 @@ export async function loadSignals(
   baseDir: string,
   options: LoadSignalsOptions = {},
 ): Promise<Signal[]> {
-  const { wuId, lane, unreadOnly, since } = options;
+  const { wuId, lane, unreadOnly, since, compatibilityMode = 'strict' } = options;
   const signalsPath = getSignalsPath(baseDir);
 
   // Read file content
@@ -448,7 +450,19 @@ export async function loadSignals(
 
   // Parse JSONL content
   const lines = content.split('\n').filter((line) => line.trim());
-  const signals = lines.map((line, index) => parseStrictSignalRecord(line, index + 1));
+  const signals: Signal[] = [];
+  for (const [index, line] of lines.entries()) {
+    try {
+      signals.push(parseStrictSignalRecord(line, index + 1));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      const isLegacySignalError = message.includes(ERROR_MESSAGES.LEGACY_SIGNAL_RECORD);
+      if (compatibilityMode === 'skip-legacy' && isLegacySignalError) {
+        continue;
+      }
+      throw err;
+    }
+  }
 
   // Merge receipt-based read state (WU-1472)
   const receiptIds = await loadReceiptIds(baseDir);

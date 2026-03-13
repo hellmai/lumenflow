@@ -43,6 +43,38 @@ describe('signal contract enforcement (WU-2291)', () => {
     );
   });
 
+  it('skips legacy signals only when compatibility mode is explicitly requested', async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'signal-schema-extension-'));
+    tempRoots.push(root);
+
+    await writeSignals(root, [
+      {
+        id: 'sig-legacy1',
+        message: 'legacy signal',
+        created_at: '2026-03-01T12:00:00.000Z',
+        read: false,
+        wu_id: 'WU-2146',
+      },
+      {
+        id: 'sig-strict1',
+        message: 'strict signal',
+        created_at: '2026-03-01T12:05:00.000Z',
+        read: false,
+        wu_id: 'WU-9999',
+        type: 'coordination',
+        sender: 'system',
+        origin: 'local',
+        remote_id: 'sig-strict1',
+      },
+    ]);
+
+    const loaded = await loadSignals(root, { compatibilityMode: 'skip-legacy' });
+
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0]?.id).toBe('sig-strict1');
+    expect(loaded[0]?.message).toBe('strict signal');
+  });
+
   it('writes canonical strict metadata defaults for local signals', async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), 'signal-schema-extension-'));
     tempRoots.push(root);

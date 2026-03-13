@@ -173,7 +173,11 @@ export async function checkInboxForRecentSignals(
 ): Promise<void> {
   try {
     const since = new Date(Date.now() - MEMORY_SIGNAL_WINDOW_MS);
-    const signals = await loadSignals(baseDir, { since, unreadOnly: true });
+    const signals = await loadSignals(baseDir, {
+      since,
+      unreadOnly: true,
+      compatibilityMode: 'skip-legacy',
+    });
     const relevantSignals = signals.filter((s) => s.wu_id !== id);
 
     if (relevantSignals.length > 0) {
