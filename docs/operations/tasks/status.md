@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2464 — Fix 18 pre-existing CLI test failures for green CI](wu/WU-2464.yaml)
 
 ## Completed
 

@@ -3505,3 +3505,4 @@
 {"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:56:14.993Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2463.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:56:32.518Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2463.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2463","timestamp":"2026-03-13T11:58:13.221Z"}
+{"type":"claim","wuId":"WU-2464","timestamp":"2026-03-13T12:26:16.273Z","lane":"Framework: CLI WU Commands","title":"Fix 18 pre-existing CLI test failures for green CI"}
