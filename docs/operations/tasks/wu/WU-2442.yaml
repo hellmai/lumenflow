@@ -20,12 +20,20 @@ artifacts:
   - .lumenflow/stamps/WU-2442.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: CI workflow YAML files are not testable with unit tests. Verification is via
+  GitHub Actions running successfully.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T08:42:47.152Z
+worktree_path: worktrees/operations-automation-wu-2442
+session_id: 9690fe49-e906-453b-9e84-51b793f374e9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T08:42:47.160Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +43,3 @@ acceptance:
   - 'All workflows use runs-on: ubuntu-latest'
   - pnpm/action-setup and actions/setup-node configured in all workflows
   - Self-hosted pnpm store hack removed
-claimed_mode: worktree
-worktree_path: worktrees/operations-automation-wu-2442
-claimed_at: 2026-03-13T08:42:47.152Z
-baseline_main_sha: e6223f11033622a58415d7d38a96eab9cc126a99
-session_id: 9690fe49-e906-453b-9e84-51b793f374e9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T08:42:47.160Z
