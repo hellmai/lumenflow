@@ -514,10 +514,12 @@ export async function main() {
     die(
       `Cannot claim ${id}: ${lockResult.error}\n\n` +
         `Another agent is actively claiming or has claimed this lane.\n\n` +
+        `Do not modify ${lockResult.existingLock?.wuId || 'the other WU'} with wu:block, wu:release, wu:recover, or wu:unblock just to free the lane.\n\n` +
         `Options:\n` +
         `  1. Wait for ${lockResult.existingLock?.wuId || 'the other WU'} to complete or block\n` +
         `  2. Choose a different lane\n` +
-        `  3. Use --force to override (P0 emergencies only)${staleSuffix}`,
+        `  3. Coordinate with the owner via mem:signal / wu:escalate\n` +
+        `  4. Use --force to override (P0 emergencies only)${staleSuffix}`,
     );
   }
 

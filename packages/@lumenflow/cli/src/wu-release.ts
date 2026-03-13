@@ -43,6 +43,7 @@ import { releaseLaneLock } from '@lumenflow/core/lane-lock';
 import { shouldUseBranchPrStatePath } from './wu-state-cloud.js';
 import { runCLI } from './cli-entry-point.js';
 import { resolveStateDir, resolveWuEventsRelativePath } from './state-path-resolvers.js';
+import { assertStateMutationOwnership } from './wu-state-mutation-ownership.js';
 
 const PREFIX = '[wu-release]';
 
@@ -64,7 +65,7 @@ export async function main() {
   const args = createWUParser({
     name: 'wu-release',
     description: 'Release an orphaned WU from in_progress back to ready state for reclaiming',
-    options: [WU_OPTIONS.id, WU_OPTIONS.reason],
+    options: [WU_OPTIONS.id, WU_OPTIONS.reason, WU_OPTIONS.overrideOwner],
     required: ['id', 'reason'],
     allowPositionalId: true,
   });
@@ -93,6 +94,15 @@ export async function main() {
   const title = doc.title || '';
   const lane = (doc.lane as string) || 'Unknown';
   const branchPrPath = shouldUseBranchPrReleasePath(doc);
+
+  await assertStateMutationOwnership({
+    wuId: id,
+    action: 'release',
+    commandExample: `pnpm wu:release --id ${id}`,
+    doc,
+    overrideOwner: args.overrideOwner,
+    overrideReason: args.reason,
+  });
 
   if (!branchPrPath) {
     await ensureOnMain(getGitForCwd());

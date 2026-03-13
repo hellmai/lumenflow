@@ -397,11 +397,13 @@ export function handleLaneOccupancy(
       `LumenFlow enforces WIP limits per lane to maintain focus.\n` +
       `Current limit for "${lane}": ${wipLimit} ` +
       `(configure in workspace.yaml software_delivery.lanes.definitions)\n\n` +
+      `Do not use wu:block, wu:release, wu:recover, or wu:unblock on another agent's WU to free the lane.\n\n` +
       `Options:\n` +
       `  1. Wait for a WU to complete or block\n` +
       `  2. Choose a different lane\n` +
       `  3. Increase wip_limit in workspace.yaml software_delivery.lanes.definitions\n` +
-      `  4. Use --force to override (P0 emergencies only)\n\n` +
+      `  4. Coordinate with the owner via mem:signal / wu:escalate\n` +
+      `  5. Use --force to override (P0 emergencies only)\n\n` +
       // WU-1311: Use config-based status path
       `To check lane status: grep "${STATUS_SECTIONS.IN_PROGRESS}" ${getConfig().directories.statusPath}`,
   );

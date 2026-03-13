@@ -43,6 +43,7 @@ import { generateBacklog, generateStatus } from '@lumenflow/core/backlog-generat
 import { releaseLaneLock } from '@lumenflow/core/lane-lock';
 import { join, relative } from 'node:path';
 import { resolveStateDir, resolveWuEventsRelativePath } from './state-path-resolvers.js';
+import { assertStateMutationOwnership } from './wu-state-mutation-ownership.js';
 
 const { RECOVERY_ACTIONS } = CONTEXT_VALIDATION;
 const LOG_PREFIX = '[wu:recover]';
@@ -707,6 +708,8 @@ export async function main(): Promise<void> {
         type: 'boolean',
         description: 'Output as JSON',
       },
+      WU_OPTIONS.overrideOwner,
+      WU_OPTIONS.reason,
     ],
     required: ['id'],
     allowPositionalId: true,
@@ -718,6 +721,8 @@ export async function main(): Promise<void> {
     force?: boolean;
     discardChanges?: boolean;
     json?: boolean;
+    overrideOwner?: boolean;
+    reason?: string;
   };
 
   // Compute context for the WU
@@ -747,6 +752,19 @@ export async function main(): Promise<void> {
   if (requiresForceFlag(action) && !force) {
     const warning = getDestructiveActionWarning(action, id);
     die(warning || `Action '${action}' requires --force flag`);
+  }
+
+  const wuPath = WU_PATHS.WU(id);
+  if (existsSync(wuPath)) {
+    const doc = readWU(wuPath, id);
+    await assertStateMutationOwnership({
+      wuId: id,
+      action,
+      commandExample: `pnpm wu:recover --id ${id} --action ${action}`,
+      doc,
+      overrideOwner: args.overrideOwner,
+      overrideReason: args.reason,
+    });
   }
 
   // Execute action

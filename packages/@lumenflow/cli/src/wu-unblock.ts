@@ -52,6 +52,7 @@ import { generateBacklog, generateStatus } from '@lumenflow/core/backlog-generat
 import { shouldUseBranchPrStatePath } from './wu-state-cloud.js';
 import { runCLI } from './cli-entry-point.js';
 import { resolveStateDir, resolveWuEventsRelativePath } from './state-path-resolvers.js';
+import { assertStateMutationOwnership } from './wu-state-mutation-ownership.js';
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
 // ensureStaged() moved to git-staged-validator.ts (WU-1341)
@@ -68,6 +69,7 @@ interface UnblockCliArgs {
   branch?: string;
   noAuto?: boolean;
   force?: boolean;
+  overrideOwner?: boolean;
 }
 
 /** Lane occupancy check result from checkLaneFree */
@@ -183,6 +185,7 @@ export async function main() {
       WU_OPTIONS.branch,
       WU_OPTIONS.noAuto,
       WU_OPTIONS.force,
+      WU_OPTIONS.overrideOwner,
     ],
     required: ['id'],
     allowPositionalId: true,
@@ -209,6 +212,15 @@ export async function main() {
   const title = typeof doc.title === 'string' ? doc.title : '';
   const lane = typeof doc.lane === 'string' ? doc.lane : 'Unknown';
   const branchPrPath = shouldUseBranchPrUnblockPath(doc);
+
+  await assertStateMutationOwnership({
+    wuId: id,
+    action: 'unblock',
+    commandExample: `pnpm wu:unblock --id ${id}`,
+    doc,
+    overrideOwner: args.overrideOwner,
+    overrideReason: args.reason,
+  });
 
   if (!branchPrPath) {
     await ensureOnMain(getGitForCwd());

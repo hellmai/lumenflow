@@ -55,6 +55,7 @@ import { releaseLaneLock } from '@lumenflow/core/lane-lock';
 import { getLockPolicyForLane } from '@lumenflow/core/lane-checker';
 import { shouldUseBranchPrStatePath } from './wu-state-cloud.js';
 import { runCLI } from './cli-entry-point.js';
+import { assertStateMutationOwnership } from './wu-state-mutation-ownership.js';
 
 /** Parsed CLI arguments for wu:block */
 interface BlockCliArgs {
@@ -63,6 +64,7 @@ interface BlockCliArgs {
   worktree?: string;
   removeWorktree?: boolean;
   noAuto?: boolean;
+  overrideOwner?: boolean;
 }
 
 // ensureOnMain() moved to wu-helpers.ts (WU-1256)
@@ -235,6 +237,7 @@ export async function main() {
       WU_OPTIONS.worktree,
       WU_OPTIONS.removeWorktree,
       WU_OPTIONS.noAuto,
+      WU_OPTIONS.overrideOwner,
     ],
     required: ['id'],
     allowPositionalId: true,
@@ -260,6 +263,15 @@ export async function main() {
   }
   const title = typeof doc.title === 'string' ? doc.title : '';
   const branchPrPath = shouldUseBranchPrBlockPath(doc);
+
+  await assertStateMutationOwnership({
+    wuId: id,
+    action: 'block',
+    commandExample: `pnpm wu:block --id ${id}`,
+    doc,
+    overrideOwner: args.overrideOwner,
+    overrideReason: args.reason,
+  });
 
   if (!branchPrPath) {
     await ensureOnMain(getGitForCwd());
