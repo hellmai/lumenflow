@@ -496,34 +496,38 @@ describe('greenfield onboarding (WU-1364)', () => {
   });
 
   describe('AC: WU-1576 — Init Next Steps mentions integrate for Claude', () => {
-    it('should mention enforcement hooks in Next Steps when --client claude', { timeout: 30_000 }, async () => {
-      const consoleLogs: string[] = [];
-      const originalLog = console.log;
-      console.log = (...args: unknown[]) => {
-        consoleLogs.push(args.join(' '));
-      };
-
-      try {
-        const { main } = await import('../init.js');
-        const originalCwd = process.cwd();
-        process.chdir(tempDir);
-        const originalArgv = process.argv;
-        process.argv = ['node', 'init', '--full', '--client', 'claude', '--skip-bootstrap'];
+    it(
+      'should mention enforcement hooks in Next Steps when --client claude',
+      { timeout: 30_000 },
+      async () => {
+        const consoleLogs: string[] = [];
+        const originalLog = console.log;
+        console.log = (...args: unknown[]) => {
+          consoleLogs.push(args.join(' '));
+        };
 
         try {
-          await main();
-        } finally {
-          process.argv = originalArgv;
-          process.chdir(originalCwd);
-        }
+          const { main } = await import('../init.js');
+          const originalCwd = process.cwd();
+          process.chdir(tempDir);
+          const originalArgv = process.argv;
+          process.argv = ['node', 'init', '--full', '--client', 'claude', '--skip-bootstrap'];
 
-        const output = consoleLogs.join('\n');
-        // AC#3: Next Steps must explicitly mention integrate command
-        expect(output).toContain('lumenflow:integrate');
-      } finally {
-        console.log = originalLog;
-      }
-    });
+          try {
+            await main();
+          } finally {
+            process.argv = originalArgv;
+            process.chdir(originalCwd);
+          }
+
+          const output = consoleLogs.join('\n');
+          // AC#3: Next Steps must explicitly mention integrate command
+          expect(output).toContain('lumenflow:integrate');
+        } finally {
+          console.log = originalLog;
+        }
+      },
+    );
   });
 
   describe('AC: WU-1748 — lane:setup defaults have zero overlaps', () => {
