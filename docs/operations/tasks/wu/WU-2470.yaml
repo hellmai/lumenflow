@@ -21,12 +21,19 @@ artifacts:
   - .lumenflow/stamps/WU-2470.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: docs-only WU, no runtime code'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T23:20:43.532Z
+worktree_path: worktrees/content-documentation-wu-2470
+session_id: 5cc01656-abaf-4364-93b9-5b724c80609c
 exposure: documentation
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T23:20:43.540Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -34,11 +41,3 @@ description: Releases index, changelog, and language guides reference v3.18.0/v3
   version-policy.yaml says v3.18.1. docs:audit gate fails in CI.
 acceptance:
   - docs:audit passes locally
-claimed_mode: worktree
-worktree_path: worktrees/content-documentation-wu-2470
-claimed_at: 2026-03-13T23:20:43.532Z
-baseline_main_sha: 318e963b74d19a33e7e86210ad0ee93c76ce7f87
-session_id: 5cc01656-abaf-4364-93b9-5b724c80609c
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T23:20:43.540Z
