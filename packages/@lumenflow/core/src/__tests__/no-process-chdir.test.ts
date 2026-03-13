@@ -48,6 +48,7 @@ describe('WU-1541: No process.chdir in normal execution paths', () => {
           add: vi.fn().mockResolvedValue(undefined),
           commit: vi.fn().mockResolvedValue(undefined),
           push: vi.fn().mockResolvedValue(undefined),
+          getStatus: vi.fn().mockResolvedValue(''),
           getCurrentBranch: vi.fn().mockResolvedValue(TEST_BRANCH),
         };
 
@@ -202,6 +203,112 @@ describe('WU-1541: No process.chdir in normal execution paths', () => {
         expect.any(String),
         'utf-8',
       );
+    });
+
+    it('temporarily restores evidence-only wu-events drift before rebase and re-appends it after', async () => {
+      const eventsRelativePath = '.lumenflow/state/wu-events.jsonl';
+      const briefLine =
+        '{"type":"checkpoint","wuId":"WU-2460","note":"[wu:brief] generated via codex-cli","timestamp":"2026-03-13T10:00:00.000Z"}';
+      const committedLine =
+        '{"type":"claim","wuId":"WU-2460","lane":"Framework: CLI WU Commands","title":"Preserve wu:brief evidence during auto-rebase","timestamp":"2026-03-13T09:00:00.000Z"}';
+      const readFile = vi
+        .fn()
+        .mockResolvedValueOnce(`${committedLine}\n${briefLine}\n`)
+        .mockResolvedValueOnce(`${committedLine}\n`);
+      const appendFile = vi.fn().mockResolvedValue(undefined);
+
+      const mockGitAdapter = {
+        fetch: vi.fn().mockResolvedValue(undefined),
+        rebase: vi.fn().mockResolvedValue(undefined),
+        add: vi.fn().mockResolvedValue(undefined),
+        commit: vi.fn().mockResolvedValue(undefined),
+        push: vi.fn().mockResolvedValue(undefined),
+        getStatus: vi.fn().mockResolvedValue(` M ${eventsRelativePath}`),
+        raw: vi.fn(async (args: string[]) => {
+          if (args[0] === 'show' && args[1] === `HEAD:${eventsRelativePath}`) {
+            return `${committedLine}\n`;
+          }
+          if (args[0] === 'restore') {
+            return '';
+          }
+          if (args[0] === 'diff') {
+            return '';
+          }
+          return '';
+        }),
+      };
+
+      vi.doMock('node:fs/promises', async () => {
+        const actual = await vi.importActual<typeof import('node:fs/promises')>('node:fs/promises');
+        return {
+          ...actual,
+          appendFile,
+          readFile,
+        };
+      });
+      vi.doMock('../git-adapter.js', () => ({
+        getGitForCwd: vi.fn(() => mockGitAdapter),
+        createGitForPath: vi.fn(() => mockGitAdapter),
+      }));
+
+      const { autoRebaseBranch } = await import('../wu-done-worktree.js');
+      const result = await autoRebaseBranch(TEST_BRANCH, FAKE_WORKTREE_PATH);
+
+      expect(result.success).toBe(true);
+      expect(mockGitAdapter.raw).toHaveBeenCalledWith(['restore', '--', eventsRelativePath]);
+      expect(mockGitAdapter.rebase).toHaveBeenCalledWith('origin/main');
+      expect(appendFile).toHaveBeenCalledWith(
+        join(FAKE_WORKTREE_PATH, eventsRelativePath),
+        `${briefLine}\n`,
+        'utf-8',
+      );
+    });
+
+    it('does not sanitize worktree drift before rebase when non-allowlisted files are dirty', async () => {
+      const eventsRelativePath = '.lumenflow/state/wu-events.jsonl';
+      const mockGitAdapter = {
+        fetch: vi.fn().mockResolvedValue(undefined),
+        rebase: vi.fn().mockRejectedValue(new Error('cannot rebase: you have unstaged changes')),
+        add: vi.fn().mockResolvedValue(undefined),
+        commit: vi.fn().mockResolvedValue(undefined),
+        push: vi.fn().mockResolvedValue(undefined),
+        getStatus: vi
+          .fn()
+          .mockResolvedValue(` M ${eventsRelativePath}\n M packages/@lumenflow/cli/src/wu-done.ts`),
+        raw: vi.fn(async (args: string[]) => {
+          if (args[0] === 'rebase' && args[1] === '--abort') {
+            return '';
+          }
+          if (args[0] === 'diff') {
+            return '';
+          }
+          return '';
+        }),
+      };
+
+      const readFile = vi.fn();
+      const appendFile = vi.fn();
+
+      vi.doMock('node:fs/promises', async () => {
+        const actual = await vi.importActual<typeof import('node:fs/promises')>('node:fs/promises');
+        return {
+          ...actual,
+          appendFile,
+          readFile,
+        };
+      });
+      vi.doMock('../git-adapter.js', () => ({
+        getGitForCwd: vi.fn(() => mockGitAdapter),
+        createGitForPath: vi.fn(() => mockGitAdapter),
+      }));
+
+      const { autoRebaseBranch } = await import('../wu-done-worktree.js');
+      const result = await autoRebaseBranch(TEST_BRANCH, FAKE_WORKTREE_PATH);
+
+      expect(result.success).toBe(false);
+      expect(mockGitAdapter.raw).not.toHaveBeenCalledWith(['restore', '--', eventsRelativePath]);
+      expect(readFile).not.toHaveBeenCalled();
+      expect(appendFile).not.toHaveBeenCalled();
     });
 
     it('should abort auto-rebase when git detects staged conflict artifacts', async () => {

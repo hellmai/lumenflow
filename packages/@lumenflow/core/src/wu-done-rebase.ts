@@ -16,7 +16,7 @@
  */
 
 import path from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { createGitForPath, type GitAdapter } from './git-adapter.js';
 import {
   BRANCHES,
@@ -31,6 +31,7 @@ import {
 import { REBASE } from './wu-done-messages.js';
 import { WU_EVENTS_FILE_NAME } from './wu-state-store.js';
 import { validateWUEvent, type WUEvent } from './wu-state-schema.js';
+import { WU_BRIEF_EVIDENCE_NOTE_PREFIX } from './wu-event-sourcer.js';
 import { WU_PATHS } from './wu-paths.js';
 // WU-1371: Import rebase artifact cleanup functions
 import { detectRebasedArtifacts, cleanupRebasedArtifacts } from './rebase-artifact-cleanup.js';
@@ -64,6 +65,7 @@ const APPEND_ONLY_FILES = [
 // WU-1430: Use centralized constant
 const WU_EVENTS_PATH = path.join(LUMENFLOW_PATHS.STATE_DIR, WU_EVENTS_FILE_NAME);
 const WU_EVENTS_PATH_POSIX = WU_EVENTS_PATH.split(path.sep).join('/');
+const AUTO_REBASE_ALLOWLISTED_STATUS_PATHS = new Set([WU_EVENTS_PATH_POSIX]);
 
 const REBASE_CONFLICT_GIT = {
   DIFF_UNMERGED_ARGS: [GIT_COMMANDS.DIFF, '--name-only', '--diff-filter=U'] as const,
@@ -108,9 +110,34 @@ function isAppendOnlyConflictFile(filePath: string): boolean {
   });
 }
 
+function extractStatusPath(statusLine: string): string {
+  const match = statusLine.match(/^\s*[A-Z?!]{1,2}\s+(.*)$/);
+  const rawPath = match?.[1]?.trim() ?? '';
+  if (!rawPath) {
+    return '';
+  }
+
+  const renameParts = rawPath.split(' -> ');
+  return renameParts[renameParts.length - 1]?.trim() ?? '';
+}
+
+function getAllowlistedStatusPaths(status: string): string[] {
+  return status
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter(Boolean)
+    .map((line) => extractStatusPath(line))
+    .filter((filePath) => AUTO_REBASE_ALLOWLISTED_STATUS_PATHS.has(toPosixPath(filePath)));
+}
+
 interface ParsedWuEventLine {
   event: WUEvent;
   line: string;
+}
+
+interface PreservedWuBriefEvidence {
+  filePath: string;
+  lines: string[];
 }
 
 function normalizeEventForKey(event: WUEvent): Record<string, unknown> {
@@ -184,6 +211,87 @@ async function resolveWuEventsJsonlConflict(
   const resolvedPath = path.isAbsolute(filePath) ? filePath : path.join(worktreePath, filePath);
   await writeFile(resolvedPath, mergedLines.join('\n') + '\n', 'utf-8');
   await gitCwd.add(filePath);
+}
+
+async function preserveWuBriefEvidenceBeforeRebase(
+  gitWorktree: GitAdapter,
+  worktreePath: string,
+): Promise<PreservedWuBriefEvidence | null> {
+  const status = await gitWorktree.getStatus();
+  const dirtyPaths = status
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter(Boolean)
+    .map((line) => extractStatusPath(line))
+    .filter(Boolean);
+
+  if (dirtyPaths.length === 0) {
+    return null;
+  }
+
+  const allowlistedDirtyPaths = getAllowlistedStatusPaths(status);
+  if (allowlistedDirtyPaths.length !== dirtyPaths.length) {
+    return null;
+  }
+
+  if (!allowlistedDirtyPaths.includes(WU_EVENTS_PATH_POSIX)) {
+    return null;
+  }
+
+  const absolutePath = path.join(worktreePath, WU_EVENTS_PATH);
+  let currentContent: string;
+  try {
+    currentContent = await readFile(absolutePath, 'utf-8');
+  } catch {
+    return null;
+  }
+
+  let committedContent: string;
+  try {
+    committedContent = await gitWorktree.raw(['show', `HEAD:${WU_EVENTS_PATH_POSIX}`]);
+  } catch {
+    committedContent = '';
+  }
+
+  const committedLines = new Set(committedContent.trim().split('\n').filter(Boolean));
+  const uncommittedBriefLines = currentContent
+    .trim()
+    .split('\n')
+    .filter((line) => !committedLines.has(line) && line.includes(WU_BRIEF_EVIDENCE_NOTE_PREFIX));
+
+  if (uncommittedBriefLines.length === 0) {
+    return null;
+  }
+
+  await gitWorktree.raw(['restore', '--', WU_EVENTS_PATH_POSIX]);
+
+  return {
+    filePath: absolutePath,
+    lines: uncommittedBriefLines,
+  };
+}
+
+async function restoreWuBriefEvidenceAfterRebase(
+  preservedEvidence: PreservedWuBriefEvidence | null,
+): Promise<void> {
+  if (!preservedEvidence || preservedEvidence.lines.length === 0) {
+    return;
+  }
+
+  let currentContent: string;
+  try {
+    currentContent = await readFile(preservedEvidence.filePath, 'utf-8');
+  } catch {
+    currentContent = '';
+  }
+
+  const currentLines = new Set(currentContent.trim().split('\n').filter(Boolean));
+  const missingLines = preservedEvidence.lines.filter((line) => !currentLines.has(line));
+  if (missingLines.length === 0) {
+    return;
+  }
+
+  await appendFile(preservedEvidence.filePath, missingLines.join('\n') + '\n', 'utf-8');
 }
 
 // ---------------------------------------------------------------------------
@@ -316,10 +424,12 @@ export async function autoRebaseBranch(
   const gitWorktree = createGitForPath(worktreePath);
   const previousEditor = process.env[ENV_VARS.GIT_EDITOR];
   process.env[ENV_VARS.GIT_EDITOR] = 'true';
+  let preservedWuBriefEvidence: PreservedWuBriefEvidence | null = null;
 
   try {
     // Fetch latest main (using worktree git context)
     await gitWorktree.fetch(REMOTES.ORIGIN, BRANCHES.MAIN);
+    preservedWuBriefEvidence = await preserveWuBriefEvidenceBeforeRebase(gitWorktree, worktreePath);
 
     // Attempt rebase
     try {
@@ -364,6 +474,8 @@ export async function autoRebaseBranch(
         throw rebaseError;
       }
     }
+
+    await restoreWuBriefEvidenceAfterRebase(preservedWuBriefEvidence);
 
     // WU-1371: Detect and cleanup rebased completion artifacts
     // After rebase, check if main's completion artifacts (stamps, status=done)
@@ -443,6 +555,8 @@ export async function autoRebaseBranch(
     } catch {
       // Ignore abort errors - may already be clean
     }
+
+    await restoreWuBriefEvidenceAfterRebase(preservedWuBriefEvidence);
 
     return {
       success: false,
