@@ -3539,9 +3539,10 @@
 {"type":"checkpoint","wuId":"WU-2466","timestamp":"2026-03-13T13:51:08.067Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2466.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2466","timestamp":"2026-03-13T13:51:29.646Z"}
 {"type":"claim","wuId":"WU-2468","timestamp":"2026-03-13T14:30:58.063Z","lane":"Framework: CLI WU Commands","title":"Block cross-session WU state mutations"}
+{"type":"checkpoint","wuId":"WU-2468","timestamp":"2026-03-13T14:31:10.673Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2468","timestamp":"2026-03-13T14:31:22.614Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"claim","wuId":"WU-2467","timestamp":"2026-03-13T14:34:50.726Z","lane":"Framework: CLI WU Commands","title":"Fix formatPlanUri test to be cwd-independent"}
 {"type":"checkpoint","wuId":"WU-2467","timestamp":"2026-03-13T14:35:12.721Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2467","timestamp":"2026-03-13T14:35:35.627Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2467","timestamp":"2026-03-13T14:39:16.555Z"}
-{"type":"checkpoint","wuId":"WU-2468","timestamp":"2026-03-13T14:31:10.673Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
-{"type":"checkpoint","wuId":"WU-2468","timestamp":"2026-03-13T14:31:22.614Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2468","timestamp":"2026-03-13T14:40:33.696Z"}
