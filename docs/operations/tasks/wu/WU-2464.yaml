@@ -1,0 +1,32 @@
+id: WU-2464
+title: Fix 18 pre-existing CLI test failures for green CI
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-13
+code_paths:
+  - packages/@lumenflow/cli/src/__tests__,packages/@lumenflow/cli/__tests__,packages/@lumenflow/cli/e2e
+tests:
+  manual:
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2464.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 18 pre-existing test failures in @lumenflow/cli prevent CI from going green on ubuntu-latest. Stale tests, missing exports, deleted file references, environment assumptions, and mock drift.
+acceptance:
+  - All 18 pre-existing CLI test failures are fixed or correctly skipped
+  - Full CLI test suite passes locally with 0 failures
+  - CI on ubuntu-latest passes the Test step
