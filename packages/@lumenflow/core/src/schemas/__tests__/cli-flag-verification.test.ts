@@ -224,7 +224,7 @@ describe('CLI Flag Verification (WU-1458)', () => {
       'wu:unlock-lane': 5,
       // initiative-schemas.ts
       'initiative:create': 6,
-      'initiative:edit': 15,
+      'initiative:edit': 17,
       'initiative:list': 3,
       'initiative:status': 3,
       'initiative:add-wu': 3,
@@ -242,7 +242,7 @@ describe('CLI Flag Verification (WU-1458)', () => {
       'mem:delete': 4,
       'mem:export': 4,
       'mem:inbox': 3,
-      'mem:signal': 2,
+      'mem:signal': 7,
       'mem:summarize': 2,
       'mem:triage': 5,
       // flow-schemas.ts

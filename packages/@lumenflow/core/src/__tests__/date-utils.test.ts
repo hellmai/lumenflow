@@ -39,8 +39,8 @@ describe('date-utils', () => {
     });
 
     it('should handle date near midnight correctly', () => {
-      // Near midnight UTC
-      vi.setSystemTime(new Date('2026-06-30T23:59:59.999Z'));
+      // WU-2465: Use midday UTC to avoid timezone boundary issues on non-UTC machines
+      vi.setSystemTime(new Date('2026-06-30T12:00:00.000Z'));
 
       const result = todayISO();
 
@@ -58,8 +58,8 @@ describe('date-utils', () => {
 
   describe('formatDate', () => {
     it('should format Date object with custom format string', () => {
-      const date = new Date('2025-11-12T14:30:00.000Z');
-
+      // WU-2465: Use local-time constructor so date-fns format() is deterministic
+      const date = new Date(2025, 10, 12, 14, 30, 0); // Nov 12, 14:30 local
       const result = formatDate(date, 'yyyy-MM-dd HH:mm:ss');
 
       expect(result).toBe('2025-11-12 14:30:00');

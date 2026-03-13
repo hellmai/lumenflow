@@ -23,7 +23,14 @@ export default defineConfig({
       'scripts/__tests__/**/*.test.ts',
       '.husky/hooks/__tests__/**/*.test.ts',
     ],
-    exclude: ['**/node_modules/**', '**/dist/**'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      // WU-2465: These files use node:test runner, not vitest
+      'packages/@lumenflow/core/src/core/__tests__/scope-checker.test.ts',
+      'packages/@lumenflow/core/src/core/__tests__/tool-runner.test.ts',
+      'packages/@lumenflow/core/src/core/__tests__/worktree-guard.test.ts',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

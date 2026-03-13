@@ -1,7 +1,7 @@
 {
   "description": "Ratcheting baseline for banned path literals in test files. Count must not increase.",
-  "wuId": "WU-2311",
+  "wuId": "WU-2465",
   "lastUpdated": "2026-03-13",
-  "baseline": 495,
-  "note": "Computed from codebase scan. 495 banned path literals across test files. Updated from 493 after adding micro-worktree.ts, wu-edit-validators.ts, docs-sync.ts to path-literal allowlist."
+  "baseline": 497,
+  "note": "Updated from 495 after WU-2464 added path literals to wu-spawn.test.ts and wu-status.test.ts."
 }

@@ -25,7 +25,7 @@ import type {
 } from '../../domain/orchestration.types';
 
 async function createFixtureRepo(baseDir: string): Promise<void> {
-  const tasksDir = join(baseDir, 'docs/operations/tasks');
+  const tasksDir = join(baseDir, 'docs/tasks');
   const wuDir = join(tasksDir, 'wu');
   const stampsDir = join(baseDir, '.lumenflow/stamps');
   const telemetryDir = join(baseDir, '.lumenflow/telemetry');
