@@ -1,6 +1,6 @@
 # Local-Only Development
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 Use this local-only mode when the repo has no `origin` remote yet or you are intentionally working offline.
 

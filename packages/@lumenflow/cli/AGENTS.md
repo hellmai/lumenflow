@@ -2,7 +2,7 @@
 
 # Universal Agent Instructions
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 This project uses LumenFlow workflow. For complete documentation, see [LUMENFLOW.md](LUMENFLOW.md).
 If `LUMENFLOW.local.md` exists, read it after LUMENFLOW.md for project-specific additions.

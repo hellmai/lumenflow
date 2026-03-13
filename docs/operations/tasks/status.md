@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2465 — Fix 9 pre-existing @lumenflow/core test failures for green CI](wu/WU-2465.yaml)
 
 ## Completed
 
@@ -1373,3 +1373,4 @@ _Last updated: 2026-03-13_
 - [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml) — 2026-03-13
 - [WU-2462 — Increase CI job timeout from 10 to 20 minutes for ubuntu-latest](wu/WU-2462.yaml) — 2026-03-13
 - [WU-2463 — Fix pre-existing CLI test failures for green CI](wu/WU-2463.yaml) — 2026-03-13
+- [WU-2464 — Fix 18 pre-existing CLI test failures for green CI](wu/WU-2464.yaml) — 2026-03-13

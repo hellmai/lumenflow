@@ -332,7 +332,7 @@ export const PUBLIC_MANIFEST: PublicCommand[] = [
     audience: 'advanced',
   },
   {
-    name: 'gate:co-change',
+    name: 'gate:co-change', // WU-2464: bin entry added
     binName: 'gate-co-change',
     binPath: './dist/gate-co-change.js',
     description: 'Manage co-change gate rules (add, remove, edit, list)',

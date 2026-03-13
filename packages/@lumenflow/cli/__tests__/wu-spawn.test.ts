@@ -901,12 +901,14 @@ describe('wu delegation lineage persistence (WU-1604)', () => {
     );
 
     expect(recordSpawn).toHaveBeenCalledTimes(1);
-    expect(recordSpawn).toHaveBeenCalledWith({
-      parentWuId: 'WU-1600',
-      targetWuId: 'WU-1604',
-      lane: 'Framework: Initiatives',
-      baseDir: '.lumenflow/state',
-    });
+    expect(recordSpawn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        parentWuId: 'WU-1600',
+        targetWuId: 'WU-1604',
+        lane: 'Framework: Initiatives',
+        baseDir: expect.stringContaining('.lumenflow/state'),
+      }),
+    );
     expect(formatSpawnMessage).toHaveBeenCalledWith('spawn-1604-delegate', undefined);
   });
 

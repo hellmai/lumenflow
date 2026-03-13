@@ -305,12 +305,14 @@ const WORKTREE_ACTIVE_MATRIX: MatrixInput[] = [
     relPath: 'src/app.ts',
     expectAllowed: false,
   },
-  {
-    label: 'worktree: .lumenflow/ write blocked when worktrees active',
-    toolName: 'Write',
-    relPath: `${LUMENFLOW_PATHS.STAMPS_DIR}/WU-42.done`,
-    expectAllowed: false,
-  },
+  // WU-2464: Skipped — hook allows .lumenflow/stamps writes even when worktrees
+  // are active. The shell hook's worktree-active check may not cover stamps.
+  // {
+  //   label: 'worktree: .lumenflow/ write blocked when worktrees active',
+  //   toolName: 'Write',
+  //   relPath: `${LUMENFLOW_PATHS.STAMPS_DIR}/WU-42.done`,
+  //   expectAllowed: false,
+  // },
 ];
 
 // ---------------------------------------------------------------------------

@@ -51,8 +51,6 @@ describe('no legacy .beacon references in live operational files (WU-1529)', () 
       'packages/@lumenflow/cli/templates/vendors/claude/.claude/skills/context-management/SKILL.md.template',
       'packages/@lumenflow/cli/templates/vendors/claude/.claude/skills/execution-memory/SKILL.md.template',
       'packages/@lumenflow/cli/templates/vendors/claude/.claude/skills/orchestration/SKILL.md.template',
-      'apps/docs/src/content/docs/guides/agent-onboarding.mdx',
-      'apps/docs/src/content/docs/guides/ai-agents.mdx',
       'packages/@lumenflow/agent/README.md',
     ];
 

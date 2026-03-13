@@ -152,14 +152,26 @@ describe('docs-sync', () => {
         ref: 'main',
       });
 
-      await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+      // WU-2464: shouldUseMicroWorktree checks fs.existsSync(.git) on cwd
+      const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-docs-sync-main-'));
+      mkdirSync(path.join(tempDir, '.git'), { recursive: true });
+      mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+      const originalCwd = process.cwd;
+      process.cwd = vi.fn().mockReturnValue(tempDir) as typeof process.cwd;
 
-      expect(mockWithMicroWorktree).toHaveBeenCalledTimes(1);
-      expect(mockWithMicroWorktree).toHaveBeenCalledWith(
-        expect.objectContaining({
-          operation: 'docs-sync',
-        }),
-      );
+      try {
+        await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+
+        expect(mockWithMicroWorktree).toHaveBeenCalledTimes(1);
+        expect(mockWithMicroWorktree).toHaveBeenCalledWith(
+          expect.objectContaining({
+            operation: 'docs-sync',
+          }),
+        );
+      } finally {
+        process.cwd = originalCwd;
+        rmSync(tempDir, { recursive: true, force: true });
+      }
     });
 
     it('should NOT use micro-worktree when in a worktree (writes directly)', async () => {
@@ -228,11 +240,23 @@ describe('docs-sync', () => {
         },
       );
 
-      await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+      // WU-2464: shouldUseMicroWorktree checks fs.existsSync(.git) on cwd
+      const cwdTempDir = mkdtempSync(path.join(tmpdir(), 'lf-docs-sync-cwd-'));
+      mkdirSync(path.join(cwdTempDir, '.git'), { recursive: true });
+      mkdirSync(path.join(cwdTempDir, '.lumenflow'), { recursive: true });
+      const originalCwd = process.cwd;
+      process.cwd = vi.fn().mockReturnValue(cwdTempDir) as typeof process.cwd;
 
-      expect(executeResult).toBeDefined();
-      expect(executeResult!.commitMessage).toContain('docs:sync');
-      expect(executeResult!.files.length).toBeGreaterThan(0);
+      try {
+        await runDocsSyncWithIsolation({ force: true, vendor: 'claude' });
+
+        expect(executeResult).toBeDefined();
+        expect(executeResult!.commitMessage).toContain('docs:sync');
+        expect(executeResult!.files.length).toBeGreaterThan(0);
+      } finally {
+        process.cwd = originalCwd;
+        rmSync(cwdTempDir, { recursive: true, force: true });
+      }
     });
   });
 });

@@ -1,6 +1,6 @@
 # LumenFlow Workflow Guide
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 > **This file is managed by LumenFlow.** Do not edit — it will be overwritten on upgrade.
 > For project-specific additions, create `LUMENFLOW.local.md` (never overwritten).

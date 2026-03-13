@@ -1,6 +1,6 @@
 # LumenFlow Agent Starting Prompt
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 This is the complete onboarding document for AI agents working with LumenFlow. Read this entire document before starting any work.
 

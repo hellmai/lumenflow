@@ -1,6 +1,6 @@
 # Quick Reference: LumenFlow Commands
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 
 Reference for CLI commands. Organized by category for quick discovery.
 
