@@ -17,23 +17,22 @@ artifacts:
   - .lumenflow/stamps/WU-2466.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: baseline JSON file update only, no production code changes.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T13:50:27.970Z
+worktree_path: worktrees/framework-core-wu-2466
+session_id: e960d6e3-a792-4be0-bf95-9b16ba6fdd0e
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T13:50:27.976Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
 description: WU-2458/WU-2460 merged in parallel with WU-2465 adding 3 path literals. Baseline needs 497→500.
 acceptance:
   - path-literal-guard ratchet test passes with baseline 500
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-wu-2466
-claimed_at: 2026-03-13T13:50:27.970Z
-baseline_main_sha: e1842bf9a838c246f633fc151d554840c319194f
-session_id: e960d6e3-a792-4be0-bf95-9b16ba6fdd0e
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T13:50:27.976Z
