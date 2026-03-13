@@ -2,7 +2,7 @@ id: WU-2466
 title: Update path-literal ratchet baseline after parallel WU merges
 lane: 'Framework: Core'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -36,3 +36,6 @@ requires_design_approval: false
 description: WU-2458/WU-2460 merged in parallel with WU-2465 adding 3 path literals. Baseline needs 497→500.
 acceptance:
   - path-literal-guard ratchet test passes with baseline 500
+locked: true
+completed_at: 2026-03-13T13:51:24.747Z
+completed: 2026-03-13
