@@ -1142,6 +1142,7 @@ pnpm wu:block --id <wuId>
 | `-w, --worktree &lt;path&gt;` | Override worktree path                                                           | No       |
 | `--remove-worktree`           | Remove worktree when blocking                                                    | No       |
 | `--no-auto`                   | Skip auto-updating YAML/backlog/status                                           | No       |
+| `--override-owner`            | Override ownership check (requires --reason)                                     | No       |
 
 ### wu:brief
 
@@ -1327,9 +1328,11 @@ pnpm wu:recover --id <wuId>
 
 **Options:**
 
-| Flag                    | Description                                                                      | Required |
-| ----------------------- | -------------------------------------------------------------------------------- | -------- |
-| `-i, --id &lt;wuId&gt;` | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
+| Flag                          | Description                                                                      | Required |
+| ----------------------------- | -------------------------------------------------------------------------------- | -------- |
+| `-i, --id &lt;wuId&gt;`       | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
+| `--override-owner`            | Override ownership check (requires --reason)                                     | No       |
+| `-r, --reason &lt;reason&gt;` | Reason for action (required with --skip-gates, --override-owner)                 | No       |
 
 ### wu:release
 
@@ -1345,6 +1348,7 @@ pnpm wu:release --id <wuId> --reason <reason>
 | ----------------------------- | -------------------------------------------------------------------------------- | -------- |
 | `-i, --id &lt;wuId&gt;`       | Work Unit ID (e.g., WU-123). If not provided, auto-generates next sequential ID. | Yes      |
 | `-r, --reason &lt;reason&gt;` | Reason for action (required with --skip-gates, --override-owner)                 | Yes      |
+| `--override-owner`            | Override ownership check (requires --reason)                                     | No       |
 
 ### wu:sandbox
 
@@ -1388,6 +1392,7 @@ pnpm wu:unblock --id <wuId>
 | `-b, --branch &lt;branch&gt;` | Override branch name                                                             | No       |
 | `--no-auto`                   | Skip auto-updating YAML/backlog/status                                           | No       |
 | `-f, --force`                 | Force operation                                                                  | No       |
+| `--override-owner`            | Override ownership check (requires --reason)                                     | No       |
 
 ### wu:validate
 
