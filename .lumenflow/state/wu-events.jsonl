@@ -3496,3 +3496,5 @@
 {"type":"checkpoint","wuId":"WU-2455","timestamp":"2026-03-13T11:09:00.940Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2455.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2455","timestamp":"2026-03-13T11:10:23.472Z"}
 {"type":"claim","wuId":"WU-2462","timestamp":"2026-03-13T11:32:43.520Z","lane":"Operations: Automation","title":"Increase CI job timeout from 10 to 20 minutes for ubuntu-latest"}
+{"type":"checkpoint","wuId":"WU-2462","timestamp":"2026-03-13T11:32:54.938Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2462","timestamp":"2026-03-13T11:32:57.056Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
