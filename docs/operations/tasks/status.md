@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2443 — Install D2 in CI workflow for docs build](wu/WU-2443.yaml)
 
 ## Completed
 

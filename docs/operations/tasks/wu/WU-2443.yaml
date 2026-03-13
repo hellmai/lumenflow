@@ -2,14 +2,15 @@ id: WU-2443
 title: Install D2 in CI workflow for docs build
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
   - .github/workflows/ci.yml
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -25,7 +26,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: CI fails because D2 is not installed on ubuntu-latest. The self-hosted runner had it globally. Need to add D2 install step to ci.yml.
+description: CI fails because D2 is not installed on ubuntu-latest. The self-hosted runner had it
+  globally. Need to add D2 install step to ci.yml.
 acceptance:
   - D2 installed in ci.yml before build step
   - CI passes on ubuntu-latest
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2443
+claimed_at: 2026-03-13T09:11:48.662Z
+baseline_main_sha: 2a60c8375ba5e42c2752c5401bb73b54fae3ee52
+session_id: d903d0bb-9954-4047-897d-91b7d69b49e4
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:11:48.676Z
