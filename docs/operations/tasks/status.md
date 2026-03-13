@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml)
 
 ## Completed
 

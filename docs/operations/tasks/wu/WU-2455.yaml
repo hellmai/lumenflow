@@ -2,7 +2,7 @@ id: WU-2455
 title: 'Fix remaining CI test failures: timeouts and baseline drift'
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-03-13
 code_paths:
@@ -30,6 +30,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Multiple @lumenflow/core tests still failing on ubuntu-latest: status-literal-guard and type-safety-guard need 30s timeouts, path-literal baseline needs updating to 495, wu-done-concurrent-backlog needs timeout, wu-done-metadata-format prettier issue.'
+description: 'Multiple @lumenflow/core tests still failing on ubuntu-latest: status-literal-guard
+  and type-safety-guard need 30s timeouts, path-literal baseline needs updating to 495,
+  wu-done-concurrent-backlog needs timeout, wu-done-metadata-format prettier issue.'
 acceptance:
   - All CI gates pass on ubuntu-latest
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2455
+claimed_at: 2026-03-13T11:03:28.081Z
+baseline_main_sha: 9cccac5ac80a7581ece54b08ae3ea866c9011fa1
+session_id: 21c91d34-7968-47d7-ab7a-69948ccb235b
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T11:03:28.089Z
