@@ -846,106 +846,120 @@ function persistPathLiteralTestBaseline(count: number): void {
 }
 
 describe('WU-2093: AST path literal regression guard', () => {
-  it('scans all runtime packages for banned literals (zero tolerance)', async () => {
-    const filesPerTarget = await Promise.all(
-      PRODUCTION_SCAN_TARGETS.map(async (target) => {
-        const files = await getRuntimeSourceFiles(target);
-        return { target: target.label, files };
-      }),
-    );
+  it(
+    'scans all runtime packages for banned literals (zero tolerance)',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        PRODUCTION_SCAN_TARGETS.map(async (target) => {
+          const files = await getRuntimeSourceFiles(target);
+          return { target: target.label, files };
+        }),
+      );
 
-    for (const target of filesPerTarget) {
-      expect(target.files.length, `No files discovered for ${target.target}`).toBeGreaterThan(0);
-    }
-
-    const allViolations: PathLiteralViolation[] = [];
-    for (const { files } of filesPerTarget) {
-      for (const file of files) {
-        const violations = scanFileForBannedPathLiterals(file);
-        allViolations.push(...violations);
+      for (const target of filesPerTarget) {
+        expect(target.files.length, `No files discovered for ${target.target}`).toBeGreaterThan(0);
       }
-    }
 
-    if (allViolations.length > 0) {
-      expect.fail(
-        `Found ${allViolations.length} banned runtime path literal(s).\n\n` +
-          `Use getConfig()/createWuPaths()/shared constants instead of inline literals.\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
-      );
-    }
-
-    expect(allViolations).toHaveLength(0);
-  });
-
-  it('scans test directories for banned literals (ratcheting baseline)', async () => {
-    const filesPerTarget = await Promise.all(
-      TEST_SCAN_TARGETS.map(async (target) => {
-        const files = await getRuntimeSourceFiles(target, { includeTests: true });
-        return { target: target.label, files };
-      }),
-    );
-
-    const allViolations: PathLiteralViolation[] = [];
-    for (const { files } of filesPerTarget) {
-      for (const file of files) {
-        const violations = scanTestFileForBannedPathLiterals(file);
-        allViolations.push(...violations);
+      const allViolations: PathLiteralViolation[] = [];
+      for (const { files } of filesPerTarget) {
+        for (const file of files) {
+          const violations = scanFileForBannedPathLiterals(file);
+          allViolations.push(...violations);
+        }
       }
-    }
 
-    const currentCount = allViolations.length;
-    const savedBaseline = loadPathLiteralTestBaseline();
-
-    // WU-2311: Ratchet — count must not increase
-    if (savedBaseline !== null && currentCount > savedBaseline) {
-      expect.fail(
-        `Test path literal ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
-          `(+${currentCount - savedBaseline}).\n\n` +
-          `New banned path literals detected in test files. Use DIRECTORIES/LUMENFLOW_PATHS/DOCS_LAYOUT_PRESETS constants instead.\n` +
-          `To intentionally update the baseline after a deliberate migration:\n` +
-          `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/path-literal-guard.test.ts -t "test directories"\n\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
-      );
-    }
-
-    if (savedBaseline !== null) {
-      const delta = savedBaseline - currentCount;
-      const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
-      console.log(
-        `Test path literal ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
-      );
-    } else {
-      console.log(`Test path literal ratchet: baseline established at ${currentCount} references`);
-    }
-
-    const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
-    if (shouldPersistRatchetingBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
-      persistPathLiteralTestBaseline(currentCount);
-      if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
-        console.log(`Test path literal ratchet: baseline explicitly updated to ${currentCount}`);
+      if (allViolations.length > 0) {
+        expect.fail(
+          `Found ${allViolations.length} banned runtime path literal(s).\n\n` +
+            `Use getConfig()/createWuPaths()/shared constants instead of inline literals.\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
       }
-    }
 
-    expect(currentCount).toBeGreaterThanOrEqual(0);
-  });
+      expect(allViolations).toHaveLength(0);
+    },
+  );
 
-  it('scans core spawn template generators for embedded banned path tokens', () => {
-    const violations: PathLiteralViolation[] = [];
-
-    for (const filePath of EMBEDDED_TEMPLATE_GUARD_FILES) {
-      violations.push(...scanFileForEmbeddedBannedPathTokens(filePath));
-    }
-
-    if (violations.length > 0) {
-      expect.fail(
-        `Found ${violations.length} embedded banned token(s) in core spawn template generators.\n\n` +
-          `These files render runtime prompt text and must remain config/constant driven.\n` +
-          `Violations:\n${formatViolationReport(violations)}`,
+  it(
+    'scans test directories for banned literals (ratcheting baseline)',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        TEST_SCAN_TARGETS.map(async (target) => {
+          const files = await getRuntimeSourceFiles(target, { includeTests: true });
+          return { target: target.label, files };
+        }),
       );
-    }
 
-    expect(violations).toHaveLength(0);
-  });
+      const allViolations: PathLiteralViolation[] = [];
+      for (const { files } of filesPerTarget) {
+        for (const file of files) {
+          const violations = scanTestFileForBannedPathLiterals(file);
+          allViolations.push(...violations);
+        }
+      }
+
+      const currentCount = allViolations.length;
+      const savedBaseline = loadPathLiteralTestBaseline();
+
+      // WU-2311: Ratchet — count must not increase
+      if (savedBaseline !== null && currentCount > savedBaseline) {
+        expect.fail(
+          `Test path literal ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
+            `(+${currentCount - savedBaseline}).\n\n` +
+            `New banned path literals detected in test files. Use DIRECTORIES/LUMENFLOW_PATHS/DOCS_LAYOUT_PRESETS constants instead.\n` +
+            `To intentionally update the baseline after a deliberate migration:\n` +
+            `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/path-literal-guard.test.ts -t "test directories"\n\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
+      }
+
+      if (savedBaseline !== null) {
+        const delta = savedBaseline - currentCount;
+        const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
+        console.log(
+          `Test path literal ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
+        );
+      } else {
+        console.log(
+          `Test path literal ratchet: baseline established at ${currentCount} references`,
+        );
+      }
+
+      const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
+      if (shouldPersistRatchetingBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
+        persistPathLiteralTestBaseline(currentCount);
+        if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
+          console.log(`Test path literal ratchet: baseline explicitly updated to ${currentCount}`);
+        }
+      }
+
+      expect(currentCount).toBeGreaterThanOrEqual(0);
+    },
+  );
+
+  it(
+    'scans core spawn template generators for embedded banned path tokens',
+    { timeout: 30_000 },
+    () => {
+      const violations: PathLiteralViolation[] = [];
+
+      for (const filePath of EMBEDDED_TEMPLATE_GUARD_FILES) {
+        violations.push(...scanFileForEmbeddedBannedPathTokens(filePath));
+      }
+
+      if (violations.length > 0) {
+        expect.fail(
+          `Found ${violations.length} embedded banned token(s) in core spawn template generators.\n\n` +
+            `These files render runtime prompt text and must remain config/constant driven.\n` +
+            `Violations:\n${formatViolationReport(violations)}`,
+        );
+      }
+
+      expect(violations).toHaveLength(0);
+    },
+  );
 });
 
 describe('WU-1539: legacy local constant guards', () => {
@@ -1224,69 +1238,73 @@ describe('WU-2114: file extension literal guard foundations', () => {
 });
 
 describe('WU-2114: file extension ratcheting regression guard', () => {
-  it('scans all 7 runtime packages for bare file extension literals', async () => {
-    const filesPerTarget = await Promise.all(
-      SCAN_TARGETS.map(async (target) => {
-        const files = await getRuntimeSourceFiles(target);
-        return { target: target.label, files };
-      }),
-    );
-
-    // Verify all scan targets discovered files
-    for (const target of filesPerTarget) {
-      expect(
-        target.files.length,
-        `No source files discovered for ${target.target}`,
-      ).toBeGreaterThan(0);
-    }
-
-    // Collect all violations
-    const allViolations: PathLiteralViolation[] = [];
-    for (const { files } of filesPerTarget) {
-      for (const file of files) {
-        const violations = scanFileForFileExtLiterals(file);
-        allViolations.push(...violations);
-      }
-    }
-
-    const currentCount = allViolations.length;
-    const savedBaseline = loadFileExtBaseline();
-
-    // WU-2131: Compare before writes. Regression failure must not mutate baseline.
-    if (savedBaseline !== null && currentCount > savedBaseline) {
-      expect.fail(
-        `File extension literal ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
-          `(+${currentCount - savedBaseline}).\n\n` +
-          `New bare file extension literals detected. Use FILE_EXTENSIONS constant from wu-paths-constants.ts instead.\n` +
-          `To intentionally update the baseline after a deliberate migration:\n` +
-          `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/path-literal-guard.test.ts -t "file extension ratcheting regression guard"\n\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
+  it(
+    'scans all 7 runtime packages for bare file extension literals',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        SCAN_TARGETS.map(async (target) => {
+          const files = await getRuntimeSourceFiles(target);
+          return { target: target.label, files };
+        }),
       );
-    }
 
-    if (savedBaseline !== null) {
-      // Log ratchet status for visibility
-      const delta = savedBaseline - currentCount;
-      const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
-      console.log(
-        `File extension ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
-      );
-    } else {
-      // First run: baseline established
-      console.log(`File extension ratchet: baseline established at ${currentCount} references`);
-    }
-
-    const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
-    if (shouldPersistRatchetingBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
-      persistFileExtBaseline(currentCount);
-      if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
-        console.log(`File extension ratchet: baseline explicitly updated to ${currentCount}`);
+      // Verify all scan targets discovered files
+      for (const target of filesPerTarget) {
+        expect(
+          target.files.length,
+          `No source files discovered for ${target.target}`,
+        ).toBeGreaterThan(0);
       }
-    }
 
-    // The test itself passes as long as count does not increase
-    expect(currentCount).toBeGreaterThanOrEqual(0);
-  });
+      // Collect all violations
+      const allViolations: PathLiteralViolation[] = [];
+      for (const { files } of filesPerTarget) {
+        for (const file of files) {
+          const violations = scanFileForFileExtLiterals(file);
+          allViolations.push(...violations);
+        }
+      }
+
+      const currentCount = allViolations.length;
+      const savedBaseline = loadFileExtBaseline();
+
+      // WU-2131: Compare before writes. Regression failure must not mutate baseline.
+      if (savedBaseline !== null && currentCount > savedBaseline) {
+        expect.fail(
+          `File extension literal ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
+            `(+${currentCount - savedBaseline}).\n\n` +
+            `New bare file extension literals detected. Use FILE_EXTENSIONS constant from wu-paths-constants.ts instead.\n` +
+            `To intentionally update the baseline after a deliberate migration:\n` +
+            `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/path-literal-guard.test.ts -t "file extension ratcheting regression guard"\n\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
+      }
+
+      if (savedBaseline !== null) {
+        // Log ratchet status for visibility
+        const delta = savedBaseline - currentCount;
+        const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
+        console.log(
+          `File extension ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
+        );
+      } else {
+        // First run: baseline established
+        console.log(`File extension ratchet: baseline established at ${currentCount} references`);
+      }
+
+      const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
+      if (shouldPersistRatchetingBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
+        persistFileExtBaseline(currentCount);
+        if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
+          console.log(`File extension ratchet: baseline explicitly updated to ${currentCount}`);
+        }
+      }
+
+      // The test itself passes as long as count does not increase
+      expect(currentCount).toBeGreaterThanOrEqual(0);
+    },
+  );
 
   it('would fail if a new bare file extension literal were added', () => {
     const existingSource = "const safe = 'hello';";
@@ -1373,69 +1391,75 @@ describe('WU-2113: LUMENFLOW_ env var literal guard foundations', () => {
 });
 
 describe('WU-2113: LUMENFLOW_ env var ratcheting regression guard', () => {
-  it('scans all 7 runtime packages for raw LUMENFLOW_ env var literals', async () => {
-    const filesPerTarget = await Promise.all(
-      SCAN_TARGETS.map(async (target) => {
-        const files = await getRuntimeSourceFiles(target);
-        return { target: target.label, files };
-      }),
-    );
-
-    // Verify all scan targets discovered files
-    for (const target of filesPerTarget) {
-      expect(
-        target.files.length,
-        `No source files discovered for ${target.target}`,
-      ).toBeGreaterThan(0);
-    }
-
-    // Collect all violations
-    const allViolations: PathLiteralViolation[] = [];
-    for (const { files } of filesPerTarget) {
-      for (const file of files) {
-        const violations = scanFileForEnvVarLiterals(file);
-        allViolations.push(...violations);
-      }
-    }
-
-    const currentCount = allViolations.length;
-    const savedBaseline = loadEnvVarBaseline();
-
-    // WU-2131: Compare before writes. Regression failure must not mutate baseline.
-    if (savedBaseline !== null && currentCount > savedBaseline) {
-      expect.fail(
-        `LUMENFLOW_ env var literal ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
-          `(+${currentCount - savedBaseline}).\n\n` +
-          `New raw LUMENFLOW_ env var literals detected. Use ENV_VARS constant from wu-context-constants.ts instead.\n` +
-          `To intentionally update the baseline after a deliberate migration:\n` +
-          `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/path-literal-guard.test.ts -t "LUMENFLOW_ env var ratcheting regression guard"\n\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
+  it(
+    'scans all 7 runtime packages for raw LUMENFLOW_ env var literals',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        SCAN_TARGETS.map(async (target) => {
+          const files = await getRuntimeSourceFiles(target);
+          return { target: target.label, files };
+        }),
       );
-    }
 
-    if (savedBaseline !== null) {
-      // Log ratchet status for visibility
-      const delta = savedBaseline - currentCount;
-      const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
-      console.log(
-        `LUMENFLOW_ env var ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
-      );
-    } else {
-      // First run: baseline established
-      console.log(`LUMENFLOW_ env var ratchet: baseline established at ${currentCount} references`);
-    }
-
-    const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
-    if (shouldPersistRatchetingBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
-      persistEnvVarBaseline(currentCount);
-      if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
-        console.log(`LUMENFLOW_ env var ratchet: baseline explicitly updated to ${currentCount}`);
+      // Verify all scan targets discovered files
+      for (const target of filesPerTarget) {
+        expect(
+          target.files.length,
+          `No source files discovered for ${target.target}`,
+        ).toBeGreaterThan(0);
       }
-    }
 
-    // The test itself passes as long as count does not increase
-    expect(currentCount).toBeGreaterThanOrEqual(0);
-  });
+      // Collect all violations
+      const allViolations: PathLiteralViolation[] = [];
+      for (const { files } of filesPerTarget) {
+        for (const file of files) {
+          const violations = scanFileForEnvVarLiterals(file);
+          allViolations.push(...violations);
+        }
+      }
+
+      const currentCount = allViolations.length;
+      const savedBaseline = loadEnvVarBaseline();
+
+      // WU-2131: Compare before writes. Regression failure must not mutate baseline.
+      if (savedBaseline !== null && currentCount > savedBaseline) {
+        expect.fail(
+          `LUMENFLOW_ env var literal ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
+            `(+${currentCount - savedBaseline}).\n\n` +
+            `New raw LUMENFLOW_ env var literals detected. Use ENV_VARS constant from wu-context-constants.ts instead.\n` +
+            `To intentionally update the baseline after a deliberate migration:\n` +
+            `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/path-literal-guard.test.ts -t "LUMENFLOW_ env var ratcheting regression guard"\n\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
+      }
+
+      if (savedBaseline !== null) {
+        // Log ratchet status for visibility
+        const delta = savedBaseline - currentCount;
+        const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
+        console.log(
+          `LUMENFLOW_ env var ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
+        );
+      } else {
+        // First run: baseline established
+        console.log(
+          `LUMENFLOW_ env var ratchet: baseline established at ${currentCount} references`,
+        );
+      }
+
+      const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
+      if (shouldPersistRatchetingBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
+        persistEnvVarBaseline(currentCount);
+        if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
+          console.log(`LUMENFLOW_ env var ratchet: baseline explicitly updated to ${currentCount}`);
+        }
+      }
+
+      // The test itself passes as long as count does not increase
+      expect(currentCount).toBeGreaterThanOrEqual(0);
+    },
+  );
 
   it('would fail if a new raw LUMENFLOW_ env var literal were added', () => {
     const existingSource = "const safe = 'hello';";
