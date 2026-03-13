@@ -2,7 +2,7 @@ id: WU-2463
 title: Fix pre-existing CLI test failures for green CI
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -33,7 +33,19 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Four pre-existing test failures in @lumenflow/cli block CI from going green on ubuntu-latest: (1) docs-sync.test.ts expects old skip behavior but WU-2383 made managed docs always-write, (2) init.test.ts same issue for scaffoldProject, (3) wu-edit.test.ts expects comma-split risks but WU-2381 changed to no-split, (4) wu-recover.test.ts needs testTimeout for CI runners.'
+description: 'Four pre-existing test failures in @lumenflow/cli block CI from going green on
+  ubuntu-latest: (1) docs-sync.test.ts expects old skip behavior but WU-2383 made managed docs
+  always-write, (2) init.test.ts same issue for scaffoldProject, (3) wu-edit.test.ts expects
+  comma-split risks but WU-2381 changed to no-split, (4) wu-recover.test.ts needs testTimeout for CI
+  runners.'
 acceptance:
   - All 4 CLI test files pass locally and on CI
   - No test behavior regressions
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2463
+claimed_at: 2026-03-13T11:52:55.597Z
+baseline_main_sha: da40bf303da440833c95a65f5eb8af2a6d0af67c
+session_id: a0b3295f-976e-4be1-8e29-d539138e1d5f
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T11:52:55.604Z

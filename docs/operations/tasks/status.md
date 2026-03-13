@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2463 — Fix pre-existing CLI test failures for green CI](wu/WU-2463.yaml)
 
 ## Completed
 
