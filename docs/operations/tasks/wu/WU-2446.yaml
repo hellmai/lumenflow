@@ -15,7 +15,8 @@ tests:
       and verify the file content appears in the output
   unit:
     - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
-    - packages/@lumenflow/cli/src/__tests__/gate-co-change.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-co-change.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gate-co-change-cmd.test.ts
   e2e: []
 artifacts:
   - .lumenflow/stamps/WU-2446.done
@@ -27,10 +28,17 @@ notes: 'Companion to WU-2445 (concrete anti-patterns). Together they solve the d
   WU-2445 improves the framework-level guidance, this WU lets projects inject project-specific
   quality criteria into co-change violations.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T09:38:33.019Z
+worktree_path: worktrees/framework-core-validation-wu-2446
+session_id: 4283fd24-3ed6-48c2-9dd4-39be6b6dbd13
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:38:33.030Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -49,11 +57,3 @@ acceptance:
   - gate:co-change CLI supports --guidance-ref in add and edit subcommands
   - When guidance_ref file does not exist, gate runner emits a warning but does not fail
   - Existing inline guidance field continues to work unchanged (backward compatible)
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2446
-claimed_at: 2026-03-13T09:38:33.019Z
-baseline_main_sha: 50f052d86ec7a21f1033aa904ba4f067cd3c1c83
-session_id: 4283fd24-3ed6-48c2-9dd4-39be6b6dbd13
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T09:38:33.030Z
