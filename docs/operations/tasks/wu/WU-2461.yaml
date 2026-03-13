@@ -21,7 +21,8 @@ artifacts:
   - .lumenflow/stamps/WU-2461.done
 dependencies: []
 risks: []
-notes: 'Created from observed wu:done inbox telemetry warning caused by legacy signal records that predate
+notes:
+  'Created from observed wu:done inbox telemetry warning caused by legacy signal records that predate
   the strict signal contract.'
 requires_review: false
 assigned_to: tom@hellm.ai

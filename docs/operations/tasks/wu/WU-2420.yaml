@@ -19,7 +19,8 @@ artifacts:
   - .lumenflow/stamps/WU-2420.done
 dependencies: []
 risks: []
-notes: 'Tracks recurring main-branch test instability that blocks unrelated WUs at gates. No implementation
+notes:
+  'Tracks recurring main-branch test instability that blocks unrelated WUs at gates. No implementation
   started yet.'
 requires_review: false
 assigned_to: tom@hellm.ai

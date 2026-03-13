@@ -27,7 +27,8 @@ artifacts:
   - .lumenflow/stamps/WU-2387.done
 dependencies: []
 risks: []
-notes: 'Migration cleanup backlog item captured after a 3.16 -> 3.17 consumer upgrade surfaced legacy
+notes:
+  'Migration cleanup backlog item captured after a 3.16 -> 3.17 consumer upgrade surfaced legacy
   scaffold conversion rough edges.'
 requires_review: false
 assigned_to: tom@hellm.ai
