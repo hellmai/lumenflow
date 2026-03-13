@@ -18,7 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2397.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Follow-up bug after WU-2395. Formatting should move to the Prettier Node API so consumer repos
+  get YAML output that matches prettier --check.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
