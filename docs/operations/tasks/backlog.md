@@ -33,7 +33,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2451 — Inject co-change guidance_ref content into wu:brief prompts](wu/WU-2451.yaml) — Framework: CLI WU Commands
-- [WU-2453 — Fix path-literal-guard timeouts and micro-worktree CI failure](wu/WU-2453.yaml) — Operations: Automation
 
 ## ⛔ Blocked
 
@@ -1399,6 +1398,7 @@ sections:
 - [WU-2446 — Add guidance_ref support to co-change rules for file-based test guidance](wu/WU-2446.yaml)
 - [WU-2450 — Fix remaining test timeouts for ubuntu-latest CI](wu/WU-2450.yaml)
 - [WU-2452 — Fix all CI test failures for ubuntu-latest open source runners](wu/WU-2452.yaml)
+- [WU-2453 — Fix path-literal-guard timeouts and micro-worktree CI failure](wu/WU-2453.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

@@ -3483,3 +3483,4 @@
 {"type":"claim","wuId":"WU-2453","timestamp":"2026-03-13T10:42:35.929Z","lane":"Operations: Automation","title":"Fix path-literal-guard timeouts and micro-worktree CI failure"}
 {"type":"checkpoint","wuId":"WU-2453","timestamp":"2026-03-13T10:42:47.294Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2453","timestamp":"2026-03-13T10:42:55.766Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"complete","wuId":"WU-2453","timestamp":"2026-03-13T10:45:12.969Z"}
