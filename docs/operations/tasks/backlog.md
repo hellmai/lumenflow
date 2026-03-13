@@ -35,7 +35,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2463 — Fix pre-existing CLI test failures for green CI](wu/WU-2463.yaml) — Framework: CLI WU Commands
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1406,6 +1406,7 @@ sections:
 - [WU-2454 — Fix initiatives test timeout for ubuntu-latest CI](wu/WU-2454.yaml)
 - [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml)
 - [WU-2462 — Increase CI job timeout from 10 to 20 minutes for ubuntu-latest](wu/WU-2462.yaml)
+- [WU-2463 — Fix pre-existing CLI test failures for green CI](wu/WU-2463.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

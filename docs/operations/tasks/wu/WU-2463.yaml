@@ -2,7 +2,7 @@ id: WU-2463
 title: Fix pre-existing CLI test failures for green CI
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -49,3 +49,6 @@ description: 'Four pre-existing test failures in @lumenflow/cli block CI from go
 acceptance:
   - All 4 CLI test files pass locally and on CI
   - No test behavior regressions
+locked: true
+completed_at: 2026-03-13T11:58:08.389Z
+completed: 2026-03-13
