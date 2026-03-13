@@ -17,9 +17,28 @@ LumenFlow packages follow [Semantic Versioning](https://semver.org/):
 
 All `@lumenflow/*` packages are versioned together for simplicity. The `@lumenflow/metrics` package may have independent minor versions.
 
-## v3.18.0
+## v3.18.1
 
 <Badge text="Latest" variant="success" />
+
+**Release Date:** March 2026
+
+### Highlights
+
+- **CI stabilization**: Fixed 27+ test failures on ubuntu-latest GitHub-hosted runners across `@lumenflow/cli` and `@lumenflow/core` packages.
+- **Timezone-safe tests**: Date utility tests now use midday UTC and local-time constructors for deterministic cross-timezone behavior.
+- **Language guide pin refresh**: All pack-scoped quickstarts updated to `@lumenflow/cli@3.18.1`.
+- **Docs audit alignment**: Releases index, changelog, and language guides synchronized with published stable version.
+
+### Upgrade
+
+```bash
+pnpm lumenflow:upgrade --latest
+```
+
+---
+
+## v3.18.0
 
 **Release Date:** March 2026
 
