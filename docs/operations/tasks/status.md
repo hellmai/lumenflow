@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2444 — Fix packaging-boundary test timeout on ubuntu-latest](wu/WU-2444.yaml)
 
 ## Completed
 

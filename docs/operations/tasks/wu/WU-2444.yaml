@@ -2,7 +2,7 @@ id: WU-2444
 title: Fix packaging-boundary test timeout on ubuntu-latest
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -26,7 +26,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: packaging-boundary.test.ts spawns tsc and pnpm pack as child processes. Default 5s vitest timeout is insufficient on GitHub-hosted ubuntu-latest runners. Was masked by faster self-hosted runner.
+description: packaging-boundary.test.ts spawns tsc and pnpm pack as child processes. Default 5s
+  vitest timeout is insufficient on GitHub-hosted ubuntu-latest runners. Was masked by faster
+  self-hosted runner.
 acceptance:
   - packaging-boundary tests pass on ubuntu-latest CI
   - Timeout set per-test on slow tests, not globally
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2444
+claimed_at: 2026-03-13T09:22:48.240Z
+baseline_main_sha: 04dcae932c123d71f106f08e5455c5f5ec87538e
+session_id: b645060b-512e-4940-bb37-252d439288f2
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:22:48.247Z
