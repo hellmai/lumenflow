@@ -10,7 +10,7 @@ A fast start for agents entering an existing LumenFlow project.
 
 ```bash
 ls LUMENFLOW.md AGENTS.md workspace.yaml
-pnpm exec lumenflow doctor
+pnpm lumenflow:doctor
 ```
 
 If the doctor reports a repo-level problem, stop there and fix it before claiming work.

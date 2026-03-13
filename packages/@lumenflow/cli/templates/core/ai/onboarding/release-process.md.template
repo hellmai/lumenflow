@@ -30,7 +30,7 @@ pnpm release --release-version 1.3.0 --skip-publish
 
 1. Validates semver version format
 2. Ensures clean working directory on main branch
-3. Syncs templates with source docs (`pnpm sync:templates`)
+3. Syncs templates with source docs (`pnpm lumenflow:sync-templates`)
 4. Bumps all `@lumenflow/*` package versions using micro-worktree isolation
 5. Builds all packages
 6. Creates and pushes git tag `vX.Y.Z`
@@ -79,24 +79,24 @@ CLI templates (`packages/@lumenflow/cli/templates/`) are synced from source docs
 
 ```bash
 # Sync source docs to CLI templates
-pnpm sync:templates
+pnpm lumenflow:sync-templates
 
 # Preview without writing files
-pnpm sync:templates --dry-run
+pnpm lumenflow:sync-templates --dry-run
 ```
 
 ### Check for Drift (CI)
 
 ```bash
 # Check if templates are out of sync with source
-pnpm sync:templates --check-drift
+pnpm lumenflow:sync-templates --check-drift
 ```
 
 The `--check-drift` flag compares templates with their source files. If drift is detected:
 
 - Exit code 1 (fails CI)
 - Lists drifting files
-- Suggests running `pnpm sync:templates`
+- Suggests running `pnpm lumenflow:sync-templates`
 
 ### What Gets Synced
 
@@ -345,12 +345,12 @@ rm packages/@lumenflow/packs/software-delivery/lumenflow-packs-software-delivery
 
 ### Vercel Projects Reference
 
-| Project           | Domain                   | Purpose                 |
-| ----------------- | ------------------------ | ----------------------- |
-| `web`             | registry.lumenflow.dev   | Pack registry + web app |
-| `docs`            | lumenflow.dev            | Starlight documentation |
-| `lumenflow-dev`   | lumenflow-dev.vercel.app | Monorepo preview        |
-| `cloud`           | cloud.lumenflow.dev      | Control plane           |
+| Project         | Domain                   | Purpose                 |
+| --------------- | ------------------------ | ----------------------- |
+| `web`           | registry.lumenflow.dev   | Pack registry + web app |
+| `docs`          | lumenflow.dev            | Starlight documentation |
+| `lumenflow-dev` | lumenflow-dev.vercel.app | Monorepo preview        |
+| `cloud`         | cloud.lumenflow.dev      | Control plane           |
 
 ### Troubleshooting Pack Publishing
 
@@ -379,7 +379,7 @@ The `@lumenflow/docs` package requires `d2` (diagramming tool) which is not avai
 - [ ] All acceptance criteria met
 - [ ] Gates pass (`pnpm gates`)
 - [ ] Pre-release checks pass (`pnpm pre-release:check`)
-- [ ] Templates synced (`pnpm sync:templates` - ensures CLI templates match source docs)
+- [ ] Templates synced (`pnpm lumenflow:sync-templates` - ensures CLI templates match source docs)
 - [ ] CHANGELOG updated (if maintained)
 
 ### Release Steps (Automated)

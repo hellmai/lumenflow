@@ -2,10 +2,6 @@
 
 **Last updated:** {{DATE}}
 
-> **This file is managed by LumenFlow.** Do not edit — it will be overwritten on upgrade.
-> For project-specific additions, create `LUMENFLOW.local.md` (never overwritten).
-> If `LUMENFLOW.local.md` exists, agents should read it after this file.
-
 LumenFlow is a vendor-agnostic workflow framework for AI-native software development.
 
 > **Context Safety**: When approaching context limits (80% usage, 50+ tool calls), spawn a fresh agent instead of continuing after compaction. See [wu-sizing-guide.md]({{DOCS_OPERATIONS_PATH}}/_frameworks/lumenflow/wu-sizing-guide.md).
@@ -53,6 +49,9 @@ cd worktrees/<lane>-wu-xxxx
 
 # 4b. Build CLI in worktree (required for gates)
 pnpm bootstrap
+
+# 4c. Run wu:brief (MANDATORY — wu:done blocks without this)
+pnpm wu:brief --id WU-XXXX --client <client>
 
 # 5. Implement in worktree
 
@@ -141,7 +140,7 @@ When `requireRemote: true` (default):
 ## Core Principles
 
 1. **Design-First** (feature/refactor WUs): Load `/skill design-first` before implementation. Question requirements, delete unnecessary, simplify before optimizing
-2. **Fit-For-Surface Verification**: Choose the least brittle verification that gives strong confidence. Prefer TDD for runtime logic when repository policy requires it; prefer behavior-focused integration, smoke, visual, or manual verification for UI, content, and presentation work.
+2. **Fit-For-Surface Verification**: Choose the least brittle verification that gives strong confidence. Prefer TDD for runtime logic when repository policy requires it; prefer behavior-focused integration, smoke, visual, or manual verification for UI, content, and presentation work. Never assert inline styles, CSS values, exact copy, or DOM shape in E2E/integration tests.
 3. **Library-First**: Search existing libraries before custom code
 4. **DRY/SOLID/KISS/YAGNI**: No magic numbers, no hardcoded strings
 5. **Worktree Discipline**: After `wu:claim`, work ONLY in the worktree
@@ -221,6 +220,22 @@ lumenflow init --merge             # Safe merge into existing files
 
 The `--merge` flag uses bounded markers (`LUMENFLOW:START`/`END`) to safely insert or update LumenFlow config in existing files without overwriting user content.
 
+### File Ownership Model
+
+| File                           | Owner                     | On Upgrade                                                      | User Overrides           |
+| ------------------------------ | ------------------------- | --------------------------------------------------------------- | ------------------------ |
+| `LUMENFLOW.md`                 | LumenFlow (fully managed) | Force-synced from template                                      | Use `LUMENFLOW.local.md` |
+| `.lumenflow/constraints.md`    | LumenFlow (fully managed) | Force-synced from template                                      | —                        |
+| `AGENTS.md`                    | Shared (merge-block)      | Content between `LUMENFLOW:START`/`END` updated; rest preserved | Edit outside markers     |
+| `CLAUDE.md`                    | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `.cursor/rules/lumenflow.md`   | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `.windsurf/rules/lumenflow.md` | Shared (merge-block)      | Content between markers updated; rest preserved                 | Edit outside markers     |
+| `LUMENFLOW.local.md`           | User (never touched)      | Skipped entirely                                                | Full ownership           |
+| `.lumenflow/templates/`        | User (never touched)      | Skipped entirely                                                | Full ownership           |
+
+> For project-specific workflow additions, create `LUMENFLOW.local.md` (never overwritten).
+> If `LUMENFLOW.local.md` exists, agents should read it after this file.
+
 ---
 
 ## Worktree Discipline (IMMUTABLE LAW)
@@ -254,31 +269,31 @@ For the full worktree lifecycle (parallel execution, bootstrap, isolation guaran
 
 > **Complete CLI reference (100+ commands):** See [quick-ref-commands.md]({{QUICK_REF_LINK}}). Always run `<command> --help` for the authoritative option list.
 
-| Command                   | Description                                               |
-| ------------------------- | --------------------------------------------------------- |
-| `pnpm wu:create`          | Create new WU spec                                        |
-| `pnpm wu:claim`           | Claim WU, update canonical state, create worktree         |
-| `pnpm wu:prep`            | Run gates in worktree, prep for wu:done                   |
-| `pnpm wu:done`            | Complete WU (merge, stamp, cleanup)                       |
-| `pnpm wu:status`          | Show WU status, location, and valid commands              |
-| `pnpm wu:recover`         | Analyze and fix WU state inconsistencies                  |
-| `pnpm wu:block`           | Block WU (transitions to blocked, frees lane)             |
-| `pnpm wu:unblock`         | Unblock WU (transitions to in_progress)                   |
-| `pnpm wu:release`         | Release orphaned WU (in_progress to ready for reclaim)    |
+| Command                   | Description                                                             |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `pnpm wu:create`          | Create new WU spec                                                      |
+| `pnpm wu:claim`           | Claim WU, update canonical state, create worktree                       |
+| `pnpm wu:prep`            | Run gates in worktree, prep for wu:done                                 |
+| `pnpm wu:done`            | Complete WU (merge, stamp, cleanup)                                     |
+| `pnpm wu:status`          | Show WU status, location, and valid commands                            |
+| `pnpm wu:recover`         | Analyze and fix WU state inconsistencies                                |
+| `pnpm wu:block`           | Block WU (transitions to blocked, frees lane)                           |
+| `pnpm wu:unblock`         | Unblock WU (transitions to in_progress)                                 |
+| `pnpm wu:release`         | Release orphaned WU (in_progress to ready for reclaim)                  |
 | `pnpm wu:brief`           | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence |
-| `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation |
-| `pnpm wu:escalate`        | Show or resolve WU escalation status                      |
-| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)          |
-| `pnpm wu:delete`          | Delete WU spec and cleanup                                |
-| `pnpm gates`              | Run quality gates (`--docs-only` for docs WUs)            |
-| `pnpm lumenflow:commands` | List all public commands (primary + alias + legacy)       |
-| `pnpm docs:generate`      | Regenerate CLI/config reference docs from source          |
-| `pnpm docs:validate`      | Verify generated docs are up-to-date                      |
-| `pnpm lane:status`        | Show lane lifecycle status + next step                    |
-| `pnpm lane:setup`         | Create/update draft lane artifacts                        |
-| `pnpm lane:validate`      | Validate lane artifacts before lock                       |
-| `pnpm lane:lock`          | Lock lane lifecycle for delivery WUs                      |
-| `pnpm mem:checkpoint`     | Save memory checkpoint                                    |
+| `pnpm wu:delegate`        | Generate prompt + record lineage + brief hash attestation               |
+| `pnpm wu:escalate`        | Show or resolve WU escalation status                                    |
+| `pnpm wu:verify`          | Verify WU completion (stamp, commit, clean tree)                        |
+| `pnpm wu:delete`          | Delete WU spec and cleanup                                              |
+| `pnpm gates`              | Run quality gates (`--docs-only` for docs WUs)                          |
+| `pnpm lumenflow:commands` | List all public commands (primary + alias + legacy)                     |
+| `pnpm docs:generate`      | Regenerate CLI/config reference docs from source                        |
+| `pnpm docs:validate`      | Verify generated docs are up-to-date                                    |
+| `pnpm lane:status`        | Show lane lifecycle status + next step                                  |
+| `pnpm lane:setup`         | Create/update draft lane artifacts                                      |
+| `pnpm lane:validate`      | Validate lane artifacts before lock                                     |
+| `pnpm lane:lock`          | Lock lane lifecycle for delivery WUs                                    |
+| `pnpm mem:checkpoint`     | Save memory checkpoint                                                  |
 
 Commands include **context-aware validation** that checks location, WU status, and git state. When validation fails, commands provide copy-paste ready fix commands. Configure in `workspace.yaml` under `software_delivery.experimental.context_validation`.
 The Starlight CLI reference page is intentionally curated to primary commands; use `pnpm lumenflow:commands` for complete discovery.

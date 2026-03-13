@@ -56,25 +56,25 @@ Run `--help` first, then run the real command with explicit flags.
 
 **For this monorepo (development):**
 
-| Command                                            | Description                                                    |
-| -------------------------------------------------- | -------------------------------------------------------------- |
-| `pnpm setup`                                       | Install deps and build CLI (first time)                        |
-| `pnpm bootstrap`                                   | Build CLI with dependency closure (worktree-safe)              |
-| `pnpm build`                                       | Build all packages                                             |
-| `pnpm build:dist`                                  | Build distribution packages                                    |
-| `pnpm dev`                                         | Start development mode                                         |
-| `pnpm clean`                                       | Clean build artifacts and caches                               |
-| `pnpm pack:all`                                    | Pack all packages for distribution                             |
-| `pnpm exec lumenflow init`                         | Scaffold LumenFlow in a project                                |
-| `pnpm exec lumenflow init --docs-structure simple` | Use simple docs structure (`docs/tasks`)                       |
-| `pnpm exec lumenflow init --docs-structure arc42`  | Use arc42 docs structure (`{{DOCS_OPERATIONS_PATH}}`)                |
-| `pnpm docs:sync --vendor <type>`                  | Refresh selected vendor bootstrap assets outside upgrade |
-| `pnpm sync:templates`                              | Sync repo docs into bundled templates                          |
-| `pnpm lumenflow:upgrade`                           | Upgrade LumenFlow packages                                     |
-| `pnpm lumenflow:doctor`                            | Diagnose LumenFlow configuration                               |
-| `pnpm lumenflow:integrate`                         | Generate enforcement hooks for client                          |
-| `pnpm cloud:connect`                               | Configure cloud control-plane access                           |
-| `npx lumenflow commands`                           | List all available CLI commands                                |
+| Command                                  | Description                                                                             |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm setup`                             | Install deps and build CLI (first time)                                                 |
+| `pnpm bootstrap`                         | Build CLI with dependency closure (worktree-safe)                                       |
+| `pnpm build`                             | Build all packages                                                                      |
+| `pnpm build:dist`                        | Build distribution packages                                                             |
+| `pnpm dev`                               | Start development mode                                                                  |
+| `pnpm clean`                             | Clean build artifacts and caches                                                        |
+| `pnpm pack:validate`                     | Validate a pack manifest and implementation surface                                     |
+| `pnpm lumenflow`                         | Scaffold LumenFlow in a project                                                         |
+| `pnpm lumenflow --docs-structure simple` | Use simple docs structure (`docs/tasks`)                                                |
+| `pnpm lumenflow --docs-structure arc42`  | Use arc42 docs structure (`{{DOCS_OPERATIONS_PATH}}`)                                            |
+| `pnpm docs:sync`                         | Refresh managed docs, onboarding docs, and vendor assets (run by upgrade automatically) |
+| `pnpm sync:templates`                    | Sync repo docs into bundled templates                                                   |
+| `pnpm lumenflow:upgrade`                 | Upgrade LumenFlow packages                                                              |
+| `pnpm lumenflow:doctor`                  | Diagnose LumenFlow configuration                                                        |
+| `pnpm lumenflow:integrate`               | Generate enforcement hooks for client                                                   |
+| `pnpm cloud:connect`                     | Configure cloud control-plane access                                                    |
+| `npx lumenflow commands`                 | List all available CLI commands                                                         |
 
 **For external projects (end users):**
 
@@ -83,12 +83,12 @@ Run `--help` first, then run the real command with explicit flags.
 pnpm add -D @lumenflow/cli  # or: npm install -D @lumenflow/cli
 
 # Initialize LumenFlow
-pnpm exec lumenflow init
+pnpm lumenflow
 
 # With client-specific overlays
-pnpm exec lumenflow init --client claude   # Claude Code
-pnpm exec lumenflow init --client cursor   # Cursor IDE
-pnpm exec lumenflow init --client all      # All clients
+pnpm lumenflow --client claude   # Claude Code
+pnpm lumenflow --client cursor   # Cursor IDE
+pnpm lumenflow --client all      # All clients
 ```
 
 ---
@@ -98,30 +98,29 @@ pnpm exec lumenflow init --client all      # All clients
 These commands use **micro-worktree isolation** internally — they handle their own
 commit and push atomically. Do NOT wrap them in a WU or use raw `pnpm update`/`git commit`.
 
-| Command                                           | Description                                      |
-| ------------------------------------------------- | ------------------------------------------------ |
-| `pnpm lumenflow:upgrade --version 3.5.0`          | Upgrade all 7 @lumenflow/\* packages             |
-| `pnpm lumenflow:upgrade --latest`                 | Upgrade to latest version                        |
-| `pnpm lumenflow:upgrade --latest --dry-run`       | Preview upgrade without executing                |
-| `pnpm config:set --key <dotpath> --value <value>` | Set workspace.yaml config (Zod-validated)        |
-| `pnpm config:get --key <dotpath>`                 | Read workspace.yaml config                       |
-| `pnpm cloud:connect`                              | Configure cloud control-plane access             |
-| `pnpm docs:sync --vendor <type>`                 | Optional targeted refresh for vendor/bootstrap assets |
-| `pnpm sync:templates`                             | Sync repo docs into bundled templates            |
+| Command                                           | Description                                                           |
+| ------------------------------------------------- | --------------------------------------------------------------------- |
+| `pnpm lumenflow:upgrade --version 3.5.0`          | Upgrade all 7 @lumenflow/\* packages                                  |
+| `pnpm lumenflow:upgrade --latest`                 | Upgrade to latest version                                             |
+| `pnpm lumenflow:upgrade --latest --dry-run`       | Preview upgrade without executing                                     |
+| `pnpm config:set --key <dotpath> --value <value>` | Set workspace.yaml config (Zod-validated)                             |
+| `pnpm config:get --key <dotpath>`                 | Read workspace.yaml config                                            |
+| `pnpm cloud:connect`                              | Configure cloud control-plane access                                  |
+| `pnpm docs:sync`                                  | Refresh managed docs, onboarding docs, and vendor assets (standalone) |
+| `pnpm sync:templates`                             | Sync repo docs into bundled templates                                 |
 
 **Key principle:** If a LumenFlow CLI command exists for the operation, use it instead of
 raw pnpm/git. These tooling commands commit directly to main via micro-worktree — no dirty
 files, no manual git, no WU ceremony. Only actual **code changes** need WUs.
 
-`docs:sync` refreshes managed docs, the scaffolded onboarding set, and selected vendor bootstrap
-assets. Managed docs are refreshed automatically during `pnpm lumenflow:upgrade --latest`, and
-bootstrap files update safely via merge-block markers.
+`lumenflow:upgrade` runs `docs:sync` internally as part of the upgrade transaction. You do not
+need to run `docs:sync` separately after upgrading. Standalone `docs:sync` is only needed when
+you want to refresh docs without upgrading packages (e.g., after manually editing templates).
 
-For existing installs, upgrade packages first with `pnpm lumenflow:upgrade --latest`. That command
-automatically syncs managed docs, onboarding docs, and configured vendor assets. Use
-`pnpm docs:sync --vendor <type>` only when you want an additional targeted refresh outside upgrade.
-The improved default `wu:brief` behavior comes from the package upgrade itself. New installs get
-those defaults automatically, and `.lumenflow/templates/` remains optional unless you want custom overrides.
+`docs:sync` handles two categories of files:
+
+- **Managed docs** (`LUMENFLOW.md`, `.lumenflow/constraints.md`) — always force-synced from templates
+- **Bootstrap docs** (`AGENTS.md`, vendor files) — merge-block update only (user content outside `LUMENFLOW:START`/`END` markers is preserved)
 
 > **Anti-pattern:** Do NOT use `pnpm update @lumenflow/*` to upgrade packages.
 > This leaves dirty `package.json` and `pnpm-lock.yaml` on main.
@@ -131,27 +130,27 @@ those defaults automatically, and `.lumenflow/templates/` remains optional unles
 
 ## WU Lifecycle
 
-| Command                                                        | Description                                                           |
-| -------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `pnpm wu:create --lane <Lane> --title "..." ..`                | Create new WU spec (ID auto-generated; see fields below)              |
-| `pnpm wu:claim --id WU-XXX --lane <Lane>`                      | Claim WU and create worktree (default)                                |
-| `pnpm wu:claim --id WU-XXX --lane <L> --cloud`                 | Claim WU in cloud/branch-pr mode (no worktree)                        |
-| `pnpm wu:prep --id WU-XXX [--full-tests]`                      | Run gates, prep for wu:done (`tests.unit` scoped by default)          |
-| `pnpm wu:done --id WU-XXX`                                     | Complete WU (merge or PR, stamp, cleanup)                             |
-| `pnpm wu:edit --id WU-XXX --description "..."`                 | Edit WU spec fields (run --help for all flags)                        |
-| `pnpm wu:escalate --id WU-XXX`                                 | Show escalation status for a WU                                       |
-| `pnpm wu:escalate --resolve --id WU-XXX`                       | Resolve escalation (sets resolved_by/resolved_at)                     |
-| `pnpm approval:request --type <type> --subject <json>`         | Request control-plane approval for an action                          |
-| `pnpm approval:review --id <approvalId> --decision <decision>` | Resolve an approval decision (`approved`/`rejected`/`expired`)        |
-| `pnpm approval:list [--status <status>]`                       | List approvals with optional status/type filters                      |
-| `pnpm wu:block --id WU-XXX --reason "..."`                     | Block WU with reason                                                  |
-| `pnpm wu:unblock --id WU-XXX`                                  | Unblock WU                                                            |
-| `pnpm wu:release --id WU-XXX`                                  | Release orphaned WU (in_progress to ready)                            |
-| `pnpm wu:status --id WU-XXX`                                   | Show WU status, location, valid commands                              |
-| `pnpm wu:brief --id WU-XXX --client <client>`                  | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence. wu:done blocks without this |
-| `pnpm wu:brief --id WU-XXX --no-context`                       | Generate prompt without memory context injection                      |
-| `pnpm wu:delegate --id WU-XXX --parent-wu <P>`                 | Generate prompt, record lineage, and store brief hash attestation     |
-| `pnpm wu:sandbox --id WU-XXX -- <cmd>`                         | Run command through hardened WU sandbox backend                       |
+| Command                                                        | Description                                                                                                    |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `pnpm wu:create --lane <Lane> --title "..." ..`                | Create new WU spec (ID auto-generated; see fields below)                                                       |
+| `pnpm wu:claim --id WU-XXX --lane <Lane>`                      | Claim WU and create worktree (default)                                                                         |
+| `pnpm wu:claim --id WU-XXX --lane <L> --cloud`                 | Claim WU in cloud/branch-pr mode (no worktree)                                                                 |
+| `pnpm wu:prep --id WU-XXX [--full-tests]`                      | Run gates, prep for wu:done (`tests.unit` scoped by default)                                                   |
+| `pnpm wu:done --id WU-XXX`                                     | Complete WU (merge or PR, stamp, cleanup)                                                                      |
+| `pnpm wu:edit --id WU-XXX --description "..."`                 | Edit WU spec fields (run --help for all flags)                                                                 |
+| `pnpm wu:escalate --id WU-XXX`                                 | Show escalation status for a WU                                                                                |
+| `pnpm wu:escalate --resolve --id WU-XXX`                       | Resolve escalation (sets resolved_by/resolved_at)                                                              |
+| `pnpm approval:request --type <type> --subject <json>`         | Request control-plane approval for an action                                                                   |
+| `pnpm approval:review --id <approvalId> --decision <decision>` | Resolve an approval decision (`approved`/`rejected`/`expired`)                                                 |
+| `pnpm approval:list [--status <status>]`                       | List approvals with optional status/type filters                                                               |
+| `pnpm wu:block --id WU-XXX --reason "..."`                     | Block WU with reason                                                                                           |
+| `pnpm wu:unblock --id WU-XXX`                                  | Unblock WU                                                                                                     |
+| `pnpm wu:release --id WU-XXX`                                  | Release orphaned WU (in_progress to ready)                                                                     |
+| `pnpm wu:status --id WU-XXX`                                   | Show WU status, location, valid commands                                                                       |
+| `pnpm wu:brief --id WU-XXX --client <client>`                  | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence. wu:done blocks without this (WU-2379) |
+| `pnpm wu:brief --id WU-XXX --no-context`                       | Generate prompt without memory context injection                                                               |
+| `pnpm wu:delegate --id WU-XXX --parent-wu <P>`                 | Generate prompt, record lineage, and store brief hash attestation                                              |
+| `pnpm wu:sandbox --id WU-XXX -- <cmd>`                         | Run command through hardened WU sandbox backend                                                                |
 
 ### WU Maintenance
 
@@ -174,23 +173,27 @@ those defaults automatically, and `.lumenflow/templates/` remains optional unles
 
 ## Gates & Quality
 
-| Command                                           | Description                                     |
-| ------------------------------------------------- | ----------------------------------------------- |
-| `pnpm gates`                                      | Run all quality gates                           |
-| `pnpm gates --docs-only`                          | Run gates for docs changes                      |
-| `pnpm format`                                     | Format all files (Prettier)                     |
-| `pnpm format:check`                               | Check formatting without changes                |
-| `pnpm lint`                                       | Run ESLint                                      |
-| `pnpm typecheck`                                  | Run TypeScript type checking                    |
-| `pnpm test`                                       | Run all tests (Vitest)                          |
-| `pnpm spec:linter`                                | Validate WU specs (all) ¹                       |
-| `pnpm lane:health`                                | Check lane config health                        |
-| `pnpm lane:suggest --output workspace.lanes.yaml` | Generate a workspace lane-definition snippet    |
-| `pnpm lane:status`                                | Show lane lifecycle status                      |
-| `pnpm lane:setup`                                 | Create/update draft lane config                 |
-| `pnpm lane:validate`                              | Validate lane draft artifacts                   |
-| `pnpm lane:lock`                                  | Lock lane lifecycle for WU create               |
-| `pnpm lane:edit --name <L>`                       | Edit lane definition (rename, wip-limit, paths) |
+| Command                                                            | Description                                     |
+| ------------------------------------------------------------------ | ----------------------------------------------- |
+| `pnpm gates`                                                       | Run all quality gates                           |
+| `pnpm gates --docs-only`                                           | Run gates for docs changes                      |
+| `pnpm format`                                                      | Format all files (Prettier)                     |
+| `pnpm format:check`                                                | Check formatting without changes                |
+| `pnpm lint`                                                        | Run ESLint                                      |
+| `pnpm typecheck`                                                   | Run TypeScript type checking                    |
+| `pnpm test`                                                        | Run all tests (Vitest)                          |
+| `pnpm spec:linter`                                                 | Validate WU specs (all) ¹                       |
+| `pnpm lane:health`                                                 | Check lane config health                        |
+| `pnpm lane:suggest --output workspace.lanes.yaml`                  | Generate a workspace lane-definition snippet    |
+| `pnpm lane:status`                                                 | Show lane lifecycle status                      |
+| `pnpm lane:setup`                                                  | Create/update draft lane config                 |
+| `pnpm lane:validate`                                               | Validate lane draft artifacts                   |
+| `pnpm lane:lock`                                                   | Lock lane lifecycle for WU create               |
+| `pnpm lane:edit --name <L>`                                        | Edit lane definition (rename, wip-limit, paths) |
+| `pnpm gate:co-change --add --name <N> --trigger <G> --require <G>` | Add co-change gate rule                         |
+| `pnpm gate:co-change --remove --name <N>`                          | Remove co-change gate rule                      |
+| `pnpm gate:co-change --edit --name <N> --severity <S>`             | Edit co-change gate rule                        |
+| `pnpm gate:co-change --list`                                       | List all co-change rules (built-in + custom)    |
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
@@ -327,18 +330,18 @@ If the plan exists only in conversation, use `--plan` on `wu:create` to generate
 stub in `$LUMENFLOW_HOME/plans/` and automatically set the WU's `plan` field to the
 `lumenflow://plans/` URI. Feature WUs should have a `plan` field; notes do not replace the plan link.
 
-| Command                                                                  | Description                                                         |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `pnpm plan:create --id INIT-XXX --title "..."`                           | Create a repo-native plan file in configured `directories.plansDir` |
-| `pnpm plan:create --id INIT-XXX --title "..." --from <path>`             | Import external plan file into repo plansDir                        |
+| Command                                                                       | Description                                                         |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `pnpm plan:create --id INIT-XXX --title "..."`                                | Create a repo-native plan file in configured `directories.plansDir` |
+| `pnpm plan:create --id INIT-XXX --title "..." --from <path>`                  | Import external plan file into repo plansDir                        |
 | `pnpm plan:edit --id INIT-XXX --section Goal --content "..."`                 | Edit plan section (auto-resolves file from initiative metadata)     |
-| `pnpm plan:edit --id WU-XXX --file my-plan.md --section Goal --content "..."` | Edit plan by explicit filename                                     |
-| `pnpm plan:link --id INIT-XXX --plan lumenflow://plans/INIT-XXX-plan.md`      | Link plan URI to initiative or WU                                  |
-| `pnpm plan:promote --id INIT-XXX`                                             | Promote plan to approved (auto-resolves from initiative metadata)  |
-| `pnpm plan:promote --id WU-XXX --file my-plan.md`                             | Promote plan by explicit filename                                  |
-| `pnpm initiative:plan --initiative INIT-XXX --plan <path>`               | Link plan to initiative (auto-imports external files into repo)     |
-| `pnpm initiative:plan --initiative INIT-XXX --create`                    | Create blank plan template and link to initiative                   |
-| `pnpm initiative:plan --initiative INIT-XXX --create --plan <path>`      | Import external plan content into new template and link             |
+| `pnpm plan:edit --id WU-XXX --file my-plan.md --section Goal --content "..."` | Edit plan by explicit filename                                      |
+| `pnpm plan:link --id INIT-XXX --plan lumenflow://plans/INIT-XXX-plan.md`      | Link plan URI to initiative or WU                                   |
+| `pnpm plan:promote --id INIT-XXX`                                             | Promote plan to approved (auto-resolves from initiative metadata)   |
+| `pnpm plan:promote --id WU-XXX --file my-plan.md`                             | Promote plan by explicit filename                                   |
+| `pnpm initiative:plan --initiative INIT-XXX --plan <path>`                    | Link plan to initiative (auto-imports external files into repo)     |
+| `pnpm initiative:plan --initiative INIT-XXX --create`                         | Create blank plan template and link to initiative                   |
+| `pnpm initiative:plan --initiative INIT-XXX --create --plan <path>`           | Import external plan content into new template and link             |
 
 ### Linking Plans
 
@@ -544,6 +547,8 @@ pnpm gates              # Now works
 
 ## Workflow Sequence (Quick Reference)
 
+<!-- lumenflow-example: strict -->
+
 ```bash
 # 0. Check available options (do this before first use of any command)
 pnpm wu:create --help
@@ -559,6 +564,7 @@ pnpm wu:create --lane "Framework: Core" --title "Add feature" \
 
 # 2. Claim (creates worktree) -- use the ID from wu:create output
 pnpm wu:claim --id WU-1990 --lane "Framework: Core"
+pnpm wu:brief --id WU-1990 --client <client>
 cd worktrees/framework-core-wu-1990
 
 # 2b. Bootstrap (build CLI for dist-backed commands)
@@ -727,13 +733,13 @@ When `requireRemote: true` (default):
 
 ## Key File Paths
 
-| Path                                      | Description          |
-| ----------------------------------------- | -------------------- |
+| Path                                   | Description          |
+| -------------------------------------- | -------------------- |
 | `{{DOCS_TASKS_PATH}}/wu/WU-XXX.yaml` | WU specification     |
 | `{{DOCS_TASKS_PATH}}/status.md`      | Current status board |
 | `{{DOCS_TASKS_PATH}}/backlog.md`     | Backlog summary      |
-| `.lumenflow/stamps/WU-XXX.done`           | Completion stamp     |
-| `worktrees/<lane>-wu-xxx/`                | Worktree directory   |
+| `.lumenflow/stamps/WU-XXX.done`        | Completion stamp     |
+| `worktrees/<lane>-wu-xxx/`             | Worktree directory   |
 
 ---
 
@@ -772,6 +778,7 @@ For cloud agents that cannot use local worktrees:
 # 1. Claim in cloud mode
 pnpm wu:claim --id WU-XXX --lane "<Lane>" --cloud
 # Or: LUMENFLOW_CLOUD=1 pnpm wu:claim --id WU-XXX --lane "<Lane>"
+pnpm wu:brief --id WU-XXX --client <client>
 
 # 2. Work on lane branch, push commits
 
@@ -835,4 +842,4 @@ For a complete picture of how all WU commands, memory tools, and orchestration t
 - **[Failure-Mode Runbook](../../lumenflow-agent-capsule.md)** -- Concrete remediation for main-behind-origin, partial-claim state, spawn-provenance enforcement, and wu:recover usage
 - **[Troubleshooting wu:done](./troubleshooting-wu-done.md)** -- Most common agent mistake (two-step wu:prep + wu:done workflow)
 - **[First WU Mistakes](./first-wu-mistakes.md)** -- Common first-time pitfalls and how to avoid them
-- **[WU Sizing Guide](../../wu-sizing-guide.md)** -- Context safety triggers, complexity assessment, and session strategies
+- **[WU Sizing Guide](./wu-sizing-guide.md)** -- Context safety triggers, complexity assessment, and session strategies

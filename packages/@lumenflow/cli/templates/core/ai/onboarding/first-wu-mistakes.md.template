@@ -22,6 +22,7 @@ git push origin main
 ```bash
 # Claim first, then work in worktree
 pnpm wu:claim --id WU-123 --lane Core
+pnpm wu:brief --id WU-123 --client <client>
 cd worktrees/core-wu-123
 vim src/feature.ts
 git commit -m "feat: add feature"
@@ -330,7 +331,7 @@ sizing_estimate:
   strategy: checkpoint-resume
 ```
 
-3. **Split the WU** only if the work is no longer atomic or should land independently (see [wu-sizing-guide.md](../../wu-sizing-guide.md) section 3 for splitting patterns).
+3. **Split the WU** only if the work is no longer atomic or should land independently (see [wu-sizing-guide.md](./wu-sizing-guide.md) section 3 for splitting patterns).
 
 **Strict mode:** Teams can enforce sizing compliance for delegated work with `--strict-sizing` on `wu:brief`. In strict mode, missing or non-compliant sizing metadata blocks the operation.
 

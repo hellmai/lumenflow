@@ -45,7 +45,7 @@ Before accepting the wave plan, sanity-check the decomposition. If several WUs s
 | Checkpoint-per-wave   | `pnpm orchestrate:initiative -i INIT-XXX -c`         | Large initiatives (>3 WUs or >2 waves) |
 | Continuous            | `pnpm orchestrate:initiative -i INIT-XXX`            | Small initiatives (<=3 WUs, 1-2 waves) |
 | Manual brief/delegate | `pnpm wu:brief --id WU-XXX --client <client>` per WU | Testing individual WUs, debugging      |
-| Manual self-implement | `pnpm wu:brief --id WU-XXX --client <client>` per WU | Self-implementation (records evidence) |
+| Manual self-implement | `pnpm wu:brief --id WU-XXX --client <client>` per WU | You are implementing without sub-agent |
 
 Checkpoint-per-wave is recommended for most initiatives. It processes one wave at a time and writes a manifest before exiting, giving you control between waves.
 
@@ -61,8 +61,6 @@ pnpm wu:brief --id WU-100 --client claude-code
 pnpm wu:delegate --id WU-100 --parent-wu WU-050 --client claude-code
 ```
 
-`wu:brief` always outputs full WU context AND records evidence. Use it for both delegation and self-implementation.
-
 **Use `wu:delegate` (not `wu:brief`) when:**
 
 - You are the orchestrator agent managing the initiative
@@ -74,6 +72,8 @@ pnpm wu:delegate --id WU-100 --parent-wu WU-050 --client claude-code
 - You are not handing WU ownership to a sub-agent
 - You still need `wu:brief` evidence for `wu:done` policy
 - You will implement directly in the current session
+
+`wu:brief` always outputs full WU context and records evidence in a single step. There is no separate evidence-only mode.
 
 **Verification checklist before spawning:**
 
@@ -270,7 +270,7 @@ pnpm wu:brief --id WU-100 --client claude-code
 pnpm orchestrate:monitor  # Shows "Zombie lock (PID XXXXX not running)"
 
 # 2. Unlock the lane
-pnpm lane:unlock "Framework: Core" --reason "Zombie lock (PID 12345 not running)"
+pnpm wu:unlock-lane --lane "Framework: Core" --reason "Zombie lock (PID 12345 not running)"
 
 # 3. Release and re-claim the WU
 pnpm wu:release --id WU-100
@@ -375,23 +375,23 @@ pnpm delegation:list --initiative INIT-XXX --json
 
 ## Quick Reference: All Orchestration Commands
 
-| Command                                             | Description                                                   |
-| --------------------------------------------------- | ------------------------------------------------------------- |
-| `pnpm orchestrate:initiative -i INIT-XXX --dry-run` | Preview wave plan without executing                           |
-| `pnpm orchestrate:initiative -i INIT-XXX -c`        | Execute one wave then checkpoint and exit                     |
-| `pnpm orchestrate:initiative -i INIT-XXX`           | Execute all waves continuously                                |
-| `pnpm orchestrate:init-status -i INIT-XXX`          | Compact progress view                                         |
-| `pnpm orchestrate:monitor`                          | Detect stuck agents and zombie locks                          |
-| `pnpm wu:brief --id WU-XXX --client <client>`       | **MANDATORY after wu:claim.** Generate prompt + evidence      |
-| `pnpm wu:delegate --id WU-XXX --parent-wu <P>`      | Generate prompt + record delegation                           |
-| `pnpm delegation:list --initiative INIT-XXX`        | View delegation tree                                          |
-| `pnpm mem:signal "msg" --wu WU-XXX`                 | Broadcast coordination signal                                 |
-| `pnpm mem:inbox --since <duration>`                 | Read coordination signals                                     |
-| `pnpm mem:checkpoint "msg" --wu WU-XXX`             | Save progress checkpoint                                      |
-| `pnpm mem:ready --wu WU-XXX`                        | Check pending work/checkpoints                                |
-| `pnpm wu:block --id WU-XXX --reason "..."`          | Block stuck WU                                                |
-| `pnpm wu:unblock --id WU-XXX`                       | Unblock recovered WU                                          |
-| `pnpm wu:release --id WU-XXX`                       | Release abandoned WU for re-claim                             |
+| Command                                             | Description                                              |
+| --------------------------------------------------- | -------------------------------------------------------- |
+| `pnpm orchestrate:initiative -i INIT-XXX --dry-run` | Preview wave plan without executing                      |
+| `pnpm orchestrate:initiative -i INIT-XXX -c`        | Execute one wave then checkpoint and exit                |
+| `pnpm orchestrate:initiative -i INIT-XXX`           | Execute all waves continuously                           |
+| `pnpm orchestrate:init-status -i INIT-XXX`          | Compact progress view                                    |
+| `pnpm orchestrate:monitor`                          | Detect stuck agents and zombie locks                     |
+| `pnpm wu:brief --id WU-XXX --client <client>`       | **MANDATORY after wu:claim.** Generate prompt + evidence |
+| `pnpm wu:delegate --id WU-XXX --parent-wu <P>`      | Generate prompt + record delegation                      |
+| `pnpm delegation:list --initiative INIT-XXX`        | View delegation tree                                     |
+| `pnpm mem:signal "msg" --wu WU-XXX`                 | Broadcast coordination signal                            |
+| `pnpm mem:inbox --since <duration>`                 | Read coordination signals                                |
+| `pnpm mem:checkpoint "msg" --wu WU-XXX`             | Save progress checkpoint                                 |
+| `pnpm mem:ready --wu WU-XXX`                        | Check pending work/checkpoints                           |
+| `pnpm wu:block --id WU-XXX --reason "..."`          | Block stuck WU                                           |
+| `pnpm wu:unblock --id WU-XXX`                       | Unblock recovered WU                                     |
+| `pnpm wu:release --id WU-XXX`                       | Release abandoned WU for re-claim                        |
 
 ---
 

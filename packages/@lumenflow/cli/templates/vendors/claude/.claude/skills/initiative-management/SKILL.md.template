@@ -134,8 +134,8 @@ pnpm wu:brief --id WU-1501 --client claude-code    # Prompt generation only
 pnpm wu:delegate --id WU-1502 --parent-wu WU-1500  # Prompt + lineage recording
 pnpm wu:delegate --id WU-1503 --parent-wu WU-1500
 
-# For WUs implemented in current session:
-pnpm wu:brief --id WU-1504 --client <client>       # Full context + evidence (self-implementation)
+# For WUs implemented in current session (full context + evidence):
+pnpm wu:brief --id WU-1504 --client claude-code     # Always gives context + records evidence
 ```
 
 ### Orchestration Pattern

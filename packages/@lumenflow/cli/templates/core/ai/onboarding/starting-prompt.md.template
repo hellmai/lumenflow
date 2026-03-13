@@ -124,6 +124,7 @@ cat {{DOCS_TASKS_PATH}}/wu/WU-XXXX.yaml
 
 # 2. Claim the WU (creates isolated worktree)
 pnpm wu:claim --id WU-XXXX --lane "Lane Name"
+pnpm wu:brief --id WU-XXXX --client <client>
 
 # 3. IMMEDIATELY cd to worktree (CRITICAL!)
 cd worktrees/<lane>-wu-xxxx
@@ -152,6 +153,7 @@ cat {{DOCS_TASKS_PATH}}/wu/WU-XXXX.yaml
 # 2. Claim in cloud mode (no worktree, sets claimed_mode: branch-pr)
 pnpm wu:claim --id WU-XXXX --lane "Lane Name" --cloud
 # Or: LUMENFLOW_CLOUD=1 pnpm wu:claim --id WU-XXXX --lane "Lane Name"
+pnpm wu:brief --id WU-XXXX --client <client>
 
 # 3. Work on the lane branch (lane/<lane>/wu-xxxx)
 
@@ -476,6 +478,8 @@ pnpm wu:done --id WU-XXX
 
 Use `wu:brief` to create parallel sub-agent handoff prompts for complex WUs. Use `wu:delegate` when you also need explicit lineage recording.
 
+**MANDATORY:** You **must** run `wu:brief` explicitly after `wu:claim`. While `wu:claim` auto-records a stub event (`claim-auto`), this stub does **not** satisfy the `wu:done` evidence gate (WU-2379). Only an explicit `wu:brief` run generates the handoff prompt, checks lane occupation, validates sizing, and records proper evidence. Without it, `wu:done` will block.
+
 **Evidence recording:** `wu:brief` writes a checkpoint event to `.lumenflow/state/wu-events.jsonl` when run in a claimed workspace (worktree mode) or on the claimed lane branch (branch-pr/branch-only mode). This evidence is **required** — `wu:done` blocks feature/bug WUs without it (WU-2132). Running from an unrelated checkout/branch is side-effect-free (WU-2144). **Never delete or revert `wu-events.jsonl` entries** written by lifecycle commands — if evidence is accidentally lost, rerun `wu:brief` to recreate it.
 
 ### When to Use wu:brief
@@ -488,16 +492,13 @@ Use `wu:brief` to create parallel sub-agent handoff prompts for complex WUs. Use
 ### Choose the Correct Flow
 
 - **Delegating to a sub-agent:** Run `wu:brief` (or `wu:delegate` for lineage), then pass the generated prompt to Task tool.
-- **Implementing in current session:** Run `wu:brief --client <client>` to record evidence, then do the WU yourself. `wu:brief` always outputs full context AND records evidence.
+- **Implementing in current session:** Run `wu:brief --client <client>` to satisfy evidence policy. It outputs full WU context and records evidence in a single step.
 
 ### How to Use wu:brief / wu:delegate
 
 ```bash
 # Generate a handoff prompt + evidence (no lineage side effect)
 pnpm wu:brief --id WU-XXXX --client <client-type>
-
-# Self-implementation: wu:brief always outputs full context AND records evidence
-pnpm wu:brief --id WU-XXXX --client <client>
 
 # Generate + record explicit delegation lineage
 pnpm wu:delegate --id WU-XXXX --parent-wu WU-YYYY --client <client-type>
@@ -520,8 +521,7 @@ extra project commands, or client-specific overrides.
 
 - New installs get the current defaults automatically.
 - Existing installs get the runtime defaults after `pnpm lumenflow:upgrade --latest`.
-- `pnpm lumenflow:upgrade --latest` already refreshes managed docs, onboarding docs, and configured
-  vendor assets. Use `pnpm docs:sync --vendor <type>` only for an extra targeted refresh.
+- `lumenflow:upgrade` automatically syncs onboarding docs and vendor assets (no separate `docs:sync` step needed).
 
 Default profiles:
 
@@ -550,22 +550,22 @@ Domain-specific commands must come from local configuration, not core framework 
 
 ## WU Lifecycle Commands
 
-| Command                                        | Description                                      | When to Use                 |
-| ---------------------------------------------- | ------------------------------------------------ | --------------------------- |
-| `pnpm wu:status --id WU-XXX`                   | Show WU state and valid commands                 | Check current state         |
-| `pnpm wu:claim --id WU-XXX --lane "Lane"`      | Claim WU and create worktree (default)           | Start working (local)       |
-| `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree)         | Start working (cloud)       |
-| `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                              | Update notes/desc           |
-| `pnpm wu:brief --id WU-XXX --client <client>`  | **MANDATORY after wu:claim.** Generate prompt + evidence | Delegation or self-impl     |
-| `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation              | Auditable delegation flows  |
-| `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion  | Before wu:done              |
-| `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)               | After gates pass            |
-| `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)                   | After PR merge (cloud only) |
-| `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status                | Escalation-triggered WUs    |
-| `pnpm wu:escalate --resolve --id WU-XXX`       | Resolve human escalation                         | Before wu:done (escalation) |
-| `pnpm wu:verify --id WU-XXX`                   | Verify WU completion (stamp, commit, clean tree) | After wu:done               |
-| `pnpm wu:delete --id WU-XXX`                   | Delete WU spec and cleanup                       | Cancel stale/throwaway WUs  |
-| `pnpm wu:recover --id WU-XXX`                  | Fix inconsistent WU state                        | When state is broken        |
+| Command                                        | Description                                      | When to Use                       |
+| ---------------------------------------------- | ------------------------------------------------ | --------------------------------- |
+| `pnpm wu:status --id WU-XXX`                   | Show WU state and valid commands                 | Check current state               |
+| `pnpm wu:claim --id WU-XXX --lane "Lane"`      | Claim WU and create worktree (default)           | Start working (local)             |
+| `pnpm wu:claim --id WU-XXX --lane "L" --cloud` | Claim WU in branch-pr mode (no worktree)         | Start working (cloud)             |
+| `pnpm wu:edit --id WU-XXX --field value`       | Edit WU spec fields                              | Update notes/desc                 |
+| `pnpm wu:brief --id WU-XXX --client X`         | Generate handoff prompt + record evidence        | Delegation or self-implementation |
+| `pnpm wu:delegate --id WU-XXX --parent-wu P`   | Generate prompt + record delegation              | Auditable delegation flows        |
+| `pnpm wu:prep --id WU-XXX`                     | Run gates in claimed workspace, prep completion  | Before wu:done                    |
+| `pnpm wu:done --id WU-XXX`                     | Complete WU (merge or PR, cleanup)               | After gates pass                  |
+| `pnpm wu:cleanup --id WU-XXX`                  | Post-merge cleanup (branch-pr)                   | After PR merge (cloud only)       |
+| `pnpm wu:escalate --id WU-XXX`                 | Show or resolve escalation status                | Escalation-triggered WUs          |
+| `pnpm wu:escalate --resolve --id WU-XXX`       | Resolve human escalation                         | Before wu:done (escalation)       |
+| `pnpm wu:verify --id WU-XXX`                   | Verify WU completion (stamp, commit, clean tree) | After wu:done                     |
+| `pnpm wu:delete --id WU-XXX`                   | Delete WU spec and cleanup                       | Cancel stale/throwaway WUs        |
+| `pnpm wu:recover --id WU-XXX`                  | Fix inconsistent WU state                        | When state is broken              |
 
 ---
 
@@ -670,19 +670,19 @@ When initializing LumenFlow, use the `--client` flag to generate client-specific
 pnpm add -D @lumenflow/cli
 
 # Universal setup (AGENTS.md only)
-pnpm exec lumenflow
+pnpm lumenflow
 
 # Claude-specific setup
-pnpm exec lumenflow --client claude
+pnpm lumenflow --client claude
 
 # Cursor-specific setup
-pnpm exec lumenflow --client cursor
+pnpm lumenflow --client cursor
 
 # Windsurf-specific setup
-pnpm exec lumenflow --client windsurf
+pnpm lumenflow --client windsurf
 
 # All clients
-pnpm exec lumenflow --client all
+pnpm lumenflow --client all
 ```
 
 ### Adding LumenFlow to Existing Projects
@@ -694,10 +694,10 @@ Use `--merge` mode to safely add LumenFlow configuration to existing files witho
 pnpm add -D @lumenflow/cli
 
 # Merge into existing AGENTS.md (preserves your content)
-pnpm exec lumenflow --merge
+pnpm lumenflow --merge
 
 # Merge with client overlay
-pnpm exec lumenflow --merge --client claude
+pnpm lumenflow --merge --client claude
 ```
 
 The merge mode uses bounded markers (`<!-- LUMENFLOW:START -->` and `<!-- LUMENFLOW:END -->`) to safely insert and update the LumenFlow block while preserving everything else.
@@ -717,7 +717,7 @@ cp -rn /tmp/nextjs-scaffold/.* . 2>/dev/null || true
 # 3. Install and initialize LumenFlow
 pnpm install
 pnpm add -D @lumenflow/cli
-pnpm exec lumenflow --client claude --full
+pnpm lumenflow --client claude --full
 
 # 4. Clean up
 rm -rf /tmp/nextjs-scaffold
@@ -733,5 +733,5 @@ rm -rf /tmp/nextjs-scaffold
 - [troubleshooting-wu-done.md](troubleshooting-wu-done.md) - Why agents forget wu:done
 - [first-wu-mistakes.md](first-wu-mistakes.md) - Common mistakes to avoid
 - [quick-ref-commands.md](quick-ref-commands.md) - Command reference
-- [wu-sizing-guide.md](../../wu-sizing-guide.md) - Context safety and WU sizing
+- [wu-sizing-guide.md](wu-sizing-guide.md) - Context safety and WU sizing
 - [initiative-orchestration.md](initiative-orchestration.md) - Initiative orchestration, delegation, recovery
