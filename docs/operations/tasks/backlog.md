@@ -29,11 +29,11 @@ sections:
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — Framework: Core Validation
 - [WU-2449 — Update onboarding docs to reflect WU-2445 UI test anti-patterns](wu/WU-2449.yaml) — Content: Documentation
-- [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
 - [WU-2465 — Fix 9 pre-existing @lumenflow/core test failures for green CI](wu/WU-2465.yaml) — Framework: Core
+- [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 

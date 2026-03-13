@@ -5,6 +5,7 @@ _Last updated: 2026-03-13_
 ## In Progress
 
 - [WU-2465 — Fix 9 pre-existing @lumenflow/core test failures for green CI](wu/WU-2465.yaml)
+- [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml)
 
 ## Completed
 

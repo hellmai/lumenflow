@@ -3527,3 +3527,4 @@
 {"type":"checkpoint","wuId":"WU-2458","timestamp":"2026-03-13T13:27:43.091Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2458","timestamp":"2026-03-13T13:28:14.887Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2458","timestamp":"2026-03-13T13:34:34.780Z"}
+{"type":"claim","wuId":"WU-2461","timestamp":"2026-03-13T13:35:48.310Z","lane":"Framework: CLI WU Commands","title":"Make wu:done inbox checks degrade gracefully on legacy signal records"}
