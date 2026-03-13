@@ -2,7 +2,7 @@ id: WU-2450
 title: Fix remaining test timeouts for ubuntu-latest CI
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -28,6 +28,15 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Source-scanning guard tests (error-pattern-guard, as-any-guard) timeout on ubuntu-latest. Need per-test timeouts on all tests that scan the full codebase.
+description: Source-scanning guard tests (error-pattern-guard, as-any-guard) timeout on
+  ubuntu-latest. Need per-test timeouts on all tests that scan the full codebase.
 acceptance:
   - All CI gates pass on ubuntu-latest
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2450
+claimed_at: 2026-03-13T09:52:02.317Z
+baseline_main_sha: 4c1befe0caf5f59feefdc885a068822fd20dc250
+session_id: f9277487-e0d7-4c19-9624-234f8480cd2d
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:52:02.324Z
