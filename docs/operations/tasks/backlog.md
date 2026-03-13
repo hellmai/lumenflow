@@ -32,10 +32,12 @@ sections:
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — Framework: Core Validation
 - [WU-2449 — Update onboarding docs to reflect WU-2445 UI test anti-patterns](wu/WU-2449.yaml) — Content: Documentation
+- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — Framework: CLI WU Commands
+- [WU-2460 — Make wu:done auto-rebase tolerate wu:brief evidence-only state drift](wu/WU-2460.yaml) — Framework: CLI WU Commands
 
 ## 🔧 In progress
 
-- [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml) — Operations: Automation
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1404,6 +1406,7 @@ sections:
 - [WU-2453 — Fix path-literal-guard timeouts and micro-worktree CI failure](wu/WU-2453.yaml)
 - [WU-2451 — Inject co-change guidance_ref content into wu:brief prompts](wu/WU-2451.yaml)
 - [WU-2454 — Fix initiatives test timeout for ubuntu-latest CI](wu/WU-2454.yaml)
+- [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

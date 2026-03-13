@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-- [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1369,3 +1369,4 @@ _Last updated: 2026-03-13_
 - [WU-2453 — Fix path-literal-guard timeouts and micro-worktree CI failure](wu/WU-2453.yaml) — 2026-03-13
 - [WU-2451 — Inject co-change guidance_ref content into wu:brief prompts](wu/WU-2451.yaml) — 2026-03-13
 - [WU-2454 — Fix initiatives test timeout for ubuntu-latest CI](wu/WU-2454.yaml) — 2026-03-13
+- [WU-2455 — Fix remaining CI test failures: timeouts and baseline drift](wu/WU-2455.yaml) — 2026-03-13
