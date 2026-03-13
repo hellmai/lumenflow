@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2452 — Fix all CI test failures for ubuntu-latest open source runners](wu/WU-2452.yaml)
 
 ## Completed
 

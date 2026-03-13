@@ -2,7 +2,7 @@ id: WU-2452
 title: Fix all CI test failures for ubuntu-latest open source runners
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P0
 created: 2026-03-13
 code_paths:
@@ -30,7 +30,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: '8 test files fail on ubuntu-latest: stale ratcheting baselines, test isolation issues, and timeouts. Need to update baselines and fix tests for public CI.'
+description: '8 test files fail on ubuntu-latest: stale ratcheting baselines, test isolation issues,
+  and timeouts. Need to update baselines and fix tests for public CI.'
 acceptance:
   - All CI gates pass on ubuntu-latest
   - Ratcheting baselines are up to date
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2452
+claimed_at: 2026-03-13T10:19:08.014Z
+baseline_main_sha: a09bff96b3c44e58f53ed2276feee55841dc3241
+session_id: c2179bfc-39c6-4c16-a00a-218074eb6bc9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T10:19:08.020Z

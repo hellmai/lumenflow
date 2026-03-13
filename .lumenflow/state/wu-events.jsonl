@@ -3474,3 +3474,4 @@
 {"type":"checkpoint","wuId":"WU-2450","timestamp":"2026-03-13T09:52:13.643Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2450","timestamp":"2026-03-13T09:52:20.442Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2450","timestamp":"2026-03-13T09:57:24.276Z"}
+{"type":"claim","wuId":"WU-2452","timestamp":"2026-03-13T10:19:08.050Z","lane":"Operations: Automation","title":"Fix all CI test failures for ubuntu-latest open source runners"}
