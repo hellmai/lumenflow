@@ -1,0 +1,31 @@
+id: WU-2443
+title: Install D2 in CI workflow for docs build
+lane: 'Operations: Automation'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-13
+code_paths:
+  - .github/workflows/ci.yml
+tests:
+  manual:
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2443.done
+dependencies: []
+risks: []
+notes: ''
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: CI fails because D2 is not installed on ubuntu-latest. The self-hosted runner had it globally. Need to add D2 install step to ci.yml.
+acceptance:
+  - D2 installed in ci.yml before build step
+  - CI passes on ubuntu-latest
