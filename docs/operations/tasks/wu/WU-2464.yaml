@@ -17,12 +17,21 @@ artifacts:
   - .lumenflow/stamps/WU-2464.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Fixed 18 pre-existing test failures across 11 CLI test files. Root causes: missing bin
+  entry, non-exported constants tested, stale format strings, hardcoded path assumptions, mock drift
+  from new fields, and insufficient CI timeouts.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T12:26:16.240Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2464
+session_id: 2c167e9a-2b01-4794-a7d4-23bdc2a2b474
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T12:26:16.246Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -33,11 +42,3 @@ acceptance:
   - All 18 pre-existing CLI test failures are fixed or correctly skipped
   - Full CLI test suite passes locally with 0 failures
   - CI on ubuntu-latest passes the Test step
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2464
-claimed_at: 2026-03-13T12:26:16.240Z
-baseline_main_sha: edac7329163f2025c272f470b37d2d167ec11b2a
-session_id: 2c167e9a-2b01-4794-a7d4-23bdc2a2b474
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T12:26:16.246Z
