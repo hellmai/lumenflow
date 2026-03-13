@@ -19,7 +19,10 @@ describe('WU-2166: memory and telemetry extraction', () => {
   });
 
   it('uses legacy-compatible signal loading only in the non-blocking inbox helper', async () => {
-    const source = await readFile(new URL('../wu-done-memory-telemetry.ts', import.meta.url), 'utf-8');
+    const source = await readFile(
+      new URL('../wu-done-memory-telemetry.ts', import.meta.url),
+      'utf-8',
+    );
 
     expect(source).toContain("compatibilityMode: 'skip-legacy'");
     expect(source).toContain('Could not check inbox for signals');
