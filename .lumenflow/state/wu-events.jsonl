@@ -3556,3 +3556,4 @@
 {"type":"checkpoint","wuId":"WU-2470","timestamp":"2026-03-13T23:21:57.322Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2470.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2470","timestamp":"2026-03-13T23:23:36.449Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2470.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2470","timestamp":"2026-03-13T23:24:19.094Z"}
+{"type":"claim","wuId":"WU-2471","timestamp":"2026-03-13T23:39:32.634Z","lane":"Content: Documentation","title":"Sync templates to fix CI template drift check"}

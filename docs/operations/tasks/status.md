@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2471 — Sync templates to fix CI template drift check](wu/WU-2471.yaml)
 
 ## Completed
 

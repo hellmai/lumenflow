@@ -2,7 +2,7 @@ id: WU-2471
 title: Sync templates to fix CI template drift check
 lane: 'Content: Documentation'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -25,6 +25,15 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: pnpm sync:templates --check-drift fails in CI. 14 templates drifted from source. Pre-existing on main.
+description: pnpm sync:templates --check-drift fails in CI. 14 templates drifted from source.
+  Pre-existing on main.
 acceptance:
   - pnpm sync:templates --check-drift passes
+claimed_mode: worktree
+worktree_path: worktrees/content-documentation-wu-2471
+claimed_at: 2026-03-13T23:39:32.609Z
+baseline_main_sha: 38b23be1ab40775eb480b9adf7f542277b3aa4e0
+session_id: a250c45a-a0f6-42ac-9708-c0beb6b651c1
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T23:39:32.614Z
