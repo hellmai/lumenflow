@@ -3550,3 +3550,4 @@
 {"type":"checkpoint","wuId":"WU-2469","timestamp":"2026-03-13T21:49:20.883Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2469","timestamp":"2026-03-13T21:49:30.567Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2469","timestamp":"2026-03-13T21:57:59.343Z"}
+{"type":"claim","wuId":"WU-2470","timestamp":"2026-03-13T23:20:43.568Z","lane":"Content: Documentation","title":"Sync docs to v3.18.1 published stable"}

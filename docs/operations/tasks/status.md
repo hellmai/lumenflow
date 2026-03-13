@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2470 — Sync docs to v3.18.1 published stable](wu/WU-2470.yaml)
 
 ## Completed
 
