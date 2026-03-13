@@ -1,10 +1,10 @@
 # Work Unit Status
 
-_Last updated: 2026-03-12_
+_Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2442 — Fix CI workflows for open source: replace self-hosted with ubuntu-latest](wu/WU-2442.yaml)
 
 ## Completed
 

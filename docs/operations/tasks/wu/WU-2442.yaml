@@ -2,7 +2,7 @@ id: WU-2442
 title: 'Fix CI workflows for open source: replace self-hosted with ubuntu-latest'
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - .github/workflows/codeql.yml
 tests:
   manual:
-    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code files.'
+    - '(auto) Manual check: verify acceptance criteria; add automated tests before changing code
+      files.'
   unit: []
   e2e: []
 artifacts:
@@ -28,8 +29,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'All 4 GitHub Actions workflows use runs-on: self-hosted which requires a private runner. As an open source project we need ubuntu-latest with proper pnpm/node setup actions.'
+description: 'All 4 GitHub Actions workflows use runs-on: self-hosted which requires a private
+  runner. As an open source project we need ubuntu-latest with proper pnpm/node setup actions.'
 acceptance:
   - 'All workflows use runs-on: ubuntu-latest'
   - pnpm/action-setup and actions/setup-node configured in all workflows
   - Self-hosted pnpm store hack removed
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2442
+claimed_at: 2026-03-13T08:42:47.152Z
+baseline_main_sha: e6223f11033622a58415d7d38a96eab9cc126a99
+session_id: 9690fe49-e906-453b-9e84-51b793f374e9
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T08:42:47.160Z
