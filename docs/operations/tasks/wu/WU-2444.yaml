@@ -2,7 +2,7 @@ id: WU-2444
 title: Fix packaging-boundary test timeout on ubuntu-latest
 lane: 'Operations: Automation'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -40,3 +40,6 @@ session_id: b645060b-512e-4940-bb37-252d439288f2
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T09:22:48.247Z
+locked: true
+completed_at: 2026-03-13T09:24:40.850Z
+completed: 2026-03-13

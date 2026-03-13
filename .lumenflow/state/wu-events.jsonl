@@ -3456,3 +3456,4 @@
 {"type":"claim","wuId":"WU-2444","timestamp":"2026-03-13T09:22:48.274Z","lane":"Operations: Automation","title":"Fix packaging-boundary test timeout on ubuntu-latest"}
 {"type":"checkpoint","wuId":"WU-2444","timestamp":"2026-03-13T09:23:01.468Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2444","timestamp":"2026-03-13T09:23:08.359Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"complete","wuId":"WU-2444","timestamp":"2026-03-13T09:24:45.737Z"}
