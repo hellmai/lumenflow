@@ -32,7 +32,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2471 — Sync templates to fix CI template drift check](wu/WU-2471.yaml) — Content: Documentation
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1414,6 +1414,7 @@ sections:
 - [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml)
 - [WU-2469 — Sync CLI docs after WU-2468 ownership guard changes](wu/WU-2469.yaml)
 - [WU-2470 — Sync docs to v3.18.1 published stable](wu/WU-2470.yaml)
+- [WU-2471 — Sync templates to fix CI template drift check](wu/WU-2471.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)
