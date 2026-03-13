@@ -2,7 +2,7 @@ id: WU-2461
 title: Make wu:done inbox checks degrade gracefully on legacy signal records
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -55,3 +55,6 @@ session_id: e85c93c9-a3bb-41fe-a30d-e929925cfac3
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T13:35:48.288Z
+locked: true
+completed_at: 2026-03-13T13:48:35.262Z
+completed: 2026-03-13
