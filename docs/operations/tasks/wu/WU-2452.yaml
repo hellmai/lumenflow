@@ -7,9 +7,6 @@ priority: P0
 created: 2026-03-13
 code_paths:
   - tools/baselines/enforcement/throw-new-error-baseline.json
-  - tools/baselines/enforcement/path-literal-test-baseline.json
-  - packages/@lumenflow/core/src/__tests__/error-pattern-guard.test.ts
-  - packages/@lumenflow/core/src/__tests__/path-literal-guard.test.ts
 tests:
   manual:
     - Verify full CI passes on ubuntu-latest
@@ -23,10 +20,17 @@ dependencies: []
 risks: []
 notes: 'tdd-exception: Fixing CI failures - existing tests are the verification'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T10:19:08.014Z
+worktree_path: worktrees/operations-automation-wu-2452
+session_id: c2179bfc-39c6-4c16-a00a-218074eb6bc9
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T10:19:08.020Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +39,3 @@ description: '8 test files fail on ubuntu-latest: stale ratcheting baselines, te
 acceptance:
   - All CI gates pass on ubuntu-latest
   - Ratcheting baselines are up to date
-claimed_mode: worktree
-worktree_path: worktrees/operations-automation-wu-2452
-claimed_at: 2026-03-13T10:19:08.014Z
-baseline_main_sha: a09bff96b3c44e58f53ed2276feee55841dc3241
-session_id: c2179bfc-39c6-4c16-a00a-218074eb6bc9
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T10:19:08.020Z
