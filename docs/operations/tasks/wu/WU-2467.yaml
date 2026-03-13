@@ -1,0 +1,30 @@
+id: WU-2467
+title: Fix formatPlanUri test to be cwd-independent
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P1
+created: 2026-03-13
+code_paths:
+  - packages/@lumenflow/cli/src/__tests__/initiative-plan.test.ts
+tests:
+  manual:
+    - Run vitest on initiative-plan.test.ts
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2467.done
+dependencies: []
+risks: []
+notes: 'tdd-exception: test-fix-only WU, modifying test assertion to be cwd-independent'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: formatPlanUri behaves differently based on cwd - returns basename on CI but preserves subdir locally. Test needs flexible assertion.
+acceptance:
+  - initiative-plan formatPlanUri nested path test passes on both CI and local
