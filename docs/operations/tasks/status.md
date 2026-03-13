@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-- [WU-2443 — Install D2 in CI workflow for docs build](wu/WU-2443.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1359,3 +1359,4 @@ _Last updated: 2026-03-13_
 - [WU-2440 — Validate CLI example flags against live command schemas](wu/WU-2440.yaml) — 2026-03-12
 - [WU-2441 — Validate config examples against live schemas](wu/WU-2441.yaml) — 2026-03-12
 - [WU-2442 — Fix CI workflows for open source: replace self-hosted with ubuntu-latest](wu/WU-2442.yaml) — 2026-03-13
+- [WU-2443 — Install D2 in CI workflow for docs build](wu/WU-2443.yaml) — 2026-03-13

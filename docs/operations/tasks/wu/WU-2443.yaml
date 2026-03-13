@@ -2,7 +2,7 @@ id: WU-2443
 title: Install D2 in CI workflow for docs build
 lane: 'Operations: Automation'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -38,3 +38,6 @@ description: CI fails because D2 is not installed on ubuntu-latest. The self-hos
 acceptance:
   - D2 installed in ci.yml before build step
   - CI passes on ubuntu-latest
+locked: true
+completed_at: 2026-03-13T09:13:53.565Z
+completed: 2026-03-13
