@@ -3530,4 +3530,10 @@
 {"type":"claim","wuId":"WU-2461","timestamp":"2026-03-13T13:35:48.310Z","lane":"Framework: CLI WU Commands","title":"Make wu:done inbox checks degrade gracefully on legacy signal records"}
 {"type":"checkpoint","wuId":"WU-2465","timestamp":"2026-03-13T13:19:24.232Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2465","timestamp":"2026-03-13T13:20:10.508Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"claim","wuId":"WU-2458","timestamp":"2026-03-13T13:27:31.534Z","lane":"Framework: CLI WU Commands","title":"Relax wu:done claim ownership when no active session is present"}
+{"type":"checkpoint","wuId":"WU-2458","timestamp":"2026-03-13T13:27:43.091Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2458","timestamp":"2026-03-13T13:28:14.887Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2465","timestamp":"2026-03-13T13:32:54.100Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2465.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
+{"type":"complete","wuId":"WU-2458","timestamp":"2026-03-13T13:34:34.780Z"}
+{"type":"claim","wuId":"WU-2461","timestamp":"2026-03-13T13:35:48.310Z","lane":"Framework: CLI WU Commands","title":"Make wu:done inbox checks degrade gracefully on legacy signal records"}
+{"type":"complete","wuId":"WU-2465","timestamp":"2026-03-13T13:38:51.465Z"}
