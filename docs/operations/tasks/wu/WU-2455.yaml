@@ -7,10 +7,6 @@ priority: P0
 created: 2026-03-13
 code_paths:
   - packages/@lumenflow/core/src/__tests__/status-literal-guard.test.ts
-  - packages/@lumenflow/core/src/__tests__/type-safety-guard.test.ts
-  - packages/@lumenflow/core/src/__tests__/wu-done-concurrent-backlog.test.ts
-  - packages/@lumenflow/core/src/__tests__/wu-done-metadata-format.test.ts
-  - tools/baselines/enforcement/path-literal-test-baseline.json
 tests:
   manual:
     - Verify CI passes on ubuntu-latest
@@ -23,10 +19,17 @@ dependencies: []
 risks: []
 notes: 'tdd-exception: Fixing test timeouts and baselines - existing tests are verification'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T11:03:28.081Z
+worktree_path: worktrees/operations-automation-wu-2455
+session_id: 21c91d34-7968-47d7-ab7a-69948ccb235b
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T11:03:28.089Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -35,11 +38,3 @@ description: 'Multiple @lumenflow/core tests still failing on ubuntu-latest: sta
   wu-done-concurrent-backlog needs timeout, wu-done-metadata-format prettier issue.'
 acceptance:
   - All CI gates pass on ubuntu-latest
-claimed_mode: worktree
-worktree_path: worktrees/operations-automation-wu-2455
-claimed_at: 2026-03-13T11:03:28.081Z
-baseline_main_sha: 9cccac5ac80a7581ece54b08ae3ea866c9011fa1
-session_id: 21c91d34-7968-47d7-ab7a-69948ccb235b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T11:03:28.089Z
