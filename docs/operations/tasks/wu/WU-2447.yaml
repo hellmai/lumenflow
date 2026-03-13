@@ -2,7 +2,7 @@ id: WU-2447
 title: Add timeouts to slow tests for ubuntu-latest CI runners
 lane: 'Operations: Automation'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -26,7 +26,16 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Multiple tests timeout on ubuntu-latest CI: scope-intersection fuzz tests (10k iterations), and other subprocess-spawning tests. Were masked by faster self-hosted runner.'
+description: 'Multiple tests timeout on ubuntu-latest CI: scope-intersection fuzz tests (10k
+  iterations), and other subprocess-spawning tests. Were masked by faster self-hosted runner.'
 acceptance:
   - scope-intersection fuzz tests pass on ubuntu-latest
   - All CI gates pass on ubuntu-latest
+claimed_mode: worktree
+worktree_path: worktrees/operations-automation-wu-2447
+claimed_at: 2026-03-13T09:35:32.632Z
+baseline_main_sha: 8586fd6231d96a94633093492731a84e231f9b91
+session_id: 7a41a43c-a804-4f99-a6dc-9c9b169c46b7
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T09:35:32.646Z

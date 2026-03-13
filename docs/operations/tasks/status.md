@@ -5,6 +5,7 @@ _Last updated: 2026-03-13_
 ## In Progress
 
 - [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml)
+- [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml)
 
 ## Completed
 

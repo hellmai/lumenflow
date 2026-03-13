@@ -20,7 +20,6 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
-- [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml) — Operations: Automation
 - [WU-1553 — Fix commitCleanupChanges to stage archive files alongside state files](wu/WU-1553.yaml) — Framework: CLI WU Commands
 - [WU-1552 — Restructure INIT-020 to 15-WU plan per sizing guide](wu/WU-1552.yaml) — Content: Specs Governance
 - [WU-2218 — Pre-release formatting fix for v3.6.0](wu/WU-2218.yaml) — Operations: Tooling
@@ -33,6 +32,7 @@ sections:
 ## 🔧 In progress
 
 - [WU-2445 — Strengthen UI smoke-test guidance with concrete anti-patterns](wu/WU-2445.yaml) — Framework: Agent
+- [WU-2447 — Add timeouts to slow tests for ubuntu-latest CI runners](wu/WU-2447.yaml) — Operations: Automation
 
 ## ⛔ Blocked
 
