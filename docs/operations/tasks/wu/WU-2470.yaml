@@ -2,7 +2,7 @@ id: WU-2470
 title: Sync docs to v3.18.1 published stable
 lane: 'Content: Documentation'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -41,3 +41,6 @@ description: Releases index, changelog, and language guides reference v3.18.0/v3
   version-policy.yaml says v3.18.1. docs:audit gate fails in CI.
 acceptance:
   - docs:audit passes locally
+locked: true
+completed_at: 2026-03-13T23:24:14.095Z
+completed: 2026-03-14

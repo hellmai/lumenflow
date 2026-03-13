@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-- [WU-2470 — Sync docs to v3.18.1 published stable](wu/WU-2470.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1381,3 +1381,4 @@ _Last updated: 2026-03-13_
 - [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml) — 2026-03-13
 - [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml) — 2026-03-13
 - [WU-2469 — Sync CLI docs after WU-2468 ownership guard changes](wu/WU-2469.yaml) — 2026-03-13
+- [WU-2470 — Sync docs to v3.18.1 published stable](wu/WU-2470.yaml) — 2026-03-13
