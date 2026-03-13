@@ -3480,3 +3480,4 @@
 {"type":"checkpoint","wuId":"WU-2452","timestamp":"2026-03-13T10:31:33.704Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2452.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2452","timestamp":"2026-03-13T10:33:17.404Z"}
 {"type":"claim","wuId":"WU-2451","timestamp":"2026-03-13T10:38:20.106Z","lane":"Framework: CLI WU Commands","title":"Inject co-change guidance_ref content into wu:brief prompts"}
+{"type":"claim","wuId":"WU-2453","timestamp":"2026-03-13T10:42:35.929Z","lane":"Operations: Automation","title":"Fix path-literal-guard timeouts and micro-worktree CI failure"}

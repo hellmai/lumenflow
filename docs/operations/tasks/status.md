@@ -5,6 +5,7 @@ _Last updated: 2026-03-13_
 ## In Progress
 
 - [WU-2451 — Inject co-change guidance_ref content into wu:brief prompts](wu/WU-2451.yaml)
+- [WU-2453 — Fix path-literal-guard timeouts and micro-worktree CI failure](wu/WU-2453.yaml)
 
 ## Completed
 
