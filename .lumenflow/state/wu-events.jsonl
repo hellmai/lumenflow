@@ -3533,3 +3533,4 @@
 {"type":"claim","wuId":"WU-2461","timestamp":"2026-03-13T13:35:48.310Z","lane":"Framework: CLI WU Commands","title":"Make wu:done inbox checks degrade gracefully on legacy signal records"}
 {"type":"complete","wuId":"WU-2465","timestamp":"2026-03-13T13:38:51.465Z"}
 {"type":"complete","wuId":"WU-2461","timestamp":"2026-03-13T13:48:41.408Z"}
+{"type":"claim","wuId":"WU-2466","timestamp":"2026-03-13T13:50:28.008Z","lane":"Framework: Core","title":"Update path-literal ratchet baseline after parallel WU merges"}

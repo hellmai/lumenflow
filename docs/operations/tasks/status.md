@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2466 — Update path-literal ratchet baseline after parallel WU merges](wu/WU-2466.yaml)
 
 ## Completed
 
