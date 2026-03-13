@@ -92,7 +92,7 @@ describe('lumenflow init command (WU-1045)', () => {
       expect(fs.existsSync(backlogPath)).toBe(false);
     });
 
-    it('should not overwrite existing files without --force', async () => {
+    it('should overwrite managed LUMENFLOW.md even without --force (WU-2383)', async () => {
       const { scaffoldProject } = await import('../src/init.js');
 
       const existingContent = '# Existing LUMENFLOW.md';
@@ -101,8 +101,10 @@ describe('lumenflow init command (WU-1045)', () => {
 
       await scaffoldProject(tempDir, { ...baseOptions });
 
+      // WU-2383: LUMENFLOW.md is a managed doc — always written from template
       const content = fs.readFileSync(lumenflowPath, 'utf-8');
-      expect(content).toBe(existingContent);
+      expect(content).not.toBe(existingContent);
+      expect(content).not.toContain('{{DATE}}');
     });
 
     it('should overwrite existing files with --force', async () => {
@@ -128,14 +130,15 @@ describe('lumenflow init command (WU-1045)', () => {
       expect(result.created).toContain('.lumenflow/agents');
     });
 
-    it('should return list of skipped files when not using --force', async () => {
+    it('should report managed LUMENFLOW.md as created even without --force (WU-2383)', async () => {
       const { scaffoldProject } = await import('../src/init.js');
 
       fs.writeFileSync(path.join(tempDir, 'LUMENFLOW.md'), '# Existing');
 
       const result = await scaffoldProject(tempDir, { ...baseOptions });
 
-      expect(result.skipped).toContain('LUMENFLOW.md');
+      // WU-2383: LUMENFLOW.md is a managed doc — always written, reported as created
+      expect(result.created).toContain('LUMENFLOW.md');
     });
   });
 

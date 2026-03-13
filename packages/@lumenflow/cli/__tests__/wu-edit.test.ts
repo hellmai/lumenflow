@@ -183,8 +183,8 @@ describe('wu:edit --risks behavior (WU-1073)', () => {
     expect(result.risks).toEqual(['Original risk', 'Additional risk']);
   });
 
-  // WU-1225: risks now append by default (changed from WU-1073's replace-by-default)
-  it('should split comma-separated risks and append by default (WU-1225)', () => {
+  // WU-2381: Risks are free-text descriptions — do NOT split on commas
+  it('should NOT split comma-separated risks (WU-2381)', () => {
     const wu = {
       id: 'WU-1073',
       risks: ['Original risk'],
@@ -192,7 +192,8 @@ describe('wu:edit --risks behavior (WU-1073)', () => {
     const opts = { risks: ['New risk 1, New risk 2'] };
     const result = applyEdits(wu, opts);
 
-    expect(result.risks).toEqual(['Original risk', 'New risk 1', 'New risk 2']);
+    // WU-2381: Risks are free-text, commas are preserved as-is
+    expect(result.risks).toEqual(['Original risk', 'New risk 1, New risk 2']);
   });
 
   it('should replace risks when --replace-risks is set (WU-1225)', () => {

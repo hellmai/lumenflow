@@ -94,6 +94,11 @@ export default defineConfig({
     ],
     exclude: ['**/node_modules/**', '**/dist/**'],
     passWithNoTests: false, // Fail fast if include globs don't match any tests.
+    // WU-2463: Generous timeout for first-test module compilation.
+    // CLI tests use dynamic imports from dist/ which compile the full dependency
+    // tree on first import (~3s locally, potentially longer under CI load).
+    // Default 5s timeout is insufficient on GitHub-hosted ubuntu-latest runners.
+    testTimeout: 15000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'clover', 'json'],

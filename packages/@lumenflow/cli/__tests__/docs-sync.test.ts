@@ -277,7 +277,7 @@ describe('lumenflow docs:sync command (WU-1083)', () => {
       expect(agents).not.toContain('{{DATE}}');
     });
 
-    it('should skip existing core docs without --force', async () => {
+    it('should overwrite managed docs even without --force (WU-2383)', async () => {
       const { syncCoreDocs } = await import('../src/docs-sync.js');
 
       // Create existing files
@@ -288,15 +288,16 @@ describe('lumenflow docs:sync command (WU-1083)', () => {
 
       const result = await syncCoreDocs(tempDir, { force: false });
 
-      expect(result.skipped).toContain('LUMENFLOW.md');
-      expect(result.skipped).toContain('AGENTS.md');
-      expect(result.skipped).toContain('.lumenflow/constraints.md');
-      expect(result.created.length).toBe(0);
+      // WU-2383: Managed docs (LUMENFLOW.md, constraints.md) are always written.
+      // AGENTS.md uses merge-block markers. None are skipped.
+      expect(result.created).toContain('LUMENFLOW.md');
+      expect(result.created).toContain('AGENTS.md');
+      expect(result.created).toContain('.lumenflow/constraints.md');
 
-      // Verify content was NOT overwritten
-      expect(fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8')).toBe(
-        '# Custom LUMENFLOW',
-      );
+      // Verify managed content was overwritten from template
+      const lumenflow = fs.readFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'utf-8');
+      expect(lumenflow).not.toBe('# Custom LUMENFLOW');
+      expect(lumenflow).not.toContain('{{DATE}}');
     });
 
     it('should create core docs when they do not exist', async () => {
