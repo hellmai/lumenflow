@@ -505,7 +505,8 @@ describe('WU-1279: Wire methodology policy into spawn prompt generation', () => 
       });
 
       expect(standards).toContain('Verification Strategy');
-      expect(standards).toContain('brittle DOM assertions');
+      expect(standards).toContain('Assert behavior, not presentation');
+      expect(standards).toContain('NEVER assert inline styles');
       expect(standards).not.toContain('Failing test first');
     });
   });
@@ -517,7 +518,8 @@ describe('WU-1279: Wire methodology policy into spawn prompt generation', () => 
         testMethodologyHint: 'smoke-test',
       });
 
-      expect(summary).toContain('fit-for-surface UI verification');
+      expect(summary).toContain('behavioral UI verification only');
+      expect(summary).toContain('no inline-style');
       expect(summary).not.toContain('**Testing**: tdd');
       expect(summary).toContain('policy target');
     });

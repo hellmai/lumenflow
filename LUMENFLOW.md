@@ -140,7 +140,7 @@ When `requireRemote: true` (default):
 ## Core Principles
 
 1. **Design-First** (feature/refactor WUs): Load `/skill design-first` before implementation. Question requirements, delete unnecessary, simplify before optimizing
-2. **Fit-For-Surface Verification**: Choose the least brittle verification that gives strong confidence. Prefer TDD for runtime logic when repository policy requires it; prefer behavior-focused integration, smoke, visual, or manual verification for UI, content, and presentation work.
+2. **Fit-For-Surface Verification**: Choose the least brittle verification that gives strong confidence. Prefer TDD for runtime logic when repository policy requires it; prefer behavior-focused integration, smoke, visual, or manual verification for UI, content, and presentation work. Never assert inline styles, CSS values, exact copy, or DOM shape in E2E/integration tests.
 3. **Library-First**: Search existing libraries before custom code
 4. **DRY/SOLID/KISS/YAGNI**: No magic numbers, no hardcoded strings
 5. **Worktree Discipline**: After `wu:claim`, work ONLY in the worktree

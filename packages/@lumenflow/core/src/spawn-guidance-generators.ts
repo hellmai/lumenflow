@@ -124,12 +124,13 @@ function generateDocsGuidance(): string {
 }
 
 /**
- * WU-1900: Generate smoke-test guidance (extracted from inline)
+ * WU-1900, WU-2445: Generate smoke-test guidance with concrete anti-patterns.
+ * Mirrors .lumenflow/templates/spawn-prompt/visual-directive.md — keep in sync.
  */
 function generateSmokeTestGuidance(): string {
   return `## UI/Visual Verification Strategy
 
-**Prefer user-outcome verification over brittle DOM assertions** for UI-classified work.
+**Assert behavior, not presentation.** Tests must verify what a user can do, not how the page looks.
 
 ### Recommended Order
 
@@ -137,7 +138,22 @@ function generateSmokeTestGuidance(): string {
 2. Add smoke/render coverage for crash-prone states, loading states, and empty states
 3. Use unit tests for pure logic only (formatters, reducers, validators, accessibility helpers, slug builders)
 4. Verify responsive behavior and accessibility manually or with automation
-5. Avoid tests that only snapshot CSS classes or markup shape unless that contract is intentional`;
+
+### Anti-Patterns (NEVER do these in E2E or integration tests)
+
+- Assert inline style values, CSS hue/color numbers, or computed styles
+- Assert exact marketing copy, button labels, or heading text that changes with content updates
+- Use substring label matching that catches multiple elements (e.g., getByLabel('Password') matching both an input and a toggle button)
+- Snapshot entire DOM structures, CSS class lists, or markup shape
+- Assert OG meta tag content strings beyond existence
+
+### Do Instead
+
+- Select elements by data-testid, ARIA roles, or { exact: true } label matching
+- Assert behavior: page loads without error, form submits, navigation works, sections render
+- Assert element existence and visibility, not text content
+- For auth flows: assert redirect happens, not button text
+- For SEO: assert meta tags exist and are non-empty, not their exact values`;
 }
 
 /** Generate refactor testing guidance */
@@ -311,7 +327,7 @@ export function generateMandatoryStandards(
   // Testing methodology based on policy
   if (options?.testMethodologyHint === TEST_METHODOLOGY_HINTS.SMOKE_TEST) {
     lines.push(
-      '- **Verification Strategy**: Prefer user-outcome verification over brittle DOM assertions. Use integration/E2E, smoke coverage, and manual or visual checks as appropriate.',
+      '- **Verification Strategy**: Assert behavior, not presentation. NEVER assert inline styles, CSS values, exact copy, or DOM shape. Use data-testid/roles, check element existence and user flows, not content.',
     );
   } else if (options?.testMethodologyHint === TEST_METHODOLOGY_HINTS.STRUCTURED_CONTENT) {
     lines.push(
@@ -555,7 +571,7 @@ export function generateEnforcementSummary(
   // Testing methodology
   if (options?.testMethodologyHint === TEST_METHODOLOGY_HINTS.SMOKE_TEST) {
     lines.push(
-      '- **Testing**: fit-for-surface UI verification (integration/E2E, smoke, manual, or visual checks as appropriate)',
+      '- **Testing**: behavioral UI verification only (no inline-style, CSS-value, exact-copy, or DOM-shape assertions)',
     );
   } else if (options?.testMethodologyHint === TEST_METHODOLOGY_HINTS.STRUCTURED_CONTENT) {
     lines.push(

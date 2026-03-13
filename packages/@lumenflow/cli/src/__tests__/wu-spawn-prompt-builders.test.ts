@@ -743,7 +743,7 @@ describe('WU-2329: verification guidance composition', () => {
 
     expect(prompt).toContain('## Mandatory Standards');
     expect(prompt).toContain('Verification Strategy');
-    expect(prompt).toContain('fit-for-surface UI verification');
+    expect(prompt).toContain('behavioral UI verification only');
     expect(prompt).not.toContain('**TDD**: Failing test first');
     expect(prompt).not.toContain('**Testing**: tdd');
   });
