@@ -4,7 +4,7 @@ _Last updated: 2026-03-13_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2451 — Inject co-change guidance_ref content into wu:brief prompts](wu/WU-2451.yaml)
 
 ## Completed
 
