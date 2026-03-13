@@ -3505,3 +3505,7 @@
 {"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:56:14.993Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2463.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:56:32.518Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2463.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2463","timestamp":"2026-03-13T11:58:13.221Z"}
+{"type":"claim","wuId":"WU-2460","timestamp":"2026-03-13T12:18:49.235Z","lane":"Framework: CLI WU Commands","title":"Make wu:done auto-rebase tolerate wu:brief evidence-only state drift"}
+{"type":"checkpoint","wuId":"WU-2460","timestamp":"2026-03-13T12:18:51.930Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2460","timestamp":"2026-03-13T12:19:04.115Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2460","timestamp":"2026-03-13T12:23:10.001Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
