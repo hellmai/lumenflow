@@ -33,7 +33,6 @@ sections:
 ## 🔧 In progress
 
 - [WU-2468 — Block cross-session WU state mutations](wu/WU-2468.yaml) — Framework: CLI WU Commands
-- [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml) — Framework: CLI WU Commands
 
 ## ⛔ Blocked
 
@@ -1411,6 +1410,7 @@ sections:
 - [WU-2465 — Fix 9 pre-existing @lumenflow/core test failures for green CI](wu/WU-2465.yaml)
 - [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml)
 - [WU-2466 — Update path-literal ratchet baseline after parallel WU merges](wu/WU-2466.yaml)
+- [WU-2467 — Fix formatPlanUri test to be cwd-independent](wu/WU-2467.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

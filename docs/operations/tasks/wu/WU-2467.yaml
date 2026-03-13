@@ -2,7 +2,7 @@ id: WU-2467
 title: Fix formatPlanUri test to be cwd-independent
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -37,3 +37,6 @@ session_id: 33b14a29-ae80-4760-9e97-27f663f14f6b
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T14:34:50.640Z
+locked: true
+completed_at: 2026-03-13T14:39:11.770Z
+completed: 2026-03-13
