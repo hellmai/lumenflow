@@ -20,6 +20,7 @@ sections:
 
 ## 🚀 Ready (pull from here)
 
+- [WU-2462 — Increase CI job timeout from 10 to 20 minutes for ubuntu-latest](wu/WU-2462.yaml) — Operations: Automation
 - [WU-2461 — Make wu:done inbox checks degrade gracefully on legacy signal records](wu/WU-2461.yaml) — Framework: CLI WU Commands
 - [WU-2460 — Make wu:done auto-rebase tolerate wu:brief evidence-only state drift](wu/WU-2460.yaml) — Framework: CLI WU Commands
 - [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — Framework: CLI WU Commands
