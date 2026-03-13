@@ -3509,10 +3509,10 @@
 {"type":"checkpoint","wuId":"WU-2460","timestamp":"2026-03-13T12:18:51.930Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2460","timestamp":"2026-03-13T12:19:04.115Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2460","timestamp":"2026-03-13T12:23:10.001Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
-{"type":"complete","wuId":"WU-2460","timestamp":"2026-03-13T12:30:45.811Z"}
 {"type":"claim","wuId":"WU-2464","timestamp":"2026-03-13T12:26:16.273Z","lane":"Framework: CLI WU Commands","title":"Fix 18 pre-existing CLI test failures for green CI"}
 {"type":"checkpoint","wuId":"WU-2464","timestamp":"2026-03-13T12:26:27.064Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2464","timestamp":"2026-03-13T12:26:52.701Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"complete","wuId":"WU-2460","timestamp":"2026-03-13T12:30:45.811Z"}
 {"type":"delegation","wuId":"WU-1604","timestamp":"2026-03-13T12:44:52.840Z","parentWuId":"WU-1600","delegationId":"dlg-fa8b"}
 {"type":"delegation","wuId":"WU-1604","timestamp":"2026-03-13T12:49:07.948Z","parentWuId":"WU-1600","delegationId":"dlg-fd42"}
 {"type":"checkpoint","wuId":"WU-2464","timestamp":"2026-03-13T12:52:25.363Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2464.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
@@ -3524,3 +3524,6 @@
 {"type":"complete","wuId":"WU-2464","timestamp":"2026-03-13T12:58:47.713Z"}
 {"type":"claim","wuId":"WU-2465","timestamp":"2026-03-13T13:19:08.587Z","lane":"Framework: Core","title":"Fix 9 pre-existing @lumenflow/core test failures for green CI"}
 {"type":"claim","wuId":"WU-2458","timestamp":"2026-03-13T13:27:31.534Z","lane":"Framework: CLI WU Commands","title":"Relax wu:done claim ownership when no active session is present"}
+{"type":"checkpoint","wuId":"WU-2458","timestamp":"2026-03-13T13:27:43.091Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2458","timestamp":"2026-03-13T13:28:14.887Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2458","timestamp":"2026-03-13T13:34:34.780Z"}

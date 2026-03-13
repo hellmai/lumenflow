@@ -5,7 +5,6 @@ _Last updated: 2026-03-13_
 ## In Progress
 
 - [WU-2465 — Fix 9 pre-existing @lumenflow/core test failures for green CI](wu/WU-2465.yaml)
-- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml)
 
 ## Completed
 
@@ -1375,3 +1374,4 @@ _Last updated: 2026-03-13_
 - [WU-2463 — Fix pre-existing CLI test failures for green CI](wu/WU-2463.yaml) — 2026-03-13
 - [WU-2460 — Make wu:done auto-rebase tolerate wu:brief evidence-only state drift](wu/WU-2460.yaml) — 2026-03-13
 - [WU-2464 — Fix 18 pre-existing CLI test failures for green CI](wu/WU-2464.yaml) — 2026-03-13
+- [WU-2458 — Relax wu:done claim ownership when no active session is present](wu/WU-2458.yaml) — 2026-03-13

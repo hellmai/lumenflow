@@ -2,7 +2,7 @@ id: WU-2458
 title: Relax wu:done claim ownership when no active session is present
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -55,3 +55,6 @@ session_id: 95dfcef7-8ef0-427e-90a2-418243f921d3
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-13T13:27:31.510Z
+locked: true
+completed_at: 2026-03-13T13:34:27.252Z
+completed: 2026-03-13
