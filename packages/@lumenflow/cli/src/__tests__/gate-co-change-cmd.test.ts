@@ -396,4 +396,101 @@ describe('formatRuleList', () => {
     expect(output).toContain('triggers: src/app/api/**/route.ts');
     expect(output).toContain('requires: src/app/api/**/__tests__/route.test.ts');
   });
+
+  it('shows guidance_ref when present', () => {
+    const ruleWithRef: CoChangeRuleConfig = {
+      ...sampleRule,
+      name: 'with-ref',
+      guidance_ref: 'docs/testing-guide.md',
+    };
+    const output = formatRuleList([ruleWithRef], true);
+    expect(output).toContain('guidance_ref: docs/testing-guide.md');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WU-2446: --guidance-ref support
+// ---------------------------------------------------------------------------
+describe('WU-2446: --guidance-ref in parseGateCoChangeArgs', () => {
+  it('parses --guidance-ref for --add', () => {
+    const result = parseGateCoChangeArgs([
+      '--add',
+      '--name',
+      'ref-rule',
+      '--trigger',
+      'src/**',
+      '--require',
+      'tests/**',
+      '--guidance-ref',
+      'docs/guide.md',
+    ]);
+    expect(result.guidanceRef).toBe('docs/guide.md');
+  });
+
+  it('parses --guidance-ref for --edit', () => {
+    const result = parseGateCoChangeArgs([
+      '--edit',
+      '--name',
+      'my-rule',
+      '--guidance-ref',
+      'docs/style.md',
+    ]);
+    expect(result.operation).toBe('edit');
+    expect(result.guidanceRef).toBe('docs/style.md');
+  });
+
+  it('allows --guidance and --guidance-ref together', () => {
+    const result = parseGateCoChangeArgs([
+      '--add',
+      '--name',
+      'both',
+      '--trigger',
+      'src/**',
+      '--require',
+      'tests/**',
+      '--guidance',
+      'Inline hint',
+      '--guidance-ref',
+      'detailed.md',
+    ]);
+    expect(result.guidance).toBe('Inline hint');
+    expect(result.guidanceRef).toBe('detailed.md');
+  });
+});
+
+describe('WU-2446: applyAddRule with guidance_ref', () => {
+  it('adds guidance_ref to the new rule', () => {
+    const result = applyAddRule([], {
+      operation: 'add',
+      name: 'ref-rule',
+      triggers: ['src/**'],
+      requires: ['tests/**'],
+      guidanceRef: 'docs/guide.md',
+    });
+    expect(result.ok).toBe(true);
+    expect(result.rules![0].guidance_ref).toBe('docs/guide.md');
+  });
+
+  it('omits guidance_ref when not provided', () => {
+    const result = applyAddRule([], {
+      operation: 'add',
+      name: 'no-ref',
+      triggers: ['src/**'],
+      requires: ['tests/**'],
+    });
+    expect(result.ok).toBe(true);
+    expect(result.rules![0].guidance_ref).toBeUndefined();
+  });
+});
+
+describe('WU-2446: applyEditRule with guidance_ref', () => {
+  it('adds guidance_ref to existing rule', () => {
+    const result = applyEditRule([sampleRule], {
+      operation: 'edit',
+      name: 'route-requires-test',
+      guidanceRef: 'docs/new-guide.md',
+    });
+    expect(result.ok).toBe(true);
+    expect(result.rules![0].guidance_ref).toBe('docs/new-guide.md');
+  });
 });

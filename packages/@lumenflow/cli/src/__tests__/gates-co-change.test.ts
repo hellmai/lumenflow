@@ -8,8 +8,15 @@
  * and backwards compatibility with custom co-change patterns.
  */
 
-import { describe, expect, it } from 'vitest';
-import { evaluateCoChangeRules, DEFAULT_DB_CO_CHANGE_RULES } from '../gates-runners.js';
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { describe, expect, it, afterEach } from 'vitest';
+import {
+  evaluateCoChangeRules,
+  resolveGuidanceRefs,
+  DEFAULT_DB_CO_CHANGE_RULES,
+} from '../gates-runners.js';
 import type { CoChangeRuleConfig } from '@lumenflow/core/config-schema';
 
 // ---------------------------------------------------------------------------
@@ -252,5 +259,147 @@ describe('WU-2368: evaluateCoChangeRules guidance field', () => {
     expect(result.errors.length).toBe(1);
     expect(result.errors[0]).toContain('legacy-rule');
     expect(result.errors[0]).toContain('required patterns missing');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WU-2446: resolveGuidanceRefs
+// ---------------------------------------------------------------------------
+describe('WU-2446: resolveGuidanceRefs', () => {
+  const tmpDirs: string[] = [];
+
+  function makeTmpDir(): string {
+    const dir = mkdtempSync(path.join(tmpdir(), 'wu2446-'));
+    tmpDirs.push(dir);
+    return dir;
+  }
+
+  afterEach(() => {
+    for (const dir of tmpDirs) {
+      rmSync(dir, { recursive: true, force: true });
+    }
+    tmpDirs.length = 0;
+  });
+
+  it('returns rules unchanged when no guidance_ref is set', () => {
+    const rules: CoChangeRuleConfig[] = [
+      {
+        name: 'no-ref',
+        trigger_patterns: ['src/**'],
+        require_patterns: ['tests/**'],
+        severity: 'error',
+        guidance: 'inline only',
+      },
+    ];
+    const warnings: string[] = [];
+    const result = resolveGuidanceRefs(rules, '/tmp', (msg) => warnings.push(msg));
+    expect(result).toEqual(rules);
+    expect(warnings).toHaveLength(0);
+  });
+
+  it('reads guidance_ref file and appends content to guidance', () => {
+    const dir = makeTmpDir();
+    const refFile = path.join(dir, 'style-guide.md');
+    writeFileSync(refFile, '# Test Style\nUse descriptive names.\n');
+
+    const rules: CoChangeRuleConfig[] = [
+      {
+        name: 'with-ref',
+        trigger_patterns: ['src/**'],
+        require_patterns: ['tests/**'],
+        severity: 'error',
+        guidance: 'Inline hint.',
+        guidance_ref: 'style-guide.md',
+      },
+    ];
+    const warnings: string[] = [];
+    const result = resolveGuidanceRefs(rules, dir, (msg) => warnings.push(msg));
+
+    expect(warnings).toHaveLength(0);
+    expect(result[0].guidance).toContain('Inline hint.');
+    expect(result[0].guidance).toContain('# Test Style');
+    expect(result[0].guidance).toContain('Use descriptive names.');
+  });
+
+  it('sets guidance from file when no inline guidance exists', () => {
+    const dir = makeTmpDir();
+    const refFile = path.join(dir, 'guide.md');
+    writeFileSync(refFile, 'File-only guidance content');
+
+    const rules: CoChangeRuleConfig[] = [
+      {
+        name: 'file-only',
+        trigger_patterns: ['src/**'],
+        require_patterns: ['tests/**'],
+        severity: 'error',
+        guidance_ref: 'guide.md',
+      },
+    ];
+    const warnings: string[] = [];
+    const result = resolveGuidanceRefs(rules, dir, (msg) => warnings.push(msg));
+
+    expect(warnings).toHaveLength(0);
+    expect(result[0].guidance).toBe('File-only guidance content');
+  });
+
+  it('warns when guidance_ref file does not exist', () => {
+    const dir = makeTmpDir();
+    const rules: CoChangeRuleConfig[] = [
+      {
+        name: 'missing-ref',
+        trigger_patterns: ['src/**'],
+        require_patterns: ['tests/**'],
+        severity: 'error',
+        guidance_ref: 'nonexistent.md',
+      },
+    ];
+    const warnings: string[] = [];
+    const result = resolveGuidanceRefs(rules, dir, (msg) => warnings.push(msg));
+
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('nonexistent.md');
+    expect(warnings[0]).toContain('not found');
+    // Rule passes through unchanged
+    expect(result[0].guidance).toBeUndefined();
+  });
+
+  it('does not mutate original rules array', () => {
+    const dir = makeTmpDir();
+    writeFileSync(path.join(dir, 'g.md'), 'content');
+
+    const original: CoChangeRuleConfig[] = [
+      {
+        name: 'immutable',
+        trigger_patterns: ['src/**'],
+        require_patterns: ['tests/**'],
+        severity: 'error',
+        guidance_ref: 'g.md',
+      },
+    ];
+    resolveGuidanceRefs(original, dir, () => {});
+    expect(original[0].guidance).toBeUndefined();
+  });
+
+  it('guidance_ref content appears in evaluateCoChangeRules error output', () => {
+    const dir = makeTmpDir();
+    writeFileSync(path.join(dir, 'quality.md'), 'Must use data-testid selectors');
+
+    const rules: CoChangeRuleConfig[] = [
+      {
+        name: 'e2e-quality',
+        trigger_patterns: ['src/pages/**'],
+        require_patterns: ['e2e/**'],
+        severity: 'error',
+        guidance_ref: 'quality.md',
+      },
+    ];
+    const resolved = resolveGuidanceRefs(rules, dir, () => {});
+    const result = evaluateCoChangeRules({
+      changedFiles: ['src/pages/dashboard.tsx'],
+      rules: resolved,
+    });
+
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors[0]).toContain('data-testid selectors');
   });
 });

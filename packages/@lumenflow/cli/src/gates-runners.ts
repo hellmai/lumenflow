@@ -11,7 +11,7 @@
  */
 
 import { spawnSync } from 'node:child_process';
-import { writeSync } from 'node:fs';
+import { existsSync, readFileSync, writeSync } from 'node:fs';
 import { access } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -671,6 +671,37 @@ export function evaluateCoChangeRules({
   return { errors, warnings };
 }
 
+/**
+ * WU-2446: Resolve guidance_ref file references into inline guidance content.
+ * For each rule with a guidance_ref, reads the file and appends its content
+ * to the rule's guidance field. Returns a new array (does not mutate input).
+ * Logs a warning for missing files but does not fail.
+ */
+export function resolveGuidanceRefs(
+  rules: CoChangeRuleConfig[],
+  projectRoot: string,
+  logWarning: (msg: string) => void,
+): CoChangeRuleConfig[] {
+  return rules.map((rule) => {
+    if (!rule.guidance_ref) return rule;
+
+    const refPath = path.resolve(projectRoot, rule.guidance_ref);
+    if (!existsSync(refPath)) {
+      logWarning(
+        `co-change "${rule.name}": guidance_ref "${rule.guidance_ref}" not found; skipping file content`,
+      );
+      return rule;
+    }
+
+    const fileContent = readFileSync(refPath, 'utf-8').trim();
+    const combined = rule.guidance
+      ? `${rule.guidance}\n${fileContent}`
+      : fileContent;
+
+    return { ...rule, guidance: combined };
+  });
+}
+
 export async function runCoChangeGate({ agentLog, useAgentMode, cwd }: GateLogContext) {
   const start = Date.now();
   const effectiveCwd = cwd ?? process.cwd();
@@ -690,7 +721,10 @@ export async function runCoChangeGate({ agentLog, useAgentMode, cwd }: GateLogCo
   // WU-2368: Merge built-in DB defaults with user-configured rules
   const includeDefaults = gatesSection?.include_builtin_co_change_defaults !== false;
   const userRules = parsedRules.data;
-  const rules = includeDefaults ? [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules] : userRules;
+  const mergedRules = includeDefaults ? [...DEFAULT_DB_CO_CHANGE_RULES, ...userRules] : userRules;
+
+  // WU-2446: Resolve guidance_ref file references
+  const rules = resolveGuidanceRefs(mergedRules, effectiveCwd, (msg) => logLine(`⚠️  ${msg}`));
 
   if (rules.length === 0) {
     logLine('ℹ️  No co-change rules configured; skipping.');

@@ -61,6 +61,7 @@ const ARG_TRIGGER = '--trigger';
 const ARG_REQUIRE = '--require';
 const ARG_SEVERITY = '--severity';
 const ARG_GUIDANCE = '--guidance';
+const ARG_GUIDANCE_REF = '--guidance-ref';
 const ARG_HELP = '--help';
 
 const COMMIT_PREFIX = 'chore: gate:co-change';
@@ -81,6 +82,7 @@ export interface GateCoChangeOptions {
   requires?: string[];
   severity?: 'warn' | 'error' | 'off';
   guidance?: string;
+  guidanceRef?: string;
 }
 
 interface CoChangeEditResult {
@@ -123,6 +125,7 @@ Options:
   ${ARG_REQUIRE} <glob>   Require glob pattern (repeatable, required for --add)
   ${ARG_SEVERITY} <level> Severity: warn, error, off (default: error)
   ${ARG_GUIDANCE} <text>  Actionable guidance shown on rule failure
+  ${ARG_GUIDANCE_REF} <path> File path whose content is appended to violation messages
   ${ARG_HELP}             Show this help
 
 Examples:
@@ -154,6 +157,7 @@ export function parseGateCoChangeArgs(argv: string[]): GateCoChangeOptions {
   const requires: string[] = [];
   let severity: 'warn' | 'error' | 'off' | undefined;
   let guidance: string | undefined;
+  let guidanceRef: string | undefined;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -199,6 +203,10 @@ export function parseGateCoChangeArgs(argv: string[]): GateCoChangeOptions {
         guidance = next;
         i++;
         break;
+      case ARG_GUIDANCE_REF:
+        guidanceRef = next;
+        i++;
+        break;
       default:
         break;
     }
@@ -242,11 +250,12 @@ export function parseGateCoChangeArgs(argv: string[]): GateCoChangeOptions {
       triggers.length > 0 ||
       requires.length > 0 ||
       severity !== undefined ||
-      guidance !== undefined;
+      guidance !== undefined ||
+      guidanceRef !== undefined;
     if (!hasEdits) {
       throw createError(
         ErrorCodes.INVALID_ARGUMENT,
-        `At least one edit flag is required for ${ARG_EDIT} (${ARG_TRIGGER}, ${ARG_REQUIRE}, ${ARG_SEVERITY}, ${ARG_GUIDANCE}).`,
+        `At least one edit flag is required for ${ARG_EDIT} (${ARG_TRIGGER}, ${ARG_REQUIRE}, ${ARG_SEVERITY}, ${ARG_GUIDANCE}, ${ARG_GUIDANCE_REF}).`,
       );
     }
   }
@@ -258,6 +267,7 @@ export function parseGateCoChangeArgs(argv: string[]): GateCoChangeOptions {
     requires: requires.length > 0 ? requires : undefined,
     severity,
     guidance,
+    guidanceRef,
   };
 }
 
@@ -316,7 +326,7 @@ export function applyAddRule(
   existingRules: CoChangeRuleConfig[],
   options: GateCoChangeOptions,
 ): CoChangeEditResult {
-  const { name, triggers, requires, severity, guidance } = options;
+  const { name, triggers, requires, severity, guidance, guidanceRef } = options;
 
   // Check duplicate name in custom rules
   if (existingRules.some((r) => r.name === name)) {
@@ -340,6 +350,9 @@ export function applyAddRule(
   };
   if (guidance !== undefined) {
     newRule.guidance = guidance;
+  }
+  if (guidanceRef !== undefined) {
+    newRule.guidance_ref = guidanceRef;
   }
 
   // Validate against Zod schema
@@ -388,7 +401,7 @@ export function applyEditRule(
   existingRules: CoChangeRuleConfig[],
   options: GateCoChangeOptions,
 ): CoChangeEditResult {
-  const { name, triggers, requires, severity, guidance } = options;
+  const { name, triggers, requires, severity, guidance, guidanceRef } = options;
 
   const targetIndex = existingRules.findIndex((r) => r.name === name);
   if (targetIndex === -1) {
@@ -413,6 +426,7 @@ export function applyEditRule(
   if (requires !== undefined) target.require_patterns = requires;
   if (severity !== undefined) target.severity = severity;
   if (guidance !== undefined) target.guidance = guidance;
+  if (guidanceRef !== undefined) target.guidance_ref = guidanceRef;
 
   // Validate edited rule against schema
   const parsed = CoChangeRuleConfigSchema.safeParse(target);
@@ -466,6 +480,9 @@ function formatRuleEntry(rule: CoChangeRuleConfig, label: string): string {
   if (rule.guidance) {
     lines.push(`    guidance: ${rule.guidance}`);
   }
+  if (rule.guidance_ref) {
+    lines.push(`    guidance_ref: ${rule.guidance_ref}`);
+  }
   return lines.join('\n');
 }
 
@@ -506,6 +523,7 @@ function buildCommitMessage(options: GateCoChangeOptions): string {
       if (options.requires) edits.push('requires');
       if (options.severity) edits.push(`severity=${options.severity}`);
       if (options.guidance) edits.push('guidance');
+      if (options.guidanceRef) edits.push('guidance_ref');
       return `${COMMIT_PREFIX} edit rule '${options.name}' (${edits.join(', ')})`;
     }
     default:

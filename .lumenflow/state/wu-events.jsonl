@@ -3466,3 +3466,5 @@
 {"type":"complete","wuId":"WU-2445","timestamp":"2026-03-13T09:37:07.969Z"}
 {"type":"claim","wuId":"WU-2446","timestamp":"2026-03-13T09:38:33.080Z","lane":"Framework: Core Validation","title":"Add guidance_ref support to co-change rules for file-based test guidance"}
 {"type":"complete","wuId":"WU-2447","timestamp":"2026-03-13T09:41:52.344Z"}
+{"type":"checkpoint","wuId":"WU-2446","timestamp":"2026-03-13T09:38:45.835Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2446","timestamp":"2026-03-13T09:39:11.028Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}

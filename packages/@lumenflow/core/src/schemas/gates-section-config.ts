@@ -98,6 +98,8 @@ export const CoChangeRuleConfigSchema = z.object({
   severity: CoChangeSeveritySchema.default('error'),
   /** WU-2368: Optional actionable guidance shown when this rule fails */
   guidance: z.string().optional(),
+  /** WU-2446: Optional file path whose content is appended to violation messages */
+  guidance_ref: z.string().optional(),
 });
 
 export type CoChangeRuleConfig = z.infer<typeof CoChangeRuleConfigSchema>;
