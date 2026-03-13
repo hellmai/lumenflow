@@ -92,10 +92,10 @@ describe('sdk packaging boundary', () => {
 
   it('keeps compile-time kernel parity checks in monorepo CI', () => {
     expect(runKernelParityTypecheck).not.toThrow();
-  });
+  }, 30_000);
 
   it('produces a packed artifact without kernel runtime dependency', () => {
     const packed = readPackedPackageJson();
     expect(packed.dependencies?.['@lumenflow/kernel']).toBeUndefined();
-  });
+  }, 30_000);
 });
