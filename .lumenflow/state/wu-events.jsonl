@@ -3500,3 +3500,6 @@
 {"type":"checkpoint","wuId":"WU-2462","timestamp":"2026-03-13T11:32:57.056Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"complete","wuId":"WU-2462","timestamp":"2026-03-13T11:34:25.172Z"}
 {"type":"claim","wuId":"WU-2463","timestamp":"2026-03-13T11:52:55.625Z","lane":"Framework: CLI WU Commands","title":"Fix pre-existing CLI test failures for green CI"}
+{"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:53:07.685Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:53:40.778Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
+{"type":"checkpoint","wuId":"WU-2463","timestamp":"2026-03-13T11:56:14.993Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2463.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}

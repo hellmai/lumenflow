@@ -24,12 +24,21 @@ artifacts:
   - .lumenflow/stamps/WU-2463.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'Fixed 4 pre-existing test failures: docs-sync syncCoreDocs (WU-2383 managed docs), init
+  scaffoldProject (WU-2383), wu-edit risks (WU-2381 no-comma-split), and added testTimeout to CLI
+  vitest config for CI headroom.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T11:52:55.597Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2463
+session_id: a0b3295f-976e-4be1-8e29-d539138e1d5f
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T11:52:55.604Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -41,11 +50,3 @@ description: 'Four pre-existing test failures in @lumenflow/cli block CI from go
 acceptance:
   - All 4 CLI test files pass locally and on CI
   - No test behavior regressions
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2463
-claimed_at: 2026-03-13T11:52:55.597Z
-baseline_main_sha: da40bf303da440833c95a65f5eb8af2a6d0af67c
-session_id: a0b3295f-976e-4be1-8e29-d539138e1d5f
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T11:52:55.604Z
