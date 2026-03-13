@@ -2,7 +2,7 @@ id: WU-2460
 title: Make wu:done auto-rebase tolerate wu:brief evidence-only state drift
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -12,7 +12,8 @@ code_paths:
   - packages/@lumenflow/cli/src/__tests__/wu-done-evidence-path.test.ts
 tests:
   manual:
-    - Run wu:brief for a claimed WU, trigger a parallel-completion auto-rebase path, and verify wu:done completes without manual stashing when only wu-events.jsonl evidence is dirty
+    - Run wu:brief for a claimed WU, trigger a parallel-completion auto-rebase path, and verify
+      wu:done completes without manual stashing when only wu-events.jsonl evidence is dirty
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-done.test.ts
     - packages/@lumenflow/cli/src/__tests__/wu-done-evidence-path.test.ts
@@ -30,8 +31,25 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: wu:done requires fresh wu:brief evidence for bug/feature WUs, and wu:brief records that evidence in .lumenflow/state/wu-events.jsonl. Problem: when parallel completions trigger wu:done auto-rebase, the rebase path refuses to proceed if the only dirty file is workflow-generated wu-events.jsonl state from a fresh wu:brief run. This creates a completion loop: regenerate required evidence, then fail rebase because the evidence dirtied the worktree. Solution: treat workflow-generated wu:brief/state-only drift as safe during the auto-rebase path, or preserve/absorb it automatically so completion can proceed without manual stash/commit workarounds.'
+description: 'Context: wu:done requires fresh wu:brief evidence for bug/feature WUs, and wu:brief
+  records that evidence in .lumenflow/state/wu-events.jsonl. Problem: when parallel completions
+  trigger wu:done auto-rebase, the rebase path refuses to proceed if the only dirty file is
+  workflow-generated wu-events.jsonl state from a fresh wu:brief run. This creates a completion
+  loop: regenerate required evidence, then fail rebase because the evidence dirtied the worktree.
+  Solution: treat workflow-generated wu:brief/state-only drift as safe during the auto-rebase path,
+  or preserve/absorb it automatically so completion can proceed without manual stash/commit
+  workarounds.'
 acceptance:
-  - wu:done auto-rebase does not fail when the only dirty worktree change is fresh wu:brief/state evidence in .lumenflow/state/wu-events.jsonl
+  - wu:done auto-rebase does not fail when the only dirty worktree change is fresh wu:brief/state
+    evidence in .lumenflow/state/wu-events.jsonl
   - Non-state source edits still block auto-rebase and continue to require explicit user/agent action
-  - Regression tests cover the required-evidence plus parallel-completion path so wu:brief and auto-rebase no longer deadlock each other
+  - Regression tests cover the required-evidence plus parallel-completion path so wu:brief and
+    auto-rebase no longer deadlock each other
+claimed_mode: branch-pr
+claimed_branch: codex-batch-wu-runner
+claimed_at: 2026-03-13T12:18:49.204Z
+baseline_main_sha: 373fd82c2e65c57f71a6049c91b330052ad9bf77
+session_id: e2ecd66d-b24d-4cd1-9593-eec1c7fbdf3a
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T12:18:49.211Z
