@@ -208,43 +208,47 @@ describe('WU-2112: as any AST guard', () => {
 });
 
 describe('WU-2112: as any strict-zero regression guard', () => {
-  it('scans all 7 runtime packages for as any casts (strict zero)', async () => {
-    const filesPerTarget = await Promise.all(
-      SCAN_TARGETS.map(async (target) => {
-        const files = await getSourceFiles(target);
-        return { target: target.label, files };
-      }),
-    );
-
-    // Verify all scan targets discovered files
-    for (const target of filesPerTarget) {
-      expect(
-        target.files.length,
-        `No source files discovered for ${target.target}`,
-      ).toBeGreaterThan(0);
-    }
-
-    // Collect all violations
-    const allViolations: AsAnyViolation[] = [];
-    for (const { files } of filesPerTarget) {
-      for (const file of files) {
-        const violations = scanFileForAsAny(file);
-        allViolations.push(...violations);
-      }
-    }
-
-    if (allViolations.length > 0) {
-      expect.fail(
-        `Found ${allViolations.length} "as any" cast(s) in production code.\n\n` +
-          `Use proper type narrowing, \`as unknown\`, or discriminated unions instead of \`as any\`.\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
+  it(
+    'scans all 7 runtime packages for as any casts (strict zero)',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        SCAN_TARGETS.map(async (target) => {
+          const files = await getSourceFiles(target);
+          return { target: target.label, files };
+        }),
       );
-    }
 
-    // Strict zero: no as any casts allowed in production code
-    expect(allViolations).toHaveLength(0);
-    console.log('as any guard: 0 violations (strict-zero enforced)');
-  });
+      // Verify all scan targets discovered files
+      for (const target of filesPerTarget) {
+        expect(
+          target.files.length,
+          `No source files discovered for ${target.target}`,
+        ).toBeGreaterThan(0);
+      }
+
+      // Collect all violations
+      const allViolations: AsAnyViolation[] = [];
+      for (const { files } of filesPerTarget) {
+        for (const file of files) {
+          const violations = scanFileForAsAny(file);
+          allViolations.push(...violations);
+        }
+      }
+
+      if (allViolations.length > 0) {
+        expect.fail(
+          `Found ${allViolations.length} "as any" cast(s) in production code.\n\n` +
+            `Use proper type narrowing, \`as unknown\`, or discriminated unions instead of \`as any\`.\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
+      }
+
+      // Strict zero: no as any casts allowed in production code
+      expect(allViolations).toHaveLength(0);
+      console.log('as any guard: 0 violations (strict-zero enforced)');
+    },
+  );
 
   it('would fail if a new as any cast were added', () => {
     // Simulate: existing clean code + one new as any cast

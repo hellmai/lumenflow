@@ -330,71 +330,77 @@ describe('WU-2111: throw new Error() AST error-pattern guard', () => {
 });
 
 describe('WU-2111: throw new Error() ratcheting regression guard', () => {
-  it('scans all 7 runtime packages for throw new Error() occurrences', async () => {
-    const filesPerTarget = await Promise.all(
-      SCAN_TARGETS.map(async (target) => {
-        const files = await getSourceFiles(target);
-        return { target: target.label, files };
-      }),
-    );
-
-    // Verify all scan targets discovered files
-    for (const target of filesPerTarget) {
-      expect(
-        target.files.length,
-        `No source files discovered for ${target.target}`,
-      ).toBeGreaterThan(0);
-    }
-
-    // Collect all violations
-    const allViolations: ThrowNewErrorViolation[] = [];
-    for (const { files } of filesPerTarget) {
-      for (const file of files) {
-        const violations = scanFileForThrowNewError(file);
-        allViolations.push(...violations);
-      }
-    }
-
-    const currentCount = allViolations.length;
-    const savedBaseline = loadBaseline();
-
-    // WU-2131: Compare before any write. Regression failure path must not
-    // mutate baseline state.
-    if (savedBaseline !== null && currentCount > savedBaseline) {
-      expect.fail(
-        `throw new Error() ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
-          `(+${currentCount - savedBaseline}).\n\n` +
-          `New throw new Error() detected. Use \`createError(ErrorCodes.*)\` from error-handler.ts instead.\n` +
-          `To intentionally update the baseline after a deliberate migration:\n` +
-          `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/error-pattern-guard.test.ts\n\n` +
-          `Violations:\n${formatViolationReport(allViolations)}`,
+  it(
+    'scans all 7 runtime packages for throw new Error() occurrences',
+    { timeout: 30_000 },
+    async () => {
+      const filesPerTarget = await Promise.all(
+        SCAN_TARGETS.map(async (target) => {
+          const files = await getSourceFiles(target);
+          return { target: target.label, files };
+        }),
       );
-    }
 
-    if (savedBaseline !== null) {
-      // Log ratchet status for visibility
-      const delta = savedBaseline - currentCount;
-      const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
-      console.log(
-        `throw new Error() ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
-      );
-    } else {
-      // First run: baseline established
-      console.log(`throw new Error() ratchet: baseline established at ${currentCount} occurrences`);
-    }
-
-    // WU-2131: Baseline writes are controlled, never unconditional.
-    const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
-    if (shouldPersistBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
-      persistBaseline(currentCount);
-      if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
-        console.log(`throw new Error() ratchet: baseline explicitly updated to ${currentCount}`);
+      // Verify all scan targets discovered files
+      for (const target of filesPerTarget) {
+        expect(
+          target.files.length,
+          `No source files discovered for ${target.target}`,
+        ).toBeGreaterThan(0);
       }
-    }
 
-    // The test itself passes as long as count does not increase
-    expect(currentCount).toBeGreaterThanOrEqual(0);
-  });
+      // Collect all violations
+      const allViolations: ThrowNewErrorViolation[] = [];
+      for (const { files } of filesPerTarget) {
+        for (const file of files) {
+          const violations = scanFileForThrowNewError(file);
+          allViolations.push(...violations);
+        }
+      }
+
+      const currentCount = allViolations.length;
+      const savedBaseline = loadBaseline();
+
+      // WU-2131: Compare before any write. Regression failure path must not
+      // mutate baseline state.
+      if (savedBaseline !== null && currentCount > savedBaseline) {
+        expect.fail(
+          `throw new Error() ratchet FAILED: count increased from ${savedBaseline} to ${currentCount} ` +
+            `(+${currentCount - savedBaseline}).\n\n` +
+            `New throw new Error() detected. Use \`createError(ErrorCodes.*)\` from error-handler.ts instead.\n` +
+            `To intentionally update the baseline after a deliberate migration:\n` +
+            `  UPDATE_BASELINE=true pnpm --filter @lumenflow/core exec vitest run src/__tests__/error-pattern-guard.test.ts\n\n` +
+            `Violations:\n${formatViolationReport(allViolations)}`,
+        );
+      }
+
+      if (savedBaseline !== null) {
+        // Log ratchet status for visibility
+        const delta = savedBaseline - currentCount;
+        const status = delta > 0 ? `IMPROVED: reduced by ${delta}` : 'STABLE: no change';
+        console.log(
+          `throw new Error() ratchet: ${currentCount} (baseline: ${savedBaseline}) -- ${status}`,
+        );
+      } else {
+        // First run: baseline established
+        console.log(
+          `throw new Error() ratchet: baseline established at ${currentCount} occurrences`,
+        );
+      }
+
+      // WU-2131: Baseline writes are controlled, never unconditional.
+      const isExplicitUpdate = process.env.UPDATE_BASELINE === 'true';
+      if (shouldPersistBaseline(savedBaseline, currentCount, isExplicitUpdate)) {
+        persistBaseline(currentCount);
+        if (isExplicitUpdate && savedBaseline !== null && currentCount === savedBaseline) {
+          console.log(`throw new Error() ratchet: baseline explicitly updated to ${currentCount}`);
+        }
+      }
+
+      // The test itself passes as long as count does not increase
+      expect(currentCount).toBeGreaterThanOrEqual(0);
+    },
+  );
 
   it('would fail if a new throw new Error() were added', () => {
     // Simulate: existing code + one new throw new Error()

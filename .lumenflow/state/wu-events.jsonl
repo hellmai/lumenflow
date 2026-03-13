@@ -3472,3 +3472,5 @@
 {"type":"checkpoint","wuId":"WU-2446","timestamp":"2026-03-13T09:44:32.657Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2446.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2446","timestamp":"2026-03-13T09:46:21.961Z"}
 {"type":"claim","wuId":"WU-2450","timestamp":"2026-03-13T09:52:02.346Z","lane":"Operations: Automation","title":"Fix remaining test timeouts for ubuntu-latest CI"}
+{"type":"checkpoint","wuId":"WU-2450","timestamp":"2026-03-13T09:52:13.643Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2450","timestamp":"2026-03-13T09:52:20.442Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
