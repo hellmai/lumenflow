@@ -694,9 +694,7 @@ export function resolveGuidanceRefs(
     }
 
     const fileContent = readFileSync(refPath, 'utf-8').trim();
-    const combined = rule.guidance
-      ? `${rule.guidance}\n${fileContent}`
-      : fileContent;
+    const combined = rule.guidance ? `${rule.guidance}\n${fileContent}` : fileContent;
 
     return { ...rule, guidance: combined };
   });
