@@ -30,7 +30,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2442 — Fix CI workflows for open source: replace self-hosted with ubuntu-latest](wu/WU-2442.yaml) — Operations: Automation
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1388,6 +1388,7 @@ sections:
 - [WU-2439 — Validate MCP example payloads against live tool schemas](wu/WU-2439.yaml)
 - [WU-2440 — Validate CLI example flags against live command schemas](wu/WU-2440.yaml)
 - [WU-2441 — Validate config examples against live schemas](wu/WU-2441.yaml)
+- [WU-2442 — Fix CI workflows for open source: replace self-hosted with ubuntu-latest](wu/WU-2442.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

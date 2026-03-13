@@ -2,7 +2,7 @@ id: WU-2442
 title: 'Fix CI workflows for open source: replace self-hosted with ubuntu-latest'
 lane: 'Operations: Automation'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-13
 code_paths:
@@ -43,3 +43,6 @@ acceptance:
   - 'All workflows use runs-on: ubuntu-latest'
   - pnpm/action-setup and actions/setup-node configured in all workflows
   - Self-hosted pnpm store hack removed
+locked: true
+completed_at: 2026-03-13T08:47:00.587Z
+completed: 2026-03-13
