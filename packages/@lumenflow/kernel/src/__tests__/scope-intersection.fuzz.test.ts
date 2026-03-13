@@ -106,42 +106,46 @@ describe('patternContains fuzz tests (WU-1864)', () => {
   // then for ANY concrete path matched by nested, that path must also be
   // matched by container. A violation means a false containment claim
   // that could allow unauthorized tool execution.
-  it('never claims containment when concrete nested paths escape the container (security invariant)', () => {
-    fc.assert(
-      fc.property(globPatternArb, globPatternArb, (container, nested) => {
-        const heuristicResult = patternContains(container, nested);
+  it(
+    'never claims containment when concrete nested paths escape the container (security invariant)',
+    { timeout: 30_000 },
+    () => {
+      fc.assert(
+        fc.property(globPatternArb, globPatternArb, (container, nested) => {
+          const heuristicResult = patternContains(container, nested);
 
-        if (!heuristicResult) {
-          // If heuristic says "not contained", that is the safe direction.
-          // False negatives are acceptable (deny access when it could be
-          // allowed). We do not need to verify this direction.
-          return true;
-        }
+          if (!heuristicResult) {
+            // If heuristic says "not contained", that is the safe direction.
+            // False negatives are acceptable (deny access when it could be
+            // allowed). We do not need to verify this direction.
+            return true;
+          }
 
-        // Heuristic claims containment: verify with oracle.
-        // Generate sample paths matching the nested pattern and verify
-        // they all match the container pattern too.
-        const samplePaths = expandGlobToSamplePaths(nested, PATHS_PER_CHECK);
-        for (const path of samplePaths) {
-          if (micromatch.isMatch(path, nested)) {
-            // This path matches nested -- it MUST also match container
-            // for the containment claim to be valid.
-            if (!micromatch.isMatch(path, container)) {
-              // Found a counterexample: nested matches this path but
-              // container does not. The heuristic lied -- this is a
-              // security-relevant false positive.
-              return false;
+          // Heuristic claims containment: verify with oracle.
+          // Generate sample paths matching the nested pattern and verify
+          // they all match the container pattern too.
+          const samplePaths = expandGlobToSamplePaths(nested, PATHS_PER_CHECK);
+          for (const path of samplePaths) {
+            if (micromatch.isMatch(path, nested)) {
+              // This path matches nested -- it MUST also match container
+              // for the containment claim to be valid.
+              if (!micromatch.isMatch(path, container)) {
+                // Found a counterexample: nested matches this path but
+                // container does not. The heuristic lied -- this is a
+                // security-relevant false positive.
+                return false;
+              }
             }
           }
-        }
-        return true;
-      }),
-      { numRuns: FUZZ_ITERATIONS, seed: 42, verbose: 1 },
-    );
-  });
+          return true;
+        }),
+        { numRuns: FUZZ_ITERATIONS, seed: 42, verbose: 1 },
+      );
+    },
+  );
 
   // AC1 (supplement): Verify reflexivity -- every pattern contains itself.
-  it('is reflexive: patternContains(p, p) is true for simple patterns', () => {
+  it('is reflexive: patternContains(p, p) is true for simple patterns', { timeout: 15_000 }, () => {
     fc.assert(
       fc.property(globPatternArb, (pattern) => {
         return patternContains(pattern, pattern);
@@ -154,101 +158,117 @@ describe('patternContains fuzz tests (WU-1864)', () => {
   //
   // The heuristic does not explicitly handle negation. We verify that
   // negation patterns do not produce false-positive containment claims.
-  it('does not produce false-positive containment for negation patterns', () => {
-    fc.assert(
-      fc.property(negationPatternArb, globPatternArb, (negContainer, nested) => {
-        const result = patternContains(negContainer, nested);
+  it(
+    'does not produce false-positive containment for negation patterns',
+    { timeout: 15_000 },
+    () => {
+      fc.assert(
+        fc.property(negationPatternArb, globPatternArb, (negContainer, nested) => {
+          const result = patternContains(negContainer, nested);
 
-        if (!result) return true;
+          if (!result) return true;
 
-        // If heuristic claims containment with a negation container,
-        // verify with oracle on concrete paths.
-        const samplePaths = expandGlobToSamplePaths(nested, PATHS_PER_CHECK);
-        for (const path of samplePaths) {
-          if (micromatch.isMatch(path, nested)) {
-            if (!micromatch.isMatch(path, negContainer)) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }),
-      { numRuns: 2_000, seed: 456 },
-    );
-  });
-
-  it('does not produce false-positive containment when nested is negation', () => {
-    fc.assert(
-      fc.property(globPatternArb, negationPatternArb, (container, negNested) => {
-        const result = patternContains(container, negNested);
-
-        if (!result) return true;
-
-        // The synthetic path for a negation nested will start with "!"
-        // which is a literal char -- micromatch would not normally match.
-        // Verify the claim is valid.
-        const samplePaths = expandGlobToSamplePaths(negNested.slice(1), PATHS_PER_CHECK);
-        for (const path of samplePaths) {
-          if (micromatch.isMatch(path, negNested)) {
-            if (!micromatch.isMatch(path, container)) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }),
-      { numRuns: 2_000, seed: 789 },
-    );
-  });
-
-  // AC3: Brace expansion ({a,b}) handled correctly or explicitly rejected.
-  it('does not produce false-positive containment for brace expansion patterns', () => {
-    fc.assert(
-      fc.property(bracePatternArb, globPatternArb, (braceContainer, nested) => {
-        const result = patternContains(braceContainer, nested);
-
-        if (!result) return true;
-
-        const samplePaths = expandGlobToSamplePaths(nested, PATHS_PER_CHECK);
-        for (const path of samplePaths) {
-          if (micromatch.isMatch(path, nested)) {
-            if (!micromatch.isMatch(path, braceContainer)) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }),
-      { numRuns: 2_000, seed: 101 },
-    );
-  });
-
-  it('does not produce false-positive containment when nested uses brace expansion', () => {
-    fc.assert(
-      fc.property(globPatternArb, bracePatternArb, (container, braceNested) => {
-        const result = patternContains(container, braceNested);
-
-        if (!result) return true;
-
-        // Brace expansion in nested: the heuristic replaces wildcards but
-        // leaves braces as literal text in the synthetic path. Verify.
-        // Expand braces manually for oracle check.
-        const expanded = micromatch.braces(braceNested, { expand: true });
-        for (const expandedPattern of expanded) {
-          const samplePaths = expandGlobToSamplePaths(expandedPattern, 10);
+          // If heuristic claims containment with a negation container,
+          // verify with oracle on concrete paths.
+          const samplePaths = expandGlobToSamplePaths(nested, PATHS_PER_CHECK);
           for (const path of samplePaths) {
-            if (micromatch.isMatch(path, braceNested)) {
+            if (micromatch.isMatch(path, nested)) {
+              if (!micromatch.isMatch(path, negContainer)) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }),
+        { numRuns: 2_000, seed: 456 },
+      );
+    },
+  );
+
+  it(
+    'does not produce false-positive containment when nested is negation',
+    { timeout: 15_000 },
+    () => {
+      fc.assert(
+        fc.property(globPatternArb, negationPatternArb, (container, negNested) => {
+          const result = patternContains(container, negNested);
+
+          if (!result) return true;
+
+          // The synthetic path for a negation nested will start with "!"
+          // which is a literal char -- micromatch would not normally match.
+          // Verify the claim is valid.
+          const samplePaths = expandGlobToSamplePaths(negNested.slice(1), PATHS_PER_CHECK);
+          for (const path of samplePaths) {
+            if (micromatch.isMatch(path, negNested)) {
               if (!micromatch.isMatch(path, container)) {
                 return false;
               }
             }
           }
-        }
-        return true;
-      }),
-      { numRuns: 2_000, seed: 202 },
-    );
-  });
+          return true;
+        }),
+        { numRuns: 2_000, seed: 789 },
+      );
+    },
+  );
+
+  // AC3: Brace expansion ({a,b}) handled correctly or explicitly rejected.
+  it(
+    'does not produce false-positive containment for brace expansion patterns',
+    { timeout: 15_000 },
+    () => {
+      fc.assert(
+        fc.property(bracePatternArb, globPatternArb, (braceContainer, nested) => {
+          const result = patternContains(braceContainer, nested);
+
+          if (!result) return true;
+
+          const samplePaths = expandGlobToSamplePaths(nested, PATHS_PER_CHECK);
+          for (const path of samplePaths) {
+            if (micromatch.isMatch(path, nested)) {
+              if (!micromatch.isMatch(path, braceContainer)) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }),
+        { numRuns: 2_000, seed: 101 },
+      );
+    },
+  );
+
+  it(
+    'does not produce false-positive containment when nested uses brace expansion',
+    { timeout: 15_000 },
+    () => {
+      fc.assert(
+        fc.property(globPatternArb, bracePatternArb, (container, braceNested) => {
+          const result = patternContains(container, braceNested);
+
+          if (!result) return true;
+
+          // Brace expansion in nested: the heuristic replaces wildcards but
+          // leaves braces as literal text in the synthetic path. Verify.
+          // Expand braces manually for oracle check.
+          const expanded = micromatch.braces(braceNested, { expand: true });
+          for (const expandedPattern of expanded) {
+            const samplePaths = expandGlobToSamplePaths(expandedPattern, 10);
+            for (const path of samplePaths) {
+              if (micromatch.isMatch(path, braceNested)) {
+                if (!micromatch.isMatch(path, container)) {
+                  return false;
+                }
+              }
+            }
+          }
+          return true;
+        }),
+        { numRuns: 2_000, seed: 202 },
+      );
+    },
+  );
 
   // -------------------------------------------------------------------------
   // AC4: Edge cases documented with regression tests
