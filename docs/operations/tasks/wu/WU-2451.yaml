@@ -1,0 +1,37 @@
+id: WU-2451
+title: Inject co-change guidance_ref content into wu:brief prompts
+lane: 'Framework: CLI WU Commands'
+type: bug
+status: ready
+priority: P2
+created: 2026-03-13
+code_paths:
+  - packages/@lumenflow/cli/src/wu-spawn-prompt-builders.ts
+  - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
+  - packages/@lumenflow/cli/src/gates-runners.ts
+tests:
+  manual:
+    - Configure a co-change rule with guidance_ref, generate a wu:brief for a matching WU, and verify the referenced guidance appears in the prompt before gates run
+  unit:
+    - packages/@lumenflow/cli/src/__tests__/wu-spawn-prompt-builders.test.ts
+    - packages/@lumenflow/cli/src/__tests__/gates-co-change.test.ts
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2451.done
+dependencies: []
+risks: []
+notes: Follow-up from review of WU-2446. The goal is prompt-time guidance parity with gate-time guidance, not a new conditional-gates feature.
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: backend-only
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: WU-2446 added guidance_ref support for co-change rules so projects can attach detailed test-quality guidance files. Problem: the current implementation only resolves guidance_ref during co-change gate execution, so agents do not see the project-specific guidance in wu:brief/spawn prompts before writing tests. This leaves the original downstream UX only partially solved and conflicts with the WU-2446 description. Solution: load configured co-change rules during prompt assembly, resolve any guidance_ref content safely, and surface matching project-specific guidance in wu:brief/spawn prompts for relevant WUs before gates run.'
+acceptance:
+  - wu:brief / spawn prompt assembly resolves guidance_ref content for matching co-change rules and includes it in the prompt before implementation begins
+  - Prompt injection is scoped to relevant WUs based on changed/code paths and does not add unrelated guidance to non-matching prompts
+  - Missing guidance_ref files emit a non-fatal warning or are skipped cleanly during prompt assembly, matching gate-time resilience
+  - Regression tests cover matching-rule injection, non-matching WUs, and missing-file behavior
