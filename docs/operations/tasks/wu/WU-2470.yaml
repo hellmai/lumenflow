@@ -1,7 +1,7 @@
 id: WU-2470
 title: Sync docs to v3.18.1 published stable
 lane: 'Content: Documentation'
-type: documentation
+type: bug
 status: in_progress
 priority: P2
 created: 2026-03-14
