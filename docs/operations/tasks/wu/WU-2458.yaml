@@ -6,7 +6,6 @@ status: in_progress
 priority: P2
 created: 2026-03-13
 code_paths:
-  - packages/@lumenflow/cli/src/wu-done.ts
   - packages/@lumenflow/cli/src/wu-done-ownership.ts
   - packages/@lumenflow/cli/src/__tests__/wu-done-ownership.test.ts
   - packages/@lumenflow/cli/src/__tests__/wu-done-claim-validation.test.ts
@@ -23,7 +22,8 @@ artifacts:
 dependencies: []
 risks: []
 notes: 'Created from observed wu:done completion failure where claimed session metadata existed but
-  the runtime reported Active session: none.'
+  the runtime reported Active session: none. Implementation stayed inside the ownership helper and
+  tests because the wu:done call site already passed the required session inputs.'
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only

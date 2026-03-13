@@ -42,6 +42,19 @@ describe('WU-2341: wu:prep checkpoint authorizes session handoff', () => {
     expect(result.error).toContain('claimed by a different session');
   });
 
+  it('accepts missing active session context without a prep checkpoint', () => {
+    const result = validateClaimSessionOwnership({
+      wuId: 'WU-2458',
+      claimedSessionId: 'session-worktree',
+      activeSessionId: null,
+      force: false,
+      hasValidPrepCheckpoint: false,
+    });
+    expect(result.valid).toBe(true);
+    expect(result.auditRequired).toBe(false);
+    expect(result.error).toBeNull();
+  });
+
   it('prep checkpoint does not override when sessions already match', () => {
     const result = validateClaimSessionOwnership({
       wuId: 'WU-2341',

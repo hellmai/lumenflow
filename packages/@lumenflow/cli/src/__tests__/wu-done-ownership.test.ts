@@ -28,6 +28,18 @@ describe('WU-2275: claimant session ownership enforcement', () => {
     expect(result.error).toContain('claimed by a different session');
   });
 
+  it('passes when the claim exists but no active session is attached', () => {
+    const result = validateClaimSessionOwnership({
+      wuId: 'WU-2458',
+      claimedSessionId: 'session-owner',
+      activeSessionId: null,
+      force: false,
+    });
+    expect(result.valid).toBe(true);
+    expect(result.auditRequired).toBe(false);
+    expect(result.error).toBeNull();
+  });
+
   it('allows mismatch with --force and marks audit required', () => {
     const result = validateClaimSessionOwnership({
       wuId: 'WU-2275',

@@ -35,6 +35,13 @@ export function validateClaimSessionOwnership({
     return { valid: true, auditRequired: false, error: null };
   }
 
+  // WU-2458: Missing session context is not the same as a competing session.
+  // Legitimate resumed completions should not require force flags solely because
+  // the current shell has no active session attached.
+  if (!activeSessionId) {
+    return { valid: true, auditRequired: false, error: null };
+  }
+
   // WU-2341: wu:prep checkpoint proves authorized handoff between sessions.
   // This is the normal wu:prep (worktree session) -> wu:done (main session) flow.
   if (hasValidPrepCheckpoint) {
