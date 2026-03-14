@@ -1,0 +1,55 @@
+id: WU-2476
+title: Sync internal and Starlight docs to v3.19.0
+lane: 'Content: Documentation'
+type: documentation
+status: ready
+priority: P2
+created: 2026-03-14
+code_paths:
+  - apps/docs/src/content/docs/releases/
+  - apps/docs/src/content/docs/releases/index.mdx
+  - apps/docs/src/content/docs/reference/changelog.mdx
+  - apps/docs/src/content/docs/packs/software-delivery/concepts/gates.mdx
+  - apps/docs/src/content/docs/reference/workspace-spec.mdx
+  - apps/docs/src/content/docs/reference/cli.mdx
+  - apps/docs/src/content/docs/reference/agent-safety.mdx
+  - apps/docs/src/content/docs/packs/software-delivery/setup/troubleshooting.mdx
+  - apps/docs/src/content/docs/packs/software-delivery/workflows/wu-prep-workflow.mdx
+  - docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
+  - docs/operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
+  - docs/operations/_frameworks/lumenflow/agent-safety-architecture.md
+tests:
+  manual: []
+  unit: []
+  e2e: []
+artifacts:
+  - .lumenflow/stamps/WU-2476.done
+dependencies: []
+risks: []
+notes: 'Single WU per cohesion rule: one coherent outcome (docs reflect v3.19.0), should land together, all files support same change. Touches apps/docs/ so strict docs-only exception does not apply, but ~15 files is within Simple threshold. All changes are content updates to MDX/markdown, no structural code.'
+requires_review: false
+assigned_to: tom@hellm.ai
+exposure: documentation
+sizing_estimate:
+  estimated_files: 15
+  estimated_tool_calls: 40
+  strategy: single-session
+escalation_triggers: []
+requires_human_escalation: false
+requires_cso_approval: false
+requires_cto_approval: false
+requires_design_approval: false
+description: 'Context: v3.19.0 released 2026-03-14 but docs still reflect v3.18.1. Audit found gaps across Starlight site and internal onboarding docs. Problem: Missing release notes, changelog entry, and documentation for conditional gates (WU-2448), ownership guards (WU-2468), skip-gates pre-existing failure guidance (WU-2357), and evidence-only state recovery (WU-2460). Solution: Create v3.19.0 release notes, update changelog, sync all affected Starlight and internal docs to reflect shipped features.'
+acceptance:
+  - v3.19.0 release notes MDX exists in apps/docs/src/content/docs/releases/
+  - changelog.mdx has v3.19.0 section with Latest badge
+  - Releases index page shows v3.19.0 as Latest Stable Release
+  - gates.mdx documents conditional_commands with trigger_patterns
+  - workspace-spec.mdx documents conditional_commands schema
+  - cli.mdx explains ownership guard flags (--override-owner) with error context
+  - agent-safety.mdx references cross-session mutation blocking
+  - troubleshooting.mdx has evidence-only state recovery section
+  - wu-prep-workflow.mdx cross-references pre-existing failure guidance
+  - quick-ref-commands.md includes ownership flags and conditional gates
+  - starting-prompt.md has ownership guard gotcha
+  - agent-safety-architecture.md updated with WU-2448 and WU-2468 features
