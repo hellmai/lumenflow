@@ -527,7 +527,7 @@ Default profiles:
 
 - Behavior/logic changes: follow project policy (`methodology.testing`: `tdd`, `test-after`, or `none`).
 - Structured-content-only changes (`.yaml/.yml/.json/.md/.mdx`): use parse/schema/lint/eval evidence; TDD checkpoint is omitted.
-- UI presentation hints: prefer smoke/manual/integration/E2E verification and use unit tests for pure logic or explicitly required checks.
+- UI presentation hints: prefer smoke/manual/integration/E2E verification, never assert inline styles, CSS values, exact copy, or DOM shape, and use unit tests only for pure logic or explicitly required checks.
 
 Common override points include `visual-directive`, `structured-content-directive`,
 `verification-requirements`, and `design-context-ui`.
