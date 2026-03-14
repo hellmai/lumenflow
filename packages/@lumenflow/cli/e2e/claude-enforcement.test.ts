@@ -355,14 +355,14 @@ describe('WU-1466: Lifecycle Subprocess E2E', () => {
       );
 
       // Isolate task state from repo WUs so this test is deterministic.
-      fs.rmSync(path.join(sandbox, 'docs/tasks'), { recursive: true, force: true });
-      fs.mkdirSync(path.join(sandbox, 'docs/tasks/wu'), { recursive: true });
-      fs.mkdirSync(path.join(sandbox, 'docs/tasks/initiatives'), { recursive: true });
+      fs.rmSync(path.join(sandbox, 'docs/operations/tasks'), { recursive: true, force: true });
+      fs.mkdirSync(path.join(sandbox, 'docs/operations/tasks/wu'), { recursive: true });
+      fs.mkdirSync(path.join(sandbox, 'docs/operations/tasks/initiatives'), { recursive: true });
       fs.mkdirSync(path.join(sandbox, '.lumenflow/state'), { recursive: true });
       fs.mkdirSync(path.join(sandbox, '.lumenflow/stamps'), { recursive: true });
 
       fs.writeFileSync(
-        path.join(sandbox, 'docs/tasks/backlog.md'),
+        path.join(sandbox, 'docs/operations/tasks/backlog.md'),
         `---
 sections:
   ready:
@@ -385,7 +385,7 @@ sections:
 `,
       );
       fs.writeFileSync(
-        path.join(sandbox, 'docs/tasks/status.md'),
+        path.join(sandbox, 'docs/operations/tasks/status.md'),
         `# Status
 
 ## In Progress
@@ -402,9 +402,13 @@ sections:
       assertCommandSuccess(
         'commit isolated task fixture',
         'git',
-        ['add', 'docs/tasks', '.lumenflow/state/wu-events.jsonl'],
+        ['add', 'docs/operations/tasks', '.lumenflow/state/wu-events.jsonl'],
         sandbox,
-        runCommand('git', ['add', 'docs/tasks', '.lumenflow/state/wu-events.jsonl'], sandbox),
+        runCommand(
+          'git',
+          ['add', 'docs/operations/tasks', '.lumenflow/state/wu-events.jsonl'],
+          sandbox,
+        ),
       );
       assertCommandSuccess(
         'commit isolated task fixture',
@@ -436,7 +440,7 @@ sections:
         '--acceptance',
         'Commands run end-to-end',
         '--code-paths',
-        `docs/tasks/wu/${wuId}.yaml`,
+        `docs/operations/tasks/wu/${wuId}.yaml`,
         '--test-paths-manual',
         'Run lifecycle e2e',
         '--spec-refs',
@@ -448,7 +452,7 @@ sections:
       const create = runCommand('node', createArgs, sandbox);
       assertCommandSuccess('wu:create', 'node', createArgs, sandbox, create);
 
-      const createdWuPath = path.join(sandbox, `docs/tasks/wu/${wuId}.yaml`);
+      const createdWuPath = path.join(sandbox, `docs/operations/tasks/wu/${wuId}.yaml`);
       const createdWU = parseYAML(fs.readFileSync(createdWuPath, 'utf-8')) as Record<
         string,
         unknown
@@ -472,7 +476,10 @@ sections:
         path.join(sandbox, 'worktrees', `content-documentation-${wuId.toLowerCase()}`);
       expect(fs.existsSync(extractedWorktree)).toBe(true);
 
-      const worktreeWuPath = path.join(extractedWorktree, `docs/tasks/wu/${wuId}.yaml`);
+      const worktreeWuPath = path.join(
+        extractedWorktree,
+        `docs/operations/tasks/wu/${wuId}.yaml`,
+      );
       const claimedWU = parseYAML(fs.readFileSync(worktreeWuPath, 'utf-8')) as Record<
         string,
         unknown

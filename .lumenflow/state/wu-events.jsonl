@@ -3576,3 +3576,5 @@
 {"type":"checkpoint","wuId":"WU-2449","timestamp":"2026-03-14T10:43:23.516Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2449","timestamp":"2026-03-14T10:45:09.344Z"}
 {"type":"claim","wuId":"WU-2474","timestamp":"2026-03-14T10:45:52.633Z","lane":"Framework: CLI Enforcement","title":"Fix claude-enforcement e2e fixture paths to use docs/operations/tasks"}
+{"type":"checkpoint","wuId":"WU-2474","timestamp":"2026-03-14T10:46:03.784Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2474","timestamp":"2026-03-14T10:46:15.710Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
