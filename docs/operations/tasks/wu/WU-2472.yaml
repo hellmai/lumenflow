@@ -17,23 +17,22 @@ artifacts:
   - .lumenflow/stamps/WU-2472.done
 dependencies: []
 risks: []
-notes: ''
+notes: 'tdd-exception: test-fix-only WU, updating stale assertions to match synced templates'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-13T23:58:50.439Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2472
+session_id: 2f610c4f-ee21-482a-91ed-d498a125d52f
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-13T23:58:50.445Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
 description: WU-2471 synced templates but init-quick-ref tests have stale assertions
 acceptance:
   - init-quick-ref tests pass
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2472
-claimed_at: 2026-03-13T23:58:50.439Z
-baseline_main_sha: 038998bc920529b051d1f1aaf64891f620bc3e39
-session_id: 2f610c4f-ee21-482a-91ed-d498a125d52f
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-13T23:58:50.445Z
