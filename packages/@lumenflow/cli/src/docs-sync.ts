@@ -27,7 +27,7 @@ import { isMainBranch, isInWorktree } from '@lumenflow/core/core/worktree-guard'
 import { withMicroWorktree, isInGitWorktree } from '@lumenflow/core/micro-worktree';
 import { SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS } from './onboarding-template-paths.js';
 import { resolveCliTemplatesDir } from './template-directory-resolver.js';
-import { updateMergeBlock, MARKERS } from './merge-block.js';
+import { updateMergeBlock, extractMergeBlock, MARKERS } from './merge-block.js';
 
 export type VendorType = 'claude' | 'cursor' | 'windsurf' | 'cline' | 'aider' | 'all' | 'none';
 
@@ -69,6 +69,7 @@ export interface SyncOptions {
   force: boolean;
   vendor?: VendorType;
   vendors?: VendorType[];
+  refreshManagedOnboarding?: boolean;
 }
 
 export interface SyncResult {
@@ -294,6 +295,17 @@ function mergeBootstrapContent(
 
   if (fs.existsSync(filePath)) {
     const existingContent = fs.readFileSync(filePath, 'utf-8');
+    const migratedLegacyContent = migrateLegacyBootstrapScaffold(existingContent, processedContent);
+    if (migratedLegacyContent !== null) {
+      if (migratedLegacyContent === existingContent) {
+        result.skipped.push(relativePath);
+      } else {
+        fs.writeFileSync(filePath, migratedLegacyContent);
+        result.created.push(relativePath);
+      }
+      return;
+    }
+
     const mergeResult = updateMergeBlock(existingContent, processedContent);
 
     if (mergeResult.updated) {
@@ -317,6 +329,112 @@ function mergeBootstrapContent(
   }
   fs.writeFileSync(filePath, wrappedContent);
   result.created.push(relativePath);
+}
+
+const DATE_PATTERN = /\d{4}-\d{2}-\d{2}/g;
+const DATE_PLACEHOLDER = 'XXXX-XX-XX';
+
+function normalizeScaffoldContent(content: string): string {
+  return content.replace(/\r\n/g, '\n').replace(DATE_PATTERN, DATE_PLACEHOLDER).trim();
+}
+
+function getMeaningfulLines(content: string): string[] {
+  return normalizeScaffoldContent(content)
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function hasMatchingTitle(existingContent: string, templateContent: string): boolean {
+  const existingTitle = getMeaningfulLines(existingContent)[0] ?? '';
+  const templateTitle = getMeaningfulLines(templateContent)[0] ?? '';
+  return existingTitle.length > 0 && existingTitle === templateTitle;
+}
+
+function isScaffoldLikeContent(existingContent: string, templateContent: string): boolean {
+  const normalizedExisting = normalizeScaffoldContent(existingContent);
+  const normalizedTemplate = normalizeScaffoldContent(templateContent);
+
+  if (normalizedExisting === normalizedTemplate) {
+    return true;
+  }
+
+  if (!hasMatchingTitle(existingContent, templateContent)) {
+    return false;
+  }
+
+  const existingLines = new Set(getMeaningfulLines(existingContent));
+  const templateLines = getMeaningfulLines(templateContent);
+  if (templateLines.length === 0) {
+    return false;
+  }
+
+  const overlapCount = templateLines.filter((line) => existingLines.has(line)).length;
+  return overlapCount / templateLines.length >= 0.6;
+}
+
+function renderBootstrapContentWithPreservedAdditions(
+  beforeLines: string[],
+  processedContent: string,
+  afterLines: string[],
+  lineEnding: '\n' | '\r\n',
+): string {
+  const sections: string[] = [];
+
+  const before = beforeLines.join(lineEnding).trim();
+  if (before) {
+    sections.push(before);
+  }
+
+  sections.push([MARKERS.START, processedContent, MARKERS.END].join(lineEnding));
+
+  const after = afterLines.join(lineEnding).trim();
+  if (after) {
+    sections.push(after);
+  }
+
+  return sections.join(`${lineEnding}${lineEnding}`) + lineEnding;
+}
+
+function migrateLegacyBootstrapScaffold(
+  existingContent: string,
+  processedContent: string,
+): string | null {
+  const extraction = extractMergeBlock(existingContent);
+  if (extraction.found || extraction.malformed) {
+    return null;
+  }
+
+  if (!isScaffoldLikeContent(existingContent, processedContent)) {
+    return null;
+  }
+
+  const lineEnding = existingContent.includes('\r\n') ? '\r\n' : '\n';
+  const existingLines = existingContent.replace(/\r\n/g, '\n').split('\n');
+  const templateLines = processedContent.replace(/\r\n/g, '\n').split('\n');
+  const firstTemplateLine = templateLines.find((line) => line.trim().length > 0);
+  const lastTemplateLine = [...templateLines].reverse().find((line) => line.trim().length > 0);
+
+  if (!firstTemplateLine || !lastTemplateLine) {
+    return [MARKERS.START, processedContent, MARKERS.END, ''].join(lineEnding);
+  }
+
+  const firstIndex = existingLines.findIndex((line) => line.trim() === firstTemplateLine.trim());
+  const reverseIndex = [...existingLines]
+    .reverse()
+    .findIndex((line) => line.trim() === lastTemplateLine.trim());
+  const lastIndex = reverseIndex === -1 ? -1 : existingLines.length - reverseIndex - 1;
+
+  if (firstIndex === -1 || lastIndex === -1 || lastIndex < firstIndex) {
+    return [MARKERS.START, processedContent, MARKERS.END, ''].join(lineEnding);
+  }
+
+  return renderBootstrapContentWithPreservedAdditions(
+    existingLines.slice(0, firstIndex),
+    processedContent,
+    existingLines.slice(lastIndex + 1),
+    lineEnding,
+  );
 }
 
 function normalizeConfiguredVendor(clientName: string): VendorType | null {
@@ -415,14 +533,21 @@ export async function syncAgentDocs(targetDir: string, options: SyncOptions): Pr
   for (const [outputFile, templatePath] of Object.entries(SCAFFOLDED_ONBOARDING_TEMPLATE_PATHS)) {
     const templateContent = loadTemplate(templatePath);
     const processedContent = processTemplate(templateContent, tokens);
+    const outputPath = path.join(onboardingDir, outputFile);
 
-    await createFile(
-      path.join(onboardingDir, outputFile),
-      processedContent,
-      options.force,
-      result,
-      targetDir,
-    );
+    if (
+      fs.existsSync(outputPath) &&
+      !options.force &&
+      !(
+        options.refreshManagedOnboarding &&
+        isScaffoldLikeContent(fs.readFileSync(outputPath, 'utf-8'), processedContent)
+      )
+    ) {
+      result.skipped.push(getRelativePath(targetDir, outputPath));
+      continue;
+    }
+
+    await createFile(outputPath, processedContent, true, result, targetDir);
   }
 
   return result;
@@ -519,12 +644,13 @@ export async function syncCoreDocs(targetDir: string, _options: SyncOptions): Pr
     // back up to .local.md before overwriting (first upgrade only).
     if (outputFile === 'LUMENFLOW.md' && fs.existsSync(filePath)) {
       const existingContent = fs.readFileSync(filePath, 'utf-8');
-      const DATE_PATTERN = /\d{4}-\d{2}-\d{2}/g;
-      const DATE_PLACEHOLDER = 'XXXX-XX-XX';
       const normalizedExisting = existingContent.replace(DATE_PATTERN, DATE_PLACEHOLDER);
       const normalizedTemplate = processedContent.replace(DATE_PATTERN, DATE_PLACEHOLDER);
 
-      if (normalizedExisting !== normalizedTemplate) {
+      if (
+        normalizedExisting !== normalizedTemplate &&
+        !isScaffoldLikeContent(existingContent, processedContent)
+      ) {
         const localPath = path.join(targetDir, 'LUMENFLOW.local.md');
         if (!fs.existsSync(localPath)) {
           // First drift detection: save user's custom content to .local.md
@@ -605,7 +731,10 @@ export async function executeDocsSyncInDir(
       ? inferConfiguredVendors(targetDir)
       : resolveSelectedVendors(options.vendor, options.vendors);
   const coreResult = await syncCoreDocs(targetDir, { force: options.force });
-  const docsResult = await syncAgentDocs(targetDir, { force: options.force });
+  const docsResult = await syncAgentDocs(targetDir, {
+    force: options.force,
+    refreshManagedOnboarding: options.refreshManagedOnboarding,
+  });
   const vendorBootstrapResult = await syncVendorBootstraps(targetDir, {
     force: options.force,
     vendors: selectedVendors,

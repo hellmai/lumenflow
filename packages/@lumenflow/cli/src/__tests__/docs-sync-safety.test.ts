@@ -28,6 +28,9 @@ import {
   syncVendorBootstraps,
   syncSkills,
   RESERVED_SKILL_NAMES,
+  buildCoreDocTokens,
+  loadTemplate,
+  processTemplate,
 } from '../docs-sync.js';
 import { createFile, type ScaffoldResult } from '../init-scaffolding.js';
 
@@ -94,6 +97,22 @@ describe('WU-2383: safe docs lifecycle', () => {
   });
 
   describe('syncCoreDocs — bootstrap docs (AGENTS.md)', () => {
+    it('should convert legacy scaffolded AGENTS.md without duplicating the bootstrap body', async () => {
+      const agentsPath = path.join(tempDir, 'AGENTS.md');
+      const legacyScaffold = processTemplate(
+        loadTemplate('core/AGENTS.md.template'),
+        buildCoreDocTokens(tempDir),
+      );
+      fs.writeFileSync(agentsPath, legacyScaffold);
+
+      await syncCoreDocs(tempDir, { force: false });
+
+      const content = fs.readFileSync(agentsPath, 'utf-8');
+      expect(content).toContain(MARKERS.START);
+      expect(content).toContain(MARKERS.END);
+      expect(content.match(/# Universal Agent Instructions/g)).toHaveLength(1);
+    });
+
     it('should create AGENTS.md with markers when file does not exist', async () => {
       await syncCoreDocs(tempDir, { force: false });
 
@@ -240,6 +259,23 @@ More custom rules.
   });
 
   describe('migration guard for LUMENFLOW.md', () => {
+    it('should not create LUMENFLOW.local.md for scaffold-like legacy LUMENFLOW.md drift', async () => {
+      const lumenflowPath = path.join(tempDir, 'LUMENFLOW.md');
+      const scaffoldedGuide = processTemplate(
+        loadTemplate('core/LUMENFLOW.md.template'),
+        buildCoreDocTokens(tempDir),
+      ).replace(
+        'Do NOT run `wu:done` from a worktree, skip `wu:prep`, or forget to run `wu:done` after `wu:prep`.',
+        'Do NOT run `wu:done` from a worktree or skip `wu:prep`.',
+      );
+      fs.writeFileSync(lumenflowPath, scaffoldedGuide);
+
+      const result = await syncCoreDocs(tempDir, { force: false });
+
+      expect(fs.existsSync(path.join(tempDir, 'LUMENFLOW.local.md'))).toBe(false);
+      expect(result.warnings ?? []).toHaveLength(0);
+    });
+
     it('should back up user-modified LUMENFLOW.md to LUMENFLOW.local.md on first sync', async () => {
       // Create a hand-edited LUMENFLOW.md
       const lumenflowPath = path.join(tempDir, 'LUMENFLOW.md');
@@ -386,6 +422,22 @@ More custom rules.
   });
 
   describe('vendor bootstrap sync', () => {
+    it('should convert legacy scaffolded CLAUDE.md without duplicating bootstrap content', async () => {
+      const claudePath = path.join(tempDir, 'CLAUDE.md');
+      const legacyScaffold = processTemplate(
+        loadTemplate('vendors/claude/.claude/CLAUDE.md.template'),
+        buildCoreDocTokens(tempDir),
+      );
+      fs.writeFileSync(claudePath, legacyScaffold);
+
+      await syncVendorBootstraps(tempDir, { force: false, vendor: 'claude' });
+
+      const content = fs.readFileSync(claudePath, 'utf-8');
+      expect(content).toContain(MARKERS.START);
+      expect(content).toContain(MARKERS.END);
+      expect(content.match(/# Claude Code Configuration/g)).toHaveLength(1);
+    });
+
     it('should inject bootstrap content into an existing CLAUDE.md without destroying user content', async () => {
       const claudePath = path.join(tempDir, 'CLAUDE.md');
       fs.writeFileSync(claudePath, '# Team Claude Notes\n\nKeep this intro.\n');

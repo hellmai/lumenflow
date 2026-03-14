@@ -35,6 +35,7 @@ import {
   loadTemplate,
   parseDocsSyncOptions,
   runDocsSyncWithIsolation,
+  executeDocsSyncInDir,
 } from '../docs-sync.js';
 
 const mockWithMicroWorktree = withMicroWorktree as ReturnType<typeof vi.fn>;
@@ -257,6 +258,50 @@ describe('docs-sync', () => {
         process.cwd = originalCwd;
         rmSync(cwdTempDir, { recursive: true, force: true });
       }
+    });
+  });
+
+  describe('refreshManagedOnboarding', () => {
+    let tempDir: string;
+
+    beforeEach(() => {
+      tempDir = mkdtempSync(path.join(tmpdir(), 'lf-docs-sync-onboarding-'));
+      mkdirSync(path.join(tempDir, 'docs', '_frameworks', 'lumenflow', 'agent', 'onboarding'), {
+        recursive: true,
+      });
+      mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+    });
+
+    afterEach(() => {
+      rmSync(tempDir, { recursive: true, force: true });
+    });
+
+    it('should skip user-maintained onboarding docs even when refreshManagedOnboarding is enabled', async () => {
+      const quickRefPath = path.join(
+        tempDir,
+        'docs',
+        '_frameworks',
+        'lumenflow',
+        'agent',
+        'onboarding',
+        'quick-ref-commands.md',
+      );
+      writeFileSync(
+        quickRefPath,
+        '# Quick Reference: Commands\n\nMy team keeps a custom cheat sheet here.\n',
+      );
+
+      const result = await executeDocsSyncInDir(tempDir, {
+        force: false,
+        refreshManagedOnboarding: true,
+      });
+
+      expect(result.skipped).toContain(
+        'docs/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
+      );
+      expect(readFileSync(quickRefPath, 'utf-8')).toContain(
+        'My team keeps a custom cheat sheet here.',
+      );
     });
   });
 });

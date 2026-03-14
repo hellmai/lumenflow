@@ -16,7 +16,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { execSync, execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -603,6 +603,68 @@ describe('lumenflow-upgrade', () => {
       expect(executeResult!.files).not.toEqual(
         expect.arrayContaining(['.claude/skills/wu-lifecycle/SKILL.md']),
       );
+    });
+
+    it('should refresh scaffolded onboarding docs during upgrade', async () => {
+      interface ExecuteParams {
+        worktreePath: string;
+      }
+      interface ExecuteResult {
+        commitMessage: string;
+        files: string[];
+      }
+      let executeResult: ExecuteResult | undefined;
+      let refreshedQuickRef = '';
+
+      mockWithMicroWorktree.mockImplementation(
+        async (options: { execute: (params: ExecuteParams) => Promise<ExecuteResult> }) => {
+          const tempDir = mkdtempSync(path.join(tmpdir(), 'lf-upgrade-onboarding-'));
+          const onboardingDir = path.join(
+            tempDir,
+            'docs',
+            'operations',
+            '_frameworks',
+            'lumenflow',
+            'agent',
+            'onboarding',
+          );
+          mkdirSync(path.join(tempDir, '.lumenflow'), { recursive: true });
+          mkdirSync(onboardingDir, { recursive: true });
+          writeFileSync(
+            path.join(onboardingDir, 'quick-ref-commands.md'),
+            processTemplate(
+              loadTemplate('core/ai/onboarding/quick-ref-commands.md.template'),
+              buildCoreDocTokens(tempDir),
+            ).replace(
+              '`pnpm docs:sync` separately after upgrading',
+              '`pnpm docs:sync --force` separately after upgrading',
+            ),
+          );
+          writeFileSync(
+            path.join(tempDir, 'package.json'),
+            JSON.stringify({ name: 'test', scripts: {} }, null, 2),
+          );
+          try {
+            executeResult = await options.execute({ worktreePath: tempDir });
+            refreshedQuickRef = readFileSync(
+              path.join(onboardingDir, 'quick-ref-commands.md'),
+              'utf-8',
+            );
+          } finally {
+            rmSync(tempDir, { recursive: true, force: true });
+          }
+          return executeResult;
+        },
+      );
+
+      await executeUpgradeInMicroWorktree({ version: '2.1.0' });
+
+      expect(executeResult).toBeDefined();
+      expect(executeResult!.files).toEqual(
+        expect.arrayContaining([expect.stringContaining('/quick-ref-commands.md')]),
+      );
+      expect(refreshedQuickRef).not.toContain('docs:sync --force');
+      expect(refreshedQuickRef).toContain('lumenflow:upgrade');
     });
 
     it('should not print "run docs:sync" advice after upgrade', async () => {

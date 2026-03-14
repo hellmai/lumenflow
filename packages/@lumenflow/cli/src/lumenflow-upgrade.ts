@@ -623,6 +623,7 @@ export async function executeUpgradeInMicroWorktree(args: UpgradeArgs): Promise<
       console.log(`${LOG_PREFIX} Syncing core docs...`);
       const docsSyncResult = await executeDocsSyncInDir(worktreePath, {
         force: false,
+        refreshManagedOnboarding: true,
       });
       if (docsSyncResult.created.length > 0) {
         console.log(`${LOG_PREFIX} Synced ${docsSyncResult.created.length} doc file(s)`);
