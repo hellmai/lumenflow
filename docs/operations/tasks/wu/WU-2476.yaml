@@ -20,10 +20,14 @@ artifacts:
   - .lumenflow/stamps/WU-2476.done
 dependencies: []
 risks: []
-notes: 'Single WU per cohesion rule: one coherent outcome (docs reflect v3.19.0), should land
-  together, all files support same change. Touches apps/docs/ so strict docs-only exception does not
-  apply, but ~15 files is within Simple threshold. All changes are content updates to MDX/markdown,
-  no structural code.'
+notes: >-
+  Single WU per cohesion rule: one coherent outcome (docs reflect v3.19.0), should land together,
+  all files support same change. Touches apps/docs/ so strict docs-only exception does not apply,
+  but ~15 files is within Simple threshold. All changes are content updates to MDX/markdown, no
+  structural code.
+
+
+  spec_refs: docs/operations/_frameworks/lumenflow/agent/onboarding/release-process.md
 requires_review: false
 claimed_mode: worktree
 assigned_to: tom@hellm.ai
