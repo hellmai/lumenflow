@@ -2,7 +2,7 @@ id: WU-2476
 title: Sync internal and Starlight docs to v3.19.0
 lane: 'Content: Documentation'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -66,3 +66,6 @@ acceptance:
   - quick-ref-commands.md includes ownership flags and conditional gates
   - starting-prompt.md has ownership guard gotcha
   - agent-safety-architecture.md updated with WU-2448 and WU-2468 features
+locked: true
+completed_at: 2026-03-14T19:09:46.359Z
+completed: 2026-03-14
