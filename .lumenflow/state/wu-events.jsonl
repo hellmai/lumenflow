@@ -3566,3 +3566,4 @@
 {"type":"checkpoint","wuId":"WU-2472","timestamp":"2026-03-13T23:59:09.422Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2472","timestamp":"2026-03-14T00:00:37.065Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2472.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2472","timestamp":"2026-03-14T00:02:07.013Z"}
+{"type":"claim","wuId":"WU-2473","timestamp":"2026-03-14T10:22:56.796Z","lane":"Operations: Tooling","title":"Remove Discord notification jobs from CI workflow"}

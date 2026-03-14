@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2473 — Remove Discord notification jobs from CI workflow](wu/WU-2473.yaml)
 
 ## Completed
 
