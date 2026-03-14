@@ -8,11 +8,6 @@ created: 2026-03-10
 code_paths:
   - packages/@lumenflow/cli/src/docs-sync.ts
   - packages/@lumenflow/cli/src/lumenflow-upgrade.ts
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/quick-ref-commands.md.template
-  - packages/@lumenflow/cli/templates/core/ai/onboarding/starting-prompt.md.template
-  - packages/@lumenflow/cli/templates/vendors/claude/.claude/CLAUDE.md.template
-  - packages/@lumenflow/cli/templates/core/AGENTS.md.template
-  - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
 tests:
   manual:
     - Upgrade a scratch repo with legacy 3.16-style LUMENFLOW.md, AGENTS.md, and CLAUDE.md and
@@ -30,13 +25,26 @@ artifacts:
   - .lumenflow/stamps/WU-2387.done
 dependencies: []
 risks: []
-notes: Migration cleanup backlog item captured after a 3.16 -> 3.17 consumer upgrade surfaced legacy
+notes: >-
+  Migration cleanup backlog item captured after a 3.16 -> 3.17 consumer upgrade surfaced legacy
   scaffold conversion rough edges.
+
+
+  Migration cleanup delivered in docs-sync and upgrade orchestration logic with regression coverage;
+  template changes were not required once scaffold-like legacy docs were detected and converted at
+  runtime.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-14T11:14:12.830Z
+worktree_path: worktrees/framework-cli-wu-commands-wu-2387
+session_id: 46612338-4e9d-4aac-800c-60a537b695ed
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T11:14:12.837Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -69,11 +77,3 @@ acceptance:
   - The migration logic distinguishes older scaffolded content from genuinely user-maintained
     content for managed docs and bootstrap docs, with regression tests covering AGENTS.md,
     CLAUDE.md, LUMENFLOW.md, and onboarding-doc upgrade behavior
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-commands-wu-2387
-claimed_at: 2026-03-14T11:14:12.830Z
-baseline_main_sha: 2aba890b09b9c1deee0c2884253ec7804024ac57
-session_id: 46612338-4e9d-4aac-800c-60a537b695ed
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-14T11:14:12.837Z
