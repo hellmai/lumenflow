@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml)
 
 ## Completed
 
