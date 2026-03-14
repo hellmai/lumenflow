@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml)
 
 ## Completed
 

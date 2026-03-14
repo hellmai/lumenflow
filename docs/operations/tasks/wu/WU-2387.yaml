@@ -2,7 +2,7 @@ id: WU-2387
 title: Clean up legacy docs migration after 3.17 upgrade
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -15,8 +15,11 @@ code_paths:
   - packages/@lumenflow/cli/templates/core/LUMENFLOW.md.template
 tests:
   manual:
-    - Upgrade a scratch repo with legacy 3.16-style LUMENFLOW.md, AGENTS.md, and CLAUDE.md and verify conversion is clean, local additions are preserved, and LUMENFLOW.local.md is only created when needed
-    - Upgrade a scratch repo with existing scaffolded onboarding docs and verify quick-ref-commands.md no longer retains stale docs:sync --force guidance after upgrade
+    - Upgrade a scratch repo with legacy 3.16-style LUMENFLOW.md, AGENTS.md, and CLAUDE.md and
+      verify conversion is clean, local additions are preserved, and LUMENFLOW.local.md is only
+      created when needed
+    - Upgrade a scratch repo with existing scaffolded onboarding docs and verify
+      quick-ref-commands.md no longer retains stale docs:sync --force guidance after upgrade
   unit:
     - packages/@lumenflow/cli/src/__tests__/docs-sync-safety.test.ts
     - packages/@lumenflow/cli/src/__tests__/docs-sync.test.ts
@@ -27,9 +30,8 @@ artifacts:
   - .lumenflow/stamps/WU-2387.done
 dependencies: []
 risks: []
-notes:
-  'Migration cleanup backlog item captured after a 3.16 -> 3.17 consumer upgrade surfaced legacy
-  scaffold conversion rough edges.'
+notes: Migration cleanup backlog item captured after a 3.16 -> 3.17 consumer upgrade surfaced legacy
+  scaffold conversion rough edges.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -38,10 +40,40 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: A real consumer-repo upgrade from @lumenflow 3.16.1 to 3.17.0 showed that the safe-docs ownership model prevents data loss, but the migration experience is still rough in legacy repos. Problem: (1) legacy unmarked AGENTS.md and CLAUDE.md are preserved verbatim and then get a managed merge-block appended, leaving duplicate bootstrap content instead of a clean converted file; (2) LUMENFLOW.md drift detection backs up entire prior managed templates into LUMENFLOW.local.md even when the file is just an older scaffolded LumenFlow guide, creating noisy false-local overrides; (3) scaffolded onboarding docs like quick-ref-commands.md remain stale after upgrade because docs-sync still skips existing onboarding files, so consumer repos can keep obsolete docs:sync --force guidance even after package upgrade. Solution: refine upgrade/docs-sync migration behavior so older scaffolded managed/bootstrap docs are recognized and converted cleanly, only true user-local workflow additions become LUMENFLOW.local.md, and shipped onboarding docs that are LumenFlow-managed are refreshed on upgrade without clobbering genuine user-authored content.'
+description: 'Context: A real consumer-repo upgrade from @lumenflow 3.16.1 to 3.17.0 showed that the
+  safe-docs ownership model prevents data loss, but the migration experience is still rough in
+  legacy repos. Problem: (1) legacy unmarked AGENTS.md and CLAUDE.md are preserved verbatim and then
+  get a managed merge-block appended, leaving duplicate bootstrap content instead of a clean
+  converted file; (2) LUMENFLOW.md drift detection backs up entire prior managed templates into
+  LUMENFLOW.local.md even when the file is just an older scaffolded LumenFlow guide, creating noisy
+  false-local overrides; (3) scaffolded onboarding docs like quick-ref-commands.md remain stale
+  after upgrade because docs-sync still skips existing onboarding files, so consumer repos can keep
+  obsolete docs:sync --force guidance even after package upgrade. Solution: refine upgrade/docs-sync
+  migration behavior so older scaffolded managed/bootstrap docs are recognized and converted
+  cleanly, only true user-local workflow additions become LUMENFLOW.local.md, and shipped onboarding
+  docs that are LumenFlow-managed are refreshed on upgrade without clobbering genuine user-authored
+  content.'
 acceptance:
-  - Upgrading a repo with a legacy scaffolded AGENTS.md converts it to the current bootstrap format without duplicating the old full file above the managed block, while preserving genuine user-authored content outside the managed section
-  - Upgrading a repo with a legacy scaffolded CLAUDE.md converts it to the current bootstrap format without duplicate bootstrap content, while preserving genuine user-authored content outside the managed section
-  - Upgrading a repo whose pre-3.17 LUMENFLOW.md is just an older LumenFlow-managed template does not create a noisy full-copy LUMENFLOW.local.md backup; LUMENFLOW.local.md is created only when real local additions need preservation
-  - Scaffolded onboarding docs that are part of the shipped LumenFlow contract, including quick-ref-commands.md, are refreshed to current upgrade guidance during lumenflow:upgrade, so stale docs:sync --force instructions are not left behind in consumer repos
-  - The migration logic distinguishes older scaffolded content from genuinely user-maintained content for managed docs and bootstrap docs, with regression tests covering AGENTS.md, CLAUDE.md, LUMENFLOW.md, and onboarding-doc upgrade behavior
+  - Upgrading a repo with a legacy scaffolded AGENTS.md converts it to the current bootstrap format
+    without duplicating the old full file above the managed block, while preserving genuine
+    user-authored content outside the managed section
+  - Upgrading a repo with a legacy scaffolded CLAUDE.md converts it to the current bootstrap format
+    without duplicate bootstrap content, while preserving genuine user-authored content outside the
+    managed section
+  - Upgrading a repo whose pre-3.17 LUMENFLOW.md is just an older LumenFlow-managed template does
+    not create a noisy full-copy LUMENFLOW.local.md backup; LUMENFLOW.local.md is created only when
+    real local additions need preservation
+  - Scaffolded onboarding docs that are part of the shipped LumenFlow contract, including
+    quick-ref-commands.md, are refreshed to current upgrade guidance during lumenflow:upgrade, so
+    stale docs:sync --force instructions are not left behind in consumer repos
+  - The migration logic distinguishes older scaffolded content from genuinely user-maintained
+    content for managed docs and bootstrap docs, with regression tests covering AGENTS.md,
+    CLAUDE.md, LUMENFLOW.md, and onboarding-doc upgrade behavior
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2387
+claimed_at: 2026-03-14T11:14:12.830Z
+baseline_main_sha: 2aba890b09b9c1deee0c2884253ec7804024ac57
+session_id: 46612338-4e9d-4aac-800c-60a537b695ed
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T11:14:12.837Z
