@@ -63,6 +63,53 @@ migrations automatically.
 
 This approach works with any language and toolchain.
 
+### Conditional Commands
+
+<Aside type="tip" title="Added in v3.19.0">
+  Conditional commands let you define gates that run only when specific file patterns change,
+  avoiding expensive checks on every WU.
+</Aside>
+
+Define pattern-triggered commands alongside your standard gates:
+
+```yaml
+gates:
+  execution:
+    format: 'pnpm format:check'
+    lint: 'pnpm lint'
+    typecheck: 'pnpm typecheck'
+    test: 'pnpm test'
+
+  conditional_commands:
+    - trigger_patterns:
+        - 'supabase/migrations/**'
+        - 'supabase/schema.sql'
+      command: 'pnpm db:verify'
+      severity: error
+      guidance: 'Apply pending migrations locally before verifying database state.'
+      guidance_ref: 'docs/db-verification-guide.md'
+
+    - trigger_patterns:
+        - 'prisma/migrations/**'
+        - 'prisma/schema.prisma'
+      command: 'npm run prisma:validate'
+      severity: warn
+```
+
+| Field              | Type       | Required | Description                                              |
+| ------------------ | ---------- | -------- | -------------------------------------------------------- |
+| `trigger_patterns` | `string[]` | Yes      | Glob patterns matched against changed files              |
+| `command`          | `string`   | Yes      | Shell command to execute when patterns match              |
+| `severity`         | `string`   | No       | `error` (default, blocks gates), `warn`, or `off` (skip) |
+| `guidance`         | `string`   | No       | Actionable text shown when the command fails              |
+| `guidance_ref`     | `string`   | No       | File path whose content is appended to guidance           |
+
+**How it works:**
+
+1. When `pnpm gates` or `wu:prep` runs, changed files are compared against each command's `trigger_patterns` using glob matching
+2. Only commands with matching patterns execute — unmatched commands are silently skipped
+3. If a matching command fails with severity `error`, gates fail. With severity `warn`, a warning is logged but gates continue
+
 ## Using Presets
 
 For common languages, use a preset to get sensible defaults:

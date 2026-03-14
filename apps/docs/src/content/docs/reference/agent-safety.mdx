@@ -5,7 +5,7 @@ description: Protection layers, coverage matrix, and per-client enforcement for 
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-LumenFlow enforces agent safety through 8 layered protection mechanisms working in a defense-in-depth model. No single layer provides complete coverage -- understanding which layers apply to your agent client is essential for maintaining workflow integrity.
+LumenFlow enforces agent safety through 9 layered protection mechanisms working in a defense-in-depth model. No single layer provides complete coverage -- understanding which layers apply to your agent client is essential for maintaining workflow integrity.
 
 ## Protection Layers
 
@@ -76,6 +76,14 @@ Toggles in `workspace.yaml` for features like `block_outside_worktree`, `require
 - **Scope:** Varies by setting and client
 - **Enforcement:** Active for Claude Code, advisory for others
 
+### Layer 9: Ownership Guards (v3.19.0)
+
+State-mutating commands (`wu:block`, `wu:unblock`, `wu:release`, `wu:recover`) validate session ownership before allowing state changes. Prevents one agent from modifying another session's WU to free a lane.
+
+- **Scope:** All clients (CLI-level)
+- **Enforcement:** Active (blocks with `SESSION OWNERSHIP VIOLATION` or `CLAIM OWNERSHIP VIOLATION`)
+- **Override:** `--override-owner --reason "..."` — audited to `.lumenflow/ownership-override-audit.log`
+
 ## Coverage Matrix
 
 | Layer | Mechanism           | Claude Code | Cursor      | Codex     | Windsurf  | Manual    |
@@ -88,6 +96,7 @@ Toggles in `workspace.yaml` for features like `block_outside_worktree`, `require
 | 6     | Policy documents    | Advisory    | Advisory    | Advisory  | Advisory  | Advisory  |
 | 7     | Constraints capsule | Injected    | Advisory    | Advisory  | Advisory  | Advisory  |
 | 8     | Config enforcement  | Enforced    | Advisory    | Advisory  | Advisory  | N/A       |
+| 9     | Ownership guards    | Enforced    | Enforced    | Enforced  | Enforced  | Enforced  |
 
 **Legend:** **Enforced** = actively blocks non-compliant operations. **Recommended** = configured but opt-in. **Available** = can be used. **Advisory** = documented policy only. **Injected** = included in spawn prompts. **--** = not applicable.
 

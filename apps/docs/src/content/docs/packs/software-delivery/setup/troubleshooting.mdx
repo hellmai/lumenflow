@@ -207,6 +207,55 @@ pnpm wu:unlock-lane --lane "Framework: Core" --reason "Abandoned lock"
 
 3. Locks older than 2 hours with a dead PID will auto-clear on the next `wu:claim` attempt.
 
+### Evidence-only state drift during wu:done
+
+**Symptom:**
+
+```
+ERROR: Worktree has uncommitted changes. Cannot proceed with wu:done.
+```
+
+But `git status` shows only `.lumenflow/state/wu-events.jsonl` as modified (from a recent `wu:brief` run).
+
+**Cause:** Running `wu:brief` records evidence to `wu-events.jsonl`. If other WUs merged to main and triggered auto-rebase, the rebase could fail because this workflow-generated file was dirty.
+
+**Fix:** As of v3.19.0 (WU-2460), `wu:done` auto-rebase automatically preserves and restores `wu:brief` evidence when `wu-events.jsonl` is the only dirty file. If you're on an older version, commit the evidence file before retrying:
+
+```bash
+cd worktrees/<lane>-wu-xxx
+git add .lumenflow/state/wu-events.jsonl
+git commit -m "wu(wu-xxx): preserve wu:brief evidence"
+cd /path/to/repo
+pnpm wu:done --id WU-XXX
+```
+
+### Ownership violation on wu:block or wu:release
+
+**Symptom:**
+
+```
+❌ SESSION OWNERSHIP VIOLATION: Active session is attached to another WU.
+```
+
+or:
+
+```
+❌ CLAIM OWNERSHIP VIOLATION: WU-XXX was claimed by a different session.
+```
+
+**Cause:** As of v3.19.0 (WU-2468), state-mutating commands validate session ownership. You're trying to modify a WU that belongs to another agent session.
+
+**Fix:**
+
+1. **Don't modify another agent's WU to free a lane.** Wait for the owning WU to complete or block itself.
+2. If you have legitimate reason for cross-session recovery, use the override:
+
+```bash
+pnpm wu:block --id WU-XXX --override-owner --reason "Manual recovery per team decision"
+```
+
+All overrides are audited to `.lumenflow/ownership-override-audit.log`.
+
 ## Worktree Issues
 
 ### Worktree not found

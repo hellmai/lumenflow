@@ -1,0 +1,34 @@
+---
+title: v3.19.0
+description: Conditional gates, ownership guards, skip-gates pre-existing failure detection, and template sync improvements
+---
+
+import { Badge } from '@astrojs/starlight/components';
+
+<Badge text="Latest Stable" variant="success" />
+
+**Release date:** March 14, 2026
+
+## Highlights
+
+- **Conditional gate commands** (WU-2448): Define pattern-triggered gates that run only when matching files change. Prevents expensive checks from running on every WU while enforcing scoped verification for database schemas, migrations, and other targeted concerns.
+- **Ownership guards** (WU-2468): `wu:block`, `wu:unblock`, `wu:release`, and `wu:recover` now validate session ownership before allowing state mutations. Prevents agents from modifying another session's WU to free lanes.
+- **Pre-existing failure detection** (WU-2357): `wu:prep` detects test failures that exist on main and prints a ready-to-copy `wu:done --skip-gates` command, removing the guesswork from handling inherited failures.
+- **Evidence-only state drift tolerance** (WU-2460): `wu:done` auto-rebase now handles the case where `wu:brief` evidence in `wu-events.jsonl` is the only dirty file, eliminating a completion deadlock.
+- **Force-sync wu-sizing-guide** (WU-2475): The sizing guide is now a managed template that force-syncs on upgrade, ensuring all users receive the latest guidance.
+- **CI stabilization**: 27+ pre-existing test failures fixed across `@lumenflow/cli` and `@lumenflow/core` (WU-2462, WU-2463, WU-2464, WU-2465). CI job timeout increased to 20 minutes (WU-2462). Discord notification jobs removed from CI (WU-2473).
+
+## Upgrade
+
+```bash
+pnpm lumenflow:upgrade --latest
+```
+
+## Notes
+
+- User-facing "latest" claims must track `apps/docs/src/data/version-policy.yaml`
+- Verify docs parity after command/config changes with:
+
+```bash
+pnpm docs:validate
+```

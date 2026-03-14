@@ -154,3 +154,13 @@ Fix the issues in your worktree, then run `wu:prep` again. The workflow prevents
 ### Does this change skip-gates?
 
 If you need to use `--skip-gates`, run `wu:done` directly from main with the `--reason` flag. This is for emergency use only when pre-existing failures block completion.
+
+### What if gates fail on code I didn't change?
+
+As of v3.19.0 (WU-2357), `wu:prep` detects test failures that already exist on main. When all blockers are pre-existing, it prints a ready-to-copy command:
+
+```bash
+cd /path/to/main && pnpm wu:done --id WU-XXX --skip-gates --reason "pre-existing on main" --fix-wu WU-YYY
+```
+
+New failures introduced by your changes remain blocking and must be fixed first. See [Troubleshooting: Pre-existing gate failures](/packs/software-delivery/setup/troubleshooting#pre-existing-gate-failures) for the full verification workflow.

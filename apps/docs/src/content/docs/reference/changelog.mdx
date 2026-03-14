@@ -17,9 +17,31 @@ LumenFlow packages follow [Semantic Versioning](https://semver.org/):
 
 All `@lumenflow/*` packages are versioned together for simplicity. The `@lumenflow/metrics` package may have independent minor versions.
 
-## v3.18.1
+## v3.19.0
 
 <Badge text="Latest" variant="success" />
+
+**Release Date:** March 2026
+
+### Highlights
+
+- **Conditional gate commands** (WU-2448): New `conditional_commands` config in `workspace.yaml` allows pattern-triggered gates. Define commands that run only when matching file patterns change (e.g., run `db:verify` only when schema files change). Supports `error`, `warn`, and `off` severity levels with optional `guidance` and `guidance_ref` fields.
+- **Ownership guards** (WU-2468): `wu:block`, `wu:unblock`, `wu:release`, and `wu:recover` now validate session ownership before allowing state mutations. Use `--override-owner --reason "..."` for manual cross-session recovery. All overrides are audited to `.lumenflow/ownership-override-audit.log`.
+- **Pre-existing failure detection** (WU-2357): `wu:prep` now detects test failures that already exist on main and prints a ready-to-copy `wu:done --skip-gates --reason "pre-existing on main"` command when all blockers are pre-existing.
+- **Evidence-only state drift tolerance** (WU-2460): `wu:done` auto-rebase now preserves and restores `wu:brief` evidence when `wu-events.jsonl` is the only dirty file, eliminating a completion deadlock.
+- **Force-sync wu-sizing-guide** (WU-2475): Sizing guide is now a managed core doc template that force-syncs on upgrade.
+- **CI stabilization**: Fixed 27+ pre-existing test failures (WU-2462-2465), increased CI timeout to 20 minutes (WU-2462), removed Discord notification jobs (WU-2473).
+- **Legacy docs migration cleanup** (WU-2387): Improved detection and conversion of legacy scaffold docs during 3.16-3.17 upgrade.
+
+### Upgrade
+
+```bash
+pnpm lumenflow:upgrade --latest
+```
+
+---
+
+## v3.18.1
 
 **Release Date:** March 2026
 

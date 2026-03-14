@@ -1144,6 +1144,14 @@ pnpm wu:block --id <wuId>
 | `--no-auto`                   | Skip auto-updating YAML/backlog/status                                           | No       |
 | `--override-owner`            | Override ownership check (requires --reason)                                     | No       |
 
+<Aside type="note" title="Ownership guards (v3.19.0)">
+  `wu:block`, `wu:unblock`, `wu:release`, and `wu:recover` validate session ownership before
+  allowing state mutations. If the active session differs from the WU's claimed session, you'll
+  see a `SESSION OWNERSHIP VIOLATION` or `CLAIM OWNERSHIP VIOLATION` error. Use
+  `--override-owner --reason "..."` for manual cross-session recovery. All overrides are audited
+  to `.lumenflow/ownership-override-audit.log`.
+</Aside>
+
 ### wu:brief
 
 Generate handoff prompt for sub-agent WU execution

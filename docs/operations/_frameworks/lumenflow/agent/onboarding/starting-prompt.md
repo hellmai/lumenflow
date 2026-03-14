@@ -1,6 +1,6 @@
 # LumenFlow Agent Starting Prompt
 
-**Last updated:** 2026-03-10
+**Last updated:** 2026-03-14
 
 This is the complete onboarding document for AI agents working with LumenFlow. Read this entire document before starting any work.
 
@@ -203,6 +203,7 @@ These are the mistakes agents make most often. Memorize these before reading any
 5. **State files are auto-generated.** Never manually edit `wu-events.jsonl`, `backlog.md`, or `status.md` — lifecycle commands manage them.
 6. **wu:edit requires a clean worktree.** Commit `wu-events.jsonl` and other changes before running `wu:edit`.
 7. **Don't edit on main then stash to a worktree.** If a hook blocks you on main, that means you need a WU. Create one and work in the worktree from the start.
+8. **Don't modify another agent's WU to free a lane.** `wu:block`, `wu:unblock`, `wu:release`, and `wu:recover` enforce ownership guards (v3.19.0). If you hit a `SESSION OWNERSHIP VIOLATION`, wait for the owning WU to complete or block itself — never use `--override-owner` without explicit human instruction.
 
 ---
 

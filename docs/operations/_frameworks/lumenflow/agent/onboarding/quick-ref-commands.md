@@ -1,6 +1,6 @@
 # Quick Reference: LumenFlow Commands
 
-**Last updated:** 2026-02-27
+**Last updated:** 2026-03-14
 
 Reference for CLI commands. Organized by category for quick discovery.
 
@@ -143,9 +143,9 @@ you want to refresh docs without upgrading packages (e.g., after manually editin
 | `pnpm approval:request --type <type> --subject <json>`         | Request control-plane approval for an action                                                                   |
 | `pnpm approval:review --id <approvalId> --decision <decision>` | Resolve an approval decision (`approved`/`rejected`/`expired`)                                                 |
 | `pnpm approval:list [--status <status>]`                       | List approvals with optional status/type filters                                                               |
-| `pnpm wu:block --id WU-XXX --reason "..."`                     | Block WU with reason                                                                                           |
-| `pnpm wu:unblock --id WU-XXX`                                  | Unblock WU                                                                                                     |
-| `pnpm wu:release --id WU-XXX`                                  | Release orphaned WU (in_progress to ready)                                                                     |
+| `pnpm wu:block --id WU-XXX --reason "..."`                     | Block WU with reason (ownership-guarded, v3.19.0)                                                              |
+| `pnpm wu:unblock --id WU-XXX`                                  | Unblock WU (ownership-guarded, v3.19.0)                                                                        |
+| `pnpm wu:release --id WU-XXX --reason "..."`                   | Release orphaned WU (ownership-guarded, v3.19.0)                                                               |
 | `pnpm wu:status --id WU-XXX`                                   | Show WU status, location, valid commands                                                                       |
 | `pnpm wu:brief --id WU-XXX --client <client>`                  | **MANDATORY after wu:claim.** Generate handoff prompt + record evidence. wu:done blocks without this (WU-2379) |
 | `pnpm wu:brief --id WU-XXX --no-context`                       | Generate prompt without memory context injection                                                               |
@@ -159,7 +159,7 @@ you want to refresh docs without upgrading packages (e.g., after manually editin
 | `pnpm wu:validate --id WU-XXX`   | Validate WU spec                                 |
 | `pnpm wu:preflight --id WU-XXX`  | Pre-flight checks before wu:done                 |
 | `pnpm wu:verify --id WU-XXX`     | Verify WU completion (stamp, commit, clean tree) |
-| `pnpm wu:recover --id WU-XXX`    | Analyze and fix WU state inconsistencies         |
+| `pnpm wu:recover --id WU-XXX`    | Analyze and fix WU state (ownership-guarded, v3.19.0) |
 | `pnpm wu:repair --id WU-XXX`     | Repair WU state issues                           |
 | `pnpm wu:prune`                  | Clean stale worktrees                            |
 | `pnpm wu:cleanup --id WU-XXX`    | Cleanup after PR merge (PR-only)                 |
@@ -168,6 +168,11 @@ you want to refresh docs without upgrading packages (e.g., after manually editin
 | `pnpm wu:delete --id WU-XXX`     | Delete WU spec and cleanup                       |
 | `pnpm wu:unlock-lane --lane <L>` | Unlock stuck lane                                |
 | `pnpm wu:proto --lane <Lane>`    | Create WU prototype (lightweight draft)          |
+
+**Ownership guards (v3.19.0, WU-2468):** `wu:block`, `wu:unblock`, `wu:release`, and `wu:recover`
+validate session ownership before state mutations. If the WU belongs to another session, use
+`--override-owner --reason "..."` to override (audited). **AGENTS: NEVER use --override-owner
+without explicit human instruction.**
 
 ---
 
@@ -197,6 +202,11 @@ you want to refresh docs without upgrading packages (e.g., after manually editin
 
 ¹ **Script aliases:** `spec:linter` and `tasks:validate` are pnpm script aliases
 for `wu:validate --all`. They are not standalone CLI commands.
+
+**Conditional gates (v3.19.0, WU-2448):** Define pattern-triggered commands in
+`workspace.yaml > software_delivery.gates.conditional_commands`. Commands with `trigger_patterns`
+only run when matching files change. Supports `error` (blocks), `warn` (logs), and `off` (skip)
+severity levels. See workspace-spec.mdx for schema.
 
 **Formatting: always scope to changed files only.**
 Use `pnpm prettier --write <changed-files...>` — never unscoped `pnpm format`.

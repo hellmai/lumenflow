@@ -270,7 +270,7 @@ The `software_delivery` root key is a **pack config block** owned by the Softwar
 | **Lanes**      | `LaneSpec` (`id`, scopes, wip)       | Lane definitions (`name`, code_paths)       |
 | **Packs**      | `PackPin` (`id`, version, integrity) | Not present                                 |
 | **Security**   | Scope intersection boundaries        | Git hooks, safe-git wrapper                 |
-| **Gates**      | Pack policies (`on_completion`)      | Gate commands (format, lint, test)          |
+| **Gates**      | Pack policies (`on_completion`)      | Gate commands, conditional commands         |
 | **Validation** | Zod `WorkspaceSpecSchema` at init    | Pack config schema via `config:set`         |
 
 <Aside type="caution">
@@ -279,6 +279,42 @@ The `software_delivery` root key is a **pack config block** owned by the Softwar
   configuration. This two-phase approach allows workspaces to boot even when pack configuration is
   incomplete.
 </Aside>
+
+## Gates Configuration
+
+The `software_delivery.gates` block configures quality gate commands and conditional commands.
+
+### Conditional Commands (v3.19.0)
+
+Pattern-triggered commands that run only when matching files change:
+
+```yaml
+software_delivery:
+  gates:
+    execution:
+      format: 'pnpm format:check'
+      lint: 'pnpm lint'
+      test: 'pnpm test'
+
+    conditional_commands:
+      - trigger_patterns:
+          - 'supabase/migrations/**'
+          - 'supabase/schema.sql'
+        command: 'pnpm db:verify'
+        severity: error
+        guidance: 'Apply pending migrations before verifying.'
+        guidance_ref: 'docs/db-verification-guide.md'
+```
+
+| Field              | Type       | Required | Description                                               |
+| ------------------ | ---------- | -------- | --------------------------------------------------------- |
+| `trigger_patterns` | `string[]` | Yes      | Glob patterns matched against changed files (min 1)       |
+| `command`          | `string`   | Yes      | Shell command to execute                                  |
+| `severity`         | `string`   | No       | `error` (default), `warn`, or `off`                       |
+| `guidance`         | `string`   | No       | Actionable text shown on failure                          |
+| `guidance_ref`     | `string`   | No       | File path whose content is appended to guidance on failure |
+
+See [Gates](/packs/software-delivery/concepts/gates#conditional-commands) for usage details.
 
 ## Next Steps
 

@@ -1,14 +1,16 @@
 # Agent Safety Architecture
 
-**Last updated:** 2026-02-19
+**Last updated:** 2026-03-14
 
 This document describes the full protection landscape for AI agents working in LumenFlow projects. It covers all enforcement layers, their coverage per client, known gaps, and mitigation strategies.
+
+**v3.19.0 additions:** Ownership guards (Layer 9), conditional gate commands.
 
 ---
 
 ## Overview
 
-LumenFlow enforces agent safety through 8 layered protection mechanisms. No single layer provides complete coverage -- they work together in a defense-in-depth model. Understanding which layers apply to your agent client is essential for maintaining workflow integrity.
+LumenFlow enforces agent safety through 9 layered protection mechanisms. No single layer provides complete coverage -- they work together in a defense-in-depth model. Understanding which layers apply to your agent client is essential for maintaining workflow integrity.
 
 ---
 
@@ -163,6 +165,56 @@ experimental:
 
 ---
 
+### Layer 9: Ownership Guards (WU-2468)
+
+**File:** `packages/@lumenflow/cli/src/wu-state-mutation-ownership.ts`
+
+**Scope:** All clients (CLI-level enforcement)
+
+**What it does:** Validates session ownership before allowing state-mutating WU commands (`wu:block`, `wu:unblock`, `wu:release`, `wu:recover`). Checks three levels:
+
+1. **Active session check**: If the current session is attached to a different WU, blocks the operation
+2. **Claimed session check**: If the WU was claimed by a different session, blocks the operation
+3. **Assigned owner check**: If the WU is assigned to a different user, blocks the operation
+
+**Error messages:**
+- `SESSION OWNERSHIP VIOLATION` — active session belongs to another WU
+- `CLAIM OWNERSHIP VIOLATION` — WU was claimed by a different session
+- `OWNERSHIP VIOLATION` — WU is assigned to another user
+
+**Override:** `--override-owner --reason "..."` on any of the four guarded commands. Requires `--reason` (mandatory). All overrides are audited to `.lumenflow/ownership-override-audit.log` (JSONL format).
+
+**Enforcement:** Yes. Blocks by default; override is explicitly opt-in and logged. This is the first CLI-level enforcement layer that applies equally to all clients — no hook configuration required.
+
+**Why it exists:** Agents were using `wu:block` or `wu:release` on other agents' WUs to free lanes and claim them. This violates WIP limits as stop signals and creates state corruption.
+
+---
+
+### Conditional Gate Commands (WU-2448)
+
+**File:** `packages/@lumenflow/cli/src/gates-runners.ts`, `packages/@lumenflow/core/src/schemas/gates-section-config.ts`
+
+**Scope:** All clients (gates configuration)
+
+**What it does:** Allows `workspace.yaml` to define `conditional_commands` under `software_delivery.gates`. Each command specifies `trigger_patterns` (glob patterns) that are matched against changed files. Only commands whose patterns match execute; unmatched commands are silently skipped.
+
+**Configuration:**
+
+```yaml
+software_delivery:
+  gates:
+    conditional_commands:
+      - trigger_patterns: ['supabase/migrations/**']
+        command: 'pnpm db:verify'
+        severity: error  # error (blocks), warn (logs), off (skip)
+        guidance: 'Apply pending migrations before verifying.'
+        guidance_ref: 'docs/db-verification.md'
+```
+
+**Enforcement:** Active during `pnpm gates` and `wu:prep`. Error-severity failures block gates; warn-severity failures log but allow continuation.
+
+---
+
 ## Coverage Matrix
 
 | Layer | Mechanism                | Claude Code | Cursor      | Codex     | Windsurf  | Manual    |
@@ -175,6 +227,7 @@ experimental:
 | 6     | Policy documents         | Advisory    | Advisory    | Advisory  | Advisory  | Advisory  |
 | 7     | Constraints capsule      | Injected    | Advisory    | Advisory  | Advisory  | Advisory  |
 | 8     | Config enforcement       | Enforced    | Advisory    | Advisory  | Advisory  | N/A       |
+| 9     | Ownership guards         | Enforced    | Enforced    | Enforced  | Enforced  | Enforced  |
 
 **Legend:**
 
