@@ -18,12 +18,21 @@ artifacts:
   - .lumenflow/stamps/WU-2474.done
 dependencies: []
 risks: []
-notes: ''
+notes: Fix stale lifecycle e2e fixture paths from docs/tasks to docs/operations/tasks; targeted
+  Vitest invocation could not run because current Vitest include globs exclude
+  packages/@lumenflow/cli/e2e/*.test.ts.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-14T10:45:52.599Z
+worktree_path: worktrees/framework-cli-enforcement-wu-2474
+session_id: 4ac982c1-1f08-462c-80e6-62aa6d4b2a84
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T10:45:52.609Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -34,11 +43,3 @@ description: 'Context: packages/@lumenflow/cli/e2e/claude-enforcement.test.ts st
 acceptance:
   - claude-enforcement e2e fixture uses docs/operations/tasks paths consistently
   - The affected e2e flow no longer references legacy docs/tasks task paths
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-enforcement-wu-2474
-claimed_at: 2026-03-14T10:45:52.599Z
-baseline_main_sha: 8d8f9fb75cd0e1db6e570e75c7229bce50d0c366
-session_id: 4ac982c1-1f08-462c-80e6-62aa6d4b2a84
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-14T10:45:52.609Z
