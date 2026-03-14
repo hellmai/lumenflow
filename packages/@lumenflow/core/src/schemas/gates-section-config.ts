@@ -88,6 +88,20 @@ export const CoChangeSeveritySchema = z.enum(['warn', 'error', 'off']);
 export type CoChangeSeverity = z.infer<typeof CoChangeSeveritySchema>;
 
 /**
+ * WU-2448: Conditional command configuration.
+ * Runs an arbitrary command only when changed files match trigger_patterns.
+ */
+export const ConditionalCommandConfigSchema = z.object({
+  trigger_patterns: z.array(z.string().min(1)).min(1),
+  command: z.string().min(1),
+  severity: CoChangeSeveritySchema.default('error'),
+  guidance: z.string().optional(),
+  guidance_ref: z.string().optional(),
+});
+
+export type ConditionalCommandConfig = z.infer<typeof ConditionalCommandConfigSchema>;
+
+/**
  * WU-2158: Co-change rule configuration.
  * Detects required companion file changes when trigger files are modified.
  */
@@ -160,6 +174,12 @@ export const GatesConfigSchema = z.object({
    * at least one require_patterns file must also be changed.
    */
   co_change: z.array(CoChangeRuleConfigSchema).default([]),
+
+  /**
+   * WU-2448: Pattern-triggered commands that run only when matching files change.
+   * Useful for scoped verification such as db:verify for migration-affecting WUs.
+   */
+  conditional_commands: z.array(ConditionalCommandConfigSchema).default([]),
 
   /**
    * WU-2368: Include built-in database co-change defaults.

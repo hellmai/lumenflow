@@ -23,8 +23,11 @@ import {
   resolveTestRunner,
   getGatesSection,
 } from '@lumenflow/core/gates-config';
-import { CoChangeRuleConfigSchema } from '@lumenflow/core/config-schema';
-import type { CoChangeRuleConfig } from '@lumenflow/core/config-schema';
+import {
+  CoChangeRuleConfigSchema,
+  ConditionalCommandConfigSchema,
+} from '@lumenflow/core/config-schema';
+import type { CoChangeRuleConfig, ConditionalCommandConfig } from '@lumenflow/core/config-schema';
 import type { LaneHealthMode } from '@lumenflow/core/gates-config';
 import { validateBacklogSync } from '@lumenflow/core/validators/backlog-sync';
 import { validateClaimValidation } from '@lumenflow/core';
@@ -611,8 +614,14 @@ export async function runIntegrationTests({
 // ── Co-change gate ────────────────────────────────────────────────────
 
 const CoChangeRulesConfigSchema = CoChangeRuleConfigSchema.array();
+const ConditionalCommandsConfigSchema = ConditionalCommandConfigSchema.array();
 
 export interface CoChangeEvaluationResult {
+  errors: string[];
+  warnings: string[];
+}
+
+export interface ConditionalCommandsEvaluationResult {
   errors: string[];
   warnings: string[];
 }
@@ -656,6 +665,93 @@ export function getMatchingCoChangeRulesForPaths(options: {
 
 export function shouldRunMigrationVerifyForChanges(options: { changedFiles: string[] }): boolean {
   return hasPatternMatch(options.changedFiles, [...DEFAULT_MIGRATION_VERIFY_PATTERNS]);
+}
+
+function resolveConditionalCommandGuidanceRefs(
+  commands: ConditionalCommandConfig[],
+  projectRoot: string,
+  logWarning: (msg: string) => void,
+): ConditionalCommandConfig[] {
+  return commands.map((command) => {
+    if (!command.guidance_ref) {
+      return command;
+    }
+
+    const refPath = path.resolve(projectRoot, command.guidance_ref);
+    if (!existsSync(refPath)) {
+      logWarning(
+        `conditional command "${command.command}": guidance_ref "${command.guidance_ref}" not found; skipping file content`,
+      );
+      return command;
+    }
+
+    const fileContent = readFileSync(refPath, 'utf-8').trim();
+    const combined = command.guidance ? `${command.guidance}\n${fileContent}` : fileContent;
+
+    return { ...command, guidance: combined };
+  });
+}
+
+export function getResolvedConditionalCommands(
+  projectRoot: string,
+  logWarning: (msg: string) => void,
+): ConditionalCommandConfig[] {
+  const gatesSection = getGatesSection(projectRoot) as {
+    conditional_commands?: unknown;
+  } | null;
+  const parsedCommands = ConditionalCommandsConfigSchema.safeParse(
+    gatesSection?.conditional_commands ?? [],
+  );
+
+  if (!parsedCommands.success) {
+    logWarning('Invalid gates.conditional_commands config; skipping conditional commands.');
+    return [];
+  }
+
+  return resolveConditionalCommandGuidanceRefs(parsedCommands.data, projectRoot, logWarning);
+}
+
+export function getMatchingConditionalCommandsForPaths(options: {
+  filePaths: string[];
+  commands: ConditionalCommandConfig[];
+}): ConditionalCommandConfig[] {
+  return options.commands.filter(
+    (command) =>
+      command.severity !== CO_CHANGE_SEVERITY.OFF &&
+      hasPatternMatch(options.filePaths, command.trigger_patterns),
+  );
+}
+
+function appendConditionalCommandGuidance(
+  message: string,
+  command: ConditionalCommandConfig,
+): string {
+  if (!command.guidance) {
+    return message;
+  }
+
+  return `${message}\n  Guidance: ${command.guidance}`;
+}
+
+export function evaluateConditionalCommandFailure(
+  command: ConditionalCommandConfig,
+): ConditionalCommandsEvaluationResult {
+  const message = appendConditionalCommandGuidance(
+    `conditional command failed: ${command.command}`,
+    command,
+  );
+
+  if (command.severity === CO_CHANGE_SEVERITY.WARN) {
+    return {
+      errors: [],
+      warnings: [`warn-level ${message}`],
+    };
+  }
+
+  return {
+    errors: [message],
+    warnings: [],
+  };
 }
 
 export function evaluateCoChangeRules({
@@ -787,6 +883,34 @@ export async function runMigrationVerifyGate({ agentLog, useAgentMode, cwd }: Ga
   if (changedFiles.length === 0) {
     logLine('ℹ️  No changed files detected; skipping migration verification.');
     return { ok: true, duration: Date.now() - start };
+  }
+
+  const conditionalCommands = getResolvedConditionalCommands(effectiveCwd, (msg) =>
+    logLine(`⚠️  ${msg}`),
+  );
+  const matchingConditionalCommands = getMatchingConditionalCommandsForPaths({
+    filePaths: changedFiles,
+    commands: conditionalCommands,
+  });
+
+  for (const conditionalCommand of matchingConditionalCommands) {
+    const result = run(conditionalCommand.command, { agentLog, cwd: effectiveCwd });
+    if (result.ok) {
+      continue;
+    }
+
+    const evaluation = evaluateConditionalCommandFailure(conditionalCommand);
+
+    for (const warning of evaluation.warnings) {
+      logLine(`⚠️  ${warning}`);
+    }
+    for (const error of evaluation.errors) {
+      logLine(`❌ ${error}`);
+    }
+
+    if (evaluation.errors.length > 0) {
+      return { ok: false, duration: Date.now() - start };
+    }
   }
 
   if (!shouldRunMigrationVerifyForChanges({ changedFiles })) {
