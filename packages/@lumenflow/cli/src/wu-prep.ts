@@ -347,6 +347,15 @@ export type ExecOnMainFn = (cmd: string) => Promise<{
   stderr: string;
 }>;
 
+export type ExecFileOnCwdFn = (
+  command: string,
+  args: string[],
+) => Promise<{
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+}>;
+
 /**
  * WU-1344: Default implementation of execOnMain using spawnSync.
  * Uses spawnSync with pnpm executable for safety (no shell injection risk).
@@ -387,6 +396,22 @@ function defaultExecOnMain(mainCheckout: string): ExecOnMainFn {
 
     const result = spawnSync(executable, args, {
       cwd: mainCheckout,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    return {
+      exitCode: result.status ?? 1,
+      stdout: result.stdout ?? '',
+      stderr: result.stderr ?? '',
+    };
+  };
+}
+
+function defaultExecFileOnCwd(cwd: string): ExecFileOnCwdFn {
+  return async (command: string, args: string[]) => {
+    const result = spawnSync(command, args, {
+      cwd,
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });
@@ -443,6 +468,72 @@ export function classifySpecLinterFailures(options: {
     newFailures,
     preExistingFailures,
   };
+}
+
+export function buildScopedUnitTestArgs(scopedUnitTests: string[]): string[] {
+  return ['vitest', 'run', ...scopedUnitTests, '--passWithNoTests'];
+}
+
+export type PreExistingScopedUnitTestCheckResult = {
+  hasPreExisting: boolean;
+  hasNewFailures: boolean;
+  checkedPaths: string[];
+  error?: string;
+};
+
+export async function checkPreExistingScopedUnitTestFailures(options: {
+  mainCheckout: string;
+  scopedUnitTests: string[];
+  execOnMain?: ExecFileOnCwdFn;
+  execOnWorktree?: ExecFileOnCwdFn;
+}): Promise<PreExistingScopedUnitTestCheckResult> {
+  const {
+    mainCheckout,
+    scopedUnitTests,
+    execOnMain = defaultExecFileOnCwd(mainCheckout),
+    execOnWorktree = defaultExecFileOnCwd(process.cwd()),
+  } = options;
+
+  if (scopedUnitTests.length === 0) {
+    return {
+      hasPreExisting: false,
+      hasNewFailures: false,
+      checkedPaths: [],
+    };
+  }
+
+  const testArgs = buildScopedUnitTestArgs(scopedUnitTests);
+
+  try {
+    const worktreeResult = await execOnWorktree('pnpm', testArgs);
+    const mainResult = await execOnMain('pnpm', testArgs);
+
+    const worktreeFailed = worktreeResult.exitCode !== EXIT_CODES.SUCCESS;
+    const mainFailed = mainResult.exitCode !== EXIT_CODES.SUCCESS;
+
+    return {
+      hasPreExisting: worktreeFailed && mainFailed,
+      hasNewFailures: worktreeFailed && !mainFailed,
+      checkedPaths: scopedUnitTests,
+    };
+  } catch (error) {
+    return {
+      hasPreExisting: false,
+      hasNewFailures: false,
+      checkedPaths: scopedUnitTests,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+export function shouldOfferSkipGatesGuidance(
+  checks: Array<{ hasPreExisting: boolean; hasNewFailures: boolean }>,
+): boolean {
+  const relevantChecks = checks.filter((check) => check.hasPreExisting || check.hasNewFailures);
+  return (
+    relevantChecks.length > 0 &&
+    relevantChecks.every((check) => check.hasPreExisting && !check.hasNewFailures)
+  );
 }
 
 async function runSpecLinterJson(execOnCwd: ExecOnMainFn): Promise<{
@@ -807,6 +898,11 @@ export async function main(): Promise<void> {
     die(formatTddDiffEvidenceFailure({ wuId: id, result: tddEvidenceResult }));
   }
 
+  const scopedUnitTests = resolveScopedUnitTestsForPrep({
+    fullTests: args.fullTests,
+    tests: doc.tests as { unit?: unknown } | undefined,
+  });
+
   // WU-1344: Check for pre-existing spec:linter failures on main BEFORE running gates.
   // We do this first because runGates() calls die() on failure, which exits the process
   // before we can check. By checking first, we can set up an exit handler to show
@@ -816,15 +912,53 @@ export async function main(): Promise<void> {
     mainCheckout: location.mainCheckout,
   });
 
-  const hasPreExistingOnly = preExistingCheck.hasPreExisting && !preExistingCheck.hasNewFailures;
-
   if (preExistingCheck.error) {
     console.log(
       `${PREP_PREFIX} ${EMOJI.WARNING} Unable to compare spec:linter results: ${preExistingCheck.error}`,
     );
-  } else if (hasPreExistingOnly) {
+  } else if (preExistingCheck.hasPreExisting && !preExistingCheck.hasNewFailures) {
     console.log(`${PREP_PREFIX} ${EMOJI.WARNING} Pre-existing failures detected on main.`);
+  } else if (preExistingCheck.hasNewFailures) {
+    console.log(
+      `${PREP_PREFIX} ${EMOJI.WARNING} New spec:linter failures detected in worktree: ${preExistingCheck.newFailures.join(
+        ', ',
+      )}`,
+    );
+  } else {
+    console.log(`${PREP_PREFIX} No pre-existing failures on main.`);
+  }
 
+  let scopedUnitTestCheck: PreExistingScopedUnitTestCheckResult = {
+    hasPreExisting: false,
+    hasNewFailures: false,
+    checkedPaths: [],
+  };
+
+  if (!args.fullTests && scopedUnitTests.length > 0) {
+    console.log(`${PREP_PREFIX} Checking for pre-existing scoped test failures on main...`);
+    scopedUnitTestCheck = await checkPreExistingScopedUnitTestFailures({
+      mainCheckout: location.mainCheckout,
+      scopedUnitTests,
+    });
+  }
+
+  if (scopedUnitTestCheck.error) {
+    console.log(
+      `${PREP_PREFIX} ${EMOJI.WARNING} Unable to compare scoped test results: ${scopedUnitTestCheck.error}`,
+    );
+  } else if (scopedUnitTestCheck.hasPreExisting && !scopedUnitTestCheck.hasNewFailures) {
+    console.log(
+      `${PREP_PREFIX} ${EMOJI.WARNING} Declared scoped test failures are also present on main.`,
+    );
+  } else if (scopedUnitTestCheck.hasNewFailures) {
+    console.log(
+      `${PREP_PREFIX} ${EMOJI.WARNING} Scoped tests fail in this worktree but pass on main.`,
+    );
+  }
+
+  const hasPreExistingOnly = shouldOfferSkipGatesGuidance([preExistingCheck, scopedUnitTestCheck]);
+
+  if (hasPreExistingOnly) {
     // Set up an exit handler to print the skip-gates command when gates fail
     // This runs before process.exit() fully terminates the process
     process.on('exit', (code) => {
@@ -838,26 +972,15 @@ export async function main(): Promise<void> {
           `    ${formatSkipGatesCommand({ wuId: id, mainCheckout: location.mainCheckout })}`,
         );
         console.log('');
-        console.log(`${PREP_PREFIX} Replace WU-XXXX with the WU that will fix these spec issues.`);
+        console.log(
+          `${PREP_PREFIX} Replace WU-XXXX with the WU that will fix these pre-existing failures.`,
+        );
         console.log('');
       }
     });
-  } else if (preExistingCheck.hasNewFailures) {
-    console.log(
-      `${PREP_PREFIX} ${EMOJI.WARNING} New spec:linter failures detected in worktree: ${preExistingCheck.newFailures.join(
-        ', ',
-      )}`,
-    );
-  } else {
-    console.log(`${PREP_PREFIX} No pre-existing failures on main.`);
   }
 
   console.log('');
-
-  const scopedUnitTests = resolveScopedUnitTestsForPrep({
-    fullTests: args.fullTests,
-    tests: doc.tests as { unit?: unknown } | undefined,
-  });
   if (args.fullTests) {
     console.log(
       `${PREP_PREFIX} --full-tests enabled; using default incremental/full test gate flow.`,
