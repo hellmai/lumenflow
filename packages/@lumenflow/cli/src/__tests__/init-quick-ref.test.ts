@@ -67,21 +67,21 @@ describe('quick-ref commands', () => {
       const quickRefPath = getQuickRefPath();
       const content = fs.readFileSync(quickRefPath, 'utf-8');
 
-      // Should document the init command correctly
-      expect(content).toContain('lumenflow init');
-      // Should show the various init flags
-      expect(content).toContain('--full');
+      // WU-2472: Template now documents setup/bootstrap instead of lumenflow init
+      expect(content).toContain('pnpm setup');
+      // Should show the various init-related commands
+      expect(content).toContain('bootstrap');
     });
 
-    it('should document --docs-structure flag in quick-ref', async () => {
+    it('should document upgrade command in quick-ref', async () => {
       await scaffoldProject(tempDir, getArc42Options());
 
       const quickRefPath = getQuickRefPath();
       const content = fs.readFileSync(quickRefPath, 'utf-8');
 
-      // Should document the docs-structure option
-      expect(content).toContain('--docs-structure');
-      expect(content).toMatch(/simple|arc42/);
+      // WU-2472: Template now documents upgrade as primary setup path
+      expect(content).toContain('lumenflow:upgrade');
+      expect(content).toContain('--latest');
     });
   });
 
@@ -150,7 +150,8 @@ describe('quick-ref commands', () => {
       expect(agentsContent).toContain(
         'docs/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md',
       );
-      expect(agentsContent).not.toContain('operations');
+      // WU-2472: Check for path component, not bare word (template uses 'operations' in prose)
+      expect(agentsContent).not.toContain('docs/operations/');
     });
   });
 
@@ -164,7 +165,8 @@ describe('quick-ref commands', () => {
       // Should have a project setup section
 
       expect(content).toMatch(/##.*?Setup|##.*?Project/i);
-      expect(content).toContain('lumenflow init');
+      // WU-2472: Template now uses pnpm setup instead of lumenflow init
+      expect(content).toContain('pnpm setup');
     });
 
     it('should have WU management commands', async () => {
@@ -219,7 +221,8 @@ describe('quick-ref commands', () => {
       const content = fs.readFileSync(getQuickRefPath(), 'utf-8');
 
       expect(content).toContain('pnpm lumenflow:upgrade --latest');
-      expect(content).toContain('automatically syncs managed docs');
+      // WU-2472: Template wording changed; check docs:sync is documented
+      expect(content).toContain('docs:sync');
       expect(content).toContain('pnpm docs:sync');
     });
   });
