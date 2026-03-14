@@ -2,7 +2,7 @@ id: WU-2449
 title: Update onboarding docs to reflect WU-2445 UI test anti-patterns
 lane: 'Content: Documentation'
 type: documentation
-status: in_progress
+status: done
 priority: P3
 created: 2026-03-13
 code_paths:
@@ -42,3 +42,6 @@ session_id: 7e18390b-220e-486f-b726-b1387699766d
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-14T10:42:55.823Z
+locked: true
+completed_at: 2026-03-14T10:45:04.567Z
+completed: 2026-03-14

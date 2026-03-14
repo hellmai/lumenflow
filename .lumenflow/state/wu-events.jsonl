@@ -3574,3 +3574,4 @@
 {"type":"claim","wuId":"WU-2449","timestamp":"2026-03-14T10:42:55.853Z","lane":"Content: Documentation","title":"Update onboarding docs to reflect WU-2445 UI test anti-patterns"}
 {"type":"checkpoint","wuId":"WU-2449","timestamp":"2026-03-14T10:43:06.911Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2449","timestamp":"2026-03-14T10:43:23.516Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2449","timestamp":"2026-03-14T10:45:09.344Z"}
