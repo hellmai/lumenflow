@@ -1,7 +1,7 @@
 id: WU-2476
 title: Sync internal and Starlight docs to v3.19.0
 lane: 'Content: Documentation'
-type: documentation
+type: feature
 status: in_progress
 priority: P2
 created: 2026-03-14
@@ -19,7 +19,9 @@ code_paths:
   - docs/operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
   - docs/operations/_frameworks/lumenflow/agent-safety-architecture.md
 tests:
-  manual: []
+  manual:
+    - Verify Starlight docs build successfully with astro build
+    - Verify release notes render at /releases/v3190
   unit: []
   e2e: []
 artifacts:
@@ -31,7 +33,11 @@ notes: 'Single WU per cohesion rule: one coherent outcome (docs reflect v3.19.0)
   apply, but ~15 files is within Simple threshold. All changes are content updates to MDX/markdown,
   no structural code.'
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-14T18:20:12.166Z
+worktree_path: worktrees/content-documentation-wu-2476
+session_id: 3c7b24fe-d187-48e5-a721-0447ff4eef20
 exposure: documentation
 sizing_estimate:
   estimated_files: 15
@@ -39,6 +45,9 @@ sizing_estimate:
   strategy: single-session
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T18:20:12.173Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -61,11 +70,3 @@ acceptance:
   - quick-ref-commands.md includes ownership flags and conditional gates
   - starting-prompt.md has ownership guard gotcha
   - agent-safety-architecture.md updated with WU-2448 and WU-2468 features
-claimed_mode: worktree
-worktree_path: worktrees/content-documentation-wu-2476
-claimed_at: 2026-03-14T18:20:12.166Z
-baseline_main_sha: 871655c416f4f96eca810eda2ed2b739e66b8e4c
-session_id: 3c7b24fe-d187-48e5-a721-0447ff4eef20
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-14T18:20:12.173Z
