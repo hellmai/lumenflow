@@ -2,7 +2,7 @@ id: WU-2357
 title: Extend wu:prep skip-gates guidance to pre-existing test failures
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -48,3 +48,6 @@ session_id: cce0ab9e-9277-4fdd-88bd-857f5009dd40
 approved_by:
   - tom@hellm.ai
 approved_at: 2026-03-14T10:50:14.021Z
+locked: true
+completed_at: 2026-03-14T10:56:12.418Z
+completed: 2026-03-14

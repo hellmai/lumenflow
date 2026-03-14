@@ -3583,3 +3583,4 @@
 {"type":"claim","wuId":"WU-2357","timestamp":"2026-03-14T10:50:14.050Z","lane":"Framework: CLI WU Commands","title":"Extend wu:prep skip-gates guidance to pre-existing test failures"}
 {"type":"checkpoint","wuId":"WU-2357","timestamp":"2026-03-14T10:50:24.872Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2357","timestamp":"2026-03-14T10:51:45.641Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
+{"type":"complete","wuId":"WU-2357","timestamp":"2026-03-14T10:56:17.118Z"}

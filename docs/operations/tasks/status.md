@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-- [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1387,3 +1387,4 @@ _Last updated: 2026-03-14_
 - [WU-2473 — Remove Discord notification jobs from CI workflow](wu/WU-2473.yaml) — 2026-03-14
 - [WU-2449 — Update onboarding docs to reflect WU-2445 UI test anti-patterns](wu/WU-2449.yaml) — 2026-03-14
 - [WU-2474 — Fix claude-enforcement e2e fixture paths to use docs/operations/tasks](wu/WU-2474.yaml) — 2026-03-14
+- [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — 2026-03-14
