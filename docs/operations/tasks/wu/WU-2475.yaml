@@ -20,12 +20,20 @@ artifacts:
   - .lumenflow/stamps/WU-2475.done
 dependencies: []
 risks: []
-notes: ''
+notes: wu-sizing-guide.md was missing from CLI templates, causing cloud users to keep stale copies
+  after upgrade. Added as managed core doc template with force-sync behavior.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-14T13:46:39.766Z
+worktree_path: worktrees/framework-cli-wu-2475
+session_id: 09dc8cbb-3a68-451a-b5ae-c34f30875f35
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T13:46:39.772Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -36,11 +44,3 @@ acceptance:
   - docs-sync force-syncs sizing guide on upgrade using layout-dependent path
   - sync-templates picks up sizing guide from source and creates template
   - checkTemplateDrift covers sizing guide
-claimed_mode: worktree
-worktree_path: worktrees/framework-cli-wu-2475
-claimed_at: 2026-03-14T13:46:39.766Z
-baseline_main_sha: 673b0f2cefa54d070b11af7fd2bf18048ff5277b
-session_id: 09dc8cbb-3a68-451a-b5ae-c34f30875f35
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-14T13:46:39.772Z

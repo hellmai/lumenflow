@@ -3595,3 +3595,5 @@
 {"type":"checkpoint","wuId":"WU-2387","timestamp":"2026-03-14T11:22:32.013Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2387.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2387","timestamp":"2026-03-14T11:24:02.674Z"}
 {"type":"claim","wuId":"WU-2475","timestamp":"2026-03-14T13:46:39.795Z","lane":"Framework: CLI","title":"Force-sync wu-sizing-guide.md as managed template on upgrade"}
+{"type":"checkpoint","wuId":"WU-2475","timestamp":"2026-03-14T13:46:52.541Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
+{"type":"checkpoint","wuId":"WU-2475","timestamp":"2026-03-14T13:54:15.504Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2475.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
