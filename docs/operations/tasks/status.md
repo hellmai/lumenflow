@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-- [WU-2473 — Remove Discord notification jobs from CI workflow](wu/WU-2473.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1384,3 +1384,4 @@ _Last updated: 2026-03-14_
 - [WU-2470 — Sync docs to v3.18.1 published stable](wu/WU-2470.yaml) — 2026-03-13
 - [WU-2471 — Sync templates to fix CI template drift check](wu/WU-2471.yaml) — 2026-03-13
 - [WU-2472 — Fix init-quick-ref tests after template sync](wu/WU-2472.yaml) — 2026-03-14
+- [WU-2473 — Remove Discord notification jobs from CI workflow](wu/WU-2473.yaml) — 2026-03-14
