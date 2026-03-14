@@ -2,7 +2,7 @@ id: WU-2476
 title: Remove stale onboarding sizing guide copy on upgrade
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -26,7 +26,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: WU-2475 added force-sync for wu-sizing-guide.md at the correct path, but cloud users who had the old shadow copy in the onboarding directory will end up with duplicates. Need to delete the stale copy during docs:sync.
+description: WU-2475 added force-sync for wu-sizing-guide.md at the correct path, but cloud users
+  who had the old shadow copy in the onboarding directory will end up with duplicates. Need to
+  delete the stale copy during docs:sync.
 acceptance:
   - syncCoreDocs removes stale sizing guide from onboarding dir when it exists
   - Existing tests still pass
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-2476
+claimed_at: 2026-03-14T14:03:11.842Z
+baseline_main_sha: 3d06c17f73100af7a7c737dccd977dae1cf31a90
+session_id: 3c7b24fe-d187-48e5-a721-0447ff4eef20
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T14:03:11.848Z

@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2476 — Remove stale onboarding sizing guide copy on upgrade](wu/WU-2476.yaml)
 
 ## Completed
 
