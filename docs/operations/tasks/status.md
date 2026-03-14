@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2476 — Sync internal and Starlight docs to v3.19.0](wu/WU-2476.yaml)
 
 ## Completed
 
