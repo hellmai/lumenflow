@@ -178,6 +178,7 @@ experimental:
 3. **Assigned owner check**: If the WU is assigned to a different user, blocks the operation
 
 **Error messages:**
+
 - `SESSION OWNERSHIP VIOLATION` — active session belongs to another WU
 - `CLAIM OWNERSHIP VIOLATION` — WU was claimed by a different session
 - `OWNERSHIP VIOLATION` — WU is assigned to another user
@@ -206,7 +207,7 @@ software_delivery:
     conditional_commands:
       - trigger_patterns: ['supabase/migrations/**']
         command: 'pnpm db:verify'
-        severity: error  # error (blocks), warn (logs), off (skip)
+        severity: error # error (blocks), warn (logs), off (skip)
         guidance: 'Apply pending migrations before verifying.'
         guidance_ref: 'docs/db-verification.md'
 ```

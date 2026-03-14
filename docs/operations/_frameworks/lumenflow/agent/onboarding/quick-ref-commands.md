@@ -154,20 +154,20 @@ you want to refresh docs without upgrading packages (e.g., after manually editin
 
 ### WU Maintenance
 
-| Command                          | Description                                      |
-| -------------------------------- | ------------------------------------------------ |
-| `pnpm wu:validate --id WU-XXX`   | Validate WU spec                                 |
-| `pnpm wu:preflight --id WU-XXX`  | Pre-flight checks before wu:done                 |
-| `pnpm wu:verify --id WU-XXX`     | Verify WU completion (stamp, commit, clean tree) |
+| Command                          | Description                                           |
+| -------------------------------- | ----------------------------------------------------- |
+| `pnpm wu:validate --id WU-XXX`   | Validate WU spec                                      |
+| `pnpm wu:preflight --id WU-XXX`  | Pre-flight checks before wu:done                      |
+| `pnpm wu:verify --id WU-XXX`     | Verify WU completion (stamp, commit, clean tree)      |
 | `pnpm wu:recover --id WU-XXX`    | Analyze and fix WU state (ownership-guarded, v3.19.0) |
-| `pnpm wu:repair --id WU-XXX`     | Repair WU state issues                           |
-| `pnpm wu:prune`                  | Clean stale worktrees                            |
-| `pnpm wu:cleanup --id WU-XXX`    | Cleanup after PR merge (PR-only)                 |
-| `pnpm wu:deps --id WU-XXX`       | Show WU dependencies                             |
-| `pnpm wu:infer-lane --id WU-XXX` | Infer lane from code paths/description           |
-| `pnpm wu:delete --id WU-XXX`     | Delete WU spec and cleanup                       |
-| `pnpm wu:unlock-lane --lane <L>` | Unlock stuck lane                                |
-| `pnpm wu:proto --lane <Lane>`    | Create WU prototype (lightweight draft)          |
+| `pnpm wu:repair --id WU-XXX`     | Repair WU state issues                                |
+| `pnpm wu:prune`                  | Clean stale worktrees                                 |
+| `pnpm wu:cleanup --id WU-XXX`    | Cleanup after PR merge (PR-only)                      |
+| `pnpm wu:deps --id WU-XXX`       | Show WU dependencies                                  |
+| `pnpm wu:infer-lane --id WU-XXX` | Infer lane from code paths/description                |
+| `pnpm wu:delete --id WU-XXX`     | Delete WU spec and cleanup                            |
+| `pnpm wu:unlock-lane --lane <L>` | Unlock stuck lane                                     |
+| `pnpm wu:proto --lane <Lane>`    | Create WU prototype (lightweight draft)               |
 
 **Ownership guards (v3.19.0, WU-2468):** `wu:block`, `wu:unblock`, `wu:release`, and `wu:recover`
 validate session ownership before state mutations. If the WU belongs to another session, use

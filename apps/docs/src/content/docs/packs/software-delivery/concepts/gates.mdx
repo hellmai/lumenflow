@@ -99,10 +99,10 @@ gates:
 | Field              | Type       | Required | Description                                              |
 | ------------------ | ---------- | -------- | -------------------------------------------------------- |
 | `trigger_patterns` | `string[]` | Yes      | Glob patterns matched against changed files              |
-| `command`          | `string`   | Yes      | Shell command to execute when patterns match              |
+| `command`          | `string`   | Yes      | Shell command to execute when patterns match             |
 | `severity`         | `string`   | No       | `error` (default, blocks gates), `warn`, or `off` (skip) |
-| `guidance`         | `string`   | No       | Actionable text shown when the command fails              |
-| `guidance_ref`     | `string`   | No       | File path whose content is appended to guidance           |
+| `guidance`         | `string`   | No       | Actionable text shown when the command fails             |
+| `guidance_ref`     | `string`   | No       | File path whose content is appended to guidance          |
 
 **How it works:**
 

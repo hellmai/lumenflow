@@ -306,12 +306,12 @@ software_delivery:
         guidance_ref: 'docs/db-verification-guide.md'
 ```
 
-| Field              | Type       | Required | Description                                               |
-| ------------------ | ---------- | -------- | --------------------------------------------------------- |
-| `trigger_patterns` | `string[]` | Yes      | Glob patterns matched against changed files (min 1)       |
-| `command`          | `string`   | Yes      | Shell command to execute                                  |
-| `severity`         | `string`   | No       | `error` (default), `warn`, or `off`                       |
-| `guidance`         | `string`   | No       | Actionable text shown on failure                          |
+| Field              | Type       | Required | Description                                                |
+| ------------------ | ---------- | -------- | ---------------------------------------------------------- |
+| `trigger_patterns` | `string[]` | Yes      | Glob patterns matched against changed files (min 1)        |
+| `command`          | `string`   | Yes      | Shell command to execute                                   |
+| `severity`         | `string`   | No       | `error` (default), `warn`, or `off`                        |
+| `guidance`         | `string`   | No       | Actionable text shown on failure                           |
 | `guidance_ref`     | `string`   | No       | File path whose content is appended to guidance on failure |
 
 See [Gates](/packs/software-delivery/concepts/gates#conditional-commands) for usage details.
