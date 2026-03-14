@@ -1,8 +1,9 @@
 id: WU-2420
-title: Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter
+title: Fix recurring pre-existing test failures in filesystem-metrics.adapter and
+  control-plane-sync-adapter
 lane: 'Framework: Core Lifecycle'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-12
 code_paths:
@@ -19,9 +20,8 @@ artifacts:
   - .lumenflow/stamps/WU-2420.done
 dependencies: []
 risks: []
-notes:
-  'Tracks recurring main-branch test instability that blocks unrelated WUs at gates. No implementation
-  started yet.'
+notes: Tracks recurring main-branch test instability that blocks unrelated WUs at gates. No
+  implementation started yet.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -30,7 +30,17 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Pre-existing test failures on main in filesystem-metrics.adapter.test.ts and control-plane-sync-adapter.test.ts block wu:done for unrelated WUs. Previous fixes (WU-1555, WU-1742, WU-2291) did not fully resolve.
+description: Pre-existing test failures on main in filesystem-metrics.adapter.test.ts and
+  control-plane-sync-adapter.test.ts block wu:done for unrelated WUs. Previous fixes (WU-1555,
+  WU-1742, WU-2291) did not fully resolve.
 acceptance:
   - filesystem-metrics.adapter.test.ts passes consistently on main
   - control-plane-sync-adapter.test.ts passes consistently on main
+claimed_mode: worktree
+worktree_path: worktrees/framework-core-lifecycle-wu-2420
+claimed_at: 2026-03-14T10:57:04.963Z
+baseline_main_sha: 3747188287e6accfdb7f5ff2149f7a297e27ce27
+session_id: 39c66ed9-c564-4f61-9df7-f75953dcad35
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T10:57:04.968Z

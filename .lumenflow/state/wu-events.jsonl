@@ -3584,3 +3584,4 @@
 {"type":"checkpoint","wuId":"WU-2357","timestamp":"2026-03-14T10:50:24.872Z","note":"[wu:brief] generated via wu:claim:auto","progress":"wu:brief executed","nextSteps":"client=wu:claim:auto;mode=claim-auto"}
 {"type":"checkpoint","wuId":"WU-2357","timestamp":"2026-03-14T10:51:45.641Z","note":"[wu:brief] generated via codex-cli","progress":"wu:brief executed","nextSteps":"client=codex-cli;mode=prompt"}
 {"type":"complete","wuId":"WU-2357","timestamp":"2026-03-14T10:56:17.118Z"}
+{"type":"claim","wuId":"WU-2420","timestamp":"2026-03-14T10:57:04.997Z","lane":"Framework: Core Lifecycle","title":"Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter"}

@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml)
 
 ## Completed
 
