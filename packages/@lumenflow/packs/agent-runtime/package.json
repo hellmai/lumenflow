@@ -1,6 +1,6 @@
 {
   "name": "@lumenflow/packs-agent-runtime",
-  "version": "3.18.1",
+  "version": "3.19.0",
   "description": "Agent runtime pack scaffold for LumenFlow — governed model-turn execution, pack config, and provider capability baselines",
   "keywords": [
     "lumenflow",
