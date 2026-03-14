@@ -26,7 +26,7 @@ sections:
 
 ## 🔧 In progress
 
-- [WU-2475 — Force-sync wu-sizing-guide.md as managed template on upgrade](wu/WU-2475.yaml) — Framework: CLI
+(No items currently in progress)
 
 ## ⛔ Blocked
 
@@ -1416,6 +1416,7 @@ sections:
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml)
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml)
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml)
+- [WU-2475 — Force-sync wu-sizing-guide.md as managed template on upgrade](wu/WU-2475.yaml)
 - [WU-1489 — Fix pre-existing lane-lock test regressions blocking gates](wu/WU-1489.yaml)
 - [WU-1669 — Fix pre-existing test failures: cli-flag-verification snapshots and MCP timeout](wu/WU-1669.yaml)
 - [WU-1670 — Fix flaky test timeouts in gates-graceful-degradation and wu-prep-default-exec tests](wu/WU-1670.yaml)

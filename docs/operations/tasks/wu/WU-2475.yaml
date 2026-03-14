@@ -2,7 +2,7 @@ id: WU-2475
 title: Force-sync wu-sizing-guide.md as managed template on upgrade
 lane: 'Framework: CLI'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -44,3 +44,6 @@ acceptance:
   - docs-sync force-syncs sizing guide on upgrade using layout-dependent path
   - sync-templates picks up sizing guide from source and creates template
   - checkTemplateDrift covers sizing guide
+locked: true
+completed_at: 2026-03-14T13:59:08.968Z
+completed: 2026-03-14

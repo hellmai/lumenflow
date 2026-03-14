@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-- [WU-2475 — Force-sync wu-sizing-guide.md as managed template on upgrade](wu/WU-2475.yaml)
+(No items currently in progress)
 
 ## Completed
 
@@ -1390,3 +1390,4 @@ _Last updated: 2026-03-14_
 - [WU-2357 — Extend wu:prep skip-gates guidance to pre-existing test failures](wu/WU-2357.yaml) — 2026-03-14
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — 2026-03-14
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — 2026-03-14
+- [WU-2475 — Force-sync wu-sizing-guide.md as managed template on upgrade](wu/WU-2475.yaml) — 2026-03-14
