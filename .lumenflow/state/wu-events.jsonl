@@ -3571,3 +3571,4 @@
 {"type":"checkpoint","wuId":"WU-2473","timestamp":"2026-03-14T10:23:15.373Z","note":"[wu:brief] generated via claude-code","progress":"wu:brief executed","nextSteps":"client=claude-code;mode=prompt"}
 {"type":"checkpoint","wuId":"WU-2473","timestamp":"2026-03-14T10:23:54.198Z","note":"[wu:edit] path=docs/operations/tasks/wu/WU-2473.yaml","progress":"wu:edit stamp","nextSteps":"pre-commit enforcement"}
 {"type":"complete","wuId":"WU-2473","timestamp":"2026-03-14T10:25:25.982Z"}
+{"type":"claim","wuId":"WU-2449","timestamp":"2026-03-14T10:42:55.853Z","lane":"Content: Documentation","title":"Update onboarding docs to reflect WU-2445 UI test anti-patterns"}
