@@ -17,12 +17,22 @@ artifacts:
   - .lumenflow/stamps/WU-2473.done
 dependencies: []
 risks: []
-notes: 'tdd-exception: CI workflow YAML change, no unit tests applicable'
+notes: |-
+  tdd-exception: CI workflow YAML change, no unit tests applicable
+
+  tdd-exception: CI workflow YAML-only change, no unit tests applicable
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-14T10:22:56.767Z
+worktree_path: worktrees/operations-tooling-wu-2473
+session_id: 65a1d439-5a6c-4c1d-a7cb-a65d09e2189b
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T10:22:56.773Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -30,11 +40,3 @@ description: Discord webhook points to private channel, not suitable for OSS. No
   cause CI to show red even when gates pass.
 acceptance:
   - CI workflow has no Discord notification jobs
-claimed_mode: worktree
-worktree_path: worktrees/operations-tooling-wu-2473
-claimed_at: 2026-03-14T10:22:56.767Z
-baseline_main_sha: f42aa97270046f2649b067dd2af808c21690b454
-session_id: 65a1d439-5a6c-4c1d-a7cb-a65d09e2189b
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-14T10:22:56.773Z
