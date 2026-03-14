@@ -2,14 +2,15 @@ id: WU-2357
 title: Extend wu:prep skip-gates guidance to pre-existing test failures
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: ready
+status: in_progress
 priority: P1
 created: 2026-03-10
 code_paths:
   - packages/@lumenflow/cli/src/wu-prep.ts
 tests:
   manual:
-    - From a claimed worktree, run wu:prep against a WU whose gate failure is pre-existing on clean main due to tests and verify the printed skip-gates command is ready to copy
+    - From a claimed worktree, run wu:prep against a WU whose gate failure is pre-existing on clean
+      main due to tests and verify the printed skip-gates command is ready to copy
   unit:
     - packages/@lumenflow/cli/src/__tests__/wu-prep-skip-gates.test.ts
   e2e: []
@@ -17,9 +18,8 @@ artifacts:
   - .lumenflow/stamps/WU-2357.done
 dependencies: []
 risks: []
-notes:
-  'Created to codify wu:prep skip-gates guidance for pre-existing main failures. No implementation
-  started yet.'
+notes: Created to codify wu:prep skip-gates guidance for pre-existing main failures. No
+  implementation started yet.
 requires_review: false
 assigned_to: tom@hellm.ai
 exposure: backend-only
@@ -28,8 +28,23 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: 'Context: docs-only and maintenance WUs can hit pre-existing @lumenflow/cli test failures on clean main during wu:prep, but current pre-existing detection only checks spec:linter. Problem: operators get blocked without the audited skip-gates guidance that the onboarding docs imply. Solution: extend wu:prep pre-existing failure handling so worktree prep can distinguish new test failures from main-pre-existing test failures and print the ready wu:done --skip-gates command when the blocker is not introduced by the current WU.'
+description: 'Context: docs-only and maintenance WUs can hit pre-existing @lumenflow/cli test
+  failures on clean main during wu:prep, but current pre-existing detection only checks spec:linter.
+  Problem: operators get blocked without the audited skip-gates guidance that the onboarding docs
+  imply. Solution: extend wu:prep pre-existing failure handling so worktree prep can distinguish new
+  test failures from main-pre-existing test failures and print the ready wu:done --skip-gates
+  command when the blocker is not introduced by the current WU.'
 acceptance:
-  - wu:prep prints a ready wu:done --skip-gates --reason --fix-wu command when gates fail only because tests already fail on clean main
-  - New test failures introduced by the current WU remain blocking and do not emit pre-existing skip guidance
+  - wu:prep prints a ready wu:done --skip-gates --reason --fix-wu command when gates fail only
+    because tests already fail on clean main
+  - New test failures introduced by the current WU remain blocking and do not emit pre-existing skip
+    guidance
   - Automated coverage locks the pre-existing-test-failure guidance path for wu:prep
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-commands-wu-2357
+claimed_at: 2026-03-14T10:50:14.014Z
+baseline_main_sha: d93d4bfa148c94d1f4404a1a1f8d9e1a4d451e5e
+session_id: cce0ab9e-9277-4fdd-88bd-857f5009dd40
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T10:50:14.021Z
