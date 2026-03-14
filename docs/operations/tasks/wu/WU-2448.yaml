@@ -8,6 +8,7 @@ created: 2026-03-13
 code_paths:
   - packages/@lumenflow/core/src/schemas/gates-section-config.ts
   - packages/@lumenflow/cli/src/gates-runners.ts
+  - packages/@lumenflow/cli/src/__tests__/gates-runners.test.ts
 tests:
   manual:
     - Configure a conditional command triggered by migration file patterns, verify it runs only when
@@ -21,14 +22,21 @@ dependencies: []
 spec_refs:
   - lumenflow://plans/WU-2448-plan.md
 risks: []
-notes: Motivated by lumenflow-cloud needing scoped DB verification (db:verify) only for DB-touching
-  WUs. Complements WU-2446 (guidance_ref) and WU-2445 (UI anti-patterns). The existing
-  migration_verify in gates.commands is a partial solution but runs unconditionally.
+notes: Narrowed execution scope to schema and runner support for conditional_commands. Existing gate
+  registration is reused via migration verification flow; CLI management is deferred to a follow-up
+  WU if needed.
 requires_review: false
+claimed_mode: worktree
 assigned_to: tom@hellm.ai
+claimed_at: 2026-03-14T10:58:30.991Z
+worktree_path: worktrees/framework-core-validation-wu-2448
+session_id: 39c66ed9-c564-4f61-9df7-f75953dcad35
 exposure: backend-only
 escalation_triggers: []
 requires_human_escalation: false
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T10:58:30.996Z
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
@@ -47,13 +55,3 @@ acceptance:
   - Gates runner evaluates trigger_patterns against changed files and only runs matched commands
   - Unmatched conditional commands are skipped silently (no slowdown for unrelated WUs)
   - 'Command failure respects severity: error blocks gates, warn logs and continues'
-  - gate:co-change CLI or a new gate:conditional CLI supports add/edit/remove/list for conditional
-    commands
-claimed_mode: worktree
-worktree_path: worktrees/framework-core-validation-wu-2448
-claimed_at: 2026-03-14T10:58:30.991Z
-baseline_main_sha: a1c768ad049df85674fc52ca0eacb5065e0c7878
-session_id: 39c66ed9-c564-4f61-9df7-f75953dcad35
-approved_by:
-  - tom@hellm.ai
-approved_at: 2026-03-14T10:58:30.996Z
