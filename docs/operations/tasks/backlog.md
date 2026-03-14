@@ -27,11 +27,10 @@ sections:
 - [WU-2387 — Clean up legacy docs migration after 3.17 upgrade](wu/WU-2387.yaml) — Framework: CLI WU Commands
 - [WU-2420 — Fix recurring pre-existing test failures in filesystem-metrics.adapter and control-plane-sync-adapter](wu/WU-2420.yaml) — Framework: Core Lifecycle
 - [WU-2448 — Conditional gate commands keyed to trigger patterns](wu/WU-2448.yaml) — Framework: Core Validation
-- [WU-2474 — Fix claude-enforcement e2e fixture paths to use docs/operations/tasks](wu/WU-2474.yaml) — Framework: CLI Enforcement
 
 ## 🔧 In progress
 
-(No items currently in progress)
+- [WU-2474 — Fix claude-enforcement e2e fixture paths to use docs/operations/tasks](wu/WU-2474.yaml) — Framework: CLI Enforcement
 
 ## ⛔ Blocked
 

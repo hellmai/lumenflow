@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2474 — Fix claude-enforcement e2e fixture paths to use docs/operations/tasks](wu/WU-2474.yaml)
 
 ## Completed
 
