@@ -101,6 +101,25 @@ describe('docs-sync', () => {
       );
       expect(constraintsContent).not.toContain('{{DOCS_TASKS_PATH}}');
     });
+
+    it('WU-2475: should force-sync wu-sizing-guide.md to layout-dependent path', async () => {
+      const result = await syncCoreDocs(tempDir, { force: true });
+
+      // The sizing guide should be created at the resolved operations path
+      const sizingGuideCreated = result.created.some((f) => f.includes('wu-sizing-guide.md'));
+      expect(sizingGuideCreated).toBe(true);
+
+      // Find the actual path and verify content
+      const sizingGuidePath = result.created.find((f) => f.includes('wu-sizing-guide.md'));
+      expect(sizingGuidePath).toBeDefined();
+
+      const content = readFileSync(path.join(tempDir, sizingGuidePath!), 'utf-8');
+      // Should have resolved tokens, not raw placeholders
+      expect(content).not.toContain('{{DATE}}');
+      expect(content).not.toContain('{{DOCS_OPERATIONS_PATH}}');
+      // Should contain actual sizing guide content
+      expect(content).toContain('Sizing');
+    });
   });
 
   describe('WU-2371: parseDocsSyncOptions help text', () => {

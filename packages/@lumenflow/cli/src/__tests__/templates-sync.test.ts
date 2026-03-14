@@ -134,6 +134,22 @@ This document contains the 7 non-negotiable constraints.
 Universal rules for all agents.
 `,
       );
+
+      // WU-2475: Create wu-sizing-guide.md source
+      const sizingGuideDir = path.dirname(path.join(tempDir, ARC42.sizingGuidePath));
+      fs.mkdirSync(sizingGuideDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(tempDir, ARC42.sizingGuidePath),
+        `# Work Unit Sizing & Strategy Guide
+
+**Effective Date:** 2026-01-15
+
+## 1. Complexity Assessment Matrix
+
+| Complexity | Files | Tool Calls |
+| Simple     | <20   | <50        |
+`,
+      );
     });
 
     it('should sync constraints.md to template', async () => {
@@ -296,6 +312,16 @@ Universal rules.`,
 Guide content.`,
       );
 
+      // WU-2475: Create sizing guide source for drift checks
+      const sizingGuideDir = path.dirname(path.join(tempDir, ARC42.sizingGuidePath));
+      fs.mkdirSync(sizingGuideDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(tempDir, ARC42.sizingGuidePath),
+        `# Work Unit Sizing & Strategy Guide
+**Effective Date:** 2026-01-15
+Sizing content.`,
+      );
+
       // Set up template directory
       const templatesDir = path.join(
         tempDir,
@@ -378,6 +404,11 @@ Guide content.`,
 
       fs.writeFileSync(path.join(tempDir, 'LUMENFLOW.md'), 'content');
       fs.writeFileSync(path.join(tempDir, 'AGENTS.md'), 'content');
+
+      // WU-2475: Create sizing guide source
+      const sizingGuideDir = path.dirname(path.join(tempDir, ARC42.sizingGuidePath));
+      fs.mkdirSync(sizingGuideDir, { recursive: true });
+      fs.writeFileSync(path.join(tempDir, ARC42.sizingGuidePath), 'sizing content');
 
       const onboardingDir = path.join(getOnboardingDir(tempDir));
       fs.mkdirSync(onboardingDir, { recursive: true });

@@ -70,6 +70,7 @@ FILES=$(git diff --cached --name-only --diff-filter=ACMR \
   | grep -v "docs/operations/tasks/wu/" \
   | grep -v "apps/docs/" \
   | grep -v "\.md$" \
+  | grep -v "\.md\.template$" \
   | grep -v "\.mdx$" \
   | grep -v "__tests__/" \
   | grep -v "\.test\.ts$" \

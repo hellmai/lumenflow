@@ -230,11 +230,22 @@ export const CORE_DOC_TEMPLATE_PATHS: Record<string, string> = {
 /**
  * WU-2383: Managed docs — 100% LumenFlow-owned, safe to force-sync on upgrade.
  * Users MUST NOT edit these files; use LUMENFLOW.local.md for project-specific additions.
+ *
+ * NOTE: wu-sizing-guide.md is also fully managed but lives at a layout-dependent
+ * path (e.g. docs/_frameworks/lumenflow/ or docs/operations/_frameworks/lumenflow/).
+ * It is synced separately in syncCoreDocs using the resolved DOCS_OPERATIONS_PATH token.
  */
 export const MANAGED_DOC_PATHS: Record<string, string> = {
   'LUMENFLOW.md': 'core/LUMENFLOW.md.template',
   '.lumenflow/constraints.md': 'core/.lumenflow/constraints.md.template',
 };
+
+/**
+ * WU-2475: Template path for the WU sizing guide.
+ * Output path is computed at sync time from DOCS_OPERATIONS_PATH token because
+ * the docs layout varies (simple vs arc42).
+ */
+export const SIZING_GUIDE_TEMPLATE_PATH = 'core/_frameworks/lumenflow/wu-sizing-guide.md.template';
 
 /**
  * WU-2383: Bootstrap docs — shared files using merge-block markers.
@@ -666,6 +677,25 @@ export async function syncCoreDocs(targetDir: string, _options: SyncOptions): Pr
 
     // Always write managed docs regardless of force flag
     await createFile(filePath, processedContent, true, result, targetDir);
+  }
+
+  // WU-2475: Sizing guide — managed doc at layout-dependent path.
+  // Output path uses resolved DOCS_OPERATIONS_PATH so it lands correctly for both
+  // simple (docs/_frameworks/...) and arc42 (docs/operations/_frameworks/...) layouts.
+  try {
+    const sizingGuideOutputPath = `${tokens.DOCS_OPERATIONS_PATH}/_frameworks/lumenflow/wu-sizing-guide.md`;
+    const sizingGuideTemplate = loadTemplate(SIZING_GUIDE_TEMPLATE_PATH);
+    const sizingGuideContent = processTemplate(sizingGuideTemplate, tokens);
+    await createFile(
+      path.join(targetDir, sizingGuideOutputPath),
+      sizingGuideContent,
+      true, // always force for managed docs
+      result,
+      targetDir,
+    );
+  } catch {
+    // Template may not exist yet during development; skip gracefully.
+    // Once the template is created via sync:templates, this path will succeed.
   }
 
   // WU-2383: Bootstrap docs — use merge-block to preserve user content

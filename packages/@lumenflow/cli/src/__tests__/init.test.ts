@@ -1042,9 +1042,9 @@ describe('lumenflow init', () => {
     });
   });
 
-  // WU-1385 / WU-2398: wu-sizing-guide.md is no longer scaffolded as an onboarding
-  // template. The canonical doc lives at docs/operations/_frameworks/lumenflow/wu-sizing-guide.md.
-  // The starting-prompt.md template still references wu-sizing-guide.md (via LUMENFLOW.md link).
+  // WU-1385 / WU-2398: wu-sizing-guide.md is no longer scaffolded as an onboarding template.
+  // WU-2475: It is now a managed core doc template at templates/core/_frameworks/lumenflow/
+  // and force-synced via syncCoreDocs on upgrade (like LUMENFLOW.md and constraints.md).
 
   // WU-1408: safe-git and pre-commit hook scaffolding
   describe('WU-1408: safe-git and pre-commit scaffolding', () => {

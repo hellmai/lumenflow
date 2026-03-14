@@ -284,6 +284,17 @@ export async function syncCoreDocs(
   );
   syncFile(constraintsSource, constraintsTarget, projectRoot, result, dryRun);
 
+  // WU-2475: Sync wu-sizing-guide.md
+  const sizingSource = path.join(projectRoot, ARC42_DOCS.sizingGuidePath);
+  const sizingTarget = path.join(
+    templatesDir,
+    'core',
+    '_frameworks',
+    'lumenflow',
+    'wu-sizing-guide.md.template',
+  );
+  syncFile(sizingSource, sizingTarget, projectRoot, result, dryRun);
+
   return result;
 }
 
@@ -365,6 +376,17 @@ export async function checkTemplateDrift(projectRoot: string): Promise<DriftResu
     {
       source: path.join(projectRoot, LUMENFLOW_DIR, 'constraints.md'),
       template: path.join(templatesDir, 'core', LUMENFLOW_DIR, 'constraints.md.template'),
+    },
+    // WU-2475: Sizing guide
+    {
+      source: path.join(projectRoot, ARC42_DOCS.sizingGuidePath),
+      template: path.join(
+        templatesDir,
+        'core',
+        '_frameworks',
+        'lumenflow',
+        'wu-sizing-guide.md.template',
+      ),
     },
   ];
 
@@ -517,6 +539,17 @@ export async function syncTemplatesWithWorktree(projectRoot: string): Promise<Sy
           'constraints.md.template',
         );
         syncFileToWorktree(constraintsSource, constraintsTarget, projectRoot, coreResult);
+
+        // WU-2475: Sync wu-sizing-guide.md
+        const sizingSource = path.join(projectRoot, ARC42_DOCS.sizingGuidePath);
+        const sizingTarget = path.join(
+          templatesDir,
+          'core',
+          '_frameworks',
+          'lumenflow',
+          'wu-sizing-guide.md.template',
+        );
+        syncFileToWorktree(sizingSource, sizingTarget, projectRoot, coreResult);
 
         // Sync onboarding docs
         const onboardingResult: SyncResult = { synced: [], errors: [] };
