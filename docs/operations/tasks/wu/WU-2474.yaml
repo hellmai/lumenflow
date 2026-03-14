@@ -2,7 +2,7 @@ id: WU-2474
 title: Fix claude-enforcement e2e fixture paths to use docs/operations/tasks
 lane: 'Framework: CLI Enforcement'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -43,3 +43,6 @@ description: 'Context: packages/@lumenflow/cli/e2e/claude-enforcement.test.ts st
 acceptance:
   - claude-enforcement e2e fixture uses docs/operations/tasks paths consistently
   - The affected e2e flow no longer references legacy docs/tasks task paths
+locked: true
+completed_at: 2026-03-14T10:49:31.554Z
+completed: 2026-03-14
