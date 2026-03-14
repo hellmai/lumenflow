@@ -2,7 +2,7 @@ id: WU-2387
 title: Clean up legacy docs migration after 3.17 upgrade
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P1
 created: 2026-03-10
 code_paths:
@@ -77,3 +77,6 @@ acceptance:
   - The migration logic distinguishes older scaffolded content from genuinely user-maintained
     content for managed docs and bootstrap docs, with regression tests covering AGENTS.md,
     CLAUDE.md, LUMENFLOW.md, and onboarding-doc upgrade behavior
+locked: true
+completed_at: 2026-03-14T11:23:57.788Z
+completed: 2026-03-14
