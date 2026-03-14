@@ -476,10 +476,7 @@ sections:
         path.join(sandbox, 'worktrees', `content-documentation-${wuId.toLowerCase()}`);
       expect(fs.existsSync(extractedWorktree)).toBe(true);
 
-      const worktreeWuPath = path.join(
-        extractedWorktree,
-        `docs/operations/tasks/wu/${wuId}.yaml`,
-      );
+      const worktreeWuPath = path.join(extractedWorktree, `docs/operations/tasks/wu/${wuId}.yaml`);
       const claimedWU = parseYAML(fs.readFileSync(worktreeWuPath, 'utf-8')) as Record<
         string,
         unknown
