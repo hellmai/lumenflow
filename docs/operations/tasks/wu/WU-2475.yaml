@@ -2,7 +2,7 @@ id: WU-2475
 title: Force-sync wu-sizing-guide.md as managed template on upgrade
 lane: 'Framework: CLI'
 type: bug
-status: ready
+status: in_progress
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -29,9 +29,18 @@ requires_human_escalation: false
 requires_cso_approval: false
 requires_cto_approval: false
 requires_design_approval: false
-description: Cloud users only get a stale sizing guide after upgrade because wu-sizing-guide.md has no template and is not in MANAGED_DOC_PATHS.
+description: Cloud users only get a stale sizing guide after upgrade because wu-sizing-guide.md has
+  no template and is not in MANAGED_DOC_PATHS.
 acceptance:
   - wu-sizing-guide.md.template exists in CLI templates
   - docs-sync force-syncs sizing guide on upgrade using layout-dependent path
   - sync-templates picks up sizing guide from source and creates template
   - checkTemplateDrift covers sizing guide
+claimed_mode: worktree
+worktree_path: worktrees/framework-cli-wu-2475
+claimed_at: 2026-03-14T13:46:39.766Z
+baseline_main_sha: 673b0f2cefa54d070b11af7fd2bf18048ff5277b
+session_id: 09dc8cbb-3a68-451a-b5ae-c34f30875f35
+approved_by:
+  - tom@hellm.ai
+approved_at: 2026-03-14T13:46:39.772Z

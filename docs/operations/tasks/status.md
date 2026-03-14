@@ -4,7 +4,7 @@ _Last updated: 2026-03-14_
 
 ## In Progress
 
-(No items currently in progress)
+- [WU-2475 — Force-sync wu-sizing-guide.md as managed template on upgrade](wu/WU-2475.yaml)
 
 ## Completed
 
