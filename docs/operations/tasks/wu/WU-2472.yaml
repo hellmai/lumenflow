@@ -2,7 +2,7 @@ id: WU-2472
 title: Fix init-quick-ref tests after template sync
 lane: 'Framework: CLI WU Commands'
 type: bug
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-14
 code_paths:
@@ -36,3 +36,6 @@ requires_design_approval: false
 description: WU-2471 synced templates but init-quick-ref tests have stale assertions
 acceptance:
   - init-quick-ref tests pass
+locked: true
+completed_at: 2026-03-14T00:02:02.185Z
+completed: 2026-03-14
