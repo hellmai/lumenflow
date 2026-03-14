@@ -2,7 +2,7 @@ id: WU-2448
 title: Conditional gate commands keyed to trigger patterns
 lane: 'Framework: Core Validation'
 type: feature
-status: in_progress
+status: done
 priority: P2
 created: 2026-03-13
 code_paths:
@@ -55,3 +55,6 @@ acceptance:
   - Gates runner evaluates trigger_patterns against changed files and only runs matched commands
   - Unmatched conditional commands are skipped silently (no slowdown for unrelated WUs)
   - 'Command failure respects severity: error blocks gates, warn logs and continues'
+locked: true
+completed_at: 2026-03-14T11:12:08.534Z
+completed: 2026-03-14
