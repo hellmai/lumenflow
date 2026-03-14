@@ -1,23 +1,15 @@
 id: WU-2476
 title: Sync internal and Starlight docs to v3.19.0
 lane: 'Content: Documentation'
-type: feature
+type: documentation
 status: in_progress
 priority: P2
 created: 2026-03-14
 code_paths:
-  - apps/docs/src/content/docs/releases/
-  - apps/docs/src/content/docs/releases/index.mdx
-  - apps/docs/src/content/docs/reference/changelog.mdx
-  - apps/docs/src/content/docs/packs/software-delivery/concepts/gates.mdx
-  - apps/docs/src/content/docs/reference/workspace-spec.mdx
-  - apps/docs/src/content/docs/reference/cli.mdx
-  - apps/docs/src/content/docs/reference/agent-safety.mdx
-  - apps/docs/src/content/docs/packs/software-delivery/setup/troubleshooting.mdx
-  - apps/docs/src/content/docs/packs/software-delivery/workflows/wu-prep-workflow.mdx
+  - apps/docs/src/content/docs/
+  - docs/operations/_frameworks/lumenflow/agent-safety-architecture.md
   - docs/operations/_frameworks/lumenflow/agent/onboarding/quick-ref-commands.md
   - docs/operations/_frameworks/lumenflow/agent/onboarding/starting-prompt.md
-  - docs/operations/_frameworks/lumenflow/agent-safety-architecture.md
 tests:
   manual:
     - Verify Starlight docs build successfully with astro build
